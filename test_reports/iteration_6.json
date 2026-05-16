@@ -1,0 +1,43 @@
+{
+  "summary": "Iteration 6 backend validation: wall_type enum extended with 'brique_parement' (4 valid values), new optional Mesure fields bay_diagonal_1, bay_diagonal_2, diag_1_verified, diag_2_verified, legacy bay_diagonal still accepted, and XLSX/PDF exports work with brique_parement. 20 new iter6 tests added. Final: 111/111 pytest passing (20 iter6 + 91 regression).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "GET /api/chantiers/{id}/export.pdf", "issue": "Carry-over from iter2–5: still does NOT filter by company_id (matches on id only). export.xlsx correctly filters; please align export.pdf."},
+      {"endpoint": "Creation endpoints (POST /chantiers, /mesures, /feedbacks)", "issue": "Carry-over: still return 200 instead of 201."},
+      {"endpoint": "passlib + bcrypt", "issue": "Carry-over startup noise: 'module bcrypt has no attribute __about__' (pin bcrypt<4 to silence)."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iter6_brique_parement_diagonals.py",
+    "/app/test_reports/pytest/iter6.xml",
+    "/app/test_reports/pytest/iter6_full.xml"
+  ],
+  "action_items": [
+    "(Optional) Align export.pdf with export.xlsx tenant filter (add company_id to find_one).",
+    "(Optional carry-overs) Return 201 on creation, pin bcrypt<4, return 404 on unknown DELETE /mesures/{id} & /feedbacks/{id}."
+  ],
+  "critical_code_review_comments": [
+    "VALID_WALL_TYPES correctly extended to {ite, iti, brique_parement, crepi_simple} (server.py L55) and Pydantic field_validator rejects everything else with 422 (incl. empty, whitespace, wrong case, hyphen, space variants).",
+    "MesureCreate gained bay_diagonal_1, bay_diagonal_2, diag_1_verified, diag_2_verified as Optional with proper defaults (None) — Pydantic v2 round-trips them through POST → DB → GET correctly.",
+    "Legacy bay_diagonal kept on the model — backward compat confirmed: existing payload (without _1/_2 fields) still 200 and persists with the new fields as null.",
+    "PDF label_map (server.py L665) and XLSX wall_map (L756) both include 'brique_parement' -> 'Brique de parement' — verified by 200 response + valid magic bytes (%PDF, PK).",
+    "compute_alerts/slope logic untouched — no behavioural regression on standard/coulissant/trapeze.",
+    "All other iter1–iter5 functionality unaffected (91/91 prior tests still green)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iter6_brique_parement_diagonals.py (new — 20 tests)"
+  ],
+  "success_rate": {"backend": "100% (111/111, 20 iter6 + 91 regression)", "frontend": "not tested (backend-only request)"},
+  "seed_data_creation": "Module-scoped TEST_Iter6_Brique chantier (commercial), plus class-scoped TEST_Iter6_Export chantier for export tests. Each chantier is teardown-deleted as admin (cascades mesures). All test data prefixed with TEST_.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iter6 backend is fully green (111/111). Enum: wall_type ∈ {ite, iti, brique_parement, crepi_simple} or null — 422 otherwise. New optional Mesure fields: bay_diagonal_1, bay_diagonal_2, diag_1_verified, diag_2_verified (booleans). Legacy bay_diagonal still works. Frontend tasks likely include: a 4-way segmented control for wall_type (the new 'Brique de parement' option), a dual-diagonal capture UI with per-diagonal 'vérifié' toggles, and visual rendering of brique_parement in PDF/XLSX export previews (server already maps label correctly). Carry-overs (export.pdf company_id filter, 201 on creation, bcrypt warning) still pending — non-blocking.",
+  "rca_of_issue": "No bugs found. Iter6 backend changes (one new enum value + 4 new optional model fields + 2 export label_maps) are minimal and orthogonal; all spec items pass on first run with no code modifications needed."
+}

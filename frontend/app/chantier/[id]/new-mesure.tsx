@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
   Image,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   ScrollView,
   StyleSheet,
@@ -21,13 +22,13 @@ import {
   RawBaySchemaTrapeze,
   WallSection,
 } from "@/src/components/WindowSchema";
-import AnomalyButton from "@/src/components/AnomalyButton";
 import { api } from "@/src/services/api";
 import { enqueueMesure, isOnline } from "@/src/services/offlineQueue";
 import { colors } from "@/src/theme";
 
 type BlockType = "standard" | "coulissant" | "porte" | "trapeze";
-type WallType = "ite" | "iti" | "crepi_simple";
+type WallType = "ite" | "iti" | "brique_parement" | "crepi_simple";
+type DiagState = "auto" | "validated" | "manual";
 
 const BLOCKS: { key: BlockType; letter: string; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
   { key: "standard", letter: "A", label: "CHÂSSIS STANDARD", icon: "square-outline" },
@@ -38,14 +39,27 @@ const BLOCKS: { key: BlockType; letter: string; label: string; icon: keyof typeo
 
 type Step = 0 | 1 | 2;
 
-type Step2Form = {
-  bay_height: string;
+type Step2 = {
   bay_width: string;
-  bay_diagonal: string;
+  bay_height: string;
+  diag_1: string;
+  diag_1_state: DiagState;
+  diag_2: string;
+  diag_2_state: DiagState;
   floor_reserve: string;
 };
 
-type Step3Form = {
+const initStep2 = (): Step2 => ({
+  bay_width: "",
+  bay_height: "",
+  diag_1: "",
+  diag_1_state: "manual",
+  diag_2: "",
+  diag_2_state: "manual",
+  floor_reserve: "",
+});
+
+type Step3 = {
   bloc_thickness: string;
   wall_type: WallType | null;
   insulation_thickness: string;
@@ -53,70 +67,89 @@ type Step3Form = {
   finish_inner: string;
 };
 
-export default function NewMesure() {
+const initStep3 = (): Step3 => ({
+  bloc_thickness: "",
+  wall_type: null,
+  insulation_thickness: "",
+  finish_outer: "",
+  finish_inner: "",
+});
+
+const parseNum = (s: string) => {
+  const n = parseFloat(s.replace(",", "."));
+  return Number.isFinite(n) ? n : null;
+};
+
+export default function NewMesureWizard() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+
   const [step, setStep] = useState<Step>(0);
   const [blockType, setBlockType] = useState<BlockType | null>(null);
   const [label, setLabel] = useState("");
   const [photo, setPhoto] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const [s2, setS2] = useState<Step2Form>({
-    bay_height: "",
-    bay_width: "",
-    bay_diagonal: "",
-    floor_reserve: "",
-  });
-  const [s2Errors, setS2Errors] = useState<Partial<Record<keyof Step2Form, boolean>>>({});
+  const [s2, setS2] = useState<Step2>(initStep2());
+  const [s2Err, setS2Err] = useState<Record<string, boolean>>({});
 
-  const [s3, setS3] = useState<Step3Form>({
-    bloc_thickness: "",
-    wall_type: null,
-    insulation_thickness: "",
-    finish_outer: "",
-    finish_inner: "",
-  });
-  const [s3Errors, setS3Errors] = useState<Partial<Record<keyof Step3Form, boolean>>>({});
+  const [s3, setS3] = useState<Step3>(initStep3());
+  const [s3Err, setS3Err] = useState<Record<string, boolean>>({});
 
-  // ---------------------------------------------------------------- Step 1
-  const onPickBlock = (key: BlockType) => {
-    setBlockType(key);
-    setStep(1);
-  };
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportText, setReportText] = useState("");
+  const [reportSending, setReportSending] = useState(false);
 
-  // ---------------------------------------------------------------- Step 2
+  // ---------- Auto-Pythagoras prefill ----------------------------------
+  useEffect(() => {
+    const w = parseNum(s2.bay_width);
+    const h = parseNum(s2.bay_height);
+    if (w && h && w > 0 && h > 0) {
+      const d = Math.round(Math.sqrt(w * w + h * h));
+      setS2((prev) => {
+        let next = prev;
+        if (prev.diag_1_state === "manual" && prev.diag_1.trim().length === 0) {
+          next = { ...next, diag_1: String(d), diag_1_state: "auto" };
+        }
+        if (prev.diag_2_state === "manual" && prev.diag_2.trim().length === 0) {
+          next = { ...next, diag_2: String(d), diag_2_state: "auto" };
+        }
+        return next;
+      });
+    }
+  }, [s2.bay_width, s2.bay_height]);
+
+  const setS2Field = (k: keyof Step2, v: any) => setS2((p) => ({ ...p, [k]: v }));
+  const setS3Field = (k: keyof Step3, v: any) => setS3((p) => ({ ...p, [k]: v }));
+
+  // ---------- Validation -----------------------------------------------
   const validateStep2 = (): boolean => {
-    const errors: Partial<Record<keyof Step2Form, boolean>> = {};
-    (Object.keys(s2) as (keyof Step2Form)[]).forEach((k) => {
-      if (!s2[k] || s2[k].trim().length === 0 || Number.isNaN(parseFloat(s2[k]))) {
-        errors[k] = true;
-      }
-    });
+    if (!blockType) return false;
+    const err: Record<string, boolean> = {};
+    if (!parseNum(s2.bay_width)) err.bay_width = true;
+    if (!parseNum(s2.bay_height)) err.bay_height = true;
+    if (!parseNum(s2.diag_1)) err.diag_1 = true;
+    if (!parseNum(s2.diag_2)) err.diag_2 = true;
+    if (s2.diag_1_state === "auto") err.diag_1 = true; // not yet validated/modified
+    if (s2.diag_2_state === "auto") err.diag_2 = true;
+    if (blockType === "porte" && !parseNum(s2.floor_reserve)) err.floor_reserve = true;
     if (!label.trim()) {
-      Alert.alert("Libellé manquant", "Indiquez un libellé (ex. Salon, Chambre 1...).");
+      Alert.alert("Libellé manquant", "Indiquez un libellé (ex. Salon).");
       return false;
     }
-    setS2Errors(errors);
-    return Object.keys(errors).length === 0;
+    setS2Err(err);
+    return Object.keys(err).length === 0;
   };
 
-  const goToStep3 = () => {
-    if (validateStep2()) setStep(2);
-  };
-
-  // ---------------------------------------------------------------- Step 3
   const validateStep3 = (): boolean => {
-    const errors: Partial<Record<keyof Step3Form, boolean>> = {};
-    if (!s3.bloc_thickness || Number.isNaN(parseFloat(s3.bloc_thickness))) {
-      errors.bloc_thickness = true;
-    }
-    if (!s3.wall_type) errors.wall_type = true;
-    setS3Errors(errors);
-    return Object.keys(errors).length === 0;
+    const err: Record<string, boolean> = {};
+    if (!parseNum(s3.bloc_thickness)) err.bloc_thickness = true;
+    if (!s3.wall_type) err.wall_type = true;
+    setS3Err(err);
+    return Object.keys(err).length === 0;
   };
 
-  // ---------------------------------------------------------------- Photo
+  // ---------- Photo helpers --------------------------------------------
   const pickPhoto = async (source: "camera" | "library") => {
     const fn =
       source === "camera"
@@ -128,41 +161,37 @@ export default function NewMesure() {
       return;
     }
     const launcher =
-      source === "camera"
-        ? ImagePicker.launchCameraAsync
-        : ImagePicker.launchImageLibraryAsync;
-    const res = await launcher({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.5,
-      base64: true,
-    });
+      source === "camera" ? ImagePicker.launchCameraAsync : ImagePicker.launchImageLibraryAsync;
+    const res = await launcher({ mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.5, base64: true });
     if (!res.canceled && res.assets[0]) {
       const a = res.assets[0];
       setPhoto(a.base64 ? `data:image/jpeg;base64,${a.base64}` : a.uri);
     }
   };
 
-  // ---------------------------------------------------------------- Submit
+  // ---------- Submit ----------------------------------------------------
   const submit = async () => {
-    if (!blockType) return;
-    if (!validateStep3()) return;
+    if (!blockType || !validateStep3()) return;
     setSaving(true);
     const payload: Record<string, unknown> = {
       chantier_id: id,
       block_type: blockType,
       label: label.trim(),
       photo_url: photo,
-      bay_height: parseFloat(s2.bay_height),
-      bay_width: parseFloat(s2.bay_width),
-      bay_diagonal: parseFloat(s2.bay_diagonal),
-      floor_reserve: parseFloat(s2.floor_reserve),
-      bloc_thickness: parseFloat(s3.bloc_thickness),
+      bay_width: parseNum(s2.bay_width),
+      bay_height: parseNum(s2.bay_height),
+      bay_diagonal_1: parseNum(s2.diag_1),
+      bay_diagonal_2: parseNum(s2.diag_2),
+      diag_1_verified: s2.diag_1_state !== "auto",
+      diag_2_verified: s2.diag_2_state !== "auto",
+      bloc_thickness: parseNum(s3.bloc_thickness),
       wall_type: s3.wall_type,
       options: {},
     };
-    if (s3.insulation_thickness) payload.insulation_thickness = parseFloat(s3.insulation_thickness);
-    if (s3.finish_outer) payload.finish_outer = parseFloat(s3.finish_outer);
-    if (s3.finish_inner) payload.finish_inner = parseFloat(s3.finish_inner);
+    if (blockType === "porte") payload.floor_reserve = parseNum(s2.floor_reserve);
+    if (s3.insulation_thickness) payload.insulation_thickness = parseNum(s3.insulation_thickness);
+    if (s3.finish_outer) payload.finish_outer = parseNum(s3.finish_outer);
+    if (s3.finish_inner) payload.finish_inner = parseNum(s3.finish_inner);
 
     try {
       const online = await isOnline();
@@ -185,54 +214,80 @@ export default function NewMesure() {
     }
   };
 
-  // ============================ RENDER ====================================
+  // ---------- Quick report (top-corner) ---------------------------------
+  const sendReport = async () => {
+    if (!reportText.trim()) return;
+    setReportSending(true);
+    try {
+      await api.post("/feedbacks", {
+        page_context: `wizard:step${step + 1}:${blockType ?? "none"}`,
+        user_comment: reportText.trim(),
+        encoded_data_snapshot: { chantier_id: id, blockType, label, s2, s3 },
+      });
+      setReportOpen(false);
+      setReportText("");
+      Alert.alert("Merci !", "Votre signalement a été envoyé.");
+    } catch {
+      Alert.alert("Erreur", "Envoi impossible.");
+    } finally {
+      setReportSending(false);
+    }
+  };
+
+  const isRectangular = blockType !== "trapeze";
 
   return (
     <SafeAreaView style={styles.flex} edges={["bottom"]}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={styles.flex}
-      >
-        <View style={styles.stepBar}>
-          {[0, 1, 2].map((i) => (
-            <View
-              key={i}
-              testID={`step-pill-${i + 1}`}
-              style={[
-                styles.stepPill,
-                i <= step && styles.stepPillActive,
-                i === step && styles.stepPillCurrent,
-              ]}
-            >
-              <Text style={[styles.stepPillText, i <= step && { color: "#000" }]}>
-                {i + 1}
-              </Text>
-            </View>
-          ))}
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.flex}>
+        {/* Top bar with steps + tiny "Signaler un problème" */}
+        <View style={styles.topBar}>
+          <View style={styles.stepRow}>
+            {[0, 1, 2].map((i) => (
+              <View
+                key={i}
+                testID={`step-pill-${i + 1}`}
+                style={[styles.stepPill, i <= step && styles.stepPillActive]}
+              >
+                <Text style={[styles.stepPillText, i <= step && { color: "#000" }]}>{i + 1}</Text>
+              </View>
+            ))}
+          </View>
+          <TouchableOpacity
+            testID="open-report-modal"
+            onPress={() => setReportOpen(true)}
+            style={styles.reportBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="alert-circle-outline" size={14} color={colors.anomaly} />
+            <Text style={styles.reportBtnText}>Signaler un problème</Text>
+          </TouchableOpacity>
         </View>
 
-        <ScrollView
-          contentContainerStyle={{ padding: 16, paddingBottom: 200 }}
-          keyboardShouldPersistTaps="handled"
-        >
-          {step === 0 && <Step1Picker onPick={onPickBlock} />}
-
+        <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 200 }} keyboardShouldPersistTaps="handled">
+          {step === 0 && (
+            <Step1
+              onPick={(k) => {
+                setBlockType(k);
+                setStep(1);
+              }}
+            />
+          )}
           {step === 1 && blockType && (
-            <Step2Bay
+            <Step2View
               blockType={blockType}
+              isRectangular={isRectangular}
               label={label}
               setLabel={setLabel}
-              values={s2}
-              setValues={setS2}
-              errors={s2Errors}
+              s2={s2}
+              setS2Field={setS2Field}
+              err={s2Err}
               photo={photo}
               setPhoto={setPhoto}
               pickPhoto={pickPhoto}
             />
           )}
-
           {step === 2 && (
-            <Step3Wall values={s3} setValues={setS3} errors={s3Errors} />
+            <Step3View s3={s3} setField={setS3Field} err={s3Err} />
           )}
         </ScrollView>
 
@@ -250,8 +305,8 @@ export default function NewMesure() {
           )}
           {step === 1 && (
             <TouchableOpacity
-              testID="wizard-next-step2"
-              onPress={goToStep3}
+              testID="wizard-next"
+              onPress={() => validateStep2() && setStep(2)}
               style={[styles.btn, styles.btnPrimary]}
               activeOpacity={0.85}
             >
@@ -280,18 +335,52 @@ export default function NewMesure() {
         </View>
       </KeyboardAvoidingView>
 
-      {step >= 1 && (
-        <AnomalyButton
-          pageContext={`mesure_wizard:step${step + 1}:${blockType}`}
-          dataSnapshot={{ chantier_id: id, block_type: blockType, label, step2: s2, step3: s3 }}
-        />
-      )}
+      {/* Report modal */}
+      <Modal visible={reportOpen} transparent animationType="fade" onRequestClose={() => setReportOpen(false)}>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+              <Ionicons name="alert-circle" size={20} color={colors.anomaly} />
+              <Text style={styles.modalTitle}>Signaler un problème</Text>
+            </View>
+            <Text style={styles.modalSub}>Décrivez ce qui ne va pas — envoyé à l'admin avec le contexte.</Text>
+            <TextInput
+              testID="report-text-input"
+              value={reportText}
+              onChangeText={setReportText}
+              multiline
+              numberOfLines={4}
+              placeholder="Ex: la diagonale auto-calculée est fausse..."
+              placeholderTextColor={colors.placeholder}
+              style={styles.reportInput}
+            />
+            <View style={{ flexDirection: "row", gap: 8, marginTop: 12 }}>
+              <TouchableOpacity
+                onPress={() => setReportOpen(false)}
+                style={[styles.btn, styles.btnSecondary, { flex: 1, minHeight: 48 }]}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.btnSecondaryText}>ANNULER</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                testID="report-submit"
+                onPress={sendReport}
+                disabled={reportSending}
+                style={[styles.btn, styles.btnPrimary, { flex: 1, minHeight: 48 }]}
+                activeOpacity={0.85}
+              >
+                {reportSending ? <ActivityIndicator color="#000" /> : <Text style={styles.btnPrimaryText}>ENVOYER</Text>}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </SafeAreaView>
   );
 }
 
-// ====================== STEP 1 — Block type picker ========================
-function Step1Picker({ onPick }: { onPick: (k: BlockType) => void }) {
+// ======================== Step 1 ========================================
+function Step1({ onPick }: { onPick: (k: BlockType) => void }) {
   return (
     <View>
       <Text style={styles.h1}>SÉLECTION TYPE CHÂSSIS</Text>
@@ -318,35 +407,43 @@ function Step1Picker({ onPick }: { onPick: (k: BlockType) => void }) {
   );
 }
 
-// ====================== STEP 2 — Raw bay measurements =====================
-function Step2Bay({
+// ======================== Step 2 ========================================
+function Step2View({
   blockType,
+  isRectangular,
   label,
   setLabel,
-  values,
-  setValues,
-  errors,
+  s2,
+  setS2Field,
+  err,
   photo,
   setPhoto,
   pickPhoto,
 }: {
   blockType: BlockType;
+  isRectangular: boolean;
   label: string;
   setLabel: (v: string) => void;
-  values: Step2Form;
-  setValues: (v: Step2Form) => void;
-  errors: Partial<Record<keyof Step2Form, boolean>>;
+  s2: Step2;
+  setS2Field: (k: keyof Step2, v: any) => void;
+  err: Record<string, boolean>;
   photo: string | null;
   setPhoto: (v: string | null) => void;
   pickPhoto: (s: "camera" | "library") => void;
 }) {
-  const set = (k: keyof Step2Form, v: string) =>
-    setValues({ ...values, [k]: v.replace(",", ".") });
-  const Sketch = blockType === "trapeze" ? RawBaySchemaTrapeze : RawBaySchemaRect;
+  const Sketch = isRectangular ? RawBaySchemaRect : RawBaySchemaTrapeze;
+
+  const validateDiag = (which: 1 | 2) =>
+    setS2Field(which === 1 ? "diag_1_state" : "diag_2_state", "validated");
+  const modifyDiag = (which: 1 | 2) => {
+    setS2Field(which === 1 ? "diag_1" : "diag_2", "");
+    setS2Field(which === 1 ? "diag_1_state" : "diag_2_state", "manual");
+  };
+
   return (
     <View>
       <Text style={styles.h1}>PRISE À LA MESURE</Text>
-      <Text style={styles.h2}>Cotes de la baie brute</Text>
+      <Text style={styles.h2}>Cotes de la baie brute · {isRectangular ? "Rectangulaire" : "Trapèze"}</Text>
 
       <Text style={[styles.label, { marginTop: 14 }]}>Libellé de l'ouverture</Text>
       <TextInput
@@ -359,62 +456,70 @@ function Step2Bay({
       />
 
       <View style={styles.sketchBox}>
-        <Sketch values={values} />
+        <Sketch values={{ bay_width: s2.bay_width, bay_height: s2.bay_height, bay_diagonal: s2.diag_1 }} />
       </View>
 
-      <BayField
-        testID="input-bay-height"
-        label="HAUTEUR (mm)"
-        value={values.bay_height}
-        onChange={(v) => set("bay_height", v)}
-        error={errors.bay_height}
-      />
-      <BayField
+      <CotField
         testID="input-bay-width"
         label="LARGEUR (mm)"
-        value={values.bay_width}
-        onChange={(v) => set("bay_width", v)}
-        error={errors.bay_width}
+        value={s2.bay_width}
+        onChange={(v) => setS2Field("bay_width", v.replace(",", "."))}
+        error={!!err.bay_width}
       />
-      <BayField
-        testID="input-bay-diagonal"
-        label="DIAGONALE (mm)"
-        value={values.bay_diagonal}
-        onChange={(v) => set("bay_diagonal", v)}
-        error={errors.bay_diagonal}
+      <CotField
+        testID="input-bay-height"
+        label="HAUTEUR (mm)"
+        value={s2.bay_height}
+        onChange={(v) => setS2Field("bay_height", v.replace(",", "."))}
+        error={!!err.bay_height}
       />
 
-      <View style={styles.criticalBlock}>
-        <View style={styles.criticalHeader}>
-          <Ionicons name="warning" size={18} color={colors.anomaly} />
-          <Text style={styles.criticalTitle}>RÉSERVE SOL FINI (mm)</Text>
-        </View>
-        <Text style={styles.criticalHelp}>
-          Mesurez la distance entre le sol brut et le sol fini prévu. Cette cote est OBLIGATOIRE.
-        </Text>
-        <TextInput
-          testID="input-floor-reserve"
-          value={values.floor_reserve}
-          onChangeText={(v) => set("floor_reserve", v.replace(",", "."))}
-          placeholder="0"
-          placeholderTextColor={colors.placeholder}
-          keyboardType="decimal-pad"
-          style={[styles.input, styles.inputCritical, errors.floor_reserve && styles.inputErrorCritical]}
-        />
-        {errors.floor_reserve && (
-          <View style={styles.errorRow}>
-            <Ionicons name="alert-circle" size={14} color={colors.anomaly} />
-            <Text style={styles.errorText}>OBLIGATOIRE — MANQUANT</Text>
+      <DiagonalField
+        testID="diag-1"
+        label="DIAGONALE 1 (mm)"
+        value={s2.diag_1}
+        state={s2.diag_1_state}
+        onChange={(v) => {
+          setS2Field("diag_1", v.replace(",", "."));
+          if (s2.diag_1_state === "auto") setS2Field("diag_1_state", "manual");
+        }}
+        onValidate={() => validateDiag(1)}
+        onModify={() => modifyDiag(1)}
+        error={!!err.diag_1}
+      />
+      <DiagonalField
+        testID="diag-2"
+        label="DIAGONALE 2 (mm)"
+        value={s2.diag_2}
+        state={s2.diag_2_state}
+        onChange={(v) => {
+          setS2Field("diag_2", v.replace(",", "."));
+          if (s2.diag_2_state === "auto") setS2Field("diag_2_state", "manual");
+        }}
+        onValidate={() => validateDiag(2)}
+        onModify={() => modifyDiag(2)}
+        error={!!err.diag_2}
+      />
+
+      {blockType === "porte" && (
+        <View style={styles.criticalBlock}>
+          <View style={styles.criticalHeader}>
+            <Ionicons name="warning" size={18} color={colors.anomaly} />
+            <Text style={styles.criticalTitle}>RÉSERVE SOL FINI (mm)</Text>
           </View>
-        )}
-      </View>
-
-      <View style={styles.validationCallout}>
-        <Text style={styles.calloutBold}>VALIDATION STRICTE :</Text>
-        <Text style={styles.calloutBody}>
-          Hauteur, Largeur, Diagonale et Réserve Sol Fini sont toutes OBLIGATOIRES avant validation.
-        </Text>
-      </View>
+          <Text style={styles.criticalHelp}>Obligatoire pour les portes d'entrée.</Text>
+          <TextInput
+            testID="input-floor-reserve"
+            value={s2.floor_reserve}
+            onChangeText={(v) => setS2Field("floor_reserve", v.replace(",", "."))}
+            placeholder="0"
+            placeholderTextColor={colors.placeholder}
+            keyboardType="decimal-pad"
+            style={[styles.input, styles.inputCritical, err.floor_reserve && styles.inputErrorCritical]}
+          />
+          {err.floor_reserve && <ErrFlag />}
+        </View>
+      )}
 
       <Text style={[styles.label, { marginTop: 24 }]}>Photo (optionnel)</Text>
       {photo ? (
@@ -440,7 +545,7 @@ function Step2Bay({
   );
 }
 
-function BayField({
+function CotField({
   testID,
   label,
   value,
@@ -451,10 +556,10 @@ function BayField({
   label: string;
   value: string;
   onChange: (v: string) => void;
-  error?: boolean;
+  error: boolean;
 }) {
   return (
-    <View style={{ marginTop: 14 }}>
+    <View style={{ marginTop: 12 }}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         testID={testID}
@@ -465,54 +570,149 @@ function BayField({
         keyboardType="decimal-pad"
         style={[styles.input, error && styles.inputError]}
       />
-      {error && (
-        <View style={styles.errorRow}>
-          <Ionicons name="alert-circle" size={14} color={colors.anomaly} />
-          <Text style={styles.errorText}>OBLIGATOIRE — MANQUANT</Text>
-        </View>
-      )}
+      {error && <ErrFlag />}
     </View>
   );
 }
 
-// ====================== STEP 3 — Wall & isolation =========================
-const WALL_OPTIONS: { key: WallType; letter: string; title: string; sub1: string; sub2: string; variant: "ite" | "iti" | "crepi" }[] = [
+function DiagonalField({
+  testID,
+  label,
+  value,
+  state,
+  onChange,
+  onValidate,
+  onModify,
+  error,
+}: {
+  testID: string;
+  label: string;
+  value: string;
+  state: DiagState;
+  onChange: (v: string) => void;
+  onValidate: () => void;
+  onModify: () => void;
+  error: boolean;
+}) {
+  const badge = useMemo(() => {
+    if (state === "auto") return { text: "AUTO (Pythagore)", bg: "#3a2400", color: colors.warning };
+    if (state === "validated") return { text: "VALIDÉ", bg: "#0e3315", color: colors.success };
+    return { text: "MANUEL", bg: "#27272A", color: colors.textPrimary };
+  }, [state]);
+  return (
+    <View style={{ marginTop: 12 }}>
+      <View style={styles.diagHeader}>
+        <Text style={styles.label}>{label}</Text>
+        <View style={[styles.diagBadge, { backgroundColor: badge.bg }]}>
+          <Text style={[styles.diagBadgeText, { color: badge.color }]}>{badge.text}</Text>
+        </View>
+      </View>
+      <TextInput
+        testID={`${testID}-input`}
+        value={value}
+        onChangeText={onChange}
+        editable={state !== "validated"}
+        placeholder="Ex: 1800"
+        placeholderTextColor={colors.placeholder}
+        keyboardType="decimal-pad"
+        style={[
+          styles.input,
+          error && styles.inputError,
+          state === "auto" && { borderColor: colors.warning, backgroundColor: "#1a1206" },
+          state === "validated" && { borderColor: colors.success },
+        ]}
+      />
+      <View style={styles.diagActions}>
+        <TouchableOpacity
+          testID={`${testID}-validate`}
+          onPress={onValidate}
+          disabled={!value || state === "validated"}
+          style={[styles.diagBtn, styles.diagBtnValid, (!value || state === "validated") && { opacity: 0.5 }]}
+          activeOpacity={0.85}
+        >
+          <Ionicons name="checkmark" size={16} color="#000" />
+          <Text style={styles.diagBtnValidText}>Valider</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          testID={`${testID}-modify`}
+          onPress={onModify}
+          style={[styles.diagBtn, styles.diagBtnModify]}
+          activeOpacity={0.85}
+        >
+          <Ionicons name="create" size={16} color={colors.textPrimary} />
+          <Text style={styles.diagBtnModifyText}>Modifier</Text>
+        </TouchableOpacity>
+      </View>
+      {error && <ErrFlag />}
+    </View>
+  );
+}
+
+function ErrFlag() {
+  return (
+    <View style={styles.errorRow}>
+      <Ionicons name="alert-circle" size={14} color={colors.anomaly} />
+      <Text style={styles.errorText}>COTE OBLIGATOIRE MANQUANTE</Text>
+    </View>
+  );
+}
+
+// ======================== Step 3 ========================================
+const WALLS: {
+  key: WallType;
+  letter: string;
+  title: string;
+  variant: "ite" | "iti" | "crepi";
+  subs: { label: string; key: "insulation_thickness" | "finish_outer" | "finish_inner" }[];
+}[] = [
   {
     key: "ite",
     letter: "A",
     title: "FAÇADE ISOLANTE EXTÉRIEURE (ITE)",
-    sub1: "Épaisseur Isolant (mm)",
-    sub2: "Épaisseur Crépi (mm)",
     variant: "ite",
+    subs: [
+      { label: "Épaisseur Isolant (mm)", key: "insulation_thickness" },
+      { label: "Épaisseur Crépi (mm)", key: "finish_outer" },
+    ],
   },
   {
     key: "iti",
     letter: "B",
     title: "ISOLATION INTÉRIEURE (ITI)",
-    sub1: "Épaisseur Isolant (mm)",
-    sub2: "Épaisseur Plâtre/Finition (mm)",
     variant: "iti",
+    subs: [
+      { label: "Épaisseur Isolant (mm)", key: "insulation_thickness" },
+      { label: "Épaisseur Plâtre/Finition (mm)", key: "finish_inner" },
+    ],
+  },
+  {
+    key: "brique_parement",
+    letter: "C",
+    title: "BRIQUE DE PAREMENT",
+    variant: "ite",
+    subs: [
+      { label: "Épaisseur Coulisse/Isolant (mm)", key: "insulation_thickness" },
+      { label: "Épaisseur Brique (mm)", key: "finish_outer" },
+    ],
   },
   {
     key: "crepi_simple",
-    letter: "C",
+    letter: "D",
     title: "CRÉPI SIMPLE",
-    sub1: "Épaisseur Crépi Ext. (mm)",
-    sub2: "Épaisseur Crépi Int. (mm)",
     variant: "crepi",
+    subs: [{ label: "Épaisseur Crépi/Finition (mm)", key: "finish_outer" }],
   },
 ];
 
-function Step3Wall({
-  values,
-  setValues,
-  errors,
+function Step3View({
+  s3,
+  setField,
+  err,
 }: {
-  values: Step3Form;
-  setValues: (v: Step3Form) => void;
-  errors: Partial<Record<keyof Step3Form, boolean>>;
+  s3: Step3;
+  setField: (k: keyof Step3, v: any) => void;
+  err: Record<string, boolean>;
 }) {
-  const set = (k: keyof Step3Form, v: any) => setValues({ ...values, [k]: v });
   return (
     <View>
       <Text style={styles.h1}>CONCEPTION MAÇONNERIE & ISOLATION</Text>
@@ -523,41 +723,31 @@ function Step3Wall({
         <Text style={styles.label}>Épaisseur Bloc Béton (mm)</Text>
         <TextInput
           testID="input-bloc-thickness"
-          value={values.bloc_thickness}
-          onChangeText={(v) => set("bloc_thickness", v.replace(",", "."))}
+          value={s3.bloc_thickness}
+          onChangeText={(v) => setField("bloc_thickness", v.replace(",", "."))}
           placeholder="Ex: 200"
           placeholderTextColor={colors.placeholder}
           keyboardType="decimal-pad"
-          style={[styles.input, errors.bloc_thickness && styles.inputError]}
+          style={[styles.input, err.bloc_thickness && styles.inputError]}
         />
-        {errors.bloc_thickness && (
-          <View style={styles.errorRow}>
-            <Ionicons name="alert-circle" size={14} color={colors.anomaly} />
-            <Text style={styles.errorText}>OBLIGATOIRE — MANQUANT</Text>
-          </View>
-        )}
+        {err.bloc_thickness && <ErrFlag />}
       </View>
 
       <Text style={[styles.label, { marginTop: 22 }]}>Type de paroi (sélectionner)</Text>
-      {errors.wall_type && (
-        <View style={styles.errorRow}>
-          <Ionicons name="alert-circle" size={14} color={colors.anomaly} />
-          <Text style={styles.errorText}>OBLIGATOIRE — MANQUANT</Text>
-        </View>
-      )}
+      {err.wall_type && <ErrFlag />}
 
-      {WALL_OPTIONS.map((opt) => {
-        const active = values.wall_type === opt.key;
+      {WALLS.map((opt) => {
+        const active = s3.wall_type === opt.key;
         return (
           <TouchableOpacity
             key={opt.key}
             testID={`wall-type-${opt.key}`}
-            onPress={() => set("wall_type", opt.key)}
+            onPress={() => setField("wall_type", opt.key)}
             activeOpacity={0.75}
             style={[styles.wallCard, active && styles.wallCardActive]}
           >
             <View style={styles.wallCardHeader}>
-              <View style={[styles.blockLetterBadge, active && { backgroundColor: colors.primary }]}>
+              <View style={[styles.blockLetterBadge, active && { backgroundColor: colors.primary }, { position: "relative", top: 0, left: 0 }]}>
                 <Text style={[styles.blockLetter, active && { color: "#000" }]}>{opt.letter}</Text>
               </View>
               <View style={{ flex: 1, marginLeft: 10 }}>
@@ -568,29 +758,22 @@ function Step3Wall({
             </View>
             {active && (
               <View style={styles.wallFields}>
-                <SubField
-                  testID={`wall-${opt.key}-sub1`}
-                  label={opt.sub1}
-                  value={values.insulation_thickness}
-                  onChange={(v) => set("insulation_thickness", v.replace(",", "."))}
-                />
-                <SubField
-                  testID={`wall-${opt.key}-sub2`}
-                  label={opt.sub2}
-                  value={opt.key === "crepi_simple" ? values.finish_inner : values.finish_outer}
-                  onChange={(v) => {
-                    if (opt.key === "crepi_simple") set("finish_inner", v.replace(",", "."));
-                    else set("finish_outer", v.replace(",", "."));
-                  }}
-                />
-                {opt.key === "crepi_simple" && (
-                  <SubField
-                    testID="wall-crepi-ext"
-                    label="Épaisseur Crépi Ext. (mm)"
-                    value={values.finish_outer}
-                    onChange={(v) => set("finish_outer", v.replace(",", "."))}
-                  />
-                )}
+                {opt.subs.map((sub) => (
+                  <View key={sub.key} style={{ marginTop: 10 }}>
+                    <Text style={styles.subFieldLabel}>
+                      {sub.label} <Text style={styles.indicatifInline}>(INDICATIF)</Text>
+                    </Text>
+                    <TextInput
+                      testID={`${opt.key}-${sub.key}`}
+                      value={(s3 as any)[sub.key] ?? ""}
+                      onChangeText={(v) => setField(sub.key as any, v.replace(",", "."))}
+                      placeholder="0"
+                      placeholderTextColor={colors.placeholder}
+                      keyboardType="decimal-pad"
+                      style={styles.input}
+                    />
+                  </View>
+                ))}
               </View>
             )}
           </TouchableOpacity>
@@ -600,50 +783,25 @@ function Step3Wall({
   );
 }
 
-function SubField({
-  testID,
-  label,
-  value,
-  onChange,
-}: {
-  testID: string;
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-}) {
-  return (
-    <View style={{ marginTop: 10 }}>
-      <Text style={styles.subFieldLabel}>{label} <Text style={styles.indicatifInline}>(INDICATIF)</Text></Text>
-      <TextInput
-        testID={testID}
-        value={value}
-        onChangeText={onChange}
-        placeholder="0"
-        placeholderTextColor={colors.placeholder}
-        keyboardType="decimal-pad"
-        style={styles.input}
-      />
-    </View>
-  );
-}
-
-// ============================ Styles =====================================
+// ======================== Styles ========================================
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: colors.bg },
-  stepBar: {
+  topBar: {
     flexDirection: "row",
-    gap: 8,
-    justifyContent: "center",
-    paddingTop: 12,
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingTop: 10,
     paddingBottom: 8,
     backgroundColor: colors.bg,
     borderBottomWidth: 1,
     borderBottomColor: colors.borderSubtle,
   },
+  stepRow: { flexDirection: "row", gap: 6 },
   stepPill: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.borderSubtle,
@@ -651,19 +809,23 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   stepPillActive: { backgroundColor: colors.primary, borderColor: colors.primary },
-  stepPillCurrent: {
-    transform: [{ scale: 1.1 }],
+  stepPillText: { color: colors.textSecondary, fontWeight: "900", fontSize: 13 },
+  reportBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: colors.anomaly,
+    backgroundColor: "#1a0707",
   },
-  stepPillText: { color: colors.textSecondary, fontWeight: "900", fontSize: 14 },
+  reportBtnText: { color: colors.anomaly, fontSize: 11, fontWeight: "700" },
   h1: { color: colors.textPrimary, fontSize: 20, fontWeight: "900", letterSpacing: 1 },
   h2: { color: colors.textPrimary, fontSize: 14, marginTop: 2, fontWeight: "700", letterSpacing: 0.8 },
   // Step 1
-  gridRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-    marginTop: 20,
-  },
+  gridRow: { flexDirection: "row", flexWrap: "wrap", gap: 12, marginTop: 20 },
   blockCard: {
     width: "47%",
     backgroundColor: colors.surface,
@@ -700,13 +862,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
     marginBottom: 14,
   },
-  blockTitle: {
-    color: colors.textPrimary,
-    fontWeight: "900",
-    fontSize: 13,
-    letterSpacing: 0.6,
-    textAlign: "center",
-  },
+  blockTitle: { color: colors.textPrimary, fontWeight: "900", fontSize: 13, letterSpacing: 0.6, textAlign: "center" },
   // Inputs
   label: {
     color: colors.textSecondary,
@@ -722,27 +878,16 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 8,
     color: colors.textPrimary,
-    minHeight: 56,
+    minHeight: 52,
     paddingHorizontal: 14,
     fontSize: 16,
     fontWeight: "600",
   },
-  inputError: { borderColor: colors.anomaly },
-  inputCritical: {
-    borderColor: colors.anomaly,
-    backgroundColor: "#1c0606",
-  },
-  inputErrorCritical: {
-    borderColor: colors.anomaly,
-    backgroundColor: "#260a0a",
-  },
+  inputError: { borderColor: colors.anomaly, borderWidth: 3 },
+  inputCritical: { borderColor: colors.anomaly, backgroundColor: "#1c0606" },
+  inputErrorCritical: { borderColor: colors.anomaly, borderWidth: 3, backgroundColor: "#260a0a" },
   errorRow: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 6 },
-  errorText: {
-    color: colors.anomaly,
-    fontWeight: "900",
-    fontSize: 11,
-    letterSpacing: 1,
-  },
+  errorText: { color: colors.anomaly, fontWeight: "900", fontSize: 11, letterSpacing: 1 },
   sketchBox: {
     backgroundColor: colors.bg,
     borderColor: colors.borderSubtle,
@@ -752,6 +897,25 @@ const styles = StyleSheet.create({
     padding: 12,
     alignItems: "center",
   },
+  // Diag
+  diagHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  diagBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 4, marginBottom: 6 },
+  diagBadgeText: { fontSize: 10, fontWeight: "900", letterSpacing: 0.8 },
+  diagActions: { flexDirection: "row", gap: 8, marginTop: 8 },
+  diagBtn: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    minHeight: 46,
+    borderRadius: 8,
+  },
+  diagBtnValid: { backgroundColor: colors.success },
+  diagBtnValidText: { color: "#000", fontWeight: "900", letterSpacing: 0.6, fontSize: 13 },
+  diagBtnModify: { backgroundColor: colors.surfaceElevated, borderWidth: 1, borderColor: colors.borderStrong },
+  diagBtnModifyText: { color: colors.textPrimary, fontWeight: "800", letterSpacing: 0.6, fontSize: 13 },
+  // Critical block
   criticalBlock: {
     marginTop: 22,
     padding: 14,
@@ -761,23 +925,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#1a0707",
   },
   criticalHeader: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 },
-  criticalTitle: {
-    color: colors.anomaly,
-    fontWeight: "900",
-    fontSize: 13,
-    letterSpacing: 1,
-  },
+  criticalTitle: { color: colors.anomaly, fontWeight: "900", fontSize: 13, letterSpacing: 1 },
   criticalHelp: { color: colors.textSecondary, fontSize: 12, marginBottom: 10 },
-  validationCallout: {
-    marginTop: 18,
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: colors.surface,
-    borderColor: colors.borderSubtle,
-    borderWidth: 1,
-  },
-  calloutBold: { color: colors.anomaly, fontWeight: "900", letterSpacing: 0.8, fontSize: 13 },
-  calloutBody: { color: colors.textSecondary, fontSize: 12, marginTop: 4 },
   // Photo
   photo: { width: "100%", height: 200, borderRadius: 10, backgroundColor: colors.surface },
   removePhoto: {
@@ -815,13 +964,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 14,
   },
-  mainWallTitle: {
-    color: colors.primary,
-    fontWeight: "900",
-    fontSize: 14,
-    letterSpacing: 1.2,
-    marginBottom: 12,
-  },
+  mainWallTitle: { color: colors.primary, fontWeight: "900", fontSize: 14, letterSpacing: 1.2, marginBottom: 12 },
   wallCard: {
     marginTop: 10,
     backgroundColor: colors.surface,
@@ -833,13 +976,7 @@ const styles = StyleSheet.create({
   wallCardActive: { borderColor: colors.primary, backgroundColor: "#1a0e00" },
   wallCardHeader: { flexDirection: "row", alignItems: "center" },
   wallTitle: { color: colors.textPrimary, fontWeight: "900", fontSize: 13, letterSpacing: 0.4 },
-  indicatif: {
-    color: colors.textSecondary,
-    fontSize: 10,
-    fontWeight: "700",
-    letterSpacing: 0.8,
-    marginTop: 2,
-  },
+  indicatif: { color: colors.textSecondary, fontSize: 10, fontWeight: "700", letterSpacing: 0.8, marginTop: 2 },
   indicatifInline: { color: colors.textSecondary, fontSize: 10, fontWeight: "700" },
   wallFields: { marginTop: 12, borderTopWidth: 1, borderTopColor: colors.borderSubtle, paddingTop: 12 },
   subFieldLabel: {
@@ -864,17 +1001,31 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 10,
   },
-  btn: {
-    flex: 1,
-    minHeight: 60,
-    borderRadius: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-  },
+  btn: { flex: 1, minHeight: 60, borderRadius: 8, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8 },
   btnPrimary: { backgroundColor: colors.primary },
   btnPrimaryText: { color: "#000", fontWeight: "900", fontSize: 15, letterSpacing: 1 },
   btnSecondary: { borderWidth: 2, borderColor: colors.borderStrong },
   btnSecondaryText: { color: colors.textPrimary, fontWeight: "800", letterSpacing: 1 },
+  // Modal
+  modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.8)", justifyContent: "center", padding: 20 },
+  modalCard: {
+    backgroundColor: colors.surface,
+    borderColor: colors.borderSubtle,
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 20,
+  },
+  modalTitle: { color: colors.textPrimary, fontWeight: "900", fontSize: 17, letterSpacing: 0.6 },
+  modalSub: { color: colors.textSecondary, fontSize: 12, marginTop: 4, marginBottom: 12 },
+  reportInput: {
+    backgroundColor: colors.inputBg,
+    borderColor: colors.borderSubtle,
+    borderWidth: 2,
+    borderRadius: 8,
+    color: colors.textPrimary,
+    padding: 12,
+    fontSize: 15,
+    minHeight: 110,
+    textAlignVertical: "top",
+  },
 });

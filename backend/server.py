@@ -52,7 +52,7 @@ api = APIRouter(prefix="/api")
 VALID_ROLES = {"admin", "commercial", "technician"}
 VALID_STATUSES = {"devis_a_faire", "technique_a_valider", "cloture"}
 VALID_BLOCK_TYPES = {"standard", "coulissant", "porte", "trapeze"}
-VALID_WALL_TYPES = {"ite", "iti", "crepi_simple"}
+VALID_WALL_TYPES = {"ite", "iti", "brique_parement", "crepi_simple"}
 
 
 # --- Models --------------------------------------------------------------
@@ -136,8 +136,12 @@ class MesureCreate(BaseModel):
     # NEW — Baie brute (raw masonry bay) — Step 2
     bay_height: Optional[float] = None        # Hauteur (mm)
     bay_width: Optional[float] = None         # Largeur (mm)
-    bay_diagonal: Optional[float] = None      # Diagonale (mm)
-    floor_reserve: Optional[float] = None     # Réserve Sol Fini (mm)
+    bay_diagonal: Optional[float] = None      # legacy single diagonal
+    bay_diagonal_1: Optional[float] = None    # iter6 — Diagonale 1
+    bay_diagonal_2: Optional[float] = None    # iter6 — Diagonale 2
+    diag_1_verified: Optional[bool] = None    # validated by user (auto or manual)
+    diag_2_verified: Optional[bool] = None
+    floor_reserve: Optional[float] = None     # Réserve Sol Fini (mm) — only "porte"
     # NEW — Conception maçonnerie & isolation (indicatif) — Step 3
     bloc_thickness: Optional[float] = None    # Épaisseur Bloc Béton (mm)
     wall_type: Optional[str] = None           # "ite" | "iti" | "crepi_simple"
@@ -631,7 +635,8 @@ async def export_pdf(chantier_id: str, user=Depends(auth_user)):
         fields = [
             ("Hauteur baie", m.get("bay_height")),
             ("Largeur baie", m.get("bay_width")),
-            ("Diagonale", m.get("bay_diagonal")),
+            ("Diagonale 1", m.get("bay_diagonal_1") or m.get("bay_diagonal")),
+            ("Diagonale 2", m.get("bay_diagonal_2") or m.get("bay_diagonal")),
             ("Réserve Sol Fini", m.get("floor_reserve")),
             ("Épaisseur Bloc Béton", m.get("bloc_thickness")),
             ("Épaisseur Isolant", m.get("insulation_thickness")),
@@ -657,7 +662,9 @@ async def export_pdf(chantier_id: str, user=Depends(auth_user)):
         for label, val in fields:
             if val is not None:
                 if label == "Type paroi":
-                    label_map = {"ite": "ITE", "iti": "ITI", "crepi_simple": "Crépi simple"}
+                    label_map = {"ite": "ITE", "iti": "ITI",
+                                "brique_parement": "Brique de parement",
+                                "crepi_simple": "Crépi simple"}
                     rows.append([label, label_map.get(str(val), str(val))])
                 else:
                     rows.append([label, str(val)])
@@ -746,7 +753,9 @@ async def export_xlsx(chantier_id: str, user=Depends(auth_user)):
         cell = ws.cell(row=1, column=col_idx, value=label)
         cell.font = head
         cell.fill = fill
-    wall_map = {"ite": "ITE", "iti": "ITI", "crepi_simple": "Crépi simple"}
+    wall_map = {"ite": "ITE", "iti": "ITI",
+                "brique_parement": "Brique de parement",
+                "crepi_simple": "Crépi simple"}
     block_map = {"standard": "Standard", "coulissant": "Coulissant",
                  "porte": "Porte", "trapeze": "Trapèze"}
     for row_idx, m in enumerate(mesures, start=2):
