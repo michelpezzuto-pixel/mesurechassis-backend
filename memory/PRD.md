@@ -65,5 +65,30 @@ Application Expo (React Native, mobile + web) de digitalisation des relevés de 
 ## Multi-tenant
 Tous les endpoints chantiers / mesures / feedbacks / exports filtrent automatiquement par le `company_id` de l'utilisateur courant. Les utilisateurs d'une société ne voient jamais les données d'une autre.
 
+## Sécurité par rôle (iter 3)
+- `POST /api/chantiers`, `PATCH /api/chantiers/{id}` : admin + commercial uniquement
+- `DELETE /api/chantiers/{id}` : admin uniquement
+- `POST /api/mesures` : tous les rôles authentifiés (le technicien est le primary user terrain)
+- `GET /api/stats/company`, `GET /api/feedbacks`, `DELETE /api/feedbacks/{id}` : admin uniquement
+- `POST /api/auth/push-token` : tout user (enregistre son propre token)
+
+## Notifications push (iter 3)
+- `POST /api/auth/push-token` enregistre le token Expo Push de l'utilisateur courant
+- Quand un chantier reçoit un nouveau `assigned_to` via `PATCH /api/chantiers/{id}`, le backend envoie automatiquement (best-effort) une notification Expo Push au user assigné via `https://exp.host/--/api/v2/push/send`
+- ⚠️ Limite Expo Go SDK 53+ : les push distants ne fonctionnent qu'en build EAS (Publish via Emergent)
+
+## Mode hors-ligne (iter 3)
+- File d'attente locale via `AsyncStorage` pour les créations de mesures
+- Détection de l'état réseau via `@react-native-community/netinfo`
+- Synchronisation automatique au retour du réseau, plus bandeau dashboard "N mesures en attente · Toucher pour synchroniser"
+- Le service vit dans `src/services/offlineQueue.ts` ; le sync est démarré dans `app/_layout.tsx`
+
+## Statistiques admin (iter 3)
+- `GET /api/stats/company` (admin) retourne :
+  - `total_chantiers`, `by_status` (3 statuts), `closure_rate` (%)
+  - `total_mesures`, `total_alerts`
+  - `by_technician` : liste triée par nb de mesures, avec `mesures` et `alerts` par user
+- Écran `/admin/stats` accessible depuis le dashboard via icône graphique
+
 ## Business smart-add
 Le feedback continu (anomalie/idée + snapshot des données) construit une **boucle de feedback produit** automatique : chaque chantier réel devient une source d'amélioration UX/métier traçable côté admin — différenciateur fort vs concurrents (papier + Excel).
