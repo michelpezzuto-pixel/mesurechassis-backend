@@ -82,13 +82,13 @@ class TestChantierIsolation:
                   "SCI Le Clos", "Cabinet Dr. Rousseau"}
         assert seeded.issubset(names), f"Missing seeded: {seeded - names}"
 
-    def test_acme_chantier_invisible_to_default_admin(self, api_url, acme_user, admin_headers):
-        # Acme user creates a chantier
+    def test_acme_chantier_invisible_to_default_admin(self, api_url, acme_admin, admin_headers):
+        # Acme admin creates a chantier (iter3: technician role can't create)
         r = requests.post(f"{api_url}/chantiers", json={
             "client_name": "TEST_AcmeOnly",
             "address": "1 Acme Street",
             "status": "devis_a_faire",
-        }, headers=acme_user["headers"], timeout=30)
+        }, headers=acme_admin["headers"], timeout=30)
         assert r.status_code == 200, r.text
         cid = r.json()["id"]
         assert r.json()["company_id"] == "acme-test"
@@ -115,9 +115,9 @@ class TestChantierIsolation:
         }, headers=admin_headers, timeout=30)
         assert r5.status_code == 404, f"Expected 404 cross-company POST mesure, got {r5.status_code}"
 
-        # Cleanup
+        # Cleanup (DELETE requires admin role per iter3)
         requests.delete(f"{api_url}/chantiers/{cid}",
-                        headers=acme_user["headers"], timeout=30)
+                        headers=acme_admin["headers"], timeout=30)
 
     def test_acme_user_sees_only_acme_chantiers(self, api_url, acme_user):
         r = requests.get(f"{api_url}/chantiers", headers=acme_user["headers"], timeout=30)

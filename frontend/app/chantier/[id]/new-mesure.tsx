@@ -25,6 +25,7 @@ import {
 } from "@/src/components/WindowSchema";
 import AnomalyButton from "@/src/components/AnomalyButton";
 import { api } from "@/src/services/api";
+import { enqueueMesure, isOnline } from "@/src/services/offlineQueue";
 import { colors, blockMeta } from "@/src/theme";
 
 type BlockType = "standard" | "coulissant" | "porte" | "trapeze";
@@ -101,6 +102,16 @@ export default function NewMesure() {
       if (v && v.trim()) payload[k] = parseFloat(v);
     });
     try {
+      const online = await isOnline();
+      if (!online) {
+        await enqueueMesure(payload);
+        Alert.alert(
+          "Hors ligne",
+          "La mesure a été ajoutée à la file et sera synchronisée dès le retour du réseau.",
+          [{ text: "OK", onPress: () => router.back() }]
+        );
+        return;
+      }
       const res = await api.post("/mesures", payload);
       const alerts: string[] = res.data.alerts || [];
       if (alerts.length > 0) {
@@ -111,7 +122,13 @@ export default function NewMesure() {
         router.back();
       }
     } catch (e) {
-      Alert.alert("Erreur", "Enregistrement impossible.");
+      // network error: queue it offline as fallback
+      await enqueueMesure(payload);
+      Alert.alert(
+        "Réseau indisponible",
+        "Mesure mise en file d'attente — sera envoyée au retour du réseau.",
+        [{ text: "OK", onPress: () => router.back() }]
+      );
     } finally {
       setSaving(false);
     }

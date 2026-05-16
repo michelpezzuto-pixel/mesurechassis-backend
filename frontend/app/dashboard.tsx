@@ -18,6 +18,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import { api } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
+import { subscribeQueueSize, syncQueue } from "@/src/services/offlineQueue";
 import { colors, statusMeta } from "@/src/theme";
 
 type Chantier = {
@@ -47,6 +48,13 @@ export default function Dashboard() {
   const [newClient, setNewClient] = useState("");
   const [newAddr, setNewAddr] = useState("");
   const [creating, setCreating] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    return subscribeQueueSize(setPendingCount);
+  }, []);
+
+  const canCreate = user?.role === "admin" || user?.role === "commercial";
 
   const fetchData = useCallback(async () => {
     try {
@@ -156,6 +164,16 @@ export default function Dashboard() {
         </View>
         {user?.role === "admin" && (
           <TouchableOpacity
+            testID="admin-stats-button"
+            onPress={() => router.push("/admin/stats")}
+            style={[styles.logoutBtn, { marginRight: 8 }]}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="stats-chart" size={22} color={colors.primary} />
+          </TouchableOpacity>
+        )}
+        {user?.role === "admin" && (
+          <TouchableOpacity
             testID="admin-feedbacks-button"
             onPress={() => router.push("/admin/feedbacks")}
             style={[styles.logoutBtn, { marginRight: 8 }]}
@@ -245,12 +263,26 @@ export default function Dashboard() {
       <TouchableOpacity
         testID="new-chantier-button"
         onPress={() => setNewModal(true)}
-        style={styles.fab}
+        style={[styles.fab, !canCreate && { display: "none" }]}
         activeOpacity={0.85}
       >
         <Ionicons name="add" size={26} color="#000" />
         <Text style={styles.fabText}>NOUVEAU CHANTIER</Text>
       </TouchableOpacity>
+
+      {pendingCount > 0 && (
+        <TouchableOpacity
+          testID="offline-queue-banner"
+          onPress={() => syncQueue().then(() => fetchData())}
+          activeOpacity={0.8}
+          style={[styles.offlineBanner, !canCreate && { bottom: 24 }]}
+        >
+          <Ionicons name="cloud-upload" size={18} color="#000" />
+          <Text style={styles.offlineText}>
+            {pendingCount} mesure{pendingCount > 1 ? "s" : ""} en attente · Toucher pour synchroniser
+          </Text>
+        </TouchableOpacity>
+      )}
 
       <Modal visible={newModal} transparent animationType="fade" onRequestClose={() => setNewModal(false)}>
         <KeyboardAvoidingView
@@ -420,6 +452,20 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   fabText: { color: "#000", fontWeight: "900", fontSize: 16, letterSpacing: 1.2 },
+  offlineBanner: {
+    position: "absolute",
+    bottom: 100,
+    left: 16,
+    right: 16,
+    backgroundColor: colors.warning,
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    minHeight: 48,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  offlineText: { color: "#000", fontWeight: "800", fontSize: 13, flex: 1 },
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.8)",

@@ -15,6 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { api } from "@/src/services/api";
+import { useAuth } from "@/src/context/AuthContext";
 import { colors, statusMeta, blockMeta } from "@/src/theme";
 
 type Chantier = {
@@ -40,6 +41,8 @@ type UserOpt = { id: string; name: string; email: string; role: string };
 export default function ChantierDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { user } = useAuth();
+  const canManage = user?.role === "admin" || user?.role === "commercial";
   const [chantier, setChantier] = useState<Chantier | null>(null);
   const [mesures, setMesures] = useState<Mesure[]>([]);
   const [users, setUsers] = useState<UserOpt[]>([]);
@@ -127,8 +130,9 @@ export default function ChantierDetail() {
 
               <TouchableOpacity
                 testID="assign-button"
-                onPress={() => setAssignOpen(true)}
-                style={styles.assignRow}
+                onPress={() => canManage && setAssignOpen(true)}
+                disabled={!canManage}
+                style={[styles.assignRow, !canManage && { opacity: 0.6 }]}
                 activeOpacity={0.7}
               >
                 <Ionicons name="person-circle-outline" size={18} color={colors.primary} />
@@ -200,7 +204,7 @@ export default function ChantierDetail() {
       />
 
       <View style={styles.footer}>
-        {chantier.status !== "cloture" && (
+        {chantier.status !== "cloture" && canManage && (
           <TouchableOpacity
             testID="close-project-button"
             onPress={() => router.push(`/chantier/${id}/closure`)}

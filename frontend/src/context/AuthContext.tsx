@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { api, clearToken, getToken, saveToken } from "@/src/services/api";
+import { registerPushTokenWithBackend } from "@/src/services/notifications";
 
 export type Role = "admin" | "commercial" | "technician";
 
@@ -35,6 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const res = await api.get<User>("/auth/me");
         setUser(res.data);
+        registerPushTokenWithBackend();
       } catch {
         await clearToken();
       } finally {
@@ -47,6 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const res = await api.post("/auth/login", { email, password });
     await saveToken(res.data.access_token);
     setUser(res.data.user);
+    registerPushTokenWithBackend();
   };
 
   const signUp = async (name: string, email: string, password: string, role: Role, companyId?: string) => {
@@ -59,6 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     await saveToken(res.data.access_token);
     setUser(res.data.user);
+    registerPushTokenWithBackend();
   };
 
   const signOut = async () => {

@@ -10,6 +10,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Annotated, Any, List, Optional
 
+import httpx
 import jwt
 from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, status
@@ -201,6 +202,49 @@ def require_admin(user: dict = Depends(auth_user)) -> dict:
     return user
 
 
+def require_roles(roles: List[str]):
+    def _dep(user: dict = Depends(auth_user)) -> dict:
+        if user["role"] not in roles:
+            raise HTTPException(
+                status_code=403,
+                detail=f"Réservé aux rôles : {', '.join(roles)}",
+            )
+        return user
+    return _dep
+
+
+# --- Expo Push ----------------------------------------------------------
+EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send"
+
+
+async def send_push_to_user(user_id: str, title: str, body: str,
+                             data: Optional[dict] = None) -> None:
+    """Best-effort push: never raises. Skips if user has no token."""
+    u = await db.users.find_one({"id": user_id}, {"_id": 0, "push_token": 1})
+    if not u or not u.get("push_token"):
+        return
+    payload = {
+        "to": u["push_token"],
+        "title": title,
+        "body": body,
+        "sound": "default",
+        "data": data or {},
+    }
+    try:
+        async with httpx.AsyncClient(timeout=10) as cli:
+            r = await cli.post(EXPO_PUSH_URL, json=payload,
+                                headers={"Accept-Encoding": "gzip, deflate",
+                                          "Accept": "application/json"})
+            if r.status_code >= 400:
+                logger.warning("Push failed [%s]: %s", r.status_code, r.text[:200])
+    except Exception as exc:
+        logger.warning("Push send error: %s", exc)
+
+
+class PushTokenIn(BaseModel):
+    push_token: Optional[str] = None
+
+
 # --- Calculation logic ---------------------------------------------------
 def compute_alerts(m: MesureCreate) -> tuple[list[str], Optional[float]]:
     alerts: list[str] = []
@@ -279,9 +323,17 @@ async def list_users(user=Depends(auth_user)):
     return [user_to_public(d) for d in docs]
 
 
+@api.post("/auth/push-token")
+async def set_push_token(payload: PushTokenIn, user=Depends(auth_user)):
+    await db.users.update_one(
+        {"id": user["id"]}, {"$set": {"push_token": payload.push_token}})
+    return {"ok": True}
+
+
 # --- Chantiers routes ----------------------------------------------------
 @api.post("/chantiers", response_model=Chantier)
-async def create_chantier(payload: ChantierCreate, user=Depends(auth_user)):
+async def create_chantier(payload: ChantierCreate,
+                           user=Depends(require_roles(["admin", "commercial"]))):
     if payload.status not in VALID_STATUSES:
         raise HTTPException(400, "Invalid status")
     doc = {
@@ -327,7 +379,8 @@ async def get_chantier(chantier_id: str, user=Depends(auth_user)):
 
 
 @api.patch("/chantiers/{chantier_id}", response_model=Chantier)
-async def update_chantier(chantier_id: str, payload: ChantierUpdate, user=Depends(auth_user)):
+async def update_chantier(chantier_id: str, payload: ChantierUpdate,
+                           user=Depends(require_roles(["admin", "commercial"]))):
     company = user.get("company_id", "default")
     existing = await db.chantiers.find_one({"id": chantier_id, "company_id": company})
     if not existing:
@@ -338,11 +391,22 @@ async def update_chantier(chantier_id: str, payload: ChantierUpdate, user=Depend
     if update:
         await db.chantiers.update_one({"id": chantier_id, "company_id": company}, {"$set": update})
     doc = await db.chantiers.find_one({"id": chantier_id, "company_id": company}, {"_id": 0})
+
+    # Push notification on assignment change
+    new_assignee = update.get("assigned_to")
+    if new_assignee and new_assignee != existing.get("assigned_to"):
+        await send_push_to_user(
+            new_assignee,
+            "Nouveau chantier affecté",
+            f"{doc['client_name']} — {doc['address']}",
+            {"type": "chantier_assigned", "chantier_id": chantier_id},
+        )
     return Chantier(**doc)
 
 
 @api.delete("/chantiers/{chantier_id}")
-async def delete_chantier(chantier_id: str, user=Depends(auth_user)):
+async def delete_chantier(chantier_id: str,
+                           user=Depends(require_roles(["admin"]))):
     company = user.get("company_id", "default")
     res = await db.chantiers.delete_one({"id": chantier_id, "company_id": company})
     if res.deleted_count:
@@ -426,6 +490,68 @@ async def delete_feedback(feedback_id: str, user=Depends(require_admin)):
     await db.feedbacks.delete_one(
         {"id": feedback_id, "company_id": user.get("company_id", "default")})
     return {"ok": True}
+
+
+# --- Stats route ---------------------------------------------------------
+@api.get("/stats/company")
+async def stats_company(user=Depends(require_admin)):
+    company = user.get("company_id", "default")
+    pipe_status = [
+        {"$match": {"company_id": company}},
+        {"$group": {"_id": "$status", "count": {"$sum": 1}}},
+    ]
+    by_status: dict[str, int] = {s: 0 for s in VALID_STATUSES}
+    async for d in db.chantiers.aggregate(pipe_status):
+        if d["_id"]:
+            by_status[d["_id"]] = d["count"]
+    total = sum(by_status.values())
+    closure_rate = round((by_status["cloture"] / total) * 100, 1) if total else 0.0
+
+    company_chantier_ids = await db.chantiers.distinct("id", {"company_id": company})
+    chantier_to_tech: dict[str, Optional[str]] = {}
+    async for c in db.chantiers.find(
+            {"company_id": company}, {"_id": 0, "id": 1, "assigned_to": 1}):
+        chantier_to_tech[c["id"]] = c.get("assigned_to")
+
+    by_tech: dict[str, dict] = {}
+    total_mesures = 0
+    total_alerts = 0
+    async for m in db.mesures.find(
+            {"chantier_id": {"$in": company_chantier_ids}},
+            {"_id": 0, "chantier_id": 1, "alerts": 1}):
+        total_mesures += 1
+        alerts = len(m.get("alerts") or [])
+        total_alerts += alerts
+        tech = chantier_to_tech.get(m["chantier_id"]) or "unassigned"
+        slot = by_tech.setdefault(tech, {"mesures": 0, "alerts": 0})
+        slot["mesures"] += 1
+        slot["alerts"] += alerts
+
+    tech_users: dict[str, dict] = {}
+    async for u in db.users.find(
+            {"company_id": company}, {"_id": 0, "id": 1, "name": 1, "role": 1}):
+        tech_users[u["id"]] = u
+
+    tech_breakdown = []
+    for tid, stats in by_tech.items():
+        info = tech_users.get(tid)
+        tech_breakdown.append({
+            "user_id": tid,
+            "name": info["name"] if info else "Non affecté",
+            "role": info["role"] if info else "—",
+            "mesures": stats["mesures"],
+            "alerts": stats["alerts"],
+        })
+    tech_breakdown.sort(key=lambda x: x["mesures"], reverse=True)
+
+    return {
+        "total_chantiers": total,
+        "by_status": by_status,
+        "closure_rate": closure_rate,
+        "total_mesures": total_mesures,
+        "total_alerts": total_alerts,
+        "by_technician": tech_breakdown,
+    }
 
 
 # --- Export routes -------------------------------------------------------

@@ -1,0 +1,51 @@
+{
+  "summary": "Iteration 3 — role gating on /api/chantiers (POST/PATCH = admin|commercial, DELETE = admin only), POST /api/auth/push-token (set + clear with null), best-effort Expo push on PATCH assigned_to, GET /api/stats/company (admin-only, company-isolated). 63/63 pytest tests pass: 20 new iter3 tests + 43 regression tests from iter1 & iter2 (after a 2-line adjustment to test_multitenant.py to align with the new role rules).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "GET /api/chantiers/{id}/export.pdf", "issue": "Carry-over from iter2: still does NOT filter by company_id (server.py L571-573 only matches by id), while export.json correctly does (L644). Cross-tenant PDF download possible by UUID guess."},
+      {"endpoint": "DELETE /api/mesures/{id}", "issue": "Carry-over: returns 200 {'ok': true} even when mesure does not exist (no 404)."},
+      {"endpoint": "DELETE /api/feedbacks/{id}", "issue": "Carry-over: silent 200 no-op when id is unknown or belongs to another company."},
+      {"endpoint": "POST /api/auth/push-token", "issue": "Always returns 200 even with empty body (push_token defaults to None due to Optional). This effectively means an empty POST clears the token — usable but a bit surprising; consider requiring the field explicitly."},
+      {"endpoint": "passlib bcrypt warning", "issue": "Carry-over: 'module bcrypt has no attribute __about__' on startup. Functional but noisy."},
+      {"endpoint": "POST /api/chantiers, POST /api/mesures, POST /api/auth/register, POST /api/feedbacks", "issue": "Carry-over: returns 200 OK on creation; REST convention is 201."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iter3_roles_stats_push.py",
+    "/app/test_reports/pytest/iter3.xml",
+    "/app/test_reports/pytest/iter3_full.xml"
+  ],
+  "action_items": [
+    "Optional: add company_id filter to GET /api/chantiers/{id}/export.pdf to match export.json (iter2 residual gap, still present in iter3).",
+    "Optional: return 404 on DELETE /api/feedbacks/{id} and DELETE /api/mesures/{id} when nothing was deleted.",
+    "Optional carry-over: pin bcrypt<4 / upgrade passlib, return 201 on creation endpoints.",
+    "Consider requiring an explicit push_token field on POST /api/auth/push-token (currently an empty body silently clears the token)."
+  ],
+  "critical_code_review_comments": [
+    "require_roles(['admin','commercial']) correctly gates POST and PATCH /api/chantiers — technician returns 403 with FR message.",
+    "require_roles(['admin']) correctly gates DELETE /api/chantiers — commercial AND technician return 403.",
+    "POST /api/mesures remains gated only by auth_user (no role check) — all three demo roles can create mesures.",
+    "send_push_to_user is properly best-effort: short-circuits when user has no push_token, and the outer try/except in httpx call swallows every exception. Logs warnings only.",
+    "PATCH /api/chantiers correctly triggers push only when new assigned_to differs from existing.get('assigned_to') — no spurious notifications on unrelated edits.",
+    "GET /api/stats/company correctly: (1) admin-only via require_admin, (2) filtered by company_id on chantiers, mesures (via $in chantier ids of the company), and users. Verified zero-state for a fresh company and aggregation after one chantier + one alerted mesure (closure_rate=100.0, by_technician populated).",
+    "by_status is initialized to {devis_a_faire:0, technique_a_valider:0, cloture:0} so all 3 keys are always present.",
+    "by_technician sorts by mesures desc and names 'Non affecté' for unassigned — clean."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iter3_roles_stats_push.py (new — 20 tests)",
+    "/app/backend/tests/test_multitenant.py (2-line fix: test_acme_chantier_invisible_to_default_admin now creates via acme_admin and cleans via acme_admin, since iter3 forbids technicians from creating/deleting chantiers)"
+  ],
+  "success_rate": {"backend": "100% (63/63)", "frontend": "not tested (backend-only request)"},
+  "seed_data_creation": "Each test class uses its own ephemeral users (TEST_acme_*, TEST_acme_admin_*) and chantiers (TEST_*) created via fixtures, with teardown that DELETEs created chantiers as admin. Demo users and 5 seeded default-company chantiers were left intact. Tech user's push_token is set/cleared during tests but always reset to null at the end of TestPatchAssignmentPushBestEffort.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Backend is fully green (63/63). Iter3 endpoints validated: role gating on /api/chantiers, /api/auth/push-token, /api/stats/company (shape + admin-only + company isolation). Push best-effort verified by patching assigned_to to a user with no token (no error). Test fixture for acme_user is still a technician — when adding tests that need acme to CREATE/DELETE chantiers, use acme_admin instead. Next iteration should focus on frontend wiring of the stats screen and push registration flow.",
+  "rca_of_issue": "Single regression observed and fixed in-test: TestChantierIsolation.test_acme_chantier_invisible_to_default_admin used acme_user (technician) to POST a chantier; iter3 added require_roles(['admin','commercial']) on that route, so the call now returns 403. Adjusted the test to use acme_admin for both POST and the cleanup DELETE. No production code changed."
+}
