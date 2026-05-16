@@ -65,6 +65,25 @@ Application Expo (React Native, mobile + web) de digitalisation des relevés de 
 ## Multi-tenant
 Tous les endpoints chantiers / mesures / feedbacks / exports filtrent automatiquement par le `company_id` de l'utilisateur courant. Les utilisateurs d'une société ne voient jamais les données d'une autre.
 
+## Workflow de mesure — Wizard 3 étapes (iter 4 — refonte stricte)
+1. **Étape 1 — Sélection type châssis** : 4 icônes A/B/C/D épurées (CHÂSSIS STANDARD, CHÂSSIS COULISSANT, PORTE D'ENTRÉE, CHÂSSIS TRAPÈZE) — aucun texte descriptif sous les icônes.
+2. **Étape 2 — Prise à la mesure (baie brute)** : SVG _béton brut hachuré + linteau + sous-sol coupe_ (rect. ou trapèze), pas de menuiserie. Champs obligatoires :
+   - `bay_height`, `bay_width`, `bay_diagonal`, `floor_reserve` (mm). Le champ "Réserve Sol Fini" a bordure rouge + icône warning + helper "OBLIGATOIRE — MANQUANT". Validation bloquante avant transition.
+3. **Étape 3 — Conception maçonnerie & isolation (INDICATIF)** :
+   - `bloc_thickness` obligatoire ; `wall_type` ∈ {ITE, ITI, CRÉPI SIMPLE} en cartes radio avec coupe SVG du mur.
+   - Champs révélés selon type, tous marqués `(INDICATIF)` :
+     - ITE → `insulation_thickness`, `finish_outer` (Crépi)
+     - ITI → `insulation_thickness`, `finish_inner` (Plâtre/Finition)
+     - CRÉPI SIMPLE → `finish_outer` (Crépi Ext.) + `finish_inner` (Crépi Int.)
+
+## Modèles MongoDB — mise à jour iter 4
+- `mesures` accepte 9 nouveaux champs optionnels côté BE (validés strictement côté FE) :
+  `bay_height`, `bay_width`, `bay_diagonal`, `floor_reserve`,
+  `bloc_thickness`, `wall_type` ("ite"|"iti"|"crepi_simple"),
+  `insulation_thickness`, `finish_outer`, `finish_inner`.
+- Les anciens champs (`width_top`, `height_left`, `diag_*`, etc.) restent optionnels pour rétrocompatibilité.
+- L'export PDF affiche d'abord les nouveaux champs (libellés FR) puis les legacy si présents.
+
 ## Sécurité par rôle (iter 3)
 - `POST /api/chantiers`, `PATCH /api/chantiers/{id}` : admin + commercial uniquement
 - `DELETE /api/chantiers/{id}` : admin uniquement
