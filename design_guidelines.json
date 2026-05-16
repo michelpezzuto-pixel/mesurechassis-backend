@@ -1,0 +1,142 @@
+{
+  "project": "MesureChâssis",
+  "platform": "React Native (Expo) - Mobile Field App",
+  "theme_archetype": {
+    "theme": "DARK",
+    "archetype": "Archetype 2: The Performance Pro (Adapted for Construction Field Work)",
+    "emotional_tone": "Robust, Tactical, Reliable, High-Contrast",
+    "description": "A tactical, no-nonsense UI designed for field technicians wearing gloves outdoors. Focuses on high-contrast legibility, massive touch targets, and offline-first ruggedness. No fragile glassmorphism. No soft shadows. Hard lines and safety colors."
+  },
+  "color_system": {
+    "background": {
+      "base": "#0C0C0E",
+      "surface_card": "#18181B",
+      "surface_elevated": "#27272A",
+      "surface_input": "#000000"
+    },
+    "brand": {
+      "primary": "#FF5A00",
+      "primary_pressed": "#CC4800"
+    },
+    "feedback": {
+      "anomaly_red": "#FF3B30",
+      "anomaly_red_pressed": "#CC2F26",
+      "warning_amber": "#FFCC00",
+      "success_green": "#32D74B",
+      "faux_aplomb_alert": "#FF9F0A"
+    },
+    "text": {
+      "primary": "#FFFFFF",
+      "secondary": "#A1A1AA",
+      "placeholder": "#52525B",
+      "inverse": "#000000"
+    },
+    "borders": {
+      "subtle": "#3F3F46",
+      "strong": "#52525B",
+      "focus": "#FF5A00"
+    }
+  },
+  "typography": {
+    "global_rules": [
+      "DO NOT use generic sans (Inter/Roboto) for Headings.",
+      "Headings must be robust, condensed, and heavy.",
+      "Body text must have increased tracking for outdoor glare legibility."
+    ],
+    "families": {
+      "headings": "Barlow Condensed (Black/900 weight)",
+      "body": "IBM Plex Sans or Chivo (Medium/500 weight)"
+    },
+    "scale": {
+      "h1": "text-4xl tracking-tight leading-none uppercase",
+      "h2": "text-2xl tracking-tight uppercase",
+      "h3": "text-xl font-bold",
+      "body_lg": "text-lg tracking-wide",
+      "body": "text-base tracking-wide",
+      "label": "text-sm tracking-[0.15em] uppercase text-secondary"
+    }
+  },
+  "layout_and_spacing": {
+    "container": "p-6",
+    "gap_standard": "gap-4",
+    "gap_large": "gap-8",
+    "touch_targets": {
+      "minimum_height": "min-h-[64px]",
+      "icon_button": "h-16 w-16"
+    },
+    "border_radius": {
+      "buttons": "rounded-md",
+      "cards": "rounded-lg",
+      "inputs": "rounded-md"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-[#FF5A00] rounded-md min-h-[64px] flex items-center justify-center border-2 border-transparent active:border-white",
+      "primary_text": "text-[#000000] font-bold text-xl uppercase tracking-wider",
+      "secondary": "bg-transparent border-2 border-[#52525B] min-h-[64px] flex items-center justify-center rounded-md active:bg-[#27272A]",
+      "anomaly_persistent": "bg-[#FF3B30] rounded-md min-h-[64px] flex-row items-center justify-center px-4 absolute bottom-6 right-6 left-6 shadow-[0_0_15px_rgba(255,59,48,0.5)] z-50",
+      "anomaly_text": "text-white font-bold text-lg uppercase ml-2"
+    },
+    "inputs": {
+      "text_field": "bg-black border-2 border-[#3F3F46] rounded-md min-h-[64px] px-4 text-white text-xl focus:border-[#FF5A00]",
+      "label": "text-sm text-[#A1A1AA] uppercase tracking-wider mb-2"
+    },
+    "cards": {
+      "project_card": "bg-[#18181B] border border-[#3F3F46] p-5 rounded-lg mb-4 flex-col gap-2",
+      "status_badge": "px-3 py-1 rounded-sm text-xs font-bold uppercase tracking-wider self-start"
+    },
+    "visual_schema": {
+      "wrapper": "relative w-full aspect-square bg-[#0C0C0E] border-2 border-[#3F3F46] rounded-lg items-center justify-center p-8",
+      "svg_stroke": "#52525B",
+      "svg_stroke_width": 4,
+      "measurement_input_overlay": "absolute bg-black border-2 border-[#FF5A00] rounded-md min-w-[80px] h-[50px] flex items-center justify-center text-center text-white font-bold text-lg"
+    }
+  },
+  "screens": {
+    "auth": {
+      "layout": "Centered form, massive logo, role selector via large distinct touch cards (Admin, Commercial, Technician)."
+    },
+    "dashboard": {
+      "layout": "Sticky top search bar (h-16). Horizontal scrollable filter chips (h-12). Flat list of Project Cards."
+    },
+    "project_detail": {
+      "layout": "Client info header (solid #18181B bg). List of measurements. Massive 'Ajouter une ouverture' dashed-border button at the bottom."
+    },
+    "measurement_form": {
+      "layout": "Top: Block Type Selector (4 horizontal thick tabs). Middle: Visual Schema Box (SVG drawing of Standard/Coulissant/Porte/Trapèze with overlay inputs). Bottom: Capture Photo Button. Footer: Persistent Anomaly Red Button."
+    }
+  },
+  "motion_and_haptics": {
+    "buttons": "Opacity feedback on press (activeOpacity={0.7}). Trigger heavy haptic feedback on 'Signaler une anomalie' and 'Clôturer'. Trigger light haptic on measurements input."
+  },
+  "testing_requirements": {
+    "attribute": "testID",
+    "description": "Since this is React Native, use testID instead of data-testid. ALL interactive elements MUST have a testID.",
+    "examples": [
+      "testID='login-submit-button'",
+      "testID='project-card-{id}'",
+      "testID='schema-input-top-width'",
+      "testID='report-anomaly-button'"
+    ]
+  },
+  "media_urls": {
+    "login_background": {
+      "url": "https://images.unsplash.com/photo-1559073760-0ee41703dbf7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MTJ8MHwxfHNlYXJjaHwzfHxjb25zdHJ1Y3Rpb24lMjB3b3JrZXIlMjBkYXJrJTIwb3JhbmdlfGVufDB8fHx8MTc3ODk2Mzc1MHww&ixlib=rb-4.1.0&q=85",
+      "description": "Dark, industrial construction worker background to be used with a 80% black overlay (bg-black/80)."
+    },
+    "schema_texture": {
+      "url": "https://images.unsplash.com/photo-1721244654392-9c912a6eb236?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2OTV8MHwxfHNlYXJjaHwxfHx3aW5kb3clMjBmcmFtZSUyMGJsdWVwcmludHxlbnwwfHx8fDE3Nzg5NjM3NTB8MA&ixlib=rb-4.1.0&q=85",
+      "description": "Blueprint texture. Can be blended at 5% opacity into the visual schema wrapper for a technical feel."
+    }
+  },
+  "instructions_to_main_agent": [
+    "This is an Expo React Native app. Do NOT use HTML tags (div, span). Use View, Text, TouchableOpacity, Pressable, TextInput.",
+    "Do NOT use Shadcn UI. Use React Native components with NativeWind className props for styling.",
+    "For the dynamic measurement visual schemas, use 'react-native-svg'. Render the window frame as SVG paths with stroke='#52525B' and use 'position: absolute' on TextInput components to place them logically around the edges (top, bottom, left, right, diagonals).",
+    "Touch targets are critical: Every button or input MUST have a minimum height of 64px (h-16).",
+    "Implement the 'Signaler une anomalie' button as a persistent absolute View at the bottom of the measurement screens with a high z-index.",
+    "Measurement inputs must use keyboardType='numeric'.",
+    "Apply testID to all touchable elements and inputs using kebab-case role-based names."
+  ]
+}
