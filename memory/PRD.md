@@ -65,7 +65,25 @@ Application Expo (React Native, mobile + web) de digitalisation des relevés de 
 ## Multi-tenant
 Tous les endpoints chantiers / mesures / feedbacks / exports filtrent automatiquement par le `company_id` de l'utilisateur courant. Les utilisateurs d'une société ne voient jamais les données d'une autre.
 
-## Workflow de mesure — Wizard 3 étapes (iter 4 — refonte stricte)
+## Workflow de mesure — Wizard 3 étapes (iter 6 — refonte complète)
+1. **Étape 1 — Sélection** : 4 cartes A/B/C/D épurées (CHÂSSIS STANDARD / CHÂSSIS COULISSANT / PORTE D'ENTRÉE / CHÂSSIS TRAPÈZE). A, B, C → workflow rectangulaire ; D → workflow trapèze.
+2. **Étape 2 — Cotes baie brute** :
+   - Champs : Largeur, Hauteur, Diagonale 1, Diagonale 2 (+ Réserve Sol Fini si PORTE D'ENTRÉE).
+   - **Auto-Pythagore** : dès que Largeur ET Hauteur sont remplies, le système pré-remplit Diagonale 1 et 2 avec `Math.round(√(W² + H²))` et badge `AUTO (Pythagore)` orange.
+   - Pour chaque diagonale : **bouton vert "Valider"** (verrouille la valeur calculée) OU **bouton gris "Modifier"** (efface, ouvre clavier numérique). État `manual` accepté tel quel.
+   - **Blocage strict** : SUIVANT impossible tant qu'une cote est vide OU qu'une diagonale est encore en état `AUTO` non confirmée. Border rouge + "COTE OBLIGATOIRE MANQUANTE".
+3. **Étape 3 — Maçonnerie & isolation (INDICATIF)** :
+   - `bloc_thickness` obligatoire.
+   - Cartes radio :
+     - A) **FAÇADE ISOLANTE EXTÉRIEURE (ITE)** → Épais. Isolant + Épais. Crépi
+     - B) **ISOLATION INTÉRIEURE (ITI)** → Épais. Isolant + Épais. Plâtre/Finition
+     - C) **BRIQUE DE PAREMENT** → Épais. Coulisse/Isolant + Épais. Brique
+     - D) **CRÉPI SIMPLE** → Épais. Crépi/Finition (1 seul champ)
+   - Tous les sous-champs marqués `(INDICATIF)` en gris.
+
+## Top-bar "Signaler un problème"
+Mini-bouton rouge non-intrusif **en haut à droite** de chaque étape du wizard. Ouvre un modal textuel rapide qui envoie commentaire + snapshot (step, blockType, s2, s3) à `/api/feedbacks` → consultable par l'admin via `/admin/feedbacks`.
+
 1. **Étape 1 — Sélection type châssis** : 4 icônes A/B/C/D épurées (CHÂSSIS STANDARD, CHÂSSIS COULISSANT, PORTE D'ENTRÉE, CHÂSSIS TRAPÈZE) — aucun texte descriptif sous les icônes.
 2. **Étape 2 — Prise à la mesure (baie brute)** : SVG _béton brut hachuré + linteau + sous-sol coupe_ (rect. ou trapèze), pas de menuiserie. Champs obligatoires :
    - `bay_height`, `bay_width`, `bay_diagonal`, `floor_reserve` (mm). Le champ "Réserve Sol Fini" a bordure rouge + icône warning + helper "OBLIGATOIRE — MANQUANT". Validation bloquante avant transition.
