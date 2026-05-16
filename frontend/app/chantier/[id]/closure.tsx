@@ -1,7 +1,8 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,6 +15,7 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { api, getToken, PDF_URL } from "@/src/services/api";
+import SignaturePad from "@/src/components/SignaturePad";
 import { colors, blockMeta, statusMeta } from "@/src/theme";
 
 type Chantier = {
@@ -22,6 +24,8 @@ type Chantier = {
   address: string;
   status: string;
   created_at: string;
+  client_signature?: string | null;
+  signed_at?: string | null;
 };
 
 type Mesure = {
@@ -112,6 +116,79 @@ export default function Closure() {
     } catch {
       Alert.alert("Erreur", "Export JSON impossible.");
     }
+  };
+
+  const exportXLSX = async () => {
+    try {
+      const token = await getToken();
+      const r = await fetch(
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/chantiers/${id}/export.xlsx`,
+        { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+      );
+      if (!r.ok) throw new Error("xlsx failed");
+      const blob = await r.blob();
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const b64 = (reader.result as string).split(",")[1];
+        const FS = await import("expo-file-system/legacy");
+        const fileUri = `${FS.cacheDirectory}chantier-${id}.xlsx`;
+        await FS.writeAsStringAsync(fileUri, b64, { encoding: FS.EncodingType.Base64 });
+        if (await Sharing.isAvailableAsync()) {
+          await Sharing.shareAsync(fileUri, {
+            mimeType:
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          });
+        } else {
+          Alert.alert("Excel prêt", `Fichier : ${fileUri}`);
+        }
+      };
+      reader.readAsDataURL(blob);
+    } catch {
+      Alert.alert("Erreur", "Export Excel impossible.");
+    }
+  };
+
+  // ---- Signature handlers ----
+  const [showPad, setShowPad] = useState(false);
+  const [signing, setSigning] = useState(false);
+  const padRef = useRef<any>(null);
+
+  const saveSignature = async () => {
+    const sig = await (SignaturePad as any).capture?.();
+    if (!sig) {
+      Alert.alert("Signature vide", "Veuillez signer dans la zone prévue.");
+      return;
+    }
+    setSigning(true);
+    try {
+      const res = await api.post<Chantier>(`/chantiers/${id}/signature`, {
+        signature: sig,
+      });
+      setChantier(res.data);
+      setShowPad(false);
+    } catch {
+      Alert.alert("Erreur", "Enregistrement signature impossible.");
+    } finally {
+      setSigning(false);
+    }
+  };
+
+  const removeSignature = async () => {
+    Alert.alert("Supprimer la signature ?", "Cette action est définitive.", [
+      { text: "Annuler", style: "cancel" },
+      {
+        text: "Supprimer",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            const res = await api.delete<Chantier>(`/chantiers/${id}/signature`);
+            setChantier(res.data);
+          } catch {
+            Alert.alert("Erreur", "Suppression impossible.");
+          }
+        },
+      },
+    ]);
   };
 
   const cloturer = async () => {
@@ -228,6 +305,16 @@ export default function Closure() {
           </TouchableOpacity>
 
           <TouchableOpacity
+            testID="export-xlsx-button"
+            onPress={exportXLSX}
+            style={[styles.btn, styles.btnSecondary]}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="grid" size={20} color={colors.textPrimary} />
+            <Text style={styles.btnSecondaryText}>EXPORT EXCEL</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
             testID="export-json-button"
             onPress={exportJSON}
             style={[styles.btn, styles.btnSecondary]}
@@ -236,6 +323,77 @@ export default function Closure() {
             <Ionicons name="code-slash" size={20} color={colors.textPrimary} />
             <Text style={styles.btnSecondaryText}>EXPORT JSON</Text>
           </TouchableOpacity>
+
+          {/* SIGNATURE BLOCK */}
+          <View style={styles.sigCard}>
+            <View style={styles.sigHeader}>
+              <Ionicons name="create" size={18} color={colors.primary} />
+              <Text style={styles.sigTitle}>SIGNATURE CLIENT</Text>
+            </View>
+            {chantier.client_signature ? (
+              <View>
+                <Image
+                  source={{ uri: chantier.client_signature }}
+                  style={styles.sigPreview}
+                  resizeMode="contain"
+                />
+                {chantier.signed_at && (
+                  <Text style={styles.sigDate}>
+                    Signé le {chantier.signed_at.slice(0, 10)} à {chantier.signed_at.slice(11, 16)}
+                  </Text>
+                )}
+                <TouchableOpacity
+                  testID="signature-remove-button"
+                  onPress={removeSignature}
+                  style={[styles.btn, styles.btnSecondary, { marginTop: 10 }]}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="trash" size={18} color={colors.textPrimary} />
+                  <Text style={styles.btnSecondaryText}>EFFACER ET RESIGNER</Text>
+                </TouchableOpacity>
+              </View>
+            ) : showPad ? (
+              <View>
+                <Text style={styles.sigHelp}>
+                  Faites signer le client ci-dessous, puis enregistrez.
+                </Text>
+                <SignaturePad ref={padRef} />
+                <View style={{ flexDirection: "row", gap: 8, marginTop: 10 }}>
+                  <TouchableOpacity
+                    testID="signature-cancel-button"
+                    onPress={() => setShowPad(false)}
+                    style={[styles.btn, styles.btnSecondary, { flex: 1 }]}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.btnSecondaryText}>ANNULER</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    testID="signature-save-button"
+                    onPress={saveSignature}
+                    disabled={signing}
+                    style={[styles.btn, styles.btnPrimary, { flex: 1 }]}
+                    activeOpacity={0.85}
+                  >
+                    {signing ? (
+                      <ActivityIndicator color="#000" />
+                    ) : (
+                      <Text style={styles.btnPrimaryText}>ENREGISTRER</Text>
+                    )}
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ) : (
+              <TouchableOpacity
+                testID="signature-open-button"
+                onPress={() => setShowPad(true)}
+                style={[styles.btn, styles.btnPrimary]}
+                activeOpacity={0.85}
+              >
+                <Ionicons name="create-outline" size={20} color="#000" />
+                <Text style={styles.btnPrimaryText}>OUVRIR LA ZONE DE SIGNATURE</Text>
+              </TouchableOpacity>
+            )}
+          </View>
 
           {chantier.status !== "cloture" && (
             <TouchableOpacity
@@ -390,4 +548,23 @@ const styles = StyleSheet.create({
   btnSecondaryText: { color: colors.textPrimary, fontWeight: "800", letterSpacing: 1 },
   btnDanger: { backgroundColor: "#7a1d1d" },
   btnDangerText: { color: "#fff", fontWeight: "900", letterSpacing: 1 },
+  sigCard: {
+    marginTop: 14,
+    padding: 16,
+    backgroundColor: colors.surface,
+    borderColor: colors.borderSubtle,
+    borderWidth: 1,
+    borderRadius: 12,
+  },
+  sigHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10 },
+  sigTitle: { color: colors.textPrimary, fontWeight: "900", letterSpacing: 1.2, fontSize: 13 },
+  sigHelp: { color: colors.textSecondary, marginBottom: 10, fontSize: 13 },
+  sigPreview: {
+    width: "100%",
+    height: 160,
+    backgroundColor: "#F4F1EA",
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  sigDate: { color: colors.textSecondary, fontSize: 12, marginBottom: 6 },
 });

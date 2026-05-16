@@ -130,14 +130,13 @@ class TestNewFieldsAcceptance:
         assert r.status_code == 200, r.text
         assert r.json()["wall_type"] == wall_type
 
-    def test_wall_type_arbitrary_string_accepted_no_enum_validation(self, api_url, chantier_ctx):
-        """Per iter4 spec: backend has no enum check on wall_type — frontend enforces."""
+    def test_wall_type_arbitrary_string_rejected_iter5(self, api_url, chantier_ctx):
+        """Updated for iter5: backend now enforces enum on wall_type — 422 on invalid."""
         cid, com_headers, _ = chantier_ctx
         payload = {"chantier_id": cid, "block_type": "standard", "label": "TEST_wt_arbitrary",
                    "bay_height": 2000, "bay_width": 1000, "wall_type": "foobar"}
         r = requests.post(f"{api_url}/mesures", json=payload, headers=com_headers, timeout=30)
-        assert r.status_code == 200, r.text
-        assert r.json()["wall_type"] == "foobar"
+        assert r.status_code == 422, r.text
 
     def test_technician_can_post_with_new_fields(self, api_url, chantier_ctx):
         cid, _, tech_headers = chantier_ctx

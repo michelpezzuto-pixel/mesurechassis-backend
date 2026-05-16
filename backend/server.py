@@ -16,8 +16,10 @@ from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, status
 from fastapi.responses import StreamingResponse
 from motor.motor_asyncio import AsyncIOMotorClient
+from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill
 from passlib.context import CryptContext
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
@@ -50,6 +52,7 @@ api = APIRouter(prefix="/api")
 VALID_ROLES = {"admin", "commercial", "technician"}
 VALID_STATUSES = {"devis_a_faire", "technique_a_valider", "cloture"}
 VALID_BLOCK_TYPES = {"standard", "coulissant", "porte", "trapeze"}
+VALID_WALL_TYPES = {"ite", "iti", "crepi_simple"}
 
 
 # --- Models --------------------------------------------------------------
@@ -102,7 +105,13 @@ class Chantier(BaseModel):
     created_by: str
     assigned_to: Optional[str] = None
     company_id: str = "default"
+    client_signature: Optional[str] = None  # base64 PNG
+    signed_at: Optional[str] = None
     created_at: str
+
+
+class SignatureIn(BaseModel):
+    signature: str  # base64 data URL or raw base64
 
 
 class MesureCreate(BaseModel):
@@ -137,6 +146,17 @@ class MesureCreate(BaseModel):
     finish_inner: Optional[float] = None      # ITI plâtre / CRÉPI int
     options: dict = Field(default_factory=dict)
     photo_url: Optional[str] = None  # base64 data URL
+
+    @field_validator("wall_type")
+    @classmethod
+    def _validate_wall_type(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        if v not in VALID_WALL_TYPES:
+            raise ValueError(
+                f"wall_type must be one of {sorted(VALID_WALL_TYPES)}"
+            )
+        return v
 
 
 class Mesure(MesureCreate):
@@ -674,6 +694,114 @@ async def export_json(chantier_id: str, user=Depends(auth_user)):
     mesures = await db.mesures.find({"chantier_id": chantier_id}, {"_id": 0}) \
         .sort("created_at", 1).to_list(500)
     return {"chantier": chantier, "mesures": mesures}
+
+
+@api.get("/chantiers/{chantier_id}/export.xlsx")
+async def export_xlsx(chantier_id: str, user=Depends(auth_user)):
+    chantier = await db.chantiers.find_one(
+        {"id": chantier_id, "company_id": user.get("company_id", "default")},
+        {"_id": 0})
+    if not chantier:
+        raise HTTPException(404, "Chantier introuvable")
+    mesures = await db.mesures.find({"chantier_id": chantier_id}, {"_id": 0}) \
+        .sort("created_at", 1).to_list(500)
+
+    wb = Workbook()
+    info = wb.active
+    info.title = "Chantier"
+    head = Font(bold=True, color="FFFFFF")
+    fill = PatternFill(start_color="FF5A00", end_color="FF5A00", fill_type="solid")
+    info["A1"] = "MesureChâssis — Fiche Chantier"
+    info["A1"].font = Font(bold=True, size=14)
+    pairs = [
+        ("Client", chantier["client_name"]),
+        ("Adresse", chantier["address"]),
+        ("Statut", _status_label(chantier["status"])),
+        ("Date", chantier["created_at"][:10]),
+        ("Signé le", chantier.get("signed_at") or "—"),
+    ]
+    for i, (k, v) in enumerate(pairs, start=3):
+        info.cell(row=i, column=1, value=k).font = Font(bold=True)
+        info.cell(row=i, column=2, value=v)
+    info.column_dimensions["A"].width = 22
+    info.column_dimensions["B"].width = 50
+
+    ws = wb.create_sheet("Mesures")
+    columns = [
+        ("Libellé", "label"),
+        ("Type bloc", "block_type"),
+        ("H baie (mm)", "bay_height"),
+        ("L baie (mm)", "bay_width"),
+        ("Diag (mm)", "bay_diagonal"),
+        ("Réserve sol fini (mm)", "floor_reserve"),
+        ("Épais. bloc béton (mm)", "bloc_thickness"),
+        ("Type paroi", "wall_type"),
+        ("Épais. isolant (mm)", "insulation_thickness"),
+        ("Finition ext. (mm)", "finish_outer"),
+        ("Finition int. (mm)", "finish_inner"),
+        ("Angle pente (°)", "slope_angle_deg"),
+        ("Alertes", "alerts"),
+    ]
+    for col_idx, (label, _) in enumerate(columns, start=1):
+        cell = ws.cell(row=1, column=col_idx, value=label)
+        cell.font = head
+        cell.fill = fill
+    wall_map = {"ite": "ITE", "iti": "ITI", "crepi_simple": "Crépi simple"}
+    block_map = {"standard": "Standard", "coulissant": "Coulissant",
+                 "porte": "Porte", "trapeze": "Trapèze"}
+    for row_idx, m in enumerate(mesures, start=2):
+        for col_idx, (_, key) in enumerate(columns, start=1):
+            v: Any = m.get(key)
+            if key == "wall_type" and v:
+                v = wall_map.get(v, v)
+            elif key == "block_type" and v:
+                v = block_map.get(v, v)
+            elif key == "alerts":
+                v = " ; ".join(v) if v else ""
+            ws.cell(row=row_idx, column=col_idx, value=v)
+    for c in ws.columns:
+        max_len = max((len(str(cell.value)) if cell.value is not None else 0) for cell in c)
+        ws.column_dimensions[c[0].column_letter].width = min(max_len + 2, 36)
+
+    buf = io.BytesIO()
+    wb.save(buf)
+    buf.seek(0)
+    return StreamingResponse(
+        buf,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f'attachment; filename="chantier-{chantier_id}.xlsx"'},
+    )
+
+
+@api.post("/chantiers/{chantier_id}/signature", response_model=Chantier)
+async def save_signature(chantier_id: str, payload: SignatureIn, user=Depends(auth_user)):
+    company = user.get("company_id", "default")
+    if not payload.signature.strip():
+        raise HTTPException(400, "Signature vide")
+    res = await db.chantiers.update_one(
+        {"id": chantier_id, "company_id": company},
+        {"$set": {
+            "client_signature": payload.signature,
+            "signed_at": datetime.now(timezone.utc).isoformat(),
+        }},
+    )
+    if res.matched_count == 0:
+        raise HTTPException(404, "Chantier introuvable")
+    doc = await db.chantiers.find_one({"id": chantier_id}, {"_id": 0})
+    return Chantier(**doc)
+
+
+@api.delete("/chantiers/{chantier_id}/signature", response_model=Chantier)
+async def delete_signature(chantier_id: str, user=Depends(auth_user)):
+    company = user.get("company_id", "default")
+    await db.chantiers.update_one(
+        {"id": chantier_id, "company_id": company},
+        {"$set": {"client_signature": None, "signed_at": None}},
+    )
+    doc = await db.chantiers.find_one({"id": chantier_id, "company_id": company}, {"_id": 0})
+    if not doc:
+        raise HTTPException(404, "Chantier introuvable")
+    return Chantier(**doc)
 
 
 # --- Demo data seeding ---------------------------------------------------

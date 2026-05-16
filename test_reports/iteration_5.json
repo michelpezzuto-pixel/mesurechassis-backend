@@ -1,0 +1,47 @@
+{
+  "summary": "Iteration 5 backend validation: wall_type strict enum, GET /api/chantiers/{id}/export.xlsx, POST/DELETE /api/chantiers/{id}/signature. 17 new tests + 1 updated iter4 stale-contract test. Final: 91/91 pytest passing (17 iter5 + 74 regression). All requested cases covered end-to-end.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/chantiers/{id}/signature", "issue": "No content-shape validation on signature payload — any non-empty string passes (e.g., 'abc' is accepted). Spec says 'base64 data URL', but base64/data-URL syntax is not verified. Low impact since frontend controls it."},
+      {"endpoint": "DELETE /api/chantiers/{id}/signature", "issue": "Always returns 200 even if chantier exists in another company — the update_one matches 0 rows then the second find_one returns None and raises 404. Verified the 404 path works for missing IDs, but behavior on cross-company DELETE returns 404 only because the same company filter is reused on the read — could be tightened to fail-fast on the update step."},
+      {"endpoint": "GET /api/chantiers/{id}/export.pdf", "issue": "Carry-over from iter2/3/4: still does NOT filter by company_id (only matches by id). Iter5 export.xlsx correctly filters by company_id — please align export.pdf."},
+      {"endpoint": "Creation endpoints", "issue": "Carry-over: POST endpoints return 200 instead of 201."},
+      {"endpoint": "passlib bcrypt warning", "issue": "Carry-over noise at startup ('module bcrypt has no attribute __about__')."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iter5_validation_xlsx_signature.py",
+    "/app/test_reports/pytest/iter5.xml",
+    "/app/test_reports/pytest/iter5_full.xml"
+  ],
+  "action_items": [
+    "(Optional) Align export.pdf with export.xlsx multi-tenant filter (add company_id to the find_one query).",
+    "(Optional) Validate signature payload shape (regex on 'data:image/(png|jpeg);base64,...' + min length) to harden against garbage strings.",
+    "(Optional carry-overs) 201 on creation; pin bcrypt<4; 404 on unknown DELETE /mesures/{id} & /feedbacks/{id}."
+  ],
+  "critical_code_review_comments": [
+    "field_validator on MesureCreate.wall_type works correctly via Pydantic v2 — returns 422 on invalid, None still allowed, three valid enum values accepted. Matches spec exactly.",
+    "export.xlsx properly filters by company_id (server.py L701) — confirmed 404 returned when accessed by a fresh registered admin from a different company. All three roles (admin/commercial/technician) of the same company succeed.",
+    "xlsx response: Content-Type application/vnd.openxmlformats-officedocument.spreadsheetml.sheet (contains 'spreadsheetml.sheet'); body starts with PK (0x50 0x4B) — valid zip/xlsx magic.",
+    "POST /signature uses payload.signature.strip() to reject empty/whitespace — returns 400. matched_count check correctly returns 404 for unknown or cross-company chantier.",
+    "Signature persistence verified via Create→GET round-trip: client_signature == sent data URL, signed_at ISO timestamp present. DELETE clears both fields to None — verified by subsequent GET.",
+    "One stale iter4 test (test_wall_type_arbitrary_string_accepted_no_enum_validation) had to be updated since iter4 explicitly tested the absence of validation — renamed to test_wall_type_arbitrary_string_rejected_iter5 and asserts 422. This is a contract-change correction, not a test workaround."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iter5_validation_xlsx_signature.py (new — 17 tests)",
+    "/app/backend/tests/test_iter4_new_mesure_fields.py (updated 1 test for new wall_type enum contract)"
+  ],
+  "success_rate": {"backend": "100% (91/91)", "frontend": "not tested (backend-only request)"},
+  "seed_data_creation": "Module-scoped TEST_Iter5Client chantier created via commercial token, populated with several TEST_-prefixed mesures across wall_type variants. Plus an ephemeral other-company admin user (TEST_other_*@example.com under TEST_co_* company) for tenant-isolation checks. Teardown deletes the chantier as admin (cascades mesures); the other-company test user is left as orphan TEST_-prefixed data which is the same pattern used in prior iterations.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iter5 backend is fully green (91/91). New contract enforced: wall_type ∈ {ite, iti, crepi_simple} or null — Pydantic 422 on anything else. New endpoints: GET /chantiers/{id}/export.xlsx (openpyxl, multi-tenant filtered), POST /chantiers/{id}/signature (sets client_signature+signed_at, 400 on empty, 404 cross-company/unknown), DELETE /chantiers/{id}/signature (clears both fields, 404 if chantier not in user's company). export.pdf still missing the company_id filter — flagged as carry-over. Frontend tasks likely include: signature pad UI on chantier detail, an Excel/PDF export button (admin+commercial+tech all allowed for xlsx), and wall_type segmented control already enforced server-side. Watch for keyboard handling on the signature canvas (likely react-native-signature-canvas or similar) and base64 data URL size limits in API payload.",
+  "rca_of_issue": "No bugs found in iter5 implementation. One pre-existing test (iter4) became stale because of the legitimate contract change introduced in iter5 — updated in place. All other behavior is correct per spec."
+}

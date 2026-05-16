@@ -359,7 +359,7 @@ function Step2Bay({
       />
 
       <View style={styles.sketchBox}>
-        <Sketch />
+        <Sketch values={values} />
       </View>
 
       <BayField

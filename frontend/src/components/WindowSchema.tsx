@@ -31,46 +31,35 @@ function MasonryDefs() {
 
 /**
  * Raw rectangular masonry bay: concrete blocks + lintel + visible sub-floor cross-section.
- * No window, no door, no decoration.
+ * No window, no door, no decoration. Optional live annotations for H/W/D.
  */
-export function RawBaySchemaRect({ size = 320 }: { size?: number }) {
+export function RawBaySchemaRect({
+  size = 320,
+  values,
+}: {
+  size?: number;
+  values?: { bay_height?: string; bay_width?: string; bay_diagonal?: string };
+}) {
   const w = size;
   const h = size * 0.78;
-  const wallT = 30; // wall thickness
+  const wallT = 30;
   const lintelT = 28;
   const openX = wallT;
   const openY = lintelT;
   const openW = w - wallT * 2;
-  const openH = h - lintelT - 60; // 60 = floor zone
+  const openH = h - lintelT - 60;
   const floorY = h - 60;
+  const fmt = (v?: string) => (v && v.trim().length > 0 ? `${v} mm` : "—");
   return (
     <Svg width={w} height={h}>
       <MasonryDefs />
-      {/* Left wall */}
       <Rect x={0} y={0} width={wallT} height={floorY} fill="url(#brick)" stroke={BLOCK_DARK} strokeWidth={1} />
-      {/* Right wall */}
       <Rect x={w - wallT} y={0} width={wallT} height={floorY} fill="url(#brick)" stroke={BLOCK_DARK} strokeWidth={1} />
-      {/* Lintel */}
       <Rect x={0} y={0} width={w} height={lintelT} fill="url(#brick)" stroke={BLOCK_DARK} strokeWidth={1} />
-      {/* Floor base */}
       <Rect x={0} y={floorY} width={w} height={60} fill={FLOOR_BROWN} />
-      {/* Sub-floor cross-section (revealed) */}
       <Rect x={openX} y={floorY} width={openW} height={14} fill="url(#subfloor)" stroke={BLOCK_DARK} strokeWidth={0.5} />
-      {/* Finished floor line */}
       <Line x1={openX} y1={floorY + 14} x2={openX + openW} y2={floorY + 14} stroke={FLOOR_TOP} strokeWidth={2} />
-      {/* Opening outline */}
-      <Rect
-        x={openX}
-        y={openY}
-        width={openW}
-        height={openH}
-        fill="none"
-        stroke={STROKE}
-        strokeWidth={1.2}
-        strokeDasharray="4,3"
-        opacity={0.6}
-      />
-      {/* Diagonal arrow */}
+      <Rect x={openX} y={openY} width={openW} height={openH} fill="none" stroke={STROKE} strokeWidth={1.2} strokeDasharray="4,3" opacity={0.6} />
       <Line
         x1={openX + 4}
         y1={openY + 4}
@@ -81,9 +70,29 @@ export function RawBaySchemaRect({ size = 320 }: { size?: number }) {
         strokeDasharray="5,3"
         opacity={0.85}
       />
-      {/* Annotations */}
-      <SvgText x={w / 2} y={openY + openH / 2 + 4} fontSize={11} fill={colors.primary} fontWeight="700" textAnchor="middle">
-        BAIE BRUTE
+      {/* Live annotations */}
+      <SvgText x={w / 2} y={openY + 16} fontSize={11} fontWeight="800" fill={colors.primary} textAnchor="middle">
+        L: {fmt(values?.bay_width)}
+      </SvgText>
+      <SvgText
+        x={openX + 12}
+        y={openY + openH / 2}
+        fontSize={11}
+        fontWeight="800"
+        fill={colors.primary}
+        textAnchor="start"
+      >
+        H: {fmt(values?.bay_height)}
+      </SvgText>
+      <SvgText
+        x={openX + openW - 8}
+        y={openY + openH - 16}
+        fontSize={11}
+        fontWeight="800"
+        fill={colors.primary}
+        textAnchor="end"
+      >
+        D: {fmt(values?.bay_diagonal)}
       </SvgText>
     </Svg>
   );
@@ -92,32 +101,34 @@ export function RawBaySchemaRect({ size = 320 }: { size?: number }) {
 /**
  * Raw trapezoidal masonry bay (sloped top), same principle.
  */
-export function RawBaySchemaTrapeze({ size = 320 }: { size?: number }) {
+export function RawBaySchemaTrapeze({
+  size = 320,
+  values,
+}: {
+  size?: number;
+  values?: { bay_height?: string; bay_width?: string; bay_diagonal?: string };
+}) {
   const w = size;
   const h = size * 0.78;
   const wallT = 30;
   const lintelLow = 22;
   const lintelHigh = 90;
   const floorY = h - 60;
+  const fmt = (v?: string) => (v && v.trim().length > 0 ? `${v} mm` : "—");
   return (
     <Svg width={w} height={h}>
       <MasonryDefs />
-      {/* Left wall */}
       <Rect x={0} y={lintelLow} width={wallT} height={floorY - lintelLow} fill="url(#brick)" stroke={BLOCK_DARK} strokeWidth={1} />
-      {/* Right wall */}
       <Rect x={w - wallT} y={lintelHigh} width={wallT} height={floorY - lintelHigh} fill="url(#brick)" stroke={BLOCK_DARK} strokeWidth={1} />
-      {/* Trapezoidal lintel */}
       <Polygon
         points={`0,0 ${w},0 ${w},${lintelHigh} 0,${lintelLow}`}
         fill="url(#brick)"
         stroke={BLOCK_DARK}
         strokeWidth={1}
       />
-      {/* Floor */}
       <Rect x={0} y={floorY} width={w} height={60} fill={FLOOR_BROWN} />
       <Rect x={wallT} y={floorY} width={w - wallT * 2} height={14} fill="url(#subfloor)" stroke={BLOCK_DARK} strokeWidth={0.5} />
       <Line x1={wallT} y1={floorY + 14} x2={w - wallT} y2={floorY + 14} stroke={FLOOR_TOP} strokeWidth={2} />
-      {/* Opening outline */}
       <Path
         d={`M ${wallT} ${lintelLow} L ${w - wallT} ${lintelHigh} L ${w - wallT} ${floorY} L ${wallT} ${floorY} Z`}
         fill="none"
@@ -126,8 +137,14 @@ export function RawBaySchemaTrapeze({ size = 320 }: { size?: number }) {
         strokeDasharray="4,3"
         opacity={0.6}
       />
-      <SvgText x={w / 2} y={(floorY + (lintelLow + lintelHigh) / 2) / 2 + 4} fontSize={11} fill={colors.primary} fontWeight="700" textAnchor="middle">
-        BAIE BRUTE (TRAPÈZE)
+      <SvgText x={w / 2} y={(lintelLow + lintelHigh) / 2 + 28} fontSize={11} fontWeight="800" fill={colors.primary} textAnchor="middle">
+        L: {fmt(values?.bay_width)}
+      </SvgText>
+      <SvgText x={wallT + 10} y={(lintelLow + floorY) / 2} fontSize={11} fontWeight="800" fill={colors.primary}>
+        H: {fmt(values?.bay_height)}
+      </SvgText>
+      <SvgText x={w - wallT - 8} y={floorY - 10} fontSize={11} fontWeight="800" fill={colors.primary} textAnchor="end">
+        D: {fmt(values?.bay_diagonal)}
       </SvgText>
     </Svg>
   );
