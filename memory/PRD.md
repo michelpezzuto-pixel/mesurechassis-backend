@@ -44,22 +44,26 @@ Application Expo (React Native, mobile + web) de digitalisation des relevés de 
 ## Routes API
 | Méthode | Route | Auth | Description |
 |---|---|---|---|
-| POST | `/api/auth/register` | — | Inscription |
+| POST | `/api/auth/register` | — | Inscription (avec `company_id` optionnel) |
 | POST | `/api/auth/login` | — | Connexion |
 | GET  | `/api/auth/me` | Bearer | Utilisateur courant |
 | GET  | `/api/users` | Bearer | Liste utilisateurs (même société) |
-| POST | `/api/chantiers` | Bearer | Créer un chantier |
-| GET  | `/api/chantiers?status_filter=&q=` | Bearer | Liste filtrée |
-| GET  | `/api/chantiers/{id}` | Bearer | Détail |
-| PATCH| `/api/chantiers/{id}` | Bearer | MAJ statut/champs |
+| POST | `/api/chantiers` | Bearer | Créer un chantier (société du user) |
+| GET  | `/api/chantiers?status_filter=&q=` | Bearer | Liste filtrée par société + statut + recherche |
+| GET  | `/api/chantiers/{id}` | Bearer | Détail (404 si autre société) |
+| PATCH| `/api/chantiers/{id}` | Bearer | MAJ statut / `assigned_to` / champs |
 | DELETE | `/api/chantiers/{id}` | Bearer | Suppression (cascade mesures) |
 | POST | `/api/mesures` | Bearer | Créer une ouverture (calcule alertes & pente) |
 | GET  | `/api/chantiers/{id}/mesures` | Bearer | Mesures du chantier |
 | DELETE | `/api/mesures/{id}` | Bearer | Supprime une mesure |
 | POST | `/api/feedbacks` | Bearer | Envoi feedback |
-| GET  | `/api/feedbacks` | Admin | Liste feedbacks |
-| GET  | `/api/chantiers/{id}/export.pdf` | Bearer | PDF |
-| GET  | `/api/chantiers/{id}/export.json` | Bearer | JSON brut |
+| GET  | `/api/feedbacks` | Admin | Liste feedbacks (sa société uniquement) |
+| DELETE | `/api/feedbacks/{id}` | Admin | Supprime un feedback (sa société) |
+| GET  | `/api/chantiers/{id}/export.pdf` | Bearer | PDF (isolé par société) |
+| GET  | `/api/chantiers/{id}/export.json` | Bearer | JSON brut (isolé par société) |
+
+## Multi-tenant
+Tous les endpoints chantiers / mesures / feedbacks / exports filtrent automatiquement par le `company_id` de l'utilisateur courant. Les utilisateurs d'une société ne voient jamais les données d'une autre.
 
 ## Business smart-add
 Le feedback continu (anomalie/idée + snapshot des données) construit une **boucle de feedback produit** automatique : chaque chantier réel devient une source d'amélioration UX/métier traçable côté admin — différenciateur fort vs concurrents (papier + Excel).

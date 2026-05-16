@@ -442,7 +442,9 @@ def _block_label(b: str) -> str:
 
 @api.get("/chantiers/{chantier_id}/export.pdf")
 async def export_pdf(chantier_id: str, user=Depends(auth_user)):
-    chantier = await db.chantiers.find_one({"id": chantier_id}, {"_id": 0})
+    chantier = await db.chantiers.find_one(
+        {"id": chantier_id, "company_id": user.get("company_id", "default")},
+        {"_id": 0})
     if not chantier:
         raise HTTPException(404, "Chantier introuvable")
     mesures = await db.mesures.find({"chantier_id": chantier_id}, {"_id": 0}) \
