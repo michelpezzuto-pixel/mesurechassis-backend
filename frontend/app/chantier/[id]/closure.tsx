@@ -187,7 +187,9 @@ export default function Closure() {
                 {dimensionFields(m).map((d) => (
                   <View key={d.label} style={styles.dimItem}>
                     <Text style={styles.dimLabel}>{d.label}</Text>
-                    <Text style={styles.dimValue}>{d.value} mm</Text>
+                    <Text style={styles.dimValue}>
+                      {typeof d.value === "number" ? `${d.value} mm` : String(d.value)}
+                    </Text>
                   </View>
                 ))}
               </View>
@@ -252,9 +254,18 @@ export default function Closure() {
   );
 }
 
-function dimensionFields(m: any): { label: string; value: number }[] {
-  const out: { label: string; value: number }[] = [];
+function dimensionFields(m: any): { label: string; value: number | string }[] {
+  const out: { label: string; value: number | string }[] = [];
   const map: [string, string][] = [
+    ["bay_height", "Hauteur (baie)"],
+    ["bay_width", "Largeur (baie)"],
+    ["bay_diagonal", "Diagonale"],
+    ["floor_reserve", "Réserve Sol Fini"],
+    ["bloc_thickness", "Épais. Bloc Béton"],
+    ["insulation_thickness", "Épais. Isolant"],
+    ["finish_outer", "Finition ext."],
+    ["finish_inner", "Finition int."],
+    // Legacy
     ["width_top", "L. haut"],
     ["width_middle", "L. milieu"],
     ["width_bottom", "L. bas"],
@@ -271,6 +282,17 @@ function dimensionFields(m: any): { label: string; value: number }[] {
     ["width_intermediate", "L. inter."],
   ];
   for (const [k, l] of map) if (m[k] != null) out.push({ label: l, value: m[k] });
+  if (m.wall_type) {
+    out.push({
+      label: "Type paroi",
+      value:
+        m.wall_type === "ite"
+          ? "ITE"
+          : m.wall_type === "iti"
+          ? "ITI"
+          : "Crépi simple",
+    });
+  }
   return out;
 }
 

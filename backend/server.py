@@ -109,6 +109,7 @@ class MesureCreate(BaseModel):
     chantier_id: str
     block_type: str
     label: str
+    # Legacy schema fields (optional, kept for backward compat)
     width_top: Optional[float] = None
     width_middle: Optional[float] = None
     width_bottom: Optional[float] = None
@@ -123,6 +124,17 @@ class MesureCreate(BaseModel):
     height_large: Optional[float] = None
     width_small: Optional[float] = None
     width_intermediate: Optional[float] = None
+    # NEW — Baie brute (raw masonry bay) — Step 2
+    bay_height: Optional[float] = None        # Hauteur (mm)
+    bay_width: Optional[float] = None         # Largeur (mm)
+    bay_diagonal: Optional[float] = None      # Diagonale (mm)
+    floor_reserve: Optional[float] = None     # Réserve Sol Fini (mm)
+    # NEW — Conception maçonnerie & isolation (indicatif) — Step 3
+    bloc_thickness: Optional[float] = None    # Épaisseur Bloc Béton (mm)
+    wall_type: Optional[str] = None           # "ite" | "iti" | "crepi_simple"
+    insulation_thickness: Optional[float] = None  # ITE/ITI — Épaisseur Isolant
+    finish_outer: Optional[float] = None      # ITE crépi / CRÉPI ext
+    finish_inner: Optional[float] = None      # ITI plâtre / CRÉPI int
     options: dict = Field(default_factory=dict)
     photo_url: Optional[str] = None  # base64 data URL
 
@@ -597,6 +609,16 @@ async def export_pdf(chantier_id: str, user=Depends(auth_user)):
             styles["Heading3"]))
         rows = [["Mesure", "Valeur (mm)"]]
         fields = [
+            ("Hauteur baie", m.get("bay_height")),
+            ("Largeur baie", m.get("bay_width")),
+            ("Diagonale", m.get("bay_diagonal")),
+            ("Réserve Sol Fini", m.get("floor_reserve")),
+            ("Épaisseur Bloc Béton", m.get("bloc_thickness")),
+            ("Épaisseur Isolant", m.get("insulation_thickness")),
+            ("Finition extérieure", m.get("finish_outer")),
+            ("Finition intérieure", m.get("finish_inner")),
+            ("Type paroi", m.get("wall_type")),
+            # Legacy
             ("Largeur haut", m.get("width_top")),
             ("Largeur milieu", m.get("width_middle")),
             ("Largeur bas", m.get("width_bottom")),
@@ -614,7 +636,11 @@ async def export_pdf(chantier_id: str, user=Depends(auth_user)):
         ]
         for label, val in fields:
             if val is not None:
-                rows.append([label, str(val)])
+                if label == "Type paroi":
+                    label_map = {"ite": "ITE", "iti": "ITI", "crepi_simple": "Crépi simple"}
+                    rows.append([label, label_map.get(str(val), str(val))])
+                else:
+                    rows.append([label, str(val)])
         if m.get("slope_angle_deg") is not None:
             rows.append(["Angle de pente", f"{m['slope_angle_deg']}°"])
         tbl = Table(rows, colWidths=[260, 200])

@@ -1,280 +1,219 @@
 import React from "react";
-import { View, Text, TextInput, StyleSheet, Platform } from "react-native";
-import Svg, { Rect, Line, Polygon, Path } from "react-native-svg";
+import { View, StyleSheet } from "react-native";
+import Svg, { Defs, G, Line, Path, Pattern, Polygon, Rect, Text as SvgText } from "react-native-svg";
 import { colors } from "@/src/theme";
 
+const STROKE = "#52525B";
+const BLOCK_GREY = "#6B6B6E";
+const BLOCK_DARK = "#3F3F46";
+const FLOOR_BROWN = "#5A4632";
+const FLOOR_TOP = "#8E7A5E";
+const SUBFLOOR = "#C5A878";
+
+function MasonryDefs() {
+  return (
+    <Defs>
+      <Pattern id="brick" x={0} y={0} width={32} height={16} patternUnits="userSpaceOnUse">
+        <Rect x={0} y={0} width={32} height={16} fill={BLOCK_GREY} />
+        <Line x1={0} y1={0} x2={32} y2={0} stroke={BLOCK_DARK} strokeWidth={0.8} />
+        <Line x1={16} y1={0} x2={16} y2={8} stroke={BLOCK_DARK} strokeWidth={0.8} />
+        <Line x1={0} y1={8} x2={32} y2={8} stroke={BLOCK_DARK} strokeWidth={0.8} />
+        <Line x1={8} y1={8} x2={8} y2={16} stroke={BLOCK_DARK} strokeWidth={0.8} />
+        <Line x1={24} y1={8} x2={24} y2={16} stroke={BLOCK_DARK} strokeWidth={0.8} />
+      </Pattern>
+      <Pattern id="subfloor" x={0} y={0} width={10} height={10} patternUnits="userSpaceOnUse">
+        <Rect width={10} height={10} fill={SUBFLOOR} />
+        <Line x1={0} y1={0} x2={10} y2={10} stroke="#7C5E3A" strokeWidth={0.6} />
+      </Pattern>
+    </Defs>
+  );
+}
+
+/**
+ * Raw rectangular masonry bay: concrete blocks + lintel + visible sub-floor cross-section.
+ * No window, no door, no decoration.
+ */
+export function RawBaySchemaRect({ size = 320 }: { size?: number }) {
+  const w = size;
+  const h = size * 0.78;
+  const wallT = 30; // wall thickness
+  const lintelT = 28;
+  const openX = wallT;
+  const openY = lintelT;
+  const openW = w - wallT * 2;
+  const openH = h - lintelT - 60; // 60 = floor zone
+  const floorY = h - 60;
+  return (
+    <Svg width={w} height={h}>
+      <MasonryDefs />
+      {/* Left wall */}
+      <Rect x={0} y={0} width={wallT} height={floorY} fill="url(#brick)" stroke={BLOCK_DARK} strokeWidth={1} />
+      {/* Right wall */}
+      <Rect x={w - wallT} y={0} width={wallT} height={floorY} fill="url(#brick)" stroke={BLOCK_DARK} strokeWidth={1} />
+      {/* Lintel */}
+      <Rect x={0} y={0} width={w} height={lintelT} fill="url(#brick)" stroke={BLOCK_DARK} strokeWidth={1} />
+      {/* Floor base */}
+      <Rect x={0} y={floorY} width={w} height={60} fill={FLOOR_BROWN} />
+      {/* Sub-floor cross-section (revealed) */}
+      <Rect x={openX} y={floorY} width={openW} height={14} fill="url(#subfloor)" stroke={BLOCK_DARK} strokeWidth={0.5} />
+      {/* Finished floor line */}
+      <Line x1={openX} y1={floorY + 14} x2={openX + openW} y2={floorY + 14} stroke={FLOOR_TOP} strokeWidth={2} />
+      {/* Opening outline */}
+      <Rect
+        x={openX}
+        y={openY}
+        width={openW}
+        height={openH}
+        fill="none"
+        stroke={STROKE}
+        strokeWidth={1.2}
+        strokeDasharray="4,3"
+        opacity={0.6}
+      />
+      {/* Diagonal arrow */}
+      <Line
+        x1={openX + 4}
+        y1={openY + 4}
+        x2={openX + openW - 4}
+        y2={openY + openH - 4}
+        stroke={colors.primary}
+        strokeWidth={1.2}
+        strokeDasharray="5,3"
+        opacity={0.85}
+      />
+      {/* Annotations */}
+      <SvgText x={w / 2} y={openY + openH / 2 + 4} fontSize={11} fill={colors.primary} fontWeight="700" textAnchor="middle">
+        BAIE BRUTE
+      </SvgText>
+    </Svg>
+  );
+}
+
+/**
+ * Raw trapezoidal masonry bay (sloped top), same principle.
+ */
+export function RawBaySchemaTrapeze({ size = 320 }: { size?: number }) {
+  const w = size;
+  const h = size * 0.78;
+  const wallT = 30;
+  const lintelLow = 22;
+  const lintelHigh = 90;
+  const floorY = h - 60;
+  return (
+    <Svg width={w} height={h}>
+      <MasonryDefs />
+      {/* Left wall */}
+      <Rect x={0} y={lintelLow} width={wallT} height={floorY - lintelLow} fill="url(#brick)" stroke={BLOCK_DARK} strokeWidth={1} />
+      {/* Right wall */}
+      <Rect x={w - wallT} y={lintelHigh} width={wallT} height={floorY - lintelHigh} fill="url(#brick)" stroke={BLOCK_DARK} strokeWidth={1} />
+      {/* Trapezoidal lintel */}
+      <Polygon
+        points={`0,0 ${w},0 ${w},${lintelHigh} 0,${lintelLow}`}
+        fill="url(#brick)"
+        stroke={BLOCK_DARK}
+        strokeWidth={1}
+      />
+      {/* Floor */}
+      <Rect x={0} y={floorY} width={w} height={60} fill={FLOOR_BROWN} />
+      <Rect x={wallT} y={floorY} width={w - wallT * 2} height={14} fill="url(#subfloor)" stroke={BLOCK_DARK} strokeWidth={0.5} />
+      <Line x1={wallT} y1={floorY + 14} x2={w - wallT} y2={floorY + 14} stroke={FLOOR_TOP} strokeWidth={2} />
+      {/* Opening outline */}
+      <Path
+        d={`M ${wallT} ${lintelLow} L ${w - wallT} ${lintelHigh} L ${w - wallT} ${floorY} L ${wallT} ${floorY} Z`}
+        fill="none"
+        stroke={STROKE}
+        strokeWidth={1.2}
+        strokeDasharray="4,3"
+        opacity={0.6}
+      />
+      <SvgText x={w / 2} y={(floorY + (lintelLow + lintelHigh) / 2) / 2 + 4} fontSize={11} fill={colors.primary} fontWeight="700" textAnchor="middle">
+        BAIE BRUTE (TRAPÈZE)
+      </SvgText>
+    </Svg>
+  );
+}
+
+/**
+ * Wall-section visual for the ITE / ITI / CRÉPI cards on Step 3.
+ */
+export function WallSection({
+  variant,
+  size = 80,
+}: {
+  variant: "ite" | "iti" | "crepi";
+  size?: number;
+}) {
+  const w = size;
+  const h = size;
+  // Layers (left → right): outer | wall | inner
+  const layers =
+    variant === "ite"
+      ? [
+          { color: "#C9A36B", width: 18, label: "C" },
+          { color: BLOCK_GREY, width: 28, label: "B" },
+          { color: SUBFLOOR, width: 12, label: "F" },
+        ]
+      : variant === "iti"
+      ? [
+          { color: "#C9A36B", width: 14, label: "C" },
+          { color: BLOCK_GREY, width: 28, label: "B" },
+          { color: SUBFLOOR, width: 18, label: "I" },
+        ]
+      : [
+          { color: "#C9A36B", width: 14, label: "C" },
+          { color: BLOCK_GREY, width: 32, label: "B" },
+          { color: "#C9A36B", width: 14, label: "C" },
+        ];
+  const total = layers.reduce((acc, l) => acc + l.width, 0);
+  const scale = (w - 8) / total;
+  let x = 4;
+  return (
+    <Svg width={w} height={h}>
+      {layers.map((l) => {
+        const lw = l.width * scale;
+        const el = (
+          <Rect
+            key={l.label + x}
+            x={x}
+            y={10}
+            width={lw}
+            height={h - 20}
+            fill={l.color}
+            stroke={BLOCK_DARK}
+            strokeWidth={0.8}
+          />
+        );
+        x += lw;
+        return el;
+      })}
+    </Svg>
+  );
+}
+
+// --- Legacy schemas kept for backward compat (no longer used in the wizard) ---
 export type MeasurementValues = Record<string, string>;
 
-type FieldDef = {
-  key: string;
-  label: string;
-  position: { top?: number; bottom?: number; left?: number; right?: number };
-};
+const SchemaContainer = ({ children }: { children: React.ReactNode }) => (
+  <View style={legacyStyles.wrapper}>{children}</View>
+);
 
-const SVG_SIZE = 280;
-const STROKE = "#52525B";
+export const StandardSchema = ({ values }: { values: MeasurementValues; onChange: (k: string, v: string) => void }) => (
+  <SchemaContainer><RawBaySchemaRect /></SchemaContainer>
+);
+export const CoulissantSchema = StandardSchema;
+export const PorteSchema = StandardSchema;
+export const TrapezeSchema = ({ values }: { values: MeasurementValues; onChange: (k: string, v: string) => void }) => (
+  <SchemaContainer><RawBaySchemaTrapeze /></SchemaContainer>
+);
 
-function InputOverlay({
-  testID,
-  position,
-  value,
-  onChange,
-  placeholder,
-}: {
-  testID: string;
-  position: FieldDef["position"];
-  value: string;
-  onChange: (v: string) => void;
-  placeholder: string;
-}) {
-  return (
-    <View
-      style={[styles.inputWrapper, position]}
-      pointerEvents="box-none"
-    >
-      <Text style={styles.inputLabel}>{placeholder}</Text>
-      <TextInput
-        testID={testID}
-        value={value}
-        onChangeText={onChange}
-        placeholder="mm"
-        placeholderTextColor={colors.placeholder}
-        keyboardType={Platform.OS === "ios" ? "decimal-pad" : "numeric"}
-        style={styles.input}
-      />
-    </View>
-  );
-}
-
-function FrameBox() {
-  return (
-    <Svg width={SVG_SIZE} height={SVG_SIZE}>
-      <Rect
-        x={40}
-        y={40}
-        width={SVG_SIZE - 80}
-        height={SVG_SIZE - 80}
-        stroke={STROKE}
-        strokeWidth={4}
-        fill="transparent"
-      />
-      <Line x1={40} y1={SVG_SIZE / 2} x2={SVG_SIZE - 40} y2={SVG_SIZE / 2} stroke={STROKE} strokeWidth={1} strokeDasharray="4,4" />
-      <Line x1={SVG_SIZE / 2} y1={40} x2={SVG_SIZE / 2} y2={SVG_SIZE - 40} stroke={STROKE} strokeWidth={1} strokeDasharray="4,4" />
-      <Line x1={40} y1={40} x2={SVG_SIZE - 40} y2={SVG_SIZE - 40} stroke={colors.primary} strokeWidth={1.5} strokeDasharray="3,3" opacity={0.7} />
-      <Line x1={SVG_SIZE - 40} y1={40} x2={40} y2={SVG_SIZE - 40} stroke={colors.primary} strokeWidth={1.5} strokeDasharray="3,3" opacity={0.7} />
-    </Svg>
-  );
-}
-
-function SlidingFrame() {
-  return (
-    <Svg width={SVG_SIZE} height={SVG_SIZE}>
-      <Rect x={40} y={40} width={SVG_SIZE - 80} height={SVG_SIZE - 80} stroke={STROKE} strokeWidth={4} fill="transparent" />
-      <Line x1={SVG_SIZE / 2} y1={40} x2={SVG_SIZE / 2} y2={SVG_SIZE - 40} stroke={STROKE} strokeWidth={3} />
-      <Line x1={40} y1={SVG_SIZE / 4 + 20} x2={SVG_SIZE - 40} y2={SVG_SIZE / 4 + 20} stroke={STROKE} strokeWidth={1} strokeDasharray="3,3" />
-      <Line x1={40} y1={(3 * SVG_SIZE) / 4 - 20} x2={SVG_SIZE - 40} y2={(3 * SVG_SIZE) / 4 - 20} stroke={STROKE} strokeWidth={1} strokeDasharray="3,3" />
-    </Svg>
-  );
-}
-
-function DoorFrame() {
-  return (
-    <Svg width={SVG_SIZE} height={SVG_SIZE}>
-      <Rect x={70} y={20} width={SVG_SIZE - 140} height={SVG_SIZE - 40} stroke={STROKE} strokeWidth={4} fill="transparent" />
-      <Rect x={SVG_SIZE - 90} y={SVG_SIZE / 2 - 8} width={8} height={20} fill={colors.primary} />
-    </Svg>
-  );
-}
-
-function TrapezeFrame() {
-  return (
-    <Svg width={SVG_SIZE} height={SVG_SIZE}>
-      <Polygon
-        points={`60,${SVG_SIZE - 40} ${SVG_SIZE - 60},${SVG_SIZE - 40} ${SVG_SIZE - 60},60 60,140`}
-        stroke={STROKE}
-        strokeWidth={4}
-        fill="transparent"
-      />
-      <Path
-        d={`M 60 140 L ${SVG_SIZE - 60} 60`}
-        stroke={colors.primary}
-        strokeWidth={1.5}
-        strokeDasharray="3,3"
-        opacity={0.7}
-      />
-    </Svg>
-  );
-}
-
-export function StandardSchema({
-  values,
-  onChange,
-}: {
-  values: MeasurementValues;
-  onChange: (key: string, v: string) => void;
-}) {
-  const fields: FieldDef[] = [
-    { key: "width_top", label: "L. haut", position: { top: 0, left: SVG_SIZE / 2 - 50 } },
-    { key: "width_middle", label: "L. milieu", position: { top: SVG_SIZE / 2 - 25, left: SVG_SIZE / 2 - 50 } },
-    { key: "width_bottom", label: "L. bas", position: { top: SVG_SIZE - 50, left: SVG_SIZE / 2 - 50 } },
-    { key: "height_left", label: "H. gauche", position: { top: SVG_SIZE / 2 - 25, left: -10 } },
-    { key: "height_middle", label: "H. milieu", position: { top: SVG_SIZE / 2 + 30, left: SVG_SIZE / 2 - 50 } },
-    { key: "height_right", label: "H. droite", position: { top: SVG_SIZE / 2 - 25, right: -10 } },
-    { key: "diag_1", label: "Diag 1 ↘", position: { top: 80, right: 0 } },
-    { key: "diag_2", label: "Diag 2 ↙", position: { top: 80, left: 0 } },
-  ];
-  return (
-    <SchemaContainer>
-      <FrameBox />
-      {fields.map((f) => (
-        <InputOverlay
-          key={f.key}
-          testID={`schema-input-${f.key}`}
-          position={f.position}
-          value={values[f.key] ?? ""}
-          onChange={(v) => onChange(f.key, v)}
-          placeholder={f.label}
-        />
-      ))}
-    </SchemaContainer>
-  );
-}
-
-export function CoulissantSchema({
-  values,
-  onChange,
-}: {
-  values: MeasurementValues;
-  onChange: (key: string, v: string) => void;
-}) {
-  const fields: FieldDef[] = [
-    { key: "width_top", label: "L. haut", position: { top: 0, left: SVG_SIZE / 2 - 50 } },
-    { key: "width_middle", label: "L. milieu", position: { top: SVG_SIZE / 2 - 25, left: SVG_SIZE / 2 - 50 } },
-    { key: "width_bottom", label: "L. bas", position: { top: SVG_SIZE - 50, left: SVG_SIZE / 2 - 50 } },
-    { key: "height_left", label: "H. gauche", position: { top: 50, left: -10 } },
-    { key: "height_quarter_left", label: "H. 1/4 G", position: { top: 110, left: -10 } },
-    { key: "height_middle", label: "H. milieu", position: { top: SVG_SIZE / 2 - 25, left: SVG_SIZE / 2 - 50 } },
-    { key: "height_quarter_right", label: "H. 1/4 D", position: { top: 110, right: -10 } },
-    { key: "height_right", label: "H. droite", position: { top: 50, right: -10 } },
-  ];
-  return (
-    <SchemaContainer>
-      <SlidingFrame />
-      {fields.map((f) => (
-        <InputOverlay
-          key={f.key}
-          testID={`schema-input-${f.key}`}
-          position={f.position}
-          value={values[f.key] ?? ""}
-          onChange={(v) => onChange(f.key, v)}
-          placeholder={f.label}
-        />
-      ))}
-    </SchemaContainer>
-  );
-}
-
-export function PorteSchema({
-  values,
-  onChange,
-}: {
-  values: MeasurementValues;
-  onChange: (key: string, v: string) => void;
-}) {
-  const fields: FieldDef[] = [
-    { key: "width_top", label: "L. haut", position: { top: 0, left: SVG_SIZE / 2 - 50 } },
-    { key: "width_middle", label: "L. milieu", position: { top: SVG_SIZE / 2 - 25, left: SVG_SIZE / 2 - 50 } },
-    { key: "width_bottom", label: "L. bas", position: { top: SVG_SIZE - 50, left: SVG_SIZE / 2 - 50 } },
-    { key: "height_left", label: "H. gauche", position: { top: SVG_SIZE / 2 - 25, left: -10 } },
-    { key: "height_right", label: "H. droite", position: { top: SVG_SIZE / 2 - 25, right: -10 } },
-    { key: "diag_1", label: "Diag 1", position: { top: 60, left: 30 } },
-    { key: "diag_2", label: "Diag 2", position: { top: SVG_SIZE - 100, right: 30 } },
-  ];
-  return (
-    <SchemaContainer>
-      <DoorFrame />
-      {fields.map((f) => (
-        <InputOverlay
-          key={f.key}
-          testID={`schema-input-${f.key}`}
-          position={f.position}
-          value={values[f.key] ?? ""}
-          onChange={(v) => onChange(f.key, v)}
-          placeholder={f.label}
-        />
-      ))}
-    </SchemaContainer>
-  );
-}
-
-export function TrapezeSchema({
-  values,
-  onChange,
-}: {
-  values: MeasurementValues;
-  onChange: (key: string, v: string) => void;
-}) {
-  const fields: FieldDef[] = [
-    { key: "width_small", label: "L. petite (haut)", position: { top: 30, left: SVG_SIZE / 2 - 50 } },
-    { key: "width_intermediate", label: "L. inter. (bas)", position: { top: SVG_SIZE - 30, left: SVG_SIZE / 2 - 50 } },
-    { key: "height_small", label: "H. petite (G)", position: { top: SVG_SIZE / 2 - 25, left: -10 } },
-    { key: "height_large", label: "H. grande (D)", position: { top: SVG_SIZE / 2 - 25, right: -10 } },
-  ];
-  return (
-    <SchemaContainer>
-      <TrapezeFrame />
-      {fields.map((f) => (
-        <InputOverlay
-          key={f.key}
-          testID={`schema-input-${f.key}`}
-          position={f.position}
-          value={values[f.key] ?? ""}
-          onChange={(v) => onChange(f.key, v)}
-          placeholder={f.label}
-        />
-      ))}
-    </SchemaContainer>
-  );
-}
-
-function SchemaContainer({ children }: { children: React.ReactNode }) {
-  return <View style={styles.wrapper}>{children}</View>;
-}
-
-const styles = StyleSheet.create({
+const legacyStyles = StyleSheet.create({
   wrapper: {
-    width: SVG_SIZE,
-    height: SVG_SIZE,
     alignSelf: "center",
     backgroundColor: colors.bg,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.borderSubtle,
-    position: "relative",
+    padding: 6,
     marginVertical: 8,
-  },
-  inputWrapper: {
-    position: "absolute",
-    width: 100,
-    backgroundColor: colors.bg,
-    borderWidth: 2,
-    borderColor: colors.primary,
-    borderRadius: 6,
-    padding: 4,
-  },
-  inputLabel: {
-    color: colors.textSecondary,
-    fontSize: 9,
-    fontWeight: "700",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-    textAlign: "center",
-  },
-  input: {
-    color: colors.textPrimary,
-    fontSize: 14,
-    fontWeight: "800",
-    textAlign: "center",
-    paddingVertical: 2,
   },
 });

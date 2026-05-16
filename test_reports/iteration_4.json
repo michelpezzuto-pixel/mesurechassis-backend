@@ -1,0 +1,48 @@
+{
+  "summary": "Iteration 4 — Backend validation of the refactored Mesure model (9 new optional fields: bay_height, bay_width, bay_diagonal, floor_reserve, bloc_thickness, wall_type, insulation_thickness, finish_outer, finish_inner) + legacy field backward-compat + updated PDF/JSON exports. 74/74 pytest tests pass: 11 new iter4 tests + 63 regression tests from iter1/iter2/iter3, all green with zero modifications to existing tests or backend code.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/mesures", "issue": "wall_type has no backend enum validation — arbitrary strings like 'foobar' are accepted and persisted. Per iter4 spec this is expected (frontend enforces 'ite'|'iti'|'crepi_simple'), but consider adding server-side validation in a future iter for defense-in-depth."},
+      {"endpoint": "POST /api/mesures", "issue": "compute_alerts only inspects legacy fields (width_*, height_*, diag_*). When only new bay_* fields are supplied, alerts=[] silently — documented expected behavior, but worth flagging: no faux-aplomb detection on bay_height/bay_width yet."},
+      {"endpoint": "GET /api/chantiers/{id}/export.pdf", "issue": "Carry-over from iter2/iter3: still does NOT filter by company_id (only matches by id); export.json correctly does. Cross-tenant PDF download possible by UUID guess."},
+      {"endpoint": "DELETE /api/mesures/{id}, DELETE /api/feedbacks/{id}", "issue": "Carry-over: silent 200 no-op when id is unknown."},
+      {"endpoint": "Creation endpoints", "issue": "Carry-over: returns 200 instead of REST-conventional 201 on POST."},
+      {"endpoint": "passlib bcrypt warning", "issue": "Carry-over: 'module bcrypt has no attribute __about__' on startup. Functional but noisy."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iter4_new_mesure_fields.py",
+    "/app/test_reports/pytest/iter4.xml",
+    "/app/test_reports/pytest/iter4_full.xml"
+  ],
+  "action_items": [
+    "(Optional) Add server-side enum validation for wall_type ∈ {ite, iti, crepi_simple} to mirror the frontend constraint.",
+    "(Optional) Extend compute_alerts to also flag inconsistencies in bay_diagonal vs sqrt(bay_height^2+bay_width^2), and a faux-aplomb proxy if/when multiple bay measurements are introduced.",
+    "(Optional carry-over) company_id filter on export.pdf; 404 on delete-not-found; 201 on creation; pin bcrypt<4."
+  ],
+  "critical_code_review_comments": [
+    "MesureCreate cleanly extended with 9 optional new fields — no breaking change. Legacy fields kept Optional, so unmodified iter1/2/3 payloads still pass Pydantic validation (verified by 63/63 regression tests).",
+    "compute_alerts is unchanged and references only legacy fields — when new-only payloads are sent, alerts=[] which is the documented expected behavior. No crash on missing legacy values (already Optional).",
+    "POST /api/mesures uses payload.model_dump() then merges id/created_at/alerts/slope, so new fields are persisted verbatim and returned by both list_mesures and export.json (verified).",
+    "PDF builder (server.py L611-643) lists the 9 new fields FIRST (Hauteur baie, Largeur baie, Diagonale, Réserve Sol Fini, Épaisseur Bloc Béton, Épaisseur Isolant, Finition ext, Finition int, Type paroi) then legacy. wall_type is mapped to human labels ('ITE'/'ITI'/'Crépi simple') with fallback to raw string — robust against arbitrary values.",
+    "Fields with value None are skipped from PDF rows — clean output for mixed payloads. Verified export.pdf returns 200 + application/pdf + valid %PDF- magic header with new-fields-only mesure.",
+    "Role gating unchanged: technician CAN POST /api/mesures with new fields (verified test_technician_can_post_with_new_fields).",
+    "No MongoDB _id leakage — all find() calls already project {_id:0}."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iter4_new_mesure_fields.py (new — 11 tests across TestNewFieldsAcceptance + TestRetrievalAndExports)"
+  ],
+  "success_rate": {"backend": "100% (74/74)", "frontend": "not tested (backend-only request)"},
+  "seed_data_creation": "One ephemeral chantier 'TEST_Iter4Client' created via commercial token at module-fixture setup, populated with ~7 TEST_-prefixed mesures across new-only, legacy-only, mix, wall_type variants, and a technician-authored mesure. Teardown deletes the chantier as admin which cascades mesure cleanup via existing DELETE /api/chantiers/{id} handler. Demo users and 5 seeded chantiers untouched.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Backend iter4 is fully green (74/74). All 9 new MesureCreate fields validated end-to-end: POST acceptance, GET list retrieval, export.json shape, export.pdf 200 + %PDF- bytes. Backward compatibility verified (legacy-only payloads still work, mixed payloads still produce alerts from legacy values). wall_type has NO server-side enum check — only the frontend enforces ite/iti/crepi_simple. compute_alerts intentionally still references legacy fields only (new-only mesure → alerts=[]). Next iteration likely needs frontend testing of the 3-step wizard: (1) block picker, (2) raw-bay H/W/D/floor_reserve form (mandatory), (3) bloc thickness + wall_type segmented + indicative insulation/finish fields. Watch for keyboard handling on numeric inputs and testID coverage on segmented controls.",
+  "rca_of_issue": "No issues observed. Zero code or test changes were required to existing files — the iter4 refactor is purely additive at the model level and the PDF builder gracefully iterates new fields first, legacy second, skipping None values."
+}
