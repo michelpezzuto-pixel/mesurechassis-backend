@@ -100,6 +100,7 @@ class Chantier(BaseModel):
     status: str
     created_by: str
     assigned_to: Optional[str] = None
+    company_id: str = "default"
     created_at: str
 
 
@@ -147,6 +148,7 @@ class Feedback(BaseModel):
     user_comment: str
     screenshot_data: Optional[str] = None
     encoded_data_snapshot: dict
+    company_id: str = "default"
     created_at: str
 
 
@@ -211,7 +213,7 @@ def compute_alerts(m: MesureCreate) -> tuple[list[str], Optional[float]]:
             alerts.append("⚠️ Faux-aplomb détecté (largeurs)")
         if heights and (max(heights) - min(heights)) > 5:
             alerts.append("⚠️ Faux-aplomb détecté (hauteurs)")
-        if m.diag_1 is not None and m.diag_2 is not None and abs(m.diag_1 - m.diag_2) > 0:
+        if m.diag_1 is not None and m.diag_2 is not None and abs(m.diag_1 - m.diag_2) > 5:
             alerts.append("⚠️ Hors-équerre")
     elif bt == "coulissant":
         widths = [m.width_top, m.width_middle, m.width_bottom]
@@ -289,6 +291,7 @@ async def create_chantier(payload: ChantierCreate, user=Depends(auth_user)):
         "status": payload.status,
         "created_by": user["id"],
         "assigned_to": payload.assigned_to,
+        "company_id": user.get("company_id", "default"),
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.chantiers.insert_one(doc)
@@ -299,13 +302,15 @@ async def create_chantier(payload: ChantierCreate, user=Depends(auth_user)):
 @api.get("/chantiers", response_model=List[Chantier])
 async def list_chantiers(status_filter: Optional[str] = None, q: Optional[str] = None,
                           user=Depends(auth_user)):
-    query: dict = {}
+    query: dict = {"company_id": user.get("company_id", "default")}
     if status_filter and status_filter in VALID_STATUSES:
         query["status"] = status_filter
     if q:
+        import re as _re
+        safe = _re.escape(q.strip())
         query["$or"] = [
-            {"client_name": {"$regex": q, "$options": "i"}},
-            {"address": {"$regex": q, "$options": "i"}},
+            {"client_name": {"$regex": safe, "$options": "i"}},
+            {"address": {"$regex": safe, "$options": "i"}},
         ]
     docs = await db.chantiers.find(query, {"_id": 0}).sort("created_at", -1).to_list(500)
     return [Chantier(**d) for d in docs]
@@ -313,7 +318,9 @@ async def list_chantiers(status_filter: Optional[str] = None, q: Optional[str] =
 
 @api.get("/chantiers/{chantier_id}", response_model=Chantier)
 async def get_chantier(chantier_id: str, user=Depends(auth_user)):
-    doc = await db.chantiers.find_one({"id": chantier_id}, {"_id": 0})
+    doc = await db.chantiers.find_one(
+        {"id": chantier_id, "company_id": user.get("company_id", "default")},
+        {"_id": 0})
     if not doc:
         raise HTTPException(404, "Chantier introuvable")
     return Chantier(**doc)
@@ -321,32 +328,42 @@ async def get_chantier(chantier_id: str, user=Depends(auth_user)):
 
 @api.patch("/chantiers/{chantier_id}", response_model=Chantier)
 async def update_chantier(chantier_id: str, payload: ChantierUpdate, user=Depends(auth_user)):
+    company = user.get("company_id", "default")
+    existing = await db.chantiers.find_one({"id": chantier_id, "company_id": company})
+    if not existing:
+        raise HTTPException(404, "Chantier introuvable")
     update = {k: v for k, v in payload.model_dump().items() if v is not None}
     if "status" in update and update["status"] not in VALID_STATUSES:
         raise HTTPException(400, "Invalid status")
     if update:
-        await db.chantiers.update_one({"id": chantier_id}, {"$set": update})
-    doc = await db.chantiers.find_one({"id": chantier_id}, {"_id": 0})
-    if not doc:
-        raise HTTPException(404, "Chantier introuvable")
+        await db.chantiers.update_one({"id": chantier_id, "company_id": company}, {"$set": update})
+    doc = await db.chantiers.find_one({"id": chantier_id, "company_id": company}, {"_id": 0})
     return Chantier(**doc)
 
 
 @api.delete("/chantiers/{chantier_id}")
 async def delete_chantier(chantier_id: str, user=Depends(auth_user)):
-    await db.chantiers.delete_one({"id": chantier_id})
-    await db.mesures.delete_many({"chantier_id": chantier_id})
+    company = user.get("company_id", "default")
+    res = await db.chantiers.delete_one({"id": chantier_id, "company_id": company})
+    if res.deleted_count:
+        await db.mesures.delete_many({"chantier_id": chantier_id})
     return {"ok": True}
 
 
 # --- Mesures routes ------------------------------------------------------
+async def _check_chantier_access(chantier_id: str, user: dict) -> dict:
+    chantier = await db.chantiers.find_one(
+        {"id": chantier_id, "company_id": user.get("company_id", "default")})
+    if not chantier:
+        raise HTTPException(404, "Chantier introuvable")
+    return chantier
+
+
 @api.post("/mesures", response_model=Mesure)
 async def create_mesure(payload: MesureCreate, user=Depends(auth_user)):
     if payload.block_type not in VALID_BLOCK_TYPES:
         raise HTTPException(400, "Invalid block_type")
-    chantier = await db.chantiers.find_one({"id": payload.chantier_id})
-    if not chantier:
-        raise HTTPException(404, "Chantier introuvable")
+    await _check_chantier_access(payload.chantier_id, user)
     alerts, slope = compute_alerts(payload)
     doc = payload.model_dump()
     doc.update({
@@ -362,6 +379,7 @@ async def create_mesure(payload: MesureCreate, user=Depends(auth_user)):
 
 @api.get("/chantiers/{chantier_id}/mesures", response_model=List[Mesure])
 async def list_mesures(chantier_id: str, user=Depends(auth_user)):
+    await _check_chantier_access(chantier_id, user)
     docs = await db.mesures.find({"chantier_id": chantier_id}, {"_id": 0}) \
         .sort("created_at", 1).to_list(500)
     return [Mesure(**d) for d in docs]
@@ -369,7 +387,10 @@ async def list_mesures(chantier_id: str, user=Depends(auth_user)):
 
 @api.delete("/mesures/{mesure_id}")
 async def delete_mesure(mesure_id: str, user=Depends(auth_user)):
-    await db.mesures.delete_one({"id": mesure_id})
+    mesure = await db.mesures.find_one({"id": mesure_id})
+    if mesure:
+        await _check_chantier_access(mesure["chantier_id"], user)
+        await db.mesures.delete_one({"id": mesure_id})
     return {"ok": True}
 
 
@@ -384,6 +405,7 @@ async def create_feedback(payload: FeedbackCreate, user=Depends(auth_user)):
         "user_comment": payload.user_comment,
         "screenshot_data": payload.screenshot_data,
         "encoded_data_snapshot": payload.encoded_data_snapshot,
+        "company_id": user.get("company_id", "default"),
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.feedbacks.insert_one(doc)
@@ -393,8 +415,17 @@ async def create_feedback(payload: FeedbackCreate, user=Depends(auth_user)):
 
 @api.get("/feedbacks", response_model=List[Feedback])
 async def list_feedbacks(user=Depends(require_admin)):
-    docs = await db.feedbacks.find({}, {"_id": 0}).sort("created_at", -1).to_list(500)
+    docs = await db.feedbacks.find(
+        {"company_id": user.get("company_id", "default")},
+        {"_id": 0}).sort("created_at", -1).to_list(500)
     return [Feedback(**d) for d in docs]
+
+
+@api.delete("/feedbacks/{feedback_id}")
+async def delete_feedback(feedback_id: str, user=Depends(require_admin)):
+    await db.feedbacks.delete_one(
+        {"id": feedback_id, "company_id": user.get("company_id", "default")})
+    return {"ok": True}
 
 
 # --- Export routes -------------------------------------------------------
@@ -481,7 +512,9 @@ async def export_pdf(chantier_id: str, user=Depends(auth_user)):
 
 @api.get("/chantiers/{chantier_id}/export.json")
 async def export_json(chantier_id: str, user=Depends(auth_user)):
-    chantier = await db.chantiers.find_one({"id": chantier_id}, {"_id": 0})
+    chantier = await db.chantiers.find_one(
+        {"id": chantier_id, "company_id": user.get("company_id", "default")},
+        {"_id": 0})
     if not chantier:
         raise HTTPException(404, "Chantier introuvable")
     mesures = await db.mesures.find({"chantier_id": chantier_id}, {"_id": 0}) \
@@ -536,9 +569,16 @@ async def seed_data():
                 "status": status_v,
                 "created_by": user_ids.get("commercial", "system"),
                 "assigned_to": user_ids.get("technician"),
+                "company_id": "default",
                 "created_at": datetime.now(timezone.utc).isoformat(),
             })
         logger.info("Seeded %d demo chantiers", len(demos))
+
+    # Backfill missing company_id on existing rows (from previous schema)
+    await db.chantiers.update_many(
+        {"company_id": {"$exists": False}}, {"$set": {"company_id": "default"}})
+    await db.feedbacks.update_many(
+        {"company_id": {"$exists": False}}, {"$set": {"company_id": "default"}})
 
 
 # --- App wiring ----------------------------------------------------------

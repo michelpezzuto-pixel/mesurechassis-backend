@@ -1,0 +1,45 @@
+{
+  "summary": "Iteration 2 — multi-tenant company isolation, chantier assignment, hors-équerre tolerance (>5mm), and admin DELETE /api/feedbacks. 43/43 pytest tests pass (29 from iteration 1 + 14 new). All 14 features from the review request validated against the public EXPO_PUBLIC_BACKEND_URL.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "GET /api/chantiers/{id}/export.pdf", "issue": "Does NOT filter by company_id (server.py L445) — a user who knows a UUID of another company's chantier could download its PDF. export.json correctly filters by company_id (L515-517). Should add the same company_id check to the PDF route."},
+      {"endpoint": "DELETE /api/mesures/{id}", "issue": "Returns 200 with {'ok': true} even when the mesure does not exist (no 404). Minor consistency issue with chantiers/feedbacks delete behaviour."},
+      {"endpoint": "DELETE /api/feedbacks/{id}", "issue": "Always returns 200 even if id is unknown or belongs to another company (silent no-op). Cosmetic; consider returning 404 when nothing was deleted."},
+      {"endpoint": "passlib bcrypt warning", "issue": "Carry-over from iteration 1: 'module bcrypt has no attribute __about__' on startup. Functional but noisy."},
+      {"endpoint": "POST /api/auth/register, POST /api/chantiers, POST /api/mesures, POST /api/feedbacks", "issue": "Returns 200 OK on creation; REST convention is 201. Not breaking."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_multitenant.py",
+    "/app/test_reports/pytest/iter2_multitenant.xml",
+    "/app/test_reports/pytest/iter2_full.xml"
+  ],
+  "action_items": [
+    "Add company_id filter to GET /api/chantiers/{id}/export.pdf (server.py L445) to match export.json — otherwise cross-tenant PDF download possible by UUID guess.",
+    "Optional: return 404 on DELETE /api/feedbacks/{id} and DELETE /api/mesures/{id} when nothing deleted (currently always 200).",
+    "Optional carry-over: pin bcrypt<4 / upgrade passlib, return 201 on creation endpoints."
+  ],
+  "critical_code_review_comments": [
+    "Multi-tenant filtering correctly applied via user.get('company_id', 'default') on chantiers (list/get/patch/delete), mesures (via _check_chantier_access), and feedbacks (list/delete/create). Backfill update_many on startup covers legacy rows.",
+    "re.escape correctly applied in GET /api/chantiers?q= search (server.py L310) — verified with '(', '*', '+' inputs.",
+    "Hors-équerre tolerance now '> 5' (L216) — verified that delta=3mm and delta=5mm do NOT alert, while delta=10mm does.",
+    "DELETE /api/feedbacks/{id} correctly gated by require_admin (returns 403 for technician).",
+    "export.pdf at L445 still uses {'id': chantier_id} without company filter — single isolation gap remaining (see action_items)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_multitenant.py (new)"
+  ],
+  "success_rate": {"backend": "100% (43/43)", "frontend": "not tested (backend-only request)"},
+  "seed_data_creation": "Tests register two ephemeral users in company 'acme-test' (TEST_acme_* and TEST_acme_admin_* emails). All TEST_* chantiers and feedbacks are deleted in their fixtures' teardown. Demo users and 5 seeded default-company chantiers were left intact.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Backend remains fully green (43/43). New test file /app/backend/tests/test_multitenant.py covers company-isolation contract. One residual gap (export.pdf company filter) is documented in action_items but is low impact (requires guessing UUIDs). Next iteration can focus on frontend integration of company_id selection at registration, the chantier assignment dropdown, and the new admin feedback delete button.",
+  "rca_of_issue": "N/A — all targeted features behave correctly. The two pre-existing iteration-2 test setup errors (ScopeMismatch and email-case mismatch) were test-author issues in my fixtures, fixed in-place before the final run; no production code was changed."
+}

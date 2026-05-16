@@ -143,12 +143,27 @@ export default function Dashboard() {
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
       <View style={styles.topBar}>
-        <View>
+        <View style={{ flex: 1 }}>
           <Text style={styles.welcome}>Bonjour</Text>
           <Text style={styles.userName} numberOfLines={1}>
             {user?.name}
           </Text>
+          {user?.company_id && user.company_id !== "default" && (
+            <Text style={styles.companyTag} numberOfLines={1}>
+              {user.company_id}
+            </Text>
+          )}
         </View>
+        {user?.role === "admin" && (
+          <TouchableOpacity
+            testID="admin-feedbacks-button"
+            onPress={() => router.push("/admin/feedbacks")}
+            style={[styles.logoutBtn, { marginRight: 8 }]}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="megaphone-outline" size={22} color={colors.primary} />
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
           testID="logout-button"
           onPress={logout}
@@ -304,6 +319,14 @@ const styles = StyleSheet.create({
   },
   welcome: { color: colors.textSecondary, fontSize: 13, letterSpacing: 0.5 },
   userName: { color: colors.textPrimary, fontSize: 22, fontWeight: "900", marginTop: 2 },
+  companyTag: {
+    color: colors.primary,
+    fontSize: 11,
+    fontWeight: "700",
+    letterSpacing: 1,
+    textTransform: "uppercase",
+    marginTop: 2,
+  },
   logoutBtn: {
     marginLeft: "auto",
     width: 48,

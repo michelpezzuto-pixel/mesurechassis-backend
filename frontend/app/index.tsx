@@ -30,6 +30,7 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [companyId, setCompanyId] = useState("");
   const [role, setRole] = useState<Role>("technician");
   const [submitting, setSubmitting] = useState(false);
 
@@ -65,7 +66,7 @@ export default function SignIn() {
       if (mode === "login") {
         await signIn(email.trim(), password);
       } else {
-        await signUp(name.trim(), email.trim(), password, role);
+        await signUp(name.trim(), email.trim(), password, role, companyId.trim() || "default");
       }
       router.replace("/dashboard");
     } catch (e: any) {
@@ -133,6 +134,16 @@ export default function SignIn() {
                 onChangeText={setName}
                 placeholder="ex. Lucas Petit"
                 placeholderTextColor={colors.placeholder}
+                style={styles.input}
+              />
+              <Text style={styles.label}>Société (laisser vide = par défaut)</Text>
+              <TextInput
+                testID="register-company-input"
+                value={companyId}
+                onChangeText={setCompanyId}
+                placeholder="ex. menuiseries-dupont"
+                placeholderTextColor={colors.placeholder}
+                autoCapitalize="none"
                 style={styles.input}
               />
               <Text style={styles.label}>Rôle</Text>

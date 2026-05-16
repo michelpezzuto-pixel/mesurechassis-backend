@@ -4,6 +4,7 @@ import {
   Alert,
   FlatList,
   Image,
+  Modal,
   RefreshControl,
   StyleSheet,
   Text,
@@ -21,6 +22,7 @@ type Chantier = {
   client_name: string;
   address: string;
   status: string;
+  assigned_to?: string | null;
   created_at: string;
 };
 
@@ -33,22 +35,28 @@ type Mesure = {
   slope_angle_deg?: number | null;
 };
 
+type UserOpt = { id: string; name: string; email: string; role: string };
+
 export default function ChantierDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [chantier, setChantier] = useState<Chantier | null>(null);
   const [mesures, setMesures] = useState<Mesure[]>([]);
+  const [users, setUsers] = useState<UserOpt[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [assignOpen, setAssignOpen] = useState(false);
 
   const fetchAll = useCallback(async () => {
     try {
-      const [c, m] = await Promise.all([
+      const [c, m, u] = await Promise.all([
         api.get<Chantier>(`/chantiers/${id}`),
         api.get<Mesure[]>(`/chantiers/${id}/mesures`),
+        api.get<UserOpt[]>("/users"),
       ]);
       setChantier(c.data);
       setMesures(m.data);
+      setUsers(u.data);
     } catch {
       Alert.alert("Erreur", "Impossible de charger le chantier.");
     } finally {
@@ -62,6 +70,20 @@ export default function ChantierDetail() {
       fetchAll();
     }, [fetchAll])
   );
+
+  const assignTo = async (userId: string | null) => {
+    try {
+      const res = await api.patch<Chantier>(`/chantiers/${id}`, { assigned_to: userId });
+      setChantier(res.data);
+      setAssignOpen(false);
+    } catch {
+      Alert.alert("Erreur", "Affectation impossible.");
+    }
+  };
+
+  const assignedUser = chantier?.assigned_to
+    ? users.find((u) => u.id === chantier.assigned_to)
+    : null;
 
   const meta = chantier ? statusMeta[chantier.status] : null;
 
@@ -102,6 +124,20 @@ export default function ChantierDetail() {
                   <Text style={[styles.badgeText, { color: meta.color }]}>{meta.label}</Text>
                 </View>
               )}
+
+              <TouchableOpacity
+                testID="assign-button"
+                onPress={() => setAssignOpen(true)}
+                style={styles.assignRow}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="person-circle-outline" size={18} color={colors.primary} />
+                <Text style={styles.assignLabel}>Affecté à :</Text>
+                <Text style={styles.assignValue}>
+                  {assignedUser ? assignedUser.name : "Personne — affecter"}
+                </Text>
+                <Ionicons name="chevron-down" size={16} color={colors.textSecondary} style={{ marginLeft: "auto" }} />
+              </TouchableOpacity>
             </View>
 
             <View style={styles.statsRow}>
@@ -185,6 +221,67 @@ export default function ChantierDetail() {
           <Text style={styles.btnPrimaryText}>AJOUTER UNE OUVERTURE</Text>
         </TouchableOpacity>
       </View>
+
+      <Modal visible={assignOpen} transparent animationType="fade" onRequestClose={() => setAssignOpen(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>AFFECTER LE CHANTIER</Text>
+            <Text style={styles.modalSub}>Sélectionnez un membre de l'équipe</Text>
+            <FlatList
+              data={users}
+              keyExtractor={(u) => u.id}
+              style={{ maxHeight: 320 }}
+              ListHeaderComponent={
+                <TouchableOpacity
+                  testID="assign-none"
+                  onPress={() => assignTo(null)}
+                  style={[styles.assignItem, !chantier.assigned_to && styles.assignItemActive]}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="close-circle-outline" size={20} color={colors.textSecondary} />
+                  <Text style={styles.assignItemText}>Aucune affectation</Text>
+                </TouchableOpacity>
+              }
+              renderItem={({ item }) => {
+                const active = chantier.assigned_to === item.id;
+                return (
+                  <TouchableOpacity
+                    testID={`assign-user-${item.id}`}
+                    onPress={() => assignTo(item.id)}
+                    style={[styles.assignItem, active && styles.assignItemActive]}
+                    activeOpacity={0.7}
+                  >
+                    <Ionicons
+                      name={
+                        item.role === "admin"
+                          ? "shield-checkmark"
+                          : item.role === "commercial"
+                          ? "briefcase"
+                          : "construct"
+                      }
+                      size={20}
+                      color={active ? colors.primary : colors.textSecondary}
+                    />
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.assignItemText}>{item.name}</Text>
+                      <Text style={styles.assignItemRole}>{item.role}</Text>
+                    </View>
+                    {active && <Ionicons name="checkmark-circle" size={20} color={colors.primary} />}
+                  </TouchableOpacity>
+                );
+              }}
+            />
+            <TouchableOpacity
+              testID="assign-cancel"
+              onPress={() => setAssignOpen(false)}
+              style={[styles.btn, styles.btnSecondary, { marginTop: 12 }]}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.btnSecondaryText}>FERMER</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }

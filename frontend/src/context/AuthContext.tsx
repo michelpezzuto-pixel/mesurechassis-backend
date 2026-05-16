@@ -15,7 +15,7 @@ type AuthCtx = {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (name: string, email: string, password: string, role: Role) => Promise<void>;
+  signUp: (name: string, email: string, password: string, role: Role, companyId?: string) => Promise<void>;
   signOut: () => Promise<void>;
 };
 
@@ -49,8 +49,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(res.data.user);
   };
 
-  const signUp = async (name: string, email: string, password: string, role: Role) => {
-    const res = await api.post("/auth/register", { name, email, password, role });
+  const signUp = async (name: string, email: string, password: string, role: Role, companyId?: string) => {
+    const res = await api.post("/auth/register", {
+      name,
+      email,
+      password,
+      role,
+      company_id: companyId && companyId.length > 0 ? companyId : "default",
+    });
     await saveToken(res.data.access_token);
     setUser(res.data.user);
   };
