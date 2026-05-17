@@ -6,14 +6,16 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
-import { api } from "@/src/services/api";
+import { api, getToken } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { colors, statusMeta } from "@/src/theme";
+import * as Sharing from "expo-sharing";
 
 type Stats = {
   total_chantiers: number;
@@ -24,17 +26,30 @@ type Stats = {
   by_technician: { user_id: string; name: string; role: string; mesures: number; alerts: number }[];
 };
 
+type Commercials = {
+  commercials: { user_id: string; name: string; email: string; created: number; converted: number; conversion_rate: number }[];
+  total_created: number;
+  total_converted: number;
+  global_conversion_rate: number;
+};
+
 export default function AdminStats() {
   const { user } = useAuth();
   const router = useRouter();
   const [data, setData] = useState<Stats | null>(null);
+  const [perf, setPerf] = useState<Commercials | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
-      const res = await api.get<Stats>("/stats/company");
-      setData(res.data);
+      const [s, c] = await Promise.all([
+        api.get<Stats>("/stats/company"),
+        api.get<Commercials>("/stats/commercials"),
+      ]);
+      setData(s.data);
+      setPerf(c.data);
     } catch (e: any) {
       if (e?.response?.status === 403) {
         Alert.alert("Accès refusé", "Réservé aux administrateurs.");
@@ -47,6 +62,33 @@ export default function AdminStats() {
       setRefreshing(false);
     }
   }, [router]);
+
+  const exportPerfPDF = async () => {
+    setExporting(true);
+    try {
+      const token = await getToken();
+      const r = await fetch(
+        `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/stats/commercials/export.pdf`,
+        { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+      );
+      const blob = await r.blob();
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const b64 = (reader.result as string).split(",")[1];
+        const FS = await import("expo-file-system/legacy");
+        const fileUri = `${FS.cacheDirectory}rapport-performance.pdf`;
+        await FS.writeAsStringAsync(fileUri, b64, { encoding: FS.EncodingType.Base64 });
+        if (await Sharing.isAvailableAsync()) {
+          await Sharing.shareAsync(fileUri, { mimeType: "application/pdf" });
+        }
+      };
+      reader.readAsDataURL(blob);
+    } catch {
+      Alert.alert("Erreur", "Export PDF impossible.");
+    } finally {
+      setExporting(false);
+    }
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -168,6 +210,71 @@ export default function AdminStats() {
             </View>
           </View>
         ))}
+
+        {perf && (
+          <>
+            <View style={{ flexDirection: "row", alignItems: "center", marginTop: 24 }}>
+              <Text style={[styles.section, { flex: 1, marginTop: 0 }]}>PERFORMANCE COMMERCIAUX</Text>
+              <TouchableOpacity
+                testID="export-perf-pdf"
+                onPress={exportPerfPDF}
+                disabled={exporting}
+                style={localStyles.exportBtn}
+                activeOpacity={0.85}
+              >
+                {exporting ? (
+                  <ActivityIndicator color="#000" size="small" />
+                ) : (
+                  <>
+                    <Ionicons name="document-text" size={14} color="#000" />
+                    <Text style={localStyles.exportBtnText}>PDF</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.card}>
+              <Text style={localStyles.kpi}>
+                Taux conversion global : <Text style={{ color: colors.success }}>{perf.global_conversion_rate}%</Text>
+              </Text>
+              <Text style={localStyles.kpiSub}>
+                {perf.total_converted} convertis / {perf.total_created} créés
+              </Text>
+            </View>
+
+            {perf.commercials.length === 0 ? (
+              <Text style={styles.empty}>Aucun commercial enregistré.</Text>
+            ) : (
+              perf.commercials.map((c) => (
+                <View key={c.user_id} style={styles.techCard} testID={`commercial-row-${c.user_id}`}>
+                  <View style={styles.techHeader}>
+                    <Ionicons name="briefcase" size={20} color={colors.primary} />
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.techName}>{c.name}</Text>
+                      <Text style={styles.techRole}>{c.email}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.techStats}>
+                    <View style={styles.techPill}>
+                      <Text style={styles.techPillValue}>{c.created}</Text>
+                      <Text style={styles.techPillLabel}>Créés</Text>
+                    </View>
+                    <View style={styles.techPill}>
+                      <Text style={styles.techPillValue}>{c.converted}</Text>
+                      <Text style={styles.techPillLabel}>Convertis</Text>
+                    </View>
+                    <View style={[styles.techPill, c.conversion_rate >= 50 && { borderColor: colors.success }]}>
+                      <Text style={[styles.techPillValue, c.conversion_rate >= 50 && { color: colors.success }]}>
+                        {c.conversion_rate}%
+                      </Text>
+                      <Text style={styles.techPillLabel}>Conversion</Text>
+                    </View>
+                  </View>
+                </View>
+              ))
+            )}
+          </>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -251,4 +358,19 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   empty: { color: colors.textSecondary, fontStyle: "italic", textAlign: "center", padding: 16 },
+});
+
+const localStyles = StyleSheet.create({
+  exportBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: colors.primary,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  exportBtnText: { color: "#000", fontWeight: "900", fontSize: 11, letterSpacing: 0.8 },
+  kpi: { color: colors.textPrimary, fontWeight: "800", fontSize: 16 },
+  kpiSub: { color: colors.textSecondary, fontSize: 12, marginTop: 4 },
 });

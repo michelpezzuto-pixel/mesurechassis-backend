@@ -50,7 +50,8 @@ app = FastAPI(title="MesureChâssis API")
 api = APIRouter(prefix="/api")
 
 VALID_ROLES = {"admin", "commercial", "technician"}
-VALID_STATUSES = {"devis_a_faire", "technique_a_valider", "cloture"}
+VALID_STATUSES = {"devis_a_faire", "technique_a_valider", "en_commande", "en_fabrication", "cloture"}
+CONVERTED_STATUSES = {"en_commande", "en_fabrication", "cloture"}
 VALID_BLOCK_TYPES = {"standard", "coulissant", "porte", "trapeze"}
 VALID_WALL_TYPES = {"ite", "iti", "brique_parement", "crepi_simple"}
 
@@ -88,6 +89,8 @@ class ChantierCreate(BaseModel):
     address: str
     status: str = "devis_a_faire"
     assigned_to: Optional[str] = None
+    appointment_at: Optional[str] = None  # ISO datetime
+    notes: Optional[str] = None
 
 
 class ChantierUpdate(BaseModel):
@@ -95,6 +98,8 @@ class ChantierUpdate(BaseModel):
     address: Optional[str] = None
     status: Optional[str] = None
     assigned_to: Optional[str] = None
+    appointment_at: Optional[str] = None
+    notes: Optional[str] = None
 
 
 class Chantier(BaseModel):
@@ -104,8 +109,10 @@ class Chantier(BaseModel):
     status: str
     created_by: str
     assigned_to: Optional[str] = None
+    appointment_at: Optional[str] = None
+    notes: Optional[str] = None
     company_id: str = "default"
-    client_signature: Optional[str] = None  # base64 PNG
+    client_signature: Optional[str] = None
     signed_at: Optional[str] = None
     created_at: str
 
@@ -379,11 +386,20 @@ async def create_chantier(payload: ChantierCreate,
         "status": payload.status,
         "created_by": user["id"],
         "assigned_to": payload.assigned_to,
+        "appointment_at": payload.appointment_at,
+        "notes": payload.notes,
         "company_id": user.get("company_id", "default"),
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.chantiers.insert_one(doc)
     doc.pop("_id", None)
+    if payload.assigned_to:
+        await send_push_to_user(
+            payload.assigned_to,
+            "📌 Nouveau chantier assigné",
+            f"{payload.client_name} — Prise de rendez-vous à faire",
+            {"type": "chantier_assigned", "chantier_id": doc["id"]},
+        )
     return Chantier(**doc)
 
 
@@ -590,10 +606,92 @@ async def stats_company(user=Depends(require_admin)):
     }
 
 
+@api.get("/stats/commercials")
+async def stats_commercials(user=Depends(require_admin)):
+    company = user.get("company_id", "default")
+    commercials = await db.users.find(
+        {"company_id": company, "role": "commercial"},
+        {"_id": 0, "id": 1, "name": 1, "email": 1}
+    ).to_list(500)
+    rows = []
+    total_created = 0
+    total_converted = 0
+    for u in commercials:
+        created = await db.chantiers.count_documents(
+            {"company_id": company, "created_by": u["id"]})
+        converted = await db.chantiers.count_documents(
+            {"company_id": company, "created_by": u["id"],
+             "status": {"$in": list(CONVERTED_STATUSES)}})
+        rate = round((converted / created) * 100, 1) if created else 0.0
+        rows.append({
+            "user_id": u["id"],
+            "name": u["name"],
+            "email": u["email"],
+            "created": created,
+            "converted": converted,
+            "conversion_rate": rate,
+        })
+        total_created += created
+        total_converted += converted
+    rows.sort(key=lambda r: r["conversion_rate"], reverse=True)
+    global_rate = round((total_converted / total_created) * 100, 1) if total_created else 0.0
+    return {
+        "commercials": rows,
+        "total_created": total_created,
+        "total_converted": total_converted,
+        "global_conversion_rate": global_rate,
+    }
+
+
+@api.get("/stats/commercials/export.pdf")
+async def stats_commercials_pdf(user=Depends(require_admin)):
+    data = await stats_commercials(user)  # reuse
+    buf = io.BytesIO()
+    doc = SimpleDocTemplate(buf, pagesize=A4, title="Rapport Performance Commerciaux")
+    styles = getSampleStyleSheet()
+    story: list[Any] = []
+    story.append(Paragraph("<b>MesureChâssis</b> — Rapport Performance Commerciaux",
+                            styles["Title"]))
+    story.append(Spacer(1, 14))
+    story.append(Paragraph(
+        f"<b>Société :</b> {user.get('company_id', 'default')}", styles["Normal"]))
+    story.append(Paragraph(
+        f"<b>Date :</b> {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}",
+        styles["Normal"]))
+    story.append(Spacer(1, 8))
+    story.append(Paragraph(
+        f"<b>Total chantiers créés :</b> {data['total_created']}  ·  "
+        f"<b>Convertis :</b> {data['total_converted']}  ·  "
+        f"<b>Taux global :</b> {data['global_conversion_rate']}%",
+        styles["Normal"]))
+    story.append(Spacer(1, 18))
+    rows = [["Commercial", "Email", "Créés", "Convertis", "Conversion %"]]
+    for r in data["commercials"]:
+        rows.append([r["name"], r["email"], str(r["created"]),
+                     str(r["converted"]), f"{r['conversion_rate']}%"])
+    tbl = Table(rows, colWidths=[110, 170, 60, 70, 80])
+    tbl.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#FF5A00")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+        ("ALIGN", (2, 0), (-1, -1), "RIGHT"),
+    ]))
+    story.append(tbl)
+    doc.build(story)
+    buf.seek(0)
+    return StreamingResponse(
+        buf, media_type="application/pdf",
+        headers={"Content-Disposition":
+                 'attachment; filename="rapport-performance-commerciaux.pdf"'})
+
+
 # --- Export routes -------------------------------------------------------
 def _status_label(s: str) -> str:
     return {"devis_a_faire": "Devis à faire",
             "technique_a_valider": "Technique à valider",
+            "en_commande": "En commande",
+            "en_fabrication": "En fabrication",
             "cloture": "Clôturé"}.get(s, s)
 
 

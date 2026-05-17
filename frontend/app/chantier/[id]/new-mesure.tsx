@@ -47,6 +47,8 @@ type Step2 = {
   diag_2: string;
   diag_2_state: DiagState;
   floor_reserve: string;
+  trap_height_left: string;
+  trap_height_right: string;
 };
 
 const initStep2 = (): Step2 => ({
@@ -57,6 +59,8 @@ const initStep2 = (): Step2 => ({
   diag_2: "",
   diag_2_state: "manual",
   floor_reserve: "",
+  trap_height_left: "",
+  trap_height_right: "",
 });
 
 type Step3 = {
@@ -102,6 +106,7 @@ export default function NewMesureWizard() {
 
   // ---------- Auto-Pythagoras prefill ----------------------------------
   useEffect(() => {
+    if (blockType === "trapeze") return; // no diagonals for trapeze
     const w = parseNum(s2.bay_width);
     const h = parseNum(s2.bay_height);
     if (w && h && w > 0 && h > 0) {
@@ -126,16 +131,24 @@ export default function NewMesureWizard() {
   const validateStep2 = (): boolean => {
     if (!blockType) return false;
     const err: Record<string, boolean> = {};
-    if (!parseNum(s2.bay_width)) err.bay_width = true;
-    if (!parseNum(s2.bay_height)) err.bay_height = true;
-    if (!parseNum(s2.diag_1)) err.diag_1 = true;
-    if (!parseNum(s2.diag_2)) err.diag_2 = true;
-    if (s2.diag_1_state === "auto") err.diag_1 = true; // not yet validated/modified
-    if (s2.diag_2_state === "auto") err.diag_2 = true;
-    if (blockType === "porte" && !parseNum(s2.floor_reserve)) err.floor_reserve = true;
     if (!label.trim()) {
       Alert.alert("Libellé manquant", "Indiquez un libellé (ex. Salon).");
       return false;
+    }
+    if (blockType === "trapeze") {
+      if (!parseNum(s2.bay_width)) err.bay_width = true;
+      if (!parseNum(s2.trap_height_left)) err.trap_height_left = true;
+      if (!parseNum(s2.trap_height_right)) err.trap_height_right = true;
+    } else {
+      if (!parseNum(s2.bay_width)) err.bay_width = true;
+      if (!parseNum(s2.bay_height)) err.bay_height = true;
+      if (!parseNum(s2.diag_1)) err.diag_1 = true;
+      if (!parseNum(s2.diag_2)) err.diag_2 = true;
+      if (s2.diag_1_state === "auto") err.diag_1 = true;
+      if (s2.diag_2_state === "auto") err.diag_2 = true;
+      if ((blockType === "porte" || blockType === "coulissant") && !parseNum(s2.floor_reserve)) {
+        err.floor_reserve = true;
+      }
     }
     setS2Err(err);
     return Object.keys(err).length === 0;
@@ -179,16 +192,23 @@ export default function NewMesureWizard() {
       label: label.trim(),
       photo_url: photo,
       bay_width: parseNum(s2.bay_width),
-      bay_height: parseNum(s2.bay_height),
-      bay_diagonal_1: parseNum(s2.diag_1),
-      bay_diagonal_2: parseNum(s2.diag_2),
-      diag_1_verified: s2.diag_1_state !== "auto",
-      diag_2_verified: s2.diag_2_state !== "auto",
-      bloc_thickness: parseNum(s3.bloc_thickness),
-      wall_type: s3.wall_type,
       options: {},
     };
-    if (blockType === "porte") payload.floor_reserve = parseNum(s2.floor_reserve);
+    if (blockType === "trapeze") {
+      payload.height_left = parseNum(s2.trap_height_left);
+      payload.height_right = parseNum(s2.trap_height_right);
+    } else {
+      payload.bay_height = parseNum(s2.bay_height);
+      payload.bay_diagonal_1 = parseNum(s2.diag_1);
+      payload.bay_diagonal_2 = parseNum(s2.diag_2);
+      payload.diag_1_verified = s2.diag_1_state !== "auto";
+      payload.diag_2_verified = s2.diag_2_state !== "auto";
+    }
+    payload.bloc_thickness = parseNum(s3.bloc_thickness);
+    payload.wall_type = s3.wall_type;
+    if (blockType === "porte" || blockType === "coulissant") {
+      payload.floor_reserve = parseNum(s2.floor_reserve);
+    }
     if (s3.insulation_thickness) payload.insulation_thickness = parseNum(s3.insulation_thickness);
     if (s3.finish_outer) payload.finish_outer = parseNum(s3.finish_outer);
     if (s3.finish_inner) payload.finish_inner = parseNum(s3.finish_inner);
@@ -433,6 +453,79 @@ function Step2View({
 }) {
   const Sketch = isRectangular ? RawBaySchemaRect : RawBaySchemaTrapeze;
 
+  if (!isRectangular) {
+    // === Trapezoidal workflow: ONLY 3 fields, no diagonals ===
+    return (
+      <View>
+        <Text style={styles.h1}>PRISE À LA MESURE</Text>
+        <Text style={styles.h2}>Cotes de la baie brute · Trapèze</Text>
+
+        <Text style={[styles.label, { marginTop: 14 }]}>Libellé de l'ouverture</Text>
+        <TextInput
+          testID="mesure-label-input"
+          value={label}
+          onChangeText={setLabel}
+          placeholder="ex. Lucarne, Pignon..."
+          placeholderTextColor={colors.placeholder}
+          style={styles.input}
+        />
+
+        <View style={styles.sketchBox}>
+          <Sketch
+            values={{
+              bay_width: s2.bay_width,
+              bay_height: s2.trap_height_left,
+              bay_diagonal: s2.trap_height_right,
+            }}
+          />
+        </View>
+
+        <CotField
+          testID="input-bay-width"
+          label="LARGEUR (mm)"
+          value={s2.bay_width}
+          onChange={(v) => setS2Field("bay_width", v.replace(",", "."))}
+          error={!!err.bay_width}
+        />
+        <CotField
+          testID="input-trap-height-left"
+          label="HAUTEUR GAUCHE (mm)"
+          value={s2.trap_height_left}
+          onChange={(v) => setS2Field("trap_height_left", v.replace(",", "."))}
+          error={!!err.trap_height_left}
+        />
+        <CotField
+          testID="input-trap-height-right"
+          label="HAUTEUR DROITE (mm)"
+          value={s2.trap_height_right}
+          onChange={(v) => setS2Field("trap_height_right", v.replace(",", "."))}
+          error={!!err.trap_height_right}
+        />
+
+        <Text style={[styles.label, { marginTop: 24 }]}>Photo (optionnel)</Text>
+        {photo ? (
+          <View>
+            <Image source={{ uri: photo }} style={styles.photo} />
+            <TouchableOpacity testID="remove-photo-button" onPress={() => setPhoto(null)} style={styles.removePhoto}>
+              <Ionicons name="trash" size={16} color="#fff" />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={styles.photoRow}>
+            <TouchableOpacity testID="photo-camera-button" onPress={() => pickPhoto("camera")} style={styles.photoBtn} activeOpacity={0.7}>
+              <Ionicons name="camera" size={22} color={colors.primary} />
+              <Text style={styles.photoBtnText}>Caméra</Text>
+            </TouchableOpacity>
+            <TouchableOpacity testID="photo-library-button" onPress={() => pickPhoto("library")} style={styles.photoBtn} activeOpacity={0.7}>
+              <Ionicons name="images" size={22} color={colors.primary} />
+              <Text style={styles.photoBtnText}>Galerie</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+    );
+  }
+
   const validateDiag = (which: 1 | 2) =>
     setS2Field(which === 1 ? "diag_1_state" : "diag_2_state", "validated");
   const modifyDiag = (which: 1 | 2) => {
@@ -474,51 +567,42 @@ function Step2View({
         error={!!err.bay_height}
       />
 
+      {/* Diagonales — auto-calculées Pythagore */}
       <DiagonalField
-        testID="diag-1"
+        testID="input-diag-1"
         label="DIAGONALE 1 (mm)"
         value={s2.diag_1}
         state={s2.diag_1_state}
         onChange={(v) => {
           setS2Field("diag_1", v.replace(",", "."));
-          if (s2.diag_1_state === "auto") setS2Field("diag_1_state", "manual");
+          setS2Field("diag_1_state", "manual");
         }}
         onValidate={() => validateDiag(1)}
         onModify={() => modifyDiag(1)}
         error={!!err.diag_1}
       />
       <DiagonalField
-        testID="diag-2"
+        testID="input-diag-2"
         label="DIAGONALE 2 (mm)"
         value={s2.diag_2}
         state={s2.diag_2_state}
         onChange={(v) => {
           setS2Field("diag_2", v.replace(",", "."));
-          if (s2.diag_2_state === "auto") setS2Field("diag_2_state", "manual");
+          setS2Field("diag_2_state", "manual");
         }}
         onValidate={() => validateDiag(2)}
         onModify={() => modifyDiag(2)}
         error={!!err.diag_2}
       />
 
-      {blockType === "porte" && (
-        <View style={styles.criticalBlock}>
-          <View style={styles.criticalHeader}>
-            <Ionicons name="warning" size={18} color={colors.anomaly} />
-            <Text style={styles.criticalTitle}>RÉSERVE SOL FINI (mm)</Text>
-          </View>
-          <Text style={styles.criticalHelp}>Obligatoire pour les portes d'entrée.</Text>
-          <TextInput
-            testID="input-floor-reserve"
-            value={s2.floor_reserve}
-            onChangeText={(v) => setS2Field("floor_reserve", v.replace(",", "."))}
-            placeholder="0"
-            placeholderTextColor={colors.placeholder}
-            keyboardType="decimal-pad"
-            style={[styles.input, styles.inputCritical, err.floor_reserve && styles.inputErrorCritical]}
-          />
-          {err.floor_reserve && <ErrFlag />}
-        </View>
+      {(blockType === "porte" || blockType === "coulissant") && (
+        <CotField
+          testID="input-floor-reserve"
+          label="RÉSERVE SOL FINI (mm) *"
+          value={s2.floor_reserve}
+          onChange={(v) => setS2Field("floor_reserve", v.replace(",", "."))}
+          error={!!err.floor_reserve}
+        />
       )}
 
       <Text style={[styles.label, { marginTop: 24 }]}>Photo (optionnel)</Text>
@@ -545,6 +629,86 @@ function Step2View({
   );
 }
 
+// ======================== Step 3 ========================================
+function Step3View({
+  s3,
+  setField,
+  err,
+}: {
+  s3: Step3;
+  setField: (k: keyof Step3, v: any) => void;
+  err: Record<string, boolean>;
+}) {
+  const WALLS: { key: WallType; label: string; sub: string; variant: "ite" | "iti" | "crepi" }[] = [
+    { key: "ite", label: "ITE", sub: "Isolation Thermique Extérieure", variant: "ite" },
+    { key: "iti", label: "ITI", sub: "Isolation Thermique Intérieure", variant: "iti" },
+    { key: "brique_parement", label: "BRIQUE", sub: "Brique de parement", variant: "crepi" },
+    { key: "crepi_simple", label: "CRÉPI", sub: "Crépi simple", variant: "crepi" },
+  ];
+  return (
+    <View>
+      <Text style={styles.h1}>CONCEPTION MAÇONNERIE</Text>
+      <Text style={styles.h2}>Informations indicatives (épaisseurs &amp; isolation)</Text>
+
+      <CotField
+        testID="input-bloc-thickness"
+        label="ÉPAISSEUR BLOC BÉTON (mm) *"
+        value={s3.bloc_thickness}
+        onChange={(v) => setField("bloc_thickness", v.replace(",", "."))}
+        error={!!err.bloc_thickness}
+      />
+
+      <Text style={[styles.label, { marginTop: 18 }]}>Type de paroi *</Text>
+      <View style={styles.wallGrid}>
+        {WALLS.map((w) => {
+          const active = s3.wall_type === w.key;
+          return (
+            <TouchableOpacity
+              key={w.key}
+              testID={`wall-type-${w.key}`}
+              onPress={() => setField("wall_type", w.key)}
+              activeOpacity={0.8}
+              style={[
+                styles.wallCard,
+                active && styles.wallCardActive,
+                err.wall_type && !active && styles.wallCardError,
+              ]}
+            >
+              <WallSection variant={w.variant} size={64} />
+              <Text style={[styles.wallLabel, active && { color: colors.primary }]}>{w.label}</Text>
+              <Text style={styles.wallSub}>{w.sub}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+
+      {(s3.wall_type === "ite" || s3.wall_type === "iti") && (
+        <>
+          <CotField
+            testID="input-insulation-thickness"
+            label="ÉPAISSEUR ISOLANT (mm)"
+            value={s3.insulation_thickness}
+            onChange={(v) => setField("insulation_thickness", v.replace(",", "."))}
+          />
+          <CotField
+            testID="input-finish-outer"
+            label="FINITION EXTÉRIEURE (mm)"
+            value={s3.finish_outer}
+            onChange={(v) => setField("finish_outer", v.replace(",", "."))}
+          />
+          <CotField
+            testID="input-finish-inner"
+            label="FINITION INTÉRIEURE (mm)"
+            value={s3.finish_inner}
+            onChange={(v) => setField("finish_inner", v.replace(",", "."))}
+          />
+        </>
+      )}
+    </View>
+  );
+}
+
+// ======================== Sub-components ================================
 function CotField({
   testID,
   label,
@@ -552,25 +716,24 @@ function CotField({
   onChange,
   error,
 }: {
-  testID: string;
+  testID?: string;
   label: string;
   value: string;
   onChange: (v: string) => void;
-  error: boolean;
+  error?: boolean;
 }) {
   return (
-    <View style={{ marginTop: 12 }}>
+    <View style={{ marginTop: 14 }}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         testID={testID}
         value={value}
         onChangeText={onChange}
-        placeholder="Ex: 1200"
-        placeholderTextColor={colors.placeholder}
         keyboardType="decimal-pad"
+        placeholder="0"
+        placeholderTextColor={colors.placeholder}
         style={[styles.input, error && styles.inputError]}
       />
-      {error && <ErrFlag />}
     </View>
   );
 }
@@ -585,200 +748,72 @@ function DiagonalField({
   onModify,
   error,
 }: {
-  testID: string;
+  testID?: string;
   label: string;
   value: string;
   state: DiagState;
   onChange: (v: string) => void;
   onValidate: () => void;
   onModify: () => void;
-  error: boolean;
+  error?: boolean;
 }) {
-  const badge = useMemo(() => {
-    if (state === "auto") return { text: "AUTO (Pythagore)", bg: "#3a2400", color: colors.warning };
-    if (state === "validated") return { text: "VALIDÉ", bg: "#0e3315", color: colors.success };
-    return { text: "MANUEL", bg: "#27272A", color: colors.textPrimary };
-  }, [state]);
+  const isAuto = state === "auto";
+  const isValidated = state === "validated";
   return (
-    <View style={{ marginTop: 12 }}>
-      <View style={styles.diagHeader}>
+    <View style={{ marginTop: 14 }}>
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
         <Text style={styles.label}>{label}</Text>
-        <View style={[styles.diagBadge, { backgroundColor: badge.bg }]}>
-          <Text style={[styles.diagBadgeText, { color: badge.color }]}>{badge.text}</Text>
-        </View>
+        {isAuto && (
+          <View style={styles.autoBadge}>
+            <Ionicons name="calculator-outline" size={11} color="#000" />
+            <Text style={styles.autoBadgeText}>AUTO PYTHAGORE</Text>
+          </View>
+        )}
+        {isValidated && (
+          <View style={styles.validBadge}>
+            <Ionicons name="checkmark" size={12} color="#000" />
+            <Text style={styles.autoBadgeText}>VALIDÉ</Text>
+          </View>
+        )}
       </View>
-      <TextInput
-        testID={`${testID}-input`}
-        value={value}
-        onChangeText={onChange}
-        editable={state !== "validated"}
-        placeholder="Ex: 1800"
-        placeholderTextColor={colors.placeholder}
-        keyboardType="decimal-pad"
-        style={[
-          styles.input,
-          error && styles.inputError,
-          state === "auto" && { borderColor: colors.warning, backgroundColor: "#1a1206" },
-          state === "validated" && { borderColor: colors.success },
-        ]}
-      />
-      <View style={styles.diagActions}>
-        <TouchableOpacity
-          testID={`${testID}-validate`}
-          onPress={onValidate}
-          disabled={!value || state === "validated"}
-          style={[styles.diagBtn, styles.diagBtnValid, (!value || state === "validated") && { opacity: 0.5 }]}
-          activeOpacity={0.85}
-        >
-          <Ionicons name="checkmark" size={16} color="#000" />
-          <Text style={styles.diagBtnValidText}>Valider</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          testID={`${testID}-modify`}
-          onPress={onModify}
-          style={[styles.diagBtn, styles.diagBtnModify]}
-          activeOpacity={0.85}
-        >
-          <Ionicons name="create" size={16} color={colors.textPrimary} />
-          <Text style={styles.diagBtnModifyText}>Modifier</Text>
-        </TouchableOpacity>
-      </View>
-      {error && <ErrFlag />}
-    </View>
-  );
-}
-
-function ErrFlag() {
-  return (
-    <View style={styles.errorRow}>
-      <Ionicons name="alert-circle" size={14} color={colors.anomaly} />
-      <Text style={styles.errorText}>COTE OBLIGATOIRE MANQUANTE</Text>
-    </View>
-  );
-}
-
-// ======================== Step 3 ========================================
-const WALLS: {
-  key: WallType;
-  letter: string;
-  title: string;
-  variant: "ite" | "iti" | "crepi";
-  subs: { label: string; key: "insulation_thickness" | "finish_outer" | "finish_inner" }[];
-}[] = [
-  {
-    key: "ite",
-    letter: "A",
-    title: "FAÇADE ISOLANTE EXTÉRIEURE (ITE)",
-    variant: "ite",
-    subs: [
-      { label: "Épaisseur Isolant (mm)", key: "insulation_thickness" },
-      { label: "Épaisseur Crépi (mm)", key: "finish_outer" },
-    ],
-  },
-  {
-    key: "iti",
-    letter: "B",
-    title: "ISOLATION INTÉRIEURE (ITI)",
-    variant: "iti",
-    subs: [
-      { label: "Épaisseur Isolant (mm)", key: "insulation_thickness" },
-      { label: "Épaisseur Plâtre/Finition (mm)", key: "finish_inner" },
-    ],
-  },
-  {
-    key: "brique_parement",
-    letter: "C",
-    title: "BRIQUE DE PAREMENT",
-    variant: "ite",
-    subs: [
-      { label: "Épaisseur Coulisse/Isolant (mm)", key: "insulation_thickness" },
-      { label: "Épaisseur Brique (mm)", key: "finish_outer" },
-    ],
-  },
-  {
-    key: "crepi_simple",
-    letter: "D",
-    title: "CRÉPI SIMPLE",
-    variant: "crepi",
-    subs: [{ label: "Épaisseur Crépi/Finition (mm)", key: "finish_outer" }],
-  },
-];
-
-function Step3View({
-  s3,
-  setField,
-  err,
-}: {
-  s3: Step3;
-  setField: (k: keyof Step3, v: any) => void;
-  err: Record<string, boolean>;
-}) {
-  return (
-    <View>
-      <Text style={styles.h1}>CONCEPTION MAÇONNERIE & ISOLATION</Text>
-      <Text style={[styles.h2, { color: colors.textSecondary }]}>(INDICATIF)</Text>
-
-      <View style={styles.mainWallCard}>
-        <Text style={styles.mainWallTitle}>MUR DE BASE</Text>
-        <Text style={styles.label}>Épaisseur Bloc Béton (mm)</Text>
+      <View style={{ flexDirection: "row", gap: 8 }}>
         <TextInput
-          testID="input-bloc-thickness"
-          value={s3.bloc_thickness}
-          onChangeText={(v) => setField("bloc_thickness", v.replace(",", "."))}
-          placeholder="Ex: 200"
-          placeholderTextColor={colors.placeholder}
+          testID={testID}
+          value={value}
+          onChangeText={onChange}
           keyboardType="decimal-pad"
-          style={[styles.input, err.bloc_thickness && styles.inputError]}
+          placeholder="0"
+          placeholderTextColor={colors.placeholder}
+          editable={!isAuto}
+          style={[
+            styles.input,
+            { flex: 1 },
+            error && styles.inputError,
+            isAuto && { borderColor: colors.primary, color: colors.primary },
+            isValidated && { borderColor: colors.success, color: colors.success },
+          ]}
         />
-        {err.bloc_thickness && <ErrFlag />}
+        {isAuto && (
+          <>
+            <TouchableOpacity
+              testID={`${testID}-validate`}
+              onPress={onValidate}
+              activeOpacity={0.8}
+              style={[styles.diagBtn, { backgroundColor: colors.success }]}
+            >
+              <Ionicons name="checkmark" size={18} color="#000" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              testID={`${testID}-modify`}
+              onPress={onModify}
+              activeOpacity={0.8}
+              style={[styles.diagBtn, { backgroundColor: colors.warning }]}
+            >
+              <Ionicons name="create-outline" size={18} color="#000" />
+            </TouchableOpacity>
+          </>
+        )}
       </View>
-
-      <Text style={[styles.label, { marginTop: 22 }]}>Type de paroi (sélectionner)</Text>
-      {err.wall_type && <ErrFlag />}
-
-      {WALLS.map((opt) => {
-        const active = s3.wall_type === opt.key;
-        return (
-          <TouchableOpacity
-            key={opt.key}
-            testID={`wall-type-${opt.key}`}
-            onPress={() => setField("wall_type", opt.key)}
-            activeOpacity={0.75}
-            style={[styles.wallCard, active && styles.wallCardActive]}
-          >
-            <View style={styles.wallCardHeader}>
-              <View style={[styles.blockLetterBadge, active && { backgroundColor: colors.primary }, { position: "relative", top: 0, left: 0 }]}>
-                <Text style={[styles.blockLetter, active && { color: "#000" }]}>{opt.letter}</Text>
-              </View>
-              <View style={{ flex: 1, marginLeft: 10 }}>
-                <Text style={styles.wallTitle}>{opt.title}</Text>
-                <Text style={styles.indicatif}>(INDICATIF)</Text>
-              </View>
-              <WallSection variant={opt.variant} size={60} />
-            </View>
-            {active && (
-              <View style={styles.wallFields}>
-                {opt.subs.map((sub) => (
-                  <View key={sub.key} style={{ marginTop: 10 }}>
-                    <Text style={styles.subFieldLabel}>
-                      {sub.label} <Text style={styles.indicatifInline}>(INDICATIF)</Text>
-                    </Text>
-                    <TextInput
-                      testID={`${opt.key}-${sub.key}`}
-                      value={(s3 as any)[sub.key] ?? ""}
-                      onChangeText={(v) => setField(sub.key as any, v.replace(",", "."))}
-                      placeholder="0"
-                      placeholderTextColor={colors.placeholder}
-                      keyboardType="decimal-pad"
-                      style={styles.input}
-                    />
-                  </View>
-                ))}
-              </View>
-            )}
-          </TouchableOpacity>
-        );
-      })}
     </View>
   );
 }
@@ -791,241 +826,199 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 8,
-    backgroundColor: colors.bg,
+    paddingTop: 12,
+    paddingBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: colors.borderSubtle,
   },
-  stepRow: { flexDirection: "row", gap: 6 },
+  stepRow: { flexDirection: "row", gap: 8 },
   stepPill: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.borderSubtle,
+    backgroundColor: colors.surfaceElevated,
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
   },
   stepPillActive: { backgroundColor: colors.primary, borderColor: colors.primary },
-  stepPillText: { color: colors.textSecondary, fontWeight: "900", fontSize: 13 },
+  stepPillText: { color: colors.textSecondary, fontWeight: "800", fontSize: 12 },
   reportBtn: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 6,
+    borderRadius: 8,
+    backgroundColor: "#2a1010",
     borderWidth: 1,
     borderColor: colors.anomaly,
-    backgroundColor: "#1a0707",
   },
   reportBtnText: { color: colors.anomaly, fontSize: 11, fontWeight: "700" },
-  h1: { color: colors.textPrimary, fontSize: 20, fontWeight: "900", letterSpacing: 1 },
-  h2: { color: colors.textPrimary, fontSize: 14, marginTop: 2, fontWeight: "700", letterSpacing: 0.8 },
-  // Step 1
-  gridRow: { flexDirection: "row", flexWrap: "wrap", gap: 12, marginTop: 20 },
+
+  h1: { color: colors.textPrimary, fontSize: 18, fontWeight: "800", letterSpacing: 0.5 },
+  h2: { color: colors.textSecondary, fontSize: 12, marginTop: 2 },
+  label: { color: colors.textSecondary, fontSize: 11, fontWeight: "700", letterSpacing: 0.6, marginBottom: 6 },
+  input: {
+    backgroundColor: colors.inputBg,
+    color: colors.textPrimary,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.borderStrong,
+    paddingHorizontal: 12,
+    paddingVertical: Platform.OS === "ios" ? 14 : 10,
+    fontSize: 16,
+    minHeight: 48,
+  },
+  inputError: { borderColor: colors.anomaly, backgroundColor: "#1a0808" },
+
+  gridRow: { flexDirection: "row", flexWrap: "wrap", marginTop: 16, gap: 12 },
   blockCard: {
     width: "47%",
     backgroundColor: colors.surface,
-    borderColor: colors.borderSubtle,
+    borderRadius: 14,
     borderWidth: 1,
-    borderRadius: 12,
-    padding: 16,
+    borderColor: colors.borderSubtle,
+    padding: 14,
+    minHeight: 130,
     alignItems: "center",
-    minHeight: 150,
+    justifyContent: "center",
+    position: "relative",
   },
   blockLetterBadge: {
     position: "absolute",
-    top: 10,
-    left: 10,
-    width: 28,
-    height: 28,
-    borderRadius: 6,
-    backgroundColor: colors.bg,
-    borderWidth: 1,
-    borderColor: colors.borderSubtle,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  blockLetter: { color: colors.primary, fontWeight: "900", fontSize: 14 },
-  blockIconBox: {
-    width: 72,
-    height: 72,
-    borderRadius: 10,
-    backgroundColor: colors.bg,
-    borderWidth: 1,
-    borderColor: colors.borderSubtle,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 12,
-    marginBottom: 14,
-  },
-  blockTitle: { color: colors.textPrimary, fontWeight: "900", fontSize: 13, letterSpacing: 0.6, textAlign: "center" },
-  // Inputs
-  label: {
-    color: colors.textSecondary,
-    fontSize: 11,
-    fontWeight: "800",
-    textTransform: "uppercase",
-    letterSpacing: 1.2,
-    marginBottom: 6,
-  },
-  input: {
-    backgroundColor: colors.inputBg,
-    borderColor: colors.borderSubtle,
-    borderWidth: 2,
-    borderRadius: 8,
-    color: colors.textPrimary,
-    minHeight: 52,
-    paddingHorizontal: 14,
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  inputError: { borderColor: colors.anomaly, borderWidth: 3 },
-  inputCritical: { borderColor: colors.anomaly, backgroundColor: "#1c0606" },
-  inputErrorCritical: { borderColor: colors.anomaly, borderWidth: 3, backgroundColor: "#260a0a" },
-  errorRow: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 6 },
-  errorText: { color: colors.anomaly, fontWeight: "900", fontSize: 11, letterSpacing: 1 },
-  sketchBox: {
-    backgroundColor: colors.bg,
-    borderColor: colors.borderSubtle,
-    borderWidth: 1,
+    top: 8,
+    left: 8,
+    width: 24,
+    height: 24,
     borderRadius: 12,
-    marginTop: 16,
-    padding: 12,
+    backgroundColor: colors.primary,
     alignItems: "center",
+    justifyContent: "center",
   },
-  // Diag
-  diagHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  diagBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 4, marginBottom: 6 },
-  diagBadgeText: { fontSize: 10, fontWeight: "900", letterSpacing: 0.8 },
-  diagActions: { flexDirection: "row", gap: 8, marginTop: 8 },
+  blockLetter: { color: "#000", fontWeight: "900", fontSize: 12 },
+  blockIconBox: { marginTop: 8, marginBottom: 10 },
+  blockTitle: { color: colors.textPrimary, fontSize: 12, fontWeight: "800", textAlign: "center", letterSpacing: 0.4 },
+
+  sketchBox: {
+    marginTop: 16,
+    alignItems: "center",
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    paddingVertical: 12,
+  },
+
+  autoBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: colors.primary,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  validBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: colors.success,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  autoBadgeText: { color: "#000", fontSize: 10, fontWeight: "900", letterSpacing: 0.5 },
   diagBtn: {
+    width: 48,
+    height: 48,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  photo: { width: "100%", height: 180, borderRadius: 12, marginTop: 8 },
+  removePhoto: {
+    position: "absolute",
+    top: 16,
+    right: 8,
+    backgroundColor: "rgba(0,0,0,0.7)",
+    padding: 6,
+    borderRadius: 14,
+  },
+  photoRow: { flexDirection: "row", gap: 8, marginTop: 8 },
+  photoBtn: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 6,
-    minHeight: 46,
-    borderRadius: 8,
-  },
-  diagBtnValid: { backgroundColor: colors.success },
-  diagBtnValidText: { color: "#000", fontWeight: "900", letterSpacing: 0.6, fontSize: 13 },
-  diagBtnModify: { backgroundColor: colors.surfaceElevated, borderWidth: 1, borderColor: colors.borderStrong },
-  diagBtnModifyText: { color: colors.textPrimary, fontWeight: "800", letterSpacing: 0.6, fontSize: 13 },
-  // Critical block
-  criticalBlock: {
-    marginTop: 22,
-    padding: 14,
+    paddingVertical: 14,
     borderRadius: 10,
-    borderWidth: 2,
-    borderColor: colors.anomaly,
-    backgroundColor: "#1a0707",
-  },
-  criticalHeader: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 },
-  criticalTitle: { color: colors.anomaly, fontWeight: "900", fontSize: 13, letterSpacing: 1 },
-  criticalHelp: { color: colors.textSecondary, fontSize: 12, marginBottom: 10 },
-  // Photo
-  photo: { width: "100%", height: 200, borderRadius: 10, backgroundColor: colors.surface },
-  removePhoto: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "rgba(0,0,0,0.7)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  photoRow: { flexDirection: "row", gap: 10 },
-  photoBtn: {
-    flex: 1,
-    minHeight: 64,
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.borderSubtle,
-    borderStyle: "dashed",
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row",
-    gap: 8,
   },
-  photoBtnText: { color: colors.textPrimary, fontWeight: "700" },
-  // Step 3
-  mainWallCard: {
-    marginTop: 16,
-    backgroundColor: colors.surface,
-    borderColor: colors.borderSubtle,
-    borderWidth: 1,
-    borderRadius: 12,
-    padding: 14,
-  },
-  mainWallTitle: { color: colors.primary, fontWeight: "900", fontSize: 14, letterSpacing: 1.2, marginBottom: 12 },
+  photoBtnText: { color: colors.primary, fontWeight: "700", fontSize: 13 },
+
+  wallGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: 6 },
   wallCard: {
-    marginTop: 10,
+    width: "47%",
     backgroundColor: colors.surface,
-    borderColor: colors.borderSubtle,
-    borderWidth: 1,
     borderRadius: 12,
-    padding: 14,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    padding: 12,
+    alignItems: "center",
   },
-  wallCardActive: { borderColor: colors.primary, backgroundColor: "#1a0e00" },
-  wallCardHeader: { flexDirection: "row", alignItems: "center" },
-  wallTitle: { color: colors.textPrimary, fontWeight: "900", fontSize: 13, letterSpacing: 0.4 },
-  indicatif: { color: colors.textSecondary, fontSize: 10, fontWeight: "700", letterSpacing: 0.8, marginTop: 2 },
-  indicatifInline: { color: colors.textSecondary, fontSize: 10, fontWeight: "700" },
-  wallFields: { marginTop: 12, borderTopWidth: 1, borderTopColor: colors.borderSubtle, paddingTop: 12 },
-  subFieldLabel: {
-    color: colors.textSecondary,
-    fontSize: 11,
-    fontWeight: "700",
-    textTransform: "uppercase",
-    letterSpacing: 0.8,
-    marginBottom: 4,
-  },
-  // Footer
+  wallCardActive: { borderColor: colors.primary, backgroundColor: "#1a0e05" },
+  wallCardError: { borderColor: colors.anomaly },
+  wallLabel: { color: colors.textPrimary, fontWeight: "900", fontSize: 14, marginTop: 6, letterSpacing: 0.8 },
+  wallSub: { color: colors.textSecondary, fontSize: 10, marginTop: 2, textAlign: "center" },
+
   footer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 16,
-    paddingBottom: 24,
-    backgroundColor: colors.bg,
-    borderTopWidth: 1,
-    borderTopColor: colors.borderSubtle,
     flexDirection: "row",
     gap: 10,
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: colors.borderSubtle,
+    backgroundColor: colors.bg,
   },
-  btn: { flex: 1, minHeight: 60, borderRadius: 8, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8 },
+  btn: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    minHeight: 52,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+  },
   btnPrimary: { backgroundColor: colors.primary },
-  btnPrimaryText: { color: "#000", fontWeight: "900", fontSize: 15, letterSpacing: 1 },
-  btnSecondary: { borderWidth: 2, borderColor: colors.borderStrong },
-  btnSecondaryText: { color: colors.textPrimary, fontWeight: "800", letterSpacing: 1 },
-  // Modal
-  modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.8)", justifyContent: "center", padding: 20 },
+  btnPrimaryText: { color: "#000", fontWeight: "900", fontSize: 14, letterSpacing: 0.8 },
+  btnSecondary: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSubtle },
+  btnSecondaryText: { color: colors.textPrimary, fontWeight: "800", fontSize: 13, letterSpacing: 0.5 },
+
+  modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.7)", justifyContent: "center", padding: 20 },
   modalCard: {
     backgroundColor: colors.surface,
-    borderColor: colors.borderSubtle,
+    borderRadius: 16,
+    padding: 18,
     borderWidth: 1,
-    borderRadius: 12,
-    padding: 20,
+    borderColor: colors.borderSubtle,
   },
-  modalTitle: { color: colors.textPrimary, fontWeight: "900", fontSize: 17, letterSpacing: 0.6 },
+  modalTitle: { color: colors.textPrimary, fontWeight: "800", fontSize: 16 },
   modalSub: { color: colors.textSecondary, fontSize: 12, marginTop: 4, marginBottom: 12 },
   reportInput: {
     backgroundColor: colors.inputBg,
-    borderColor: colors.borderSubtle,
-    borderWidth: 2,
-    borderRadius: 8,
     color: colors.textPrimary,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.borderStrong,
     padding: 12,
-    fontSize: 15,
-    minHeight: 110,
+    minHeight: 100,
     textAlignVertical: "top",
+    fontSize: 14,
   },
 });

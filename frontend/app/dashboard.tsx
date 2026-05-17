@@ -47,6 +47,8 @@ export default function Dashboard() {
   const [newModal, setNewModal] = useState(false);
   const [newClient, setNewClient] = useState("");
   const [newAddr, setNewAddr] = useState("");
+  const [newAppt, setNewAppt] = useState("");
+  const [newNotes, setNewNotes] = useState("");
   const [creating, setCreating] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
 
@@ -96,10 +98,14 @@ export default function Dashboard() {
       const res = await api.post<Chantier>("/chantiers", {
         client_name: newClient.trim(),
         address: newAddr.trim(),
+        appointment_at: newAppt.trim() || undefined,
+        notes: newNotes.trim() || undefined,
       });
       setNewModal(false);
       setNewClient("");
       setNewAddr("");
+      setNewAppt("");
+      setNewNotes("");
       router.push(`/chantier/${res.data.id}`);
     } catch (e) {
       Alert.alert("Erreur", "Création impossible.");
@@ -308,6 +314,26 @@ export default function Dashboard() {
               placeholder="ex. 12 rue de la Paix, Paris"
               placeholderTextColor={colors.placeholder}
               style={styles.input}
+            />
+            <Text style={styles.label}>Date et heure du rendez-vous</Text>
+            <TextInput
+              testID="new-appointment-input"
+              value={newAppt}
+              onChangeText={setNewAppt}
+              placeholder="ex. 2026-06-15 14:00"
+              placeholderTextColor={colors.placeholder}
+              style={styles.input}
+            />
+            <Text style={styles.label}>Notes / Instructions pour le terrain</Text>
+            <TextInput
+              testID="new-notes-input"
+              value={newNotes}
+              onChangeText={setNewNotes}
+              placeholder="ex. Clé sous le paillasson, accès portail latéral..."
+              placeholderTextColor={colors.placeholder}
+              multiline
+              numberOfLines={3}
+              style={[styles.input, { minHeight: 80, textAlignVertical: "top", paddingTop: 12 }]}
             />
             <View style={styles.modalActions}>
               <TouchableOpacity
