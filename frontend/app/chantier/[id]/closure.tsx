@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -145,28 +146,40 @@ export default function Closure() {
   };
 
   // ---- Closure handler ----
-  const cloturer = async () => {
+  // Sur web, Alert.alert multi-boutons est mappé sur window.confirm/alert
+  // qui n'exécute pas les onPress. On utilise donc une branche dédiée.
+  const performClosure = useCallback(async () => {
+    try {
+      await api.patch(`/chantiers/${id}`, { status: "cloture" });
+      if (Platform.OS === "web") {
+        // Pas de callback fiable sur web → redirection immédiate
+        router.replace("/dashboard");
+      } else {
+        Alert.alert(
+          "✅ Chantier clôturé",
+          "Le chantier est marqué 'Terminé / Livré'. Le PDF, CSV et JSON sont prêts pour export.",
+          [{ text: "OK", onPress: () => router.replace("/dashboard") }]
+        );
+      }
+    } catch {
+      Alert.alert("Erreur", "Action impossible.");
+    }
+  }, [id, router]);
+
+  const cloturer = () => {
+    if (Platform.OS === "web") {
+      const ok = typeof window !== "undefined" && window.confirm(
+        "Clôturer ce chantier ?\n\nLe statut passera à 'Terminé / Livré' et le chantier sera archivé en lecture seule. Vous pourrez toujours consulter les mesures et exports."
+      );
+      if (ok) performClosure();
+      return;
+    }
     Alert.alert(
       "Clôturer ce chantier ?",
       "Le statut passera à 'Terminé / Livré' et le chantier sera archivé en lecture seule. Vous pourrez toujours consulter les mesures et exports.",
       [
         { text: "Annuler", style: "cancel" },
-        {
-          text: "Confirmer la clôture",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await api.patch(`/chantiers/${id}`, { status: "cloture" });
-              Alert.alert(
-                "✅ Chantier clôturé",
-                "Le chantier est marqué 'Terminé / Livré'. Le PDF, CSV et JSON sont prêts pour export.",
-                [{ text: "OK", onPress: () => router.replace("/dashboard") }]
-              );
-            } catch {
-              Alert.alert("Erreur", "Action impossible.");
-            }
-          },
-        },
+        { text: "Confirmer la clôture", style: "destructive", onPress: performClosure },
       ]
     );
   };

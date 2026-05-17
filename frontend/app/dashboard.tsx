@@ -31,11 +31,13 @@ type Chantier = {
   created_at: string;
 };
 
-const FILTERS: { key: string; label: string }[] = [
+// Filtres alignés sur le pipeline 3-étapes (filtrage côté client par stage).
+// "all" + 3 stages couvrant tous les statuts métier internes.
+const FILTERS: { key: "all" | "verify" | "fab" | "done"; label: string }[] = [
   { key: "all", label: "Tous" },
-  { key: "devis_a_faire", label: "Devis à faire" },
-  { key: "technique_a_valider", label: "Technique à valider" },
-  { key: "cloture", label: "Clôturés" },
+  { key: "verify", label: "À vérifier" },
+  { key: "fab", label: "En fabrication" },
+  { key: "done", label: "Terminés" },
 ];
 
 export default function Dashboard() {
@@ -113,10 +115,16 @@ export default function Dashboard() {
   const fetchData = useCallback(async () => {
     try {
       const params: Record<string, string> = {};
-      if (filter !== "all") params.status_filter = filter;
+      // Le filtre par stage est appliqué côté client (un stage = plusieurs
+      // statuts internes). Seule la recherche texte est envoyée au backend.
       if (q.trim()) params.q = q.trim();
       const res = await api.get<Chantier[]>("/chantiers", { params });
-      setItems(res.data);
+      const all = res.data;
+      const filtered =
+        filter === "all"
+          ? all
+          : all.filter((c) => (statusMeta[c.status]?.stage ?? "verify") === filter);
+      setItems(filtered);
     } catch (e) {
       Alert.alert("Erreur", "Chargement impossible.");
     } finally {

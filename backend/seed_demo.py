@@ -43,15 +43,22 @@ CLIENTS = [
     {"first": "Aurélie",    "last": "Moreau",   "addr": "61 chemin des Vignes",    "cp": "21000", "city": "Dijon"},
 ]
 
+# Pipeline 3-étapes :
+#   Étape 1 – À vérifier (orange) : devis_a_faire, technique_a_valider
+#   Étape 2 – En fabrication (bleu) : en_commande, en_fabrication
+#   Étape 3 – Terminé / Livré (vert) : cloture  → déclenche le badge "Prêt pour Export"
 STATUS_PLAN = [
-    "devis_a_faire",
-    "devis_a_faire",
-    "technique_a_valider",
-    "en_commande",
-    "en_commande",
-    "en_fabrication",
-    "cloture",
-    "cloture",
+    # 3 chantiers en étape 1 (À vérifier 🟠)
+    "devis_a_faire",        # Marc Dubois
+    "technique_a_valider",  # Sophie Laurent
+    "technique_a_valider",  # Pierre Martin
+    # 3 chantiers en étape 2 (En fabrication 🔵)
+    "en_commande",          # Émilie Rousseau
+    "en_fabrication",       # Antoine Lefèvre
+    "en_fabrication",       # Camille Bernard
+    # 2 chantiers en étape 3 (Terminé / Livré 🟢)
+    "cloture",              # Julien Petit
+    "cloture",              # Aurélie Moreau
 ]
 
 OPENING_LABELS = ["Salon", "Chambre 1", "Cuisine", "SDB", "Bureau", "Entrée", "Couloir"]
