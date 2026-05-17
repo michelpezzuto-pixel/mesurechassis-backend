@@ -5,8 +5,8 @@
    `admin_token`, `commercial_token`, `tech_token`, `*_headers`.
 
 2. **Modern** (nouveaux tests) : `httpx.AsyncClient` sur l'ASGITransport
-   in-process (pas de serveur réel requis). Fixtures: `client`, `admin_jwt`,
-   `commercial_jwt`, `tech_jwt`. Helper `hdr()`.
+   in-process (pas de serveur réel requis, couverture mesurée).
+   Fixtures: `client`, `admin_jwt`, `commercial_jwt`, `tech_jwt`. Helper `hdr()`.
 
 Les deux peuvent coexister dans le même run.
 """
@@ -28,10 +28,6 @@ from httpx import ASGITransport, AsyncClient  # noqa: E402
 
 from db import db  # noqa: E402
 from server import app  # noqa: E402
-
-# Les 9 anciens tests sont désormais à jour (matrice RBAC + schéma JSON v2)
-# → on n'active plus le hook de skip. À ré-activer si on régresse à nouveau.
-# from tests._legacy_skips import pytest_collection_modifyitems  # noqa
 
 
 # ============================================================================
