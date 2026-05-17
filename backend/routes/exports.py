@@ -38,12 +38,37 @@ def _safe_filename(name: str) -> str:
     return n[:80] or "chantier"
 
 
-def restrict_advanced_exports(
+def block_free_plan_exports(
     user=Depends(require_active_subscription),
+) -> dict:
+    """Bloque tous les exports pour le plan Free (anti-fraud).
+
+    Le mode Artisan Unique ne bypass PAS ce verrou : un compte free reste free.
+    Seul le passage en Pro débloque les exports.
+    """
+    if (user.get("plan") or "trial") == "free":
+        raise HTTPException(
+            status_code=402,
+            detail={
+                "code": "free_plan_no_export",
+                "message": (
+                    "Les exports (PDF, Excel, CSV, JSON) sont réservés "
+                    "aux abonnés Pro. Passez en Pro pour débloquer les "
+                    "exports techniques."
+                ),
+                "plan": "free",
+            },
+        )
+    return user
+
+
+def restrict_advanced_exports(
+    user=Depends(block_free_plan_exports),
 ) -> dict:
     """Excel / CSV / JSON réservés au Technicien et Admin.
 
     Commercial sans Mode Artisan : 403 (uniquement PDF accessible).
+    Le verrou Free passe d'abord (anti-fraud).
     """
     if user.get("artisan_mode"):
         return user
@@ -62,7 +87,7 @@ def restrict_advanced_exports(
 # ---------------------------- PDF --------------------------------------
 @router.get("/chantiers/{chantier_id}/export.pdf")
 async def export_pdf(
-    chantier_id: str, user=Depends(require_active_subscription)
+    chantier_id: str, user=Depends(block_free_plan_exports)
 ):
     chantier = await db.chantiers.find_one(
         {

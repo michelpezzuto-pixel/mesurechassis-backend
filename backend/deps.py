@@ -69,6 +69,17 @@ async def ensure_company(company_id: str) -> dict:
             update["subscription_expires_at"] = (
                 datetime.now(timezone.utc) + timedelta(days=90)
             ).isoformat()
+        if "plan" not in doc:
+            # Préserve l'expérience existante : les comptes pré-Freemium
+            # restent en "trial" (accès Pro 90j). Les nouveaux comptes
+            # peuvent être placés en "free" via /platform.
+            update["plan"] = "trial"
+        if "chantiers_lifetime_count" not in doc:
+            update["chantiers_lifetime_count"] = await db.chantiers.count_documents(
+                {"company_id": company_id}
+            )
+        if "cancel_at_period_end" not in doc:
+            update["cancel_at_period_end"] = False
         if update:
             await db.companies.update_one(
                 {"company_id": company_id}, {"$set": update}
@@ -83,6 +94,10 @@ async def ensure_company(company_id: str) -> dict:
         "subscription_expires_at": (
             datetime.now(timezone.utc) + timedelta(days=90)
         ).isoformat(),
+        "plan": "trial",
+        "chantiers_lifetime_count": 0,
+        "cancel_at_period_end": False,
+        "cancelled_at": None,
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.companies.insert_one(new_doc)
@@ -111,6 +126,14 @@ async def auth_user(authorization: Optional[str] = Header(None)) -> dict:
     user["subscription_expires_at"] = company_doc.get(
         "subscription_expires_at"
     )
+    user["plan"] = company_doc.get("plan", "trial")
+    user["chantiers_lifetime_count"] = int(
+        company_doc.get("chantiers_lifetime_count", 0)
+    )
+    user["cancel_at_period_end"] = bool(
+        company_doc.get("cancel_at_period_end", False)
+    )
+    user["cancelled_at"] = company_doc.get("cancelled_at")
     return user
 
 

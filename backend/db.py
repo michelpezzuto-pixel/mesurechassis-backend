@@ -46,6 +46,10 @@ CONVERTED_STATUSES = {"en_commande", "en_fabrication", "cloture"}
 VALID_BLOCK_TYPES = {"standard", "coulissant", "porte", "trapeze"}
 VALID_WALL_TYPES = {"ite", "iti", "brique_parement", "crepi_simple"}
 
+# Paywall — Freemium tier (anti-fraud lifetime limit)
+VALID_PLANS = {"free", "trial", "pro"}
+FREE_PLAN_MAX_CHANTIERS = 3
+
 # Endpoints accessibles même si l'abonnement est expiré
 SUBSCRIPTION_OPEN_PATHS = {
     "/api/auth/me",

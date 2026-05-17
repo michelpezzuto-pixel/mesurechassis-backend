@@ -100,12 +100,19 @@ class CompanyProfile(BaseModel):
     artisan_mode: bool = False
     subscription_status: str = "trial"  # trial | active | suspended
     subscription_expires_at: Optional[str] = None
+    # --- Plan & Freemium (anti-fraud) ---
+    plan: str = "trial"  # free | trial | pro
+    chantiers_lifetime_count: int = 0
+    # --- Cancellation (graceful termination) ---
+    cancel_at_period_end: bool = False
+    cancelled_at: Optional[str] = None
 
 
 class CompanyProfileUpdate(BaseModel):
     name: Optional[str] = None
     artisan_mode: Optional[bool] = None
-    # Les champs subscription_* sont updatés uniquement via /platform/...
+    # Les champs subscription_*, plan, cancel_* sont updatés uniquement
+    # via /platform/... ou /company/subscription/{cancel|reactivate}.
 
 
 # --- Mesures -------------------------------------------------------------

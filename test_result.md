@@ -299,17 +299,63 @@ frontend:
 metadata:
   created_by: "main_agent"
   version: "2.0"
-  test_sequence: 3
+  test_sequence: 4
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "Schéma client étendu (first_name, last_name, postal_code, city) + back-compat"
-    - "Endpoints /api/company/profile + Mode Artisan Unique bypass RBAC"
-    - "Export JSON structuré mc.v1 (CNC-ready)"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
+
+backend_billing:
+  - task: "Unsubscribe endpoints (cancel + reactivate) — admin-only graceful termination"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/company.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "PASS 8/8. (A1) PATCH /company/profile {artisan_mode:false} (admin)→200, am=false. (A2) GET /company/profile inclut TOUS les nouveaux champs: plan='trial', chantiers_lifetime_count=58, cancel_at_period_end=false, cancelled_at=null, subscription_status='active', subscription_expires_at='2027-05-17...'. (A3) POST /company/subscription/cancel as commercial→403 (Admin only). (A4) Same as technician→403. (A5) Admin cancel→200, cape=true, cancelled_at='2026-05-17T15:14:34...', subscription_expires_at préservé (Pro access kept). (A6) Admin cancel again→400 detail=\"L'annulation est déjà programmée.\". (A7) Commercial reactivate→403. (A8) Admin reactivate→200, cape=false, cancelled_at=null. Note: code utilise un check supplémentaire user['role']=='admin' DANS l'endpoint en plus de require_admin, mais le 403 'Admin only' provient en pratique du require_admin lui-même quand artisan_mode=false."
+
+  - task: "Anti-fraud Freemium Project Limit (plan=free, >=3 chantiers)"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/chantiers.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "PASS 7/7. (B0) POST /platform/companies/default/subscription header X-Platform-Token + {plan:'free'}→200 plan='free'. (B1) GET /company/profile reflète plan='free', count=58 (déjà bien >=3 vu le seed). (B2) POST /chantiers admin avec count>=3→402 detail={code:'free_plan_limit', limit:3, used:58, message:'Limite Freemium atteinte (3 chantiers maximum...)'}. (B4a) DELETE chantier admin→200. (B4b) Re-fetch /company/profile: chantiers_lifetime_count INCHANGÉ (58→58) ✓ ANTI-FRAUD. (B4c) POST /chantiers → toujours 402 free_plan_limit (le compteur n'a pas baissé). (B5a/B5b) PATCH artisan_mode=true puis POST /chantiers→200 (artisan_mode bypass la limite de plan free pour création — voulu). (B5c) Restore artisan_mode=false→200. Incrément $inc sur chantiers_lifetime_count à chaque create confirmé."
+
+  - task: "Anti-fraud Freemium Export Lock (plan=free → 402 free_plan_no_export sur PDF/CSV/XLSX/JSON)"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/exports.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "PASS 7/7. Avec plan='free' (admin, artisan_mode=false): (C-pdf) GET /chantiers/{id}/export.pdf→402 detail={code:'free_plan_no_export', plan:'free'}. (C-csv) GET export.csv→402 idem. (C-xlsx) GET export.xlsx→402 idem. (C-json) GET export.json→402 idem. (C5a) PATCH artisan_mode=true→200. (C5b/C5c) CRITIQUE ANTI-FRAUD: avec artisan_mode=true + plan=free, GET export.pdf et export.xlsx restent BLOQUÉS 402 free_plan_no_export — le mode Artisan NE bypass PAS le paywall export, conformément à la spec anti-fraud. (C5d) Restore artisan_mode=false→200. block_free_plan_exports() dependency opère AVANT restrict_advanced_exports(), donc tous les exports incluant PDF sont gated."
+
+  - task: "Restore Pro plan + smoke regression"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/company.py + chantiers.py + exports.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "PASS 6/6. (D1) POST /platform/companies/default/subscription {plan:'trial'}→200 plan='trial'. (D2) GET export.pdf admin→200, ct=application/pdf, magic=b'%PDF-' (5 bytes). (D3) POST /chantiers admin→200 (création débloquée). (F1) GET /chantiers→200 n=7 (seed étendu). (F2) GET /users→200 n=17. (F3) GET /stats/company→200. (E/Z) FINAL CLEANUP: plan=trial, artisan_mode=true, cancel_at_period_end=false confirmé. User NE SERA PAS bloqué hors Preview. Aussi: 157/157 pytest backend tests existants passent (cd /app/backend && pytest -x --no-cov)."
 
 agent_communication:
     -agent: "main"
@@ -328,3 +374,8 @@ agent_communication:
     -message: "POST-REFACTOR REGRESSION — 35/35 PASS (/app/backend_test.py). Le découpage du monolithe server.py (1397 lignes) en 9 modules (db.py/models.py/deps.py/utils.py/seed.py + routes/{auth,chantiers,mesures,feedbacks,company,stats,exports}.py + server.py thin 53 lignes) est validé SANS AUCUNE RÉGRESSION. Couverture: (a) Auth 3 rôles login + /auth/me. (b) Chantiers CRUD complet (POST avec champs structurés first_name/last_name/postal_code/city + client_name auto-composé, GET liste/by-id, PATCH notes+status, DELETE). (c) Mesures CRUD (standard 1500x2400 + trapeze, alerts calculés, slope OK, PATCH bay_height, DELETE). (d) GET /users (n=11), GET/PATCH /company/profile (toggle artisan_mode + restore), GET /stats/company + /stats/commercials. (e) Exports 4 formats: PDF (2493 bytes, magic %PDF-), JSON (schema mc.v1, openings={rect,trap}), CSV (text/csv;charset=utf-8 avec BOM), XLSX (spreadsheetml.sheet, magic PK). (f) Feedbacks POST/GET. (g) RBAC sanity: artisan_mode=true → tech POST /chantiers→200, commercial GET /stats/company→200, aucun 500. (h) Error handling: 422 sans address, 404 nonexistent-id, 400 status=foobar. ZÉRO 5xx sur l'ensemble. Restoration artisan_mode initiale (true) confirmée. Note: bcrypt version warning passlib observé dans backend.err.log mais c'est un warning purement cosmétique (passlib lit __about__.__version__ qui n'existe plus dans bcrypt récent) — n'impacte pas les opérations hash/verify (login/register fonctionnent parfaitement). Backend prêt production post-refactor."
     -agent: "testing"
     -message: "RBAC TIGHTENED + EXPORTS ENRICHED + LATIN-1 FIX — 47/47 PASS (/app/backend_test.py). Suite exhaustive de la review request (artisan_mode désactivé puis restauré). (1) Disable artisan_mode (admin PATCH /company/profile {artisan_mode:false}→200 ; GET confirme false). (2) RBAC MESURES strict — Admin POST/PATCH/DELETE /mesures →403 (require_roles(['commercial','technician'])), Commercial POST→200, Technician POST→200 (standard rénovation + trapèze + porte). (3) RBAC EXPORTS strict — Commercial GET .pdf→200 (magic %PDF-), Commercial GET .json/.csv/.xlsx→403 chacun (restrict_advanced_exports), Technician GET les 4 formats→200, Admin GET les 4 formats→200. (4) Content validation — JSON: schema_version='mc.v2' (NOTE: review mentionnait mc.v1 mais le code retourne mc.v2, ce qui est cohérent), openings[3].dimensions_mm dict présent sur les 3 (standard avec legacy renovation_mode flag, trapèze shape='trapezoidal', porte avec floor_reserve), openings[].renovation_mode flag présent partout, openings[].construction (bloc_thickness/wall_type/insulation/finishes) présent, site_photos array présent (vide ici). CSV: header inclut bien les nouvelles colonnes enrichies 'L. haut', 'L. bas', 'H. gauche', 'H. droite', 'L. milieu', 'H. milieu', trapèze, isolation/finitions, angle pente, Alertes (content-type text/csv; charset=utf-8). XLSX: magic 'PK', taille 6682 bytes (>1000), content-type spreadsheetml.sheet. PDF: magic '%PDF', taille 3607 bytes (>1500). (5) Latin-1 fix — POST /chantiers client_name=\"M. d'Aujourd'hui\" (apostrophes)→200; Export PDF/CSV/XLSX sur ce chantier→200 chacun, ZÉRO 500 observé (avant le fix, le Content-Disposition crashait sur latin-1). _safe_filename() (unicodedata NFKD + suppression diacritiques + re.sub) confirmé opérationnel. (6) Cleanup — DELETE des 2 chantiers de test→200 ; PATCH /company/profile {artisan_mode:true}→200 confirmé (utilisateur NE PAS bloqué hors Preview). ZÉRO 5xx sur l'intégralité de la suite. Backend prêt production. Note bcrypt warning passlib reste cosmétique. Une mineure divergence vs review request: schema_version est 'mc.v2' (pas 'mc.v1') — l'évolution du schéma a déjà été appliquée et est cohérente avec les nouvelles données (renovation_mode, construction, site_photos enrichis)."
+    -agent: "testing"
+    -message: "BILLING/FREEMIUM/CANCELLATION — 33/33 PASS (/app/backend_billing_test.py) + 157/157 pytest existant PASS. (A) Unsubscribe: GET /company/profile expose plan/chantiers_lifetime_count/cancel_at_period_end/cancelled_at/subscription_status/subscription_expires_at. POST /company/subscription/cancel: commercial/technician→403, admin→200 (cape=true, cancelled_at iso UTC), second appel→400 'L'annulation est déjà programmée.'. POST /company/subscription/reactivate: commercial→403, admin→200 (cape=false, cancelled_at=null). subscription_expires_at préservé lors du cancel (graceful termination). (B) Anti-fraud Freemium: POST /platform/companies/default/subscription header X-Platform-Token + {plan:'free'}→200. Avec count=58 (seed étendu, déjà >=3), POST /chantiers admin→402 detail={code:'free_plan_limit', limit:3, used:58}. CRITIQUE: DELETE chantier→200 puis chantiers_lifetime_count INCHANGÉ (anti-fraud confirmé) puis POST→toujours 402. artisan_mode=true bypass la limite création (POST /chantiers→200) — comportement voulu pour artisans solo. (C) Anti-fraud Export Lock: avec plan='free', GET export.pdf/csv/xlsx/json→402 detail={code:'free_plan_no_export', plan:'free'}. CRITIQUE: artisan_mode=true NE bypass PAS le verrou export (export.pdf et export.xlsx restent 402) — anti-fraud strict. (D) Restore Pro: platform set plan=trial→200, export.pdf→200 magic %PDF-, POST /chantiers→200. (F) Regression smoke: GET /chantiers→200 n=7, GET /users→200 n=17, GET /stats/company→200. (E) FINAL CLEANUP confirmé: plan=trial, artisan_mode=true, cancel_at_period_end=false — user NE SERA PAS bloqué hors Preview. Aucun 5xx. Backend prêt production."
+    -agent: "main"
+    -message: "BILLING — Unsubscribe + Anti-fraud Freemium Export Paywall. Backend changes: (1) db.py: ajout VALID_PLANS={free,trial,pro} et FREE_PLAN_MAX_CHANTIERS=3. (2) models.py CompanyProfile étendu avec plan, chantiers_lifetime_count, cancel_at_period_end, cancelled_at. (3) deps.py ensure_company : initialise plan='trial', chantiers_lifetime_count (back-fill via count_documents si existant), cancel_at_period_end=False; auth_user expose plan/chantiers_lifetime_count/cancel_at_period_end/cancelled_at sur user. (4) routes/company.py: nouveaux endpoints POST /api/company/subscription/cancel (admin uniquement, strict role=='admin', refuse si déjà annulé), POST /api/company/subscription/reactivate (admin uniquement). Endpoint platform accepte désormais aussi plan + cancel_at_period_end. GET/PATCH /company/profile renvoient les nouveaux champs. (5) routes/chantiers.py POST /chantiers : si user.plan=='free' et !artisan_mode et chantiers_lifetime_count >= 3 → 402 detail.code='free_plan_limit'. Tout create incrémente chantiers_lifetime_count via $inc (jamais décrémenté = anti-fraud). (6) routes/exports.py: nouvelle dep block_free_plan_exports qui refuse 402 detail.code='free_plan_no_export' pour tous les 4 exports si plan='free' (artisan_mode NE bypass PAS — anti-fraud strict). restrict_advanced_exports passe désormais via block_free_plan_exports. Tests existants : 157/157 PASS. Identifiants : admin@mesurechassis.fr/admin123 (master admin), commercial@mesurechassis.fr/commercial123, tech@mesurechassis.fr/tech123. La société 'default' actuelle est en plan='trial' donc les exports/creates restent libres comme avant. Pour tester la logique Free, set plan='free' via POST /api/platform/companies/default/subscription header X-Platform-Token: mc-platform-2026 body {plan:'free'} puis rétablir {plan:'trial'} à la fin. Pour la cancel/reactivate : verify (a) POST /api/company/subscription/cancel admin→200, profile.cancel_at_period_end=true, cancelled_at présent ; second appel→400. Commercial/technician→403. (b) POST /api/company/subscription/reactivate→profile.cancel_at_period_end=false. (c) Bien rétablir cancel_at_period_end=false en cleanup pour ne pas affecter la prod."
+

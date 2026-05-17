@@ -178,6 +178,25 @@ export default function Dashboard() {
       resetForm();
       router.push(`/chantier/${res.data.id}`);
     } catch (e: any) {
+      // Limite Freemium atteinte (anti-fraud lifetime)
+      if (e?.response?.status === 402) {
+        const detail = e?.response?.data?.detail;
+        if (detail?.code === "free_plan_limit") {
+          Alert.alert(
+            "🔒 Limite Freemium atteinte",
+            `${detail.message}\n\n(${detail.used}/${detail.limit} chantiers — la suppression ne réinitialise pas le compteur).`,
+            [
+              { text: "Plus tard", style: "cancel" },
+              {
+                text: "Voir l'abonnement",
+                onPress: () => router.push("/company-profile"),
+              },
+            ]
+          );
+          setCreating(false);
+          return;
+        }
+      }
       if (isNetworkError(e)) {
         // Hors-ligne : on stocke le chantier en file d'attente locale.
         await enqueueChantier(payload);

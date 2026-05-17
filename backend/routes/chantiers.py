@@ -7,7 +7,7 @@ from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from db import VALID_STATUSES, db
+from db import FREE_PLAN_MAX_CHANTIERS, VALID_STATUSES, db
 from deps import (
     require_active_subscription,
     require_roles,
@@ -30,6 +30,25 @@ async def create_chantier(
 ):
     if payload.status not in VALID_STATUSES:
         raise HTTPException(400, "Invalid status")
+    # --- Anti-fraud Freemium lifetime limit -------------------------------
+    # Le compteur lifetime n'est jamais décrémenté : impossible de
+    # contourner en supprimant un chantier.
+    if (user.get("plan") == "free") and not user.get("artisan_mode", False):
+        used = int(user.get("chantiers_lifetime_count", 0))
+        if used >= FREE_PLAN_MAX_CHANTIERS:
+            raise HTTPException(
+                status_code=402,
+                detail={
+                    "code": "free_plan_limit",
+                    "message": (
+                        f"Limite Freemium atteinte ({FREE_PLAN_MAX_CHANTIERS} "
+                        "chantiers maximum sur la durée de vie du compte). "
+                        "Passez en Pro pour créer des chantiers illimités."
+                    ),
+                    "limit": FREE_PLAN_MAX_CHANTIERS,
+                    "used": used,
+                },
+            )
     client_name = payload.client_name
     if not client_name:
         parts = [p for p in [payload.last_name, payload.first_name] if p]
@@ -53,6 +72,12 @@ async def create_chantier(
     }
     await db.chantiers.insert_one(doc)
     doc.pop("_id", None)
+    # Incrément lifetime — quel que soit le plan (utile pour bascules ultérieures).
+    await db.companies.update_one(
+        {"company_id": user.get("company_id", "default")},
+        {"$inc": {"chantiers_lifetime_count": 1}},
+        upsert=True,
+    )
     if payload.assigned_to:
         await send_push_to_user(
             payload.assigned_to,

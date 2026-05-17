@@ -19,6 +19,10 @@ export type CompanyProfile = {
   artisan_mode: boolean;
   subscription_status?: string;
   subscription_expires_at?: string;
+  plan?: "free" | "trial" | "pro";
+  chantiers_lifetime_count?: number;
+  cancel_at_period_end?: boolean;
+  cancelled_at?: string | null;
 };
 
 export type SubscriptionLock = {

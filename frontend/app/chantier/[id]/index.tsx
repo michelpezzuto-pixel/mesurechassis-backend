@@ -48,10 +48,25 @@ type UserOpt = { id: string; name: string; email: string; role: string };
 export default function ChantierDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { user, hasRole, artisanMode } = useAuth();
+  const { user, hasRole, artisanMode, company } = useAuth();
   const canManage = hasRole(["admin", "commercial"]);
   const canMeasure = hasRole(["commercial", "technician"]);
   const canExportTech = hasRole(["technician", "admin"]);
+  const isFreePlan = (company?.plan ?? "trial") === "free";
+  const showUpgradeLock = () => {
+    Alert.alert(
+      "🔒 Exports verrouillés",
+      "Les exports (PDF, Excel, CSV, JSON) sont réservés aux abonnés Pro. " +
+        "Passez en Pro pour débloquer toutes les exportations techniques.",
+      [
+        { text: "Plus tard", style: "cancel" },
+        {
+          text: "Voir l'abonnement",
+          onPress: () => router.push("/company-profile"),
+        },
+      ]
+    );
+  };
   const [chantier, setChantier] = useState<Chantier | null>(null);
   const [mesures, setMesures] = useState<Mesure[]>([]);
   const [users, setUsers] = useState<UserOpt[]>([]);
@@ -204,6 +219,10 @@ export default function ChantierDetail() {
   // -------- Exports --------------------------------------------------------
   const downloadExport = async (kind: "pdf" | "xlsx" | "csv" | "json") => {
     if (!chantier) return;
+    if (isFreePlan) {
+      showUpgradeLock();
+      return;
+    }
     const urlMap: Record<string, (cid: string) => string> = {
       pdf: PDF_URL, xlsx: XLSX_URL, csv: CSV_URL, json: JSON_URL,
     };
@@ -215,6 +234,9 @@ export default function ChantierDetail() {
       if (Platform.OS === "web") {
         // Authenticated blob download via fetch
         const r = await fetch(url, { headers });
+        if (r.status === 402) {
+          throw new Error("FREE_PLAN_LOCK");
+        }
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const blob = await r.blob();
         const safe = (chantier.client_name || chantier.id).replace(/[^a-z0-9_-]+/gi, "_");
@@ -235,7 +257,11 @@ export default function ChantierDetail() {
         await Sharing.shareAsync(dl.uri, { dialogTitle: `Export ${kind.toUpperCase()}` });
       }
     } catch (e: any) {
-      Alert.alert("Erreur export", e?.message || "Téléchargement impossible.");
+      if (e?.message === "FREE_PLAN_LOCK") {
+        showUpgradeLock();
+      } else {
+        Alert.alert("Erreur export", e?.message || "Téléchargement impossible.");
+      }
     } finally {
       setExporting(null);
     }
@@ -488,29 +514,47 @@ export default function ChantierDetail() {
                 <View style={styles.exportHeader}>
                   <Ionicons name="download" size={18} color={colors.primary} />
                   <Text style={styles.exportTitle}>EXPORTS</Text>
+                  {isFreePlan && (
+                    <View style={styles.freeLockBadge}>
+                      <Ionicons name="lock-closed" size={11} color={colors.anomaly} />
+                      <Text style={styles.freeLockBadgeText}>VERROU FREE</Text>
+                    </View>
+                  )}
                 </View>
                 <Text style={styles.exportSub}>
-                  Document client, fichier fabrication ou intégration logiciel.
+                  {isFreePlan
+                    ? "Exports réservés au plan Pro — passez en Pro pour débloquer."
+                    : "Document client, fichier fabrication ou intégration logiciel."}
                 </Text>
                 <View style={styles.exportGrid}>
                 <ExportTile
                   testID="export-pdf-button"
                   busy={exporting === "pdf"}
-                  onPress={() => router.push(`/chantier/${id}/pdf-preview`)}
+                  onPress={() =>
+                    isFreePlan
+                      ? showUpgradeLock()
+                      : router.push(`/chantier/${id}/pdf-preview`)
+                  }
                   icon="document-text"
                   label="RÉCAPITULATIF PDF"
                   sub="Fiche technique"
                   color="#EF4444"
+                  locked={isFreePlan}
                 />
                   {canExportTech && (
                     <ExportTile
                       testID="export-xlsx-button"
                       busy={exporting === "xlsx"}
-                      onPress={() => router.push(`/chantier/${id}/xlsx-preview`)}
+                      onPress={() =>
+                        isFreePlan
+                          ? showUpgradeLock()
+                          : router.push(`/chantier/${id}/xlsx-preview`)
+                      }
                       icon="grid"
                       label="EXCEL .xlsx"
                       sub="Tableau atelier"
                       color="#22C55E"
+                      locked={isFreePlan}
                     />
                   )}
                   {canExportTech && (
@@ -522,17 +566,23 @@ export default function ChantierDetail() {
                       label="CSV"
                       sub="Tabulaire brut"
                       color="#3B82F6"
+                      locked={isFreePlan}
                     />
                   )}
                   {canExportTech && (
                     <ExportTile
                       testID="export-json-button"
                       busy={exporting === "json"}
-                      onPress={() => router.push(`/chantier/${id}/json-preview`)}
+                      onPress={() =>
+                        isFreePlan
+                          ? showUpgradeLock()
+                          : router.push(`/chantier/${id}/json-preview`)
+                      }
                       icon="code-slash"
                       label="JSON"
                       sub="Intégration CNC"
                       color="#A855F7"
+                      locked={isFreePlan}
                     />
                   )}
                 </View>
@@ -640,6 +690,7 @@ function ExportTile({
   label,
   sub,
   color,
+  locked,
 }: {
   testID?: string;
   busy: boolean;
@@ -648,6 +699,7 @@ function ExportTile({
   label: string;
   sub: string;
   color: string;
+  locked?: boolean;
 }) {
   return (
     <TouchableOpacity
@@ -655,13 +707,18 @@ function ExportTile({
       onPress={onPress}
       disabled={busy}
       activeOpacity={0.85}
-      style={[exportStyles.tile, busy && { opacity: 0.5 }]}
+      style={[exportStyles.tile, busy && { opacity: 0.5 }, locked && { opacity: 0.85 }]}
     >
       <View style={[exportStyles.iconBox, { backgroundColor: color + "22" }]}>
         {busy ? (
           <ActivityIndicator color={color} />
         ) : (
           <Ionicons name={icon} size={20} color={color} />
+        )}
+        {locked && (
+          <View style={exportStyles.lockOverlay}>
+            <Ionicons name="lock-closed" size={12} color="#fff" />
+          </View>
         )}
       </View>
       <Text style={exportStyles.label}>{label}</Text>
@@ -687,6 +744,19 @@ const exportStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 6,
+  },
+  lockOverlay: {
+    position: "absolute",
+    bottom: -2,
+    right: -2,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: colors.anomaly,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1.5,
+    borderColor: "#0C0C0E",
   },
   label: { color: "#fff", fontWeight: "900", fontSize: 12, letterSpacing: 0.5 },
   sub: { color: "#888", fontSize: 10, marginTop: 2, textAlign: "center" },
@@ -880,6 +950,24 @@ const styles = StyleSheet.create({
   exportHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 4 },
   exportTitle: { color: colors.textPrimary, fontWeight: "900", fontSize: 13, letterSpacing: 1 },
   exportSub: { color: colors.textSecondary, fontSize: 11, marginBottom: 10 },
+  freeLockBadge: {
+    marginLeft: "auto",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "#3a1010",
+    borderColor: colors.anomaly,
+    borderWidth: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  freeLockBadgeText: {
+    color: colors.anomaly,
+    fontSize: 10,
+    fontWeight: "900",
+    letterSpacing: 0.6,
+  },
   exportGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
   footer: {
     position: "absolute",
