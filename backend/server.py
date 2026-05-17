@@ -18,6 +18,7 @@ from routes import chantiers as chantiers_routes
 from routes import company as company_routes
 from routes import exports as exports_routes
 from routes import feedbacks as feedbacks_routes
+from routes import invitations as invitations_routes
 from routes import mesures as mesures_routes
 from routes import stats as stats_routes
 from seed import seed_data
@@ -36,6 +37,7 @@ app = FastAPI(title="MesureChâssis API", lifespan=lifespan)
 api = APIRouter(prefix="/api")
 
 api.include_router(auth_routes.router)
+api.include_router(invitations_routes.router)
 api.include_router(chantiers_routes.router)
 api.include_router(mesures_routes.router)
 api.include_router(feedbacks_routes.router)

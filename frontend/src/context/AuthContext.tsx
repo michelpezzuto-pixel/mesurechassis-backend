@@ -38,7 +38,18 @@ type AuthCtx = {
   loading: boolean;
   lock: SubscriptionLock;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (name: string, email: string, password: string, role: Role, companyId?: string) => Promise<void>;
+  signUp: (
+    name: string,
+    email: string,
+    password: string,
+    companyName?: string
+  ) => Promise<{ verification_link?: string; message?: string }>;
+  verifyEmail: (token: string) => Promise<void>;
+  acceptInvitation: (
+    token: string,
+    password: string,
+    name?: string
+  ) => Promise<void>;
   signOut: () => Promise<void>;
   refreshCompany: () => Promise<void>;
   /**
@@ -108,14 +119,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     registerPushTokenWithBackend();
   };
 
-  const signUp = async (name: string, email: string, password: string, role: Role, companyId?: string) => {
+  /**
+   * Inscription Master Admin (création d'une nouvelle société).
+   * Le compte est créé en `pending_verification`. La réponse contient
+   * `verification_link` (MOCK MVP) qui permet de simuler le clic email.
+   */
+  const signUp = async (
+    name: string,
+    email: string,
+    password: string,
+    companyName?: string
+  ): Promise<{ verification_link?: string; message?: string }> => {
     const res = await api.post("/auth/register", {
       name,
       email,
       password,
-      role,
-      company_id: companyId && companyId.length > 0 ? companyId : "default",
+      company_name: companyName && companyName.length > 0 ? companyName : name,
     });
+    // Pas de token : compte en pending_verification.
+    return {
+      verification_link: res.data?.verification_link,
+      message: res.data?.message,
+    };
+  };
+
+  /** Vérification email via token reçu en lien (deep-link /verify?token=). */
+  const verifyEmail = async (token: string) => {
+    const res = await api.post("/auth/verify", { token });
+    await saveToken(res.data.access_token);
+    setUser(res.data.user);
+    await fetchCompany();
+    registerPushTokenWithBackend();
+  };
+
+  /** Acceptation d'invitation : token reçu en /invite?token= */
+  const acceptInvitation = async (
+    token: string,
+    password: string,
+    name?: string
+  ) => {
+    const res = await api.post(
+      `/admin/invitations/${encodeURIComponent(token)}/accept`,
+      { password, name }
+    );
     await saveToken(res.data.access_token);
     setUser(res.data.user);
     await fetchCompany();
@@ -146,6 +192,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         lock,
         signIn,
         signUp,
+        verifyEmail,
+        acceptInvitation,
         signOut,
         refreshCompany: fetchCompany,
         hasRole,

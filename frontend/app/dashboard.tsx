@@ -281,6 +281,16 @@ export default function Dashboard() {
         </View>
         {user?.role === "admin" && (
           <TouchableOpacity
+            testID="admin-team-button"
+            onPress={() => router.push("/admin/team")}
+            style={[styles.logoutBtn, { marginRight: 8 }]}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="people-outline" size={22} color={colors.primary} />
+          </TouchableOpacity>
+        )}
+        {user?.role === "admin" && (
+          <TouchableOpacity
             testID="admin-stats-button"
             onPress={() => router.push("/admin/stats")}
             style={[styles.logoutBtn, { marginRight: 8 }]}

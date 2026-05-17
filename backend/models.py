@@ -15,6 +15,8 @@ class UserPublic(BaseModel):
     email: EmailStr
     role: str
     company_id: str
+    status: str = "active"  # pending_verification | active | suspended
+    email_verified_at: Optional[str] = None
 
 
 class UserCreate(BaseModel):
@@ -23,6 +25,39 @@ class UserCreate(BaseModel):
     password: str
     role: str = "technician"
     company_id: str = "default"
+
+
+class RegisterMasterAdmin(BaseModel):
+    """Inscription Master Admin uniquement (création d'une nouvelle société).
+
+    Le rôle est forcé à `admin` côté serveur. Le statut initial est
+    `pending_verification` et un email de double opt-in est envoyé.
+    """
+    name: str
+    email: EmailStr
+    password: str
+    company_name: Optional[str] = None
+
+
+class InvitationCreate(BaseModel):
+    """Invitation envoyée par le Master Admin à un Commercial / Technicien."""
+    name: str
+    email: EmailStr
+    role: str  # "commercial" | "technician"
+
+
+class InvitationAccept(BaseModel):
+    """Acceptation d'invitation : définit mot de passe + valide l'email."""
+    password: str
+    name: Optional[str] = None
+
+
+class VerifyEmailRequest(BaseModel):
+    token: str
+
+
+class ResendVerificationRequest(BaseModel):
+    email: EmailStr
 
 
 class LoginRequest(BaseModel):
@@ -34,6 +69,13 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user: UserPublic
+
+
+class RegisterResponse(BaseModel):
+    """Réponse register / invite : pas de token tant que l'email n'est pas vérifié."""
+    user: UserPublic
+    verification_link: Optional[str] = None  # MOCK MVP : lien renvoyé pour démo
+    message: str
 
 
 class PushTokenIn(BaseModel):

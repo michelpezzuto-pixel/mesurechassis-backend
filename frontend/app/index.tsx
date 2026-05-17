@@ -30,9 +30,13 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [companyId, setCompanyId] = useState("");
-  const [role, setRole] = useState<Role>("technician");
+  const [companyName, setCompanyName] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  // État post-signup : permet d'afficher l'écran "Vérifiez votre email"
+  const [pendingVerification, setPendingVerification] = useState<{
+    email: string;
+    link?: string;
+  } | null>(null);
 
   useEffect(() => {
     if (!loading && user) router.replace("/dashboard");
@@ -58,22 +62,39 @@ export default function SignIn() {
       return;
     }
     if (mode === "register" && !name.trim()) {
-      Alert.alert("Champs requis", "Le nom est obligatoire.");
+      Alert.alert("Champs requis", "Le nom complet est obligatoire.");
       return;
     }
     setSubmitting(true);
     try {
       if (mode === "login") {
         await signIn(email.trim(), password);
+        router.replace("/dashboard");
       } else {
-        await signUp(name.trim(), email.trim(), password, role, companyId.trim() || "default");
+        // Master Admin signup — pas de token immédiat, on attend la vérification email.
+        const res = await signUp(
+          name.trim(),
+          email.trim(),
+          password,
+          companyName.trim() || undefined
+        );
+        setPendingVerification({
+          email: email.trim(),
+          link: res.verification_link,
+        });
       }
-      router.replace("/dashboard");
     } catch (e: any) {
-      Alert.alert(
-        "Erreur",
-        e?.response?.data?.detail ?? "Connexion impossible. Vérifiez vos identifiants."
-      );
+      const detail = e?.response?.data?.detail;
+      // Email non vérifié → bascule vers l'écran de vérification
+      if (e?.response?.status === 403 && detail?.code === "email_not_verified") {
+        setPendingVerification({ email: email.trim() });
+        return;
+      }
+      const msg =
+        typeof detail === "string"
+          ? detail
+          : "Connexion impossible. Vérifiez vos identifiants.";
+      Alert.alert("Erreur", msg);
     } finally {
       setSubmitting(false);
     }
@@ -125,47 +146,98 @@ export default function SignIn() {
             </TouchableOpacity>
           </View>
 
+          {pendingVerification ? (
+            <View style={styles.pendingPanel}>
+              <View style={styles.pendingIconWrap}>
+                <Ionicons name="mail-unread" size={40} color={colors.primary} />
+              </View>
+              <Text style={styles.pendingTitle}>
+                VÉRIFIEZ VOTRE EMAIL
+              </Text>
+              <Text style={styles.pendingBody}>
+                Un email de vérification a été envoyé à{"\n"}
+                <Text style={styles.pendingEmail}>
+                  {pendingVerification.email}
+                </Text>
+                {"\n\n"}
+                Cliquez sur le lien reçu pour activer votre compte et accéder
+                au dashboard.
+              </Text>
+              {pendingVerification.link && (
+                <>
+                  <View style={styles.devLinkBox}>
+                    <Text style={styles.devLinkLabel}>
+                      🔧 DÉMO — Lien fourni (mode dev) :
+                    </Text>
+                    <Text
+                      testID="dev-verification-link"
+                      selectable
+                      style={styles.devLinkValue}
+                    >
+                      {pendingVerification.link}
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    testID="open-verification-link"
+                    activeOpacity={0.85}
+                    onPress={() =>
+                      router.push(pendingVerification.link as any)
+                    }
+                    style={styles.primaryBtn}
+                  >
+                    <Text style={styles.primaryBtnText}>
+                      OUVRIR LE LIEN MAINTENANT
+                    </Text>
+                  </TouchableOpacity>
+                </>
+              )}
+              <TouchableOpacity
+                onPress={() => {
+                  setPendingVerification(null);
+                  setMode("login");
+                }}
+                style={styles.ghostBtn}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.ghostBtnText}>← Retour à la connexion</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <>
           {mode === "register" && (
             <>
-              <Text style={styles.label}>Nom complet</Text>
+              <Text style={styles.label}>Nom complet (Master Admin)</Text>
               <TextInput
                 testID="register-name-input"
                 value={name}
                 onChangeText={setName}
-                placeholder="ex. Lucas Petit"
+                placeholder="ex. Marc Dubois"
                 placeholderTextColor={colors.placeholder}
                 style={styles.input}
               />
-              <Text style={styles.label}>Société (laisser vide = par défaut)</Text>
+              <Text style={styles.label}>
+                Nom de la société (optionnel — votre nom par défaut)
+              </Text>
               <TextInput
                 testID="register-company-input"
-                value={companyId}
-                onChangeText={setCompanyId}
-                placeholder="ex. menuiseries-dupont"
+                value={companyName}
+                onChangeText={setCompanyName}
+                placeholder="ex. Menuiseries Dubois SARL"
                 placeholderTextColor={colors.placeholder}
-                autoCapitalize="none"
                 style={styles.input}
               />
-              <Text style={styles.label}>Rôle</Text>
-              <View style={styles.roleRow}>
-                {ROLES.map((r) => (
-                  <TouchableOpacity
-                    key={r.value}
-                    testID={`role-${r.value}`}
-                    onPress={() => setRole(r.value)}
-                    style={[styles.roleCard, role === r.value && styles.roleCardActive]}
-                    activeOpacity={0.7}
-                  >
-                    <Ionicons
-                      name={r.icon}
-                      size={22}
-                      color={role === r.value ? colors.primary : colors.textSecondary}
-                    />
-                    <Text style={[styles.roleLabel, role === r.value && styles.roleLabelActive]}>
-                      {r.label}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+              <View style={styles.infoBox}>
+                <Ionicons
+                  name="information-circle"
+                  size={16}
+                  color={colors.primary}
+                />
+                <Text style={styles.infoBoxText}>
+                  L'inscription crée un compte{" "}
+                  <Text style={styles.bold}>Master Admin</Text> pour une
+                  nouvelle société. Les Commerciaux et Techniciens sont
+                  invités par l'Admin depuis l'application (écran Équipe).
+                </Text>
               </View>
             </>
           )}
@@ -225,6 +297,8 @@ export default function SignIn() {
               ))}
             </View>
           </View>
+            </>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -353,4 +427,72 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textTransform: "uppercase",
   },
+  // ----- Pending verification panel -----
+  pendingPanel: { alignItems: "center", paddingTop: 8 },
+  pendingIconWrap: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#2a1c08",
+    borderWidth: 2,
+    borderColor: colors.primary,
+    marginBottom: 14,
+  },
+  pendingTitle: {
+    color: colors.textPrimary,
+    fontWeight: "900",
+    letterSpacing: 1.2,
+    fontSize: 16,
+    marginBottom: 12,
+  },
+  pendingBody: {
+    color: colors.textSecondary,
+    fontSize: 13,
+    lineHeight: 19,
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  pendingEmail: { color: colors.primary, fontWeight: "900" },
+  devLinkBox: {
+    backgroundColor: colors.surface,
+    borderColor: colors.borderStrong,
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+    width: "100%",
+    marginBottom: 12,
+  },
+  devLinkLabel: {
+    color: colors.warning,
+    fontWeight: "800",
+    fontSize: 11,
+    letterSpacing: 0.6,
+    marginBottom: 6,
+  },
+  devLinkValue: {
+    color: colors.textPrimary,
+    fontSize: 11,
+    fontFamily: Platform.select({ ios: "Menlo", android: "monospace", default: "monospace" }),
+  },
+  ghostBtn: { paddingVertical: 12, paddingHorizontal: 16, marginTop: 6 },
+  ghostBtnText: {
+    color: colors.textSecondary,
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  infoBox: {
+    flexDirection: "row",
+    gap: 8,
+    backgroundColor: colors.surface,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.primary,
+    padding: 10,
+    borderRadius: 6,
+    marginTop: 6,
+    marginBottom: 6,
+  },
+  infoBoxText: { color: colors.textSecondary, fontSize: 12, flex: 1, lineHeight: 17 },
+  bold: { color: colors.textPrimary, fontWeight: "800" },
 });

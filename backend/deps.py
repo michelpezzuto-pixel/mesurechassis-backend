@@ -53,6 +53,8 @@ def user_to_public(doc: dict) -> UserPublic:
         email=doc["email"],
         role=doc["role"],
         company_id=doc.get("company_id", "default"),
+        status=doc.get("status") or "active",
+        email_verified_at=doc.get("email_verified_at"),
     )
 
 
@@ -118,6 +120,28 @@ async def auth_user(authorization: Optional[str] = Header(None)) -> dict:
     user = await db.users.find_one({"id": payload["sub"]}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
+    # Double opt-in : refus immédiat des comptes non vérifiés / suspendus.
+    status = user.get("status") or "active"
+    if status == "pending_verification":
+        raise HTTPException(
+            status_code=403,
+            detail={
+                "code": "email_not_verified",
+                "message": (
+                    "Votre adresse email n'a pas encore été vérifiée. "
+                    "Cliquez sur le lien envoyé par email pour activer votre compte."
+                ),
+            },
+        )
+    if status == "suspended":
+        raise HTTPException(
+            status_code=403,
+            detail={
+                "code": "user_suspended",
+                "message": "Votre compte a été suspendu.",
+            },
+        )
+    user["status"] = status
     company_id = user.get("company_id", "default")
     company_doc = await ensure_company(company_id)
     user["artisan_mode"] = bool(company_doc.get("artisan_mode"))
