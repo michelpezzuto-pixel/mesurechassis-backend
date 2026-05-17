@@ -109,11 +109,11 @@ class TestExportXlsx:
         assert "spreadsheetml.sheet" in ct, f"Bad content-type: {ct}"
         assert r.content[:2] == b"PK", f"Not a zip: first bytes={r.content[:4]!r}"
 
-    def test_export_xlsx_as_commercial(self, headers_commercial, chantier_id):
+    def test_export_xlsx_as_commercial_forbidden(self, headers_commercial, chantier_id):
+        """Matrix RBAC: Commercial gets 403 on XLSX (PDF only)."""
         r = requests.get(f"{API}/chantiers/{chantier_id}/export.xlsx",
                          headers=headers_commercial, timeout=30)
-        assert r.status_code == 200
-        assert r.content[:2] == b"PK"
+        assert r.status_code == 403, r.text
 
     def test_export_xlsx_as_technician(self, headers_tech, chantier_id):
         r = requests.get(f"{API}/chantiers/{chantier_id}/export.xlsx",

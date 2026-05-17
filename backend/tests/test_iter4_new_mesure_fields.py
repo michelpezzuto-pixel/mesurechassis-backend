@@ -184,16 +184,27 @@ class TestRetrievalAndExports:
         assert len(r.content) > 1000, f"PDF too small: {len(r.content)} bytes"
 
     def test_export_json_includes_new_fields(self, api_url, chantier_ctx):
-        cid, com_headers, _ = chantier_ctx
+        cid, _com_headers, tech_headers = chantier_ctx
+        # JSON export forbidden for Commercial (matrix RBAC) → use Tech headers.
         r = requests.get(f"{api_url}/chantiers/{cid}/export.json",
-                         headers=com_headers, timeout=30)
+                         headers=tech_headers, timeout=30)
         assert r.status_code == 200, r.text
         payload = r.json()
-        assert "chantier" in payload and "mesures" in payload
-        mesures = payload["mesures"]
-        target = next((m for m in mesures if m["label"] == "TEST_new_only"), None)
+        # mc.v2 schema: openings instead of mesures, dimensions_mm + construction
+        assert payload.get("schema_version") == "mc.v2"
+        openings = payload["openings"]
+        target = next((m for m in openings if m["label"] == "TEST_new_only"), None)
         assert target is not None
-        for f in NEW_FIELDS:
-            assert f in target, f"Field {f} missing in export.json mesure"
-        assert target["wall_type"] == "ite"
-        assert target["bay_height"] == 2150.5
+        dims = target["dimensions_mm"]
+        constr = target["construction"]
+        assert dims["height"] == 2150.5
+        assert dims["width"] == 1200.0
+        assert dims["diagonal_1"] == 2470.25 or dims.get("diagonal_2") == 2470.25
+        # floor_reserve is only included in dimensions_mm for porte/coulissant.
+        # block_type=standard → it lives only on the legacy mesure record.
+        assert "floor_reserve" not in dims or dims["floor_reserve"] == 35.0
+        assert constr["bloc_thickness_mm"] == 200.0
+        assert constr["wall_type"] == "ite"
+        assert constr["insulation_thickness_mm"] == 140.0
+        assert constr["finish_outer_mm"] == 15.0
+        assert constr["finish_inner_mm"] == 13.0

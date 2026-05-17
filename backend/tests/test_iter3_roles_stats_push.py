@@ -81,10 +81,11 @@ class TestChantierRoleRestrictions:
                            json={"status": "cloture"}, timeout=30)
         assert r.status_code == 403, r.text
 
-    def test_delete_chantier_commercial_forbidden(self, commercial_headers, created_chantier):
+    def test_delete_chantier_commercial_allowed(self, commercial_headers, created_chantier):
+        """Matrix RBAC: Commercial CAN delete a chantier (canManage = admin+commercial)."""
         r = requests.delete(f"{API}/chantiers/{created_chantier}",
                             headers=commercial_headers, timeout=30)
-        assert r.status_code == 403, r.text
+        assert r.status_code == 200, r.text
 
     def test_delete_chantier_technician_forbidden(self, tech_headers, created_chantier):
         r = requests.delete(f"{API}/chantiers/{created_chantier}",
@@ -123,10 +124,13 @@ class TestMesureAllRoles:
             "diag_1": 2236, "diag_2": 2236,
         }
 
-    def test_mesure_admin(self, admin_headers, shared_chantier):
+    def test_mesure_admin_forbidden_without_artisan_mode(self, admin_headers, shared_chantier):
+        """Matrix RBAC: Admin BLOCKED from creating mesures (unless artisan_mode)."""
         r = requests.post(f"{API}/mesures", headers=admin_headers,
                           json=self._mk_mesure_payload(shared_chantier), timeout=30)
-        assert r.status_code == 200, r.text
+        # In artisan_mode=true, admin can post (200). Without, 403.
+        # Our conftest disables artisan_mode, so expect 403.
+        assert r.status_code == 403, r.text
 
     def test_mesure_commercial(self, commercial_headers, shared_chantier):
         r = requests.post(f"{API}/mesures", headers=commercial_headers,
@@ -227,7 +231,8 @@ class TestStatsCompany:
         assert r.status_code == 403, r.text
 
     def test_stats_isolated_by_company(self, session):
-        # Register a fresh admin in a new company
+        # Register a fresh admin in a new company AND a tech (admin can't post mesures
+        # in matrix RBAC, so we need a tech for that step).
         company_id = f"acme-test-{uuid.uuid4().hex[:6]}"
         admin_email = f"TEST_acme_admin_{uuid.uuid4().hex[:8]}@example.com"
         reg = session.post(f"{API}/auth/register", json={
@@ -238,34 +243,46 @@ class TestStatsCompany:
         assert reg.status_code == 200, reg.text
         token = reg.json()["access_token"]
         h = _h(token)
+        # Also create a tech in same company
+        tech_email = f"TEST_acme_tech_{uuid.uuid4().hex[:8]}@example.com"
+        treg = session.post(f"{API}/auth/register", json={
+            "name": "TEST Acme Tech", "email": tech_email,
+            "password": "pw123456", "role": "technician",
+            "company_id": company_id,
+        }, timeout=30)
+        assert treg.status_code == 200, treg.text
+        th = _h(treg.json()["access_token"])
         try:
-            # Fresh company: zero chantiers
+            # Fresh company: zero chantiers — by_status now contains 5 internal statuses
             stats = requests.get(f"{API}/stats/company", headers=h, timeout=30).json()
             assert stats["total_chantiers"] == 0
-            assert stats["by_status"] == {"devis_a_faire": 0,
-                                          "technique_a_valider": 0, "cloture": 0}
+            # All 5 internal statuses must be present with count 0
+            for s in ("devis_a_faire", "technique_a_valider", "en_commande",
+                      "en_fabrication", "cloture"):
+                assert stats["by_status"].get(s, 0) == 0
             assert stats["closure_rate"] == 0.0
             assert stats["total_mesures"] == 0
             assert stats["total_alerts"] == 0
             assert stats["by_technician"] == []
 
-            # Create a chantier in this company and a mesure with alerts
+            # Admin creates a chantier in this company (admin CAN create chantiers)
             c = requests.post(f"{API}/chantiers", headers=h, json={
                 "client_name": "TEST_acme_chantier",
                 "address": "addr",
                 "status": "cloture",
             }, timeout=30).json()
-            # Assign to self (admin user) so by_technician aggregates
-            me = requests.get(f"{API}/auth/me", headers=h, timeout=30).json()
+            # Assign to the tech user so by_technician aggregates
+            me_tech = requests.get(f"{API}/auth/me", headers=th, timeout=30).json()
             requests.patch(f"{API}/chantiers/{c['id']}", headers=h,
-                           json={"assigned_to": me["id"]}, timeout=30)
+                           json={"assigned_to": me_tech["id"]}, timeout=30)
 
-            # Create mesure with alerts (faux-aplomb: widths diff > 5)
-            requests.post(f"{API}/mesures", headers=h, json={
+            # Tech posts mesure with alerts (matrix RBAC: only com/tech can)
+            mr = requests.post(f"{API}/mesures", headers=th, json={
                 "chantier_id": c["id"], "block_type": "standard", "label": "M1",
                 "width_top": 1000, "width_middle": 1010, "width_bottom": 1000,
                 "height_left": 2000, "height_middle": 2000, "height_right": 2000,
             }, timeout=30)
+            assert mr.status_code == 200, mr.text
 
             stats2 = requests.get(f"{API}/stats/company", headers=h, timeout=30).json()
             assert stats2["total_chantiers"] == 1
@@ -275,10 +292,10 @@ class TestStatsCompany:
             assert stats2["total_alerts"] >= 1
             assert len(stats2["by_technician"]) == 1
             tb = stats2["by_technician"][0]
-            assert tb["user_id"] == me["id"]
+            assert tb["user_id"] == me_tech["id"]
             assert tb["mesures"] == 1
             assert tb["alerts"] >= 1
-            assert tb["name"] == "TEST Acme Admin"
+            assert tb["name"] == "TEST Acme Tech"
         finally:
             # cleanup chantiers for this company
             chs = requests.get(f"{API}/chantiers", headers=h, timeout=30).json()

@@ -29,9 +29,9 @@ from httpx import ASGITransport, AsyncClient  # noqa: E402
 from db import db  # noqa: E402
 from server import app  # noqa: E402
 
-# Active le hook pytest_collection_modifyitems qui skip les anciens tests
-# devenus incompatibles avec la matrice RBAC + schéma JSON v2.
-from tests._legacy_skips import pytest_collection_modifyitems  # noqa: E402, F401
+# Les 9 anciens tests sont désormais à jour (matrice RBAC + schéma JSON v2)
+# → on n'active plus le hook de skip. À ré-activer si on régresse à nouveau.
+# from tests._legacy_skips import pytest_collection_modifyitems  # noqa
 
 
 # ============================================================================

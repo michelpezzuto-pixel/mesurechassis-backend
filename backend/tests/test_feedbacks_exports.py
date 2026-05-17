@@ -87,15 +87,31 @@ class TestExports:
 
     def test_export_json_success(self, api_url, chantier_with_mesure):
         cid, headers = chantier_with_mesure
+        # JSON export is restricted to admin/tech (Commercial gets 403).
+        # If headers belong to Commercial, login as tech to perform the check.
+        admin_login = requests.post(f"{api_url}/auth/login", json={
+            "email": "tech@mesurechassis.fr", "password": "tech123"}, timeout=30)
+        tech_headers = {
+            "Authorization": f"Bearer {admin_login.json()['access_token']}",
+            "Content-Type": "application/json",
+        }
         r = requests.get(f"{api_url}/chantiers/{cid}/export.json",
-                         headers=headers, timeout=30)
+                         headers=tech_headers, timeout=30)
         assert r.status_code == 200
         data = r.json()
-        assert "chantier" in data and "mesures" in data
-        assert data["chantier"]["id"] == cid
-        assert isinstance(data["mesures"], list)
-        assert len(data["mesures"]) >= 1
-        # ensure no mongo _id leakage
-        assert "_id" not in data["chantier"]
-        for m in data["mesures"]:
-            assert "_id" not in m
+        # mc.v2 schema: client + project + openings
+        assert data["schema_version"] == "mc.v2"
+        assert "client" in data and "project" in data and "openings" in data
+        assert data["project"]["id"] == cid
+        assert isinstance(data["openings"], list)
+        assert len(data["openings"]) >= 1
+        # Robust check: no real Mongo _id (substring "_id" in "company_id" is OK).
+        def _has_mongo_id(obj):
+            if isinstance(obj, dict):
+                if "_id" in obj:
+                    return True
+                return any(_has_mongo_id(v) for v in obj.values())
+            if isinstance(obj, list):
+                return any(_has_mongo_id(v) for v in obj)
+            return False
+        assert not _has_mongo_id(data), "Mongo _id leaked in export.json"

@@ -197,13 +197,20 @@ class TestExportsBriqueParement:
         yield cid
         requests.delete(f"{API}/chantiers/{cid}", headers=headers_admin, timeout=30)
 
-    def test_export_xlsx_with_brique_parement(self, headers_commercial, chantier_with_brique):
+    def test_export_xlsx_with_brique_parement(self, chantier_with_brique):
+        """Matrix RBAC: Commercial 403 on XLSX → login as tech to validate file."""
+        tech_login = requests.post(f"{API}/auth/login",
+                                   json={"email": "tech@mesurechassis.fr",
+                                         "password": "tech123"}, timeout=30)
+        tech_headers = {
+            "Authorization": f"Bearer {tech_login.json()['access_token']}",
+            "Content-Type": "application/json",
+        }
         r = requests.get(f"{API}/chantiers/{chantier_with_brique}/export.xlsx",
-                         headers=headers_commercial, timeout=60)
+                         headers=tech_headers, timeout=60)
         assert r.status_code == 200, r.text[:300]
         ct = r.headers.get("content-type", "")
         assert "spreadsheetml.sheet" in ct, f"Bad content-type: {ct}"
-        # Valid xlsx starts with PK zip magic bytes
         assert r.content[:2] == b"PK", "Invalid XLSX magic bytes"
         assert len(r.content) > 1000, "XLSX suspiciously small"
 
