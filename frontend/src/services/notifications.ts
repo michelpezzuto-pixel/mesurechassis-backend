@@ -1,22 +1,41 @@
 import { Platform } from "react-native";
-import * as Device from "expo-device";
-import * as Notifications from "expo-notifications";
-import Constants from "expo-constants";
 import { api } from "@/src/services/api";
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowBanner: true,
-    shouldShowList: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
-});
+/**
+ * expo-notifications n'étant pas supporté sur Web, on évite tout import
+ * (et tout side-effect) du module quand on tourne dans un navigateur.
+ * Cela supprime le warning de console
+ * "[expo-notifications] Listening to push token changes is not yet fully
+ *  supported on web. Adding a listener will have no effect."
+ */
+async function setupHandlerNative(): Promise<void> {
+  // Import dynamique : Metro/Webpack n'évaluera ce module que sur natif.
+  const Notifications = await import("expo-notifications");
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowBanner: true,
+      shouldShowList: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+    }),
+  });
+}
+
+if (Platform.OS !== "web") {
+  // Fire-and-forget : on n'attend pas l'init du handler côté natif.
+  setupHandlerNative().catch(() => {
+    /* noop */
+  });
+}
 
 export async function registerPushTokenWithBackend(): Promise<string | null> {
   if (Platform.OS === "web") return null;
-  if (!Device.isDevice) return null;
   try {
+    const Device = await import("expo-device");
+    if (!Device.isDevice) return null;
+    const Notifications = await import("expo-notifications");
+    const Constants = (await import("expo-constants")).default;
+
     const { status: existing } = await Notifications.getPermissionsAsync();
     let final = existing;
     if (existing !== "granted") {
@@ -42,7 +61,7 @@ export async function registerPushTokenWithBackend(): Promise<string | null> {
     const token = tokenRes.data;
     await api.post("/auth/push-token", { push_token: token });
     return token;
-  } catch (e) {
+  } catch {
     // Expo Go SDK 53+ no longer supports remote push: silently ignore
     return null;
   }
