@@ -29,6 +29,7 @@ type Chantier = {
   address: string;
   status: string;
   assigned_to?: string | null;
+  created_by?: string | null;
   created_at: string;
   site_photos?: SitePhoto[];
 };
@@ -58,6 +59,12 @@ export default function ChantierDetail() {
   const [refreshing, setRefreshing] = useState(false);
   const [assignOpen, setAssignOpen] = useState(false);
   const [exporting, setExporting] = useState<string | null>(null);
+  const isArchived = chantier?.status === "cloture" || chantier?.status === "termine";
+  const creatorName = (() => {
+    if (!chantier) return "";
+    const u = users.find((x) => x.id === chantier.created_by);
+    return u?.name || "Opérateur inconnu";
+  })();
 
   const fetchAll = useCallback(async () => {
     try {
@@ -347,7 +354,7 @@ export default function ChantierDetail() {
                   ))}
                 </View>
               )}
-              {canManage && (
+              {canManage && !isArchived && (
                 <View style={styles.mesureActions}>
                   <TouchableOpacity
                     testID={`edit-mesure-${item.id}`}
@@ -387,6 +394,12 @@ export default function ChantierDetail() {
                     <Ionicons name="trash-outline" size={14} color={colors.anomaly} />
                     <Text style={styles.mesureDelText}>SUPPRIMER</Text>
                   </TouchableOpacity>
+                </View>
+              )}
+              {isArchived && (
+                <View style={styles.archiveRow}>
+                  <Ionicons name="lock-closed" size={12} color={colors.textSecondary} />
+                  <Text style={styles.archiveText}>LECTURE SEULE — Chantier archivé</Text>
                 </View>
               )}
             </View>

@@ -21,7 +21,7 @@ import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/dat
 import { api } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { subscribeQueueSize, syncQueue } from "@/src/services/offlineQueue";
-import { colors, statusMeta } from "@/src/theme";
+import { colors, statusMeta, READY_FOR_EXPORT_BADGE } from "@/src/theme";
 
 type Chantier = {
   id: string;
@@ -182,7 +182,9 @@ export default function Dashboard() {
       label: item.status,
       color: "#fff",
       bg: "#333",
+      stage: "verify" as const,
     };
+    const isDone = meta.stage === "done";
     return (
       <TouchableOpacity
         testID={`project-card-${item.id}`}
@@ -202,11 +204,19 @@ export default function Dashboard() {
           </View>
           <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
         </View>
-        <View
-          style={[styles.badge, { backgroundColor: meta.bg }]}
-        >
-          <View style={[styles.badgeDot, { backgroundColor: meta.color }]} />
-          <Text style={[styles.badgeText, { color: meta.color }]}>{meta.label}</Text>
+        <View style={styles.badgeRow}>
+          <View style={[styles.badge, { backgroundColor: meta.bg }]}>
+            <View style={[styles.badgeDot, { backgroundColor: meta.color }]} />
+            <Text style={[styles.badgeText, { color: meta.color }]}>{meta.label}</Text>
+          </View>
+          {isDone && (
+            <View style={[styles.badge, styles.exportReadyBadge]}>
+              <Ionicons name="checkmark-circle" size={12} color={READY_FOR_EXPORT_BADGE.color} />
+              <Text style={[styles.badgeText, { color: READY_FOR_EXPORT_BADGE.color, marginLeft: 4 }]}>
+                Prêt pour Export
+              </Text>
+            </View>
+          )}
         </View>
       </TouchableOpacity>
     );
@@ -641,6 +651,14 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     textTransform: "uppercase",
     letterSpacing: 0.8,
+  },
+  badgeRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 4 },
+  exportReadyBadge: {
+    backgroundColor: "#0e3315",
+    borderWidth: 1,
+    borderColor: "#32D74B",
+    flexDirection: "row",
+    alignItems: "center",
   },
   empty: { alignItems: "center", padding: 60, gap: 8 },
   emptyText: { color: colors.textPrimary, fontWeight: "800", fontSize: 16 },

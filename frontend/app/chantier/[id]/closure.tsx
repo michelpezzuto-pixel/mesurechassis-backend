@@ -146,22 +146,29 @@ export default function Closure() {
 
   // ---- Closure handler ----
   const cloturer = async () => {
-    Alert.alert("Clôturer ce chantier ?", "Le statut passera à 'Clôturé'.", [
-      { text: "Annuler", style: "cancel" },
-      {
-        text: "Confirmer",
-        style: "destructive",
-        onPress: async () => {
-          try {
-            await api.patch(`/chantiers/${id}`, { status: "cloture" });
-            await fetchAll();
-            Alert.alert("✅ Chantier clôturé");
-          } catch {
-            Alert.alert("Erreur", "Action impossible.");
-          }
+    Alert.alert(
+      "Clôturer ce chantier ?",
+      "Le statut passera à 'Terminé / Livré' et le chantier sera archivé en lecture seule. Vous pourrez toujours consulter les mesures et exports.",
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Confirmer la clôture",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await api.patch(`/chantiers/${id}`, { status: "cloture" });
+              Alert.alert(
+                "✅ Chantier clôturé",
+                "Le chantier est marqué 'Terminé / Livré'. Le PDF, CSV et JSON sont prêts pour export.",
+                [{ text: "OK", onPress: () => router.replace("/dashboard") }]
+              );
+            } catch {
+              Alert.alert("Erreur", "Action impossible.");
+            }
+          },
         },
-      },
-    ]);
+      ]
+    );
   };
 
   if (loading || !chantier) {
