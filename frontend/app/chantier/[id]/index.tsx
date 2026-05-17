@@ -5,6 +5,7 @@ import {
   FlatList,
   Image,
   Modal,
+  Platform,
   RefreshControl,
   StyleSheet,
   Text,
@@ -14,7 +15,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
-import { api } from "@/src/services/api";
+import { api, getToken, PDF_URL, JSON_URL, XLSX_URL, CSV_URL } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { colors, statusMeta, blockMeta } from "@/src/theme";
 
@@ -41,14 +42,17 @@ type UserOpt = { id: string; name: string; email: string; role: string };
 export default function ChantierDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { user } = useAuth();
-  const canManage = user?.role === "admin" || user?.role === "commercial";
+  const { user, hasRole, artisanMode } = useAuth();
+  const canManage = hasRole(["admin", "commercial"]);
+  const canMeasure = hasRole(["commercial", "technician"]);
+  const canExportTech = hasRole(["technician", "admin"]);
   const [chantier, setChantier] = useState<Chantier | null>(null);
   const [mesures, setMesures] = useState<Mesure[]>([]);
   const [users, setUsers] = useState<UserOpt[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [assignOpen, setAssignOpen] = useState(false);
+  const [exporting, setExporting] = useState<string | null>(null);
 
   const fetchAll = useCallback(async () => {
     try {
@@ -105,6 +109,46 @@ export default function ChantierDetail() {
         },
       ]
     );
+  };
+
+  // -------- Exports --------------------------------------------------------
+  const downloadExport = async (kind: "pdf" | "xlsx" | "csv" | "json") => {
+    if (!chantier) return;
+    const urlMap: Record<string, (cid: string) => string> = {
+      pdf: PDF_URL, xlsx: XLSX_URL, csv: CSV_URL, json: JSON_URL,
+    };
+    const url = urlMap[kind](chantier.id);
+    setExporting(kind);
+    try {
+      const token = await getToken();
+      const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+      if (Platform.OS === "web") {
+        // Authenticated blob download via fetch
+        const r = await fetch(url, { headers });
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const blob = await r.blob();
+        const safe = (chantier.client_name || chantier.id).replace(/[^a-z0-9_-]+/gi, "_");
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `MesureChassis_${safe}.${kind}`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 0);
+      } else {
+        // Native: open in system viewer / share
+        const FileSystem = await import("expo-file-system/legacy");
+        const Sharing = await import("expo-sharing");
+        const safe = (chantier.client_name || chantier.id).replace(/[^a-z0-9_-]+/gi, "_");
+        const fileUri = `${FileSystem.cacheDirectory}MesureChassis_${safe}.${kind}`;
+        const dl = await FileSystem.downloadAsync(url, fileUri, { headers: headers as any });
+        await Sharing.shareAsync(dl.uri, { dialogTitle: `Export ${kind.toUpperCase()}` });
+      }
+    } catch (e: any) {
+      Alert.alert("Erreur export", e?.message || "Téléchargement impossible.");
+    } finally {
+      setExporting(null);
+    }
   };
 
   const assignedUser = chantier?.assigned_to
@@ -239,6 +283,67 @@ export default function ChantierDetail() {
             <Text style={styles.emptyText}>Aucune ouverture mesurée</Text>
           </View>
         }
+        ListFooterComponent={
+          mesures.length > 0 ? (
+            <View style={styles.exportCard}>
+              <View style={styles.exportHeader}>
+                <Ionicons name="download" size={18} color={colors.primary} />
+                <Text style={styles.exportTitle}>EXPORTS</Text>
+              </View>
+              <Text style={styles.exportSub}>
+                Document client, fichier fabrication ou intégration logiciel.
+              </Text>
+              <View style={styles.exportGrid}>
+                {/* PDF — toujours dispo: commercial + admin + tech (résumé client) */}
+                <ExportTile
+                  testID="export-pdf-button"
+                  busy={exporting === "pdf"}
+                  onPress={() => downloadExport("pdf")}
+                  icon="document-text"
+                  label="DEVIS PDF"
+                  sub="Résumé client"
+                  color="#EF4444"
+                />
+                {/* Excel XLSX — technicien + admin (artisan bypass) */}
+                {canExportTech && (
+                  <ExportTile
+                    testID="export-xlsx-button"
+                    busy={exporting === "xlsx"}
+                    onPress={() => downloadExport("xlsx")}
+                    icon="grid"
+                    label="EXCEL .xlsx"
+                    sub="Tableau atelier"
+                    color="#22C55E"
+                  />
+                )}
+                {/* CSV — tech + admin */}
+                {canExportTech && (
+                  <ExportTile
+                    testID="export-csv-button"
+                    busy={exporting === "csv"}
+                    onPress={() => downloadExport("csv")}
+                    icon="list"
+                    label="CSV"
+                    sub="Tabulaire brut"
+                    color="#3B82F6"
+                  />
+                )}
+                {/* JSON — tech + admin */}
+                {canExportTech && (
+                  <ExportTile
+                    testID="export-json-button"
+                    busy={exporting === "json"}
+                    onPress={() => downloadExport("json")}
+                    icon="code-slash"
+                    label="JSON"
+                    sub="Intégration CNC"
+                    color="#A855F7"
+                  />
+                )}
+              </View>
+            </View>
+          ) : null
+        }
       />
 
       <View style={styles.footer}>
@@ -253,15 +358,17 @@ export default function ChantierDetail() {
             <Text style={styles.btnSecondaryText}>CLÔTURER</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity
-          testID="add-mesure-button"
-          onPress={() => router.push(`/chantier/${id}/new-mesure`)}
-          style={[styles.btn, styles.btnPrimary]}
-          activeOpacity={0.85}
-        >
-          <Ionicons name="add-circle" size={22} color="#000" />
-          <Text style={styles.btnPrimaryText}>AJOUTER UNE OUVERTURE</Text>
-        </TouchableOpacity>
+        {canMeasure && chantier.status !== "cloture" && (
+          <TouchableOpacity
+            testID="add-mesure-button"
+            onPress={() => router.push(`/chantier/${id}/new-mesure`)}
+            style={[styles.btn, styles.btnPrimary]}
+            activeOpacity={0.85}
+          >
+            <Ionicons name="add-circle" size={22} color="#000" />
+            <Text style={styles.btnPrimaryText}>AJOUTER UNE OUVERTURE</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <Modal visible={assignOpen} transparent animationType="fade" onRequestClose={() => setAssignOpen(false)}>
@@ -327,6 +434,67 @@ export default function ChantierDetail() {
     </SafeAreaView>
   );
 }
+
+// ---- Export tile composant ------------------------------------------------
+function ExportTile({
+  testID,
+  busy,
+  onPress,
+  icon,
+  label,
+  sub,
+  color,
+}: {
+  testID?: string;
+  busy: boolean;
+  onPress: () => void;
+  icon: keyof typeof Ionicons.glyphMap;
+  label: string;
+  sub: string;
+  color: string;
+}) {
+  return (
+    <TouchableOpacity
+      testID={testID}
+      onPress={onPress}
+      disabled={busy}
+      activeOpacity={0.85}
+      style={[exportStyles.tile, busy && { opacity: 0.5 }]}
+    >
+      <View style={[exportStyles.iconBox, { backgroundColor: color + "22" }]}>
+        {busy ? (
+          <ActivityIndicator color={color} />
+        ) : (
+          <Ionicons name={icon} size={20} color={color} />
+        )}
+      </View>
+      <Text style={exportStyles.label}>{label}</Text>
+      <Text style={exportStyles.sub}>{sub}</Text>
+    </TouchableOpacity>
+  );
+}
+
+const exportStyles = StyleSheet.create({
+  tile: {
+    width: "47%",
+    backgroundColor: "#0C0C0E",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#202024",
+    padding: 12,
+    alignItems: "center",
+  },
+  iconBox: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 6,
+  },
+  label: { color: "#fff", fontWeight: "900", fontSize: 12, letterSpacing: 0.5 },
+  sub: { color: "#888", fontSize: 10, marginTop: 2, textAlign: "center" },
+});
 
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: colors.bg },
@@ -422,6 +590,19 @@ const styles = StyleSheet.create({
   alertText: { color: colors.alert, fontSize: 12, fontWeight: "700" },
   empty: { alignItems: "center", padding: 50, gap: 8 },
   emptyText: { color: colors.textSecondary, fontWeight: "700" },
+
+  exportCard: {
+    marginTop: 14,
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    padding: 14,
+  },
+  exportHeader: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 4 },
+  exportTitle: { color: colors.textPrimary, fontWeight: "900", fontSize: 13, letterSpacing: 1 },
+  exportSub: { color: colors.textSecondary, fontSize: 11, marginBottom: 10 },
+  exportGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
   footer: {
     position: "absolute",
     bottom: 0,

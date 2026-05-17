@@ -21,7 +21,11 @@
         "backgroundColor": "#0C0C0E"
       },
       "edgeToEdgeEnabled": true,
-      "permissions": ["CAMERA", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -30,8 +34,18 @@
     },
     "plugins": [
       "expo-router",
-      ["expo-camera", { "cameraPermission": "Photographier les ouvertures à mesurer" }],
-      ["expo-image-picker", { "photosPermission": "Joindre une photo à une mesure" }],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Photographier les ouvertures à mesurer"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Joindre une photo à une mesure"
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -40,7 +54,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#0C0C0E"
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true

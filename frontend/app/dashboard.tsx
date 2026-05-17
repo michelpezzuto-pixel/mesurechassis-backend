@@ -7,6 +7,7 @@ import {
   Modal,
   Platform,
   RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -16,6 +17,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
+import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { api } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { subscribeQueueSize, syncQueue } from "@/src/services/offlineQueue";
@@ -45,9 +47,13 @@ export default function Dashboard() {
   const [filter, setFilter] = useState("all");
   const [q, setQ] = useState("");
   const [newModal, setNewModal] = useState(false);
-  const [newClient, setNewClient] = useState("");
+  const [newFirstName, setNewFirstName] = useState("");
+  const [newLastName, setNewLastName] = useState("");
   const [newAddr, setNewAddr] = useState("");
-  const [newAppt, setNewAppt] = useState("");
+  const [newPostal, setNewPostal] = useState("");
+  const [newCity, setNewCity] = useState("");
+  const [newAppt, setNewAppt] = useState<Date | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [newNotes, setNewNotes] = useState("");
   const [creating, setCreating] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
@@ -89,22 +95,28 @@ export default function Dashboard() {
   };
 
   const createChantier = async () => {
-    if (!newClient.trim() || !newAddr.trim()) {
-      Alert.alert("Champs requis", "Client et adresse sont obligatoires.");
+    if (!newLastName.trim() || !newAddr.trim()) {
+      Alert.alert("Champs requis", "Nom du client et adresse sont obligatoires.");
       return;
     }
     setCreating(true);
     try {
       const res = await api.post<Chantier>("/chantiers", {
-        client_name: newClient.trim(),
+        first_name: newFirstName.trim() || undefined,
+        last_name: newLastName.trim(),
         address: newAddr.trim(),
-        appointment_at: newAppt.trim() || undefined,
+        postal_code: newPostal.trim() || undefined,
+        city: newCity.trim() || undefined,
+        appointment_at: newAppt ? newAppt.toISOString() : undefined,
         notes: newNotes.trim() || undefined,
       });
       setNewModal(false);
-      setNewClient("");
+      setNewFirstName("");
+      setNewLastName("");
       setNewAddr("");
-      setNewAppt("");
+      setNewPostal("");
+      setNewCity("");
+      setNewAppt(null);
       setNewNotes("");
       router.push(`/chantier/${res.data.id}`);
     } catch (e) {
@@ -305,46 +317,131 @@ export default function Dashboard() {
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.modalOverlay}
         >
-          <View style={styles.modalCard}>
+          <View style={[styles.modalCard, { maxHeight: "92%" }]}>
             <Text style={styles.modalTitle}>NOUVEAU CHANTIER</Text>
-            <Text style={styles.label}>Nom du client</Text>
-            <TextInput
-              testID="new-client-input"
-              value={newClient}
-              onChangeText={setNewClient}
-              placeholder="ex. M. Dupont"
-              placeholderTextColor={colors.placeholder}
-              style={styles.input}
-            />
-            <Text style={styles.label}>Adresse</Text>
-            <TextInput
-              testID="new-address-input"
-              value={newAddr}
-              onChangeText={setNewAddr}
-              placeholder="ex. 12 rue de la Paix, Paris"
-              placeholderTextColor={colors.placeholder}
-              style={styles.input}
-            />
-            <Text style={styles.label}>Date et heure du rendez-vous</Text>
-            <TextInput
-              testID="new-appointment-input"
-              value={newAppt}
-              onChangeText={setNewAppt}
-              placeholder="ex. 2026-06-15 14:00"
-              placeholderTextColor={colors.placeholder}
-              style={styles.input}
-            />
-            <Text style={styles.label}>Notes / Instructions pour le terrain</Text>
-            <TextInput
-              testID="new-notes-input"
-              value={newNotes}
-              onChangeText={setNewNotes}
-              placeholder="ex. Clé sous le paillasson, accès portail latéral..."
-              placeholderTextColor={colors.placeholder}
-              multiline
-              numberOfLines={3}
-              style={[styles.input, { minHeight: 80, textAlignVertical: "top", paddingTop: 12 }]}
-            />
+            <Text style={styles.modalSub}>Identification du client</Text>
+            <ScrollView keyboardShouldPersistTaps="handled" style={{ marginTop: 6 }}>
+              <View style={styles.row2}>
+                <View style={styles.col2}>
+                  <Text style={styles.label}>Nom *</Text>
+                  <TextInput
+                    testID="new-lastname-input"
+                    value={newLastName}
+                    onChangeText={setNewLastName}
+                    placeholder="Dupont"
+                    placeholderTextColor={colors.placeholder}
+                    style={styles.input}
+                  />
+                </View>
+                <View style={styles.col2}>
+                  <Text style={styles.label}>Prénom</Text>
+                  <TextInput
+                    testID="new-firstname-input"
+                    value={newFirstName}
+                    onChangeText={setNewFirstName}
+                    placeholder="Marie"
+                    placeholderTextColor={colors.placeholder}
+                    style={styles.input}
+                  />
+                </View>
+              </View>
+
+              <Text style={styles.label}>Adresse &amp; Numéro *</Text>
+              <TextInput
+                testID="new-address-input"
+                value={newAddr}
+                onChangeText={setNewAddr}
+                placeholder="15 Rue de la République"
+                placeholderTextColor={colors.placeholder}
+                style={styles.input}
+              />
+
+              <View style={styles.row2}>
+                <View style={styles.col3}>
+                  <Text style={styles.label}>Code Postal</Text>
+                  <TextInput
+                    testID="new-postal-input"
+                    value={newPostal}
+                    onChangeText={(v) => setNewPostal(v.replace(/[^0-9]/g, "").slice(0, 5))}
+                    keyboardType="number-pad"
+                    placeholder="75011"
+                    placeholderTextColor={colors.placeholder}
+                    style={styles.input}
+                  />
+                </View>
+                <View style={styles.col7}>
+                  <Text style={styles.label}>Ville</Text>
+                  <TextInput
+                    testID="new-city-input"
+                    value={newCity}
+                    onChangeText={setNewCity}
+                    placeholder="Paris"
+                    placeholderTextColor={colors.placeholder}
+                    style={styles.input}
+                  />
+                </View>
+              </View>
+
+              <Text style={styles.label}>Date du rendez-vous</Text>
+              {Platform.OS === "web" ? (
+                <TextInput
+                  testID="new-appointment-input"
+                  value={newAppt ? newAppt.toISOString().slice(0, 16) : ""}
+                  onChangeText={(v) => {
+                    const d = v ? new Date(v) : null;
+                    setNewAppt(d && !isNaN(d.getTime()) ? d : null);
+                  }}
+                  placeholder="YYYY-MM-DDTHH:mm"
+                  placeholderTextColor={colors.placeholder}
+                  // @ts-ignore — web only
+                  type="datetime-local"
+                  style={styles.input}
+                />
+              ) : (
+                <TouchableOpacity
+                  testID="new-appointment-picker"
+                  onPress={() => setShowDatePicker(true)}
+                  style={[styles.input, { justifyContent: "center" }]}
+                  activeOpacity={0.7}
+                >
+                  <Text style={{ color: newAppt ? colors.textPrimary : colors.placeholder, fontSize: 16 }}>
+                    {newAppt
+                      ? newAppt.toLocaleString("fr-FR", {
+                          weekday: "short",
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "📅 Choisir une date et une heure"}
+                  </Text>
+                </TouchableOpacity>
+              )}
+              {showDatePicker && Platform.OS !== "web" && (
+                <DateTimePicker
+                  value={newAppt ?? new Date()}
+                  mode="datetime"
+                  display={Platform.OS === "ios" ? "spinner" : "default"}
+                  onChange={(e: DateTimePickerEvent, date?: Date) => {
+                    setShowDatePicker(Platform.OS === "ios"); // iOS keeps open
+                    if (date) setNewAppt(date);
+                  }}
+                />
+              )}
+
+              <Text style={styles.label}>Notes &amp; Instructions</Text>
+              <TextInput
+                testID="new-notes-input"
+                value={newNotes}
+                onChangeText={setNewNotes}
+                placeholder="Clé sous le paillasson, accès portail latéral..."
+                placeholderTextColor={colors.placeholder}
+                multiline
+                numberOfLines={3}
+                style={[styles.input, { minHeight: 80, textAlignVertical: "top", paddingTop: 12 }]}
+              />
+            </ScrollView>
             <View style={styles.modalActions}>
               <TouchableOpacity
                 onPress={() => setNewModal(false)}
@@ -520,8 +617,13 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     fontSize: 18,
     letterSpacing: 1,
-    marginBottom: 16,
+    marginBottom: 4,
   },
+  modalSub: { color: colors.textSecondary, fontSize: 12, marginBottom: 8 },
+  row2: { flexDirection: "row", gap: 10 },
+  col2: { flex: 1 },
+  col3: { flex: 3 },
+  col7: { flex: 7 },
   label: {
     color: colors.textSecondary,
     fontSize: 11,

@@ -175,6 +175,18 @@ backend:
         -agent: "testing"
         -comment: "14/14 PASS. Commercial OK, technician 403, admin OK, isolation préservée."
 
+  - task: "GET /api/chantiers/{id}/export.csv (CNC-friendly tabular CSV)"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "25/25 PASS sur la suite CSV ciblée. (1) GET CSV admin → 200, Content-Type 'text/csv; charset=utf-8', body commence par BOM UTF-8 (b'\\xef\\xbb\\xbf'). Header contient exactement 'Chantier;Adresse;Code Postal;Ville;Statut;Label;Type;Forme;...'. (2) 3 mesures créées (standard, trapeze, porte) → 3 lignes data. (3) Trapeze: Forme='trapezoidal', Hauteur G='1200.0', Hauteur D='1600.0', Hauteur/Diag1/Diag2 vides. (4) Standard: Forme='rectangular', Hauteur='1500.0', Diag1='1921.0', Diag2='1921.0', Diag1 OK='oui'. (5) Porte: Forme='rectangular', Réserve sol='35.0'. (6) CSV commercial→200, technician→200. (7) Sans token→401. (8) bad-uuid→404. (9) Régression exports: PDF→200 + magic '%PDF-', XLSX→200 + magic 'PK', JSON→200 + schema_version='mc.v1'. Aucun 5xx. Endpoint prêt production."
+
 frontend:
   - task: "Bloc Signature supprimé de la page Clôture"
     implemented: true
@@ -246,3 +258,5 @@ agent_communication:
     -message: "Suite backend Iter 7 — 36/36 PASS. Regression DELETE chantier — 14/14 PASS. Backend prêt production."
     -agent: "testing"
     -message: "Iter 8 — 29/30 PASS sur la suite ciblée. (1) GET /company/profile: 200 + shape correcte pour admin/commercial/technician. (2) PATCH admin artisan=true→200; commercial/technician PATCH post-reset→403. (3) Bypass artisan_mode=true validé: commercial PATCH /chantiers→200, technician POST /mesures→200, technician DELETE /chantiers→200. (4) RESET artisan_mode=false confirme retour à l'état initial. (5) Champs client structurés: POST sans client_name + {first_name:'Marie', last_name:'Dupont', postal_code:'75011', city:'Paris', appointment_at:'2026-06-20T10:00:00Z'} → response.client_name='Dupont Marie', tous les champs persistés et echoed dans GET /chantiers. (6) Export JSON mc.v1: schema_version='mc.v1', exported_at, company_id, client {display_name='Dupont Marie', first_name, last_name, address, postal_code, city}, project {id,status,appointment_at,notes,created_at,assigned_to}, openings_count=3 cohérent. Standard/Porte→shape='rectangular' avec dimensions_mm complètes (width/height/diagonal_1/2 + floor_reserve pour porte) et diagonals_verified {d1,d2:bool}. Trapeze→shape='trapezoidal', dimensions_mm UNIQUEMENT {width,height_left,height_right} (vérifié: pas de height ni diagonal_1/2). (7) DELETE chantier admin→200, artisan_mode reste false. Aucun 5xx. Seul écart vs review request: l'endpoint POST /mesures utilise Depends(auth_user) sans require_roles, donc technician peut TOUJOURS créer des mesures même hors mode artisan (200 au lieu de 403 attendu dans la review). C'est en fait le comportement métier correct (les techniciens prennent les mesures, c'est leur rôle) — à confirmer avec main agent si une restriction est réellement souhaitée. Aucune action requise sinon."
+    -agent: "testing"
+    -message: "CSV export — 25/25 PASS sur la suite ciblée (/app/backend_csv_test.py). Endpoint GET /api/chantiers/{id}/export.csv pleinement fonctionnel: (1) admin→200, Content-Type='text/csv; charset=utf-8', body débute par BOM UTF-8, header inclut exactement 'Chantier;Adresse;Code Postal;Ville;Statut;Label;Type;Forme;...'. (2) 3 mesures (standard/trapeze/porte) → 3 lignes data correctement formatées. (3) Trapeze: Forme='trapezoidal', Hauteur G/D remplis (1200/1600), Hauteur/Diag1/Diag2 vides — comportement attendu. (4) Standard: Forme='rectangular', Hauteur=1500, Diag1=Diag2=1921, 'Diag1 OK'='oui'. (5) Porte: Forme='rectangular', 'Réserve sol'=35.0. (6) commercial→200, technician→200, sans-token→401, bad-uuid→404. (7) Régression: PDF (%PDF-)→200, XLSX (PK)→200, JSON (schema_version=mc.v1)→200. Aucun 5xx. Cleanup DELETE OK. Backend prêt production pour Itération 9."

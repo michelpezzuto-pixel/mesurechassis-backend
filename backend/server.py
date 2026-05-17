@@ -14,7 +14,7 @@ import httpx
 import jwt
 from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, status
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, Response
 from motor.motor_asyncio import AsyncIOMotorClient
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill
@@ -926,6 +926,65 @@ async def export_json(chantier_id: str, user=Depends(auth_user)):
         "openings_count": len(mesures),
         "openings": [_mesure_struct(m) for m in mesures],
     }
+
+
+@api.get("/chantiers/{chantier_id}/export.csv")
+async def export_csv(chantier_id: str, user=Depends(auth_user)):
+    """Plain tabular CSV — manufacturing / cutting machinery friendly."""
+    import csv
+    import io
+    chantier = await db.chantiers.find_one(
+        {"id": chantier_id, "company_id": user.get("company_id", "default")},
+        {"_id": 0})
+    if not chantier:
+        raise HTTPException(404, "Chantier introuvable")
+    mesures = await db.mesures.find({"chantier_id": chantier_id}, {"_id": 0}) \
+        .sort("created_at", 1).to_list(500)
+
+    buf = io.StringIO()
+    writer = csv.writer(buf, delimiter=";", quoting=csv.QUOTE_MINIMAL)
+    # Header
+    writer.writerow([
+        "Chantier", "Adresse", "Code Postal", "Ville", "Statut",
+        "Label", "Type", "Forme",
+        "Largeur (mm)", "Hauteur (mm)", "Hauteur G (mm)", "Hauteur D (mm)",
+        "Diag 1 (mm)", "Diag 2 (mm)", "Diag1 OK", "Diag2 OK",
+        "Réserve sol (mm)", "Épaisseur bloc (mm)", "Paroi",
+        "Date mesure",
+    ])
+    client_disp = chantier.get("client_name") or "—"
+    for m in mesures:
+        bt = m.get("block_type") or "—"
+        is_trap = bt == "trapeze"
+        writer.writerow([
+            client_disp,
+            chantier.get("address") or "",
+            chantier.get("postal_code") or "",
+            chantier.get("city") or "",
+            chantier.get("status") or "",
+            m.get("label") or "",
+            bt,
+            "trapezoidal" if is_trap else "rectangular",
+            m.get("bay_width") or "",
+            "" if is_trap else (m.get("bay_height") or ""),
+            m.get("height_left") or "" if is_trap else "",
+            m.get("height_right") or "" if is_trap else "",
+            "" if is_trap else (m.get("bay_diagonal_1") or m.get("bay_diagonal") or ""),
+            "" if is_trap else (m.get("bay_diagonal_2") or m.get("bay_diagonal") or ""),
+            "" if is_trap else ("oui" if m.get("diag_1_verified") else "non"),
+            "" if is_trap else ("oui" if m.get("diag_2_verified") else "non"),
+            m.get("floor_reserve") or "",
+            m.get("bloc_thickness") or "",
+            m.get("wall_type") or "",
+            (m.get("created_at") or "")[:19].replace("T", " "),
+        ])
+    content = buf.getvalue().encode("utf-8-sig")  # BOM for Excel-FR compatibility
+    safe = (chantier.get("client_name") or chantier_id).replace(" ", "_").replace("/", "-")
+    return Response(
+        content=content,
+        media_type="text/csv; charset=utf-8",
+        headers={"Content-Disposition": f'attachment; filename="MesureChassis_{safe}.csv"'},
+    )
 
 
 @api.get("/chantiers/{chantier_id}/export.xlsx")

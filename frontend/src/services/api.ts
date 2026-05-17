@@ -34,3 +34,7 @@ export const PDF_URL = (chantierId: string) =>
   `${BASE_URL}/api/chantiers/${chantierId}/export.pdf`;
 export const JSON_URL = (chantierId: string) =>
   `${BASE_URL}/api/chantiers/${chantierId}/export.json`;
+export const XLSX_URL = (chantierId: string) =>
+  `${BASE_URL}/api/chantiers/${chantierId}/export.xlsx`;
+export const CSV_URL = (chantierId: string) =>
+  `${BASE_URL}/api/chantiers/${chantierId}/export.csv`;
