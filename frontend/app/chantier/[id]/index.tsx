@@ -389,7 +389,7 @@ export default function ChantierDetail() {
                   ))}
                 </View>
               )}
-              {canManage && !isArchived && (
+              {canMeasure && !isArchived && (
                 <View style={styles.mesureActions}>
                   <TouchableOpacity
                     testID={`edit-mesure-${item.id}`}
