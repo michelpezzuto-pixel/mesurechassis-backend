@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -41,6 +41,13 @@ export default function AdminStats() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [exporting, setExporting] = useState(false);
+
+  // Gate UI : seul l'admin peut accéder aux statistiques (redirect immédiat).
+  useEffect(() => {
+    if (user && user.role !== "admin") {
+      router.replace("/dashboard");
+    }
+  }, [user, router]);
 
   const fetchData = useCallback(async () => {
     try {
