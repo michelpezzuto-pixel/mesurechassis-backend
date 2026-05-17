@@ -171,11 +171,12 @@ export default function CompanyProfile() {
   const used = profile?.chantiers_lifetime_count ?? 0;
   const cancelScheduled = !!profile?.cancel_at_period_end;
   const expiresLabel = formatDate(profile?.subscription_expires_at);
-  // Le bouton "Se désabonner" est dispo : admin + plan pro (ou status active) + pas déjà annulé
+  // Le bouton "Se désabonner" est dispo : admin + accès actif (trial ou pro) + pas déjà annulé
   const canUnsubscribe =
     isAdmin &&
     !cancelScheduled &&
-    (plan === "pro" || profile?.subscription_status === "active");
+    profile?.subscription_status !== "suspended" &&
+    (plan === "pro" || plan === "trial" || profile?.subscription_status === "active");
   // Pour Free : afficher l'usage des chantiers
   const isFree = plan === "free";
   const remaining = Math.max(0, FREE_LIMIT - used);
