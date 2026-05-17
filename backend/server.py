@@ -1,6 +1,7 @@
 """MesureChâssis backend - FastAPI + MongoDB."""
 from __future__ import annotations
 
+import base64
 import io
 import logging
 import math
@@ -22,9 +23,10 @@ from passlib.context import CryptContext
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import (Paragraph, SimpleDocTemplate, Spacer, Table,
-                                TableStyle)
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.units import mm
+from reportlab.platypus import (Image as RLImage, Paragraph, SimpleDocTemplate,
+                                Spacer, Table, TableStyle)
 from starlette.middleware.cors import CORSMiddleware
 
 # --- Setup ---------------------------------------------------------------
@@ -1012,6 +1014,72 @@ async def export_pdf(chantier_id: str, user=Depends(require_active_subscription)
             for a in m["alerts"]:
                 story.append(Paragraph(
                     f'<font color="#CC0000">{a}</font>', styles["Normal"]))
+
+    # --- Section photos site (Anti-litige) ----------------------------
+    site_photos = chantier.get("site_photos") or []
+    if site_photos:
+        story.append(Spacer(1, 18))
+        story.append(Paragraph(
+            f"<b>📷 Photos chantier — Anti-litige ({len(site_photos)})</b>",
+            styles["Heading2"]))
+        story.append(Paragraph(
+            '<font size="9" color="#666666"><i>Preuves photographiques de '
+            "l'état existant au moment de la prise de mesures.</i></font>",
+            styles["Normal"]))
+        story.append(Spacer(1, 8))
+
+        caption_style = ParagraphStyle(
+            "PhotoCaption",
+            parent=styles["Normal"],
+            fontName="Helvetica-Oblique",
+            fontSize=9,
+            textColor=colors.HexColor("#444444"),
+            alignment=1,  # center
+            leading=11,
+        )
+
+        # 2 photos par ligne — table 2 colonnes
+        photo_cells: list[list[Any]] = []
+        row: list[Any] = []
+        for idx, ph in enumerate(site_photos, 1):
+            uri = ph.get("uri") or ""
+            caption = (ph.get("caption") or "").strip() or f"Photo {idx}"
+            cell_content: list[Any] = []
+            try:
+                # Décodage data URI base64 → BytesIO consommé par ReportLab
+                if uri.startswith("data:"):
+                    _, b64 = uri.split(",", 1)
+                else:
+                    b64 = uri
+                img_bytes = base64.b64decode(b64)
+                img_io = io.BytesIO(img_bytes)
+                img = RLImage(img_io, width=80 * mm, height=60 * mm,
+                              kind="proportional")
+                cell_content.append(img)
+            except Exception:
+                cell_content.append(Paragraph(
+                    f'<font color="#999999">[Photo {idx} illisible]</font>',
+                    styles["Normal"]))
+            cell_content.append(Spacer(1, 4))
+            cell_content.append(Paragraph(f"#{idx} — {caption}", caption_style))
+            row.append(cell_content)
+            if len(row) == 2:
+                photo_cells.append(row)
+                row = []
+        if row:
+            row.append("")  # pad
+            photo_cells.append(row)
+
+        if photo_cells:
+            photo_table = Table(photo_cells, colWidths=[90 * mm, 90 * mm])
+            photo_table.setStyle(TableStyle([
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("LEFTPADDING", (0, 0), (-1, -1), 4),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 4),
+                ("TOPPADDING", (0, 0), (-1, -1), 6),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 10),
+            ]))
+            story.append(photo_table)
 
     doc.build(story)
     buf.seek(0)
