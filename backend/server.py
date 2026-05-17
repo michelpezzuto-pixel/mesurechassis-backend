@@ -627,6 +627,40 @@ async def delete_mesure(mesure_id: str, user=Depends(require_active_subscription
     return {"ok": True}
 
 
+@api.get("/mesures/{mesure_id}", response_model=Mesure)
+async def get_mesure(mesure_id: str, user=Depends(require_active_subscription)):
+    mesure = await db.mesures.find_one({"id": mesure_id}, {"_id": 0})
+    if not mesure:
+        raise HTTPException(404, "Mesure introuvable")
+    await _check_chantier_access(mesure["chantier_id"], user)
+    return Mesure(**mesure)
+
+
+@api.patch("/mesures/{mesure_id}", response_model=Mesure)
+async def update_mesure(mesure_id: str,
+                         payload: MesureCreate,
+                         user=Depends(require_active_subscription)):
+    existing = await db.mesures.find_one({"id": mesure_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(404, "Mesure introuvable")
+    await _check_chantier_access(existing["chantier_id"], user)
+    if payload.block_type not in VALID_BLOCK_TYPES:
+        raise HTTPException(400, "Invalid block_type")
+    alerts, slope = compute_alerts(payload)
+    update_doc = payload.model_dump()
+    update_doc.update({
+        "id": existing["id"],
+        "chantier_id": existing["chantier_id"],
+        "created_at": existing.get("created_at"),
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "alerts": alerts,
+        "slope_angle_deg": slope,
+    })
+    await db.mesures.replace_one({"id": mesure_id}, update_doc)
+    update_doc.pop("_id", None)
+    return Mesure(**update_doc)
+
+
 # --- Feedback routes -----------------------------------------------------
 @api.post("/feedbacks", response_model=Feedback)
 async def create_feedback(payload: FeedbackCreate, user=Depends(auth_user)):

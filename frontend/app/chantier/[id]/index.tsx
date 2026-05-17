@@ -347,6 +347,48 @@ export default function ChantierDetail() {
                   ))}
                 </View>
               )}
+              {canManage && (
+                <View style={styles.mesureActions}>
+                  <TouchableOpacity
+                    testID={`edit-mesure-${item.id}`}
+                    onPress={() => router.push(`/chantier/${id}/new-mesure?mesure_id=${item.id}`)}
+                    activeOpacity={0.7}
+                    style={styles.mesureEditBtn}
+                  >
+                    <Ionicons name="create-outline" size={14} color={colors.primary} />
+                    <Text style={styles.mesureEditText}>MODIFIER</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    testID={`delete-mesure-${item.id}`}
+                    onPress={() => {
+                      Alert.alert(
+                        "Supprimer cette mesure ?",
+                        `« ${item.label} » sera définitivement supprimée.`,
+                        [
+                          { text: "Annuler", style: "cancel" },
+                          {
+                            text: "Supprimer",
+                            style: "destructive",
+                            onPress: async () => {
+                              try {
+                                await api.delete(`/mesures/${item.id}`);
+                                fetchAll();
+                              } catch {
+                                Alert.alert("Erreur", "Suppression impossible.");
+                              }
+                            },
+                          },
+                        ]
+                      );
+                    }}
+                    activeOpacity={0.7}
+                    style={styles.mesureDelBtn}
+                  >
+                    <Ionicons name="trash-outline" size={14} color={colors.anomaly} />
+                    <Text style={styles.mesureDelText}>SUPPRIMER</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
           );
         }}
@@ -429,15 +471,15 @@ export default function ChantierDetail() {
                   Document client, fichier fabrication ou intégration logiciel.
                 </Text>
                 <View style={styles.exportGrid}>
-                  <ExportTile
-                    testID="export-pdf-button"
-                    busy={exporting === "pdf"}
-                    onPress={() => downloadExport("pdf")}
-                    icon="document-text"
-                    label="DEVIS PDF"
-                    sub="Résumé client"
-                    color="#EF4444"
-                  />
+                <ExportTile
+                  testID="export-pdf-button"
+                  busy={exporting === "pdf"}
+                  onPress={() => router.push(`/chantier/${id}/pdf-preview`)}
+                  icon="document-text"
+                  label="DEVIS PDF"
+                  sub="Voir / Partager"
+                  color="#EF4444"
+                />
                   {canExportTech && (
                     <ExportTile
                       testID="export-xlsx-button"
@@ -759,6 +801,40 @@ const styles = StyleSheet.create({
   },
   mesureLabel: { color: colors.textPrimary, fontWeight: "800", fontSize: 15 },
   mesureType: { color: colors.textSecondary, marginTop: 2, fontSize: 13 },
+  mesureActions: {
+    flexDirection: "row",
+    gap: 8,
+    marginTop: 10,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: colors.borderSubtle,
+  },
+  mesureEditBtn: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    backgroundColor: "#1a0e05",
+  },
+  mesureEditText: { color: colors.primary, fontSize: 11, fontWeight: "900", letterSpacing: 0.6 },
+  mesureDelBtn: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.anomaly,
+    backgroundColor: "#2a1010",
+  },
+  mesureDelText: { color: colors.anomaly, fontSize: 11, fontWeight: "900", letterSpacing: 0.6 },
   slope: { color: colors.primary, fontSize: 12, marginTop: 4, fontWeight: "700" },
   alertWrap: {
     marginTop: 10,

@@ -241,43 +241,7 @@ export default function Closure() {
         })}
 
         <View style={styles.actions}>
-          <TouchableOpacity
-            testID="export-pdf-button"
-            onPress={exportPDF}
-            disabled={exporting}
-            style={[styles.btn, styles.btnPrimary]}
-            activeOpacity={0.85}
-          >
-            {exporting ? (
-              <ActivityIndicator color="#000" />
-            ) : (
-              <>
-                <Ionicons name="document-text" size={22} color="#000" />
-                <Text style={styles.btnPrimaryText}>EXPORT PDF</Text>
-              </>
-            )}
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            testID="export-xlsx-button"
-            onPress={exportXLSX}
-            style={[styles.btn, styles.btnSecondary]}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="grid" size={20} color={colors.textPrimary} />
-            <Text style={styles.btnSecondaryText}>EXPORT EXCEL</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            testID="export-json-button"
-            onPress={exportJSON}
-            style={[styles.btn, styles.btnSecondary]}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="code-slash" size={20} color={colors.textPrimary} />
-            <Text style={styles.btnSecondaryText}>EXPORT JSON</Text>
-          </TouchableOpacity>
-
+          {/* === Exports déplacés vers la page Détail Chantier === */}
           {/* SIGNATURE BLOCK REMOVED — application gère uniquement des mesures brutes. */}
 
           {chantier.status !== "cloture" && (

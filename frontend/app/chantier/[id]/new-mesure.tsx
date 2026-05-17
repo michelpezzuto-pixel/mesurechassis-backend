@@ -96,7 +96,8 @@ const parseNum = (s: string) => {
 };
 
 export default function NewMesureWizard() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, mesure_id } = useLocalSearchParams<{ id: string; mesure_id?: string }>();
+  const editingId = (mesure_id as string) || null;
   const router = useRouter();
 
   const [step, setStep] = useState<Step>(0);
@@ -104,6 +105,7 @@ export default function NewMesureWizard() {
   const [label, setLabel] = useState("");
   const [photo, setPhoto] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [loadingEdit, setLoadingEdit] = useState(!!editingId);
 
   const [s2, setS2] = useState<Step2>(initStep2());
   const [s2Err, setS2Err] = useState<Record<string, boolean>>({});
@@ -113,6 +115,53 @@ export default function NewMesureWizard() {
 
   const [reportOpen, setReportOpen] = useState(false);
   const [reportText, setReportText] = useState("");
+
+  // --- Load existing mesure for editing ----------------------------------
+  React.useEffect(() => {
+    if (!editingId) return;
+    (async () => {
+      try {
+        const r = await api.get(`/mesures/${editingId}`);
+        const m = r.data as any;
+        setBlockType(m.block_type);
+        setLabel(m.label || "");
+        setPhoto(m.photo_url || null);
+        const isTrap = m.block_type === "trapeze";
+        const isReno = !!m.renovation_mode;
+        const toStr = (v: any) => (v == null || v === "" ? "" : String(v));
+        setS2({
+          bay_width: isTrap ? toStr(m.bay_width) : (isReno ? "" : toStr(m.bay_width)),
+          bay_height: isReno || isTrap ? "" : toStr(m.bay_height),
+          diag_1: toStr(m.bay_diagonal_1),
+          diag_1_state: m.bay_diagonal_1 ? "validated" : "manual",
+          diag_2: toStr(m.bay_diagonal_2),
+          diag_2_state: m.bay_diagonal_2 ? "validated" : "manual",
+          floor_reserve: toStr(m.floor_reserve),
+          trap_height_left: isTrap ? toStr(m.height_left) : "",
+          trap_height_right: isTrap ? toStr(m.height_right) : "",
+          renovation_mode: isReno,
+          width_top: toStr(m.width_top),
+          width_bottom: toStr(m.width_bottom),
+          height_left: isReno ? toStr(m.height_left) : "",
+          height_right: isReno ? toStr(m.height_right) : "",
+        });
+        setS3({
+          bloc_thickness: toStr(m.bloc_thickness),
+          wall_type: m.wall_type || null,
+          insulation_thickness: toStr(m.insulation_thickness),
+          finish_outer: toStr(m.finish_outer),
+          finish_inner: toStr(m.finish_inner),
+        });
+        setStep(1); // skip block-type selection in edit mode
+      } catch {
+        Alert.alert("Erreur", "Mesure introuvable.");
+        router.back();
+      } finally {
+        setLoadingEdit(false);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editingId]);
   const [reportSending, setReportSending] = useState(false);
 
   // ---------- Pythagoras manual trigger (onBlur or explicit button) ------
@@ -255,20 +304,28 @@ export default function NewMesureWizard() {
 
     try {
       const online = await isOnline();
-      if (!online) {
+      if (!online && !editingId) {
         await enqueueMesure(payload);
         Alert.alert("Hors ligne", "Mesure ajoutée à la file de synchro.", [
           { text: "OK", onPress: () => router.back() },
         ]);
         return;
       }
-      await api.post("/mesures", payload);
+      if (editingId) {
+        await api.patch(`/mesures/${editingId}`, payload);
+      } else {
+        await api.post("/mesures", payload);
+      }
       router.back();
     } catch {
-      await enqueueMesure(payload);
-      Alert.alert("Réseau indisponible", "Mesure mise en file d'attente.", [
-        { text: "OK", onPress: () => router.back() },
-      ]);
+      if (editingId) {
+        Alert.alert("Erreur", "Mise à jour impossible.");
+      } else {
+        await enqueueMesure(payload);
+        Alert.alert("Réseau indisponible", "Mesure mise en file d'attente.", [
+          { text: "OK", onPress: () => router.back() },
+        ]);
+      }
     } finally {
       setSaving(false);
     }
