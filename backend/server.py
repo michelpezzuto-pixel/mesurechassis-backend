@@ -95,6 +95,7 @@ class ChantierCreate(BaseModel):
     assigned_to: Optional[str] = None
     appointment_at: Optional[str] = None  # ISO datetime
     notes: Optional[str] = None
+    site_photos: Optional[List[dict]] = None  # [{uri, caption}], anti-litige
 
 
 class ChantierUpdate(BaseModel):
@@ -108,6 +109,7 @@ class ChantierUpdate(BaseModel):
     assigned_to: Optional[str] = None
     appointment_at: Optional[str] = None
     notes: Optional[str] = None
+    site_photos: Optional[List[dict]] = None
 
 
 class Chantier(BaseModel):
@@ -127,6 +129,7 @@ class Chantier(BaseModel):
     client_signature: Optional[str] = None
     signed_at: Optional[str] = None
     created_at: str
+    site_photos: List[dict] = Field(default_factory=list)
 
 
 class CompanyProfile(BaseModel):
@@ -180,6 +183,8 @@ class MesureCreate(BaseModel):
     finish_inner: Optional[float] = None      # ITI plâtre / CRÉPI int
     options: dict = Field(default_factory=dict)
     photo_url: Optional[str] = None  # base64 data URL
+    # Renovation verification mode (rectangular only) — 4 explicit measurements
+    renovation_mode: Optional[bool] = None
 
     @field_validator("wall_type")
     @classmethod

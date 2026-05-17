@@ -49,6 +49,12 @@ type Step2 = {
   floor_reserve: string;
   trap_height_left: string;
   trap_height_right: string;
+  // Vérification Rénovation (rectangular only) — 4 explicit measurements
+  renovation_mode: boolean;
+  width_top: string;
+  width_bottom: string;
+  height_left: string;
+  height_right: string;
 };
 
 const initStep2 = (): Step2 => ({
@@ -61,6 +67,11 @@ const initStep2 = (): Step2 => ({
   floor_reserve: "",
   trap_height_left: "",
   trap_height_right: "",
+  renovation_mode: false,
+  width_top: "",
+  width_bottom: "",
+  height_left: "",
+  height_right: "",
 });
 
 type Step3 = {
@@ -145,6 +156,15 @@ export default function NewMesureWizard() {
       if (!parseNum(s2.bay_width)) err.bay_width = true;
       if (!parseNum(s2.trap_height_left)) err.trap_height_left = true;
       if (!parseNum(s2.trap_height_right)) err.trap_height_right = true;
+    } else if (s2.renovation_mode) {
+      // Vérif rénovation: 4 cotes explicites
+      if (!parseNum(s2.width_top)) err.width_top = true;
+      if (!parseNum(s2.width_bottom)) err.width_bottom = true;
+      if (!parseNum(s2.height_left)) err.height_left = true;
+      if (!parseNum(s2.height_right)) err.height_right = true;
+      if ((blockType === "porte" || blockType === "coulissant") && !parseNum(s2.floor_reserve)) {
+        err.floor_reserve = true;
+      }
     } else {
       if (!parseNum(s2.bay_width)) err.bay_width = true;
       if (!parseNum(s2.bay_height)) err.bay_height = true;
@@ -203,6 +223,20 @@ export default function NewMesureWizard() {
     if (blockType === "trapeze") {
       payload.height_left = parseNum(s2.trap_height_left);
       payload.height_right = parseNum(s2.trap_height_right);
+    } else if (s2.renovation_mode) {
+      // Mode Vérification Rénovation: 4 cotes explicites
+      payload.renovation_mode = true;
+      payload.width_top = parseNum(s2.width_top);
+      payload.width_bottom = parseNum(s2.width_bottom);
+      payload.height_left = parseNum(s2.height_left);
+      payload.height_right = parseNum(s2.height_right);
+      // Champs hérités: on prend les moyennes pour compat back/atelier
+      const wt = parseNum(s2.width_top) || 0;
+      const wb = parseNum(s2.width_bottom) || 0;
+      const hl = parseNum(s2.height_left) || 0;
+      const hr = parseNum(s2.height_right) || 0;
+      payload.bay_width = Math.round((wt + wb) / 2) || null;
+      payload.bay_height = Math.round((hl + hr) / 2) || null;
     } else {
       payload.bay_height = parseNum(s2.bay_height);
       payload.bay_diagonal_1 = parseNum(s2.diag_1);
@@ -563,69 +597,182 @@ function Step2View({
         style={styles.input}
       />
 
+      {/* ===== Toggle Mode Standard / Vérification Rénovation ===== */}
+      {isRectangular && (
+        <View style={styles.modeToggle}>
+          <TouchableOpacity
+            testID="mode-standard-tab"
+            onPress={() => setS2Field("renovation_mode", false)}
+            activeOpacity={0.8}
+            style={[styles.modeTab, !s2.renovation_mode && styles.modeTabActive]}
+          >
+            <Ionicons
+              name="resize-outline"
+              size={14}
+              color={!s2.renovation_mode ? "#000" : colors.textSecondary}
+            />
+            <Text style={[styles.modeTabText, !s2.renovation_mode && styles.modeTabTextActive]}>
+              MODE STANDARD
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            testID="mode-renovation-tab"
+            onPress={() => setS2Field("renovation_mode", true)}
+            activeOpacity={0.8}
+            style={[styles.modeTab, s2.renovation_mode && styles.modeTabActive]}
+          >
+            <Ionicons
+              name="construct-outline"
+              size={14}
+              color={s2.renovation_mode ? "#000" : colors.textSecondary}
+            />
+            <Text style={[styles.modeTabText, s2.renovation_mode && styles.modeTabTextActive]}>
+              VÉRIF. RÉNOVATION
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       <View style={styles.sketchBox}>
         <Sketch values={{ bay_width: s2.bay_width, bay_height: s2.bay_height, bay_diagonal: s2.diag_1 }} />
       </View>
 
-      <CotField
-        testID="input-bay-width"
-        label="LARGEUR (mm)"
-        value={s2.bay_width}
-        onChange={(v) => setS2Field("bay_width", v.replace(",", "."))}
-        onBlur={onBlurDimension}
-        error={!!err.bay_width}
-      />
-      <CotField
-        testID="input-bay-height"
-        label="HAUTEUR (mm)"
-        value={s2.bay_height}
-        onChange={(v) => setS2Field("bay_height", v.replace(",", "."))}
-        onBlur={onBlurDimension}
-        error={!!err.bay_height}
-      />
+      {/* ===== STANDARD: largeur + hauteur + Pythagore diag1/diag2 ===== */}
+      {!s2.renovation_mode && (
+        <>
+          <CotField
+            testID="input-bay-width"
+            label="LARGEUR (mm)"
+            value={s2.bay_width}
+            onChange={(v) => setS2Field("bay_width", v.replace(",", "."))}
+            onBlur={onBlurDimension}
+            error={!!err.bay_width}
+          />
+          <CotField
+            testID="input-bay-height"
+            label="HAUTEUR (mm)"
+            value={s2.bay_height}
+            onChange={(v) => setS2Field("bay_height", v.replace(",", "."))}
+            onBlur={onBlurDimension}
+            error={!!err.bay_height}
+          />
+        </>
+      )}
 
-      {/* Bouton de calcul manuel — alternative claire à l'onBlur */}
-      <TouchableOpacity
-        testID="compute-diagonal-button"
-        onPress={onComputeDiagonals}
-        disabled={!canComputeDiag}
-        activeOpacity={0.8}
-        style={[
-          styles.computeBtn,
-          !canComputeDiag && { opacity: 0.4 },
-        ]}
-      >
-        <Ionicons name="calculator-outline" size={18} color={colors.primary} />
-        <Text style={styles.computeBtnText}>CALCULER LA DIAGONALE</Text>
-      </TouchableOpacity>
+      {/* ===== RÉNOVATION: 4 cotes explicites + alerte écart de niveau ===== */}
+      {s2.renovation_mode && (
+        <>
+          <View style={styles.row2}>
+            <View style={{ flex: 1 }}>
+              <CotField
+                testID="input-width-top"
+                label="LARGEUR HAUT (mm)"
+                value={s2.width_top}
+                onChange={(v) => setS2Field("width_top", v.replace(",", "."))}
+                error={!!err.width_top}
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <CotField
+                testID="input-width-bottom"
+                label="LARGEUR BAS (mm)"
+                value={s2.width_bottom}
+                onChange={(v) => setS2Field("width_bottom", v.replace(",", "."))}
+                error={!!err.width_bottom}
+              />
+            </View>
+          </View>
+          <View style={styles.row2}>
+            <View style={{ flex: 1 }}>
+              <CotField
+                testID="input-height-left"
+                label="HAUTEUR GAUCHE (mm)"
+                value={s2.height_left}
+                onChange={(v) => setS2Field("height_left", v.replace(",", "."))}
+                error={!!err.height_left}
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <CotField
+                testID="input-height-right"
+                label="HAUTEUR DROITE (mm)"
+                value={s2.height_right}
+                onChange={(v) => setS2Field("height_right", v.replace(",", "."))}
+                error={!!err.height_right}
+              />
+            </View>
+          </View>
+          {(() => {
+            const wt = parseNum(s2.width_top) ?? 0;
+            const wb = parseNum(s2.width_bottom) ?? 0;
+            const hl = parseNum(s2.height_left) ?? 0;
+            const hr = parseNum(s2.height_right) ?? 0;
+            const dW = Math.abs(wt - wb);
+            const dH = Math.abs(hl - hr);
+            const trigger = wt && wb && hl && hr && (dW > 10 || dH > 10);
+            return trigger ? (
+              <View testID="out-of-level-alert" style={styles.alertBox}>
+                <Ionicons name="warning" size={16} color={colors.warning} />
+                <View style={{ flex: 1, marginLeft: 8 }}>
+                  <Text style={styles.alertTitle}>
+                    ⚠️ Écart de niveau {">"} 10mm détecté
+                  </Text>
+                  <Text style={styles.alertSub}>
+                    Δ Largeur : {dW.toFixed(0)} mm · Δ Hauteur : {dH.toFixed(0)} mm — Attention à la pose.
+                  </Text>
+                </View>
+              </View>
+            ) : null;
+          })()}
+        </>
+      )}
 
-      {/* Diagonales — auto-calculées Pythagore */}
-      <DiagonalField
-        testID="input-diag-1"
-        label="DIAGONALE 1 (mm)"
-        value={s2.diag_1}
-        state={s2.diag_1_state}
-        onChange={(v) => {
-          setS2Field("diag_1", v.replace(",", "."));
-          setS2Field("diag_1_state", "manual");
-        }}
-        onValidate={() => validateDiag(1)}
-        onModify={() => modifyDiag(1)}
-        error={!!err.diag_1}
-      />
-      <DiagonalField
-        testID="input-diag-2"
-        label="DIAGONALE 2 (mm)"
-        value={s2.diag_2}
-        state={s2.diag_2_state}
-        onChange={(v) => {
-          setS2Field("diag_2", v.replace(",", "."));
-          setS2Field("diag_2_state", "manual");
-        }}
-        onValidate={() => validateDiag(2)}
-        onModify={() => modifyDiag(2)}
-        error={!!err.diag_2}
-      />
+      {/* Pythagore + diagonales — uniquement en mode standard */}
+      {!s2.renovation_mode && (
+        <>
+          <TouchableOpacity
+            testID="compute-diagonal-button"
+            onPress={onComputeDiagonals}
+            disabled={!canComputeDiag}
+            activeOpacity={0.8}
+            style={[
+              styles.computeBtn,
+              !canComputeDiag && { opacity: 0.4 },
+            ]}
+          >
+            <Ionicons name="calculator-outline" size={18} color={colors.primary} />
+            <Text style={styles.computeBtnText}>CALCULER LA DIAGONALE</Text>
+          </TouchableOpacity>
+
+          {/* Diagonales — auto-calculées Pythagore */}
+          <DiagonalField
+            testID="input-diag-1"
+            label="DIAGONALE 1 (mm)"
+            value={s2.diag_1}
+            state={s2.diag_1_state}
+            onChange={(v) => {
+              setS2Field("diag_1", v.replace(",", "."));
+              setS2Field("diag_1_state", "manual");
+            }}
+            onValidate={() => validateDiag(1)}
+            onModify={() => modifyDiag(1)}
+            error={!!err.diag_1}
+          />
+          <DiagonalField
+            testID="input-diag-2"
+            label="DIAGONALE 2 (mm)"
+            value={s2.diag_2}
+            state={s2.diag_2_state}
+            onChange={(v) => {
+              setS2Field("diag_2", v.replace(",", "."));
+              setS2Field("diag_2_state", "manual");
+            }}
+            onValidate={() => validateDiag(2)}
+            onModify={() => modifyDiag(2)}
+            error={!!err.diag_2}
+          />
+        </>
+      )}
 
       {(blockType === "porte" || blockType === "coulissant") && (
         <CotField
@@ -918,6 +1065,41 @@ const styles = StyleSheet.create({
   errorMsg: { color: colors.anomaly, fontSize: 11, fontWeight: "800", marginTop: 4, letterSpacing: 0.4 },
   indicSuffix: { color: colors.textSecondary, fontSize: 10, fontWeight: "700", letterSpacing: 0.5 },
   wallIndic: { color: colors.placeholder, fontSize: 9, fontWeight: "700", marginTop: 3, letterSpacing: 0.6 },
+  row2: { flexDirection: "row", gap: 10 },
+  modeToggle: {
+    flexDirection: "row",
+    gap: 6,
+    marginTop: 14,
+    padding: 4,
+    backgroundColor: colors.surface,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+  },
+  modeTab: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  modeTabActive: { backgroundColor: colors.primary },
+  modeTabText: { color: colors.textSecondary, fontSize: 11, fontWeight: "900", letterSpacing: 0.6 },
+  modeTabTextActive: { color: "#000" },
+  alertBox: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginTop: 14,
+    padding: 12,
+    borderRadius: 10,
+    backgroundColor: "#2a1c08",
+    borderWidth: 1,
+    borderColor: colors.warning,
+  },
+  alertTitle: { color: colors.warning, fontWeight: "900", fontSize: 13 },
+  alertSub: { color: colors.textSecondary, fontSize: 11, marginTop: 2 },
 
   gridRow: { flexDirection: "row", flexWrap: "wrap", marginTop: 16, gap: 12 },
   blockCard: {

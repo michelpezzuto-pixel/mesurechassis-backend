@@ -9,15 +9,19 @@ import {
   RefreshControl,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
+import * as ImagePicker from "expo-image-picker";
 import { api, getToken, PDF_URL, JSON_URL, XLSX_URL, CSV_URL } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { colors, statusMeta, blockMeta } from "@/src/theme";
+
+type SitePhoto = { uri: string; caption: string };
 
 type Chantier = {
   id: string;
@@ -26,6 +30,7 @@ type Chantier = {
   status: string;
   assigned_to?: string | null;
   created_at: string;
+  site_photos?: SitePhoto[];
 };
 
 type Mesure = {
@@ -109,6 +114,75 @@ export default function ChantierDetail() {
         },
       ]
     );
+  };
+
+  // -------- Site photos anti-litige ---------------------------------------
+  const addSitePhoto = async (source: "camera" | "library") => {
+    if (!chantier) return;
+    const current = chantier.site_photos ?? [];
+    if (current.length >= 3) {
+      Alert.alert("Limite atteinte", "Maximum 3 photos site (anti-litige).");
+      return;
+    }
+    try {
+      const fn = source === "camera"
+        ? ImagePicker.requestCameraPermissionsAsync
+        : ImagePicker.requestMediaLibraryPermissionsAsync;
+      const perm = await fn();
+      if (!perm.granted) {
+        Alert.alert("Permission refusée", "Activez l'accès dans les réglages.");
+        return;
+      }
+      const launcher = source === "camera"
+        ? ImagePicker.launchCameraAsync
+        : ImagePicker.launchImageLibraryAsync;
+      const res = await launcher({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.5,
+        base64: true,
+      });
+      if (res.canceled || !res.assets[0]) return;
+      const a = res.assets[0];
+      const uri = a.base64 ? `data:image/jpeg;base64,${a.base64}` : a.uri;
+      const next = [...current, { uri, caption: "" }];
+      const r = await api.patch<Chantier>(`/chantiers/${chantier.id}`, { site_photos: next });
+      setChantier(r.data);
+    } catch {
+      Alert.alert("Erreur", "Ajout photo impossible.");
+    }
+  };
+
+  const updateSitePhotoCaption = async (idx: number, caption: string) => {
+    if (!chantier) return;
+    const next = (chantier.site_photos ?? []).map((p, i) => i === idx ? { ...p, caption } : p);
+    setChantier({ ...chantier, site_photos: next });
+  };
+
+  const persistSitePhotoCaption = async () => {
+    if (!chantier) return;
+    try {
+      await api.patch(`/chantiers/${chantier.id}`, { site_photos: chantier.site_photos ?? [] });
+    } catch { /* swallow */ }
+  };
+
+  const removeSitePhoto = (idx: number) => {
+    if (!chantier) return;
+    Alert.alert("Supprimer la photo ?", "Cette action est définitive.", [
+      { text: "Annuler", style: "cancel" },
+      {
+        text: "Supprimer",
+        style: "destructive",
+        onPress: async () => {
+          const next = (chantier.site_photos ?? []).filter((_, i) => i !== idx);
+          try {
+            const r = await api.patch<Chantier>(`/chantiers/${chantier.id}`, { site_photos: next });
+            setChantier(r.data);
+          } catch {
+            Alert.alert("Erreur", "Suppression impossible.");
+          }
+        },
+      },
+    ]);
   };
 
   // -------- Exports --------------------------------------------------------
@@ -284,65 +358,123 @@ export default function ChantierDetail() {
           </View>
         }
         ListFooterComponent={
-          mesures.length > 0 ? (
+          <View>
+            {/* === Site photos anti-litige === */}
             <View style={styles.exportCard}>
               <View style={styles.exportHeader}>
-                <Ionicons name="download" size={18} color={colors.primary} />
-                <Text style={styles.exportTitle}>EXPORTS</Text>
+                <Ionicons name="camera" size={18} color={colors.warning} />
+                <Text style={styles.exportTitle}>PHOTOS SITE (ANTI-LITIGE)</Text>
               </View>
               <Text style={styles.exportSub}>
-                Document client, fichier fabrication ou intégration logiciel.
+                Jusqu'à 3 photos avec légende — preuves de l'état existant.
+                ({(chantier.site_photos?.length ?? 0)}/3)
               </Text>
-              <View style={styles.exportGrid}>
-                {/* PDF — toujours dispo: commercial + admin + tech (résumé client) */}
-                <ExportTile
-                  testID="export-pdf-button"
-                  busy={exporting === "pdf"}
-                  onPress={() => downloadExport("pdf")}
-                  icon="document-text"
-                  label="DEVIS PDF"
-                  sub="Résumé client"
-                  color="#EF4444"
-                />
-                {/* Excel XLSX — technicien + admin (artisan bypass) */}
-                {canExportTech && (
-                  <ExportTile
-                    testID="export-xlsx-button"
-                    busy={exporting === "xlsx"}
-                    onPress={() => downloadExport("xlsx")}
-                    icon="grid"
-                    label="EXCEL .xlsx"
-                    sub="Tableau atelier"
-                    color="#22C55E"
-                  />
-                )}
-                {/* CSV — tech + admin */}
-                {canExportTech && (
-                  <ExportTile
-                    testID="export-csv-button"
-                    busy={exporting === "csv"}
-                    onPress={() => downloadExport("csv")}
-                    icon="list"
-                    label="CSV"
-                    sub="Tabulaire brut"
-                    color="#3B82F6"
-                  />
-                )}
-                {/* JSON — tech + admin */}
-                {canExportTech && (
-                  <ExportTile
-                    testID="export-json-button"
-                    busy={exporting === "json"}
-                    onPress={() => downloadExport("json")}
-                    icon="code-slash"
-                    label="JSON"
-                    sub="Intégration CNC"
-                    color="#A855F7"
-                  />
-                )}
-              </View>
+              {(chantier.site_photos ?? []).map((p, idx) => (
+                <View key={idx} style={photoStyles.row}>
+                  <Image source={{ uri: p.uri }} style={photoStyles.thumb} />
+                  <View style={photoStyles.captionWrap}>
+                    <TextInput
+                      testID={`site-photo-caption-${idx}`}
+                      value={p.caption}
+                      onChangeText={(v) => updateSitePhotoCaption(idx, v)}
+                      onBlur={persistSitePhotoCaption}
+                      placeholder="Note / Légende de la photo"
+                      placeholderTextColor={colors.placeholder}
+                      style={photoStyles.captionInput}
+                    />
+                    <TouchableOpacity
+                      testID={`site-photo-delete-${idx}`}
+                      onPress={() => removeSitePhoto(idx)}
+                      activeOpacity={0.7}
+                      style={photoStyles.delBtn}
+                    >
+                      <Ionicons name="trash-outline" size={14} color={colors.anomaly} />
+                      <Text style={photoStyles.delBtnText}>Supprimer</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))}
+              {(chantier.site_photos?.length ?? 0) < 3 && (
+                <View style={photoStyles.addRow}>
+                  <TouchableOpacity
+                    testID="add-site-photo-camera"
+                    onPress={() => addSitePhoto("camera")}
+                    activeOpacity={0.7}
+                    style={photoStyles.addBtn}
+                  >
+                    <Ionicons name="camera" size={18} color={colors.primary} />
+                    <Text style={photoStyles.addBtnText}>Caméra</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    testID="add-site-photo-library"
+                    onPress={() => addSitePhoto("library")}
+                    activeOpacity={0.7}
+                    style={photoStyles.addBtn}
+                  >
+                    <Ionicons name="images" size={18} color={colors.primary} />
+                    <Text style={photoStyles.addBtnText}>Galerie</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
-          ) : null
+
+            {/* === Exports === */}
+            {mesures.length > 0 && (
+              <View style={styles.exportCard}>
+                <View style={styles.exportHeader}>
+                  <Ionicons name="download" size={18} color={colors.primary} />
+                  <Text style={styles.exportTitle}>EXPORTS</Text>
+                </View>
+                <Text style={styles.exportSub}>
+                  Document client, fichier fabrication ou intégration logiciel.
+                </Text>
+                <View style={styles.exportGrid}>
+                  <ExportTile
+                    testID="export-pdf-button"
+                    busy={exporting === "pdf"}
+                    onPress={() => downloadExport("pdf")}
+                    icon="document-text"
+                    label="DEVIS PDF"
+                    sub="Résumé client"
+                    color="#EF4444"
+                  />
+                  {canExportTech && (
+                    <ExportTile
+                      testID="export-xlsx-button"
+                      busy={exporting === "xlsx"}
+                      onPress={() => downloadExport("xlsx")}
+                      icon="grid"
+                      label="EXCEL .xlsx"
+                      sub="Tableau atelier"
+                      color="#22C55E"
+                    />
+                  )}
+                  {canExportTech && (
+                    <ExportTile
+                      testID="export-csv-button"
+                      busy={exporting === "csv"}
+                      onPress={() => downloadExport("csv")}
+                      icon="list"
+                      label="CSV"
+                      sub="Tabulaire brut"
+                      color="#3B82F6"
+                    />
+                  )}
+                  {canExportTech && (
+                    <ExportTile
+                      testID="export-json-button"
+                      busy={exporting === "json"}
+                      onPress={() => downloadExport("json")}
+                      icon="code-slash"
+                      label="JSON"
+                      sub="Intégration CNC"
+                      color="#A855F7"
+                    />
+                  )}
+                </View>
+              </View>
+            )}
+          </View>
         }
       />
 
@@ -494,6 +626,54 @@ const exportStyles = StyleSheet.create({
   },
   label: { color: "#fff", fontWeight: "900", fontSize: 12, letterSpacing: 0.5 },
   sub: { color: "#888", fontSize: 10, marginTop: 2, textAlign: "center" },
+});
+
+const photoStyles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 10,
+    padding: 8,
+    backgroundColor: "#0C0C0E",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#202024",
+  },
+  thumb: { width: 64, height: 64, borderRadius: 8, backgroundColor: "#000" },
+  captionWrap: { flex: 1, justifyContent: "space-between" },
+  captionInput: {
+    backgroundColor: "#000",
+    color: "#fff",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#2a2a2e",
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    fontSize: 12,
+    minHeight: 36,
+  },
+  delBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    alignSelf: "flex-end",
+    paddingTop: 4,
+  },
+  delBtnText: { color: "#EF4444", fontSize: 10, fontWeight: "800", letterSpacing: 0.4 },
+  addRow: { flexDirection: "row", gap: 10, marginTop: 4 },
+  addBtn: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#202024",
+    backgroundColor: "#0C0C0E",
+  },
+  addBtnText: { color: "#fff", fontSize: 12, fontWeight: "800", letterSpacing: 0.4 },
 });
 
 const styles = StyleSheet.create({

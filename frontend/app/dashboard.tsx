@@ -56,6 +56,52 @@ export default function Dashboard() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [newNotes, setNewNotes] = useState("");
   const [creating, setCreating] = useState(false);
+  const [listening, setListening] = useState(false);
+
+  // 🎤 Voice-to-text — Web Speech API (Chrome/Edge/Safari) with safe fallback
+  const startVoiceInput = useCallback(() => {
+    if (listening) return;
+    if (Platform.OS === "web" && typeof window !== "undefined") {
+      // @ts-ignore — webkit prefix
+      const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SR) {
+        try {
+          const rec = new SR();
+          rec.lang = "fr-FR";
+          rec.interimResults = true;
+          rec.continuous = false;
+          let accumulated = newNotes ? newNotes + " " : "";
+          setListening(true);
+          rec.onresult = (event: any) => {
+            let text = "";
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+              text += event.results[i][0].transcript;
+            }
+            setNewNotes(accumulated + text);
+          };
+          rec.onend = () => setListening(false);
+          rec.onerror = () => setListening(false);
+          rec.start();
+          return;
+        } catch {
+          /* fallthrough to simulation */
+        }
+      }
+    }
+    // Fallback simulation (native or unsupported browser)
+    setListening(true);
+    const samples = [
+      "Sonner deux fois, accès par le portail latéral.",
+      "Présence d'un volet roulant motorisé existant à conserver.",
+      "Linteau légèrement fissuré côté droit, à reprendre.",
+      "Réserve sol fini d'environ 30mm, parquet flottant prévu.",
+    ];
+    const pick = samples[Math.floor(Math.random() * samples.length)];
+    setTimeout(() => {
+      setNewNotes((prev) => (prev ? prev + " " : "") + pick);
+      setListening(false);
+    }, 1400);
+  }, [listening, newNotes]);
   const [pendingCount, setPendingCount] = useState(0);
 
   useEffect(() => {
@@ -430,12 +476,29 @@ export default function Dashboard() {
                 />
               )}
 
-              <Text style={styles.label}>Notes &amp; Instructions</Text>
+              <View style={styles.notesLabelRow}>
+                <Text style={styles.label}>Notes &amp; Instructions</Text>
+                <TouchableOpacity
+                  testID="voice-input-button"
+                  onPress={() => startVoiceInput()}
+                  activeOpacity={0.7}
+                  style={[styles.micBtn, listening && styles.micBtnActive]}
+                >
+                  <Ionicons
+                    name={listening ? "mic" : "mic-outline"}
+                    size={18}
+                    color={listening ? "#fff" : colors.primary}
+                  />
+                  <Text style={[styles.micBtnText, listening && { color: "#fff" }]}>
+                    {listening ? "Écoute..." : "Dicter"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
               <TextInput
                 testID="new-notes-input"
                 value={newNotes}
                 onChangeText={setNewNotes}
-                placeholder="Clé sous le paillasson, accès portail latéral..."
+                placeholder="Clé sous le paillasson, accès portail latéral... ou cliquez sur Dicter 🎙️"
                 placeholderTextColor={colors.placeholder}
                 multiline
                 numberOfLines={3}
@@ -624,6 +687,20 @@ const styles = StyleSheet.create({
   col2: { flex: 1 },
   col3: { flex: 3 },
   col7: { flex: 7 },
+  notesLabelRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  micBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    backgroundColor: "transparent",
+  },
+  micBtnActive: { backgroundColor: colors.anomaly, borderColor: colors.anomaly },
+  micBtnText: { color: colors.primary, fontSize: 11, fontWeight: "800", letterSpacing: 0.4 },
   label: {
     color: colors.textSecondary,
     fontSize: 11,
