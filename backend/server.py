@@ -458,7 +458,7 @@ async def update_chantier(chantier_id: str, payload: ChantierUpdate,
 
 @api.delete("/chantiers/{chantier_id}")
 async def delete_chantier(chantier_id: str,
-                           user=Depends(require_roles(["admin"]))):
+                           user=Depends(require_roles(["admin", "commercial"]))):
     company = user.get("company_id", "default")
     res = await db.chantiers.delete_one({"id": chantier_id, "company_id": company})
     if res.deleted_count:

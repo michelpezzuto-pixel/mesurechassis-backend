@@ -84,6 +84,29 @@ export default function ChantierDetail() {
     }
   };
 
+  const handleDelete = () => {
+    if (!chantier) return;
+    Alert.alert(
+      "Supprimer le chantier ?",
+      `« ${chantier.client_name} » et toutes ses mesures seront supprimés définitivement. Cette action est irréversible.`,
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Supprimer",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await api.delete(`/chantiers/${id}`);
+              router.replace("/dashboard");
+            } catch {
+              Alert.alert("Erreur", "Suppression impossible.");
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const assignedUser = chantier?.assigned_to
     ? users.find((u) => u.id === chantier.assigned_to)
     : null;
@@ -116,10 +139,25 @@ export default function ChantierDetail() {
         ListHeaderComponent={
           <View>
             <View style={styles.header}>
-              <Text style={styles.clientName}>{chantier.client_name}</Text>
-              <View style={styles.addressRow}>
-                <Ionicons name="location" size={14} color={colors.textSecondary} />
-                <Text style={styles.address}>{chantier.address}</Text>
+              <View style={styles.headerTopRow}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.clientName}>{chantier.client_name}</Text>
+                  <View style={styles.addressRow}>
+                    <Ionicons name="location" size={14} color={colors.textSecondary} />
+                    <Text style={styles.address}>{chantier.address}</Text>
+                  </View>
+                </View>
+                {canManage && (
+                  <TouchableOpacity
+                    testID="delete-chantier-button"
+                    onPress={handleDelete}
+                    style={styles.deleteIconBtn}
+                    activeOpacity={0.7}
+                    hitSlop={{ top: 8, left: 8, right: 8, bottom: 8 }}
+                  >
+                    <Ionicons name="trash-outline" size={20} color={colors.anomaly} />
+                  </TouchableOpacity>
+                )}
               </View>
               {meta && (
                 <View style={[styles.badge, { backgroundColor: meta.bg }]}>
@@ -300,6 +338,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.borderSubtle,
     marginBottom: 12,
+  },
+  headerTopRow: { flexDirection: "row", alignItems: "flex-start", gap: 8 },
+  deleteIconBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#2a1010",
+    borderWidth: 1,
+    borderColor: colors.anomaly,
+    alignItems: "center",
+    justifyContent: "center",
   },
   clientName: { color: colors.textPrimary, fontSize: 22, fontWeight: "900" },
   addressRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4 },

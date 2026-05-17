@@ -115,10 +115,25 @@ backend:
     status_history:
         -working: true
         -agent: "main"
-        -comment: "Backend déjà OK après reload : /api/auth/login, /api/chantiers (GET+PATCH avec appointment_at + notes), /api/mesures (standard & trapeze sans diagonales), /api/stats/commercials & /api/stats/commercials/export.pdf répondent 200. CONVERTED_STATUSES correctement défini (l54). À retester en suite complète Iteration 7."
+        -comment: "Backend déjà OK après reload."
         -working: true
         -agent: "testing"
-        -comment: "Suite complète Iteration 7 exécutée via /app/backend_test.py contre l'URL publique — 36/36 tests PASS. Couverture: (1) Auth: login des 3 comptes seed (admin/commercial/tech) + /auth/me (role+company_id) + 401 mauvais mdp. (2) Dispatch: POST /chantiers commercial → status devis_a_faire OK; PATCH /chantiers/{id} admin avec {assigned_to, appointment_at='2026-06-15T10:00:00Z', notes='RDV client'} persiste les 3 champs; PATCH par technician → 403; GET liste affiche les valeurs mises à jour; DELETE admin → 200 + cascade mesures (GET mesures du chantier supprimé renvoie 404). (3) Mesures 4 block_types: standard, coulissant (floor_reserve=50), porte (floor_reserve=30), trapeze SANS diagonales (bay_width+height_left+height_right uniquement) — tous 200 et payload echoé correctement (bay_diagonal_1/2 et bay_height = null pour trapeze); block_type invalide → 400, wall_type invalide → 422; GET /chantiers/{id}/mesures liste les 4. (4) Multi-tenant: POST /auth/register avec company_id 'acme-…' + admin → chantier créé porte ce company_id; admin par défaut ne voit PAS ce chantier dans GET /chantiers et reçoit 404 sur GET by id. (5) Stats commerciaux: shape OK {commercials[user_id,name,email,created,converted,conversion_rate], total_created, total_converted, global_conversion_rate}; export.pdf renvoie application/pdf + magic %PDF- (2135 bytes); les deux endpoints retournent 403 pour commercial et technician. (6) /stats/company OK, POST+GET /feedbacks OK. (7) Exports chantier: export.pdf renvoie %PDF- (3841 bytes), export.xlsx renvoie PK… (6186 bytes). Aucune 5xx observée dans backend.out.log."
+        -comment: "Suite complète Iteration 7 — 36/36 tests PASS."
+
+  - task: "DELETE /api/chantiers/{id} — autorisation élargie à commercial"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: "NA"
+        -agent: "main"
+        -comment: "DELETE chantier ouvert au rôle 'commercial' en plus de 'admin' pour la nouvelle feature de nettoyage. require_roles(['admin', 'commercial']). Cascade sur mesures conservée."
+        -working: true
+        -agent: "testing"
+        -comment: "Régression DELETE chantier autorisation — 14/14 PASS, 0 erreur 5xx. (S1) Commercial: POST chantier 'DELETE_TEST_COMM' + 2 mesures standard (bay_width/height/diag_1/2 verified, bloc_thickness, wall_type=ite) → DELETE 200, GET mesures 404, GET chantier 404 (cascade OK). (S2) Technician: DELETE → 403 avec detail 'Réservé aux rôles : admin, commercial', chantier toujours présent. (S3) Admin (régression): création chantier 'DELETE_TEST_ADMIN' + mesure → DELETE 200, cascade mesures 404. (S4) Cross-company isolation: user enregistré dans company 'zzz-isolation-test-<rand>' avec role=commercial, chantier créé; DELETE par le commercial seed (company 'default') → renvoie 200 {ok:true} no-op (filtre company_id), chantier toujours accessible par son owner (GET 200). Aucun comportement régressif détecté."
 
 frontend:
   - task: "Wizard nouvelle mesure — Step1 type / Step2 baie brute + Pythagore / Step3 paroi"
@@ -131,16 +146,54 @@ frontend:
     status_history:
         -working: false
         -agent: "main"
-        -comment: "Fichier tronqué à la ligne 559 (CotField LARGEUR incomplet) → SyntaxError, FE renvoyait HTTP 500."
+        -comment: "Fichier tronqué → SyntaxError → FE 500."
         -working: true
         -agent: "main"
-        -comment: "Reconstruit la fin du fichier : CotField LARGEUR/HAUTEUR, DiagonalField (auto/validated/manual avec boutons Valider ✓ et Modifier ✎), RÉSERVE SOL FINI obligatoire pour porte/coulissant, photo, Step3View (bloc béton, choix paroi ITE/ITI/Brique/Crépi, isolant+finitions), composants CotField & DiagonalField, styles complets. Validé via screenshot : Step1 affiche les 4 types, Step2 calcule Pythagore (1200×2100 → 2419 mm) avec badge AUTO PYTHAGORE orange."
+        -comment: "Fichier reconstruit, Pythagore (1200×2100 → 2419) validé."
+
+  - task: "Fix trigger Pythagore — onBlur + bouton 'Calculer la diagonale'"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/chantier/[id]/new-mesure.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: false
+        -agent: "user"
+        -comment: "Le calcul se déclenchait dès le premier caractère tapé (ex: '1' au lieu de '1463')."
+        -working: true
+        -agent: "main"
+        -comment: "Supprimé le useEffect par-keystroke. Nouveau: (1) computeDiagonals(false) sur onBlur LARGEUR/HAUTEUR — fill uniquement si W & H valides ET diag non validée. (2) Bouton 'CALCULER LA DIAGONALE' (force=true) sous les champs, désactivé tant que W & H invalides. Validé: W=1463 seul → D=— ; H=2100 (focus) → D=— ; clic bouton → D=2559."
+
+  - task: "Bouton 'Supprimer le chantier' — admin/commercial"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/chantier/[id]/index.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "main"
+        -comment: "Icône trash ronde rouge en haut à droite du header (canManage=admin|commercial). Tap → Alert confirmation 'Supprimer/Annuler'. Sur confirm: DELETE /api/chantiers/{id} + router.replace('/dashboard'). Validé visuellement (testID 'delete-chantier-button' bien rendu et rouge)."
 
 metadata:
   created_by: "main_agent"
-  version: "1.1"
-  test_sequence: 1
+  version: "1.2"
+  test_sequence: 2
   run_ui: false
+
+test_plan:
+  current_focus:
+    - "DELETE /api/chantiers/{id} — autorisation élargie à commercial"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+    -agent: "main"
+    -message: "Itération 7 stabilisée + 2 fixes UX livrés: (1) Pythagore: plus de déclenchement à chaque frappe — onBlur LARGEUR/HAUTEUR + bouton 'CALCULER LA DIAGONALE'. (2) Bouton trash 'Supprimer le chantier' dans le header, admin+commercial, avec Alert confirmation. Backend: DELETE /api/chantiers/{id} ouvert au commercial (avant admin only). Test backend ciblé demandé: (a) login commercial puis DELETE /api/chantiers/{id} sur un chantier de sa company → 200 + cascade mesures supprimées (GET /chantiers/{id}/mesures → 404 après); (b) login technician puis DELETE → 403."
 
 test_plan:
   current_focus:

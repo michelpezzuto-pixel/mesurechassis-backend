@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -104,25 +104,31 @@ export default function NewMesureWizard() {
   const [reportText, setReportText] = useState("");
   const [reportSending, setReportSending] = useState(false);
 
-  // ---------- Auto-Pythagoras prefill ----------------------------------
-  useEffect(() => {
-    if (blockType === "trapeze") return; // no diagonals for trapeze
+  // ---------- Pythagoras manual trigger (onBlur or explicit button) ------
+  // We deliberately DO NOT auto-compute on every keystroke — only when the
+  // user has finished typing both width AND height (blur, or tap the button).
+  const computeDiagonals = (force = false) => {
+    if (blockType === "trapeze") return;
     const w = parseNum(s2.bay_width);
     const h = parseNum(s2.bay_height);
-    if (w && h && w > 0 && h > 0) {
-      const d = Math.round(Math.sqrt(w * w + h * h));
-      setS2((prev) => {
-        let next = prev;
-        if (prev.diag_1_state === "manual" && prev.diag_1.trim().length === 0) {
-          next = { ...next, diag_1: String(d), diag_1_state: "auto" };
-        }
-        if (prev.diag_2_state === "manual" && prev.diag_2.trim().length === 0) {
-          next = { ...next, diag_2: String(d), diag_2_state: "auto" };
-        }
-        return next;
-      });
-    }
-  }, [s2.bay_width, s2.bay_height]);
+    if (!w || !h || w <= 0 || h <= 0) return;
+    const d = Math.round(Math.sqrt(w * w + h * h));
+    setS2((prev) => {
+      let next = prev;
+      // Force = explicit button click → always (re)fill in auto state.
+      // onBlur = soft → only fill if still empty / not validated.
+      if (force || (prev.diag_1_state !== "validated" && prev.diag_1.trim().length === 0)) {
+        next = { ...next, diag_1: String(d), diag_1_state: "auto" };
+      }
+      if (force || (prev.diag_2_state !== "validated" && prev.diag_2.trim().length === 0)) {
+        next = { ...next, diag_2: String(d), diag_2_state: "auto" };
+      }
+      return next;
+    });
+  };
+
+  const canComputeDiag = blockType !== "trapeze"
+    && !!parseNum(s2.bay_width) && !!parseNum(s2.bay_height);
 
   const setS2Field = (k: keyof Step2, v: any) => setS2((p) => ({ ...p, [k]: v }));
   const setS3Field = (k: keyof Step3, v: any) => setS3((p) => ({ ...p, [k]: v }));
@@ -304,6 +310,9 @@ export default function NewMesureWizard() {
               photo={photo}
               setPhoto={setPhoto}
               pickPhoto={pickPhoto}
+              onBlurDimension={() => computeDiagonals(false)}
+              onComputeDiagonals={() => computeDiagonals(true)}
+              canComputeDiag={canComputeDiag}
             />
           )}
           {step === 2 && (
@@ -439,6 +448,9 @@ function Step2View({
   photo,
   setPhoto,
   pickPhoto,
+  onBlurDimension,
+  onComputeDiagonals,
+  canComputeDiag,
 }: {
   blockType: BlockType;
   isRectangular: boolean;
@@ -450,6 +462,9 @@ function Step2View({
   photo: string | null;
   setPhoto: (v: string | null) => void;
   pickPhoto: (s: "camera" | "library") => void;
+  onBlurDimension: () => void;
+  onComputeDiagonals: () => void;
+  canComputeDiag: boolean;
 }) {
   const Sketch = isRectangular ? RawBaySchemaRect : RawBaySchemaTrapeze;
 
@@ -557,6 +572,7 @@ function Step2View({
         label="LARGEUR (mm)"
         value={s2.bay_width}
         onChange={(v) => setS2Field("bay_width", v.replace(",", "."))}
+        onBlur={onBlurDimension}
         error={!!err.bay_width}
       />
       <CotField
@@ -564,8 +580,24 @@ function Step2View({
         label="HAUTEUR (mm)"
         value={s2.bay_height}
         onChange={(v) => setS2Field("bay_height", v.replace(",", "."))}
+        onBlur={onBlurDimension}
         error={!!err.bay_height}
       />
+
+      {/* Bouton de calcul manuel — alternative claire à l'onBlur */}
+      <TouchableOpacity
+        testID="compute-diagonal-button"
+        onPress={onComputeDiagonals}
+        disabled={!canComputeDiag}
+        activeOpacity={0.8}
+        style={[
+          styles.computeBtn,
+          !canComputeDiag && { opacity: 0.4 },
+        ]}
+      >
+        <Ionicons name="calculator-outline" size={18} color={colors.primary} />
+        <Text style={styles.computeBtnText}>CALCULER LA DIAGONALE</Text>
+      </TouchableOpacity>
 
       {/* Diagonales — auto-calculées Pythagore */}
       <DiagonalField
@@ -714,12 +746,14 @@ function CotField({
   label,
   value,
   onChange,
+  onBlur,
   error,
 }: {
   testID?: string;
   label: string;
   value: string;
   onChange: (v: string) => void;
+  onBlur?: () => void;
   error?: boolean;
 }) {
   return (
@@ -729,6 +763,7 @@ function CotField({
         testID={testID}
         value={value}
         onChangeText={onChange}
+        onBlur={onBlur}
         keyboardType="decimal-pad"
         placeholder="0"
         placeholderTextColor={colors.placeholder}
@@ -937,6 +972,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  computeBtn: {
+    marginTop: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    backgroundColor: "#1a0e05",
+  },
+  computeBtnText: { color: colors.primary, fontWeight: "900", fontSize: 13, letterSpacing: 0.8 },
 
   photo: { width: "100%", height: 180, borderRadius: 12, marginTop: 8 },
   removePhoto: {
