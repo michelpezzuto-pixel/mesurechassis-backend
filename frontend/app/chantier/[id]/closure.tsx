@@ -1,8 +1,7 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -15,7 +14,6 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { api, getToken, PDF_URL } from "@/src/services/api";
-import SignaturePad from "@/src/components/SignaturePad";
 import { colors, blockMeta, statusMeta } from "@/src/theme";
 
 type Chantier = {
@@ -24,8 +22,6 @@ type Chantier = {
   address: string;
   status: string;
   created_at: string;
-  client_signature?: string | null;
-  signed_at?: string | null;
 };
 
 type Mesure = {
@@ -148,49 +144,7 @@ export default function Closure() {
     }
   };
 
-  // ---- Signature handlers ----
-  const [showPad, setShowPad] = useState(false);
-  const [signing, setSigning] = useState(false);
-  const padRef = useRef<any>(null);
-
-  const saveSignature = async () => {
-    const sig = await (SignaturePad as any).capture?.();
-    if (!sig) {
-      Alert.alert("Signature vide", "Veuillez signer dans la zone prévue.");
-      return;
-    }
-    setSigning(true);
-    try {
-      const res = await api.post<Chantier>(`/chantiers/${id}/signature`, {
-        signature: sig,
-      });
-      setChantier(res.data);
-      setShowPad(false);
-    } catch {
-      Alert.alert("Erreur", "Enregistrement signature impossible.");
-    } finally {
-      setSigning(false);
-    }
-  };
-
-  const removeSignature = async () => {
-    Alert.alert("Supprimer la signature ?", "Cette action est définitive.", [
-      { text: "Annuler", style: "cancel" },
-      {
-        text: "Supprimer",
-        style: "destructive",
-        onPress: async () => {
-          try {
-            const res = await api.delete<Chantier>(`/chantiers/${id}/signature`);
-            setChantier(res.data);
-          } catch {
-            Alert.alert("Erreur", "Suppression impossible.");
-          }
-        },
-      },
-    ]);
-  };
-
+  // ---- Closure handler ----
   const cloturer = async () => {
     Alert.alert("Clôturer ce chantier ?", "Le statut passera à 'Clôturé'.", [
       { text: "Annuler", style: "cancel" },
@@ -324,76 +278,7 @@ export default function Closure() {
             <Text style={styles.btnSecondaryText}>EXPORT JSON</Text>
           </TouchableOpacity>
 
-          {/* SIGNATURE BLOCK */}
-          <View style={styles.sigCard}>
-            <View style={styles.sigHeader}>
-              <Ionicons name="create" size={18} color={colors.primary} />
-              <Text style={styles.sigTitle}>SIGNATURE CLIENT</Text>
-            </View>
-            {chantier.client_signature ? (
-              <View>
-                <Image
-                  source={{ uri: chantier.client_signature }}
-                  style={styles.sigPreview}
-                  resizeMode="contain"
-                />
-                {chantier.signed_at && (
-                  <Text style={styles.sigDate}>
-                    Signé le {chantier.signed_at.slice(0, 10)} à {chantier.signed_at.slice(11, 16)}
-                  </Text>
-                )}
-                <TouchableOpacity
-                  testID="signature-remove-button"
-                  onPress={removeSignature}
-                  style={[styles.btn, styles.btnSecondary, { marginTop: 10 }]}
-                  activeOpacity={0.7}
-                >
-                  <Ionicons name="trash" size={18} color={colors.textPrimary} />
-                  <Text style={styles.btnSecondaryText}>EFFACER ET RESIGNER</Text>
-                </TouchableOpacity>
-              </View>
-            ) : showPad ? (
-              <View>
-                <Text style={styles.sigHelp}>
-                  Faites signer le client ci-dessous, puis enregistrez.
-                </Text>
-                <SignaturePad ref={padRef} />
-                <View style={{ flexDirection: "row", gap: 8, marginTop: 10 }}>
-                  <TouchableOpacity
-                    testID="signature-cancel-button"
-                    onPress={() => setShowPad(false)}
-                    style={[styles.btn, styles.btnSecondary, { flex: 1 }]}
-                    activeOpacity={0.7}
-                  >
-                    <Text style={styles.btnSecondaryText}>ANNULER</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    testID="signature-save-button"
-                    onPress={saveSignature}
-                    disabled={signing}
-                    style={[styles.btn, styles.btnPrimary, { flex: 1 }]}
-                    activeOpacity={0.85}
-                  >
-                    {signing ? (
-                      <ActivityIndicator color="#000" />
-                    ) : (
-                      <Text style={styles.btnPrimaryText}>ENREGISTRER</Text>
-                    )}
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ) : (
-              <TouchableOpacity
-                testID="signature-open-button"
-                onPress={() => setShowPad(true)}
-                style={[styles.btn, styles.btnPrimary]}
-                activeOpacity={0.85}
-              >
-                <Ionicons name="create-outline" size={20} color="#000" />
-                <Text style={styles.btnPrimaryText}>OUVRIR LA ZONE DE SIGNATURE</Text>
-              </TouchableOpacity>
-            )}
-          </View>
+          {/* SIGNATURE BLOCK REMOVED — application gère uniquement des mesures brutes. */}
 
           {chantier.status !== "cloture" && (
             <TouchableOpacity

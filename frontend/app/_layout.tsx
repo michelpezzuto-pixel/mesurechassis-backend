@@ -32,6 +32,7 @@ export default function RootLayout() {
             <Stack.Screen name="chantier/[id]/closure" options={{ title: "CLÔTURE" }} />
             <Stack.Screen name="admin/feedbacks" options={{ title: "FEEDBACKS" }} />
             <Stack.Screen name="admin/stats" options={{ title: "STATISTIQUES" }} />
+            <Stack.Screen name="company-profile" options={{ headerShown: false }} />
           </Stack>
         </AuthProvider>
       </SafeAreaProvider>

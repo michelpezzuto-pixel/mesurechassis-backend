@@ -690,7 +690,9 @@ function Step3View({
         error={!!err.bloc_thickness}
       />
 
-      <Text style={[styles.label, { marginTop: 18 }]}>Type de paroi *</Text>
+      <Text style={[styles.label, { marginTop: 18 }]}>
+        Type de paroi *  <Text style={styles.indicSuffix}>(INDICATIF)</Text>
+      </Text>
       <View style={styles.wallGrid}>
         {WALLS.map((w) => {
           const active = s3.wall_type === w.key;
@@ -709,6 +711,7 @@ function Step3View({
               <WallSection variant={w.variant} size={64} />
               <Text style={[styles.wallLabel, active && { color: colors.primary }]}>{w.label}</Text>
               <Text style={styles.wallSub}>{w.sub}</Text>
+              <Text style={styles.wallIndic}>(INDICATIF)</Text>
             </TouchableOpacity>
           );
         })}
@@ -769,6 +772,11 @@ function CotField({
         placeholderTextColor={colors.placeholder}
         style={[styles.input, error && styles.inputError]}
       />
+      {error && (
+        <Text style={styles.errorMsg} testID={testID ? `${testID}-error` : undefined}>
+          ⚠ Cote obligatoire manquante
+        </Text>
+      )}
     </View>
   );
 }
@@ -907,6 +915,9 @@ const styles = StyleSheet.create({
     minHeight: 48,
   },
   inputError: { borderColor: colors.anomaly, backgroundColor: "#1a0808" },
+  errorMsg: { color: colors.anomaly, fontSize: 11, fontWeight: "800", marginTop: 4, letterSpacing: 0.4 },
+  indicSuffix: { color: colors.textSecondary, fontSize: 10, fontWeight: "700", letterSpacing: 0.5 },
+  wallIndic: { color: colors.placeholder, fontSize: 9, fontWeight: "700", marginTop: 3, letterSpacing: 0.6 },
 
   gridRow: { flexDirection: "row", flexWrap: "wrap", marginTop: 16, gap: 12 },
   blockCard: {

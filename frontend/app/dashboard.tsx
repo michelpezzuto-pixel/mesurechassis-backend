@@ -188,6 +188,16 @@ export default function Dashboard() {
             <Ionicons name="megaphone-outline" size={22} color={colors.primary} />
           </TouchableOpacity>
         )}
+        {user?.role === "admin" && (
+          <TouchableOpacity
+            testID="company-profile-button"
+            onPress={() => router.push("/company-profile")}
+            style={[styles.logoutBtn, { marginRight: 8 }]}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="settings-outline" size={22} color={colors.primary} />
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
           testID="logout-button"
           onPress={logout}

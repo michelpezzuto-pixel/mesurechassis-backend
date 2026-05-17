@@ -98,13 +98,59 @@
 
 
 
+
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "MesureChâssis — Itération 7 : Refonte wizard (Pythagore auto rectangles, Trapèze sans diagonales), Dispatch Admin (RDV+notes), Stats Commerciaux + PDF. Application laissée cassée (FE 500 / fichier new-mesure.tsx tronqué)."
+user_problem_statement: "MesureChâssis — Master workflow Itération 8: 1) Mode Artisan Unique (bypass RBAC complet). 2) Champs client structurés (Nom/Prénom/CP/Ville). 3) Export JSON structuré CNC-ready. 4) Bloc Signature retiré. 5) Validation rouge 'Cote obligatoire manquante'. 6) Suffixe (INDICATIF) Step 3."
 
 backend:
+  - task: "Schéma client étendu (first_name, last_name, postal_code, city) + back-compat"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "main"
+        -comment: "ChantierCreate/Update/Chantier étendus. client_name auto-composé (last_name + first_name) si manquant. Backward-compat: payload legacy {client_name, address} OK. Validé: POST {first_name:'Marie',last_name:'Dupont'} → client_name='Dupont Marie'."
+        -working: true
+        -agent: "testing"
+        -comment: "PASS. POST /chantiers avec only {first_name:'Marie',last_name:'Dupont', postal_code:'75011', city:'Paris', appointment_at, notes} → 200, response.client_name='Dupont Marie', tous les champs structurés echoed. GET /chantiers retourne first_name/last_name/postal_code/city correctement. Persistence Mongo OK."
+
+  - task: "Endpoints /api/company/profile + Mode Artisan Unique bypass RBAC"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "main"
+        -comment: "GET /api/company/profile (auth) renvoie {company_id, name, artisan_mode}. PATCH /api/company/profile (admin) upsert dans collection 'companies'. auth_user attache artisan_mode. require_roles/require_admin bypassent si artisan_mode=true."
+        -working: true
+        -agent: "testing"
+        -comment: "PASS. GET /company/profile renvoie shape correcte pour admin/commercial/technician (200, company_id='default', name, artisan_mode bool). PATCH admin {name,artisan_mode:true}→200. Commercial/Technician PATCH (post-reset)→403. Bypass artisan_mode=true vérifié: Commercial PATCH /chantiers→200, Technician POST /mesures→200, Technician DELETE /chantiers→200 (normalement réservé admin+commercial). Re-login entre toggles confirme que auth_user lit artisan_mode à la requête. RESET artisan_mode=false OK. Note: POST /mesures utilise Depends(auth_user) sans require_roles, donc technician peut TOUJOURS créer des mesures même hors mode artisan (comportement métier attendu — c'est le rôle des techniciens). Pas un bug, juste un écart par rapport au libellé de la review request."
+
+  - task: "Export JSON structuré mc.v1 (CNC-ready)"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "main"
+        -comment: "GET /api/chantiers/{id}/export.json refait: {schema_version:'mc.v1', exported_at, company_id, client:{display_name,first_name,last_name,address,postal_code,city}, project:{...}, openings_count, openings:[{shape:rectangular|trapezoidal, dimensions_mm:{...}, diagonals_verified:{d1,d2}}]}."
+        -working: true
+        -agent: "testing"
+        -comment: "PASS. Top-level: schema_version='mc.v1', exported_at, company_id='default', client, project, openings_count=3, openings[3]. client {display_name='Dupont Marie', first_name, last_name, address, postal_code, city} OK. project {id, status, appointment_at='2026-06-20T10:00:00Z', notes, created_at, assigned_to} OK. Standard/Porte → shape='rectangular' avec dimensions_mm {width,height,diagonal_1,diagonal_2} (+floor_reserve pour porte) et diagonals_verified {d1:bool,d2:bool}. Trapeze → shape='trapezoidal' avec dimensions_mm ayant UNIQUEMENT {width,height_left,height_right} (pas de height ni diagonal_1/2). openings_count cohérent avec len(openings)."
+
   - task: "Auth JWT, multi-tenant, chantiers, mesures, feedbacks, stats commerciaux + export PDF"
     implemented: true
     working: true
@@ -114,13 +160,10 @@ backend:
     needs_retesting: false
     status_history:
         -working: true
-        -agent: "main"
-        -comment: "Backend déjà OK après reload."
-        -working: true
         -agent: "testing"
-        -comment: "Suite complète Iteration 7 — 36/36 tests PASS."
+        -comment: "36/36 PASS sur la suite complète Iter 7."
 
-  - task: "DELETE /api/chantiers/{id} — autorisation élargie à commercial"
+  - task: "DELETE /api/chantiers/{id} — autorisation admin+commercial"
     implemented: true
     working: true
     file: "/app/backend/server.py"
@@ -128,15 +171,24 @@ backend:
     priority: "high"
     needs_retesting: false
     status_history:
-        -working: "NA"
-        -agent: "main"
-        -comment: "DELETE chantier ouvert au rôle 'commercial' en plus de 'admin' pour la nouvelle feature de nettoyage. require_roles(['admin', 'commercial']). Cascade sur mesures conservée."
         -working: true
         -agent: "testing"
-        -comment: "Régression DELETE chantier autorisation — 14/14 PASS, 0 erreur 5xx. (S1) Commercial: POST chantier 'DELETE_TEST_COMM' + 2 mesures standard (bay_width/height/diag_1/2 verified, bloc_thickness, wall_type=ite) → DELETE 200, GET mesures 404, GET chantier 404 (cascade OK). (S2) Technician: DELETE → 403 avec detail 'Réservé aux rôles : admin, commercial', chantier toujours présent. (S3) Admin (régression): création chantier 'DELETE_TEST_ADMIN' + mesure → DELETE 200, cascade mesures 404. (S4) Cross-company isolation: user enregistré dans company 'zzz-isolation-test-<rand>' avec role=commercial, chantier créé; DELETE par le commercial seed (company 'default') → renvoie 200 {ok:true} no-op (filtre company_id), chantier toujours accessible par son owner (GET 200). Aucun comportement régressif détecté."
+        -comment: "14/14 PASS. Commercial OK, technician 403, admin OK, isolation préservée."
 
 frontend:
-  - task: "Wizard nouvelle mesure — Step1 type / Step2 baie brute + Pythagore / Step3 paroi"
+  - task: "Bloc Signature supprimé de la page Clôture"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/chantier/[id]/closure.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "main"
+        -comment: "Supprimés: imports SignaturePad/Image, handlers (saveSignature/removeSignature/showPad/padRef), bloc JSX 'SIGNATURE CLIENT'. Page Clôture conservée pour le résumé."
+
+  - task: "Wizard new-mesure — 'Cote obligatoire manquante' + suffixe (INDICATIF)"
     implemented: true
     working: true
     file: "/app/frontend/app/chantier/[id]/new-mesure.tsx"
@@ -144,14 +196,23 @@ frontend:
     priority: "high"
     needs_retesting: false
     status_history:
-        -working: false
-        -agent: "main"
-        -comment: "Fichier tronqué → SyntaxError → FE 500."
         -working: true
         -agent: "main"
-        -comment: "Fichier reconstruit, Pythagore (1200×2100 → 2419) validé."
+        -comment: "CotField affiche '⚠ Cote obligatoire manquante' rouge sous chaque champ en erreur. Step 3: suffixe (INDICATIF) gris sur 'Type de paroi' + chaque carte ITE/ITI/Brique/Crépi."
 
-  - task: "Fix trigger Pythagore — onBlur + bouton 'Calculer la diagonale'"
+  - task: "Page Profil Société + Mode Artisan Unique"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/company-profile.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "main"
+        -comment: "Page /company-profile (file-based routing). Sections IDENTITÉ + MODE ARTISAN UNIQUE (Switch). Bouton ENREGISTRER admin-only. AuthContext étendu: artisanMode/company/hasRole(roles). Icône ⚙️ dans header dashboard (admin). 3 états validés visuellement (OFF→ON→sauvegarde→OFF)."
+
+  - task: "Fix Pythagore (onBlur + bouton) + Bouton Supprimer chantier"
     implemented: true
     working: true
     file: "/app/frontend/app/chantier/[id]/new-mesure.tsx"
@@ -159,51 +220,29 @@ frontend:
     priority: "high"
     needs_retesting: false
     status_history:
-        -working: false
-        -agent: "user"
-        -comment: "Le calcul se déclenchait dès le premier caractère tapé (ex: '1' au lieu de '1463')."
         -working: true
         -agent: "main"
-        -comment: "Supprimé le useEffect par-keystroke. Nouveau: (1) computeDiagonals(false) sur onBlur LARGEUR/HAUTEUR — fill uniquement si W & H valides ET diag non validée. (2) Bouton 'CALCULER LA DIAGONALE' (force=true) sous les champs, désactivé tant que W & H invalides. Validé: W=1463 seul → D=— ; H=2100 (focus) → D=— ; clic bouton → D=2559."
-
-  - task: "Bouton 'Supprimer le chantier' — admin/commercial"
-    implemented: true
-    working: true
-    file: "/app/frontend/app/chantier/[id]/index.tsx"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        -working: true
-        -agent: "main"
-        -comment: "Icône trash ronde rouge en haut à droite du header (canManage=admin|commercial). Tap → Alert confirmation 'Supprimer/Annuler'. Sur confirm: DELETE /api/chantiers/{id} + router.replace('/dashboard'). Validé visuellement (testID 'delete-chantier-button' bien rendu et rouge)."
+        -comment: "Livré tour précédent."
 
 metadata:
   created_by: "main_agent"
-  version: "1.2"
-  test_sequence: 2
+  version: "2.0"
+  test_sequence: 3
   run_ui: false
 
 test_plan:
   current_focus:
-    - "DELETE /api/chantiers/{id} — autorisation élargie à commercial"
+    - "Schéma client étendu (first_name, last_name, postal_code, city) + back-compat"
+    - "Endpoints /api/company/profile + Mode Artisan Unique bypass RBAC"
+    - "Export JSON structuré mc.v1 (CNC-ready)"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
     -agent: "main"
-    -message: "Itération 7 stabilisée + 2 fixes UX livrés: (1) Pythagore: plus de déclenchement à chaque frappe — onBlur LARGEUR/HAUTEUR + bouton 'CALCULER LA DIAGONALE'. (2) Bouton trash 'Supprimer le chantier' dans le header, admin+commercial, avec Alert confirmation. Backend: DELETE /api/chantiers/{id} ouvert au commercial (avant admin only). Test backend ciblé demandé: (a) login commercial puis DELETE /api/chantiers/{id} sur un chantier de sa company → 200 + cascade mesures supprimées (GET /chantiers/{id}/mesures → 404 après); (b) login technician puis DELETE → 403."
-
-test_plan:
-  current_focus:
-    - "Auth JWT, multi-tenant, chantiers, mesures, feedbacks, stats commerciaux + export PDF"
-  stuck_tasks: []
-  test_all: false
-  test_priority: "high_first"
-
-agent_communication:
-    -agent: "main"
-    -message: "Bug bloquant résolu : le wizard new-mesure.tsx était tronqué et cassait toute l'app (FE 500). Fichier reconstruit, frontend revient en 200 et écrans wizard validés visuellement (sélection type + Pythagore auto OK). Backend déjà fonctionnel sur tous les endpoints Iteration 7. Merci de tester l'ensemble du backend en se concentrant sur : (1) PATCH /api/chantiers/{id} avec appointment_at + notes + assigned_to déclenche bien la mise à jour et la notification push (best-effort, ne doit pas planter), (2) POST /api/mesures pour les 4 block_types incluant trapèze SANS diagonales (height_left + height_right uniquement) et standard/coulissant/porte avec diag_1_verified/diag_2_verified, (3) GET /api/stats/commercials et son export PDF. Auth admin : admin@mesurechassis.fr / admin123. Voir /app/memory/test_credentials.md."
+    -message: "Phase 1 master workflow livrée. Backend ajouts: (1) schéma client structuré (first_name/last_name/postal_code/city, client_name auto-composé, back-compat); (2) endpoints /api/company/profile GET (auth)/PATCH (admin); (3) bypass complet RBAC quand company.artisan_mode=true — require_roles et require_admin retournent toujours user; (4) export.json refait en schema_version mc.v1 (structure CNC-ready avec openings[].shape='rectangular'|'trapezoidal'). Frontend ajouts validés visuellement: signature supprimée, message rouge inline, suffixe (INDICATIF) Step 3, nouvelle page /company-profile avec Switch artisan, icône ⚙️ dans dashboard admin, AuthContext étendu. Test backend ciblé demandé: (a) GET /api/company/profile renvoie shape correcte; PATCH admin OK (artisan_mode true|false), PATCH commercial → 403. (b) Une fois artisan_mode=true: commercial peut PATCH /chantiers, technician peut POST /mesures, technician peut PATCH /chantiers (bypass total). (c) POST /chantiers avec uniquement first_name+last_name (sans client_name) → response.client_name = 'last_name first_name'; postal_code et city persistés et retournés. (d) GET /chantiers/{id}/export.json: présence schema_version='mc.v1', client.first_name/last_name/postal_code/city, project.appointment_at/status, openings_count cohérent, openings[].shape correct (rectangular pour standard/coulissant/porte, trapezoidal pour trapeze), trapèze dimensions_mm={width,height_left,height_right} uniquement (PAS de diagonal_1/2), porte/coulissant ont floor_reserve. (e) Reset artisan_mode=false en fin de test pour ne pas polluer. Auth: admin@mesurechassis.fr/admin123, commercial@mesurechassis.fr/commercial123, tech@mesurechassis.fr/tech123."
     -agent: "testing"
-    -message: "Suite backend Iteration 7 complète exécutée (/app/backend_test.py, 36 cas) → 36/36 PASS, 0 erreur 5xx. Tous les focus du review-request sont validés : auth des 3 comptes seed + /auth/me + 401 mdp KO; dispatch admin PATCH (assigned_to+appointment_at+notes persistés, 403 pour technician, DELETE+cascade); les 4 block_types mesures dont trapèze sans diagonales/sans bay_height (echo correct des seuls champs envoyés); validations 400 (block_type) et 422 (wall_type); multi-tenant isolation via /auth/register dans une autre company (chantier non visible par admin par défaut, 404 sur GET by id); stats commerciaux shape + export PDF magic %PDF- (2135 bytes) + 403 pour non-admin; /stats/company + feedbacks OK; exports chantier PDF (%PDF-, 3841 bytes) et XLSX (PK, 6186 bytes). Backend prêt production pour Iteration 7. Note: warning passlib bcrypt __about__ AttributeError visible dans backend.err.log mais NON BLOQUANT (login bcrypt fonctionne, c'est un warning passlib<>bcrypt>=4)."
+    -message: "Suite backend Iter 7 — 36/36 PASS. Regression DELETE chantier — 14/14 PASS. Backend prêt production."
+    -agent: "testing"
+    -message: "Iter 8 — 29/30 PASS sur la suite ciblée. (1) GET /company/profile: 200 + shape correcte pour admin/commercial/technician. (2) PATCH admin artisan=true→200; commercial/technician PATCH post-reset→403. (3) Bypass artisan_mode=true validé: commercial PATCH /chantiers→200, technician POST /mesures→200, technician DELETE /chantiers→200. (4) RESET artisan_mode=false confirme retour à l'état initial. (5) Champs client structurés: POST sans client_name + {first_name:'Marie', last_name:'Dupont', postal_code:'75011', city:'Paris', appointment_at:'2026-06-20T10:00:00Z'} → response.client_name='Dupont Marie', tous les champs persistés et echoed dans GET /chantiers. (6) Export JSON mc.v1: schema_version='mc.v1', exported_at, company_id, client {display_name='Dupont Marie', first_name, last_name, address, postal_code, city}, project {id,status,appointment_at,notes,created_at,assigned_to}, openings_count=3 cohérent. Standard/Porte→shape='rectangular' avec dimensions_mm complètes (width/height/diagonal_1/2 + floor_reserve pour porte) et diagonals_verified {d1,d2:bool}. Trapeze→shape='trapezoidal', dimensions_mm UNIQUEMENT {width,height_left,height_right} (vérifié: pas de height ni diagonal_1/2). (7) DELETE chantier admin→200, artisan_mode reste false. Aucun 5xx. Seul écart vs review request: l'endpoint POST /mesures utilise Depends(auth_user) sans require_roles, donc technician peut TOUJOURS créer des mesures même hors mode artisan (200 au lieu de 403 attendu dans la review). C'est en fait le comportement métier correct (les techniciens prennent les mesures, c'est leur rôle) — à confirmer avec main agent si une restriction est réellement souhaitée. Aucune action requise sinon."

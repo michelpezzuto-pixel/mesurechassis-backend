@@ -85,8 +85,12 @@ class TokenResponse(BaseModel):
 
 
 class ChantierCreate(BaseModel):
-    client_name: str
+    client_name: Optional[str] = None  # legacy fallback (kept for back-compat)
+    first_name: Optional[str] = None   # Prénom
+    last_name: Optional[str] = None    # Nom
     address: str
+    postal_code: Optional[str] = None  # Code postal (string to keep leading zeros)
+    city: Optional[str] = None         # Ville
     status: str = "devis_a_faire"
     assigned_to: Optional[str] = None
     appointment_at: Optional[str] = None  # ISO datetime
@@ -95,7 +99,11 @@ class ChantierCreate(BaseModel):
 
 class ChantierUpdate(BaseModel):
     client_name: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     address: Optional[str] = None
+    postal_code: Optional[str] = None
+    city: Optional[str] = None
     status: Optional[str] = None
     assigned_to: Optional[str] = None
     appointment_at: Optional[str] = None
@@ -105,7 +113,11 @@ class ChantierUpdate(BaseModel):
 class Chantier(BaseModel):
     id: str
     client_name: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     address: str
+    postal_code: Optional[str] = None
+    city: Optional[str] = None
     status: str
     created_by: str
     assigned_to: Optional[str] = None
@@ -115,6 +127,17 @@ class Chantier(BaseModel):
     client_signature: Optional[str] = None
     signed_at: Optional[str] = None
     created_at: str
+
+
+class CompanyProfile(BaseModel):
+    company_id: str
+    name: Optional[str] = None
+    artisan_mode: bool = False
+
+
+class CompanyProfileUpdate(BaseModel):
+    name: Optional[str] = None
+    artisan_mode: Optional[bool] = None
 
 
 class SignatureIn(BaseModel):
@@ -236,17 +259,24 @@ async def auth_user(authorization: Optional[str] = Header(None)) -> dict:
     user = await db.users.find_one({"id": payload["sub"]}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
+    # Attach company artisan_mode (best-effort)
+    company_doc = await db.companies.find_one(
+        {"company_id": user.get("company_id", "default")}, {"_id": 0})
+    user["artisan_mode"] = bool(company_doc and company_doc.get("artisan_mode"))
     return user
 
 
 def require_admin(user: dict = Depends(auth_user)) -> dict:
-    if user["role"] != "admin":
+    if user["role"] != "admin" and not user.get("artisan_mode"):
         raise HTTPException(status_code=403, detail="Admin only")
     return user
 
 
 def require_roles(roles: List[str]):
     def _dep(user: dict = Depends(auth_user)) -> dict:
+        # Mode Artisan Unique bypasses all role restrictions
+        if user.get("artisan_mode"):
+            return user
         if user["role"] not in roles:
             raise HTTPException(
                 status_code=403,
@@ -379,10 +409,19 @@ async def create_chantier(payload: ChantierCreate,
                            user=Depends(require_roles(["admin", "commercial"]))):
     if payload.status not in VALID_STATUSES:
         raise HTTPException(400, "Invalid status")
+    # Backwards-compat: build client_name from first/last if missing
+    client_name = payload.client_name
+    if not client_name:
+        parts = [p for p in [payload.last_name, payload.first_name] if p]
+        client_name = " ".join(parts).strip() or "Sans nom"
     doc = {
         "id": str(uuid.uuid4()),
-        "client_name": payload.client_name,
+        "client_name": client_name,
+        "first_name": payload.first_name,
+        "last_name": payload.last_name,
         "address": payload.address,
+        "postal_code": payload.postal_code,
+        "city": payload.city,
         "status": payload.status,
         "created_by": user["id"],
         "assigned_to": payload.assigned_to,
@@ -397,7 +436,7 @@ async def create_chantier(payload: ChantierCreate,
         await send_push_to_user(
             payload.assigned_to,
             "📌 Nouveau chantier assigné",
-            f"{payload.client_name} — Prise de rendez-vous à faire",
+            f"{client_name} — Prise de rendez-vous à faire",
             {"type": "chantier_assigned", "chantier_id": doc["id"]},
         )
     return Chantier(**doc)
@@ -542,6 +581,42 @@ async def delete_feedback(feedback_id: str, user=Depends(require_admin)):
     await db.feedbacks.delete_one(
         {"id": feedback_id, "company_id": user.get("company_id", "default")})
     return {"ok": True}
+
+
+# --- Company profile (Mode Artisan Unique) -----------------------------
+@api.get("/company/profile", response_model=CompanyProfile)
+async def get_company_profile(user=Depends(auth_user)):
+    company_id = user.get("company_id", "default")
+    doc = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    if not doc:
+        doc = {"company_id": company_id, "name": company_id, "artisan_mode": False}
+    return CompanyProfile(
+        company_id=doc.get("company_id", company_id),
+        name=doc.get("name") or company_id,
+        artisan_mode=bool(doc.get("artisan_mode", False)),
+    )
+
+
+@api.patch("/company/profile", response_model=CompanyProfile)
+async def update_company_profile(payload: CompanyProfileUpdate,
+                                  user=Depends(require_admin)):
+    company_id = user.get("company_id", "default")
+    update = {k: v for k, v in payload.model_dump().items() if v is not None}
+    if not update:
+        # Read-through if nothing changed
+        return await get_company_profile(user)
+    update["company_id"] = company_id
+    await db.companies.update_one(
+        {"company_id": company_id},
+        {"$set": update},
+        upsert=True,
+    )
+    doc = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    return CompanyProfile(
+        company_id=doc.get("company_id", company_id),
+        name=doc.get("name") or company_id,
+        artisan_mode=bool(doc.get("artisan_mode", False)),
+    )
 
 
 # --- Stats route ---------------------------------------------------------
@@ -798,7 +873,59 @@ async def export_json(chantier_id: str, user=Depends(auth_user)):
         raise HTTPException(404, "Chantier introuvable")
     mesures = await db.mesures.find({"chantier_id": chantier_id}, {"_id": 0}) \
         .sort("created_at", 1).to_list(500)
-    return {"chantier": chantier, "mesures": mesures}
+
+    def _mesure_struct(m: dict) -> dict:
+        bt = m.get("block_type")
+        common = {
+            "id": m.get("id"),
+            "label": m.get("label"),
+            "block_type": bt,
+            "created_at": m.get("created_at"),
+        }
+        if bt == "trapeze":
+            return {**common, "shape": "trapezoidal", "dimensions_mm": {
+                "width": m.get("bay_width"),
+                "height_left": m.get("height_left"),
+                "height_right": m.get("height_right"),
+            }}
+        # rectangular family
+        dims = {
+            "width": m.get("bay_width"),
+            "height": m.get("bay_height"),
+            "diagonal_1": m.get("bay_diagonal_1") or m.get("bay_diagonal"),
+            "diagonal_2": m.get("bay_diagonal_2") or m.get("bay_diagonal"),
+        }
+        if bt in ("porte", "coulissant"):
+            dims["floor_reserve"] = m.get("floor_reserve")
+        return {**common, "shape": "rectangular", "dimensions_mm": dims,
+                "diagonals_verified": {
+                    "d1": bool(m.get("diag_1_verified")),
+                    "d2": bool(m.get("diag_2_verified")),
+                }}
+
+    return {
+        "schema_version": "mc.v1",
+        "exported_at": datetime.now(timezone.utc).isoformat(),
+        "company_id": chantier.get("company_id"),
+        "client": {
+            "display_name": chantier.get("client_name"),
+            "first_name": chantier.get("first_name"),
+            "last_name": chantier.get("last_name"),
+            "address": chantier.get("address"),
+            "postal_code": chantier.get("postal_code"),
+            "city": chantier.get("city"),
+        },
+        "project": {
+            "id": chantier.get("id"),
+            "status": chantier.get("status"),
+            "appointment_at": chantier.get("appointment_at"),
+            "notes": chantier.get("notes"),
+            "created_at": chantier.get("created_at"),
+            "assigned_to": chantier.get("assigned_to"),
+        },
+        "openings_count": len(mesures),
+        "openings": [_mesure_struct(m) for m in mesures],
+    }
 
 
 @api.get("/chantiers/{chantier_id}/export.xlsx")
