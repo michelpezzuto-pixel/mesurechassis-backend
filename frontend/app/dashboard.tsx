@@ -52,7 +52,7 @@ export default function Dashboard() {
   const [newAddr, setNewAddr] = useState("");
   const [newPostal, setNewPostal] = useState("");
   const [newCity, setNewCity] = useState("");
-  const [newAppt, setNewAppt] = useState<Date | null>(null);
+  const [newAppt, setNewAppt] = useState<string>(""); // raw datetime-local string e.g. "2026-06-25T14:30"
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [newNotes, setNewNotes] = useState("");
   const [creating, setCreating] = useState(false);
@@ -153,7 +153,7 @@ export default function Dashboard() {
         address: newAddr.trim(),
         postal_code: newPostal.trim() || undefined,
         city: newCity.trim() || undefined,
-        appointment_at: newAppt ? newAppt.toISOString() : undefined,
+        appointment_at: newAppt ? new Date(newAppt).toISOString() : undefined,
         notes: newNotes.trim() || undefined,
       });
       setNewModal(false);
@@ -162,7 +162,7 @@ export default function Dashboard() {
       setNewAddr("");
       setNewPostal("");
       setNewCity("");
-      setNewAppt(null);
+      setNewAppt("");
       setNewNotes("");
       router.push(`/chantier/${res.data.id}`);
     } catch (e) {
@@ -430,19 +430,31 @@ export default function Dashboard() {
 
               <Text style={styles.label}>Date du rendez-vous</Text>
               {Platform.OS === "web" ? (
-                <TextInput
-                  testID="new-appointment-input"
-                  value={newAppt ? newAppt.toISOString().slice(0, 16) : ""}
-                  onChangeText={(v) => {
-                    const d = v ? new Date(v) : null;
-                    setNewAppt(d && !isNaN(d.getTime()) ? d : null);
-                  }}
-                  placeholder="YYYY-MM-DDTHH:mm"
-                  placeholderTextColor={colors.placeholder}
-                  // @ts-ignore — web only
-                  type="datetime-local"
-                  style={styles.input}
-                />
+                // Native HTML5 calendar picker — crash-proof, never tries to parse partial text.
+                <View style={styles.input}>
+                  {React.createElement("input", {
+                    type: "date",
+                    "data-testid": "new-appointment-input",
+                    value: newAppt ? newAppt.slice(0, 10) : "",
+                    onChange: (e: any) => {
+                      const raw = e?.target?.value ?? "";
+                      // raw is YYYY-MM-DD from native picker — append default time
+                      setNewAppt(raw ? `${raw}T09:00` : "");
+                    },
+                    min: "2024-01-01",
+                    max: "2030-12-31",
+                    style: {
+                      width: "100%",
+                      backgroundColor: "transparent",
+                      color: colors.textPrimary,
+                      border: "none",
+                      outline: "none",
+                      fontSize: 16,
+                      fontFamily: "inherit",
+                      colorScheme: "dark",
+                    },
+                  })}
+                </View>
               ) : (
                 <TouchableOpacity
                   testID="new-appointment-picker"
@@ -452,7 +464,7 @@ export default function Dashboard() {
                 >
                   <Text style={{ color: newAppt ? colors.textPrimary : colors.placeholder, fontSize: 16 }}>
                     {newAppt
-                      ? newAppt.toLocaleString("fr-FR", {
+                      ? new Date(newAppt).toLocaleString("fr-FR", {
                           weekday: "short",
                           day: "2-digit",
                           month: "short",
@@ -466,12 +478,16 @@ export default function Dashboard() {
               )}
               {showDatePicker && Platform.OS !== "web" && (
                 <DateTimePicker
-                  value={newAppt ?? new Date()}
+                  value={newAppt ? new Date(newAppt) : new Date()}
                   mode="datetime"
                   display={Platform.OS === "ios" ? "spinner" : "default"}
                   onChange={(e: DateTimePickerEvent, date?: Date) => {
                     setShowDatePicker(Platform.OS === "ios"); // iOS keeps open
-                    if (date) setNewAppt(date);
+                    if (date) {
+                      // Persist as ISO-ish "YYYY-MM-DDTHH:mm"
+                      const iso = date.toISOString().slice(0, 16);
+                      setNewAppt(iso);
+                    }
                   }}
                 />
               )}

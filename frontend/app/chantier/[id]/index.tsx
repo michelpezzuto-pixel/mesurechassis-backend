@@ -120,8 +120,8 @@ export default function ChantierDetail() {
   const addSitePhoto = async (source: "camera" | "library") => {
     if (!chantier) return;
     const current = chantier.site_photos ?? [];
-    if (current.length >= 3) {
-      Alert.alert("Limite atteinte", "Maximum 3 photos site (anti-litige).");
+    if (current.length >= 6) {
+      Alert.alert("Limite atteinte", "Maximum 6 photos site (anti-litige).");
       return;
     }
     try {
@@ -366,8 +366,8 @@ export default function ChantierDetail() {
                 <Text style={styles.exportTitle}>PHOTOS SITE (ANTI-LITIGE)</Text>
               </View>
               <Text style={styles.exportSub}>
-                Jusqu'à 3 photos avec légende — preuves de l'état existant.
-                ({(chantier.site_photos?.length ?? 0)}/3)
+                Jusqu'à 6 photos avec légende — preuves de l'état existant.
+                ({(chantier.site_photos?.length ?? 0)}/6)
               </Text>
               {(chantier.site_photos ?? []).map((p, idx) => (
                 <View key={idx} style={photoStyles.row}>
@@ -394,7 +394,7 @@ export default function ChantierDetail() {
                   </View>
                 </View>
               ))}
-              {(chantier.site_photos?.length ?? 0) < 3 && (
+              {(chantier.site_photos?.length ?? 0) < 6 && (
                 <View style={photoStyles.addRow}>
                   <TouchableOpacity
                     testID="add-site-photo-camera"
