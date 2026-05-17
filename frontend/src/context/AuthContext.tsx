@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
-import { api, clearToken, getToken, saveToken } from "@/src/services/api";
+import { api, clearToken, getToken, onSubscriptionState, saveToken } from "@/src/services/api";
 import { registerPushTokenWithBackend } from "@/src/services/notifications";
+import PaywallScreen from "@/src/components/PaywallScreen";
 
 export type Role = "admin" | "commercial" | "technician";
 
@@ -16,6 +17,14 @@ export type CompanyProfile = {
   company_id: string;
   name: string;
   artisan_mode: boolean;
+  subscription_status?: string;
+  subscription_expires_at?: string;
+};
+
+export type SubscriptionLock = {
+  expired: boolean;
+  status?: string;
+  expires_at?: string;
 };
 
 type AuthCtx = {
@@ -23,6 +32,7 @@ type AuthCtx = {
   company: CompanyProfile | null;
   artisanMode: boolean;
   loading: boolean;
+  lock: SubscriptionLock;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (name: string, email: string, password: string, role: Role, companyId?: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -40,11 +50,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [company, setCompany] = useState<CompanyProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lock, setLock] = useState<SubscriptionLock>({ expired: false });
+
+  // Subscribe to subscription lock events from the axios response interceptor.
+  useEffect(() => {
+    const off = onSubscriptionState((s) => setLock(s));
+    return () => { off(); };
+  }, []);
 
   const fetchCompany = useCallback(async () => {
     try {
       const res = await api.get<CompanyProfile>("/company/profile");
       setCompany(res.data);
+      // Apply subscription state from profile (initial / refresh)
+      const status = res.data?.subscription_status;
+      const exp = res.data?.subscription_expires_at;
+      const expired = (() => {
+        if (status === "suspended") return true;
+        if (!exp) return false;
+        try { return new Date(exp).getTime() < Date.now(); } catch { return false; }
+      })();
+      setLock({ expired, status, expires_at: exp });
     } catch {
       setCompany(null);
     }
@@ -113,6 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         company,
         artisanMode,
         loading,
+        lock,
         signIn,
         signUp,
         signOut,
@@ -120,7 +147,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         hasRole,
       }}
     >
-      {children}
+      {/* Subscription paywall — covers everything when expired/suspended */}
+      {user && lock.expired ? (
+        <PaywallScreen
+          status={lock.status}
+          expires_at={lock.expires_at}
+          onContactSupport={() => {
+            const subject = encodeURIComponent("MesureChâssis — Régularisation abonnement");
+            const body = encodeURIComponent(
+              `Bonjour,\n\nMon compte (${user.email}) est verrouillé (${lock.status ?? "expiré"}).\nMerci de régulariser mon abonnement.\n\nSociété : ${user.company_id}`
+            );
+            if (typeof window !== "undefined") {
+              try { window.location.href = `mailto:support@mesurechassis.fr?subject=${subject}&body=${body}`; } catch { /* noop */ }
+            }
+          }}
+          onLogout={signOut}
+        />
+      ) : (
+        children
+      )}
     </Ctx.Provider>
   );
 }

@@ -17,6 +17,41 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
+// Subscription-lock event bus — subscribed by AuthContext for paywall display
+type SubscriptionState = {
+  expired: boolean;
+  status?: string;
+  expires_at?: string;
+};
+const subscriptionListeners = new Set<(s: SubscriptionState) => void>();
+export function onSubscriptionState(cb: (s: SubscriptionState) => void) {
+  subscriptionListeners.add(cb);
+  return () => subscriptionListeners.delete(cb);
+}
+
+api.interceptors.response.use(
+  (r) => {
+    // Any successful call proves subscription is healthy → clear paywall
+    subscriptionListeners.forEach((cb) => cb({ expired: false }));
+    return r;
+  },
+  (err) => {
+    if (err?.response?.status === 402) {
+      const d = err.response.data?.detail ?? {};
+      if (d?.code === "subscription_expired") {
+        subscriptionListeners.forEach((cb) =>
+          cb({
+            expired: true,
+            status: d.subscription_status,
+            expires_at: d.subscription_expires_at,
+          })
+        );
+      }
+    }
+    return Promise.reject(err);
+  }
+);
+
 export async function saveToken(token: string) {
   await storage.secureSet(TOKEN_KEY, token);
 }

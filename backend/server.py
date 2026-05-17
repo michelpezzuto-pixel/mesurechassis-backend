@@ -136,11 +136,14 @@ class CompanyProfile(BaseModel):
     company_id: str
     name: Optional[str] = None
     artisan_mode: bool = False
+    subscription_status: str = "trial"  # trial | active | suspended
+    subscription_expires_at: Optional[str] = None  # ISO datetime
 
 
 class CompanyProfileUpdate(BaseModel):
     name: Optional[str] = None
     artisan_mode: Optional[bool] = None
+    # Subscription fields are NOT updatable here — use /platform endpoint
 
 
 class SignatureIn(BaseModel):
@@ -264,21 +267,91 @@ async def auth_user(authorization: Optional[str] = Header(None)) -> dict:
     user = await db.users.find_one({"id": payload["sub"]}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
-    # Attach company artisan_mode (best-effort)
-    company_doc = await db.companies.find_one(
-        {"company_id": user.get("company_id", "default")}, {"_id": 0})
-    user["artisan_mode"] = bool(company_doc and company_doc.get("artisan_mode"))
+    company_id = user.get("company_id", "default")
+    # Ensure company doc exists with trial subscription (90 days)
+    company_doc = await ensure_company(company_id)
+    user["artisan_mode"] = bool(company_doc.get("artisan_mode"))
+    user["subscription_status"] = company_doc.get("subscription_status", "trial")
+    user["subscription_expires_at"] = company_doc.get("subscription_expires_at")
     return user
 
 
-def require_admin(user: dict = Depends(auth_user)) -> dict:
+# ---- Endpoints always reachable even if subscription expired ------------
+SUBSCRIPTION_OPEN_PATHS = {
+    "/api/auth/me",
+    "/api/company/profile",
+    "/api/feedbacks",
+}
+
+
+def is_subscription_blocked(user: dict) -> bool:
+    """True if access must be denied (expired or suspended)."""
+    status = user.get("subscription_status") or "trial"
+    if status == "suspended":
+        return True
+    expires_at = user.get("subscription_expires_at")
+    if not expires_at:
+        return False
+    try:
+        dt = datetime.fromisoformat(str(expires_at).replace("Z", "+00:00"))
+    except ValueError:
+        return False
+    return datetime.now(timezone.utc) > dt
+
+
+async def require_active_subscription(user: dict = Depends(auth_user)) -> dict:
+    if is_subscription_blocked(user):
+        raise HTTPException(
+            status_code=402,
+            detail={
+                "code": "subscription_expired",
+                "message": "Votre accès a expiré. Veuillez régulariser votre abonnement.",
+                "subscription_status": user.get("subscription_status"),
+                "subscription_expires_at": user.get("subscription_expires_at"),
+            },
+        )
+    return user
+
+
+async def ensure_company(company_id: str) -> dict:
+    """Idempotent: load or create company doc with 90-day trial."""
+    doc = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    if doc:
+        # Backfill subscription fields if legacy doc
+        update = {}
+        if "subscription_status" not in doc:
+            update["subscription_status"] = "trial"
+        if "subscription_expires_at" not in doc:
+            update["subscription_expires_at"] = (
+                datetime.now(timezone.utc) + timedelta(days=90)
+            ).isoformat()
+        if update:
+            await db.companies.update_one({"company_id": company_id}, {"$set": update})
+            doc.update(update)
+        return doc
+    new_doc = {
+        "company_id": company_id,
+        "name": company_id,
+        "artisan_mode": False,
+        "subscription_status": "trial",
+        "subscription_expires_at": (
+            datetime.now(timezone.utc) + timedelta(days=90)
+        ).isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.companies.insert_one(new_doc)
+    new_doc.pop("_id", None)
+    return new_doc
+
+
+def require_admin(user: dict = Depends(require_active_subscription)) -> dict:
     if user["role"] != "admin" and not user.get("artisan_mode"):
         raise HTTPException(status_code=403, detail="Admin only")
     return user
 
 
 def require_roles(roles: List[str]):
-    def _dep(user: dict = Depends(auth_user)) -> dict:
+    def _dep(user: dict = Depends(require_active_subscription)) -> dict:
         # Mode Artisan Unique bypasses all role restrictions
         if user.get("artisan_mode"):
             return user
@@ -395,14 +468,14 @@ async def me(user=Depends(auth_user)):
 
 
 @api.get("/users", response_model=List[UserPublic])
-async def list_users(user=Depends(auth_user)):
+async def list_users(user=Depends(require_active_subscription)):
     docs = await db.users.find({"company_id": user.get("company_id", "default")},
                                 {"_id": 0, "hashed_password": 0}).to_list(500)
     return [user_to_public(d) for d in docs]
 
 
 @api.post("/auth/push-token")
-async def set_push_token(payload: PushTokenIn, user=Depends(auth_user)):
+async def set_push_token(payload: PushTokenIn, user=Depends(require_active_subscription)):
     await db.users.update_one(
         {"id": user["id"]}, {"$set": {"push_token": payload.push_token}})
     return {"ok": True}
@@ -449,7 +522,7 @@ async def create_chantier(payload: ChantierCreate,
 
 @api.get("/chantiers", response_model=List[Chantier])
 async def list_chantiers(status_filter: Optional[str] = None, q: Optional[str] = None,
-                          user=Depends(auth_user)):
+                          user=Depends(require_active_subscription)):
     query: dict = {"company_id": user.get("company_id", "default")}
     if status_filter and status_filter in VALID_STATUSES:
         query["status"] = status_filter
@@ -465,7 +538,7 @@ async def list_chantiers(status_filter: Optional[str] = None, q: Optional[str] =
 
 
 @api.get("/chantiers/{chantier_id}", response_model=Chantier)
-async def get_chantier(chantier_id: str, user=Depends(auth_user)):
+async def get_chantier(chantier_id: str, user=Depends(require_active_subscription)):
     doc = await db.chantiers.find_one(
         {"id": chantier_id, "company_id": user.get("company_id", "default")},
         {"_id": 0})
@@ -520,7 +593,7 @@ async def _check_chantier_access(chantier_id: str, user: dict) -> dict:
 
 
 @api.post("/mesures", response_model=Mesure)
-async def create_mesure(payload: MesureCreate, user=Depends(auth_user)):
+async def create_mesure(payload: MesureCreate, user=Depends(require_active_subscription)):
     if payload.block_type not in VALID_BLOCK_TYPES:
         raise HTTPException(400, "Invalid block_type")
     await _check_chantier_access(payload.chantier_id, user)
@@ -538,7 +611,7 @@ async def create_mesure(payload: MesureCreate, user=Depends(auth_user)):
 
 
 @api.get("/chantiers/{chantier_id}/mesures", response_model=List[Mesure])
-async def list_mesures(chantier_id: str, user=Depends(auth_user)):
+async def list_mesures(chantier_id: str, user=Depends(require_active_subscription)):
     await _check_chantier_access(chantier_id, user)
     docs = await db.mesures.find({"chantier_id": chantier_id}, {"_id": 0}) \
         .sort("created_at", 1).to_list(500)
@@ -546,7 +619,7 @@ async def list_mesures(chantier_id: str, user=Depends(auth_user)):
 
 
 @api.delete("/mesures/{mesure_id}")
-async def delete_mesure(mesure_id: str, user=Depends(auth_user)):
+async def delete_mesure(mesure_id: str, user=Depends(require_active_subscription)):
     mesure = await db.mesures.find_one({"id": mesure_id})
     if mesure:
         await _check_chantier_access(mesure["chantier_id"], user)
@@ -592,13 +665,13 @@ async def delete_feedback(feedback_id: str, user=Depends(require_admin)):
 @api.get("/company/profile", response_model=CompanyProfile)
 async def get_company_profile(user=Depends(auth_user)):
     company_id = user.get("company_id", "default")
-    doc = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
-    if not doc:
-        doc = {"company_id": company_id, "name": company_id, "artisan_mode": False}
+    doc = await ensure_company(company_id)
     return CompanyProfile(
         company_id=doc.get("company_id", company_id),
         name=doc.get("name") or company_id,
         artisan_mode=bool(doc.get("artisan_mode", False)),
+        subscription_status=doc.get("subscription_status", "trial"),
+        subscription_expires_at=doc.get("subscription_expires_at"),
     )
 
 
@@ -607,20 +680,64 @@ async def update_company_profile(payload: CompanyProfileUpdate,
                                   user=Depends(require_admin)):
     company_id = user.get("company_id", "default")
     update = {k: v for k, v in payload.model_dump().items() if v is not None}
-    if not update:
-        # Read-through if nothing changed
-        return await get_company_profile(user)
-    update["company_id"] = company_id
-    await db.companies.update_one(
-        {"company_id": company_id},
-        {"$set": update},
-        upsert=True,
-    )
-    doc = await db.companies.find_one({"company_id": company_id}, {"_id": 0})
+    if update:
+        update["company_id"] = company_id
+        await db.companies.update_one(
+            {"company_id": company_id},
+            {"$set": update},
+            upsert=True,
+        )
+    doc = await ensure_company(company_id)
     return CompanyProfile(
         company_id=doc.get("company_id", company_id),
         name=doc.get("name") or company_id,
         artisan_mode=bool(doc.get("artisan_mode", False)),
+        subscription_status=doc.get("subscription_status", "trial"),
+        subscription_expires_at=doc.get("subscription_expires_at"),
+    )
+
+
+# --- Platform admin: regularise a subscription (out-of-band) ------------
+PLATFORM_ADMIN_TOKEN = os.getenv("PLATFORM_ADMIN_TOKEN", "mc-platform-2026")
+
+
+@api.post("/platform/companies/{company_id}/subscription")
+async def platform_set_subscription(
+    company_id: str,
+    payload: dict,
+    x_platform_token: Optional[str] = Header(None),
+):
+    """Platform-level operation: lift suspension, extend trial, mark active.
+    Caller must provide a matching X-Platform-Token header."""
+    if x_platform_token != PLATFORM_ADMIN_TOKEN:
+        raise HTTPException(status_code=403, detail="Invalid platform token")
+    update: dict = {}
+    if "subscription_status" in payload:
+        if payload["subscription_status"] not in ("trial", "active", "suspended"):
+            raise HTTPException(400, "Invalid subscription_status")
+        update["subscription_status"] = payload["subscription_status"]
+    if "extend_days" in payload:
+        try:
+            days = int(payload["extend_days"])
+        except (TypeError, ValueError):
+            raise HTTPException(400, "extend_days must be int")
+        new_dt = datetime.now(timezone.utc) + timedelta(days=days)
+        update["subscription_expires_at"] = new_dt.isoformat()
+    if "subscription_expires_at" in payload and "extend_days" not in payload:
+        update["subscription_expires_at"] = payload["subscription_expires_at"]
+    if not update:
+        raise HTTPException(400, "Nothing to update")
+    update["company_id"] = company_id
+    await db.companies.update_one(
+        {"company_id": company_id}, {"$set": update}, upsert=True,
+    )
+    doc = await ensure_company(company_id)
+    return CompanyProfile(
+        company_id=doc.get("company_id", company_id),
+        name=doc.get("name") or company_id,
+        artisan_mode=bool(doc.get("artisan_mode", False)),
+        subscription_status=doc.get("subscription_status", "trial"),
+        subscription_expires_at=doc.get("subscription_expires_at"),
     )
 
 
@@ -781,7 +898,7 @@ def _block_label(b: str) -> str:
 
 
 @api.get("/chantiers/{chantier_id}/export.pdf")
-async def export_pdf(chantier_id: str, user=Depends(auth_user)):
+async def export_pdf(chantier_id: str, user=Depends(require_active_subscription)):
     chantier = await db.chantiers.find_one(
         {"id": chantier_id, "company_id": user.get("company_id", "default")},
         {"_id": 0})
@@ -870,7 +987,7 @@ async def export_pdf(chantier_id: str, user=Depends(auth_user)):
 
 
 @api.get("/chantiers/{chantier_id}/export.json")
-async def export_json(chantier_id: str, user=Depends(auth_user)):
+async def export_json(chantier_id: str, user=Depends(require_active_subscription)):
     chantier = await db.chantiers.find_one(
         {"id": chantier_id, "company_id": user.get("company_id", "default")},
         {"_id": 0})
@@ -934,7 +1051,7 @@ async def export_json(chantier_id: str, user=Depends(auth_user)):
 
 
 @api.get("/chantiers/{chantier_id}/export.csv")
-async def export_csv(chantier_id: str, user=Depends(auth_user)):
+async def export_csv(chantier_id: str, user=Depends(require_active_subscription)):
     """Plain tabular CSV — manufacturing / cutting machinery friendly."""
     import csv
     import io
@@ -993,7 +1110,7 @@ async def export_csv(chantier_id: str, user=Depends(auth_user)):
 
 
 @api.get("/chantiers/{chantier_id}/export.xlsx")
-async def export_xlsx(chantier_id: str, user=Depends(auth_user)):
+async def export_xlsx(chantier_id: str, user=Depends(require_active_subscription)):
     chantier = await db.chantiers.find_one(
         {"id": chantier_id, "company_id": user.get("company_id", "default")},
         {"_id": 0})
@@ -1072,7 +1189,7 @@ async def export_xlsx(chantier_id: str, user=Depends(auth_user)):
 
 
 @api.post("/chantiers/{chantier_id}/signature", response_model=Chantier)
-async def save_signature(chantier_id: str, payload: SignatureIn, user=Depends(auth_user)):
+async def save_signature(chantier_id: str, payload: SignatureIn, user=Depends(require_active_subscription)):
     company = user.get("company_id", "default")
     if not payload.signature.strip():
         raise HTTPException(400, "Signature vide")
@@ -1090,7 +1207,7 @@ async def save_signature(chantier_id: str, payload: SignatureIn, user=Depends(au
 
 
 @api.delete("/chantiers/{chantier_id}/signature", response_model=Chantier)
-async def delete_signature(chantier_id: str, user=Depends(auth_user)):
+async def delete_signature(chantier_id: str, user=Depends(require_active_subscription)):
     company = user.get("company_id", "default")
     await db.chantiers.update_one(
         {"id": chantier_id, "company_id": company},
