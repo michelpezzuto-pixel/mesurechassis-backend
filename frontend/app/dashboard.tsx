@@ -20,7 +20,7 @@ import { useFocusEffect, useRouter } from "expo-router";
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { api } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
-import { subscribeQueueSize, syncQueue } from "@/src/services/offlineQueue";
+import { subscribeQueueSize, syncQueue, enqueueChantier, isNetworkError } from "@/src/services/offlineQueue";
 import { colors, statusMeta, READY_FOR_EXPORT_BADGE } from "@/src/theme";
 
 type Chantier = {
@@ -154,16 +154,16 @@ export default function Dashboard() {
       return;
     }
     setCreating(true);
-    try {
-      const res = await api.post<Chantier>("/chantiers", {
-        first_name: newFirstName.trim() || undefined,
-        last_name: newLastName.trim(),
-        address: newAddr.trim(),
-        postal_code: newPostal.trim() || undefined,
-        city: newCity.trim() || undefined,
-        appointment_at: newAppt ? new Date(newAppt).toISOString() : undefined,
-        notes: newNotes.trim() || undefined,
-      });
+    const payload = {
+      first_name: newFirstName.trim() || undefined,
+      last_name: newLastName.trim(),
+      address: newAddr.trim(),
+      postal_code: newPostal.trim() || undefined,
+      city: newCity.trim() || undefined,
+      appointment_at: newAppt ? new Date(newAppt).toISOString() : undefined,
+      notes: newNotes.trim() || undefined,
+    };
+    const resetForm = () => {
       setNewModal(false);
       setNewFirstName("");
       setNewLastName("");
@@ -172,9 +172,24 @@ export default function Dashboard() {
       setNewCity("");
       setNewAppt("");
       setNewNotes("");
+    };
+    try {
+      const res = await api.post<Chantier>("/chantiers", payload);
+      resetForm();
       router.push(`/chantier/${res.data.id}`);
-    } catch (e) {
-      Alert.alert("Erreur", "Création impossible.");
+    } catch (e: any) {
+      if (isNetworkError(e)) {
+        // Hors-ligne : on stocke le chantier en file d'attente locale.
+        await enqueueChantier(payload);
+        resetForm();
+        await fetchData();
+        Alert.alert(
+          "📥 Hors-ligne",
+          "Chantier enregistré localement. Il sera synchronisé automatiquement dès le retour de la connexion.",
+        );
+      } else {
+        Alert.alert("Erreur", "Création impossible.");
+      }
     } finally {
       setCreating(false);
     }
@@ -371,7 +386,7 @@ export default function Dashboard() {
         >
           <Ionicons name="cloud-upload" size={18} color="#000" />
           <Text style={styles.offlineText}>
-            {pendingCount} mesure{pendingCount > 1 ? "s" : ""} en attente · Toucher pour synchroniser
+            {pendingCount} élément{pendingCount > 1 ? "s" : ""} en attente · Toucher pour synchroniser
           </Text>
         </TouchableOpacity>
       )}
