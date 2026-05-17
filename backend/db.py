@@ -50,6 +50,11 @@ VALID_WALL_TYPES = {"ite", "iti", "brique_parement", "crepi_simple"}
 VALID_PLANS = {"free", "trial", "pro"}
 FREE_PLAN_MAX_CHANTIERS = 3
 
+# Durée de la période d'essai (Trial) — exactement 3 mois (90 jours).
+# Le lockout plein-écran (PaywallScreen) s'active automatiquement à J+91
+# si aucun abonnement Pro n'est détecté (via is_subscription_blocked()).
+TRIAL_DAYS = 90
+
 # Endpoints accessibles même si l'abonnement est expiré
 SUBSCRIPTION_OPEN_PATHS = {
     "/api/auth/me",

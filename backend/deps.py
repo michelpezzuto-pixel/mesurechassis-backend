@@ -16,6 +16,7 @@ from db import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     JWT_ALGO,
     JWT_SECRET,
+    TRIAL_DAYS,
     db,
     logger,
 )
@@ -67,7 +68,7 @@ async def ensure_company(company_id: str) -> dict:
             update["subscription_status"] = "trial"
         if "subscription_expires_at" not in doc:
             update["subscription_expires_at"] = (
-                datetime.now(timezone.utc) + timedelta(days=90)
+                datetime.now(timezone.utc) + timedelta(days=TRIAL_DAYS)
             ).isoformat()
         if "plan" not in doc:
             # Préserve l'expérience existante : les comptes pré-Freemium
@@ -92,7 +93,7 @@ async def ensure_company(company_id: str) -> dict:
         "artisan_mode": False,
         "subscription_status": "trial",
         "subscription_expires_at": (
-            datetime.now(timezone.utc) + timedelta(days=90)
+            datetime.now(timezone.utc) + timedelta(days=TRIAL_DAYS)
         ).isoformat(),
         "plan": "trial",
         "chantiers_lifetime_count": 0,

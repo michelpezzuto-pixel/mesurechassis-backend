@@ -22,6 +22,7 @@ import { api } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { subscribeQueueSize, syncQueue, enqueueChantier, isNetworkError } from "@/src/services/offlineQueue";
 import { colors, statusMeta, READY_FOR_EXPORT_BADGE } from "@/src/theme";
+import TrialCountdownBanner from "@/src/components/TrialCountdownBanner";
 
 type Chantier = {
   id: string;
@@ -316,6 +317,10 @@ export default function Dashboard() {
         >
           <Ionicons name="log-out-outline" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
+      </View>
+
+      <View style={{ paddingHorizontal: 16 }}>
+        <TrialCountdownBanner />
       </View>
 
       <View style={styles.searchWrap}>

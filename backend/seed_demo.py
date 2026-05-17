@@ -210,12 +210,13 @@ async def main():
 
         print(f"✅ {client_data['last']:10s} ({status}, {n_mesures} mesures, {len(site_photos)} site photos)")
 
-    # Make sure subscription is active
+    # Make sure subscription is active (essai de 90 jours)
+    from db import TRIAL_DAYS
     await db.companies.update_one(
         {"company_id": company_id},
         {"$set": {
             "subscription_status": "active",
-            "subscription_expires_at": (now + timedelta(days=90)).isoformat(),
+            "subscription_expires_at": (now + timedelta(days=TRIAL_DAYS)).isoformat(),
             "artisan_mode": True,  # keep current artisan state ON
         }},
         upsert=True,

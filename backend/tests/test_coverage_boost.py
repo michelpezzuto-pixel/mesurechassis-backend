@@ -149,13 +149,15 @@ class TestPlatformSubscription:
     async def test_platform_extend_days_with_correct_token(self, client):
         import os
         token = os.getenv("PLATFORM_ADMIN_TOKEN", "mc-platform-2026")
+        # Note : on étend de 90j seulement (= durée du trial) pour ne pas
+        # polluer l'état production après les tests (artefact 365j observé).
         r = await client.post(
             "/api/platform/companies/default/subscription",
             headers={"X-Platform-Token": token},
-            json={"extend_days": 365},
+            json={"extend_days": 90},
         )
         assert r.status_code == 200
-        # subscription_expires_at should be roughly +365 days
+        # subscription_expires_at should be roughly +90 days
         data = r.json()
         assert "subscription_expires_at" in data
 
