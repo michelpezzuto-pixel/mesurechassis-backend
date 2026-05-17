@@ -1,9 +1,13 @@
 """MesureChâssis backend — point d'entrée FastAPI.
 
-Tous les modèles, dépendances, et routes vivent désormais dans des
-modules dédiés (db.py, models.py, deps.py, utils.py, routes/, seed.py).
+Tous les modèles, dépendances, et routes vivent dans des modules
+dédiés (db.py, models.py, deps.py, utils.py, routes/, seed.py).
+Le cycle de vie applicatif utilise le moderne `lifespan` context
+manager (les hooks `@app.on_event` sont deprecated depuis FastAPI 0.93).
 """
 from __future__ import annotations
+
+from contextlib import asynccontextmanager
 
 from fastapi import APIRouter, FastAPI
 from starlette.middleware.cors import CORSMiddleware
@@ -18,11 +22,19 @@ from routes import mesures as mesures_routes
 from routes import stats as stats_routes
 from seed import seed_data
 
-# --- App & routers -------------------------------------------------------
-app = FastAPI(title="MesureChâssis API")
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    # --- Startup ---------------------------------------------------------
+    await seed_data()
+    yield
+    # --- Shutdown --------------------------------------------------------
+    mongo_client.close()
+
+
+app = FastAPI(title="MesureChâssis API", lifespan=lifespan)
 api = APIRouter(prefix="/api")
 
-# Tous les routeurs domaine sont montés sous /api
 api.include_router(auth_routes.router)
 api.include_router(chantiers_routes.router)
 api.include_router(mesures_routes.router)
@@ -40,13 +52,3 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.on_event("startup")
-async def _startup() -> None:
-    await seed_data()
-
-
-@app.on_event("shutdown")
-async def _shutdown() -> None:
-    mongo_client.close()

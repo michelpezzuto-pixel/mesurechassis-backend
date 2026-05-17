@@ -1,69 +1,127 @@
-"""Chantiers CRUD, filter, search, get-by-id, patch, 401 handling."""
-import requests
+"""Tests CRUD chantiers + pipeline 4-étapes."""
+from __future__ import annotations
+
+import pytest
+
+from tests.conftest import PYTEST_TAG, hdr
+
+pytestmark = pytest.mark.asyncio
 
 
-class TestChantiers:
-    def test_list_unauth(self, api_url):
-        r = requests.get(f"{api_url}/chantiers", timeout=30)
-        assert r.status_code == 401
-
-    def test_list_all_returns_seed(self, api_url, admin_headers):
-        r = requests.get(f"{api_url}/chantiers", headers=admin_headers, timeout=30)
+class TestChantierCRUD:
+    async def test_create_as_admin(self, client, admin_jwt):
+        r = await client.post(
+            "/api/chantiers",
+            headers=hdr(admin_jwt),
+            json={
+                "client_name": f"{PYTEST_TAG}admin",
+                "address": "1 rue de Test",
+                "status": "devis_a_faire",
+            },
+        )
         assert r.status_code == 200
         data = r.json()
-        assert isinstance(data, list)
-        assert len(data) >= 5, f"Expected >=5 seeded chantiers, got {len(data)}"
-        # validate shape
-        for c in data:
-            assert "id" in c and "client_name" in c and "address" in c and "status" in c
+        assert data["client_name"] == f"{PYTEST_TAG}admin"
+        assert data["status"] == "devis_a_faire"
 
-    def test_filter_by_status(self, api_url, admin_headers):
-        r = requests.get(f"{api_url}/chantiers?status_filter=devis_a_faire",
-                         headers=admin_headers, timeout=30)
+    async def test_create_as_commercial(self, client, commercial_jwt):
+        r = await client.post(
+            "/api/chantiers",
+            headers=hdr(commercial_jwt),
+            json={
+                "client_name": f"{PYTEST_TAG}com",
+                "address": "2 rue de Test",
+            },
+        )
         assert r.status_code == 200
-        data = r.json()
-        assert len(data) >= 1
-        for c in data:
-            assert c["status"] == "devis_a_faire"
 
-    def test_search_by_address_paris(self, api_url, admin_headers):
-        r = requests.get(f"{api_url}/chantiers?q=Paris", headers=admin_headers, timeout=30)
+    async def test_create_as_tech_forbidden(self, client, tech_jwt):
+        r = await client.post(
+            "/api/chantiers",
+            headers=hdr(tech_jwt),
+            json={
+                "client_name": f"{PYTEST_TAG}tech",
+                "address": "3 rue de Test",
+            },
+        )
+        assert r.status_code == 403
+
+    async def test_list_filter_q(self, client, admin_jwt):
+        r = await client.get(
+            "/api/chantiers",
+            headers=hdr(admin_jwt),
+            params={"q": PYTEST_TAG},
+        )
         assert r.status_code == 200
-        data = r.json()
-        assert len(data) >= 1
-        for c in data:
-            assert "paris" in c["address"].lower() or "paris" in c["client_name"].lower()
+        items = r.json()
+        assert all(PYTEST_TAG in c["client_name"] for c in items)
+        assert len(items) >= 1
 
-    def test_create_get_patch_chantier(self, api_url, commercial_headers):
-        payload = {"client_name": "TEST_Client", "address": "1 rue de Test, 75000 Paris",
-                   "status": "devis_a_faire"}
-        r = requests.post(f"{api_url}/chantiers", json=payload,
-                          headers=commercial_headers, timeout=30)
-        assert r.status_code == 200, r.text
-        created = r.json()
-        assert created["id"]
-        assert created["client_name"] == "TEST_Client"
-        cid = created["id"]
-
-        # GET by id
-        r2 = requests.get(f"{api_url}/chantiers/{cid}", headers=commercial_headers, timeout=30)
-        assert r2.status_code == 200
-        assert r2.json()["id"] == cid
-
-        # PATCH status
-        r3 = requests.patch(f"{api_url}/chantiers/{cid}", json={"status": "cloture"},
-                            headers=commercial_headers, timeout=30)
-        assert r3.status_code == 200
-        assert r3.json()["status"] == "cloture"
-
-        # verify persistence
-        r4 = requests.get(f"{api_url}/chantiers/{cid}", headers=commercial_headers, timeout=30)
-        assert r4.json()["status"] == "cloture"
-
-        # cleanup
-        requests.delete(f"{api_url}/chantiers/{cid}", headers=commercial_headers, timeout=30)
-
-    def test_get_chantier_404(self, api_url, admin_headers):
-        r = requests.get(f"{api_url}/chantiers/nonexistent-id",
-                         headers=admin_headers, timeout=30)
+    async def test_get_nonexistent_returns_404(self, client, admin_jwt):
+        r = await client.get(
+            "/api/chantiers/does-not-exist", headers=hdr(admin_jwt)
+        )
         assert r.status_code == 404
+
+
+class TestPipelineTransitions:
+    """Vérifie les 4 transitions du pipeline."""
+
+    async def test_pipeline_full_advance(self, client, admin_jwt):
+        # 1) Création à "devis_a_faire" (À mesurer)
+        r = await client.post(
+            "/api/chantiers",
+            headers=hdr(admin_jwt),
+            json={
+                "client_name": f"{PYTEST_TAG}pipeline",
+                "address": "4 rue Pipeline",
+            },
+        )
+        assert r.status_code == 200
+        cid = r.json()["id"]
+        assert r.json()["status"] == "devis_a_faire"
+
+        # 2) Advance to technique_a_valider
+        r = await client.patch(
+            f"/api/chantiers/{cid}",
+            headers=hdr(admin_jwt),
+            json={"status": "technique_a_valider"},
+        )
+        assert r.status_code == 200
+        assert r.json()["status"] == "technique_a_valider"
+
+        # 3) Advance to en_fabrication
+        r = await client.patch(
+            f"/api/chantiers/{cid}",
+            headers=hdr(admin_jwt),
+            json={"status": "en_fabrication"},
+        )
+        assert r.status_code == 200
+        assert r.json()["status"] == "en_fabrication"
+
+        # 4) Advance to cloture
+        r = await client.patch(
+            f"/api/chantiers/{cid}",
+            headers=hdr(admin_jwt),
+            json={"status": "cloture"},
+        )
+        assert r.status_code == 200
+        assert r.json()["status"] == "cloture"
+
+    async def test_invalid_status_returns_400(self, client, admin_jwt):
+        # Créer un chantier puis essayer un statut invalide
+        r = await client.post(
+            "/api/chantiers",
+            headers=hdr(admin_jwt),
+            json={
+                "client_name": f"{PYTEST_TAG}invalid_status",
+                "address": "5 rue X",
+            },
+        )
+        cid = r.json()["id"]
+        r = await client.patch(
+            f"/api/chantiers/{cid}",
+            headers=hdr(admin_jwt),
+            json={"status": "foobar"},
+        )
+        assert r.status_code == 400

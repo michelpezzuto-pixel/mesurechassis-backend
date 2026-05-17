@@ -49,6 +49,7 @@ async def create_chantier(
         "notes": payload.notes,
         "company_id": user.get("company_id", "default"),
         "created_at": datetime.now(timezone.utc).isoformat(),
+        "site_photos": payload.site_photos or [],
     }
     await db.chantiers.insert_one(doc)
     doc.pop("_id", None)
