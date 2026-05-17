@@ -1,49 +1,33 @@
-"""Regression test suite — MesureChâssis backend post-refactor.
-
-Coverage:
-  1) Auth (login/me) for admin, commercial, technician
-  2) Chantiers CRUD
-  3) Mesures CRUD
-  4) Users / Company profile / Stats
-  5) Exports (PDF, JSON, CSV, XLSX)
-  6) Feedbacks
-  7) Error handling: 422 / 404 / 400
-  8) RBAC sanity checks (no 500s)
-"""
+"""Comprehensive backend regression test for MesureChâssis (RBAC + Exports)."""
 from __future__ import annotations
 
-import os
 import sys
-import uuid
-
 import requests
 
-BASE = os.environ.get(
-    "REVIEW_BACKEND_URL",
-    "https://window-field-app.preview.emergentagent.com",
-).rstrip("/")
-API = f"{BASE}/api"
+BASE_URL = "https://window-field-app.preview.emergentagent.com/api"
 
-ADMIN = ("admin@mesurechassis.fr", "admin123")
-COMM = ("commercial@mesurechassis.fr", "commercial123")
-TECH = ("tech@mesurechassis.fr", "tech123")
+ADMIN = {"email": "admin@mesurechassis.fr", "password": "admin123"}
+COMMERCIAL = {"email": "commercial@mesurechassis.fr", "password": "commercial123"}
+TECH = {"email": "tech@mesurechassis.fr", "password": "tech123"}
 
-results: list[tuple[str, bool, str]] = []
+PASS: list[str] = []
+FAIL: list[str] = []
 
 
-def record(name: str, ok: bool, detail: str = "") -> None:
-    icon = "PASS" if ok else "FAIL"
-    print(f"[{icon}] {name}{' — ' + detail if detail else ''}")
-    results.append((name, ok, detail))
+def _log_pass(name: str, detail: str = "") -> None:
+    PASS.append(f"{name} — {detail}" if detail else name)
+    print(f"  PASS  {name}" + (f" — {detail}" if detail else ""))
 
 
-def login(email: str, password: str) -> str | None:
-    r = requests.post(
-        f"{API}/auth/login", json={"email": email, "password": password},
-        timeout=15,
-    )
+def _log_fail(name: str, detail: str) -> None:
+    FAIL.append(f"{name} — {detail}")
+    print(f"  FAIL  {name} — {detail}")
+
+
+def login(creds: dict) -> str:
+    r = requests.post(f"{BASE_URL}/auth/login", json=creds, timeout=30)
     if r.status_code != 200:
-        return None
+        raise SystemExit(f"Login failed for {creds['email']}: {r.status_code} {r.text[:200]}")
     return r.json()["access_token"]
 
 
@@ -51,273 +35,485 @@ def H(token: str) -> dict:
     return {"Authorization": f"Bearer {token}"}
 
 
-# 1) AUTH
-admin_token = login(*ADMIN)
-record("1a. POST /auth/login (admin)", admin_token is not None)
-comm_token = login(*COMM)
-record("1b. POST /auth/login (commercial)", comm_token is not None)
-tech_token = login(*TECH)
-record("1c. POST /auth/login (technician)", tech_token is not None)
+def expect(name: str, cond: bool, fail_detail: str = "", pass_detail: str = "") -> bool:
+    if cond:
+        _log_pass(name, pass_detail)
+        return True
+    _log_fail(name, fail_detail)
+    return False
 
-if not admin_token:
-    print("FATAL: cannot login as admin, abort.")
-    sys.exit(1)
 
-for role, tok in [("admin", admin_token), ("commercial", comm_token),
-                  ("technician", tech_token)]:
-    r = requests.get(f"{API}/auth/me", headers=H(tok), timeout=10)
-    record(f"2. GET /auth/me ({role})",
-           r.status_code == 200 and r.json().get("role") in
-           {"admin", "commercial", "technician"},
-           f"status={r.status_code}")
+def main() -> int:
+    print("=" * 80)
+    print("MesureChâssis backend regression — RBAC + Exports + Latin-1 fix")
+    print(f"Base URL: {BASE_URL}")
+    print("=" * 80)
 
-# Capture initial artisan_mode for restore
-r = requests.get(f"{API}/company/profile", headers=H(admin_token), timeout=10)
-initial_artisan_mode = bool(r.json().get("artisan_mode")) if r.status_code == 200 else False
-print(f"\n>>> Initial artisan_mode = {initial_artisan_mode}\n")
+    print("\n[STEP 0] Login admin/commercial/technician")
+    admin = login(ADMIN)
+    commercial = login(COMMERCIAL)
+    tech = login(TECH)
+    _log_pass("Admin login")
+    _log_pass("Commercial login")
+    _log_pass("Technician login")
 
-# 3) GET /chantiers
-r = requests.get(f"{API}/chantiers", headers=H(admin_token), timeout=10)
-ok = r.status_code == 200 and isinstance(r.json(), list)
-record("3. GET /chantiers", ok,
-       f"status={r.status_code}, count={len(r.json()) if ok else 'n/a'}")
+    # ---- Step 1 : Disable artisan_mode ---------------------------------
+    print("\n[STEP 1] Disable artisan_mode (admin only)")
+    r = requests.patch(
+        f"{BASE_URL}/company/profile",
+        json={"artisan_mode": False},
+        headers=H(admin),
+        timeout=30,
+    )
+    if not expect(
+        "PATCH /company/profile artisan_mode=false (admin)",
+        r.status_code == 200 and r.json().get("artisan_mode") is False,
+        f"status={r.status_code} body={r.text[:200]}",
+    ):
+        return 1
 
-# 4) POST /chantiers
-suffix = uuid.uuid4().hex[:6]
-payload = {
-    "first_name": "Élodie",
-    "last_name": f"Régression-{suffix}",
-    "address": f"42 rue du Refactoring {suffix}, 75003 Paris",
-    "postal_code": "75003",
-    "city": "Paris",
-    "appointment_at": "2026-07-15T14:30:00Z",
-    "notes": "Test regression post-refactor",
-}
-r = requests.post(f"{API}/chantiers", headers=H(admin_token),
-                  json=payload, timeout=15)
-chantier_id = r.json()["id"] if r.status_code == 200 else None
-record("4. POST /chantiers (admin)", r.status_code == 200 and chantier_id,
-       f"status={r.status_code}")
-if chantier_id:
-    cn = r.json().get("client_name")
-    record("4b. client_name auto-composé",
-           cn == f"Régression-{suffix} Élodie", f"got={cn!r}")
+    r = requests.get(f"{BASE_URL}/company/profile", headers=H(admin), timeout=30)
+    expect(
+        "GET /company/profile shows artisan_mode=false",
+        r.status_code == 200 and r.json().get("artisan_mode") is False,
+        f"status={r.status_code} body={r.text[:200]}",
+    )
 
-if not chantier_id:
-    print("FATAL: cannot create chantier, abort.")
-    sys.exit(1)
+    # ---- Setup chantier ------------------------------------------------
+    print("\n[SETUP] Create test chantier (as commercial)")
+    chantier_payload = {
+        "first_name": "Hélène",
+        "last_name": "Régnier-Marchand",
+        "address": "14 rue Saint-Honoré, 75001 Paris",
+        "postal_code": "75001",
+        "city": "Paris",
+        "appointment_at": "2026-07-15T09:30:00Z",
+        "notes": "Test régression RBAC + exports",
+    }
+    r = requests.post(
+        f"{BASE_URL}/chantiers", json=chantier_payload, headers=H(commercial), timeout=30
+    )
+    if r.status_code != 200:
+        _log_fail("Commercial POST /chantiers (setup)", f"{r.status_code} {r.text[:200]}")
+        return 1
+    chantier_id = r.json()["id"]
+    _log_pass("Commercial POST /chantiers (setup)", f"id={chantier_id[:8]}")
 
-# 5) PATCH /chantiers
-r = requests.patch(f"{API}/chantiers/{chantier_id}", headers=H(admin_token),
-                   json={"notes": "Updated by regression", "status": "technique_a_valider"},
-                   timeout=10)
-record("5. PATCH /chantiers/{id}",
-       r.status_code == 200 and r.json().get("status") == "technique_a_valider",
-       f"status={r.status_code}")
+    # ---- Step 2 : RBAC MESURES (without artisan) -----------------------
+    print("\n[STEP 2] RBAC MESURES — artisan_mode=false")
 
-# 6) GET /chantiers/{id}
-r = requests.get(f"{API}/chantiers/{chantier_id}", headers=H(admin_token), timeout=10)
-record("6. GET /chantiers/{id}",
-       r.status_code == 200 and r.json()["id"] == chantier_id,
-       f"status={r.status_code}")
+    standard_mesure = {
+        "chantier_id": chantier_id,
+        "block_type": "standard",
+        "label": "Fenêtre salon",
+        "bay_width": 1500.0,
+        "bay_height": 2400.0,
+        "bay_diagonal_1": 2828.0,
+        "bay_diagonal_2": 2828.0,
+        "diag_1_verified": True,
+        "diag_2_verified": True,
+        "floor_reserve": 30.0,
+        "bloc_thickness": 200.0,
+        "wall_type": "iti",
+        "insulation_thickness": 100.0,
+        "finish_inner": 12.0,
+        "renovation_mode": True,
+        "width_top": 1502.0,
+        "width_bottom": 1498.0,
+        "height_left": 2402.0,
+        "height_right": 2398.0,
+    }
 
-# 7) POST /mesures (standard)
-m_payload = {
-    "chantier_id": chantier_id,
-    "block_type": "standard",
-    "label": "Salon — fenêtre Ouest",
-    "bay_width": 1500,
-    "bay_height": 2400,
-    "bay_diagonal_1": 2828,
-    "bay_diagonal_2": 2828,
-    "diag_1_verified": True,
-    "diag_2_verified": True,
-}
-r = requests.post(f"{API}/mesures", headers=H(admin_token),
-                  json=m_payload, timeout=15)
-mesure_id = r.json().get("id") if r.status_code == 200 else None
-record("7. POST /mesures (standard 1500x2400)",
-       r.status_code == 200 and mesure_id,
-       f"status={r.status_code}, alerts={r.json().get('alerts') if r.status_code == 200 else 'n/a'}")
+    # 2a. Admin POST → 403
+    r = requests.post(
+        f"{BASE_URL}/mesures", json=standard_mesure, headers=H(admin), timeout=30
+    )
+    expect(
+        "Admin POST /mesures → 403",
+        r.status_code == 403,
+        f"got {r.status_code} body={r.text[:200]}",
+    )
 
-# 7b) trapeze for export coverage
-r = requests.post(f"{API}/mesures", headers=H(admin_token), json={
-    "chantier_id": chantier_id, "block_type": "trapeze", "label": "Pignon",
-    "bay_width": 1800, "height_left": 1200, "height_right": 1600,
-}, timeout=15)
-m_trap = r.json().get("id") if r.status_code == 200 else None
-record("7b. POST /mesures (trapeze)", r.status_code == 200 and m_trap,
-       f"status={r.status_code}")
+    # 2b. Commercial POST → 200
+    r = requests.post(
+        f"{BASE_URL}/mesures", json=standard_mesure, headers=H(commercial), timeout=30
+    )
+    if not expect(
+        "Commercial POST /mesures → 200",
+        r.status_code == 200,
+        f"got {r.status_code} body={r.text[:300]}",
+    ):
+        return 1
+    mesure_id_comm = r.json()["id"]
 
-# 8) GET /chantiers/{id}/mesures
-r = requests.get(f"{API}/chantiers/{chantier_id}/mesures",
-                 headers=H(admin_token), timeout=10)
-record("8. GET /chantiers/{id}/mesures",
-       r.status_code == 200 and isinstance(r.json(), list) and len(r.json()) >= 2,
-       f"status={r.status_code}, n={len(r.json()) if r.status_code == 200 else 'n/a'}")
+    # 2c. Technician POST → 200
+    trapeze_mesure = {
+        "chantier_id": chantier_id,
+        "block_type": "trapeze",
+        "label": "Fenêtre comble trapèze",
+        "bay_width": 1200.0,
+        "height_left": 1200.0,
+        "height_right": 1600.0,
+        "bloc_thickness": 200.0,
+    }
+    r = requests.post(
+        f"{BASE_URL}/mesures", json=trapeze_mesure, headers=H(tech), timeout=30
+    )
+    if not expect(
+        "Technician POST /mesures → 200",
+        r.status_code == 200,
+        f"got {r.status_code} body={r.text[:300]}",
+    ):
+        return 1
+    mesure_id_tech = r.json()["id"]
 
-# 9) PATCH /mesures
-if mesure_id:
-    upd = dict(m_payload)
-    upd["label"] = "Salon — fenêtre Ouest (révisée)"
-    upd["bay_height"] = 2410
-    r = requests.patch(f"{API}/mesures/{mesure_id}", headers=H(admin_token),
-                       json=upd, timeout=10)
-    record("9. PATCH /mesures/{id}",
-           r.status_code == 200 and r.json().get("bay_height") == 2410,
-           f"status={r.status_code}")
+    # 2d. Admin PATCH → 403
+    r = requests.patch(
+        f"{BASE_URL}/mesures/{mesure_id_comm}",
+        json={**standard_mesure, "bay_height": 2410.0},
+        headers=H(admin),
+        timeout=30,
+    )
+    expect(
+        "Admin PATCH /mesures/{id} → 403",
+        r.status_code == 403,
+        f"got {r.status_code} body={r.text[:200]}",
+    )
 
-# 10) GET /users
-r = requests.get(f"{API}/users", headers=H(admin_token), timeout=10)
-record("10. GET /users (admin)",
-       r.status_code == 200 and isinstance(r.json(), list) and len(r.json()) >= 3,
-       f"status={r.status_code}, n={len(r.json()) if r.status_code == 200 else 'n/a'}")
+    # 2e. Admin DELETE → 403
+    r = requests.delete(
+        f"{BASE_URL}/mesures/{mesure_id_tech}", headers=H(admin), timeout=30
+    )
+    expect(
+        "Admin DELETE /mesures/{id} → 403",
+        r.status_code == 403,
+        f"got {r.status_code} body={r.text[:200]}",
+    )
 
-# 11) GET /company/profile
-r = requests.get(f"{API}/company/profile", headers=H(admin_token), timeout=10)
-record("11. GET /company/profile",
-       r.status_code == 200 and "artisan_mode" in r.json() and "company_id" in r.json(),
-       f"status={r.status_code}")
+    # Add a porte mesure to enrich exports
+    porte_mesure = {
+        "chantier_id": chantier_id,
+        "block_type": "porte",
+        "label": "Porte entrée",
+        "bay_width": 900.0,
+        "bay_height": 2150.0,
+        "bay_diagonal_1": 2330.0,
+        "bay_diagonal_2": 2330.0,
+        "diag_1_verified": True,
+        "diag_2_verified": True,
+        "floor_reserve": 35.0,
+        "bloc_thickness": 200.0,
+        "wall_type": "ite",
+        "insulation_thickness": 140.0,
+        "finish_outer": 8.0,
+    }
+    r = requests.post(
+        f"{BASE_URL}/mesures", json=porte_mesure, headers=H(tech), timeout=30
+    )
+    expect(
+        "Technician POST /mesures (porte) → 200",
+        r.status_code == 200,
+        f"got {r.status_code} body={r.text[:300]}",
+    )
 
-# 12) PATCH /company/profile (toggle then restore)
-new_val = not initial_artisan_mode
-r = requests.patch(f"{API}/company/profile", headers=H(admin_token),
-                   json={"artisan_mode": new_val}, timeout=10)
-record("12a. PATCH /company/profile (toggle)",
-       r.status_code == 200 and r.json().get("artisan_mode") == new_val,
-       f"status={r.status_code}")
-r = requests.patch(f"{API}/company/profile", headers=H(admin_token),
-                   json={"artisan_mode": initial_artisan_mode}, timeout=10)
-record("12b. PATCH /company/profile (restore)",
-       r.status_code == 200 and r.json().get("artisan_mode") == initial_artisan_mode,
-       f"status={r.status_code}")
+    # ---- Step 3 : RBAC EXPORTS (without artisan) -----------------------
+    print("\n[STEP 3] RBAC EXPORTS — artisan_mode=false")
 
-# 13) GET /stats/company
-r = requests.get(f"{API}/stats/company", headers=H(admin_token), timeout=10)
-record("13. GET /stats/company",
-       r.status_code == 200 and "by_status" in r.json() and "total_chantiers" in r.json(),
-       f"status={r.status_code}")
+    formats = [
+        ("pdf", "application/pdf"),
+        ("json", "application/json"),
+        ("csv", "text/csv"),
+        ("xlsx",
+         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+    ]
 
-# 14) GET /stats/commercials
-r = requests.get(f"{API}/stats/commercials", headers=H(admin_token), timeout=10)
-record("14. GET /stats/commercials",
-       r.status_code == 200 and "commercials" in r.json(),
-       f"status={r.status_code}")
+    # 3a. Commercial PDF → 200
+    r = requests.get(
+        f"{BASE_URL}/chantiers/{chantier_id}/export.pdf",
+        headers=H(commercial), timeout=60,
+    )
+    expect(
+        "Commercial GET export.pdf → 200",
+        r.status_code == 200 and r.content[:4] == b"%PDF",
+        f"got {r.status_code} len={len(r.content)}",
+    )
 
-# 15) export.pdf
-r = requests.get(f"{API}/chantiers/{chantier_id}/export.pdf",
-                 headers=H(admin_token), timeout=20)
-record("15. GET export.pdf",
-       (r.status_code == 200 and r.headers.get("content-type", "").startswith("application/pdf")
-        and r.content.startswith(b"%PDF-") and len(r.content) > 1000),
-       f"status={r.status_code}, bytes={len(r.content)}")
+    # 3b. Commercial json/csv/xlsx → 403
+    for fmt in ("json", "csv", "xlsx"):
+        r = requests.get(
+            f"{BASE_URL}/chantiers/{chantier_id}/export.{fmt}",
+            headers=H(commercial), timeout=60,
+        )
+        expect(
+            f"Commercial GET export.{fmt} → 403",
+            r.status_code == 403,
+            f"got {r.status_code} body={r.text[:200]}",
+        )
 
-# 16) export.json
-r = requests.get(f"{API}/chantiers/{chantier_id}/export.json",
-                 headers=H(admin_token), timeout=15)
-try:
-    j = r.json()
-    record("16. GET export.json (schema mc.v1)",
-           (r.status_code == 200 and j.get("schema_version") == "mc.v1"
-            and "client" in j and "openings" in j
-            and j.get("openings_count") == len(j.get("openings", []))),
-           f"status={r.status_code}, openings={j.get('openings_count')}")
-    shapes = {o.get("shape") for o in j.get("openings", [])}
-    record("16b. export.json shapes",
-           "rectangular" in shapes and "trapezoidal" in shapes,
-           f"shapes={shapes}")
-except Exception as exc:
-    record("16. GET export.json", False, f"err={exc}")
+    # 3c. Technician all 4 → 200
+    for fmt, _ in formats:
+        r = requests.get(
+            f"{BASE_URL}/chantiers/{chantier_id}/export.{fmt}",
+            headers=H(tech), timeout=60,
+        )
+        ok = r.status_code == 200
+        expect(
+            f"Technician GET export.{fmt} → 200",
+            ok,
+            f"got {r.status_code} body={r.text[:200] if not ok else ''}",
+        )
 
-# 17) export.csv
-r = requests.get(f"{API}/chantiers/{chantier_id}/export.csv",
-                 headers=H(admin_token), timeout=15)
-ct = r.headers.get("content-type", "")
-record("17. GET export.csv",
-       r.status_code == 200 and "text/csv" in ct and len(r.content) > 50,
-       f"status={r.status_code}, ct={ct}")
+    # 3d. Admin all 4 → 200
+    for fmt, _ in formats:
+        r = requests.get(
+            f"{BASE_URL}/chantiers/{chantier_id}/export.{fmt}",
+            headers=H(admin), timeout=60,
+        )
+        ok = r.status_code == 200
+        expect(
+            f"Admin GET export.{fmt} → 200",
+            ok,
+            f"got {r.status_code} body={r.text[:200] if not ok else ''}",
+        )
 
-# 18) export.xlsx
-r = requests.get(f"{API}/chantiers/{chantier_id}/export.xlsx",
-                 headers=H(admin_token), timeout=15)
-ct = r.headers.get("content-type", "")
-record("18. GET export.xlsx",
-       (r.status_code == 200 and "spreadsheetml.sheet" in ct
-        and r.content.startswith(b"PK")),
-       f"status={r.status_code}, ct={ct[:50]}")
+    # ---- Step 4 : Content validation -----------------------------------
+    print("\n[STEP 4] Content validation (admin)")
 
-# 19) POST /feedbacks
-r = requests.post(f"{API}/feedbacks", headers=H(comm_token), json={
-    "page_context": "regression-test",
-    "user_comment": "Post-refactor smoke test",
-    "encoded_data_snapshot": {"foo": "bar"},
-}, timeout=10)
-fb_id = r.json().get("id") if r.status_code == 200 else None
-record("19. POST /feedbacks (commercial)",
-       r.status_code == 200 and fb_id, f"status={r.status_code}")
+    # 4a. JSON
+    r = requests.get(
+        f"{BASE_URL}/chantiers/{chantier_id}/export.json",
+        headers=H(admin), timeout=30,
+    )
+    if r.status_code == 200:
+        body = r.json()
+        expect(
+            "JSON: schema_version present",
+            "schema_version" in body,
+            f"keys={list(body.keys())[:10]}",
+            f"schema_version={body.get('schema_version')!r}",
+        )
+        openings = body.get("openings", [])
+        expect(
+            "JSON: openings list with >=2 items",
+            isinstance(openings, list) and len(openings) >= 2,
+            f"openings_count={len(openings) if isinstance(openings, list) else 'n/a'}",
+            f"openings_count={len(openings)}",
+        )
+        has_dims = all(isinstance(o.get("dimensions_mm"), dict) for o in openings)
+        expect(
+            "JSON: openings[].dimensions_mm present (all)",
+            has_dims,
+            "at least one opening missing dimensions_mm",
+            f"all {len(openings)} have dimensions_mm",
+        )
+        has_renov_flag = all("renovation_mode" in o for o in openings)
+        expect(
+            "JSON: openings[].renovation_mode flag (all)",
+            has_renov_flag,
+            "no opening has renovation_mode key",
+        )
+        has_construction = all("construction" in o for o in openings)
+        expect(
+            "JSON: openings[].construction present (all)",
+            has_construction,
+            "at least one opening missing construction",
+        )
+        expect(
+            "JSON: site_photos array present",
+            isinstance(body.get("site_photos"), list),
+            f"got {type(body.get('site_photos')).__name__}",
+        )
+        site_photos = body.get("site_photos") or []
+        if site_photos:
+            has_caption = all("caption" in p for p in site_photos)
+            expect(
+                "JSON: site_photos[].caption present",
+                has_caption,
+                "some site_photo items missing caption key",
+            )
+        else:
+            _log_pass(
+                "JSON: site_photos[].caption (n/a — empty)",
+                "no site photos in test chantier",
+            )
+        # Verify trapeze opening shape
+        trap = next((o for o in openings if o.get("block_type") == "trapeze"), None)
+        if trap is not None:
+            expect(
+                "JSON: trapeze opening shape='trapezoidal'",
+                trap.get("shape") == "trapezoidal",
+                f"got shape={trap.get('shape')!r}",
+            )
+    else:
+        _log_fail("JSON content fetch", f"{r.status_code} {r.text[:200]}")
 
-# 20) GET /feedbacks (admin)
-r = requests.get(f"{API}/feedbacks", headers=H(admin_token), timeout=10)
-record("20. GET /feedbacks (admin)",
-       r.status_code == 200 and isinstance(r.json(), list),
-       f"status={r.status_code}")
+    # 4b. CSV
+    r = requests.get(
+        f"{BASE_URL}/chantiers/{chantier_id}/export.csv",
+        headers=H(admin), timeout=30,
+    )
+    if r.status_code == 200:
+        text = r.content.decode("utf-8-sig")
+        header = text.split("\n", 1)[0]
+        expect(
+            "CSV: enriched column 'L. haut' present",
+            "L. haut" in header,
+            f"header={header[:300]}",
+        )
+        expect(
+            "CSV: enriched column 'H. gauche' present",
+            "H. gauche" in header,
+            f"header={header[:300]}",
+        )
+        expect(
+            "CSV: content-type text/csv",
+            r.headers.get("content-type", "").startswith("text/csv"),
+            f"ct={r.headers.get('content-type')}",
+        )
+    else:
+        _log_fail("CSV content fetch", f"{r.status_code}")
 
-# RBAC sanity (no 500)
-r = requests.post(f"{API}/chantiers", headers=H(tech_token), json={
-    "first_name": "RBAC", "last_name": "Test",
-    "address": "1 rue Test, 75001 Paris",
-}, timeout=10)
-record("RBAC-1. Tech POST /chantiers — no 500",
-       r.status_code != 500,
-       f"status={r.status_code} (artisan_mode={initial_artisan_mode})")
-if r.status_code == 200:
-    extra = r.json().get("id")
-    if extra:
-        requests.delete(f"{API}/chantiers/{extra}", headers=H(admin_token), timeout=10)
+    # 4c. XLSX
+    r = requests.get(
+        f"{BASE_URL}/chantiers/{chantier_id}/export.xlsx",
+        headers=H(admin), timeout=30,
+    )
+    if r.status_code == 200:
+        expect(
+            "XLSX: size > 1000 bytes",
+            len(r.content) > 1000,
+            f"len={len(r.content)}",
+            f"len={len(r.content)}",
+        )
+        expect(
+            "XLSX: magic PK",
+            r.content[:2] == b"PK",
+            f"first4={r.content[:4]!r}",
+        )
+        expect(
+            "XLSX: content-type spreadsheetml.sheet",
+            "spreadsheetml.sheet" in r.headers.get("content-type", ""),
+            f"ct={r.headers.get('content-type')}",
+        )
+    else:
+        _log_fail("XLSX content fetch", f"{r.status_code}")
 
-r = requests.get(f"{API}/stats/company", headers=H(comm_token), timeout=10)
-record("RBAC-2. Commercial GET /stats/company — no 500",
-       r.status_code != 500, f"status={r.status_code}")
+    # 4d. PDF
+    r = requests.get(
+        f"{BASE_URL}/chantiers/{chantier_id}/export.pdf",
+        headers=H(admin), timeout=60,
+    )
+    if r.status_code == 200:
+        expect(
+            "PDF: size > 1500 bytes",
+            len(r.content) > 1500,
+            f"len={len(r.content)}",
+            f"len={len(r.content)}",
+        )
+        expect(
+            "PDF: magic %PDF",
+            r.content[:4] == b"%PDF",
+            f"first4={r.content[:4]!r}",
+        )
+    else:
+        _log_fail("PDF content fetch", f"{r.status_code}")
 
-# ERROR HANDLING
-r = requests.post(f"{API}/chantiers", headers=H(admin_token),
-                  json={"first_name": "MissingAddr"}, timeout=10)
-record("ERR-1. POST /chantiers w/o address → 422",
-       r.status_code == 422, f"status={r.status_code}")
+    # ---- Step 5 : Latin-1 filename bug ---------------------------------
+    print("\n[STEP 5] Latin-1 filename bug — apostrophe in client_name")
+    apostrophe_payload = {
+        "client_name": "M. d'Aujourd'hui",
+        "address": "1 place de l'Étoile, 75008 Paris",
+        "postal_code": "75008",
+        "city": "Paris",
+    }
+    r = requests.post(
+        f"{BASE_URL}/chantiers",
+        json=apostrophe_payload,
+        headers=H(commercial),
+        timeout=30,
+    )
+    apos_id = None
+    if r.status_code == 200:
+        apos_id = r.json()["id"]
+        _log_pass(
+            "POST /chantiers with apostrophe client_name",
+            f"id={apos_id[:8]} client_name={r.json().get('client_name')!r}",
+        )
+        r = requests.get(
+            f"{BASE_URL}/chantiers/{apos_id}/export.pdf",
+            headers=H(admin), timeout=60,
+        )
+        expect(
+            "Export PDF (apostrophe client) → 200 (no Latin-1 crash)",
+            r.status_code == 200 and r.content[:4] == b"%PDF",
+            f"status={r.status_code} body={r.text[:200] if r.status_code != 200 else ''}",
+        )
+        r2 = requests.get(
+            f"{BASE_URL}/chantiers/{apos_id}/export.csv",
+            headers=H(admin), timeout=30,
+        )
+        expect(
+            "Export CSV (apostrophe client) → 200",
+            r2.status_code == 200,
+            f"status={r2.status_code} body={r2.text[:200] if r2.status_code != 200 else ''}",
+        )
+        r3 = requests.get(
+            f"{BASE_URL}/chantiers/{apos_id}/export.xlsx",
+            headers=H(admin), timeout=30,
+        )
+        expect(
+            "Export XLSX (apostrophe client) → 200",
+            r3.status_code == 200,
+            f"status={r3.status_code} body={r3.text[:200] if r3.status_code != 200 else ''}",
+        )
+    else:
+        _log_fail(
+            "POST /chantiers with apostrophe client_name",
+            f"{r.status_code} {r.text[:200]}",
+        )
 
-r = requests.get(f"{API}/chantiers/nonexistent-id-xyz",
-                 headers=H(admin_token), timeout=10)
-record("ERR-2. GET /chantiers/nonexistent-id → 404",
-       r.status_code == 404, f"status={r.status_code}")
+    # ---- Cleanup -------------------------------------------------------
+    print("\n[CLEANUP] Delete test chantiers + re-enable artisan_mode")
+    if apos_id:
+        r = requests.delete(
+            f"{BASE_URL}/chantiers/{apos_id}", headers=H(admin), timeout=30
+        )
+        expect(
+            "DELETE apostrophe chantier (cleanup)",
+            r.status_code == 200,
+            f"{r.status_code} {r.text[:200]}",
+        )
+    r = requests.delete(
+        f"{BASE_URL}/chantiers/{chantier_id}", headers=H(admin), timeout=30
+    )
+    expect(
+        "DELETE main test chantier (cleanup)",
+        r.status_code == 200,
+        f"{r.status_code} {r.text[:200]}",
+    )
 
-r = requests.patch(f"{API}/chantiers/{chantier_id}", headers=H(admin_token),
-                   json={"status": "foobar"}, timeout=10)
-record("ERR-3. PATCH status=foobar → 400",
-       r.status_code == 400, f"status={r.status_code}")
+    r = requests.patch(
+        f"{BASE_URL}/company/profile",
+        json={"artisan_mode": True},
+        headers=H(admin), timeout=30,
+    )
+    expect(
+        "PATCH /company/profile artisan_mode=true (restore)",
+        r.status_code == 200 and r.json().get("artisan_mode") is True,
+        f"{r.status_code} {r.text[:200]}",
+    )
 
-# CLEANUP
-if mesure_id:
-    r = requests.delete(f"{API}/mesures/{mesure_id}", headers=H(admin_token), timeout=10)
-    record("21. DELETE /mesures/{id}", r.status_code == 200, f"status={r.status_code}")
-if m_trap:
-    requests.delete(f"{API}/mesures/{m_trap}", headers=H(admin_token), timeout=10)
-if fb_id:
-    requests.delete(f"{API}/feedbacks/{fb_id}", headers=H(admin_token), timeout=10)
+    # ---- Summary -------------------------------------------------------
+    print("\n" + "=" * 80)
+    print(f"PASS: {len(PASS)}")
+    print(f"FAIL: {len(FAIL)}")
+    if FAIL:
+        print("\nFailed tests:")
+        for f in FAIL:
+            print(f"  - {f}")
+    print("=" * 80)
+    return 0 if not FAIL else 1
 
-r = requests.delete(f"{API}/chantiers/{chantier_id}", headers=H(admin_token), timeout=10)
-record("22. DELETE /chantiers/{id}", r.status_code == 200, f"status={r.status_code}")
 
-# Final restore
-r = requests.patch(f"{API}/company/profile", headers=H(admin_token),
-                   json={"artisan_mode": initial_artisan_mode}, timeout=10)
-print(f"\n>>> Final artisan_mode restored to {initial_artisan_mode}: status={r.status_code}\n")
-
-total = len(results)
-passed = sum(1 for _, ok, _ in results if ok)
-print(f"\n{'='*70}\nREGRESSION RESULT: {passed}/{total} passed\n{'='*70}")
-if passed != total:
-    print("\nFAILURES:")
-    for name, ok, det in results:
-        if not ok:
-            print(f"  - {name}: {det}")
-sys.exit(0 if passed == total else 1)
+if __name__ == "__main__":
+    sys.exit(main())

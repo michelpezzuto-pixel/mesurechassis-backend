@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -11,95 +12,79 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { PDF_URL, getToken } from "@/src/services/api";
+import { JSON_URL, getToken } from "@/src/services/api";
 import { colors } from "@/src/theme";
 
 /**
- * Aperçu du Récapitulatif de Mesure PDF.
- * Ceci est une FICHE TECHNIQUE de validation des cotes —
- * PAS un devis commercial. Le bouton "Partager" est l'unique action
- * proposée (avec un retour vers le chantier).
+ * Aperçu de l'export JSON d'un chantier — utile pour l'intégration
+ * machines CNC / API tierces. Affiche un extrait formatté du JSON
+ * + bouton Partager (Web Share API ou expo-sharing).
  */
-export default function PdfPreview() {
+export default function JsonPreview() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const [blobUrl, setBlobUrl] = useState<string | null>(null);
+  const [text, setText] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchPdf = useCallback(async () => {
+  const fetchJson = useCallback(async () => {
     if (!id) return;
     setLoading(true);
     setError(null);
     try {
       const token = await getToken();
-      const r = await fetch(PDF_URL(String(id)), {
+      const r = await fetch(JSON_URL(String(id)), {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      const blob = await r.blob();
-      const u = URL.createObjectURL(blob);
-      setBlobUrl(u);
+      const data = await r.json();
+      setText(JSON.stringify(data, null, 2));
     } catch (e: any) {
-      setError(e?.message || "Impossible de charger le récapitulatif.");
+      setError(e?.message || "Génération JSON impossible.");
     } finally {
       setLoading(false);
     }
   }, [id]);
 
   useEffect(() => {
-    fetchPdf();
-    return () => {
-      if (blobUrl) {
-        try {
-          URL.revokeObjectURL(blobUrl);
-        } catch {
-          /* noop */
-        }
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+    fetchJson();
+  }, [fetchJson]);
 
   const handleShare = async () => {
-    if (!blobUrl) return;
-    const fileName = `Recapitulatif_MesureChassis_${id}.pdf`;
+    if (!text || !id) return;
+    const fileName = `MesureChassis_${id}.json`;
     try {
       if (Platform.OS === "web") {
-        const r = await fetch(blobUrl);
-        const blob = await r.blob();
-        // Tente Web Share API si dispo + supportée pour les fichiers
+        const blob = new Blob([text], { type: "application/json" });
         const navAny: any = navigator;
-        const file = new File([blob], fileName, { type: "application/pdf" });
+        const file = new File([blob], fileName, { type: "application/json" });
         if (
           navAny.share &&
           (!navAny.canShare || navAny.canShare({ files: [file] }))
         ) {
           await navAny.share({
-            title: "Récapitulatif de Mesure",
-            text: "Fiche technique de validation des cotes.",
+            title: "Export JSON MesureChâssis",
+            text: "Données structurées pour intégration logiciel.",
             files: [file],
           });
           return;
         }
-        // Fallback : download forcé
+        const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
-        a.href = blobUrl;
+        a.href = url;
         a.download = fileName;
         document.body.appendChild(a);
         a.click();
         a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 0);
       } else {
         const FS: any = await import("expo-file-system/legacy");
         const Sharing = await import("expo-sharing");
         const dest = `${FS.cacheDirectory}${fileName}`;
-        const token = await getToken();
-        await FS.downloadAsync(PDF_URL(String(id)), dest, {
-          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        });
+        await FS.writeAsStringAsync(dest, text);
         await Sharing.shareAsync(dest, {
-          dialogTitle: "Partager le récapitulatif",
-          mimeType: "application/pdf",
+          dialogTitle: "Partager l'export JSON",
+          mimeType: "application/json",
         });
       }
     } catch (e: any) {
@@ -107,11 +92,17 @@ export default function PdfPreview() {
     }
   };
 
+  const preview = text
+    ? text.length > 4000
+      ? text.slice(0, 4000) + "\n\n[...] (" + text.length + " caractères au total)"
+      : text
+    : "";
+
   return (
     <SafeAreaView style={styles.flex} edges={["top", "bottom"]}>
       <View style={styles.topBar}>
         <TouchableOpacity
-          testID="pdf-back-button"
+          testID="json-back-button"
           onPress={() => router.back()}
           activeOpacity={0.7}
           style={styles.backBtn}
@@ -121,24 +112,22 @@ export default function PdfPreview() {
           <Text style={styles.backText}>RETOUR</Text>
         </TouchableOpacity>
         <View style={styles.titleBox}>
-          <Text style={styles.title} numberOfLines={1}>
-            Récapitulatif de Mesure PDF
-          </Text>
-          <Text style={styles.subtitle}>Fiche technique de validation</Text>
+          <Text style={styles.title} numberOfLines={1}>Export JSON</Text>
+          <Text style={styles.subtitle}>Intégration CNC / API</Text>
         </View>
         <View style={{ width: 70 }} />
       </View>
 
       <View style={styles.actionsBar}>
         <TouchableOpacity
-          testID="pdf-share-button"
+          testID="json-share-button"
           onPress={handleShare}
-          disabled={!blobUrl}
+          disabled={!text}
           activeOpacity={0.85}
           style={[
             styles.actionBtn,
             styles.actionPrimary,
-            !blobUrl && { opacity: 0.4 },
+            !text && { opacity: 0.4 },
           ]}
         >
           <Ionicons name="share-social" size={18} color="#000" />
@@ -146,45 +135,27 @@ export default function PdfPreview() {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.viewer}>
+      <ScrollView style={styles.viewer} contentContainerStyle={{ padding: 14 }}>
         {loading ? (
           <View style={styles.center}>
             <ActivityIndicator color={colors.primary} size="large" />
-            <Text style={styles.help}>Génération du récapitulatif...</Text>
+            <Text style={styles.help}>Génération JSON...</Text>
           </View>
         ) : error ? (
           <View style={styles.center}>
             <Ionicons name="alert-circle" size={48} color={colors.anomaly} />
-            <Text style={styles.error}>{error}</Text>
+            <Text style={styles.errorText}>{error}</Text>
             <TouchableOpacity
-              onPress={fetchPdf}
+              onPress={fetchJson}
               style={[styles.actionBtn, styles.actionPrimary]}
             >
               <Text style={styles.actionPrimaryText}>RÉESSAYER</Text>
             </TouchableOpacity>
           </View>
-        ) : Platform.OS === "web" && blobUrl ? (
-          // @ts-ignore — web iframe via createElement
-          React.createElement("iframe", {
-            src: blobUrl,
-            style: {
-              flex: 1,
-              width: "100%",
-              height: "100%",
-              border: "none",
-              backgroundColor: "#fff",
-            },
-            title: "Récapitulatif de Mesure PDF",
-          })
         ) : (
-          <View style={styles.center}>
-            <Ionicons name="document-text" size={48} color={colors.textSecondary} />
-            <Text style={styles.help}>
-              Touchez « PARTAGER » pour ouvrir le récapitulatif dans une autre app.
-            </Text>
-          </View>
+          <Text style={styles.code} selectable>{preview}</Text>
         )}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -226,7 +197,6 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: 10,
     marginTop: 2,
-    letterSpacing: 0.2,
   },
   actionsBar: {
     flexDirection: "row",
@@ -253,7 +223,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     letterSpacing: 0.8,
   },
-  viewer: { flex: 1 },
+  viewer: { flex: 1, backgroundColor: "#000" },
   center: {
     flex: 1,
     alignItems: "center",
@@ -261,15 +231,21 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 10,
   },
-  help: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    textAlign: "center",
-  },
-  error: {
+  help: { color: colors.textSecondary, fontSize: 13, textAlign: "center" },
+  errorText: {
     color: colors.anomaly,
     fontSize: 14,
     fontWeight: "700",
     textAlign: "center",
+  },
+  code: {
+    fontFamily: Platform.select({
+      ios: "Menlo",
+      android: "monospace",
+      default: "monospace",
+    }) as any,
+    color: "#A1F0A1",
+    fontSize: 11,
+    lineHeight: 16,
   },
 });

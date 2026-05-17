@@ -15,7 +15,7 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { api, getToken, PDF_URL } from "@/src/services/api";
-import { colors, blockMeta, statusMeta } from "@/src/theme";
+import { colors, blockMeta, statusMeta, NEXT_STATUS, CLOSURE_BUTTON_LABEL } from "@/src/theme";
 
 type Chantier = {
   id: string;
@@ -146,40 +146,60 @@ export default function Closure() {
   };
 
   // ---- Closure handler ----
-  // Sur web, Alert.alert multi-boutons est mappé sur window.confirm/alert
-  // qui n'exécute pas les onPress. On utilise donc une branche dédiée.
+  // Pipeline 4-étapes : on calcule dynamiquement le prochain statut selon
+  // l'étape actuelle. Le label du bouton change en conséquence.
+  const currentStage = chantier ? statusMeta[chantier.status]?.stage : null;
+  const nextStatus = chantier ? NEXT_STATUS[chantier.status] : null;
+  const nextLabel = currentStage ? CLOSURE_BUTTON_LABEL[currentStage] : null;
+
   const performClosure = useCallback(async () => {
+    if (!nextStatus) return;
     try {
-      await api.patch(`/chantiers/${id}`, { status: "cloture" });
+      await api.patch(`/chantiers/${id}`, { status: nextStatus });
       if (Platform.OS === "web") {
-        // Pas de callback fiable sur web → redirection immédiate
         router.replace("/dashboard");
       } else {
+        const isFinal = nextStatus === "cloture";
         Alert.alert(
-          "✅ Chantier clôturé",
-          "Le chantier est marqué 'Terminé / Livré'. Le PDF, CSV et JSON sont prêts pour export.",
+          isFinal ? "✅ Chantier terminé / livré" : "✅ Étape validée",
+          isFinal
+            ? "Le chantier est marqué 'Terminé / Livré'. Le PDF, CSV et JSON sont prêts pour export."
+            : "Le statut du chantier vient d'avancer dans le pipeline. Vous serez redirigé vers le Dashboard.",
           [{ text: "OK", onPress: () => router.replace("/dashboard") }]
         );
       }
-    } catch {
-      Alert.alert("Erreur", "Action impossible.");
+    } catch (e: any) {
+      const msg =
+        e?.response?.status === 403
+          ? "Vous n'avez pas les droits pour cette action."
+          : "Action impossible.";
+      Alert.alert("Erreur", msg);
     }
-  }, [id, router]);
+  }, [id, router, nextStatus]);
 
   const cloturer = () => {
+    if (!nextStatus) return;
+    const confirmText =
+      nextStatus === "cloture"
+        ? "Marquer ce chantier comme 'Terminé / Livré' ?\n\nLe chantier sera archivé en lecture seule. Vous pourrez toujours consulter les mesures et exports."
+        : `Faire avancer ce chantier à l'étape suivante du pipeline ?\n\nProchaine étape : ${
+            statusMeta[nextStatus]?.label ?? nextStatus
+          }`;
     if (Platform.OS === "web") {
-      const ok = typeof window !== "undefined" && window.confirm(
-        "Clôturer ce chantier ?\n\nLe statut passera à 'Terminé / Livré' et le chantier sera archivé en lecture seule. Vous pourrez toujours consulter les mesures et exports."
-      );
+      const ok = typeof window !== "undefined" && window.confirm(confirmText);
       if (ok) performClosure();
       return;
     }
     Alert.alert(
-      "Clôturer ce chantier ?",
-      "Le statut passera à 'Terminé / Livré' et le chantier sera archivé en lecture seule. Vous pourrez toujours consulter les mesures et exports.",
+      "Faire avancer le statut ?",
+      confirmText,
       [
         { text: "Annuler", style: "cancel" },
-        { text: "Confirmer la clôture", style: "destructive", onPress: performClosure },
+        {
+          text: nextStatus === "cloture" ? "Confirmer la clôture" : "Confirmer",
+          style: "destructive",
+          onPress: performClosure,
+        },
       ]
     );
   };
@@ -264,7 +284,7 @@ export default function Closure() {
           {/* === Exports déplacés vers la page Détail Chantier === */}
           {/* SIGNATURE BLOCK REMOVED — application gère uniquement des mesures brutes. */}
 
-          {chantier.status !== "cloture" && (
+          {nextStatus && nextLabel && (
             <TouchableOpacity
               testID="confirm-closure-button"
               onPress={cloturer}
@@ -272,7 +292,7 @@ export default function Closure() {
               activeOpacity={0.85}
             >
               <Ionicons name="flag" size={20} color="#fff" />
-              <Text style={styles.btnDangerText}>CLÔTURER LE CHANTIER</Text>
+              <Text style={styles.btnDangerText}>{nextLabel}</Text>
             </TouchableOpacity>
           )}
         </View>

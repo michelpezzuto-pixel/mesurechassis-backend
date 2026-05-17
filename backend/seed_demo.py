@@ -43,20 +43,22 @@ CLIENTS = [
     {"first": "Aurélie",    "last": "Moreau",   "addr": "61 chemin des Vignes",    "cp": "21000", "city": "Dijon"},
 ]
 
-# Pipeline 3-étapes :
-#   Étape 1 – À vérifier (orange) : devis_a_faire, technique_a_valider
-#   Étape 2 – En fabrication (bleu) : en_commande, en_fabrication
-#   Étape 3 – Terminé / Livré (vert) : cloture  → déclenche le badge "Prêt pour Export"
+# Pipeline 4-étapes :
+#   Étape 1 – À mesurer (gris) : devis_a_faire (équivalent a_mesurer)
+#   Étape 2 – À vérifier par le technicien (orange) : technique_a_valider
+#   Étape 3 – En fabrication (bleu) : en_fabrication
+#   Étape 4 – Terminé / Livré (vert) : cloture
 STATUS_PLAN = [
-    # 3 chantiers en étape 1 (À vérifier 🟠)
+    # 2 chantiers en étape 1 (À mesurer 🩶)
     "devis_a_faire",        # Marc Dubois
-    "technique_a_valider",  # Sophie Laurent
+    "devis_a_faire",        # Sophie Laurent
+    # 2 chantiers en étape 2 (À vérifier par le technicien 🟠)
     "technique_a_valider",  # Pierre Martin
-    # 3 chantiers en étape 2 (En fabrication 🔵)
-    "en_commande",          # Émilie Rousseau
+    "technique_a_valider",  # Émilie Rousseau
+    # 2 chantiers en étape 3 (En fabrication 🔵)
     "en_fabrication",       # Antoine Lefèvre
     "en_fabrication",       # Camille Bernard
-    # 2 chantiers en étape 3 (Terminé / Livré 🟢)
+    # 2 chantiers en étape 4 (Terminé / Livré 🟢)
     "cloture",              # Julien Petit
     "cloture",              # Aurélie Moreau
 ]

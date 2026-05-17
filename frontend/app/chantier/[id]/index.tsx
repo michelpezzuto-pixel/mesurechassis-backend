@@ -102,23 +102,32 @@ export default function ChantierDetail() {
 
   const handleDelete = () => {
     if (!chantier) return;
+    const msg = `« ${chantier.client_name} » et toutes ses mesures seront supprimés définitivement. Cette action est irréversible.`;
+    const doDelete = async () => {
+      try {
+        await api.delete(`/chantiers/${id}`);
+        router.replace("/dashboard");
+      } catch (e: any) {
+        const reason =
+          e?.response?.status === 403
+            ? "Vous n'avez pas les droits pour supprimer ce chantier."
+            : "Suppression impossible.";
+        Alert.alert("Erreur", reason);
+      }
+    };
+    if (Platform.OS === "web") {
+      const ok =
+        typeof window !== "undefined" &&
+        window.confirm(`Supprimer le chantier ?\n\n${msg}`);
+      if (ok) doDelete();
+      return;
+    }
     Alert.alert(
       "Supprimer le chantier ?",
-      `« ${chantier.client_name} » et toutes ses mesures seront supprimés définitivement. Cette action est irréversible.`,
+      msg,
       [
         { text: "Annuler", style: "cancel" },
-        {
-          text: "Supprimer",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await api.delete(`/chantiers/${id}`);
-              router.replace("/dashboard");
-            } catch {
-              Alert.alert("Erreur", "Suppression impossible.");
-            }
-          },
-        },
+        { text: "Supprimer", style: "destructive", onPress: doDelete },
       ]
     );
   };
@@ -489,15 +498,15 @@ export default function ChantierDetail() {
                   busy={exporting === "pdf"}
                   onPress={() => router.push(`/chantier/${id}/pdf-preview`)}
                   icon="document-text"
-                  label="DEVIS PDF"
-                  sub="Voir / Partager"
+                  label="RÉCAPITULATIF PDF"
+                  sub="Fiche technique"
                   color="#EF4444"
                 />
                   {canExportTech && (
                     <ExportTile
                       testID="export-xlsx-button"
                       busy={exporting === "xlsx"}
-                      onPress={() => downloadExport("xlsx")}
+                      onPress={() => router.push(`/chantier/${id}/xlsx-preview`)}
                       icon="grid"
                       label="EXCEL .xlsx"
                       sub="Tableau atelier"
@@ -519,7 +528,7 @@ export default function ChantierDetail() {
                     <ExportTile
                       testID="export-json-button"
                       busy={exporting === "json"}
-                      onPress={() => downloadExport("json")}
+                      onPress={() => router.push(`/chantier/${id}/json-preview`)}
                       icon="code-slash"
                       label="JSON"
                       sub="Intégration CNC"

@@ -25,6 +25,40 @@ from utils import WALL_TYPE_LABELS, block_label, status_label
 router = APIRouter()
 
 
+def _safe_filename(name: str) -> str:
+    """Latin-1 safe filename (HTTP headers ne supportent pas l'UTF-8 brut).
+
+    Translitération basique des caractères français + suppression du reste.
+    """
+    import re
+    import unicodedata
+    n = unicodedata.normalize("NFKD", name)
+    n = "".join(c for c in n if not unicodedata.combining(c))
+    n = re.sub(r"[^\w\-_.]", "_", n)
+    return n[:80] or "chantier"
+
+
+def restrict_advanced_exports(
+    user=Depends(require_active_subscription),
+) -> dict:
+    """Excel / CSV / JSON réservés au Technicien et Admin.
+
+    Commercial sans Mode Artisan : 403 (uniquement PDF accessible).
+    """
+    if user.get("artisan_mode"):
+        return user
+    if user["role"] == "commercial":
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "Les exports Excel/CSV/JSON sont réservés aux techniciens "
+                "et administrateurs. Seul le PDF est disponible pour les "
+                "commerciaux."
+            ),
+        )
+    return user
+
+
 # ---------------------------- PDF --------------------------------------
 @router.get("/chantiers/{chantier_id}/export.pdf")
 async def export_pdf(
@@ -225,12 +259,13 @@ async def export_pdf(
 
     doc.build(story)
     buf.seek(0)
+    safe = _safe_filename(chantier.get("client_name") or chantier_id)
     return StreamingResponse(
         buf,
         media_type="application/pdf",
         headers={
             "Content-Disposition": (
-                f'attachment; filename="chantier-{chantier_id}.pdf"'
+                f'attachment; filename="MesureChassis_{safe}.pdf"'
             )
         },
     )
@@ -239,7 +274,7 @@ async def export_pdf(
 # ---------------------------- JSON -------------------------------------
 @router.get("/chantiers/{chantier_id}/export.json")
 async def export_json(
-    chantier_id: str, user=Depends(require_active_subscription)
+    chantier_id: str, user=Depends(restrict_advanced_exports)
 ):
     chantier = await db.chantiers.find_one(
         {
@@ -256,13 +291,19 @@ async def export_json(
         .to_list(500)
     )
 
-    def _mesure_struct(m: dict) -> dict:
+    def _opening(m: dict) -> dict:
         bt = m.get("block_type")
         common = {
             "id": m.get("id"),
             "label": m.get("label"),
             "block_type": bt,
+            "block_label": block_label(bt or ""),
             "created_at": m.get("created_at"),
+            "alerts": m.get("alerts") or [],
+            "slope_angle_deg": m.get("slope_angle_deg"),
+            "renovation_mode": bool(m.get("renovation_mode")),
+            "options": m.get("options") or {},
+            "photo_url": m.get("photo_url"),
         }
         if bt == "trapeze":
             return {
@@ -272,7 +313,13 @@ async def export_json(
                     "width": m.get("bay_width"),
                     "height_left": m.get("height_left"),
                     "height_right": m.get("height_right"),
+                    # Données complémentaires si saisies (legacy trapèze)
+                    "width_small": m.get("width_small"),
+                    "width_intermediate": m.get("width_intermediate"),
+                    "height_small": m.get("height_small"),
+                    "height_large": m.get("height_large"),
                 },
+                "construction": _construction(m),
             }
         dims = {
             "width": m.get("bay_width"),
@@ -282,6 +329,25 @@ async def export_json(
         }
         if bt in ("porte", "coulissant"):
             dims["floor_reserve"] = m.get("floor_reserve")
+        # Renovation mode : 4 cotes explicites
+        if m.get("renovation_mode"):
+            dims["width_top"] = m.get("width_top")
+            dims["width_bottom"] = m.get("width_bottom")
+            dims["height_left"] = m.get("height_left")
+            dims["height_right"] = m.get("height_right")
+        # Legacy fields (gardés si non-null pour rétrocompat)
+        legacy = {
+            k: m.get(k)
+            for k in (
+                "width_top", "width_middle", "width_bottom",
+                "height_left", "height_middle", "height_right",
+                "diag_1", "diag_2",
+                "height_quarter_left", "height_quarter_right",
+            )
+            if m.get(k) is not None and k not in dims
+        }
+        if legacy:
+            dims["legacy"] = legacy
         return {
             **common,
             "shape": "rectangular",
@@ -290,10 +356,12 @@ async def export_json(
                 "d1": bool(m.get("diag_1_verified")),
                 "d2": bool(m.get("diag_2_verified")),
             },
+            "construction": _construction(m),
         }
 
+    site_photos = chantier.get("site_photos") or []
     return {
-        "schema_version": "mc.v1",
+        "schema_version": "mc.v2",
         "exported_at": datetime.now(timezone.utc).isoformat(),
         "company_id": chantier.get("company_id"),
         "client": {
@@ -307,22 +375,46 @@ async def export_json(
         "project": {
             "id": chantier.get("id"),
             "status": chantier.get("status"),
+            "status_label": status_label(chantier.get("status") or ""),
             "appointment_at": chantier.get("appointment_at"),
             "notes": chantier.get("notes"),
             "created_at": chantier.get("created_at"),
             "assigned_to": chantier.get("assigned_to"),
         },
         "openings_count": len(mesures),
-        "openings": [_mesure_struct(m) for m in mesures],
+        "openings": [_opening(m) for m in mesures],
+        "site_photos_count": len(site_photos),
+        "site_photos": [
+            {
+                "index": i + 1,
+                "caption": (p.get("caption") or "").strip(),
+                "uri": p.get("uri"),
+            }
+            for i, p in enumerate(site_photos)
+        ],
+    }
+
+
+def _construction(m: dict) -> dict:
+    """Bloc maçonnerie + isolation (commun à toutes les formes)."""
+    return {
+        "bloc_thickness_mm": m.get("bloc_thickness"),
+        "wall_type": m.get("wall_type"),
+        "wall_type_label": (
+            WALL_TYPE_LABELS.get(m.get("wall_type") or "", "")
+        ),
+        "insulation_thickness_mm": m.get("insulation_thickness"),
+        "finish_outer_mm": m.get("finish_outer"),
+        "finish_inner_mm": m.get("finish_inner"),
     }
 
 
 # ---------------------------- CSV --------------------------------------
 @router.get("/chantiers/{chantier_id}/export.csv")
 async def export_csv(
-    chantier_id: str, user=Depends(require_active_subscription)
+    chantier_id: str, user=Depends(restrict_advanced_exports)
 ):
-    """CSV tabulaire — friendly machines de découpe / atelier."""
+    """CSV tabulaire complet — atelier / machines de découpe."""
     chantier = await db.chantiers.find_one(
         {
             "id": chantier_id,
@@ -340,13 +432,28 @@ async def export_csv(
 
     buf = io.StringIO()
     writer = csv.writer(buf, delimiter=";", quoting=csv.QUOTE_MINIMAL)
+    # En-tête complet
     writer.writerow(
         [
             "Chantier", "Adresse", "Code Postal", "Ville", "Statut",
-            "Label", "Type", "Forme",
-            "Largeur (mm)", "Hauteur (mm)", "Hauteur G (mm)", "Hauteur D (mm)",
+            "Label", "Type", "Forme", "Rénovation",
+            # Dimensions principales
+            "Largeur baie (mm)", "Hauteur baie (mm)",
             "Diag 1 (mm)", "Diag 2 (mm)", "Diag1 OK", "Diag2 OK",
-            "Réserve sol (mm)", "Épaisseur bloc (mm)", "Paroi",
+            # Rénovation 4 cotes
+            "L. haut (mm)", "L. bas (mm)",
+            "H. gauche (mm)", "H. droite (mm)",
+            # Legacy multi-points
+            "L. milieu (mm)", "H. milieu (mm)",
+            # Trapèze
+            "L. petite (mm)", "L. inter (mm)",
+            "H. petite (mm)", "H. grande (mm)",
+            # Construction
+            "Réserve sol (mm)", "Épaisseur bloc (mm)",
+            "Paroi", "Épais. isolant (mm)",
+            "Finition ext (mm)", "Finition int (mm)",
+            "Angle pente (°)",
+            "Alertes",
             "Date mesure",
         ]
     )
@@ -354,20 +461,20 @@ async def export_csv(
     for m in mesures:
         bt = m.get("block_type") or "—"
         is_trap = bt == "trapeze"
+        is_renov = bool(m.get("renovation_mode"))
         writer.writerow(
             [
                 client_disp,
                 chantier.get("address") or "",
                 chantier.get("postal_code") or "",
                 chantier.get("city") or "",
-                chantier.get("status") or "",
+                status_label(chantier.get("status") or ""),
                 m.get("label") or "",
-                bt,
+                block_label(bt),
                 "trapezoidal" if is_trap else "rectangular",
+                "oui" if is_renov else "non",
                 m.get("bay_width") or "",
                 "" if is_trap else (m.get("bay_height") or ""),
-                m.get("height_left") or "" if is_trap else "",
-                m.get("height_right") or "" if is_trap else "",
                 "" if is_trap else (
                     m.get("bay_diagonal_1") or m.get("bay_diagonal") or ""
                 ),
@@ -380,14 +487,41 @@ async def export_csv(
                 "" if is_trap else (
                     "oui" if m.get("diag_2_verified") else "non"
                 ),
+                m.get("width_top") or "",
+                m.get("width_bottom") or "",
+                m.get("height_left") or "",
+                m.get("height_right") or "",
+                m.get("width_middle") or "",
+                m.get("height_middle") or "",
+                m.get("width_small") or "",
+                m.get("width_intermediate") or "",
+                m.get("height_small") or "",
+                m.get("height_large") or "",
                 m.get("floor_reserve") or "",
                 m.get("bloc_thickness") or "",
-                m.get("wall_type") or "",
+                WALL_TYPE_LABELS.get(m.get("wall_type") or "", "") or "",
+                m.get("insulation_thickness") or "",
+                m.get("finish_outer") or "",
+                m.get("finish_inner") or "",
+                m.get("slope_angle_deg") or "",
+                " ; ".join(m.get("alerts") or []),
                 (m.get("created_at") or "")[:19].replace("T", " "),
             ]
         )
+    # --- Bloc photos en fin de fichier (anti-litige) ---------------------
+    site_photos = chantier.get("site_photos") or []
+    if site_photos:
+        writer.writerow([])
+        writer.writerow(["[PHOTOS ANTI-LITIGE]"])
+        writer.writerow(["#", "Légende", "Format"])
+        for i, ph in enumerate(site_photos, 1):
+            cap = (ph.get("caption") or "").strip() or f"Photo {i}"
+            uri = ph.get("uri") or ""
+            fmt = "base64 data URI" if uri.startswith("data:") else "URL"
+            writer.writerow([i, cap, fmt])
+
     content = buf.getvalue().encode("utf-8-sig")
-    safe = (chantier.get("client_name") or chantier_id).replace(" ", "_").replace("/", "-")
+    safe = _safe_filename(chantier.get("client_name") or chantier_id)
     return Response(
         content=content,
         media_type="text/csv; charset=utf-8",
@@ -402,7 +536,7 @@ async def export_csv(
 # ---------------------------- XLSX -------------------------------------
 @router.get("/chantiers/{chantier_id}/export.xlsx")
 async def export_xlsx(
-    chantier_id: str, user=Depends(require_active_subscription)
+    chantier_id: str, user=Depends(restrict_advanced_exports)
 ):
     chantier = await db.chantiers.find_one(
         {
@@ -431,51 +565,83 @@ async def export_xlsx(
     pairs = [
         ("Client", chantier["client_name"]),
         ("Adresse", chantier["address"]),
+        ("Code postal", chantier.get("postal_code") or "—"),
+        ("Ville", chantier.get("city") or "—"),
         ("Statut", status_label(chantier["status"])),
-        ("Date", chantier["created_at"][:10]),
-        ("Signé le", chantier.get("signed_at") or "—"),
+        ("Date création", chantier["created_at"][:10]),
+        ("Rendez-vous", chantier.get("appointment_at") or "—"),
+        ("Notes", chantier.get("notes") or "—"),
+        ("Nb. ouvertures", len(mesures)),
+        ("Nb. photos site", len(chantier.get("site_photos") or [])),
     ]
     for i, (k, v) in enumerate(pairs, start=3):
         info.cell(row=i, column=1, value=k).font = Font(bold=True)
         info.cell(row=i, column=2, value=v)
-    info.column_dimensions["A"].width = 22
-    info.column_dimensions["B"].width = 50
+    info.column_dimensions["A"].width = 24
+    info.column_dimensions["B"].width = 60
 
+    # --- Feuille Mesures (toutes les cotes) ------------------------------
     ws = wb.create_sheet("Mesures")
     columns = [
         ("Libellé", "label"),
         ("Type bloc", "block_type"),
-        ("H baie (mm)", "bay_height"),
+        ("Forme", "_shape"),
+        ("Rénovation", "_renov"),
+        # Baie brute
         ("L baie (mm)", "bay_width"),
-        ("Diag (mm)", "bay_diagonal"),
-        ("Réserve sol fini (mm)", "floor_reserve"),
+        ("H baie (mm)", "bay_height"),
+        ("Diag 1 (mm)", "bay_diagonal_1"),
+        ("Diag 2 (mm)", "bay_diagonal_2"),
+        ("Diag1 OK", "diag_1_verified"),
+        ("Diag2 OK", "diag_2_verified"),
+        # Rénovation 4 cotes
+        ("L. haut (mm)", "width_top"),
+        ("L. bas (mm)", "width_bottom"),
+        ("H. gauche (mm)", "height_left"),
+        ("H. droite (mm)", "height_right"),
+        # Multi-points (coulissant / legacy)
+        ("L. milieu (mm)", "width_middle"),
+        ("H. milieu (mm)", "height_middle"),
+        ("H. 1/4 G (mm)", "height_quarter_left"),
+        ("H. 1/4 D (mm)", "height_quarter_right"),
+        # Trapèze
+        ("L. petite (mm)", "width_small"),
+        ("L. inter (mm)", "width_intermediate"),
+        ("H. petite (mm)", "height_small"),
+        ("H. grande (mm)", "height_large"),
+        # Construction
+        ("Réserve sol (mm)", "floor_reserve"),
         ("Épais. bloc béton (mm)", "bloc_thickness"),
         ("Type paroi", "wall_type"),
         ("Épais. isolant (mm)", "insulation_thickness"),
-        ("Finition ext. (mm)", "finish_outer"),
-        ("Finition int. (mm)", "finish_inner"),
+        ("Finition ext (mm)", "finish_outer"),
+        ("Finition int (mm)", "finish_inner"),
         ("Angle pente (°)", "slope_angle_deg"),
         ("Alertes", "alerts"),
+        ("Date mesure", "created_at"),
     ]
     for col_idx, (label, _) in enumerate(columns, start=1):
         cell = ws.cell(row=1, column=col_idx, value=label)
         cell.font = head
         cell.fill = fill
-    block_map = {
-        "standard": "Standard",
-        "coulissant": "Coulissant",
-        "porte": "Porte",
-        "trapeze": "Trapèze",
-    }
     for row_idx, m in enumerate(mesures, start=2):
         for col_idx, (_, key) in enumerate(columns, start=1):
-            v: Any = m.get(key)
+            if key == "_shape":
+                v: Any = "trapezoidal" if m.get("block_type") == "trapeze" else "rectangular"
+            elif key == "_renov":
+                v = "oui" if m.get("renovation_mode") else "non"
+            else:
+                v = m.get(key)
             if key == "wall_type" and v:
                 v = WALL_TYPE_LABELS.get(v, v)
             elif key == "block_type" and v:
-                v = block_map.get(v, v)
+                v = block_label(v)
             elif key == "alerts":
                 v = " ; ".join(v) if v else ""
+            elif key in ("diag_1_verified", "diag_2_verified"):
+                v = "oui" if v else "non"
+            elif key == "created_at" and v:
+                v = str(v)[:19].replace("T", " ")
             ws.cell(row=row_idx, column=col_idx, value=v)
     for c in ws.columns:
         max_len = max(
@@ -484,9 +650,39 @@ async def export_xlsx(
         )
         ws.column_dimensions[c[0].column_letter].width = min(max_len + 2, 36)
 
+    # --- Feuille Photos site (anti-litige) -------------------------------
+    site_photos = chantier.get("site_photos") or []
+    if site_photos:
+        ph_ws = wb.create_sheet("Photos site")
+        for col_idx, label in enumerate(
+            ["#", "Légende", "Format", "Taille (caractères)"], start=1
+        ):
+            cell = ph_ws.cell(row=1, column=col_idx, value=label)
+            cell.font = head
+            cell.fill = fill
+        for row_idx, ph in enumerate(site_photos, start=2):
+            uri = ph.get("uri") or ""
+            ph_ws.cell(row=row_idx, column=1, value=row_idx - 1)
+            ph_ws.cell(
+                row=row_idx,
+                column=2,
+                value=(ph.get("caption") or "").strip() or f"Photo {row_idx-1}",
+            )
+            ph_ws.cell(
+                row=row_idx,
+                column=3,
+                value="base64 data URI" if uri.startswith("data:") else "URL",
+            )
+            ph_ws.cell(row=row_idx, column=4, value=len(uri))
+        ph_ws.column_dimensions["A"].width = 4
+        ph_ws.column_dimensions["B"].width = 60
+        ph_ws.column_dimensions["C"].width = 22
+        ph_ws.column_dimensions["D"].width = 18
+
     buf = io.BytesIO()
     wb.save(buf)
     buf.seek(0)
+    safe = _safe_filename(chantier.get("client_name") or chantier_id)
     return StreamingResponse(
         buf,
         media_type=(
@@ -494,7 +690,7 @@ async def export_xlsx(
         ),
         headers={
             "Content-Disposition": (
-                f'attachment; filename="chantier-{chantier_id}.xlsx"'
+                f'attachment; filename="MesureChassis_{safe}.xlsx"'
             )
         },
     )

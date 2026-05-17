@@ -31,10 +31,10 @@ type Chantier = {
   created_at: string;
 };
 
-// Filtres alignés sur le pipeline 3-étapes (filtrage côté client par stage).
-// "all" + 3 stages couvrant tous les statuts métier internes.
-const FILTERS: { key: "all" | "verify" | "fab" | "done"; label: string }[] = [
+// Filtres alignés sur le pipeline 4-étapes (filtrage côté client par stage).
+const FILTERS: { key: "all" | "measure" | "verify" | "fab" | "done"; label: string }[] = [
   { key: "all", label: "Tous" },
+  { key: "measure", label: "À mesurer" },
   { key: "verify", label: "À vérifier" },
   { key: "fab", label: "En fabrication" },
   { key: "done", label: "Terminés" },

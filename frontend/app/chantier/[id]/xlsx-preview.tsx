@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -11,78 +12,79 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { PDF_URL, getToken } from "@/src/services/api";
+import { XLSX_URL, getToken } from "@/src/services/api";
 import { colors } from "@/src/theme";
 
 /**
- * Aperçu du Récapitulatif de Mesure PDF.
- * Ceci est une FICHE TECHNIQUE de validation des cotes —
- * PAS un devis commercial. Le bouton "Partager" est l'unique action
- * proposée (avec un retour vers le chantier).
+ * Aperçu de l'export Excel d'un chantier.
+ * Les .xlsx ne sont pas prévisualisables nativement — on affiche
+ * un résumé des métadonnées du fichier + un bouton Partager qui
+ * déclenche la Web Share API (ou un téléchargement en fallback).
  */
-export default function PdfPreview() {
+export default function XlsxPreview() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const [blobUrl, setBlobUrl] = useState<string | null>(null);
+  const [size, setSize] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [blobUrl, setBlobUrl] = useState<string | null>(null);
 
-  const fetchPdf = useCallback(async () => {
+  const fetchFile = useCallback(async () => {
     if (!id) return;
     setLoading(true);
     setError(null);
     try {
       const token = await getToken();
-      const r = await fetch(PDF_URL(String(id)), {
+      const r = await fetch(XLSX_URL(String(id)), {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const blob = await r.blob();
-      const u = URL.createObjectURL(blob);
-      setBlobUrl(u);
+      setSize(blob.size);
+      if (Platform.OS === "web") {
+        setBlobUrl(URL.createObjectURL(blob));
+      }
     } catch (e: any) {
-      setError(e?.message || "Impossible de charger le récapitulatif.");
+      setError(e?.message || "Génération Excel impossible.");
     } finally {
       setLoading(false);
     }
   }, [id]);
 
   useEffect(() => {
-    fetchPdf();
+    fetchFile();
     return () => {
       if (blobUrl) {
-        try {
-          URL.revokeObjectURL(blobUrl);
-        } catch {
-          /* noop */
-        }
+        try { URL.revokeObjectURL(blobUrl); } catch { /* noop */ }
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleShare = async () => {
-    if (!blobUrl) return;
-    const fileName = `Recapitulatif_MesureChassis_${id}.pdf`;
+    if (!id) return;
+    const fileName = `Atelier_MesureChassis_${id}.xlsx`;
     try {
       if (Platform.OS === "web") {
+        if (!blobUrl) return;
         const r = await fetch(blobUrl);
         const blob = await r.blob();
-        // Tente Web Share API si dispo + supportée pour les fichiers
         const navAny: any = navigator;
-        const file = new File([blob], fileName, { type: "application/pdf" });
+        const file = new File([blob], fileName, {
+          type:
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
         if (
           navAny.share &&
           (!navAny.canShare || navAny.canShare({ files: [file] }))
         ) {
           await navAny.share({
-            title: "Récapitulatif de Mesure",
-            text: "Fiche technique de validation des cotes.",
+            title: "Export Excel atelier",
+            text: "Fichier Excel pour atelier / machines de découpe.",
             files: [file],
           });
           return;
         }
-        // Fallback : download forcé
         const a = document.createElement("a");
         a.href = blobUrl;
         a.download = fileName;
@@ -94,12 +96,13 @@ export default function PdfPreview() {
         const Sharing = await import("expo-sharing");
         const dest = `${FS.cacheDirectory}${fileName}`;
         const token = await getToken();
-        await FS.downloadAsync(PDF_URL(String(id)), dest, {
+        await FS.downloadAsync(XLSX_URL(String(id)), dest, {
           headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         });
         await Sharing.shareAsync(dest, {
-          dialogTitle: "Partager le récapitulatif",
-          mimeType: "application/pdf",
+          dialogTitle: "Partager l'export Excel",
+          mimeType:
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         });
       }
     } catch (e: any) {
@@ -111,7 +114,7 @@ export default function PdfPreview() {
     <SafeAreaView style={styles.flex} edges={["top", "bottom"]}>
       <View style={styles.topBar}>
         <TouchableOpacity
-          testID="pdf-back-button"
+          testID="xlsx-back-button"
           onPress={() => router.back()}
           activeOpacity={0.7}
           style={styles.backBtn}
@@ -121,24 +124,22 @@ export default function PdfPreview() {
           <Text style={styles.backText}>RETOUR</Text>
         </TouchableOpacity>
         <View style={styles.titleBox}>
-          <Text style={styles.title} numberOfLines={1}>
-            Récapitulatif de Mesure PDF
-          </Text>
-          <Text style={styles.subtitle}>Fiche technique de validation</Text>
+          <Text style={styles.title} numberOfLines={1}>Export Excel</Text>
+          <Text style={styles.subtitle}>Tableau atelier / découpe</Text>
         </View>
         <View style={{ width: 70 }} />
       </View>
 
       <View style={styles.actionsBar}>
         <TouchableOpacity
-          testID="pdf-share-button"
+          testID="xlsx-share-button"
           onPress={handleShare}
-          disabled={!blobUrl}
+          disabled={loading || !!error}
           activeOpacity={0.85}
           style={[
             styles.actionBtn,
             styles.actionPrimary,
-            !blobUrl && { opacity: 0.4 },
+            (loading || !!error) && { opacity: 0.4 },
           ]}
         >
           <Ionicons name="share-social" size={18} color="#000" />
@@ -146,45 +147,44 @@ export default function PdfPreview() {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.viewer}>
+      <ScrollView contentContainerStyle={styles.viewer}>
         {loading ? (
           <View style={styles.center}>
             <ActivityIndicator color={colors.primary} size="large" />
-            <Text style={styles.help}>Génération du récapitulatif...</Text>
+            <Text style={styles.help}>Génération du fichier Excel...</Text>
           </View>
         ) : error ? (
           <View style={styles.center}>
             <Ionicons name="alert-circle" size={48} color={colors.anomaly} />
             <Text style={styles.error}>{error}</Text>
             <TouchableOpacity
-              onPress={fetchPdf}
+              onPress={fetchFile}
               style={[styles.actionBtn, styles.actionPrimary]}
             >
               <Text style={styles.actionPrimaryText}>RÉESSAYER</Text>
             </TouchableOpacity>
           </View>
-        ) : Platform.OS === "web" && blobUrl ? (
-          // @ts-ignore — web iframe via createElement
-          React.createElement("iframe", {
-            src: blobUrl,
-            style: {
-              flex: 1,
-              width: "100%",
-              height: "100%",
-              border: "none",
-              backgroundColor: "#fff",
-            },
-            title: "Récapitulatif de Mesure PDF",
-          })
         ) : (
-          <View style={styles.center}>
-            <Ionicons name="document-text" size={48} color={colors.textSecondary} />
-            <Text style={styles.help}>
-              Touchez « PARTAGER » pour ouvrir le récapitulatif dans une autre app.
+          <View style={styles.summary}>
+            <View style={styles.iconBig}>
+              <Ionicons name="grid" size={56} color="#22C55E" />
+            </View>
+            <Text style={styles.fileTitle}>Fichier Excel prêt</Text>
+            <Text style={styles.fileMeta}>Format : .xlsx (Microsoft Excel)</Text>
+            <Text style={styles.fileMeta}>
+              Taille : {size != null ? `${(size / 1024).toFixed(1)} Ko` : "—"}
             </Text>
+            <Text style={styles.fileMeta}>2 feuilles : Chantier + Mesures + Photos</Text>
+            <View style={styles.tipBox}>
+              <Ionicons name="information-circle" size={18} color={colors.alert} />
+              <Text style={styles.tipText}>
+                Touchez « PARTAGER » pour ouvrir le fichier dans Excel, Numbers,
+                Google Sheets ou l'envoyer par e-mail.
+              </Text>
+            </View>
           </View>
         )}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -226,7 +226,6 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: 10,
     marginTop: 2,
-    letterSpacing: 0.2,
   },
   actionsBar: {
     flexDirection: "row",
@@ -253,7 +252,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     letterSpacing: 0.8,
   },
-  viewer: { flex: 1 },
+  viewer: { flexGrow: 1, padding: 20 },
   center: {
     flex: 1,
     alignItems: "center",
@@ -261,15 +260,44 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 10,
   },
-  help: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    textAlign: "center",
-  },
+  help: { color: colors.textSecondary, fontSize: 13, textAlign: "center" },
   error: {
     color: colors.anomaly,
     fontSize: 14,
     fontWeight: "700",
     textAlign: "center",
+  },
+  summary: { alignItems: "center", paddingTop: 30, gap: 8 },
+  iconBig: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: "#0e3315",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+  },
+  fileTitle: {
+    color: colors.textPrimary,
+    fontWeight: "900",
+    fontSize: 18,
+    marginBottom: 4,
+  },
+  fileMeta: { color: colors.textSecondary, fontSize: 13 },
+  tipBox: {
+    flexDirection: "row",
+    gap: 8,
+    backgroundColor: colors.surface,
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 20,
+    alignItems: "flex-start",
+    maxWidth: 360,
+  },
+  tipText: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    lineHeight: 17,
+    flex: 1,
   },
 });

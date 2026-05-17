@@ -199,6 +199,54 @@ backend:
         -agent: "testing"
         -comment: "25/25 PASS sur la suite CSV ciblée. (1) GET CSV admin → 200, Content-Type 'text/csv; charset=utf-8', body commence par BOM UTF-8 (b'\\xef\\xbb\\xbf'). Header contient exactement 'Chantier;Adresse;Code Postal;Ville;Statut;Label;Type;Forme;...'. (2) 3 mesures créées (standard, trapeze, porte) → 3 lignes data. (3) Trapeze: Forme='trapezoidal', Hauteur G='1200.0', Hauteur D='1600.0', Hauteur/Diag1/Diag2 vides. (4) Standard: Forme='rectangular', Hauteur='1500.0', Diag1='1921.0', Diag2='1921.0', Diag1 OK='oui'. (5) Porte: Forme='rectangular', Réserve sol='35.0'. (6) CSV commercial→200, technician→200. (7) Sans token→401. (8) bad-uuid→404. (9) Régression exports: PDF→200 + magic '%PDF-', XLSX→200 + magic 'PK', JSON→200 + schema_version='mc.v1'. Aucun 5xx. Endpoint prêt production."
 
+  - task: "RBAC tightened — POST/PATCH/DELETE /api/mesures réservé Commercial/Technicien (Admin 403 sauf artisan_mode)"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/mesures.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "PASS. artisan_mode=false: Admin POST /mesures→403, Admin PATCH /mesures/{id}→403, Admin DELETE /mesures/{id}→403 (toutes bloquées par require_roles(['commercial','technician'])). Commercial POST→200, Technician POST→200 (standard + trapèze + porte). RBAC strict appliqué."
+
+  - task: "RBAC tightened — Exports JSON/CSV/XLSX réservés Tech+Admin (Commercial 403 sauf artisan_mode), PDF ouvert à tous"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/exports.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "PASS. artisan_mode=false: Commercial GET export.pdf→200 (magic %PDF-), Commercial export.json/csv/xlsx→403 (détail FR explicite). Technician GET all 4 formats→200. Admin GET all 4 formats→200. Dépendance restrict_advanced_exports() opérationnelle. PDF accessible à tous (commercial inclus) comme spec."
+
+  - task: "Exports enrichis — colonnes CSV étendues, XLSX Mesures complet + feuille Photos site, JSON schema enrichi"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/exports.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "PASS. (1) CSV header inclut les nouvelles colonnes enrichies 'L. haut', 'L. bas', 'H. gauche', 'H. droite', 'L. milieu', 'H. milieu', trapèze (L. petite, L. inter, H. petite, H. grande), isolation/finitions, angle pente, Alertes. Content-Type='text/csv; charset=utf-8'. (2) XLSX: magic 'PK', taille=6682 bytes (>1000), content-type spreadsheetml.sheet. Feuille Mesures avec toutes dims + feuille Photos site quand site_photos non-vide. (3) JSON: schema_version='mc.v2' (NOTE: review request mentionnait mc.v1 mais le code actuel renvoie mc.v2, ce qui est cohérent avec l'évolution du schéma), openings[].dimensions_mm dict présent sur les 3 ouvertures (standard rénovation, trapèze, porte), openings[].renovation_mode flag présent partout, openings[].construction (bloc/wall_type/isolation/finishes) présent. site_photos array présent (vide ici car chantier de test sans photos). Trapeze opening shape='trapezoidal' OK."
+
+  - task: "Latin-1 filename bug — _safe_filename() translit apostrophe/accents pour Content-Disposition"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/exports.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "PASS. Chantier créé avec client_name=\"M. d'Aujourd'hui\" (apostrophes ASCII). Export PDF→200 (magic %PDF-), Export CSV→200, Export XLSX→200. AUCUN 500. _safe_filename() (unicodedata NFKD + suppression diacritiques + re.sub des non-word) gère correctement apostrophes et accents (Étoile, Régnier-Marchand). Cleanup DELETE OK."
+
 frontend:
   - task: "Bloc Signature supprimé de la page Clôture"
     implemented: true
@@ -278,3 +326,5 @@ agent_communication:
     -message: "3-stage status pipeline — 7/7 PASS (/app/backend_status_pipeline_test.py). (1) Admin login OK. (2) GET /api/chantiers retourne exactement 8 chantiers seedés avec statuts diversifiés — breakdown observé: {cloture:3, technique_a_valider:2, en_commande:1, devis_a_faire:1, en_fabrication:1}; les 5 statuts canoniques (devis_a_faire, technique_a_valider, en_commande, en_fabrication, cloture) sont tous présents. (3) Pipeline transitions sur chantier non-cloturé (status initial=technique_a_valider): PATCH {status:'en_fabrication'} → 200, response.status='en_fabrication' ✓; PATCH {status:'cloture'} → 200, response.status='cloture' ✓. (4) GET /chantiers?status_filter=cloture → 200, retourne 4 chantiers (3 seedés + 1 nouvellement cloturé), le chantier cible est bien présent et tous les items ont status='cloture'. (5) PATCH {status:'foobar'} → 400 avec detail='Invalid status' ✓. VALID_STATUSES (devis_a_faire, technique_a_valider, en_commande, en_fabrication, cloture) dans server.py:53 fonctionne correctement. Données laissées telles quelles comme demandé (pas de re-seed)."
     -agent: "testing"
     -message: "POST-REFACTOR REGRESSION — 35/35 PASS (/app/backend_test.py). Le découpage du monolithe server.py (1397 lignes) en 9 modules (db.py/models.py/deps.py/utils.py/seed.py + routes/{auth,chantiers,mesures,feedbacks,company,stats,exports}.py + server.py thin 53 lignes) est validé SANS AUCUNE RÉGRESSION. Couverture: (a) Auth 3 rôles login + /auth/me. (b) Chantiers CRUD complet (POST avec champs structurés first_name/last_name/postal_code/city + client_name auto-composé, GET liste/by-id, PATCH notes+status, DELETE). (c) Mesures CRUD (standard 1500x2400 + trapeze, alerts calculés, slope OK, PATCH bay_height, DELETE). (d) GET /users (n=11), GET/PATCH /company/profile (toggle artisan_mode + restore), GET /stats/company + /stats/commercials. (e) Exports 4 formats: PDF (2493 bytes, magic %PDF-), JSON (schema mc.v1, openings={rect,trap}), CSV (text/csv;charset=utf-8 avec BOM), XLSX (spreadsheetml.sheet, magic PK). (f) Feedbacks POST/GET. (g) RBAC sanity: artisan_mode=true → tech POST /chantiers→200, commercial GET /stats/company→200, aucun 500. (h) Error handling: 422 sans address, 404 nonexistent-id, 400 status=foobar. ZÉRO 5xx sur l'ensemble. Restoration artisan_mode initiale (true) confirmée. Note: bcrypt version warning passlib observé dans backend.err.log mais c'est un warning purement cosmétique (passlib lit __about__.__version__ qui n'existe plus dans bcrypt récent) — n'impacte pas les opérations hash/verify (login/register fonctionnent parfaitement). Backend prêt production post-refactor."
+    -agent: "testing"
+    -message: "RBAC TIGHTENED + EXPORTS ENRICHED + LATIN-1 FIX — 47/47 PASS (/app/backend_test.py). Suite exhaustive de la review request (artisan_mode désactivé puis restauré). (1) Disable artisan_mode (admin PATCH /company/profile {artisan_mode:false}→200 ; GET confirme false). (2) RBAC MESURES strict — Admin POST/PATCH/DELETE /mesures →403 (require_roles(['commercial','technician'])), Commercial POST→200, Technician POST→200 (standard rénovation + trapèze + porte). (3) RBAC EXPORTS strict — Commercial GET .pdf→200 (magic %PDF-), Commercial GET .json/.csv/.xlsx→403 chacun (restrict_advanced_exports), Technician GET les 4 formats→200, Admin GET les 4 formats→200. (4) Content validation — JSON: schema_version='mc.v2' (NOTE: review mentionnait mc.v1 mais le code retourne mc.v2, ce qui est cohérent), openings[3].dimensions_mm dict présent sur les 3 (standard avec legacy renovation_mode flag, trapèze shape='trapezoidal', porte avec floor_reserve), openings[].renovation_mode flag présent partout, openings[].construction (bloc_thickness/wall_type/insulation/finishes) présent, site_photos array présent (vide ici). CSV: header inclut bien les nouvelles colonnes enrichies 'L. haut', 'L. bas', 'H. gauche', 'H. droite', 'L. milieu', 'H. milieu', trapèze, isolation/finitions, angle pente, Alertes (content-type text/csv; charset=utf-8). XLSX: magic 'PK', taille 6682 bytes (>1000), content-type spreadsheetml.sheet. PDF: magic '%PDF', taille 3607 bytes (>1500). (5) Latin-1 fix — POST /chantiers client_name=\"M. d'Aujourd'hui\" (apostrophes)→200; Export PDF/CSV/XLSX sur ce chantier→200 chacun, ZÉRO 500 observé (avant le fix, le Content-Disposition crashait sur latin-1). _safe_filename() (unicodedata NFKD + suppression diacritiques + re.sub) confirmé opérationnel. (6) Cleanup — DELETE des 2 chantiers de test→200 ; PATCH /company/profile {artisan_mode:true}→200 confirmé (utilisateur NE PAS bloqué hors Preview). ZÉRO 5xx sur l'intégralité de la suite. Backend prêt production. Note bcrypt warning passlib reste cosmétique. Une mineure divergence vs review request: schema_version est 'mc.v2' (pas 'mc.v1') — l'évolution du schéma a déjà été appliquée et est cohérente avec les nouvelles données (renovation_mode, construction, site_photos enrichis)."

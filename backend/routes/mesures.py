@@ -8,16 +8,20 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 
 from db import VALID_BLOCK_TYPES, db
-from deps import require_active_subscription
+from deps import require_active_subscription, require_roles
 from models import Mesure, MesureCreate
 from utils import check_chantier_access, compute_alerts
 
 router = APIRouter()
 
+# Mesures éditables uniquement par Commercial / Technicien.
+# Admin est exclu (bypass possible via Mode Artisan Unique).
+EDIT_ROLES = ["commercial", "technician"]
+
 
 @router.post("/mesures", response_model=Mesure)
 async def create_mesure(
-    payload: MesureCreate, user=Depends(require_active_subscription)
+    payload: MesureCreate, user=Depends(require_roles(EDIT_ROLES))
 ):
     if payload.block_type not in VALID_BLOCK_TYPES:
         raise HTTPException(400, "Invalid block_type")
@@ -54,7 +58,7 @@ async def list_mesures(
 
 @router.delete("/mesures/{mesure_id}")
 async def delete_mesure(
-    mesure_id: str, user=Depends(require_active_subscription)
+    mesure_id: str, user=Depends(require_roles(EDIT_ROLES))
 ):
     mesure = await db.mesures.find_one({"id": mesure_id})
     if mesure:
@@ -78,7 +82,7 @@ async def get_mesure(
 async def update_mesure(
     mesure_id: str,
     payload: MesureCreate,
-    user=Depends(require_active_subscription),
+    user=Depends(require_roles(EDIT_ROLES)),
 ):
     existing = await db.mesures.find_one({"id": mesure_id}, {"_id": 0})
     if not existing:
