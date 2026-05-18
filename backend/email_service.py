@@ -99,3 +99,57 @@ def send_invitation_email(
         body=body,
         link=link,
     )
+
+
+def send_assignment_email(
+    *,
+    to: str,
+    assignee_name: str,
+    chantier_name: str,
+    address: Optional[str],
+    created_by_name: Optional[str] = None,
+) -> dict:
+    """Notification quand un chantier est attribué à un membre de l'équipe."""
+    addr_line = address if address else "Adresse non précisée"
+    by_line = f" (créé par {created_by_name})" if created_by_name else ""
+    body = (
+        f"Bonjour {assignee_name},\n\n"
+        f"Un nouveau chantier vous a été attribué{by_line} :\n\n"
+        f"   📋 {chantier_name}\n"
+        f"   📍 {addr_line}\n\n"
+        "Connectez-vous à MesureChâssis pour consulter les détails et "
+        "planifier votre intervention.\n\n"
+        "L'équipe MesureChâssis"
+    )
+    return send_email(
+        to=to,
+        subject=f"Nouveau chantier attribué : {chantier_name}",
+        body=body,
+    )
+
+
+def send_feedback_email(
+    *,
+    to: str,
+    sender_email: str,
+    sender_name: str,
+    company_name: str,
+    user_comment: str,
+    page_context: Optional[str] = None,
+) -> dict:
+    """Notification interne : un utilisateur signale un bug ou suggère une amélioration."""
+    ctx_line = f"\n   Page : {page_context}" if page_context else ""
+    body = (
+        "Un nouveau feedback utilisateur a été soumis :\n\n"
+        f"   De     : {sender_name} <{sender_email}>\n"
+        f"   Société: {company_name}{ctx_line}\n\n"
+        "─── MESSAGE ───\n"
+        f"{user_comment}\n"
+        "──────────────\n\n"
+        "Connectez-vous à l'espace admin pour traiter ce feedback."
+    )
+    return send_email(
+        to=to,
+        subject=f"[Feedback] {sender_name} — {company_name}",
+        body=body,
+    )

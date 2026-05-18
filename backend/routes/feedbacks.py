@@ -1,6 +1,7 @@
 """Routes feedbacks (utilisateur + admin)."""
 from __future__ import annotations
 
+import os
 import uuid
 from datetime import datetime, timezone
 from typing import List
@@ -9,9 +10,12 @@ from fastapi import APIRouter, Depends
 
 from db import db
 from deps import auth_user, require_admin
+from email_service import send_feedback_email
 from models import Feedback, FeedbackCreate
 
 router = APIRouter()
+
+SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL", "support@mesurechassis.fr")
 
 
 @router.post("/feedbacks", response_model=Feedback)
@@ -29,6 +33,23 @@ async def create_feedback(payload: FeedbackCreate, user=Depends(auth_user)):
     }
     await db.feedbacks.insert_one(doc)
     doc.pop("_id", None)
+    # Email de notification interne — n'interrompt pas le flow en cas d'échec
+    try:
+        company = await db.companies.find_one(
+            {"company_id": user.get("company_id", "default")},
+            {"_id": 0, "name": 1},
+        )
+        company_name = (company or {}).get("name") or user.get("company_id", "default")
+        send_feedback_email(
+            to=SUPPORT_EMAIL,
+            sender_email=user["email"],
+            sender_name=user.get("name", ""),
+            company_name=company_name,
+            user_comment=payload.user_comment or "",
+            page_context=payload.page_context,
+        )
+    except Exception:
+        pass
     return Feedback(**doc)
 
 

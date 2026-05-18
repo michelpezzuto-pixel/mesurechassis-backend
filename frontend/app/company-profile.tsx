@@ -19,6 +19,7 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { api } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { colors } from "@/src/theme";
+import FeedbackButton from "@/src/components/FeedbackButton";
 
 type Plan = "free" | "trial" | "pro";
 
@@ -389,6 +390,9 @@ export default function CompanyProfile() {
               )}
             </TouchableOpacity>
           )}
+
+          {/* === FEEDBACK BUTTON === */}
+          <FeedbackButton />
         </ScrollView>
 
         {/* === Modal Confirmation Désabonnement === */}

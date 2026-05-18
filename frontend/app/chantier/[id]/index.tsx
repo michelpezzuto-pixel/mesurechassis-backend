@@ -74,7 +74,40 @@ export default function ChantierDetail() {
   const [refreshing, setRefreshing] = useState(false);
   const [assignOpen, setAssignOpen] = useState(false);
   const [exporting, setExporting] = useState<string | null>(null);
+  // Override technicien en mode fabrication (déverrouille temporairement)
+  const [techOverride, setTechOverride] = useState(false);
+  const [validating, setValidating] = useState(false);
   const isArchived = chantier?.status === "cloture" || chantier?.status === "termine";
+  const isInFabrication = chantier?.status === "en_fabrication";
+  const isAwaitingValidation =
+    chantier?.status === "a_verifier" ||
+    chantier?.status === "technique_a_valider";
+  // Team size — solo artisan si exactement 1 utilisateur (le master admin)
+  const teamSize = users.length;
+  const isSoloArtisan = teamSize <= 1;
+  // Qui peut valider le passage en fabrication ?
+  // - Mode Solo : l'admin peut valider directement (multi-rôle implicite)
+  // - Mode Équipe : seul le technicien peut valider (l'admin ne peut PAS bypasser)
+  // - artisan_mode (bypass global) = équivalent à solo
+  const canValidateForFab =
+    isAwaitingValidation &&
+    (isSoloArtisan || artisanMode
+      ? user?.role === "admin" || user?.role === "technician"
+      : user?.role === "technician");
+  const isWaitingForTech =
+    isAwaitingValidation && !isSoloArtisan && !artisanMode && user?.role !== "technician";
+  // Verrou fabrication : commercial = read-only strict
+  // Tech peut déverrouiller via override exceptionnel
+  // Admin (sauf solo) = également read-only
+  const canEditMesures = (() => {
+    if (isArchived) return false;
+    if (!canMeasure) return false; // admin sans solo n'a pas le droit de base
+    if (isInFabrication) {
+      // En fabrication : seul le tech avec override peut éditer
+      return user?.role === "technician" && techOverride;
+    }
+    return true;
+  })();
   const creatorName = (() => {
     if (!chantier) return "";
     const u = users.find((x) => x.id === chantier.created_by);
@@ -254,7 +287,35 @@ export default function ChantierDetail() {
         const safe = (chantier.client_name || chantier.id).replace(/[^a-z0-9_-]+/gi, "_");
         const fileUri = `${FileSystem.cacheDirectory}MesureChassis_${safe}.${kind}`;
         const dl = await FileSystem.downloadAsync(url, fileUri, { headers: headers as any });
-        await Sharing.shareAsync(dl.uri, { dialogTitle: `Export ${kind.toUpperCase()}` });
+        // MIME explicite par format — corrige "Sharing is not supported on this platform"
+        const mime =
+          kind === "pdf"
+            ? "application/pdf"
+            : kind === "xlsx"
+              ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              : kind === "csv"
+                ? "text/csv"
+                : "application/json";
+        const isAvailable = await Sharing.isAvailableAsync();
+        if (!isAvailable) {
+          Alert.alert(
+            "Téléchargement OK",
+            `Fichier enregistré : ${dl.uri}`
+          );
+        } else {
+          await Sharing.shareAsync(dl.uri, {
+            dialogTitle: `Export ${kind.toUpperCase()}`,
+            mimeType: mime,
+            UTI:
+              kind === "pdf"
+                ? "com.adobe.pdf"
+                : kind === "csv"
+                  ? "public.comma-separated-values-text"
+                  : kind === "json"
+                    ? "public.json"
+                    : "org.openxmlformats.spreadsheetml.sheet",
+          });
+        }
       }
     } catch (e: any) {
       if (e?.message === "FREE_PLAN_LOCK") {
@@ -270,6 +331,57 @@ export default function ChantierDetail() {
   const assignedUser = chantier?.assigned_to
     ? users.find((u) => u.id === chantier.assigned_to)
     : null;
+
+  /**
+   * Valide le chantier et le fait passer en fabrication.
+   * - Solo Artisan : l'admin peut le faire directement.
+   * - Mode équipe : seul le technicien peut valider (l'admin ne bypass PAS).
+   */
+  const validateForFabrication = async () => {
+    if (!chantier) return;
+    setValidating(true);
+    try {
+      const r = await api.patch<Chantier>(`/chantiers/${chantier.id}`, {
+        status: "en_fabrication",
+      });
+      setChantier(r.data);
+      Alert.alert(
+        "✅ Chantier validé",
+        "Le chantier est désormais en fabrication. Les exports techniques (CSV / Excel) sont disponibles."
+      );
+    } catch (e: any) {
+      const detail = e?.response?.data?.detail;
+      Alert.alert(
+        "Erreur",
+        typeof detail === "string"
+          ? detail
+          : "Validation impossible. Vérifiez vos droits."
+      );
+    } finally {
+      setValidating(false);
+    }
+  };
+
+  /**
+   * Active le mode override technicien : déverrouille temporairement
+   * l'édition des mesures sur un chantier déjà en fabrication.
+   */
+  const requestTechOverride = () => {
+    Alert.alert(
+      "Modification exceptionnelle",
+      "Vous êtes sur le point de déverrouiller temporairement l'édition d'un chantier en fabrication. " +
+        "Cette action doit rester exceptionnelle (coordination atelier urgente). " +
+        "Confirmez-vous ?",
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Confirmer",
+          style: "destructive",
+          onPress: () => setTechOverride(true),
+        },
+      ]
+    );
+  };
 
   const meta = chantier ? statusMeta[chantier.status] : null;
 
@@ -389,7 +501,7 @@ export default function ChantierDetail() {
                   ))}
                 </View>
               )}
-              {canMeasure && !isArchived && (
+              {canEditMesures && (
                 <View style={styles.mesureActions}>
                   <TouchableOpacity
                     testID={`edit-mesure-${item.id}`}
@@ -508,6 +620,88 @@ export default function ChantierDetail() {
               )}
             </View>
 
+            {/* ============ VALIDATION & FABRICATION GATE ============ */}
+            {isAwaitingValidation && canValidateForFab && (
+              <TouchableOpacity
+                testID="validate-for-fabrication-button"
+                onPress={validateForFabrication}
+                disabled={validating}
+                activeOpacity={0.85}
+                style={validateStyles.btnGo}
+              >
+                {validating ? (
+                  <ActivityIndicator color="#000" />
+                ) : (
+                  <>
+                    <Ionicons name="checkmark-done-circle" size={22} color="#000" />
+                    <Text style={validateStyles.btnGoText}>
+                      {isSoloArtisan
+                        ? "✅ VALIDER ET PUBLIER POUR FABRICATION"
+                        : "✅ CLÔTURER ET LANCER LA FABRICATION"}
+                    </Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            )}
+            {isWaitingForTech && (
+              <View style={validateStyles.waitCard}>
+                <Ionicons name="hourglass-outline" size={20} color={colors.warning} />
+                <View style={{ flex: 1 }}>
+                  <Text style={validateStyles.waitTitle}>
+                    EN ATTENTE DE VALIDATION PAR LE TECHNICIEN
+                  </Text>
+                  <Text style={validateStyles.waitBody}>
+                    Seul un technicien peut valider ce chantier pour la
+                    fabrication. L'administrateur ne peut pas bypasser cette
+                    étape de sécurité.
+                  </Text>
+                </View>
+              </View>
+            )}
+            {isInFabrication && user?.role === "technician" && !techOverride && (
+              <TouchableOpacity
+                testID="tech-override-button"
+                onPress={requestTechOverride}
+                activeOpacity={0.85}
+                style={validateStyles.btnOverride}
+              >
+                <Ionicons name="warning" size={20} color={colors.warning} />
+                <Text style={validateStyles.btnOverrideText}>
+                  ⚠️ AUTORISER UNE MODIFICATION EXCEPTIONNELLE
+                </Text>
+              </TouchableOpacity>
+            )}
+            {isInFabrication && techOverride && (
+              <View style={validateStyles.overrideActive}>
+                <Ionicons name="lock-open" size={18} color={colors.anomaly} />
+                <Text style={validateStyles.overrideActiveText}>
+                  Édition déverrouillée temporairement (override technicien).
+                </Text>
+                <TouchableOpacity
+                  onPress={() => setTechOverride(false)}
+                  activeOpacity={0.7}
+                  style={validateStyles.lockBackBtn}
+                >
+                  <Text style={validateStyles.lockBackText}>VERROUILLER</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+            {isInFabrication && user?.role !== "technician" && (
+              <View style={validateStyles.fabLockCard}>
+                <Ionicons name="cog" size={20} color={colors.primary} />
+                <View style={{ flex: 1 }}>
+                  <Text style={validateStyles.fabLockTitle}>
+                    EN FABRICATION — LECTURE SEULE
+                  </Text>
+                  <Text style={validateStyles.fabLockBody}>
+                    {user?.role === "commercial"
+                      ? "Les mesures sont figées pour garantir la cohérence avec l'atelier. Contactez le technicien en cas d'urgence."
+                      : "Seul le technicien peut modifier exceptionnellement les mesures à ce stade."}
+                  </Text>
+                </View>
+              </View>
+            )}
+
             {/* === Exports === */}
             {mesures.length > 0 && (
               <View style={styles.exportCard}>
@@ -604,7 +798,7 @@ export default function ChantierDetail() {
             <Text style={styles.btnSecondaryText}>CLÔTURER</Text>
           </TouchableOpacity>
         )}
-        {canMeasure && chantier.status !== "cloture" && (
+        {canEditMesures && (
           <TouchableOpacity
             testID="add-mesure-button"
             onPress={() => router.push(`/chantier/${id}/new-mesure`)}
@@ -993,4 +1187,125 @@ const styles = StyleSheet.create({
   btnPrimaryText: { color: "#000", fontWeight: "900", fontSize: 15, letterSpacing: 1 },
   btnSecondary: { borderWidth: 2, borderColor: colors.borderStrong },
   btnSecondaryText: { color: colors.textPrimary, fontWeight: "800", letterSpacing: 1 },
+});
+
+
+const validateStyles = StyleSheet.create({
+  btnGo: {
+    marginTop: 14,
+    minHeight: 58,
+    borderRadius: 12,
+    backgroundColor: "#22C55E",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    paddingHorizontal: 14,
+  },
+  btnGoText: {
+    color: "#000",
+    fontWeight: "900",
+    fontSize: 13,
+    letterSpacing: 0.8,
+    textAlign: "center",
+    flexShrink: 1,
+  },
+  waitCard: {
+    marginTop: 14,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+    backgroundColor: "#2a1c08",
+    borderColor: colors.warning,
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 14,
+  },
+  waitTitle: {
+    color: colors.warning,
+    fontWeight: "900",
+    fontSize: 12,
+    letterSpacing: 0.6,
+  },
+  waitBody: {
+    color: colors.textPrimary,
+    fontSize: 12,
+    lineHeight: 17,
+    marginTop: 4,
+  },
+  btnOverride: {
+    marginTop: 14,
+    minHeight: 54,
+    borderRadius: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    paddingHorizontal: 14,
+    backgroundColor: "#2a1c08",
+    borderColor: colors.warning,
+    borderWidth: 2,
+  },
+  btnOverrideText: {
+    color: colors.warning,
+    fontWeight: "900",
+    fontSize: 12,
+    letterSpacing: 0.7,
+    textAlign: "center",
+    flexShrink: 1,
+  },
+  overrideActive: {
+    marginTop: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    backgroundColor: "#3a1010",
+    borderColor: colors.anomaly,
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 12,
+  },
+  overrideActiveText: {
+    color: colors.textPrimary,
+    fontSize: 12,
+    fontWeight: "700",
+    flex: 1,
+  },
+  lockBackBtn: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: colors.borderStrong,
+    backgroundColor: colors.surface,
+  },
+  lockBackText: {
+    color: colors.textPrimary,
+    fontSize: 10,
+    fontWeight: "900",
+    letterSpacing: 0.6,
+  },
+  fabLockCard: {
+    marginTop: 14,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+    backgroundColor: colors.surface,
+    borderColor: colors.borderStrong,
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 14,
+  },
+  fabLockTitle: {
+    color: colors.primary,
+    fontWeight: "900",
+    fontSize: 12,
+    letterSpacing: 0.6,
+  },
+  fabLockBody: {
+    color: colors.textPrimary,
+    fontSize: 12,
+    lineHeight: 17,
+    marginTop: 4,
+  },
 });

@@ -13,13 +13,13 @@ from deps import (
     require_roles,
     send_push_to_user,
 )
+from email_service import send_assignment_email
 from models import (
     Chantier,
     ChantierCreate,
     ChantierUpdate,
     SignatureIn,
 )
-
 router = APIRouter()
 
 
@@ -85,6 +85,29 @@ async def create_chantier(
             f"{client_name} — Prise de rendez-vous à faire",
             {"type": "chantier_assigned", "chantier_id": doc["id"]},
         )
+        # Notification email interne (anti-double : skip si auto-attribution)
+        if payload.assigned_to != user["id"]:
+            try:
+                assignee = await db.users.find_one(
+                    {"id": payload.assigned_to, "company_id": user.get("company_id", "default")},
+                    {"_id": 0, "email": 1, "name": 1},
+                )
+                if assignee and assignee.get("email"):
+                    address_parts = [
+                        p for p in [
+                            payload.address, payload.postal_code, payload.city
+                        ] if p
+                    ]
+                    send_assignment_email(
+                        to=assignee["email"],
+                        assignee_name=assignee.get("name") or "",
+                        chantier_name=client_name,
+                        address=", ".join(address_parts) if address_parts else None,
+                        created_by_name=user.get("name"),
+                    )
+            except Exception:
+                # L'email ne doit jamais bloquer la création
+                pass
     return Chantier(**doc)
 
 
