@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -86,37 +86,67 @@ export default function ChantierDetail() {
   const teamSize = users.length;
   const isSoloArtisan = teamSize <= 1;
   // Qui peut valider le passage en fabrication ?
-  // - Mode Solo : l'admin peut valider directement (multi-rôle implicite)
+  // - Mode Solo (teamSize=1) : l'admin peut valider directement
   // - Mode Équipe : seul le technicien peut valider (l'admin ne peut PAS bypasser)
-  // - artisan_mode (bypass global) = équivalent à solo
+  // NOTE : artisan_mode (toggle UI) ne bypass plus les règles métier liées
+  // à la composition réelle de l'équipe.
   const canValidateForFab =
     isAwaitingValidation &&
-    (isSoloArtisan || artisanMode
+    (isSoloArtisan
       ? user?.role === "admin" || user?.role === "technician"
       : user?.role === "technician");
   const isWaitingForTech =
-    isAwaitingValidation && !isSoloArtisan && !artisanMode && user?.role !== "technician";
+    isAwaitingValidation && !isSoloArtisan && user?.role !== "technician";
   // Verrou fabrication : commercial = read-only strict
   // Tech peut déverrouiller via override exceptionnel
   // Admin (sauf solo) = également read-only
   const canEditMesures = (() => {
     if (isArchived) return false;
-    if (!canMeasure) return false; // admin sans solo n'a pas le droit de base
     if (isInFabrication) {
+      // Solo Artisan : l'admin a tous les droits
+      if (isSoloArtisan && user?.role === "admin") return true;
       // En fabrication : seul le tech avec override peut éditer
       return user?.role === "technician" && techOverride;
     }
+    if (!canMeasure) return false;
     return true;
   })();
 
   // Verrouillage Fabrication / Terminé pour Commercial : on AFFICHE les
   // boutons (Modifier, exports avancés) mais on intercepte le clic avec
-  // un Alert pédagogique. Le mode Solo Artisan / artisan_mode bypass tout.
+  // un Alert pédagogique. Le mode Solo Artisan bypass tout.
   const showCommercialFabIntercept =
     !isSoloArtisan &&
-    !artisanMode &&
     user?.role === "commercial" &&
     (isInFabrication || isArchived);
+
+  // ---- DIAGNOSTIC LOGGING ----------------------------------------------
+  // Permet de diagnostiquer rapidement les états en console développeur.
+  useEffect(() => {
+    if (!chantier || !user) return;
+    // eslint-disable-next-line no-console
+    console.log("[CHANTIER GATE]", {
+      role: user.role,
+      teamSize,
+      isSoloArtisan,
+      status: chantier.status,
+      isInFabrication,
+      isArchived,
+      artisanMode,
+      canEditMesures,
+      showCommercialFabIntercept,
+      canDeleteChantier: undefined, // set below
+    });
+  }, [
+    chantier?.status,
+    user?.role,
+    teamSize,
+    isInFabrication,
+    isArchived,
+    artisanMode,
+    canEditMesures,
+    showCommercialFabIntercept,
+  ]);
 
   /**
    * Affiche l'Alert pédagogique pour les actions verrouillées en
@@ -132,10 +162,9 @@ export default function ChantierDetail() {
 
   // Trash can (suppression chantier) : strictement masqué quand le
   // chantier est terminé/livré pour Commercial et Technicien. Seul le
-  // Master Admin peut supprimer un projet archivé. Solo / artisan_mode
-  // bypass total.
+  // Master Admin peut supprimer un projet archivé. Solo bypass total.
   const canDeleteChantier = (() => {
-    if (isSoloArtisan || artisanMode) return canManage;
+    if (isSoloArtisan) return canManage;
     if (isArchived) return user?.role === "admin";
     return canManage; // hors archivé : admin + commercial
   })();
@@ -805,21 +834,37 @@ export default function ChantierDetail() {
                       locked={isFreePlan || showCommercialFabIntercept}
                     />
                   )}
-                  {(canExportTech || showCommercialFabIntercept) && (
-                    <ExportTile
-                      testID="export-csv-button"
-                      busy={exporting === "csv"}
-                      onPress={() => {
-                        if (showCommercialFabIntercept) return interceptCommercialFab();
-                        downloadExport("csv");
-                      }}
-                      icon="list"
-                      label="CSV"
-                      sub="Tabulaire brut"
-                      color="#3B82F6"
-                      locked={isFreePlan || showCommercialFabIntercept}
-                    />
-                  )}
+                  {/* CSV tile : TOUJOURS visible. Le clic est intercepté
+                      avec un Alert pédagogique pour les rôles non autorisés.
+                      Sur web/simulateur, fallback via anchor blob download. */}
+                  <ExportTile
+                    testID="export-csv-button"
+                    busy={exporting === "csv"}
+                    onPress={() => {
+                      if (showCommercialFabIntercept) return interceptCommercialFab();
+                      if (!canExportTech) {
+                        // Commercial hors fab : alert pédagogique RBAC standard
+                        if (user?.role === "commercial") {
+                          Alert.alert(
+                            "🛑 Export CSV réservé",
+                            "L'export CSV est réservé aux Techniciens et Administrateurs. Demandez l'export technique à votre équipe atelier.",
+                            [{ text: "OK", style: "default" }]
+                          );
+                          return;
+                        }
+                      }
+                      downloadExport("csv");
+                    }}
+                    icon="list"
+                    label="CSV"
+                    sub="Tabulaire brut"
+                    color="#3B82F6"
+                    locked={
+                      isFreePlan ||
+                      showCommercialFabIntercept ||
+                      (!canExportTech && user?.role === "commercial")
+                    }
+                  />
                   {(canExportTech || showCommercialFabIntercept) && (
                     <ExportTile
                       testID="export-json-button"
