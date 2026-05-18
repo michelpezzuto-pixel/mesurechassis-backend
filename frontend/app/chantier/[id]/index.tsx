@@ -108,6 +108,37 @@ export default function ChantierDetail() {
     }
     return true;
   })();
+
+  // Verrouillage Fabrication / Terminé pour Commercial : on AFFICHE les
+  // boutons (Modifier, exports avancés) mais on intercepte le clic avec
+  // un Alert pédagogique. Le mode Solo Artisan / artisan_mode bypass tout.
+  const showCommercialFabIntercept =
+    !isSoloArtisan &&
+    !artisanMode &&
+    user?.role === "commercial" &&
+    (isInFabrication || isArchived);
+
+  /**
+   * Affiche l'Alert pédagogique pour les actions verrouillées en
+   * fabrication / terminé du côté Commercial.
+   */
+  const interceptCommercialFab = () => {
+    Alert.alert(
+      "🛑 Action non autorisée",
+      "Ce chantier est verrouillé en fabrication. Seul le technicien peut modifier ces données ou exporter les formats d'atelier.",
+      [{ text: "J'ai compris", style: "default" }]
+    );
+  };
+
+  // Trash can (suppression chantier) : strictement masqué quand le
+  // chantier est terminé/livré pour Commercial et Technicien. Seul le
+  // Master Admin peut supprimer un projet archivé. Solo / artisan_mode
+  // bypass total.
+  const canDeleteChantier = (() => {
+    if (isSoloArtisan || artisanMode) return canManage;
+    if (isArchived) return user?.role === "admin";
+    return canManage; // hors archivé : admin + commercial
+  })();
   const creatorName = (() => {
     if (!chantier) return "";
     const u = users.find((x) => x.id === chantier.created_by);
@@ -150,6 +181,21 @@ export default function ChantierDetail() {
 
   const handleDelete = () => {
     if (!chantier) return;
+    // Sécurité côté UI : si chantier archivé (Terminé/Livré), seul l'admin
+    // peut supprimer. Solo Artisan / artisan_mode bypassent tout.
+    if (
+      isArchived &&
+      !isSoloArtisan &&
+      !artisanMode &&
+      user?.role !== "admin"
+    ) {
+      Alert.alert(
+        "🔒 Suppression bloquée",
+        "Les chantiers terminés/livrés ne peuvent être supprimés que par l'administrateur principal (Responsable).",
+        [{ text: "J'ai compris", style: "default" }]
+      );
+      return;
+    }
     const msg = `« ${chantier.client_name} » et toutes ses mesures seront supprimés définitivement. Cette action est irréversible.`;
     const doDelete = async () => {
       try {
@@ -369,13 +415,11 @@ export default function ChantierDetail() {
   const requestTechOverride = () => {
     Alert.alert(
       "Modification exceptionnelle",
-      "Vous êtes sur le point de déverrouiller temporairement l'édition d'un chantier en fabrication. " +
-        "Cette action doit rester exceptionnelle (coordination atelier urgente). " +
-        "Confirmez-vous ?",
+      "Voulez-vous temporairement déverrouiller ce chantier ?\n\nCette action accorde un accès édition/suppression temporaire au technicien pour coordination atelier urgente.",
       [
         { text: "Annuler", style: "cancel" },
         {
-          text: "Confirmer",
+          text: "Déverrouiller",
           style: "destructive",
           onPress: () => setTechOverride(true),
         },
@@ -419,7 +463,7 @@ export default function ChantierDetail() {
                     <Text style={styles.address}>{chantier.address}</Text>
                   </View>
                 </View>
-                {canManage && (
+                {canDeleteChantier && (
                   <TouchableOpacity
                     testID="delete-chantier-button"
                     onPress={handleDelete}
@@ -501,11 +545,17 @@ export default function ChantierDetail() {
                   ))}
                 </View>
               )}
-              {canEditMesures && (
+              {(canEditMesures || showCommercialFabIntercept) && (
                 <View style={styles.mesureActions}>
                   <TouchableOpacity
                     testID={`edit-mesure-${item.id}`}
-                    onPress={() => router.push(`/chantier/${id}/new-mesure?mesure_id=${item.id}`)}
+                    onPress={() => {
+                      if (showCommercialFabIntercept) {
+                        interceptCommercialFab();
+                        return;
+                      }
+                      router.push(`/chantier/${id}/new-mesure?mesure_id=${item.id}`);
+                    }}
                     activeOpacity={0.7}
                     style={styles.mesureEditBtn}
                   >
@@ -515,6 +565,10 @@ export default function ChantierDetail() {
                   <TouchableOpacity
                     testID={`delete-mesure-${item.id}`}
                     onPress={() => {
+                      if (showCommercialFabIntercept) {
+                        interceptCommercialFab();
+                        return;
+                      }
                       Alert.alert(
                         "Supprimer cette mesure ?",
                         `« ${item.label} » sera définitivement supprimée.`,
@@ -735,48 +789,51 @@ export default function ChantierDetail() {
                   color="#EF4444"
                   locked={isFreePlan}
                 />
-                  {canExportTech && (
+                  {(canExportTech || showCommercialFabIntercept) && (
                     <ExportTile
                       testID="export-xlsx-button"
                       busy={exporting === "xlsx"}
-                      onPress={() =>
-                        isFreePlan
-                          ? showUpgradeLock()
-                          : router.push(`/chantier/${id}/xlsx-preview`)
-                      }
+                      onPress={() => {
+                        if (showCommercialFabIntercept) return interceptCommercialFab();
+                        if (isFreePlan) return showUpgradeLock();
+                        router.push(`/chantier/${id}/xlsx-preview`);
+                      }}
                       icon="grid"
                       label="EXCEL .xlsx"
                       sub="Tableau atelier"
                       color="#22C55E"
-                      locked={isFreePlan}
+                      locked={isFreePlan || showCommercialFabIntercept}
                     />
                   )}
-                  {canExportTech && (
+                  {(canExportTech || showCommercialFabIntercept) && (
                     <ExportTile
                       testID="export-csv-button"
                       busy={exporting === "csv"}
-                      onPress={() => downloadExport("csv")}
+                      onPress={() => {
+                        if (showCommercialFabIntercept) return interceptCommercialFab();
+                        downloadExport("csv");
+                      }}
                       icon="list"
                       label="CSV"
                       sub="Tabulaire brut"
                       color="#3B82F6"
-                      locked={isFreePlan}
+                      locked={isFreePlan || showCommercialFabIntercept}
                     />
                   )}
-                  {canExportTech && (
+                  {(canExportTech || showCommercialFabIntercept) && (
                     <ExportTile
                       testID="export-json-button"
                       busy={exporting === "json"}
-                      onPress={() =>
-                        isFreePlan
-                          ? showUpgradeLock()
-                          : router.push(`/chantier/${id}/json-preview`)
-                      }
+                      onPress={() => {
+                        if (showCommercialFabIntercept) return interceptCommercialFab();
+                        if (isFreePlan) return showUpgradeLock();
+                        router.push(`/chantier/${id}/json-preview`);
+                      }}
                       icon="code-slash"
                       label="JSON"
                       sub="Intégration CNC"
                       color="#A855F7"
-                      locked={isFreePlan}
+                      locked={isFreePlan || showCommercialFabIntercept}
                     />
                   )}
                 </View>
