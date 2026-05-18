@@ -50,9 +50,15 @@ export default function ChantierDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { user, hasRole, artisanMode, company } = useAuth();
-  const canManage = hasRole(["admin", "commercial"]);
-  const canMeasure = hasRole(["commercial", "technician"]);
-  const canExportTech = hasRole(["technician", "admin"]);
+  // 🔒 HARDCODED ROLE GATES (NE PAS passer par `hasRole` qui peut être
+  // bypassé par `artisan_mode=true` dans la DB).
+  // Ces booléens reflètent STRICTEMENT le rôle réel de l'utilisateur connecté.
+  const roleIsAdmin = user?.role === "admin";
+  const roleIsCommercial = user?.role === "commercial";
+  const roleIsTechnician = user?.role === "technician";
+  const canManage = roleIsAdmin || roleIsCommercial;
+  const canMeasure = roleIsCommercial || roleIsTechnician;
+  const canExportTech = roleIsTechnician || roleIsAdmin;
   const isFreePlan = (company?.plan ?? "trial") === "free";
   const showUpgradeLock = () => {
     Alert.alert(
@@ -84,20 +90,25 @@ export default function ChantierDetail() {
     chantier?.status === "a_verifier" ||
     chantier?.status === "technique_a_valider";
   // Team size — solo artisan si exactement 1 utilisateur (le master admin)
+  // ⚠️ On considère "non chargé" tant que `users` est vide afin d'éviter de
+  // basculer transitoirement en mode "solo" pendant le fetch initial (ce qui
+  // ferait apparaître le bouton vert à l'admin avant la liste des membres).
+  const usersLoaded = users.length > 0;
   const teamSize = users.length;
-  const isSoloArtisan = teamSize <= 1;
-  // Qui peut valider le passage en fabrication ?
-  // - Mode Solo (teamSize=1) : l'admin peut valider directement
-  // - Mode Équipe : seul le technicien peut valider (l'admin ne peut PAS bypasser)
-  // NOTE : artisan_mode (toggle UI) ne bypass plus les règles métier liées
-  // à la composition réelle de l'équipe.
+  const isSoloArtisan = usersLoaded && teamSize === 1;
+  // 🔒 Qui peut valider le passage en fabrication ?
+  // - Mode Solo (teamSize=1) : admin ou technicien
+  // - Mode Équipe : SEUL le technicien (jamais commercial, jamais admin)
+  // - Tant que `users` n'est pas chargé : pas de bouton (sécurité)
   const canValidateForFab =
+    usersLoaded &&
     isAwaitingValidation &&
     (isSoloArtisan
-      ? user?.role === "admin" || user?.role === "technician"
-      : user?.role === "technician");
+      ? roleIsAdmin || roleIsTechnician
+      : roleIsTechnician);
+  // Message d'attente : tout le monde sauf le technicien en mode équipe.
   const isWaitingForTech =
-    isAwaitingValidation && !isSoloArtisan && user?.role !== "technician";
+    usersLoaded && isAwaitingValidation && !isSoloArtisan && !roleIsTechnician;
   // Verrou fabrication : commercial = read-only strict
   // Tech peut déverrouiller via override exceptionnel
   // Admin (sauf solo) = également read-only
@@ -105,9 +116,9 @@ export default function ChantierDetail() {
     if (isArchived) return false;
     if (isInFabrication) {
       // Solo Artisan : l'admin a tous les droits
-      if (isSoloArtisan && user?.role === "admin") return true;
+      if (isSoloArtisan && roleIsAdmin) return true;
       // En fabrication : seul le tech avec override peut éditer
-      return user?.role === "technician" && techOverride;
+      return roleIsTechnician && techOverride;
     }
     if (!canMeasure) return false;
     return true;
@@ -118,7 +129,7 @@ export default function ChantierDetail() {
   // un Alert pédagogique. Le mode Solo Artisan bypass tout.
   const showCommercialFabIntercept =
     !isSoloArtisan &&
-    user?.role === "commercial" &&
+    roleIsCommercial &&
     (isInFabrication || isArchived);
 
   // ---- DIAGNOSTIC LOGGING ----------------------------------------------
@@ -161,13 +172,17 @@ export default function ChantierDetail() {
     );
   };
 
-  // Trash can (suppression chantier) : strictement masqué quand le
-  // chantier est terminé/livré pour Commercial et Technicien. Seul le
-  // Master Admin peut supprimer un projet archivé. Solo bypass total.
+  // 🗑️ Trash can (suppression chantier) :
+  //   - Status `en_fabrication` OU `cloture/termine` :
+  //       → MASQUÉ pour TOUS en mode équipe (Commercial + Technicien + Admin).
+  //       → En mode Solo : seul le master Admin peut supprimer.
+  //   - Autres statuts (nouveau / a_verifier / technique_a_valider) :
+  //       → Admin ou Commercial peuvent supprimer (canManage).
   const canDeleteChantier = (() => {
-    if (isSoloArtisan) return canManage;
-    if (isArchived) return user?.role === "admin";
-    return canManage; // hors archivé : admin + commercial
+    if (isInFabrication || isArchived) {
+      return isSoloArtisan && roleIsAdmin;
+    }
+    return canManage;
   })();
   const creatorName = (() => {
     if (!chantier) return "";

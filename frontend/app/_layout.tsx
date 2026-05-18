@@ -5,6 +5,9 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AuthProvider } from "@/src/context/AuthContext";
 import { startQueueAutoSync } from "@/src/services/offlineQueue";
+// ⚠️ Side-effect import: patches `Alert.alert` on web (no-op in RNW) so the
+// pedagogical popups (RBAC, fabrication lock…) are visible on the web preview.
+import "@/src/utils/alertPolyfill";
 
 export default function RootLayout() {
   useEffect(() => {
