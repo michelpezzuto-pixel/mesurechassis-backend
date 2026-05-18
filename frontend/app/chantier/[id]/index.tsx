@@ -361,8 +361,8 @@ export default function ChantierDetail() {
         const Sharing = await import("expo-sharing");
         const safe = (chantier.client_name || chantier.id).replace(/[^a-z0-9_-]+/gi, "_");
         const fileUri = `${FileSystem.cacheDirectory}MesureChassis_${safe}.${kind}`;
-        const dl = await FileSystem.downloadAsync(url, fileUri, { headers: headers as any });
-        // MIME explicite par format — corrige "Sharing is not supported on this platform"
+
+        // MIME + UTI explicites par format
         const mime =
           kind === "pdf"
             ? "application/pdf"
@@ -371,24 +371,52 @@ export default function ChantierDetail() {
               : kind === "csv"
                 ? "text/csv"
                 : "application/json";
+        const uti =
+          kind === "pdf"
+            ? "com.adobe.pdf"
+            : kind === "csv"
+              ? "public.comma-separated-values-text"
+              : kind === "json"
+                ? "public.json"
+                : "org.openxmlformats.spreadsheetml.sheet";
+
+        // CSV & JSON : fichiers texte → on récupère le contenu via fetch et on écrit
+        // explicitement un fichier UTF-8 sur disque. Ça garantit que `Sharing.shareAsync`
+        // reçoit un vrai fichier .csv et déclenche la Share Sheet iOS (au lieu d'ouvrir
+        // le texte brut dans une WebView/QuickLook qui bloque l'écran).
+        let finalUri: string;
+        if (kind === "csv" || kind === "json") {
+          const r = await fetch(url, { headers });
+          if (r.status === 402) throw new Error("FREE_PLAN_LOCK");
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          const text = await r.text();
+          await FileSystem.writeAsStringAsync(fileUri, text, {
+            encoding: FileSystem.EncodingType.UTF8,
+          });
+          finalUri = fileUri;
+        } else {
+          // PDF / XLSX : binaires → downloadAsync direct
+          const dl = await FileSystem.downloadAsync(url, fileUri, { headers: headers as any });
+          if (dl.status === 402) throw new Error("FREE_PLAN_LOCK");
+          if (dl.status && dl.status >= 400) throw new Error(`HTTP ${dl.status}`);
+          finalUri = dl.uri;
+        }
+
+        // Vérifie que le fichier existe réellement avant de partager
+        const info = await FileSystem.getInfoAsync(finalUri);
+        if (!info.exists) {
+          Alert.alert("Erreur export", "Fichier introuvable après téléchargement.");
+          return;
+        }
+
         const isAvailable = await Sharing.isAvailableAsync();
         if (!isAvailable) {
-          Alert.alert(
-            "Téléchargement OK",
-            `Fichier enregistré : ${dl.uri}`
-          );
+          Alert.alert("Téléchargement OK", `Fichier enregistré : ${finalUri}`);
         } else {
-          await Sharing.shareAsync(dl.uri, {
+          await Sharing.shareAsync(finalUri, {
             dialogTitle: `Export ${kind.toUpperCase()}`,
             mimeType: mime,
-            UTI:
-              kind === "pdf"
-                ? "com.adobe.pdf"
-                : kind === "csv"
-                  ? "public.comma-separated-values-text"
-                  : kind === "json"
-                    ? "public.json"
-                    : "org.openxmlformats.spreadsheetml.sheet",
+            UTI: uti,
           });
         }
       }
