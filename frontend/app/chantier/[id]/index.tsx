@@ -4,6 +4,7 @@ import {
   Alert,
   FlatList,
   Image,
+  Linking,
   Modal,
   Platform,
   RefreshControl,
@@ -325,6 +326,74 @@ export default function ChantierDetail() {
   };
 
   // -------- Exports --------------------------------------------------------
+
+  /**
+   * Fallback iOS / Mobile Safari : ouvre le client Mail natif via `mailto:`
+   * avec le contenu CSV/JSON en pièce-jointe textuelle (body).
+   *
+   * Pourquoi ?
+   *  - Sur Expo Go iOS, `Sharing.shareAsync` sur du `text/csv` ouvre parfois
+   *    QuickLook plein écran sans bouton retour (limitation iOS).
+   *  - Sur Mobile Safari (preview web), l'attribut `<a download>` n'est pas
+   *    respecté → Safari rend le CSV en table HTML plein écran.
+   *  - Ce fallback garantit que l'utilisateur ne reste JAMAIS bloqué.
+   *
+   * NB : `mailto:` a une limite de body (~2KB iOS, ~5KB Android). On tronque
+   * proprement si nécessaire en indiquant à l'utilisateur que le fichier
+   * complet est disponible côté Web.
+   */
+  const offerEmailFallback = (
+    kind: "csv" | "json",
+    content: string,
+    clientName: string
+  ) => {
+    const MAX_BODY = 1500; // marge de sécurité sous la limite mailto: iOS
+    const truncated =
+      content.length > MAX_BODY
+        ? content.slice(0, MAX_BODY) +
+          "\n\n[...]\n— Contenu tronqué. Connectez-vous à MesureChâssis sur le web pour récupérer le fichier complet."
+        : content;
+    const subject = `MesureChâssis — Export ${kind.toUpperCase()} — ${clientName}`;
+    const adminEmail = user?.email || ""; // pré-remplit avec l'email du master admin connecté
+
+    Alert.alert(
+      "Partage natif indisponible",
+      "Impossible d'ouvrir le partage natif sur cet appareil. Voulez-vous envoyer le fichier directement par email au bureau ?",
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Oui, envoyer par email",
+          onPress: async () => {
+            const mailtoUrl = `mailto:${adminEmail}?subject=${encodeURIComponent(
+              subject
+            )}&body=${encodeURIComponent(truncated)}`;
+            try {
+              const supported = await Linking.canOpenURL(mailtoUrl);
+              if (!supported) {
+                Alert.alert(
+                  "Aucune app Mail détectée",
+                  "Veuillez configurer un client mail sur cet appareil (Mail, Gmail, Outlook…) pour utiliser cette option."
+                );
+                return;
+              }
+              await Linking.openURL(mailtoUrl);
+            } catch (e: any) {
+              Alert.alert("Erreur", e?.message || "Impossible d'ouvrir le client mail.");
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  /** Détecte iOS Safari (Mobile Safari sur la preview Web). */
+  const isIOSMobileSafari = (): boolean => {
+    if (Platform.OS !== "web") return false;
+    if (typeof navigator === "undefined") return false;
+    const ua = navigator.userAgent || "";
+    return /iPad|iPhone|iPod/.test(ua) && !/CriOS|FxiOS|EdgiOS/.test(ua);
+  };
+
   const downloadExport = async (kind: "pdf" | "xlsx" | "csv" | "json") => {
     if (!chantier) return;
     if (isFreePlan) {
@@ -346,8 +415,20 @@ export default function ChantierDetail() {
           throw new Error("FREE_PLAN_LOCK");
         }
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        const blob = await r.blob();
         const safe = (chantier.client_name || chantier.id).replace(/[^a-z0-9_-]+/gi, "_");
+
+        // 🍏 iOS Mobile Safari ignore l'attribut `<a download>` et navigue
+        // directement vers le blob, ce qui affiche le CSV en plein écran sous
+        // forme de table HTML (bug remonté par l'utilisateur). On bascule donc
+        // sur le fallback `mailto:` immédiatement pour CSV/JSON sur cette
+        // plateforme uniquement.
+        if (isIOSMobileSafari() && (kind === "csv" || kind === "json")) {
+          const text = await r.text();
+          offerEmailFallback(kind, text, safe);
+          return;
+        }
+
+        const blob = await r.blob();
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
         a.download = `MesureChassis_${safe}.${kind}`;
@@ -380,17 +461,16 @@ export default function ChantierDetail() {
                 ? "public.json"
                 : "org.openxmlformats.spreadsheetml.sheet";
 
-        // CSV & JSON : fichiers texte → on récupère le contenu via fetch et on écrit
-        // explicitement un fichier UTF-8 sur disque. Ça garantit que `Sharing.shareAsync`
-        // reçoit un vrai fichier .csv et déclenche la Share Sheet iOS (au lieu d'ouvrir
-        // le texte brut dans une WebView/QuickLook qui bloque l'écran).
+        // CSV & JSON : on récupère le contenu en texte (utile pour le fallback
+        // `mailto:` si Sharing échoue) puis on écrit un fichier UTF-8 sur disque.
         let finalUri: string;
+        let textContent: string | null = null;
         if (kind === "csv" || kind === "json") {
           const r = await fetch(url, { headers });
           if (r.status === 402) throw new Error("FREE_PLAN_LOCK");
           if (!r.ok) throw new Error(`HTTP ${r.status}`);
-          const text = await r.text();
-          await FileSystem.writeAsStringAsync(fileUri, text, {
+          textContent = await r.text();
+          await FileSystem.writeAsStringAsync(fileUri, textContent, {
             encoding: FileSystem.EncodingType.UTF8,
           });
           finalUri = fileUri;
@@ -411,13 +491,33 @@ export default function ChantierDetail() {
 
         const isAvailable = await Sharing.isAvailableAsync();
         if (!isAvailable) {
-          Alert.alert("Téléchargement OK", `Fichier enregistré : ${finalUri}`);
-        } else {
+          // Sharing API indisponible → fallback `mailto:` pour CSV/JSON
+          if ((kind === "csv" || kind === "json") && textContent != null) {
+            offerEmailFallback(kind, textContent, safe);
+          } else {
+            Alert.alert("Téléchargement OK", `Fichier enregistré : ${finalUri}`);
+          }
+          return;
+        }
+
+        try {
           await Sharing.shareAsync(finalUri, {
             dialogTitle: `Export ${kind.toUpperCase()}`,
             mimeType: mime,
             UTI: uti,
           });
+        } catch (shareErr: any) {
+          // 🍏 iOS Expo Go : `Sharing.shareAsync` peut échouer ou ouvrir un
+          // QuickLook plein écran sur les fichiers texte (CSV/JSON). On
+          // propose le fallback `mailto:` à l'utilisateur.
+          if ((kind === "csv" || kind === "json") && textContent != null) {
+            offerEmailFallback(kind, textContent, safe);
+          } else {
+            Alert.alert(
+              "Partage indisponible",
+              shareErr?.message || "Impossible d'ouvrir le partage sur cet appareil."
+            );
+          }
         }
       }
     } catch (e: any) {
