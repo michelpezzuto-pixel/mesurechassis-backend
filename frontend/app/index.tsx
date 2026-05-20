@@ -117,7 +117,7 @@ export default function SignIn() {
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.brandWrap}>
             <View style={styles.logoBox}>
-              <Ionicons name="resize" size={32} color="#000" />
+              <Ionicons name="arrow-up" size={36} color={colors.primary} />
             </View>
             <Text style={styles.brand}>MESURECHÂSSIS</Text>
             <Text style={styles.tagline}>Mesures terrain · Menuiseries pro</Text>
@@ -311,10 +311,12 @@ const styles = StyleSheet.create({
   scroll: { padding: 24, paddingBottom: 60 },
   brandWrap: { alignItems: "center", marginTop: 16, marginBottom: 32 },
   logoBox: {
-    width: 64,
-    height: 64,
-    borderRadius: 12,
-    backgroundColor: colors.primary,
+    width: 72,
+    height: 72,
+    borderRadius: 16,
+    backgroundColor: "#0C0C0E",
+    borderWidth: 3,
+    borderColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 12,

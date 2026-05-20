@@ -101,16 +101,10 @@ export default function ChantierDetail() {
   const isSoloArtisan = usersLoaded && teamSize === 1;
   // 📐 Qui peut PRENDRE / MODIFIER des mesures ?
   //  - Commercial & Technicien : toujours (sur chantiers non-fab)
-  //  - Admin : seulement en Mode Artisan Solo (1 user) OU si le toggle
-  //    "Mode artisan" est activé dans le profil société (override explicite
-  //    pour les sociétés multi-utilisateurs qui veulent un accès admin direct).
-  //  - C'est le fix du bug : avant, l'admin n'avait JAMAIS le droit de
-  //    mesurer → bouton "AJOUTER UNE OUVERTURE" invisible même sur un
-  //    chantier vide en mode artisan.
-  const canMeasure =
-    roleIsCommercial ||
-    roleIsTechnician ||
-    (roleIsAdmin && (isSoloArtisan || artisanMode));
+  //  - Admin : TOUJOURS — il gère et configure, doit pouvoir mesurer pour
+  //    démo, formation, ajustement. Le RBAC reste strict sur la VALIDATION
+  //    de la fabrication (seul technicien en mode équipe).
+  const canMeasure = roleIsCommercial || roleIsTechnician || roleIsAdmin;
   // 🔒 Qui peut valider le passage en fabrication ?
   // - Mode Solo (teamSize=1) : admin ou technicien
   // - Mode Équipe : SEUL le technicien (jamais commercial, jamais admin)
@@ -127,17 +121,29 @@ export default function ChantierDetail() {
   // Verrou fabrication : commercial = read-only strict
   // Tech peut déverrouiller via override exceptionnel
   // Admin (sauf solo) = également read-only
+  // 🔒 Chantier TERMINÉ (cloture/livre) = verrou ABSOLU pour tous les rôles
+  //    (sauf consultation PDF/CSV/XLSX/JSON qui restent ouverts).
   const canEditMesures = (() => {
-    if (isArchived) return false;
+    if (isArchived) return false; // Terminé/Clôturé = verrou total
     if (isInFabrication) {
-      // Solo Artisan : l'admin a tous les droits
       if (isSoloArtisan && roleIsAdmin) return true;
-      // En fabrication : seul le tech avec override peut éditer
       return roleIsTechnician && techOverride;
     }
     if (!canMeasure) return false;
     return true;
   })();
+
+  // 🔒 Interception pour chantier TERMINÉ — popup pédagogique
+  //    Le verrou s'applique à TOUS les rôles (commercial, tech, admin).
+  //    Les exports (PDF, CSV, XLSX, JSON) restent 100% disponibles.
+  const showArchivedLockIntercept = isArchived;
+  const interceptArchivedLock = () => {
+    Alert.alert(
+      "🔒 Chantier verrouillé",
+      "Les mesures ne sont plus modifiables. Veuillez vous référer au PDF d'export.",
+      [{ text: "J'ai compris", style: "default" }]
+    );
+  };
 
   // Verrouillage Fabrication / Terminé pour Commercial : on AFFICHE les
   // boutons (Modifier, exports avancés) mais on intercepte le clic avec
@@ -145,7 +151,7 @@ export default function ChantierDetail() {
   const showCommercialFabIntercept =
     !isSoloArtisan &&
     roleIsCommercial &&
-    (isInFabrication || isArchived);
+    isInFabrication;
 
   // ---- DIAGNOSTIC LOGGING ----------------------------------------------
   // Permet de diagnostiquer rapidement les états en console développeur.
@@ -468,84 +474,93 @@ export default function ChantierDetail() {
         setTimeout(() => URL.revokeObjectURL(a.href), 0);
       } else {
         // Native: open in system viewer / share
-        const FileSystem = await import("expo-file-system/legacy");
-        const Sharing = await import("expo-sharing");
+        // 🐛 FIX iOS Expo Go SDK 54 — `expo-file-system/legacy` peut planter
+        // au runtime avec "TurboModuleProxy: Cannot read property 'get' of
+        // undefined" sur certaines configurations Expo Go (modules natifs
+        // non liés). On entoure TOUTE l'opération dans un mega try/catch qui
+        // bascule vers le fallback `mailto:` (CSV/JSON) ou une Alert
+        // explicite (PDF/XLSX) si le natif crashe.
         const safe = (chantier.client_name || chantier.id).replace(/[^a-z0-9_-]+/gi, "_");
-        const fileUri = `${FileSystem.cacheDirectory}MesureChassis_${safe}.${kind}`;
-
-        // MIME + UTI explicites par format
-        const mime =
-          kind === "pdf"
-            ? "application/pdf"
-            : kind === "xlsx"
-              ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-              : kind === "csv"
-                ? "text/csv"
-                : "application/json";
-        const uti =
-          kind === "pdf"
-            ? "com.adobe.pdf"
-            : kind === "csv"
-              ? "public.comma-separated-values-text"
-              : kind === "json"
-                ? "public.json"
-                : "org.openxmlformats.spreadsheetml.sheet";
-
-        // CSV & JSON : on récupère le contenu en texte (utile pour le fallback
-        // `mailto:` si Sharing échoue) puis on écrit un fichier UTF-8 sur disque.
-        let finalUri: string;
         let textContent: string | null = null;
+
+        // 1) D'abord on récupère le contenu (HTTP) pour pouvoir fallback
+        //    AVANT même de toucher au natif iOS.
+        const r = await fetch(url, { headers });
+        if (r.status === 402) throw new Error("FREE_PLAN_LOCK");
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
         if (kind === "csv" || kind === "json") {
-          const r = await fetch(url, { headers });
-          if (r.status === 402) throw new Error("FREE_PLAN_LOCK");
-          if (!r.ok) throw new Error(`HTTP ${r.status}`);
           textContent = await r.text();
-          await FileSystem.writeAsStringAsync(fileUri, textContent, {
-            encoding: FileSystem.EncodingType.UTF8,
-          });
-          finalUri = fileUri;
-        } else {
-          // PDF / XLSX : binaires → downloadAsync direct
-          const dl = await FileSystem.downloadAsync(url, fileUri, { headers: headers as any });
-          if (dl.status === 402) throw new Error("FREE_PLAN_LOCK");
-          if (dl.status && dl.status >= 400) throw new Error(`HTTP ${dl.status}`);
-          finalUri = dl.uri;
         }
 
-        // Vérifie que le fichier existe réellement avant de partager
-        const info = await FileSystem.getInfoAsync(finalUri);
-        if (!info.exists) {
-          Alert.alert("Erreur export", "Fichier introuvable après téléchargement.");
-          return;
-        }
-
-        const isAvailable = await Sharing.isAvailableAsync();
-        if (!isAvailable) {
-          // Sharing API indisponible → fallback `mailto:` pour CSV/JSON
-          if ((kind === "csv" || kind === "json") && textContent != null) {
-            offerEmailFallback(kind, textContent, safe);
-          } else {
-            Alert.alert("Téléchargement OK", `Fichier enregistré : ${finalUri}`);
-          }
-          return;
-        }
-
+        // 2) Tentative native (download + share). Si ÇA PLANTE → fallback.
         try {
+          const FileSystem = await import("expo-file-system/legacy");
+          const Sharing = await import("expo-sharing");
+          const cacheDir = FileSystem.cacheDirectory;
+          if (!cacheDir) throw new Error("FS_UNAVAILABLE");
+          const fileUri = `${cacheDir}MesureChassis_${safe}.${kind}`;
+
+          const mime =
+            kind === "pdf"
+              ? "application/pdf"
+              : kind === "xlsx"
+                ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                : kind === "csv"
+                  ? "text/csv"
+                  : "application/json";
+          const uti =
+            kind === "pdf"
+              ? "com.adobe.pdf"
+              : kind === "csv"
+                ? "public.comma-separated-values-text"
+                : kind === "json"
+                  ? "public.json"
+                  : "org.openxmlformats.spreadsheetml.sheet";
+
+          let finalUri: string;
+          if (textContent != null) {
+            await FileSystem.writeAsStringAsync(fileUri, textContent, {
+              encoding: FileSystem.EncodingType.UTF8,
+            });
+            finalUri = fileUri;
+          } else {
+            const dl = await FileSystem.downloadAsync(url, fileUri, {
+              headers: headers as any,
+            });
+            if (dl.status === 402) throw new Error("FREE_PLAN_LOCK");
+            if (dl.status && dl.status >= 400) throw new Error(`HTTP ${dl.status}`);
+            finalUri = dl.uri;
+          }
+
+          const info = await FileSystem.getInfoAsync(finalUri);
+          if (!info.exists) throw new Error("FILE_NOT_FOUND");
+
+          const isAvailable = await Sharing.isAvailableAsync();
+          if (!isAvailable) {
+            if (textContent != null) {
+              offerEmailFallback(kind as "csv" | "json", textContent, safe);
+            } else {
+              Alert.alert("Téléchargement OK", `Fichier enregistré : ${finalUri}`);
+            }
+            return;
+          }
           await Sharing.shareAsync(finalUri, {
             dialogTitle: `Export ${kind.toUpperCase()}`,
             mimeType: mime,
             UTI: uti,
           });
-        } catch (shareErr: any) {
-          // 🍏 iOS Expo Go : `Sharing.shareAsync` peut échouer ou ouvrir un
-          // QuickLook plein écran sur les fichiers texte (CSV/JSON). On
-          // propose le fallback `mailto:` à l'utilisateur.
+        } catch (nativeErr: any) {
+          // Crash natif (TurboModuleProxy ou autre) → fallback gracieux
+          console.warn("[export native] fallback:", nativeErr?.message || nativeErr);
           if ((kind === "csv" || kind === "json") && textContent != null) {
             offerEmailFallback(kind, textContent, safe);
           } else {
+            // PDF / XLSX : on ne peut pas embarquer un binaire dans un mailto.
+            // On propose à l'utilisateur d'utiliser la version web.
             Alert.alert(
-              "Partage indisponible",
-              shareErr?.message || "Impossible d'ouvrir le partage sur cet appareil."
+              "Export indisponible sur Expo Go",
+              `Le téléchargement direct du fichier ${kind.toUpperCase()} n'est pas supporté sur cet appareil. Veuillez utiliser la version web de MesureChâssis (depuis Safari/Chrome) pour télécharger ce format.`,
+              [{ text: "OK" }]
             );
           }
         }
@@ -732,11 +747,15 @@ export default function ChantierDetail() {
                   ))}
                 </View>
               )}
-              {(canEditMesures || showCommercialFabIntercept) && (
+              {(canEditMesures || showCommercialFabIntercept || showArchivedLockIntercept) && (
                 <View style={styles.mesureActions}>
                   <TouchableOpacity
                     testID={`edit-mesure-${item.id}`}
                     onPress={() => {
+                      if (showArchivedLockIntercept) {
+                        interceptArchivedLock();
+                        return;
+                      }
                       if (showCommercialFabIntercept) {
                         interceptCommercialFab();
                         return;
@@ -752,6 +771,10 @@ export default function ChantierDetail() {
                   <TouchableOpacity
                     testID={`delete-mesure-${item.id}`}
                     onPress={() => {
+                      if (showArchivedLockIntercept) {
+                        interceptArchivedLock();
+                        return;
+                      }
                       if (showCommercialFabIntercept) {
                         interceptCommercialFab();
                         return;
@@ -801,8 +824,9 @@ export default function ChantierDetail() {
             {canEditMesures ? (
               <>
                 <Text style={styles.emptyHint}>
-                  Commencez par ajouter votre première ouverture (Fixe,
-                  Ouvrant, Coulissant, Oscillo-battant, Trapèze, Porte…)
+                  Commencez par ajouter votre première ouverture (Carré /
+                  Rectangle, Porte, Trapèze, Triangle, Œil-de-bœuf, Coulissant
+                  levant, Porte de garage…)
                 </Text>
                 <TouchableOpacity
                   testID="empty-add-ouverture-button"
@@ -816,6 +840,11 @@ export default function ChantierDetail() {
                   </Text>
                 </TouchableOpacity>
               </>
+            ) : showArchivedLockIntercept ? (
+              <Text style={styles.emptyHint}>
+                🔒 Chantier verrouillé. Les mesures ne sont plus modifiables.
+                Référez-vous au PDF d'export.
+              </Text>
             ) : showCommercialFabIntercept ? (
               <Text style={styles.emptyHint}>
                 Ce chantier est verrouillé en fabrication. Seul le technicien
@@ -962,6 +991,27 @@ export default function ChantierDetail() {
                     {user?.role === "commercial"
                       ? "Les mesures sont figées pour garantir la cohérence avec l'atelier. Contactez le technicien en cas d'urgence."
                       : "Seul le technicien peut modifier exceptionnellement les mesures à ce stade."}
+                  </Text>
+                </View>
+              </View>
+            )}
+
+            {/* 🔒 Bannière verrou TOTAL si chantier "Terminé / Clôturé".
+                 Les exports PDF/CSV/XLSX/JSON restent 100% dispo en dessous. */}
+            {isArchived && (
+              <View
+                testID="chantier-archived-lock-banner"
+                style={validateStyles.archivedLockCard}
+              >
+                <Ionicons name="lock-closed" size={20} color={colors.success} />
+                <View style={{ flex: 1 }}>
+                  <Text style={validateStyles.archivedLockTitle}>
+                    🔒 CHANTIER VERROUILLÉ
+                  </Text>
+                  <Text style={validateStyles.archivedLockBody}>
+                    Les mesures ne sont plus modifiables. Référez-vous au PDF
+                    d'export. Les téléchargements (PDF, CSV, Excel, JSON)
+                    restent disponibles ci-dessous.
                   </Text>
                 </View>
               </View>
@@ -1611,6 +1661,29 @@ const validateStyles = StyleSheet.create({
     letterSpacing: 0.6,
   },
   fabLockBody: {
+    color: colors.textPrimary,
+    fontSize: 12,
+    lineHeight: 17,
+    marginTop: 4,
+  },
+  archivedLockCard: {
+    marginTop: 14,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+    backgroundColor: "#0b2418",
+    borderColor: colors.success,
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 14,
+  },
+  archivedLockTitle: {
+    color: colors.success,
+    fontWeight: "900",
+    fontSize: 13,
+    letterSpacing: 0.6,
+  },
+  archivedLockBody: {
     color: colors.textPrimary,
     fontSize: 12,
     lineHeight: 17,

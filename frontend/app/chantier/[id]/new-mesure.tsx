@@ -1,19 +1,19 @@
 /**
  * ╔══════════════════════════════════════════════════════════════════════╗
- * ║  MesureChâssis — Wizard "Nouvelle Ouverture" — V1 (7 formes)         ║
+ * ║  MesureChâssis — Wizard "Nouvelle Ouverture" — V1.1 PRODUCTION       ║
  * ╠══════════════════════════════════════════════════════════════════════╣
  * ║  Architecture en 3 étapes :                                          ║
- * ║   1. Configuration globale (Type projet, Façade, Seuils, Options)    ║
- * ║   2. Sélection de la forme (7 formes)                                ║
- * ║   3. Cotes adaptatives selon la forme + finitions                    ║
+ * ║   1. Configuration mur (Maçonnerie + Isolation/Finition dynamique)   ║
+ * ║   2. Sélection de la forme (7 formes — sans sous-type ouvrant)       ║
+ * ║   3. Cotes adaptatives + feuillures conditionnelles + trait 1m calc  ║
  * ║                                                                      ║
- * ║  Tous les nouveaux champs (project_type, facade_type, shape,         ║
- * ║  opening_subtype, garage_*, triangle_*, oeil_diameter…) sont stockés ║
- * ║  dans payload.options{} pour rester rétro-compatible avec le backend ║
- * ║  existant. `block_type` est conservé pour compat exports/CSV/PDF.    ║
+ * ║  Tous les nouveaux champs (masonry_type, gros_oeuvre_mm, insul_mode, ║
+ * ║  parement_*, feuillure_*, shape…) sont stockés dans payload.options{}║
+ * ║  → rétro-compatibilité 100% du backend. `block_type` mappé proprement║
+ * ║  vers les 4 valeurs historiques pour les exports PDF/CSV/XLSX/JSON.  ║
  * ╚══════════════════════════════════════════════════════════════════════╝
  */
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -48,44 +48,41 @@ import { colors } from "@/src/theme";
 
 type Step = 0 | 1 | 2;
 
-/** Type de projet — adapte le wording / défauts des étapes suivantes. */
 type ProjectType = "construction" | "renovation";
 
-/** Type de façade (étape 1). */
-type FacadeType =
-  | "brique"
-  | "pierre"
-  | "crepi"
-  | "bardage_bois"
-  | "beton"
-  | "ite_enduit"
-  | "iti";
+/** Type de gros œuvre (maçonnerie). */
+type MasonryType = "bloc_beton" | "bloc_terre_cuite" | "brique" | "pierre";
 
-/** 7 formes de la V1. */
+/** Mode d'isolation/finition. */
+type InsulationMode = "none" | "iti" | "ite";
+
+/** Type de parement (uniquement si ITE). */
+type ParementType = "crepi" | "brique_parement" | "pierre_parement" | "bardage";
+
+/** 7 formes V1. */
 type Shape =
-  | "rect" // A — Carré / Rectangle
-  | "porte_entree" // B — Porte d'entrée
-  | "porte_garage" // C — Porte de garage
-  | "trapeze" // D — Trapèze
-  | "triangle" // E — Triangle
-  | "oeil_de_boeuf" // H — Œil-de-bœuf
-  | "coulissant_levant"; // K — Coulissant levant
+  | "rect"
+  | "porte_entree"
+  | "porte_garage"
+  | "trapeze"
+  | "triangle"
+  | "oeil_de_boeuf"
+  | "coulissant_levant";
 
-/** Sous-type d'ouvrant (rect uniquement). */
-type OpeningSubtype = "fixe" | "ouvrant" | "oscillo_battant" | "coulissant";
-
-/** Type de paroi (étape 3, héritée). */
-type WallType = "ite" | "iti" | "brique_parement" | "crepi_simple";
 type DiagState = "auto" | "validated" | "manual";
 
-const FACADES: { key: FacadeType; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
-  { key: "brique", label: "Brique apparente", icon: "grid-outline" },
+const MASONRIES: { key: MasonryType; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
+  { key: "bloc_beton", label: "Bloc béton", icon: "cube-outline" },
+  { key: "bloc_terre_cuite", label: "Bloc Terre cuite", icon: "albums-outline" },
+  { key: "brique", label: "Brique", icon: "grid-outline" },
   { key: "pierre", label: "Pierre", icon: "diamond-outline" },
+];
+
+const PAREMENTS: { key: ParementType; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
   { key: "crepi", label: "Crépi", icon: "color-fill-outline" },
-  { key: "bardage_bois", label: "Bardage bois", icon: "leaf-outline" },
-  { key: "beton", label: "Béton", icon: "cube-outline" },
-  { key: "ite_enduit", label: "ITE-Enduit", icon: "albums-outline" },
-  { key: "iti", label: "ITI", icon: "layers-outline" },
+  { key: "brique_parement", label: "Brique parement", icon: "grid-outline" },
+  { key: "pierre_parement", label: "Pierre", icon: "diamond-outline" },
+  { key: "bardage", label: "Bardage", icon: "leaf-outline" },
 ];
 
 const SHAPES: {
@@ -95,80 +92,56 @@ const SHAPES: {
   icon: keyof typeof Ionicons.glyphMap;
   desc: string;
 }[] = [
-  {
-    key: "rect",
-    letter: "A",
-    label: "CARRÉ / RECTANGLE",
-    icon: "square-outline",
-    desc: "Fenêtre standard (fixe, ouvrant, oscillo-battant, coulissant)",
-  },
-  {
-    key: "porte_entree",
-    letter: "B",
-    label: "PORTE D'ENTRÉE",
-    icon: "exit-outline",
-    desc: "Avec réserve sol & trait de niveau 1m",
-  },
-  {
-    key: "porte_garage",
-    letter: "C",
-    label: "PORTE DE GARAGE",
-    icon: "car-outline",
-    desc: "Avec linteau et écoinçons",
-  },
-  {
-    key: "trapeze",
-    letter: "D",
-    label: "TRAPÈZE",
-    icon: "triangle-outline",
-    desc: "Hauteur gauche ≠ Hauteur droite",
-  },
-  {
-    key: "triangle",
-    letter: "E",
-    label: "TRIANGLE",
-    icon: "trail-sign-outline",
-    desc: "Base + hauteur",
-  },
-  {
-    key: "oeil_de_boeuf",
-    letter: "H",
-    label: "ŒIL-DE-BŒUF",
-    icon: "ellipse-outline",
-    desc: "Ouverture circulaire (diamètre)",
-  },
-  {
-    key: "coulissant_levant",
-    letter: "K",
-    label: "COULISSANT LEVANT",
-    icon: "swap-horizontal-outline",
-    desc: "Levant-coulissant avec réserve sol",
-  },
-];
-
-const OPENING_SUBTYPES: { key: OpeningSubtype; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
-  { key: "fixe", label: "Fixe", icon: "stop-outline" },
-  { key: "ouvrant", label: "Ouvrant", icon: "open-outline" },
-  { key: "oscillo_battant", label: "Oscillo-battant", icon: "sync-outline" },
-  { key: "coulissant", label: "Coulissant", icon: "swap-horizontal-outline" },
+  { key: "rect", letter: "A", label: "CARRÉ / RECTANGLE", icon: "square-outline", desc: "Baie standard rectangulaire" },
+  { key: "porte_entree", letter: "B", label: "PORTE D'ENTRÉE", icon: "exit-outline", desc: "Avec réserve sol & trait niveau 1m" },
+  { key: "porte_garage", letter: "C", label: "PORTE DE GARAGE", icon: "car-outline", desc: "Avec linteau et écoinçons" },
+  { key: "trapeze", letter: "D", label: "TRAPÈZE", icon: "triangle-outline", desc: "Hauteur gauche ≠ Hauteur droite" },
+  { key: "triangle", letter: "E", label: "TRIANGLE", icon: "trail-sign-outline", desc: "Base + hauteur" },
+  { key: "oeil_de_boeuf", letter: "H", label: "ŒIL-DE-BŒUF", icon: "ellipse-outline", desc: "Ouverture circulaire (diamètre)" },
+  { key: "coulissant_levant", letter: "K", label: "COULISSANT LEVANT", icon: "swap-horizontal-outline", desc: "Levant-coulissant avec réserve sol" },
 ];
 
 // ════════════════════════════════════════════════════════════════════════
-// État des étapes
+// State shapes
 // ════════════════════════════════════════════════════════════════════════
-
 type Step1Data = {
   project_type: ProjectType;
-  facade_type: FacadeType | null;
-  sill_already_installed: boolean | null; // null = pas encore choisi
+  // Maçonnerie
+  masonry_type: MasonryType | null;
+  gros_oeuvre_mm: string;
+  // Isolation
+  insulation_mode: InsulationMode | null;
+  iti_thickness_mm: string;
+  // ITE
+  ite_insul_thickness_mm: string;
+  parement_type: ParementType | null;
+  // ITE-Crépi
+  crepi_thickness_mm: string;
+  // ITE-Brique/Pierre
+  coulisse_thickness_mm: string;
+  brique_pierre_thickness_mm: string;
+  // ITE-Bardage
+  structure_lame_air_mm: string;
+  // Statut Seuils
+  sill_already_installed: boolean | null;
   sill_thickness_mm: string;
+  // Options
   has_breastwork: boolean;
   has_horizontal_cut: boolean;
 };
 
 const initStep1 = (): Step1Data => ({
   project_type: "renovation",
-  facade_type: null,
+  masonry_type: null,
+  gros_oeuvre_mm: "",
+  insulation_mode: null,
+  iti_thickness_mm: "",
+  ite_insul_thickness_mm: "",
+  parement_type: null,
+  crepi_thickness_mm: "",
+  coulisse_thickness_mm: "",
+  brique_pierre_thickness_mm: "",
+  structure_lame_air_mm: "",
   sill_already_installed: null,
   sill_thickness_mm: "",
   has_breastwork: false,
@@ -176,42 +149,35 @@ const initStep1 = (): Step1Data => ({
 });
 
 type Step3Data = {
-  // Cotes principales (toutes les formes)
   bay_width: string;
   bay_height: string;
   diag_1: string;
   diag_1_state: DiagState;
   diag_2: string;
   diag_2_state: DiagState;
-  // Mode rénovation (rect)
   renovation_mode: boolean;
   width_top: string;
   width_bottom: string;
   height_left: string;
   height_right: string;
-  // Trapèze
   trap_height_left: string;
   trap_height_right: string;
-  // Triangle
   triangle_base: string;
   triangle_height: string;
-  // Œil-de-bœuf
   oeil_diameter: string;
-  // Porte de garage
   garage_lintel: string;
   garage_ecoincon_left: string;
   garage_ecoincon_right: string;
-  // Portes & coulissant levant
+  // Réserve sol — uniquement porte_entree, porte_garage, coulissant_levant
   floor_reserve: string;
+  // 🆕 Trait niveau 1m — quand activé, on saisit la mesure brute et on
+  // calcule auto la réserve sol via : reserve = brut - 1000
   has_1m_level_mark: boolean;
-  // Rect — sous-type d'ouvrant
-  opening_subtype: OpeningSubtype | null;
-  // Conception maçonnerie (hérité)
-  bloc_thickness: string;
-  wall_type: WallType | null;
-  insulation_thickness: string;
-  finish_outer: string;
-  finish_inner: string;
+  trait_1m_brut_mm: string;
+  // 🆕 Feuillures — conditionnelles selon masonry_type (Brique / Pierre / Bloc béton)
+  feuillure_left_mm: string;
+  feuillure_right_mm: string;
+  feuillure_top_mm: string;
 };
 
 const initStep3 = (): Step3Data => ({
@@ -236,12 +202,10 @@ const initStep3 = (): Step3Data => ({
   garage_ecoincon_right: "",
   floor_reserve: "",
   has_1m_level_mark: false,
-  opening_subtype: "fixe",
-  bloc_thickness: "",
-  wall_type: null,
-  insulation_thickness: "",
-  finish_outer: "",
-  finish_inner: "",
+  trait_1m_brut_mm: "",
+  feuillure_left_mm: "",
+  feuillure_right_mm: "",
+  feuillure_top_mm: "",
 });
 
 const parseNum = (s: string) => {
@@ -249,11 +213,6 @@ const parseNum = (s: string) => {
   return Number.isFinite(n) ? n : null;
 };
 
-/**
- * Mapping shape → block_type (backend compat).
- * Le backend ne connaît que 4 block_types historiques.
- * Toutes les nouvelles formes sont mappées + détaillées via options.shape.
- */
 const shapeToBlockType = (s: Shape): "standard" | "coulissant" | "porte" | "trapeze" => {
   switch (s) {
     case "rect":
@@ -270,17 +229,19 @@ const shapeToBlockType = (s: Shape): "standard" | "coulissant" | "porte" | "trap
   }
 };
 
-/** Reverse-mapping pour l'edit mode. */
 const inferShape = (m: any): Shape => {
   const fromOpts = (m?.options?.shape as Shape) || null;
   if (fromOpts) return fromOpts;
-  // Fallback selon block_type historique
   const bt = m?.block_type;
   if (bt === "trapeze") return "trapeze";
   if (bt === "porte") return "porte_entree";
-  if (bt === "coulissant") return "rect"; // ancien coulissant → rect+sous-type
+  if (bt === "coulissant") return "rect";
   return "rect";
 };
+
+// Feuillures requises pour ces maçonneries
+const masonryHasFeuillures = (m: MasonryType | null): boolean =>
+  m === "brique" || m === "pierre" || m === "bloc_beton";
 
 // ════════════════════════════════════════════════════════════════════════
 // Composant principal
@@ -294,6 +255,7 @@ export default function NewMesureWizard() {
   const [step, setStep] = useState<Step>(0);
   const [shape, setShape] = useState<Shape | null>(null);
   const [label, setLabel] = useState("");
+  const [labelError, setLabelError] = useState(false);
   const [photo, setPhoto] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [loadingEdit, setLoadingEdit] = useState(!!editingId);
@@ -308,12 +270,16 @@ export default function NewMesureWizard() {
   const [reportText, setReportText] = useState("");
   const [reportSending, setReportSending] = useState(false);
 
+  // refs pour scrollTo automatique sur erreur libellé
+  const scrollRef = useRef<ScrollView>(null);
+  const labelRef = useRef<View>(null);
+
   const setS1Field = <K extends keyof Step1Data>(k: K, v: Step1Data[K]) =>
     setS1((p) => ({ ...p, [k]: v }));
   const setS3Field = <K extends keyof Step3Data>(k: K, v: Step3Data[K]) =>
     setS3((p) => ({ ...p, [k]: v }));
 
-  // ────── Edit mode loader ──────────────────────────────────────────────
+  // ────── Edit mode loader ────────────────────────────────────────────
   useEffect(() => {
     if (!editingId) return;
     (async () => {
@@ -328,7 +294,16 @@ export default function NewMesureWizard() {
         const toStr = (v: any) => (v == null || v === "" ? "" : String(v));
         setS1({
           project_type: opts.project_type || (m.renovation_mode ? "renovation" : "construction"),
-          facade_type: opts.facade_type || null,
+          masonry_type: opts.masonry_type || null,
+          gros_oeuvre_mm: toStr(opts.gros_oeuvre_mm),
+          insulation_mode: opts.insulation_mode || null,
+          iti_thickness_mm: toStr(opts.iti_thickness_mm),
+          ite_insul_thickness_mm: toStr(opts.ite_insul_thickness_mm),
+          parement_type: opts.parement_type || null,
+          crepi_thickness_mm: toStr(opts.crepi_thickness_mm),
+          coulisse_thickness_mm: toStr(opts.coulisse_thickness_mm),
+          brique_pierre_thickness_mm: toStr(opts.brique_pierre_thickness_mm),
+          structure_lame_air_mm: toStr(opts.structure_lame_air_mm),
           sill_already_installed:
             opts.sill_already_installed == null ? null : !!opts.sill_already_installed,
           sill_thickness_mm: toStr(opts.sill_thickness_mm),
@@ -339,7 +314,7 @@ export default function NewMesureWizard() {
         const isReno = !!m.renovation_mode;
         setS3((prev) => ({
           ...prev,
-          bay_width: isTrap ? toStr(m.bay_width) : isReno ? "" : toStr(m.bay_width),
+          bay_width: toStr(m.bay_width),
           bay_height: isReno || isTrap ? "" : toStr(m.bay_height),
           diag_1: toStr(m.bay_diagonal_1),
           diag_1_state: m.bay_diagonal_1 ? "validated" : "manual",
@@ -360,14 +335,11 @@ export default function NewMesureWizard() {
           garage_ecoincon_right: toStr(opts.garage_ecoincon_right_mm),
           floor_reserve: toStr(m.floor_reserve),
           has_1m_level_mark: !!opts.has_1m_level_mark,
-          opening_subtype: opts.opening_subtype || "fixe",
-          bloc_thickness: toStr(m.bloc_thickness),
-          wall_type: m.wall_type || null,
-          insulation_thickness: toStr(m.insulation_thickness),
-          finish_outer: toStr(m.finish_outer),
-          finish_inner: toStr(m.finish_inner),
+          trait_1m_brut_mm: toStr(opts.trait_1m_brut_mm),
+          feuillure_left_mm: toStr(opts.feuillure_left_mm),
+          feuillure_right_mm: toStr(opts.feuillure_right_mm),
+          feuillure_top_mm: toStr(opts.feuillure_top_mm),
         }));
-        // Edit : on commence à l'étape 1 mais shape déjà connu
         setStep(0);
       } catch {
         Alert.alert("Erreur", "Mesure introuvable.");
@@ -379,7 +351,7 @@ export default function NewMesureWizard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingId]);
 
-  // ────── Pythagore (rect, porte, coulissant — pas trap/triangle/oeil) ──
+  // ────── Pythagore ──────────────────────────────────────────────────
   const usesDiagonals = (sh: Shape | null) =>
     sh === "rect" || sh === "porte_entree" || sh === "porte_garage" || sh === "coulissant_levant";
 
@@ -391,12 +363,10 @@ export default function NewMesureWizard() {
     const d = Math.round(Math.sqrt(w * w + h * h));
     setS3((prev) => {
       let next = prev;
-      if (force || (prev.diag_1_state !== "validated" && prev.diag_1.trim().length === 0)) {
+      if (force || (prev.diag_1_state !== "validated" && prev.diag_1.trim().length === 0))
         next = { ...next, diag_1: String(d), diag_1_state: "auto" };
-      }
-      if (force || (prev.diag_2_state !== "validated" && prev.diag_2.trim().length === 0)) {
+      if (force || (prev.diag_2_state !== "validated" && prev.diag_2.trim().length === 0))
         next = { ...next, diag_2: String(d), diag_2_state: "auto" };
-      }
       return next;
     });
   };
@@ -406,24 +376,68 @@ export default function NewMesureWizard() {
     [shape, s3.bay_width, s3.bay_height]
   );
 
-  // ────── Validations ───────────────────────────────────────────────────
+  // Calcul auto réserve sol si trait 1m activé
+  const computedFloorReserve = useMemo(() => {
+    if (!s3.has_1m_level_mark) return null;
+    const brut = parseNum(s3.trait_1m_brut_mm);
+    if (!brut) return null;
+    return brut - 1000;
+  }, [s3.has_1m_level_mark, s3.trait_1m_brut_mm]);
+
+  // ────── Validations ────────────────────────────────────────────────
   const validateStep1 = (): boolean => {
     const err: Record<string, boolean> = {};
-    if (!s1.facade_type) err.facade_type = true;
-    if (s1.sill_already_installed == null) err.sill_already_installed = true;
-    if (s1.sill_already_installed === false && !parseNum(s1.sill_thickness_mm)) {
-      err.sill_thickness_mm = true;
+    if (!s1.masonry_type) err.masonry_type = true;
+    if (!parseNum(s1.gros_oeuvre_mm)) err.gros_oeuvre_mm = true;
+    if (!s1.insulation_mode) err.insulation_mode = true;
+    if (s1.insulation_mode === "iti" && !parseNum(s1.iti_thickness_mm)) err.iti_thickness_mm = true;
+    if (s1.insulation_mode === "ite") {
+      if (!s1.parement_type) err.parement_type = true;
+      if (!parseNum(s1.ite_insul_thickness_mm)) err.ite_insul_thickness_mm = true;
+      if (s1.parement_type === "crepi" && !parseNum(s1.crepi_thickness_mm))
+        err.crepi_thickness_mm = true;
+      if (
+        (s1.parement_type === "brique_parement" || s1.parement_type === "pierre_parement") &&
+        (!parseNum(s1.coulisse_thickness_mm) || !parseNum(s1.brique_pierre_thickness_mm))
+      ) {
+        if (!parseNum(s1.coulisse_thickness_mm)) err.coulisse_thickness_mm = true;
+        if (!parseNum(s1.brique_pierre_thickness_mm)) err.brique_pierre_thickness_mm = true;
+      }
+      if (s1.parement_type === "bardage" && !parseNum(s1.structure_lame_air_mm))
+        err.structure_lame_air_mm = true;
     }
+    if (s1.sill_already_installed == null) err.sill_already_installed = true;
+    if (s1.sill_already_installed === false && !parseNum(s1.sill_thickness_mm))
+      err.sill_thickness_mm = true;
     setS1Err(err);
     return Object.keys(err).length === 0;
+  };
+
+  const focusLabel = () => {
+    setLabelError(true);
+    try {
+      labelRef.current?.measureInWindow?.((_x, y) => {
+        scrollRef.current?.scrollTo({ y: Math.max(0, y - 120), animated: true });
+      });
+    } catch {
+      /* noop */
+    }
   };
 
   const validateStep3 = (): boolean => {
     if (!shape) return false;
     const err: Record<string, boolean> = {};
+    let ok = true;
+    // 🔴 Libellé obligatoire — focus + rouge vif si oublié
     if (!label.trim()) {
-      Alert.alert("Libellé manquant", "Indiquez un libellé (ex. Salon).");
-      return false;
+      focusLabel();
+      Alert.alert(
+        "Libellé manquant",
+        "Indiquez le libellé / référence du châssis (ex. Salon, Chambre 1, Porte d'entrée…)."
+      );
+      ok = false;
+    } else {
+      setLabelError(false);
     }
 
     if (shape === "trapeze") {
@@ -442,7 +456,6 @@ export default function NewMesureWizard() {
       if (!parseNum(s3.garage_ecoincon_left)) err.garage_ecoincon_left = true;
       if (!parseNum(s3.garage_ecoincon_right)) err.garage_ecoincon_right = true;
     } else {
-      // rect / porte_entree / coulissant_levant
       if (s3.renovation_mode && shape === "rect") {
         if (!parseNum(s3.width_top)) err.width_top = true;
         if (!parseNum(s3.width_bottom)) err.width_bottom = true;
@@ -456,20 +469,32 @@ export default function NewMesureWizard() {
         if (s3.diag_1_state === "auto") err.diag_1 = true;
         if (s3.diag_2_state === "auto") err.diag_2 = true;
       }
+      // Portes & coulissant levant : réserve sol obligatoire (sauf si trait 1m calcule)
       if (
         (shape === "porte_entree" || shape === "coulissant_levant") &&
+        !s3.has_1m_level_mark &&
         !parseNum(s3.floor_reserve)
       ) {
         err.floor_reserve = true;
       }
+      // Si trait 1m activé : la mesure brute est obligatoire
+      if (
+        (shape === "porte_entree" || shape === "coulissant_levant") &&
+        s3.has_1m_level_mark &&
+        !parseNum(s3.trait_1m_brut_mm)
+      ) {
+        err.trait_1m_brut_mm = true;
+      }
     }
-    if (!parseNum(s3.bloc_thickness)) err.bloc_thickness = true;
-    if (!s3.wall_type) err.wall_type = true;
+    // Porte garage : réserve sol obligatoire
+    if (shape === "porte_garage" && !parseNum(s3.floor_reserve)) {
+      err.floor_reserve = true;
+    }
     setS3Err(err);
-    return Object.keys(err).length === 0;
+    return ok && Object.keys(err).length === 0;
   };
 
-  // ────── Photo helpers ─────────────────────────────────────────────────
+  // ────── Photo helpers ──────────────────────────────────────────────
   const pickPhoto = async (source: "camera" | "library") => {
     const fn =
       source === "camera"
@@ -493,34 +518,64 @@ export default function NewMesureWizard() {
     }
   };
 
-  // ────── Submit ────────────────────────────────────────────────────────
+  // ────── Submit ────────────────────────────────────────────────────
   const submit = async () => {
     if (!shape || !validateStep3()) return;
     setSaving(true);
-
-    // Construit le payload
     const opts: Record<string, unknown> = {
       // Étape 1
       project_type: s1.project_type,
-      facade_type: s1.facade_type,
+      masonry_type: s1.masonry_type,
+      gros_oeuvre_mm: parseNum(s1.gros_oeuvre_mm),
+      insulation_mode: s1.insulation_mode,
+      iti_thickness_mm: s1.insulation_mode === "iti" ? parseNum(s1.iti_thickness_mm) : null,
+      ite_insul_thickness_mm:
+        s1.insulation_mode === "ite" ? parseNum(s1.ite_insul_thickness_mm) : null,
+      parement_type: s1.insulation_mode === "ite" ? s1.parement_type : null,
+      crepi_thickness_mm:
+        s1.insulation_mode === "ite" && s1.parement_type === "crepi"
+          ? parseNum(s1.crepi_thickness_mm)
+          : null,
+      coulisse_thickness_mm:
+        s1.insulation_mode === "ite" &&
+        (s1.parement_type === "brique_parement" || s1.parement_type === "pierre_parement")
+          ? parseNum(s1.coulisse_thickness_mm)
+          : null,
+      brique_pierre_thickness_mm:
+        s1.insulation_mode === "ite" &&
+        (s1.parement_type === "brique_parement" || s1.parement_type === "pierre_parement")
+          ? parseNum(s1.brique_pierre_thickness_mm)
+          : null,
+      structure_lame_air_mm:
+        s1.insulation_mode === "ite" && s1.parement_type === "bardage"
+          ? parseNum(s1.structure_lame_air_mm)
+          : null,
       sill_already_installed: s1.sill_already_installed,
-      sill_thickness_mm: s1.sill_already_installed === false ? parseNum(s1.sill_thickness_mm) : null,
+      sill_thickness_mm:
+        s1.sill_already_installed === false ? parseNum(s1.sill_thickness_mm) : null,
       has_breastwork: s1.has_breastwork,
       has_horizontal_cut: s1.has_horizontal_cut,
-      // Étape 2 — forme + sous-type
+      // Étape 2
       shape,
+      // Étape 3 — Feuillures (si maçonnerie requiert)
+      feuillure_left_mm: masonryHasFeuillures(s1.masonry_type)
+        ? parseNum(s3.feuillure_left_mm)
+        : null,
+      feuillure_right_mm: masonryHasFeuillures(s1.masonry_type)
+        ? parseNum(s3.feuillure_right_mm)
+        : null,
+      feuillure_top_mm: masonryHasFeuillures(s1.masonry_type)
+        ? parseNum(s3.feuillure_top_mm)
+        : null,
+      // Trait 1m
+      has_1m_level_mark: s3.has_1m_level_mark,
+      trait_1m_brut_mm: s3.has_1m_level_mark ? parseNum(s3.trait_1m_brut_mm) : null,
     };
-    if (shape === "rect") opts.opening_subtype = s3.opening_subtype;
-    if (shape === "porte_entree" || shape === "coulissant_levant") {
-      opts.has_1m_level_mark = s3.has_1m_level_mark;
-    }
     if (shape === "triangle") {
       opts.triangle_base_mm = parseNum(s3.triangle_base);
       opts.triangle_height_mm = parseNum(s3.triangle_height);
     }
-    if (shape === "oeil_de_boeuf") {
-      opts.oeil_diameter_mm = parseNum(s3.oeil_diameter);
-    }
+    if (shape === "oeil_de_boeuf") opts.oeil_diameter_mm = parseNum(s3.oeil_diameter);
     if (shape === "porte_garage") {
       opts.garage_lintel_mm = parseNum(s3.garage_lintel);
       opts.garage_ecoincon_left_mm = parseNum(s3.garage_ecoincon_left);
@@ -533,6 +588,30 @@ export default function NewMesureWizard() {
       label: label.trim(),
       photo_url: photo,
       bay_width: parseNum(s3.bay_width),
+      // Mappage backend des champs maçonnerie (pour les exports historiques)
+      bloc_thickness: parseNum(s1.gros_oeuvre_mm),
+      wall_type:
+        s1.insulation_mode === "ite"
+          ? s1.parement_type === "crepi"
+            ? "crepi_simple"
+            : s1.parement_type === "brique_parement" || s1.parement_type === "pierre_parement"
+              ? "brique_parement"
+              : "ite"
+          : s1.insulation_mode === "iti"
+            ? "iti"
+            : "crepi_simple",
+      insulation_thickness:
+        s1.insulation_mode === "iti"
+          ? parseNum(s1.iti_thickness_mm)
+          : s1.insulation_mode === "ite"
+            ? parseNum(s1.ite_insul_thickness_mm)
+            : null,
+      finish_outer:
+        s1.parement_type === "crepi"
+          ? parseNum(s1.crepi_thickness_mm)
+          : s1.parement_type === "brique_parement" || s1.parement_type === "pierre_parement"
+            ? parseNum(s1.brique_pierre_thickness_mm)
+            : null,
       options: opts,
     };
 
@@ -540,12 +619,10 @@ export default function NewMesureWizard() {
       payload.height_left = parseNum(s3.trap_height_left);
       payload.height_right = parseNum(s3.trap_height_right);
     } else if (shape === "triangle") {
-      // Mappé en trapèze avec base=width, hauteur=height_left=height_right
       payload.bay_width = parseNum(s3.triangle_base);
       payload.height_left = parseNum(s3.triangle_height);
       payload.height_right = parseNum(s3.triangle_height);
     } else if (shape === "oeil_de_boeuf") {
-      // Mappé : largeur=hauteur=diamètre
       payload.bay_width = parseNum(s3.oeil_diameter);
       payload.bay_height = parseNum(s3.oeil_diameter);
     } else if (shape === "rect" && s3.renovation_mode) {
@@ -568,14 +645,17 @@ export default function NewMesureWizard() {
       payload.diag_2_verified = s3.diag_2_state !== "auto";
     }
 
-    payload.bloc_thickness = parseNum(s3.bloc_thickness);
-    payload.wall_type = s3.wall_type;
-    if (shape === "porte_entree" || shape === "porte_garage" || shape === "coulissant_levant") {
-      payload.floor_reserve = parseNum(s3.floor_reserve);
+    // Réserve sol — trait 1m calc auto OU saisie manuelle
+    if (
+      shape === "porte_entree" ||
+      shape === "porte_garage" ||
+      shape === "coulissant_levant"
+    ) {
+      const reserve = s3.has_1m_level_mark
+        ? computedFloorReserve
+        : parseNum(s3.floor_reserve);
+      payload.floor_reserve = reserve;
     }
-    if (s3.insulation_thickness) payload.insulation_thickness = parseNum(s3.insulation_thickness);
-    if (s3.finish_outer) payload.finish_outer = parseNum(s3.finish_outer);
-    if (s3.finish_inner) payload.finish_inner = parseNum(s3.finish_inner);
 
     try {
       const online = await isOnline();
@@ -586,11 +666,8 @@ export default function NewMesureWizard() {
         ]);
         return;
       }
-      if (editingId) {
-        await api.patch(`/mesures/${editingId}`, payload);
-      } else {
-        await api.post("/mesures", payload);
-      }
+      if (editingId) await api.patch(`/mesures/${editingId}`, payload);
+      else await api.post("/mesures", payload);
       router.back();
     } catch {
       if (editingId) {
@@ -606,7 +683,7 @@ export default function NewMesureWizard() {
     }
   };
 
-  // ────── Quick report ───────────────────────────────────────────────────
+  // ────── Report ─────────────────────────────────────────────────────
   const sendReport = async () => {
     if (!reportText.trim()) return;
     setReportSending(true);
@@ -626,24 +703,18 @@ export default function NewMesureWizard() {
     }
   };
 
-  // ────── Navigation entre étapes ────────────────────────────────────────
+  // ────── Navigation ─────────────────────────────────────────────────
   const goNextFromStep1 = () => {
     if (!validateStep1()) return;
     setStep(1);
   };
-
   const onPickShape = (sh: Shape) => {
     setShape(sh);
     setStep(2);
   };
-
-  const canGoBack = step > 0;
   const goBack = () => {
-    if (step === 0) {
-      router.back();
-    } else {
-      setStep((step - 1) as Step);
-    }
+    if (step === 0) router.back();
+    else setStep((step - 1) as Step);
   };
 
   if (loadingEdit) {
@@ -660,7 +731,6 @@ export default function NewMesureWizard() {
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={styles.flex}
       >
-        {/* ── Top bar : steps + signaler ────────────────────────────── */}
         <View style={styles.topBar}>
           <View style={styles.stepRow}>
             {[0, 1, 2].map((i) => (
@@ -685,20 +755,23 @@ export default function NewMesureWizard() {
         </View>
 
         <ScrollView
+          ref={scrollRef}
           contentContainerStyle={{ padding: 16, paddingBottom: 200 }}
           keyboardShouldPersistTaps="handled"
         >
-          {step === 0 && (
-            <Step1Config s1={s1} setField={setS1Field} err={s1Err} />
-          )}
-          {step === 1 && (
-            <Step2Shape onPick={onPickShape} current={shape} />
-          )}
+          {step === 0 && <Step1Config s1={s1} setField={setS1Field} err={s1Err} />}
+          {step === 1 && <Step2Shape onPick={onPickShape} current={shape} />}
           {step === 2 && shape && (
             <Step3Cotes
               shape={shape}
               label={label}
-              setLabel={setLabel}
+              setLabel={(v) => {
+                setLabel(v);
+                if (labelError && v.trim()) setLabelError(false);
+              }}
+              labelError={labelError}
+              labelRef={labelRef}
+              s1MasonryType={s1.masonry_type}
               s3={s3}
               setField={setS3Field}
               err={s3Err}
@@ -708,23 +781,21 @@ export default function NewMesureWizard() {
               onBlurDimension={() => computeDiagonals(false)}
               onComputeDiagonals={() => computeDiagonals(true)}
               canComputeDiag={canComputeDiag}
+              computedFloorReserve={computedFloorReserve}
             />
           )}
         </ScrollView>
 
-        {/* ── Footer nav ──────────────────────────────────────────── */}
         <View style={styles.footer}>
-          {canGoBack && (
-            <TouchableOpacity
-              testID="wizard-back"
-              onPress={goBack}
-              style={[styles.btn, styles.btnSecondary]}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
-              <Text style={styles.btnSecondaryText}>RETOUR</Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity
+            testID="wizard-back"
+            onPress={goBack}
+            style={[styles.btn, styles.btnSecondary]}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
+            <Text style={styles.btnSecondaryText}>RETOUR</Text>
+          </TouchableOpacity>
           {step === 0 && (
             <TouchableOpacity
               testID="wizard-next-to-step2"
@@ -757,7 +828,6 @@ export default function NewMesureWizard() {
         </View>
       </KeyboardAvoidingView>
 
-      {/* ── Modal de signalement ──────────────────────────────────── */}
       <Modal visible={reportOpen} transparent animationType="fade" onRequestClose={() => setReportOpen(false)}>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -811,7 +881,7 @@ export default function NewMesureWizard() {
 }
 
 // ════════════════════════════════════════════════════════════════════════
-// Étape 1 — Configuration globale
+// Étape 1 — Configurateur de Mur Dynamique
 // ════════════════════════════════════════════════════════════════════════
 function Step1Config({
   s1,
@@ -824,8 +894,8 @@ function Step1Config({
 }) {
   return (
     <View>
-      <Text style={styles.h1}>CONFIGURATION DU CHANTIER</Text>
-      <Text style={styles.h2}>Étape 1/3 · Contexte technique de l'ouverture</Text>
+      <Text style={styles.h1}>CONFIGURATION DU MUR</Text>
+      <Text style={styles.h2}>Étape 1/3 · Structure de la maison (fait 1 seule fois)</Text>
 
       {/* Type de projet */}
       <Text style={[styles.sectionLabel, { marginTop: 22 }]}>TYPE DE PROJET *</Text>
@@ -846,44 +916,160 @@ function Step1Config({
         />
       </View>
 
-      {/* Type de façade */}
+      {/* Maçonnerie */}
       <Text style={[styles.sectionLabel, { marginTop: 22 }]}>
-        TYPE DE FAÇADE * {err.facade_type && <Text style={styles.errInline}> ⚠</Text>}
+        TYPE DE MAÇONNERIE * {err.masonry_type && <Text style={styles.errInline}> ⚠</Text>}
       </Text>
       <View style={styles.facadeGrid}>
-        {FACADES.map((f) => {
-          const active = s1.facade_type === f.key;
+        {MASONRIES.map((m) => {
+          const active = s1.masonry_type === m.key;
           return (
             <TouchableOpacity
-              key={f.key}
-              testID={`facade-${f.key}`}
-              onPress={() => setField("facade_type", f.key)}
+              key={m.key}
+              testID={`masonry-${m.key}`}
+              onPress={() => setField("masonry_type", m.key)}
               activeOpacity={0.85}
               style={[
                 styles.facadeCard,
                 active && styles.facadeCardActive,
-                err.facade_type && !active && { borderColor: colors.anomaly },
+                err.masonry_type && !active && { borderColor: colors.anomaly },
               ]}
             >
-              <Ionicons
-                name={f.icon}
-                size={22}
-                color={active ? colors.primary : colors.textSecondary}
-              />
+              <Ionicons name={m.icon} size={22} color={active ? colors.primary : colors.textSecondary} />
               <Text style={[styles.facadeLabel, active && { color: colors.primary }]}>
-                {f.label}
+                {m.label}
               </Text>
             </TouchableOpacity>
           );
         })}
       </View>
 
-      {/* Statut des seuils */}
+      {/* Épaisseur Gros Œuvre */}
+      {s1.masonry_type && (
+        <CotField
+          testID="input-gros-oeuvre"
+          label="ÉPAISSEUR DU GROS ŒUVRE (mm) *"
+          value={s1.gros_oeuvre_mm}
+          onChange={(v) => setField("gros_oeuvre_mm", v.replace(",", "."))}
+          error={!!err.gros_oeuvre_mm}
+        />
+      )}
+
+      {/* Isolation & Finition */}
+      <Text style={[styles.sectionLabel, { marginTop: 22 }]}>
+        ISOLATION & FINITION * {err.insulation_mode && <Text style={styles.errInline}> ⚠</Text>}
+      </Text>
+      <View style={{ gap: 8 }}>
+        <InsulationOption
+          testID="insul-none"
+          active={s1.insulation_mode === "none"}
+          icon="reader-outline"
+          label="Mur plein sans isolation"
+          onPress={() => setField("insulation_mode", "none")}
+        />
+        <InsulationOption
+          testID="insul-iti"
+          active={s1.insulation_mode === "iti"}
+          icon="layers-outline"
+          label="Isolation Intérieure (ITI)"
+          onPress={() => setField("insulation_mode", "iti")}
+        />
+        {s1.insulation_mode === "iti" && (
+          <CotField
+            testID="input-iti-thickness"
+            label="ÉPAISSEUR ISOLANT INT. (mm) *"
+            value={s1.iti_thickness_mm}
+            onChange={(v) => setField("iti_thickness_mm", v.replace(",", "."))}
+            error={!!err.iti_thickness_mm}
+          />
+        )}
+        <InsulationOption
+          testID="insul-ite"
+          active={s1.insulation_mode === "ite"}
+          icon="albums-outline"
+          label="Isolation Extérieure (ITE)"
+          onPress={() => setField("insulation_mode", "ite")}
+        />
+        {s1.insulation_mode === "ite" && (
+          <>
+            <Text style={[styles.sectionLabel, { marginTop: 10 }]}>
+              TYPE DE PAREMENT * {err.parement_type && <Text style={styles.errInline}> ⚠</Text>}
+            </Text>
+            <View style={styles.facadeGrid}>
+              {PAREMENTS.map((p) => {
+                const active = s1.parement_type === p.key;
+                return (
+                  <TouchableOpacity
+                    key={p.key}
+                    testID={`parement-${p.key}`}
+                    onPress={() => setField("parement_type", p.key)}
+                    activeOpacity={0.85}
+                    style={[
+                      styles.facadeCard,
+                      active && styles.facadeCardActive,
+                      err.parement_type && !active && { borderColor: colors.anomaly },
+                    ]}
+                  >
+                    <Ionicons name={p.icon} size={22} color={active ? colors.primary : colors.textSecondary} />
+                    <Text style={[styles.facadeLabel, active && { color: colors.primary }]}>
+                      {p.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+            <CotField
+              testID="input-ite-insul-thickness"
+              label="ÉPAISSEUR ISOLANT (mm) *"
+              value={s1.ite_insul_thickness_mm}
+              onChange={(v) => setField("ite_insul_thickness_mm", v.replace(",", "."))}
+              error={!!err.ite_insul_thickness_mm}
+            />
+            {s1.parement_type === "crepi" && (
+              <CotField
+                testID="input-crepi-thickness"
+                label="ÉPAISSEUR CRÉPI (mm) *"
+                value={s1.crepi_thickness_mm}
+                onChange={(v) => setField("crepi_thickness_mm", v.replace(",", "."))}
+                error={!!err.crepi_thickness_mm}
+              />
+            )}
+            {(s1.parement_type === "brique_parement" || s1.parement_type === "pierre_parement") && (
+              <>
+                <CotField
+                  testID="input-coulisse-thickness"
+                  label="ÉPAISSEUR COULISSE / VIDE (mm) *"
+                  value={s1.coulisse_thickness_mm}
+                  onChange={(v) => setField("coulisse_thickness_mm", v.replace(",", "."))}
+                  error={!!err.coulisse_thickness_mm}
+                />
+                <CotField
+                  testID="input-brique-pierre-thickness"
+                  label={`ÉPAISSEUR ${s1.parement_type === "brique_parement" ? "BRIQUE" : "PIERRE"} (mm) *`}
+                  value={s1.brique_pierre_thickness_mm}
+                  onChange={(v) => setField("brique_pierre_thickness_mm", v.replace(",", "."))}
+                  error={!!err.brique_pierre_thickness_mm}
+                />
+              </>
+            )}
+            {s1.parement_type === "bardage" && (
+              <CotField
+                testID="input-structure-lame-air"
+                label="ÉPAISSEUR STRUCTURE / LAME D'AIR (mm) *"
+                value={s1.structure_lame_air_mm}
+                onChange={(v) => setField("structure_lame_air_mm", v.replace(",", "."))}
+                error={!!err.structure_lame_air_mm}
+              />
+            )}
+          </>
+        )}
+      </View>
+
+      {/* Statut Seuils */}
       <Text style={[styles.sectionLabel, { marginTop: 22 }]}>
         STATUT DES SEUILS *
         {err.sill_already_installed && <Text style={styles.errInline}> ⚠</Text>}
       </Text>
-      <Text style={styles.helperText}>Les seuils sont-ils déjà posés sur ce chantier ?</Text>
       <View style={styles.row2}>
         <SegBtn
           testID="sill-yes"
@@ -900,15 +1086,6 @@ function Step1Config({
           onPress={() => setField("sill_already_installed", false)}
         />
       </View>
-
-      {s1.sill_already_installed === false && (
-        <View style={styles.inlineHintBox}>
-          <Ionicons name="information-circle" size={14} color={colors.warning} />
-          <Text style={styles.inlineHintText}>
-            Indiquez l'épaisseur prévue pour anticiper la cote finale.
-          </Text>
-        </View>
-      )}
       {s1.sill_already_installed === false && (
         <CotField
           testID="input-sill-thickness"
@@ -919,7 +1096,6 @@ function Step1Config({
         />
       )}
 
-      {/* Options globales */}
       <Text style={[styles.sectionLabel, { marginTop: 22 }]}>OPTIONS GLOBALES</Text>
       <CheckboxRow
         testID="opt-breastwork"
@@ -939,8 +1115,40 @@ function Step1Config({
   );
 }
 
+function InsulationOption({
+  testID,
+  icon,
+  label,
+  active,
+  onPress,
+}: {
+  testID: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  label: string;
+  active: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <TouchableOpacity
+      testID={testID}
+      onPress={onPress}
+      activeOpacity={0.85}
+      style={[styles.insulOption, active && styles.insulOptionActive]}
+    >
+      <Ionicons name={icon} size={20} color={active ? colors.primary : colors.textSecondary} />
+      <Text style={[styles.insulOptionLabel, active && { color: colors.primary }]}>{label}</Text>
+      <View style={{ flex: 1 }} />
+      <Ionicons
+        name={active ? "checkmark-circle" : "ellipse-outline"}
+        size={20}
+        color={active ? colors.primary : colors.borderStrong}
+      />
+    </TouchableOpacity>
+  );
+}
+
 // ════════════════════════════════════════════════════════════════════════
-// Étape 2 — Sélection de la forme
+// Étape 2 — Sélection de la forme (épurée)
 // ════════════════════════════════════════════════════════════════════════
 function Step2Shape({
   onPick,
@@ -953,7 +1161,10 @@ function Step2Shape({
     <View>
       <Text style={styles.h1}>SÉLECTION DE LA MENUISERIE</Text>
       <Text style={styles.h2}>Étape 2/3 · Choisissez la forme exacte du châssis</Text>
-
+      <Text style={styles.helperText}>
+        Le type d'ouvrant (Fixe, Ouvrant, Oscillo-battant, Coulissant) sera défini en atelier via
+        le libellé / référence saisi à l'étape suivante.
+      </Text>
       <View style={{ gap: 10, marginTop: 16 }}>
         {SHAPES.map((s) => {
           const active = current === s.key;
@@ -969,28 +1180,17 @@ function Step2Shape({
                 <Text style={styles.shapeLetter}>{s.letter}</Text>
               </View>
               <View style={styles.shapeIconBox}>
-                <Ionicons
-                  name={s.icon}
-                  size={32}
-                  color={active ? colors.primary : colors.textPrimary}
-                />
+                <Ionicons name={s.icon} size={32} color={active ? colors.primary : colors.textPrimary} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={[styles.shapeTitle, active && { color: colors.primary }]}>
-                  {s.label}
-                </Text>
+                <Text style={[styles.shapeTitle, active && { color: colors.primary }]}>{s.label}</Text>
                 <Text style={styles.shapeDesc}>{s.desc}</Text>
               </View>
-              <Ionicons
-                name="chevron-forward"
-                size={20}
-                color={active ? colors.primary : colors.borderStrong}
-              />
+              <Ionicons name="chevron-forward" size={20} color={active ? colors.primary : colors.borderStrong} />
             </TouchableOpacity>
           );
         })}
       </View>
-
       <View style={[styles.inlineHintBox, { marginTop: 18 }]}>
         <Ionicons name="information-circle" size={14} color={colors.textSecondary} />
         <Text style={styles.inlineHintText}>
@@ -1003,12 +1203,15 @@ function Step2Shape({
 }
 
 // ════════════════════════════════════════════════════════════════════════
-// Étape 3 — Cotes adaptatives
+// Étape 3 — Cotes adaptatives & intelligentes
 // ════════════════════════════════════════════════════════════════════════
 function Step3Cotes({
   shape,
   label,
   setLabel,
+  labelError,
+  labelRef,
+  s1MasonryType,
   s3,
   setField,
   err,
@@ -1018,10 +1221,14 @@ function Step3Cotes({
   onBlurDimension,
   onComputeDiagonals,
   canComputeDiag,
+  computedFloorReserve,
 }: {
   shape: Shape;
   label: string;
   setLabel: (v: string) => void;
+  labelError: boolean;
+  labelRef: React.RefObject<View>;
+  s1MasonryType: MasonryType | null;
   s3: Step3Data;
   setField: <K extends keyof Step3Data>(k: K, v: Step3Data[K]) => void;
   err: Record<string, boolean>;
@@ -1031,18 +1238,18 @@ function Step3Cotes({
   onBlurDimension: () => void;
   onComputeDiagonals: () => void;
   canComputeDiag: boolean;
+  computedFloorReserve: number | null;
 }) {
   const isRectFamily =
     shape === "rect" ||
     shape === "porte_entree" ||
     shape === "porte_garage" ||
     shape === "coulissant_levant";
-  const showSubtype = shape === "rect";
   const show1mLevel = shape === "porte_entree" || shape === "coulissant_levant";
   const showFloorReserve =
     shape === "porte_entree" || shape === "porte_garage" || shape === "coulissant_levant";
-  const Sketch =
-    shape === "trapeze" || shape === "triangle" ? RawBaySchemaTrapeze : RawBaySchemaRect;
+  const showFeuillures = masonryHasFeuillures(s1MasonryType);
+  const Sketch = shape === "trapeze" || shape === "triangle" ? RawBaySchemaTrapeze : RawBaySchemaRect;
 
   const validateDiag = (which: 1 | 2) =>
     setField(which === 1 ? "diag_1_state" : "diag_2_state", "validated");
@@ -1058,47 +1265,33 @@ function Step3Cotes({
         Étape 3/3 · {SHAPES.find((s) => s.key === shape)?.label}
       </Text>
 
-      <Text style={[styles.label, { marginTop: 14 }]}>Libellé de l'ouverture *</Text>
-      <TextInput
-        testID="mesure-label-input"
-        value={label}
-        onChangeText={setLabel}
-        placeholder="ex. Salon, Chambre 1, Porte d'entrée..."
-        placeholderTextColor={colors.placeholder}
-        style={styles.input}
-      />
+      <View ref={labelRef} style={{ marginTop: 14 }}>
+        <Text style={[styles.label, labelError && { color: colors.anomaly }]}>
+          LIBELLÉ / RÉFÉRENCE DU CHÂSSIS * {labelError && <Text style={styles.errInline}> ⚠ OBLIGATOIRE</Text>}
+        </Text>
+        <TextInput
+          testID="mesure-label-input"
+          value={label}
+          onChangeText={setLabel}
+          placeholder="ex. Salon, Chambre 1, Porte d'entrée, Réf. F-001..."
+          placeholderTextColor={colors.placeholder}
+          style={[
+            styles.input,
+            labelError && {
+              borderColor: colors.anomaly,
+              borderWidth: 2,
+              backgroundColor: "#1a0808",
+            },
+          ]}
+        />
+        {labelError && (
+          <Text style={styles.errorMsg}>
+            ⚠ Indiquez un libellé / référence pour identifier ce châssis.
+          </Text>
+        )}
+      </View>
 
-      {/* ── Rect : sous-type d'ouvrant ─────────────────────────────── */}
-      {showSubtype && (
-        <>
-          <Text style={[styles.sectionLabel, { marginTop: 18 }]}>TYPE D'OUVRANT</Text>
-          <View style={styles.openingGrid}>
-            {OPENING_SUBTYPES.map((o) => {
-              const active = s3.opening_subtype === o.key;
-              return (
-                <TouchableOpacity
-                  key={o.key}
-                  testID={`subtype-${o.key}`}
-                  onPress={() => setField("opening_subtype", o.key)}
-                  activeOpacity={0.85}
-                  style={[styles.openingCard, active && styles.openingCardActive]}
-                >
-                  <Ionicons
-                    name={o.icon}
-                    size={20}
-                    color={active ? colors.primary : colors.textSecondary}
-                  />
-                  <Text style={[styles.openingLabel, active && { color: colors.primary }]}>
-                    {o.label}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </>
-      )}
-
-      {/* ── Rect family : toggle Standard / Vérif. Rénovation ──────── */}
+      {/* Toggle Rénovation pour Rectangle uniquement */}
       {shape === "rect" && (
         <View style={styles.modeToggle}>
           <TouchableOpacity
@@ -1107,11 +1300,7 @@ function Step3Cotes({
             activeOpacity={0.8}
             style={[styles.modeTab, !s3.renovation_mode && styles.modeTabActive]}
           >
-            <Ionicons
-              name="resize-outline"
-              size={14}
-              color={!s3.renovation_mode ? "#000" : colors.textSecondary}
-            />
+            <Ionicons name="resize-outline" size={14} color={!s3.renovation_mode ? "#000" : colors.textSecondary} />
             <Text style={[styles.modeTabText, !s3.renovation_mode && styles.modeTabTextActive]}>
               MODE STANDARD
             </Text>
@@ -1122,11 +1311,7 @@ function Step3Cotes({
             activeOpacity={0.8}
             style={[styles.modeTab, s3.renovation_mode && styles.modeTabActive]}
           >
-            <Ionicons
-              name="construct-outline"
-              size={14}
-              color={s3.renovation_mode ? "#000" : colors.textSecondary}
-            />
+            <Ionicons name="construct-outline" size={14} color={s3.renovation_mode ? "#000" : colors.textSecondary} />
             <Text style={[styles.modeTabText, s3.renovation_mode && styles.modeTabTextActive]}>
               VÉRIF. RÉNOVATION
             </Text>
@@ -1144,204 +1329,94 @@ function Step3Cotes({
         />
       </View>
 
-      {/* ── Trapèze ────────────────────────────────────────────────── */}
+      {/* Cotes — Trapèze */}
       {shape === "trapeze" && (
         <>
-          <CotField
-            testID="input-bay-width"
-            label="LARGEUR (mm) *"
-            value={s3.bay_width}
-            onChange={(v) => setField("bay_width", v.replace(",", "."))}
-            error={!!err.bay_width}
-          />
-          <CotField
-            testID="input-trap-height-left"
-            label="HAUTEUR GAUCHE (mm) *"
-            value={s3.trap_height_left}
-            onChange={(v) => setField("trap_height_left", v.replace(",", "."))}
-            error={!!err.trap_height_left}
-          />
-          <CotField
-            testID="input-trap-height-right"
-            label="HAUTEUR DROITE (mm) *"
-            value={s3.trap_height_right}
-            onChange={(v) => setField("trap_height_right", v.replace(",", "."))}
-            error={!!err.trap_height_right}
-          />
+          <CotField testID="input-bay-width" label="LARGEUR (mm) *" value={s3.bay_width}
+            onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
+          <CotField testID="input-trap-height-left" label="HAUTEUR GAUCHE (mm) *" value={s3.trap_height_left}
+            onChange={(v) => setField("trap_height_left", v.replace(",", "."))} error={!!err.trap_height_left} />
+          <CotField testID="input-trap-height-right" label="HAUTEUR DROITE (mm) *" value={s3.trap_height_right}
+            onChange={(v) => setField("trap_height_right", v.replace(",", "."))} error={!!err.trap_height_right} />
         </>
       )}
 
-      {/* ── Triangle ───────────────────────────────────────────────── */}
+      {/* Triangle */}
       {shape === "triangle" && (
         <>
-          <CotField
-            testID="input-triangle-base"
-            label="BASE (mm) *"
-            value={s3.triangle_base}
-            onChange={(v) => setField("triangle_base", v.replace(",", "."))}
-            error={!!err.triangle_base}
-          />
-          <CotField
-            testID="input-triangle-height"
-            label="HAUTEUR (mm) *"
-            value={s3.triangle_height}
-            onChange={(v) => setField("triangle_height", v.replace(",", "."))}
-            error={!!err.triangle_height}
-          />
+          <CotField testID="input-triangle-base" label="BASE (mm) *" value={s3.triangle_base}
+            onChange={(v) => setField("triangle_base", v.replace(",", "."))} error={!!err.triangle_base} />
+          <CotField testID="input-triangle-height" label="HAUTEUR (mm) *" value={s3.triangle_height}
+            onChange={(v) => setField("triangle_height", v.replace(",", "."))} error={!!err.triangle_height} />
         </>
       )}
 
-      {/* ── Œil-de-bœuf ────────────────────────────────────────────── */}
+      {/* Œil-de-bœuf */}
       {shape === "oeil_de_boeuf" && (
-        <CotField
-          testID="input-oeil-diameter"
-          label="DIAMÈTRE (mm) *"
-          value={s3.oeil_diameter}
-          onChange={(v) => setField("oeil_diameter", v.replace(",", "."))}
-          error={!!err.oeil_diameter}
-        />
+        <CotField testID="input-oeil-diameter" label="DIAMÈTRE (mm) *" value={s3.oeil_diameter}
+          onChange={(v) => setField("oeil_diameter", v.replace(",", "."))} error={!!err.oeil_diameter} />
       )}
 
-      {/* ── Porte de garage ───────────────────────────────────────── */}
+      {/* Porte de garage */}
       {shape === "porte_garage" && (
         <>
-          <CotField
-            testID="input-bay-width"
-            label="LARGEUR (mm) *"
-            value={s3.bay_width}
-            onChange={(v) => setField("bay_width", v.replace(",", "."))}
-            onBlur={onBlurDimension}
-            error={!!err.bay_width}
-          />
-          <CotField
-            testID="input-bay-height"
-            label="HAUTEUR (mm) *"
-            value={s3.bay_height}
-            onChange={(v) => setField("bay_height", v.replace(",", "."))}
-            onBlur={onBlurDimension}
-            error={!!err.bay_height}
-          />
+          <CotField testID="input-bay-width" label="LARGEUR (mm) *" value={s3.bay_width}
+            onChange={(v) => setField("bay_width", v.replace(",", "."))} onBlur={onBlurDimension} error={!!err.bay_width} />
+          <CotField testID="input-bay-height" label="HAUTEUR (mm) *" value={s3.bay_height}
+            onChange={(v) => setField("bay_height", v.replace(",", "."))} onBlur={onBlurDimension} error={!!err.bay_height} />
           <Text style={[styles.sectionLabel, { marginTop: 18 }]}>SPÉCIFIQUES PORTE DE GARAGE</Text>
-          <CotField
-            testID="input-garage-lintel"
-            label="LINTEAU (mm) *"
-            value={s3.garage_lintel}
-            onChange={(v) => setField("garage_lintel", v.replace(",", "."))}
-            error={!!err.garage_lintel}
-          />
+          <CotField testID="input-garage-lintel" label="LINTEAU (mm) *" value={s3.garage_lintel}
+            onChange={(v) => setField("garage_lintel", v.replace(",", "."))} error={!!err.garage_lintel} />
           <View style={styles.row2}>
             <View style={{ flex: 1 }}>
-              <CotField
-                testID="input-garage-ecoincon-left"
-                label="ÉCOINÇON GAUCHE (mm) *"
-                value={s3.garage_ecoincon_left}
-                onChange={(v) => setField("garage_ecoincon_left", v.replace(",", "."))}
-                error={!!err.garage_ecoincon_left}
-              />
+              <CotField testID="input-garage-ecoincon-left" label="ÉCOINÇON GAUCHE (mm) *" value={s3.garage_ecoincon_left}
+                onChange={(v) => setField("garage_ecoincon_left", v.replace(",", "."))} error={!!err.garage_ecoincon_left} />
             </View>
             <View style={{ flex: 1 }}>
-              <CotField
-                testID="input-garage-ecoincon-right"
-                label="ÉCOINÇON DROIT (mm) *"
-                value={s3.garage_ecoincon_right}
-                onChange={(v) => setField("garage_ecoincon_right", v.replace(",", "."))}
-                error={!!err.garage_ecoincon_right}
-              />
+              <CotField testID="input-garage-ecoincon-right" label="ÉCOINÇON DROIT (mm) *" value={s3.garage_ecoincon_right}
+                onChange={(v) => setField("garage_ecoincon_right", v.replace(",", "."))} error={!!err.garage_ecoincon_right} />
             </View>
           </View>
         </>
       )}
 
-      {/* ── Rect / Porte / Coulissant levant : standard ─────────────── */}
+      {/* Rect family standard */}
       {isRectFamily && shape !== "porte_garage" && !s3.renovation_mode && (
         <>
-          <CotField
-            testID="input-bay-width"
-            label="LARGEUR (mm) *"
-            value={s3.bay_width}
-            onChange={(v) => setField("bay_width", v.replace(",", "."))}
-            onBlur={onBlurDimension}
-            error={!!err.bay_width}
-          />
-          <CotField
-            testID="input-bay-height"
-            label="HAUTEUR (mm) *"
-            value={s3.bay_height}
-            onChange={(v) => setField("bay_height", v.replace(",", "."))}
-            onBlur={onBlurDimension}
-            error={!!err.bay_height}
-          />
+          <CotField testID="input-bay-width" label="LARGEUR (mm) *" value={s3.bay_width}
+            onChange={(v) => setField("bay_width", v.replace(",", "."))} onBlur={onBlurDimension} error={!!err.bay_width} />
+          <CotField testID="input-bay-height" label="HAUTEUR (mm) *" value={s3.bay_height}
+            onChange={(v) => setField("bay_height", v.replace(",", "."))} onBlur={onBlurDimension} error={!!err.bay_height} />
         </>
       )}
 
-      {/* ── Rect : Vérif Rénovation 4 cotes ─────────────────────────── */}
+      {/* Rect Vérif Rénovation */}
       {shape === "rect" && s3.renovation_mode && (
         <>
           <View style={styles.row2}>
             <View style={{ flex: 1 }}>
-              <CotField
-                testID="input-width-top"
-                label="LARGEUR HAUT (mm) *"
-                value={s3.width_top}
-                onChange={(v) => setField("width_top", v.replace(",", "."))}
-                error={!!err.width_top}
-              />
+              <CotField testID="input-width-top" label="LARGEUR HAUT (mm) *" value={s3.width_top}
+                onChange={(v) => setField("width_top", v.replace(",", "."))} error={!!err.width_top} />
             </View>
             <View style={{ flex: 1 }}>
-              <CotField
-                testID="input-width-bottom"
-                label="LARGEUR BAS (mm) *"
-                value={s3.width_bottom}
-                onChange={(v) => setField("width_bottom", v.replace(",", "."))}
-                error={!!err.width_bottom}
-              />
+              <CotField testID="input-width-bottom" label="LARGEUR BAS (mm) *" value={s3.width_bottom}
+                onChange={(v) => setField("width_bottom", v.replace(",", "."))} error={!!err.width_bottom} />
             </View>
           </View>
           <View style={styles.row2}>
             <View style={{ flex: 1 }}>
-              <CotField
-                testID="input-height-left"
-                label="HAUTEUR GAUCHE (mm) *"
-                value={s3.height_left}
-                onChange={(v) => setField("height_left", v.replace(",", "."))}
-                error={!!err.height_left}
-              />
+              <CotField testID="input-height-left" label="HAUTEUR GAUCHE (mm) *" value={s3.height_left}
+                onChange={(v) => setField("height_left", v.replace(",", "."))} error={!!err.height_left} />
             </View>
             <View style={{ flex: 1 }}>
-              <CotField
-                testID="input-height-right"
-                label="HAUTEUR DROITE (mm) *"
-                value={s3.height_right}
-                onChange={(v) => setField("height_right", v.replace(",", "."))}
-                error={!!err.height_right}
-              />
+              <CotField testID="input-height-right" label="HAUTEUR DROITE (mm) *" value={s3.height_right}
+                onChange={(v) => setField("height_right", v.replace(",", "."))} error={!!err.height_right} />
             </View>
           </View>
-          {(() => {
-            const wt = parseNum(s3.width_top) ?? 0;
-            const wb = parseNum(s3.width_bottom) ?? 0;
-            const hl = parseNum(s3.height_left) ?? 0;
-            const hr = parseNum(s3.height_right) ?? 0;
-            const dW = Math.abs(wt - wb);
-            const dH = Math.abs(hl - hr);
-            const trigger = wt && wb && hl && hr && (dW > 10 || dH > 10);
-            return trigger ? (
-              <View testID="out-of-level-alert" style={styles.alertBox}>
-                <Ionicons name="warning" size={16} color={colors.warning} />
-                <View style={{ flex: 1, marginLeft: 8 }}>
-                  <Text style={styles.alertTitle}>⚠️ Écart de niveau {">"} 10mm détecté</Text>
-                  <Text style={styles.alertSub}>
-                    Δ Largeur : {dW.toFixed(0)} mm · Δ Hauteur : {dH.toFixed(0)} mm — Attention à
-                    la pose.
-                  </Text>
-                </View>
-              </View>
-            ) : null;
-          })()}
         </>
       )}
 
-      {/* ── Diagonales (rect family hors trap/triangle/oeil) ────────── */}
+      {/* Diagonales */}
       {isRectFamily && !s3.renovation_mode && (
         <>
           <TouchableOpacity
@@ -1354,37 +1429,84 @@ function Step3Cotes({
             <Ionicons name="calculator-outline" size={18} color={colors.primary} />
             <Text style={styles.computeBtnText}>CALCULER LA DIAGONALE</Text>
           </TouchableOpacity>
-          <DiagonalField
-            testID="input-diag-1"
-            label="DIAGONALE 1 (mm) *"
-            value={s3.diag_1}
+          <DiagonalField testID="input-diag-1" label="DIAGONALE 1 (mm) *" value={s3.diag_1}
             state={s3.diag_1_state}
             onChange={(v) => {
               setField("diag_1", v.replace(",", "."));
               setField("diag_1_state", "manual");
             }}
-            onValidate={() => validateDiag(1)}
-            onModify={() => modifyDiag(1)}
-            error={!!err.diag_1}
-          />
-          <DiagonalField
-            testID="input-diag-2"
-            label="DIAGONALE 2 (mm) *"
-            value={s3.diag_2}
+            onValidate={() => validateDiag(1)} onModify={() => modifyDiag(1)} error={!!err.diag_1} />
+          <DiagonalField testID="input-diag-2" label="DIAGONALE 2 (mm) *" value={s3.diag_2}
             state={s3.diag_2_state}
             onChange={(v) => {
               setField("diag_2", v.replace(",", "."));
               setField("diag_2_state", "manual");
             }}
-            onValidate={() => validateDiag(2)}
-            onModify={() => modifyDiag(2)}
-            error={!!err.diag_2}
-          />
+            onValidate={() => validateDiag(2)} onModify={() => modifyDiag(2)} error={!!err.diag_2} />
         </>
       )}
 
-      {/* ── Réserve sol (portes + coulissant levant) ────────────────── */}
-      {showFloorReserve && (
+      {/* 🆕 Feuillures conditionnelles (Brique/Pierre/Bloc béton) */}
+      {showFeuillures && (
+        <>
+          <Text style={[styles.sectionLabel, { marginTop: 22 }]}>FEUILLURES (optionnel)</Text>
+          <Text style={styles.helperText}>
+            Mesurez les feuillures de la baie selon la spécificité de votre maçonnerie.
+          </Text>
+          <CotField testID="input-feuillure-left" label="FEUILLURE GAUCHE (mm)" value={s3.feuillure_left_mm}
+            onChange={(v) => setField("feuillure_left_mm", v.replace(",", "."))} />
+          <CotField testID="input-feuillure-right" label="FEUILLURE DROITE (mm)" value={s3.feuillure_right_mm}
+            onChange={(v) => setField("feuillure_right_mm", v.replace(",", "."))} />
+          <CotField testID="input-feuillure-top" label="FEUILLURE HAUTE (mm)" value={s3.feuillure_top_mm}
+            onChange={(v) => setField("feuillure_top_mm", v.replace(",", "."))} />
+        </>
+      )}
+
+      {/* 🆕 Trait de niveau 1m + calcul auto réserve sol */}
+      {show1mLevel && (
+        <>
+          <Text style={[styles.sectionLabel, { marginTop: 22 }]}>RÉSERVE SOL FINI</Text>
+          <CheckboxRow
+            testID="opt-1m-level-mark"
+            label="Trait de niveau 1m"
+            sub="Active le calcul automatique via mesure brute"
+            value={s3.has_1m_level_mark}
+            onChange={(v) => setField("has_1m_level_mark", v)}
+          />
+          {s3.has_1m_level_mark ? (
+            <>
+              <CotField
+                testID="input-trait-1m-brut"
+                label="MESURE DU TRAIT AU SOL BRUT (mm) *"
+                value={s3.trait_1m_brut_mm}
+                onChange={(v) => setField("trait_1m_brut_mm", v.replace(",", "."))}
+                error={!!err.trait_1m_brut_mm}
+              />
+              {computedFloorReserve != null && (
+                <View testID="auto-floor-reserve-display" style={styles.computedBox}>
+                  <Ionicons name="calculator" size={16} color={colors.success} />
+                  <Text style={styles.computedLabel}>RÉSERVE SOL CALCULÉE :</Text>
+                  <Text style={styles.computedValue}>
+                    {computedFloorReserve} mm
+                  </Text>
+                  <Text style={styles.computedFormula}>(brut − 1000 mm)</Text>
+                </View>
+              )}
+            </>
+          ) : (
+            <CotField
+              testID="input-floor-reserve"
+              label="RÉSERVE SOL FINI (mm) *"
+              value={s3.floor_reserve}
+              onChange={(v) => setField("floor_reserve", v.replace(",", "."))}
+              error={!!err.floor_reserve}
+            />
+          )}
+        </>
+      )}
+
+      {/* Porte garage : réserve sol manuelle */}
+      {shape === "porte_garage" && (
         <CotField
           testID="input-floor-reserve"
           label="RÉSERVE SOL FINI (mm) *"
@@ -1394,121 +1516,22 @@ function Step3Cotes({
         />
       )}
 
-      {/* ── Trait de niveau 1m (portes & coulissant levant) ────────── */}
-      {show1mLevel && (
-        <CheckboxRow
-          testID="opt-1m-level-mark"
-          label="Trait de niveau 1m"
-          sub="Présent — utile pour le calcul de réserve"
-          value={s3.has_1m_level_mark}
-          onChange={(v) => setField("has_1m_level_mark", v)}
-        />
-      )}
-
-      {/* ── Conception maçonnerie (toutes formes) ───────────────────── */}
-      <Text style={[styles.sectionLabel, { marginTop: 24 }]}>CONCEPTION MAÇONNERIE</Text>
-      <CotField
-        testID="input-bloc-thickness"
-        label="ÉPAISSEUR BLOC BÉTON (mm) *"
-        value={s3.bloc_thickness}
-        onChange={(v) => setField("bloc_thickness", v.replace(",", "."))}
-        error={!!err.bloc_thickness}
-      />
-
-      <Text style={[styles.label, { marginTop: 18 }]}>
-        Type de paroi * <Text style={styles.indicSuffix}>(INDICATIF)</Text>
-      </Text>
-      <View style={styles.wallGrid}>
-        {(
-          [
-            { key: "ite", label: "ITE", sub: "Isolation Extérieure", variant: "ite" },
-            { key: "iti", label: "ITI", sub: "Isolation Intérieure", variant: "iti" },
-            {
-              key: "brique_parement",
-              label: "BRIQUE",
-              sub: "Brique de parement",
-              variant: "crepi",
-            },
-            { key: "crepi_simple", label: "CRÉPI", sub: "Crépi simple", variant: "crepi" },
-          ] as const
-        ).map((w) => {
-          const active = s3.wall_type === w.key;
-          return (
-            <TouchableOpacity
-              key={w.key}
-              testID={`wall-type-${w.key}`}
-              onPress={() => setField("wall_type", w.key as WallType)}
-              activeOpacity={0.8}
-              style={[
-                styles.wallCard,
-                active && styles.wallCardActive,
-                err.wall_type && !active && styles.wallCardError,
-              ]}
-            >
-              <WallSection variant={w.variant as any} size={64} />
-              <Text style={[styles.wallLabel, active && { color: colors.primary }]}>
-                {w.label}
-              </Text>
-              <Text style={styles.wallSub}>{w.sub}</Text>
-              <Text style={styles.wallIndic}>(INDICATIF)</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-
-      {(s3.wall_type === "ite" || s3.wall_type === "iti") && (
-        <>
-          <CotField
-            testID="input-insulation-thickness"
-            label="ÉPAISSEUR ISOLANT (mm)"
-            value={s3.insulation_thickness}
-            onChange={(v) => setField("insulation_thickness", v.replace(",", "."))}
-          />
-          <CotField
-            testID="input-finish-outer"
-            label="FINITION EXTÉRIEURE (mm)"
-            value={s3.finish_outer}
-            onChange={(v) => setField("finish_outer", v.replace(",", "."))}
-          />
-          <CotField
-            testID="input-finish-inner"
-            label="FINITION INTÉRIEURE (mm)"
-            value={s3.finish_inner}
-            onChange={(v) => setField("finish_inner", v.replace(",", "."))}
-          />
-        </>
-      )}
-
-      {/* ── Photo (toutes formes) ──────────────────────────────────── */}
+      {/* Photo */}
       <Text style={[styles.label, { marginTop: 24 }]}>Photo (optionnel)</Text>
       {photo ? (
         <View>
           <Image source={{ uri: photo }} style={styles.photo} />
-          <TouchableOpacity
-            testID="remove-photo-button"
-            onPress={() => setPhoto(null)}
-            style={styles.removePhoto}
-          >
+          <TouchableOpacity testID="remove-photo-button" onPress={() => setPhoto(null)} style={styles.removePhoto}>
             <Ionicons name="trash" size={16} color="#fff" />
           </TouchableOpacity>
         </View>
       ) : (
         <View style={styles.photoRow}>
-          <TouchableOpacity
-            testID="photo-camera-button"
-            onPress={() => pickPhoto("camera")}
-            style={styles.photoBtn}
-            activeOpacity={0.7}
-          >
+          <TouchableOpacity testID="photo-camera-button" onPress={() => pickPhoto("camera")} style={styles.photoBtn} activeOpacity={0.7}>
             <Ionicons name="camera" size={22} color={colors.primary} />
             <Text style={styles.photoBtnText}>Caméra</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            testID="photo-library-button"
-            onPress={() => pickPhoto("library")}
-            style={styles.photoBtn}
-            activeOpacity={0.7}
-          >
+          <TouchableOpacity testID="photo-library-button" onPress={() => pickPhoto("library")} style={styles.photoBtn} activeOpacity={0.7}>
             <Ionicons name="images" size={22} color={colors.primary} />
             <Text style={styles.photoBtnText}>Galerie</Text>
           </TouchableOpacity>
@@ -1521,90 +1544,36 @@ function Step3Cotes({
 // ════════════════════════════════════════════════════════════════════════
 // Sub-components
 // ════════════════════════════════════════════════════════════════════════
-function SegBtn({
-  testID,
-  icon,
-  label,
-  active,
-  onPress,
-}: {
-  testID?: string;
-  icon: keyof typeof Ionicons.glyphMap;
-  label: string;
-  active: boolean;
-  onPress: () => void;
-}) {
+function SegBtn({ testID, icon, label, active, onPress }: any) {
   return (
-    <TouchableOpacity
-      testID={testID}
-      onPress={onPress}
-      activeOpacity={0.85}
-      style={[styles.segBtn, active && styles.segBtnActive, { flex: 1 }]}
-    >
+    <TouchableOpacity testID={testID} onPress={onPress} activeOpacity={0.85}
+      style={[styles.segBtn, active && styles.segBtnActive, { flex: 1 }]}>
       <Ionicons name={icon} size={18} color={active ? "#000" : colors.textSecondary} />
       <Text style={[styles.segBtnText, active && { color: "#000" }]}>{label}</Text>
     </TouchableOpacity>
   );
 }
 
-function CheckboxRow({
-  testID,
-  label,
-  sub,
-  value,
-  onChange,
-}: {
-  testID?: string;
-  label: string;
-  sub?: string;
-  value: boolean;
-  onChange: (v: boolean) => void;
-}) {
+function CheckboxRow({ testID, label, sub, value, onChange }: any) {
   return (
     <View style={styles.checkboxRow}>
       <View style={{ flex: 1 }}>
         <Text style={styles.checkboxLabel}>{label}</Text>
         {sub && <Text style={styles.checkboxSub}>{sub}</Text>}
       </View>
-      <Switch
-        testID={testID}
-        value={value}
-        onValueChange={onChange}
-        trackColor={{ false: colors.borderSubtle, true: colors.primary }}
-        thumbColor="#fff"
-      />
+      <Switch testID={testID} value={value} onValueChange={onChange}
+        trackColor={{ false: colors.borderSubtle, true: colors.primary }} thumbColor="#fff" />
     </View>
   );
 }
 
-function CotField({
-  testID,
-  label,
-  value,
-  onChange,
-  onBlur,
-  error,
-}: {
-  testID?: string;
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  onBlur?: () => void;
-  error?: boolean;
-}) {
+function CotField({ testID, label, value, onChange, onBlur, error }: any) {
   return (
     <View style={{ marginTop: 14 }}>
       <Text style={styles.label}>{label}</Text>
-      <TextInput
-        testID={testID}
-        value={value}
-        onChangeText={onChange}
-        onBlur={onBlur}
-        keyboardType="decimal-pad"
-        placeholder="0"
-        placeholderTextColor={colors.placeholder}
-        style={[styles.input, error && styles.inputError]}
-      />
+      <TextInput testID={testID} value={value} onChangeText={onChange} onBlur={onBlur}
+        keyboardType="decimal-pad" placeholder="0" placeholderTextColor={colors.placeholder}
+        style={[styles.input, error && styles.inputError]} />
       {error && (
         <Text style={styles.errorMsg} testID={testID ? `${testID}-error` : undefined}>
           ⚠ Cote obligatoire manquante
@@ -1614,32 +1583,12 @@ function CotField({
   );
 }
 
-function DiagonalField({
-  testID,
-  label,
-  value,
-  state,
-  onChange,
-  onValidate,
-  onModify,
-  error,
-}: {
-  testID?: string;
-  label: string;
-  value: string;
-  state: DiagState;
-  onChange: (v: string) => void;
-  onValidate: () => void;
-  onModify: () => void;
-  error?: boolean;
-}) {
+function DiagonalField({ testID, label, value, state, onChange, onValidate, onModify, error }: any) {
   const isAuto = state === "auto";
   const isValidated = state === "validated";
   return (
     <View style={{ marginTop: 14 }}>
-      <View
-        style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}
-      >
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
         <Text style={styles.label}>{label}</Text>
         {isAuto && (
           <View style={styles.autoBadge}>
@@ -1655,38 +1604,20 @@ function DiagonalField({
         )}
       </View>
       <View style={{ flexDirection: "row", gap: 8 }}>
-        <TextInput
-          testID={testID}
-          value={value}
-          onChangeText={onChange}
-          keyboardType="decimal-pad"
-          placeholder="0"
-          placeholderTextColor={colors.placeholder}
+        <TextInput testID={testID} value={value} onChangeText={onChange}
+          keyboardType="decimal-pad" placeholder="0" placeholderTextColor={colors.placeholder}
           editable={!isAuto}
-          style={[
-            styles.input,
-            { flex: 1 },
-            error && styles.inputError,
+          style={[styles.input, { flex: 1 }, error && styles.inputError,
             isAuto && { borderColor: colors.primary, color: colors.primary },
-            isValidated && { borderColor: colors.success, color: colors.success },
-          ]}
-        />
+            isValidated && { borderColor: colors.success, color: colors.success }]} />
         {isAuto && (
           <>
-            <TouchableOpacity
-              testID={`${testID}-validate`}
-              onPress={onValidate}
-              activeOpacity={0.8}
-              style={[styles.diagBtn, { backgroundColor: colors.success }]}
-            >
+            <TouchableOpacity testID={`${testID}-validate`} onPress={onValidate} activeOpacity={0.8}
+              style={[styles.diagBtn, { backgroundColor: colors.success }]}>
               <Ionicons name="checkmark" size={18} color="#000" />
             </TouchableOpacity>
-            <TouchableOpacity
-              testID={`${testID}-modify`}
-              onPress={onModify}
-              activeOpacity={0.8}
-              style={[styles.diagBtn, { backgroundColor: colors.warning }]}
-            >
+            <TouchableOpacity testID={`${testID}-modify`} onPress={onModify} activeOpacity={0.8}
+              style={[styles.diagBtn, { backgroundColor: colors.warning }]}>
               <Ionicons name="create-outline" size={18} color="#000" />
             </TouchableOpacity>
           </>
@@ -1702,406 +1633,129 @@ function DiagonalField({
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: colors.bg },
   topBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderSubtle,
+    flexDirection: "row", alignItems: "center", justifyContent: "space-between",
+    paddingHorizontal: 16, paddingTop: 12, paddingBottom: 10,
+    borderBottomWidth: 1, borderBottomColor: colors.borderSubtle,
   },
   stepRow: { flexDirection: "row", gap: 8 },
   stepPill: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 28, height: 28, borderRadius: 14,
     backgroundColor: colors.surfaceElevated,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: colors.borderSubtle,
+    alignItems: "center", justifyContent: "center",
+    borderWidth: 1, borderColor: colors.borderSubtle,
   },
   stepPillActive: { backgroundColor: colors.primary, borderColor: colors.primary },
   stepPillText: { color: colors.textSecondary, fontWeight: "800", fontSize: 12 },
   reportBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: "#2a1010",
-    borderWidth: 1,
-    borderColor: colors.anomaly,
+    flexDirection: "row", alignItems: "center", gap: 4,
+    paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8,
+    backgroundColor: "#2a1010", borderWidth: 1, borderColor: colors.anomaly,
   },
   reportBtnText: { color: colors.anomaly, fontSize: 11, fontWeight: "700" },
-
   h1: { color: colors.textPrimary, fontSize: 18, fontWeight: "800", letterSpacing: 0.5 },
   h2: { color: colors.textSecondary, fontSize: 12, marginTop: 2 },
-  sectionLabel: {
-    color: colors.textSecondary,
-    fontSize: 11,
-    fontWeight: "900",
-    letterSpacing: 0.8,
-    marginBottom: 8,
-  },
+  sectionLabel: { color: colors.textSecondary, fontSize: 11, fontWeight: "900", letterSpacing: 0.8, marginBottom: 8 },
   errInline: { color: colors.anomaly, fontWeight: "900" },
-  helperText: { color: colors.placeholder, fontSize: 12, marginBottom: 8 },
-  label: {
-    color: colors.textSecondary,
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 0.6,
-    marginBottom: 6,
-  },
+  helperText: { color: colors.placeholder, fontSize: 12, marginBottom: 8, marginTop: 4, lineHeight: 16 },
+  label: { color: colors.textSecondary, fontSize: 11, fontWeight: "700", letterSpacing: 0.6, marginBottom: 6 },
   input: {
-    backgroundColor: colors.inputBg,
-    color: colors.textPrimary,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.borderStrong,
-    paddingHorizontal: 12,
-    paddingVertical: Platform.OS === "ios" ? 14 : 10,
-    fontSize: 16,
-    minHeight: 48,
+    backgroundColor: colors.inputBg, color: colors.textPrimary, borderRadius: 10,
+    borderWidth: 1, borderColor: colors.borderStrong,
+    paddingHorizontal: 12, paddingVertical: Platform.OS === "ios" ? 14 : 10,
+    fontSize: 16, minHeight: 48,
   },
   inputError: { borderColor: colors.anomaly, backgroundColor: "#1a0808" },
-  errorMsg: {
-    color: colors.anomaly,
-    fontSize: 11,
-    fontWeight: "800",
-    marginTop: 4,
-    letterSpacing: 0.4,
-  },
-  indicSuffix: {
-    color: colors.textSecondary,
-    fontSize: 10,
-    fontWeight: "700",
-    letterSpacing: 0.5,
-  },
-  wallIndic: {
-    color: colors.placeholder,
-    fontSize: 9,
-    fontWeight: "700",
-    marginTop: 3,
-    letterSpacing: 0.6,
-  },
+  errorMsg: { color: colors.anomaly, fontSize: 11, fontWeight: "800", marginTop: 4, letterSpacing: 0.4 },
   row2: { flexDirection: "row", gap: 10 },
-
-  // Étape 1 — Segmented buttons
   segBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    backgroundColor: colors.surface,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.borderSubtle,
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    minHeight: 48,
+    flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6,
+    backgroundColor: colors.surface, borderRadius: 10, borderWidth: 1, borderColor: colors.borderSubtle,
+    paddingVertical: 12, paddingHorizontal: 8, minHeight: 48,
   },
   segBtnActive: { backgroundColor: colors.primary, borderColor: colors.primary },
-  segBtnText: {
-    color: colors.textSecondary,
-    fontWeight: "800",
-    fontSize: 12,
-    letterSpacing: 0.4,
-    textAlign: "center",
-    flexShrink: 1,
-  },
-
-  // Étape 1 — Façades grid
+  segBtnText: { color: colors.textSecondary, fontWeight: "800", fontSize: 12, letterSpacing: 0.4, textAlign: "center", flexShrink: 1 },
   facadeGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   facadeCard: {
-    width: "47%",
-    backgroundColor: colors.surface,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.borderSubtle,
-    paddingVertical: 14,
-    paddingHorizontal: 10,
-    alignItems: "center",
-    gap: 6,
+    width: "47%", backgroundColor: colors.surface, borderRadius: 10,
+    borderWidth: 1, borderColor: colors.borderSubtle,
+    paddingVertical: 14, paddingHorizontal: 10, alignItems: "center", gap: 6,
   },
   facadeCardActive: { borderColor: colors.primary, backgroundColor: "#1a0e05" },
-  facadeLabel: {
-    color: colors.textPrimary,
-    fontWeight: "800",
-    fontSize: 12,
-    textAlign: "center",
-    letterSpacing: 0.3,
+  facadeLabel: { color: colors.textPrimary, fontWeight: "800", fontSize: 12, textAlign: "center", letterSpacing: 0.3 },
+  insulOption: {
+    flexDirection: "row", alignItems: "center", gap: 10,
+    backgroundColor: colors.surface, borderRadius: 10,
+    borderWidth: 1, borderColor: colors.borderSubtle,
+    paddingVertical: 14, paddingHorizontal: 14, minHeight: 50,
   },
-
-  // Étape 1 — hint box
+  insulOptionActive: { borderColor: colors.primary, backgroundColor: "#1a0e05" },
+  insulOptionLabel: { color: colors.textPrimary, fontWeight: "800", fontSize: 13 },
   inlineHintBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    marginTop: 8,
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: "#2a1c08",
-    borderWidth: 1,
-    borderColor: colors.warning,
+    flexDirection: "row", alignItems: "center", gap: 6, marginTop: 8,
+    padding: 10, borderRadius: 8, backgroundColor: "#2a1c08",
+    borderWidth: 1, borderColor: colors.warning,
   },
   inlineHintText: { color: colors.textSecondary, fontSize: 11, flex: 1, lineHeight: 15 },
-
-  // Étape 1 — Checkbox rows
   checkboxRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    borderRadius: 10,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.borderSubtle,
-    marginTop: 8,
+    flexDirection: "row", alignItems: "center", gap: 12,
+    paddingVertical: 12, paddingHorizontal: 14, borderRadius: 10,
+    backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSubtle, marginTop: 8,
   },
   checkboxLabel: { color: colors.textPrimary, fontSize: 14, fontWeight: "700" },
   checkboxSub: { color: colors.textSecondary, fontSize: 11, marginTop: 2 },
-
-  // Étape 2 — Shape cards
   shapeCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.borderSubtle,
-    padding: 14,
-    minHeight: 84,
+    flexDirection: "row", alignItems: "center", gap: 10,
+    backgroundColor: colors.surface, borderRadius: 12,
+    borderWidth: 1, borderColor: colors.borderSubtle, padding: 14, minHeight: 84,
   },
   shapeCardActive: { borderColor: colors.primary, backgroundColor: "#1a0e05" },
-  shapeLetterBadge: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: colors.primary,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  shapeLetterBadge: { width: 28, height: 28, borderRadius: 14, backgroundColor: colors.primary, alignItems: "center", justifyContent: "center" },
   shapeLetter: { color: "#000", fontWeight: "900", fontSize: 12 },
   shapeIconBox: { width: 36, alignItems: "center" },
   shapeTitle: { color: colors.textPrimary, fontWeight: "900", fontSize: 14, letterSpacing: 0.4 },
   shapeDesc: { color: colors.textSecondary, fontSize: 11, marginTop: 2, lineHeight: 15 },
-
-  // Étape 3 — Opening subtypes
-  openingGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  openingCard: {
-    width: "47%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    backgroundColor: colors.surface,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.borderSubtle,
-    paddingVertical: 12,
-  },
-  openingCardActive: { borderColor: colors.primary, backgroundColor: "#1a0e05" },
-  openingLabel: { color: colors.textPrimary, fontWeight: "800", fontSize: 12 },
-
-  // Étape 3 — Mode toggle
   modeToggle: {
-    flexDirection: "row",
-    gap: 6,
-    marginTop: 14,
-    padding: 4,
-    backgroundColor: colors.surface,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.borderSubtle,
+    flexDirection: "row", gap: 6, marginTop: 14, padding: 4,
+    backgroundColor: colors.surface, borderRadius: 10,
+    borderWidth: 1, borderColor: colors.borderSubtle,
   },
-  modeTab: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    paddingVertical: 10,
-    borderRadius: 8,
-  },
+  modeTab: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingVertical: 10, borderRadius: 8 },
   modeTabActive: { backgroundColor: colors.primary },
-  modeTabText: {
-    color: colors.textSecondary,
-    fontSize: 11,
-    fontWeight: "900",
-    letterSpacing: 0.6,
-  },
+  modeTabText: { color: colors.textSecondary, fontSize: 11, fontWeight: "900", letterSpacing: 0.6 },
   modeTabTextActive: { color: "#000" },
-
-  alertBox: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginTop: 14,
-    padding: 12,
-    borderRadius: 10,
-    backgroundColor: "#2a1c08",
-    borderWidth: 1,
-    borderColor: colors.warning,
-  },
-  alertTitle: { color: colors.warning, fontWeight: "900", fontSize: 13 },
-  alertSub: { color: colors.textSecondary, fontSize: 11, marginTop: 2 },
-
-  sketchBox: {
-    marginTop: 16,
-    alignItems: "center",
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.borderSubtle,
-    paddingVertical: 12,
-  },
-
-  autoBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    backgroundColor: colors.primary,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-  },
-  validBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    backgroundColor: colors.success,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-  },
+  sketchBox: { marginTop: 16, alignItems: "center", backgroundColor: colors.surface, borderRadius: 12, borderWidth: 1, borderColor: colors.borderSubtle, paddingVertical: 12 },
+  autoBadge: { flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: colors.primary, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
+  validBadge: { flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: colors.success, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
   autoBadgeText: { color: "#000", fontSize: 10, fontWeight: "900", letterSpacing: 0.5 },
-  diagBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  diagBtn: { width: 48, height: 48, borderRadius: 10, alignItems: "center", justifyContent: "center" },
   computeBtn: {
-    marginTop: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    backgroundColor: "#1a0e05",
+    marginTop: 12, flexDirection: "row", alignItems: "center", justifyContent: "center",
+    gap: 8, paddingVertical: 12, paddingHorizontal: 14, borderRadius: 10,
+    borderWidth: 1, borderColor: colors.primary, backgroundColor: "#1a0e05",
   },
   computeBtnText: { color: colors.primary, fontWeight: "900", fontSize: 13, letterSpacing: 0.8 },
-
+  computedBox: {
+    flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: 6,
+    marginTop: 12, padding: 12, borderRadius: 10,
+    backgroundColor: "#0b3b1c", borderWidth: 1, borderColor: colors.success,
+  },
+  computedLabel: { color: colors.success, fontWeight: "900", fontSize: 11, letterSpacing: 0.5 },
+  computedValue: { color: colors.success, fontWeight: "900", fontSize: 18 },
+  computedFormula: { color: colors.textSecondary, fontSize: 11, fontStyle: "italic" },
   photo: { width: "100%", height: 180, borderRadius: 12, marginTop: 8 },
-  removePhoto: {
-    position: "absolute",
-    top: 16,
-    right: 8,
-    backgroundColor: "rgba(0,0,0,0.7)",
-    padding: 6,
-    borderRadius: 14,
-  },
+  removePhoto: { position: "absolute", top: 16, right: 8, backgroundColor: "rgba(0,0,0,0.7)", padding: 6, borderRadius: 14 },
   photoRow: { flexDirection: "row", gap: 8, marginTop: 8 },
-  photoBtn: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    paddingVertical: 14,
-    borderRadius: 10,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.borderSubtle,
-  },
+  photoBtn: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingVertical: 14, borderRadius: 10, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSubtle },
   photoBtnText: { color: colors.primary, fontWeight: "700", fontSize: 13 },
-
-  wallGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginTop: 6 },
-  wallCard: {
-    width: "47%",
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.borderSubtle,
-    padding: 12,
-    alignItems: "center",
-  },
-  wallCardActive: { borderColor: colors.primary, backgroundColor: "#1a0e05" },
-  wallCardError: { borderColor: colors.anomaly },
-  wallLabel: {
-    color: colors.textPrimary,
-    fontWeight: "900",
-    fontSize: 14,
-    marginTop: 6,
-    letterSpacing: 0.8,
-  },
-  wallSub: { color: colors.textSecondary, fontSize: 10, marginTop: 2, textAlign: "center" },
-
-  footer: {
-    flexDirection: "row",
-    gap: 10,
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: colors.borderSubtle,
-    backgroundColor: colors.bg,
-  },
-  btn: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    minHeight: 52,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-  },
+  footer: { flexDirection: "row", gap: 10, padding: 16, borderTopWidth: 1, borderTopColor: colors.borderSubtle, backgroundColor: colors.bg },
+  btn: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, minHeight: 52, borderRadius: 12, paddingHorizontal: 16 },
   btnPrimary: { backgroundColor: colors.primary },
   btnPrimaryText: { color: "#000", fontWeight: "900", fontSize: 14, letterSpacing: 0.8 },
-  btnSecondary: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.borderSubtle,
-  },
-  btnSecondaryText: {
-    color: colors.textPrimary,
-    fontWeight: "800",
-    fontSize: 13,
-    letterSpacing: 0.5,
-  },
-
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.7)",
-    justifyContent: "center",
-    padding: 20,
-  },
-  modalCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: colors.borderSubtle,
-  },
+  btnSecondary: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSubtle },
+  btnSecondaryText: { color: colors.textPrimary, fontWeight: "800", fontSize: 13, letterSpacing: 0.5 },
+  modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.7)", justifyContent: "center", padding: 20 },
+  modalCard: { backgroundColor: colors.surface, borderRadius: 16, padding: 18, borderWidth: 1, borderColor: colors.borderSubtle },
   modalTitle: { color: colors.textPrimary, fontWeight: "800", fontSize: 16 },
   modalSub: { color: colors.textSecondary, fontSize: 12, marginTop: 4, marginBottom: 12 },
-  reportInput: {
-    backgroundColor: colors.inputBg,
-    color: colors.textPrimary,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.borderStrong,
-    padding: 12,
-    minHeight: 100,
-    textAlignVertical: "top",
-    fontSize: 14,
-  },
+  reportInput: { backgroundColor: colors.inputBg, color: colors.textPrimary, borderRadius: 10, borderWidth: 1, borderColor: colors.borderStrong, padding: 12, minHeight: 100, textAlignVertical: "top", fontSize: 14 },
 });
