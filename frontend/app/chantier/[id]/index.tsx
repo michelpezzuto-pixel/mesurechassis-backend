@@ -57,7 +57,9 @@ export default function ChantierDetail() {
   const roleIsCommercial = user?.role === "commercial";
   const roleIsTechnician = user?.role === "technician";
   const canManage = roleIsAdmin || roleIsCommercial;
-  const canMeasure = roleIsCommercial || roleIsTechnician;
+  // `canMeasure` est défini plus bas après `isSoloArtisan` car en Mode
+  // Artisan Solo (1 seul user) ou Mode Artisan activé, l'admin doit pouvoir
+  // mesurer comme un technicien.
   const canExportTech = roleIsTechnician || roleIsAdmin;
   // 🚧 BETA GRATUITE : pas de plan Free tant que beta_mode est actif.
   const isFreePlan = !company?.beta_mode && (company?.plan ?? "trial") === "free";
@@ -97,6 +99,18 @@ export default function ChantierDetail() {
   const usersLoaded = users.length > 0;
   const teamSize = users.length;
   const isSoloArtisan = usersLoaded && teamSize === 1;
+  // 📐 Qui peut PRENDRE / MODIFIER des mesures ?
+  //  - Commercial & Technicien : toujours (sur chantiers non-fab)
+  //  - Admin : seulement en Mode Artisan Solo (1 user) OU si le toggle
+  //    "Mode artisan" est activé dans le profil société (override explicite
+  //    pour les sociétés multi-utilisateurs qui veulent un accès admin direct).
+  //  - C'est le fix du bug : avant, l'admin n'avait JAMAIS le droit de
+  //    mesurer → bouton "AJOUTER UNE OUVERTURE" invisible même sur un
+  //    chantier vide en mode artisan.
+  const canMeasure =
+    roleIsCommercial ||
+    roleIsTechnician ||
+    (roleIsAdmin && (isSoloArtisan || artisanMode));
   // 🔒 Qui peut valider le passage en fabrication ?
   // - Mode Solo (teamSize=1) : admin ou technicien
   // - Mode Équipe : SEUL le technicien (jamais commercial, jamais admin)
@@ -784,6 +798,30 @@ export default function ChantierDetail() {
           <View style={styles.empty}>
             <Ionicons name="grid-outline" size={48} color={colors.borderStrong} />
             <Text style={styles.emptyText}>Aucune ouverture mesurée</Text>
+            {canEditMesures ? (
+              <>
+                <Text style={styles.emptyHint}>
+                  Commencez par ajouter votre première ouverture (Fixe,
+                  Ouvrant, Coulissant, Oscillo-battant, Trapèze, Porte…)
+                </Text>
+                <TouchableOpacity
+                  testID="empty-add-ouverture-button"
+                  onPress={() => router.push(`/chantier/${id}/new-mesure`)}
+                  activeOpacity={0.85}
+                  style={styles.emptyCta}
+                >
+                  <Ionicons name="add-circle" size={22} color="#000" />
+                  <Text style={styles.emptyCtaText}>
+                    AJOUTER UN CHÂSSIS / UNE OUVERTURE
+                  </Text>
+                </TouchableOpacity>
+              </>
+            ) : showCommercialFabIntercept ? (
+              <Text style={styles.emptyHint}>
+                Ce chantier est verrouillé en fabrication. Seul le technicien
+                peut ajouter ou modifier les mesures.
+              </Text>
+            ) : null}
           </View>
         }
         ListFooterComponent={
@@ -1378,6 +1416,30 @@ const styles = StyleSheet.create({
   alertText: { color: colors.alert, fontSize: 12, fontWeight: "700" },
   empty: { alignItems: "center", padding: 50, gap: 8 },
   emptyText: { color: colors.textSecondary, fontWeight: "700" },
+  emptyHint: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    textAlign: "center",
+    lineHeight: 17,
+    marginTop: 4,
+    paddingHorizontal: 12,
+  },
+  emptyCta: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: colors.primary,
+    paddingHorizontal: 18,
+    paddingVertical: 14,
+    borderRadius: 10,
+    marginTop: 16,
+  },
+  emptyCtaText: {
+    color: "#000",
+    fontWeight: "900",
+    letterSpacing: 0.8,
+    fontSize: 13,
+  },
 
   exportCard: {
     marginTop: 14,
