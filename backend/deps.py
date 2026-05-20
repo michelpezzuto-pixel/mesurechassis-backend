@@ -14,6 +14,7 @@ from passlib.context import CryptContext
 
 from db import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
+    BETA_MODE,
     JWT_ALGO,
     JWT_SECRET,
     TRIAL_DAYS,
@@ -60,23 +61,53 @@ def user_to_public(doc: dict) -> UserPublic:
 
 # --- Company helper ------------------------------------------------------
 async def ensure_company(company_id: str) -> dict:
-    """Idempotent : charge ou crée la société (essai 90 jours)."""
+    """Idempotent : charge ou crée la société.
+
+    🚧 BETA GRATUITE (`BETA_MODE=True` dans db.py) : tous les comptes
+    sont forcés en `plan=pro` + `subscription_status=active` + `expires_at`
+    long terme. Aucun lockout n'est appliqué. À désactiver quand Stripe
+    sera prêt.
+    """
+    # Date d'expiration "loin dans le futur" pour la beta : 10 ans.
+    beta_expires_at = (
+        datetime.now(timezone.utc) + timedelta(days=365 * 10)
+    ).isoformat()
+
     doc = await db.companies.find_one(
         {"company_id": company_id}, {"_id": 0}
     )
     if doc:
         update: dict = {}
-        if "subscription_status" not in doc:
-            update["subscription_status"] = "trial"
-        if "subscription_expires_at" not in doc:
-            update["subscription_expires_at"] = (
-                datetime.now(timezone.utc) + timedelta(days=TRIAL_DAYS)
-            ).isoformat()
-        if "plan" not in doc:
-            # Préserve l'expérience existante : les comptes pré-Freemium
-            # restent en "trial" (accès Pro 90j). Les nouveaux comptes
-            # peuvent être placés en "free" via /platform.
-            update["plan"] = "trial"
+        if BETA_MODE:
+            # Force tout le monde en plan Pro actif pendant la phase beta.
+            if doc.get("plan") != "pro":
+                update["plan"] = "pro"
+            if doc.get("subscription_status") != "active":
+                update["subscription_status"] = "active"
+            # Renouvelle l'expiration si elle est dans moins d'1 an.
+            try:
+                exp_iso = doc.get("subscription_expires_at")
+                needs_renew = True
+                if exp_iso:
+                    exp_dt = datetime.fromisoformat(
+                        str(exp_iso).replace("Z", "+00:00")
+                    )
+                    if exp_dt > datetime.now(timezone.utc) + timedelta(days=365):
+                        needs_renew = False
+                if needs_renew:
+                    update["subscription_expires_at"] = beta_expires_at
+            except ValueError:
+                update["subscription_expires_at"] = beta_expires_at
+        else:
+            # --- Logique historique (Trial/Free) — réactivable à la fin de la beta.
+            if "subscription_status" not in doc:
+                update["subscription_status"] = "trial"
+            if "subscription_expires_at" not in doc:
+                update["subscription_expires_at"] = (
+                    datetime.now(timezone.utc) + timedelta(days=TRIAL_DAYS)
+                ).isoformat()
+            if "plan" not in doc:
+                update["plan"] = "trial"
         if "chantiers_lifetime_count" not in doc:
             update["chantiers_lifetime_count"] = await db.chantiers.count_documents(
                 {"company_id": company_id}
@@ -89,20 +120,37 @@ async def ensure_company(company_id: str) -> dict:
             )
             doc.update(update)
         return doc
-    new_doc = {
-        "company_id": company_id,
-        "name": company_id,
-        "artisan_mode": False,
-        "subscription_status": "trial",
-        "subscription_expires_at": (
-            datetime.now(timezone.utc) + timedelta(days=TRIAL_DAYS)
-        ).isoformat(),
-        "plan": "trial",
-        "chantiers_lifetime_count": 0,
-        "cancel_at_period_end": False,
-        "cancelled_at": None,
-        "created_at": datetime.now(timezone.utc).isoformat(),
-    }
+
+    # Création d'une nouvelle société
+    if BETA_MODE:
+        new_doc = {
+            "company_id": company_id,
+            "name": company_id,
+            "artisan_mode": False,
+            "subscription_status": "active",
+            "subscription_expires_at": beta_expires_at,
+            "plan": "pro",
+            "chantiers_lifetime_count": 0,
+            "cancel_at_period_end": False,
+            "cancelled_at": None,
+            "beta_account": True,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }
+    else:
+        new_doc = {
+            "company_id": company_id,
+            "name": company_id,
+            "artisan_mode": False,
+            "subscription_status": "trial",
+            "subscription_expires_at": (
+                datetime.now(timezone.utc) + timedelta(days=TRIAL_DAYS)
+            ).isoformat(),
+            "plan": "trial",
+            "chantiers_lifetime_count": 0,
+            "cancel_at_period_end": False,
+            "cancelled_at": None,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }
     await db.companies.insert_one(new_doc)
     new_doc.pop("_id", None)
     return new_doc
@@ -163,6 +211,9 @@ async def auth_user(authorization: Optional[str] = Header(None)) -> dict:
 
 
 def is_subscription_blocked(user: dict) -> bool:
+    # 🚧 BETA GRATUITE : jamais de blocage tant que BETA_MODE=True.
+    if BETA_MODE:
+        return False
     status = user.get("subscription_status") or "trial"
     if status == "suspended":
         return True

@@ -8,7 +8,7 @@ from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from db import VALID_ROLES, db
+from db import BETA_MODE, VALID_ROLES, db
 from deps import (
     auth_user,
     create_access_token,
@@ -128,8 +128,27 @@ async def register(payload: dict):
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.users.insert_one(user_doc)
-    await db.companies.insert_one(
-        {
+    # 🚧 BETA GRATUITE : les nouveaux comptes naissent directement en
+    # `plan=pro` + `subscription_status=active` (pas d'écran de paiement).
+    # ensure_company() complétera les valeurs manquantes au premier accès.
+    if BETA_MODE:
+        beta_expires = (
+            datetime.now(timezone.utc) + timedelta(days=365 * 10)
+        ).isoformat()
+        company_doc = {
+            "company_id": company_id,
+            "name": company_name,
+            "artisan_mode": False,
+            "subscription_status": "active",
+            "subscription_expires_at": beta_expires,
+            "plan": "pro",
+            "chantiers_lifetime_count": 0,
+            "cancel_at_period_end": False,
+            "beta_account": True,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }
+    else:
+        company_doc = {
             "company_id": company_id,
             "name": company_name,
             "artisan_mode": False,
@@ -139,7 +158,7 @@ async def register(payload: dict):
             "cancel_at_period_end": False,
             "created_at": datetime.now(timezone.utc).isoformat(),
         }
-    )
+    await db.companies.insert_one(company_doc)
 
     token = await _create_verification(
         user_id=user_doc["id"], email=email_lower, kind="verify"

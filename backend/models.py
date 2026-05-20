@@ -148,6 +148,10 @@ class CompanyProfile(BaseModel):
     # --- Cancellation (graceful termination) ---
     cancel_at_period_end: bool = False
     cancelled_at: Optional[str] = None
+    # --- Beta Mode (no payment required) ---
+    # 🚧 Quand True, le frontend doit masquer paywall / trial / freemium
+    # et afficher la bannière verte "Beta Gratuite".
+    beta_mode: bool = False
 
 
 class CompanyProfileUpdate(BaseModel):

@@ -6,7 +6,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, Header, HTTPException
 
-from db import PLATFORM_ADMIN_TOKEN, VALID_PLANS, db
+from db import BETA_MODE, PLATFORM_ADMIN_TOKEN, VALID_PLANS, db
 from deps import auth_user, ensure_company, require_admin
 from models import CompanyProfile, CompanyProfileUpdate
 
@@ -24,6 +24,7 @@ def _to_profile(doc: dict, company_id: str) -> CompanyProfile:
         chantiers_lifetime_count=int(doc.get("chantiers_lifetime_count", 0)),
         cancel_at_period_end=bool(doc.get("cancel_at_period_end", False)),
         cancelled_at=doc.get("cancelled_at"),
+        beta_mode=BETA_MODE,
     )
 
 

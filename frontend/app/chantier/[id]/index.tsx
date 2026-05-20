@@ -59,7 +59,8 @@ export default function ChantierDetail() {
   const canManage = roleIsAdmin || roleIsCommercial;
   const canMeasure = roleIsCommercial || roleIsTechnician;
   const canExportTech = roleIsTechnician || roleIsAdmin;
-  const isFreePlan = (company?.plan ?? "trial") === "free";
+  // 🚧 BETA GRATUITE : pas de plan Free tant que beta_mode est actif.
+  const isFreePlan = !company?.beta_mode && (company?.plan ?? "trial") === "free";
   const showUpgradeLock = () => {
     Alert.alert(
       "🔒 Exports verrouillés",

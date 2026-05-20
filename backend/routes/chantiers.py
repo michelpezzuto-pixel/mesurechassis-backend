@@ -7,7 +7,7 @@ from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from db import FREE_PLAN_MAX_CHANTIERS, VALID_STATUSES, db
+from db import BETA_MODE, FREE_PLAN_MAX_CHANTIERS, VALID_STATUSES, db
 from deps import (
     require_active_subscription,
     require_roles,
@@ -31,9 +31,13 @@ async def create_chantier(
     if payload.status not in VALID_STATUSES:
         raise HTTPException(400, "Invalid status")
     # --- Anti-fraud Freemium lifetime limit -------------------------------
-    # Le compteur lifetime n'est jamais décrémenté : impossible de
-    # contourner en supprimant un chantier.
-    if (user.get("plan") == "free") and not user.get("artisan_mode", False):
+    # 🚧 BETA GRATUITE : limite désactivée (BETA_MODE=True). Le bloc reste
+    # en place pour réactivation simple une fois Stripe en ligne.
+    if (
+        not BETA_MODE
+        and (user.get("plan") == "free")
+        and not user.get("artisan_mode", False)
+    ):
         used = int(user.get("chantiers_lifetime_count", 0))
         if used >= FREE_PLAN_MAX_CHANTIERS:
             raise HTTPException(

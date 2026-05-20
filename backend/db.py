@@ -47,12 +47,19 @@ VALID_BLOCK_TYPES = {"standard", "coulissant", "porte", "trapeze"}
 VALID_WALL_TYPES = {"ite", "iti", "brique_parement", "crepi_simple"}
 
 # Paywall — Freemium tier (anti-fraud lifetime limit)
-VALID_PLANS = {"free", "trial", "pro"}
+# 🚧 BETA GRATUITE : la limite est désactivée — tous les comptes ont
+# accès illimité (plan=pro forcé via ensure_company). Cette constante
+# est conservée pour permettre la réactivation rapide du Freemium plus
+# tard (intégration Stripe).
+VALID_PLANS = {"free", "trial", "pro", "beta"}
 FREE_PLAN_MAX_CHANTIERS = 3
 
+# 🚧 BETA GRATUITE : flag global qui force tous les comptes à un état
+# d'abonnement actif et illimité. Mettre à False quand Stripe sera prêt.
+BETA_MODE = True
+
 # Durée de la période d'essai (Trial) — exactement 3 mois (90 jours).
-# Le lockout plein-écran (PaywallScreen) s'active automatiquement à J+91
-# si aucun abonnement Pro n'est détecté (via is_subscription_blocked()).
+# (Inactif tant que BETA_MODE=True : tous les comptes sont en plan=pro actif.)
 TRIAL_DAYS = 90
 
 # Endpoints accessibles même si l'abonnement est expiré

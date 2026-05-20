@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
+  Linking,
   Modal,
   Platform,
   ScrollView,
@@ -33,9 +34,37 @@ type Profile = {
   chantiers_lifetime_count?: number;
   cancel_at_period_end?: boolean;
   cancelled_at?: string | null;
+  /** 🚧 Quand True → Beta Gratuite, paywall masqué côté UI. */
+  beta_mode?: boolean;
 };
 
 const FREE_LIMIT = 3;
+const SUPPORT_EMAIL = "info@mesurechassis.com";
+
+async function openSupportMail() {
+  const subject = encodeURIComponent("MesureChâssis — Retour beta / support");
+  const body = encodeURIComponent(
+    "Bonjour l'équipe MesureChâssis,\n\nVoici mon retour / suggestion / question :\n\n"
+  );
+  const url = `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`;
+  try {
+    if (Platform.OS === "web" && typeof window !== "undefined") {
+      window.location.href = url;
+      return;
+    }
+    const supported = await Linking.canOpenURL(url);
+    if (supported) {
+      await Linking.openURL(url);
+    } else {
+      Alert.alert(
+        "Aucune app Mail détectée",
+        `Veuillez écrire à ${SUPPORT_EMAIL} depuis votre client mail habituel.`
+      );
+    }
+  } catch {
+    /* noop */
+  }
+}
 
 function formatDate(iso?: string | null): string {
   if (!iso) return "—";
@@ -172,14 +201,18 @@ export default function CompanyProfile() {
   const used = profile?.chantiers_lifetime_count ?? 0;
   const cancelScheduled = !!profile?.cancel_at_period_end;
   const expiresLabel = formatDate(profile?.subscription_expires_at);
+  // 🚧 BETA GRATUITE : flag global (backend BETA_MODE) → masque paywall/freemium.
+  const betaMode = !!profile?.beta_mode;
   // Le bouton "Se désabonner" est dispo : admin + accès actif (trial ou pro) + pas déjà annulé
+  // → désactivé en mode beta : remplacé par un bouton "Donner mon avis / Contacter le support".
   const canUnsubscribe =
+    !betaMode &&
     isAdmin &&
     !cancelScheduled &&
     profile?.subscription_status !== "suspended" &&
     (plan === "pro" || plan === "trial" || profile?.subscription_status === "active");
-  // Pour Free : afficher l'usage des chantiers
-  const isFree = plan === "free";
+  // Pour Free : afficher l'usage des chantiers (désactivé en mode beta)
+  const isFree = !betaMode && plan === "free";
   const remaining = Math.max(0, FREE_LIMIT - used);
   const overLimit = isFree && used >= FREE_LIMIT;
 
@@ -202,30 +235,66 @@ export default function CompanyProfile() {
           <View style={styles.card}>
             <View style={styles.rowBetween}>
               <Text style={styles.section}>ABONNEMENT & FACTURATION</Text>
-              <View
-                style={[
-                  styles.planBadge,
-                  { backgroundColor: meta.bg, borderColor: meta.fg },
-                ]}
-              >
-                <Text style={[styles.planBadgeText, { color: meta.fg }]}>
-                  {meta.label}
-                </Text>
-              </View>
+              {betaMode ? (
+                <View style={styles.betaBadge}>
+                  <Ionicons name="rocket" size={12} color="#34d399" />
+                  <Text style={styles.betaBadgeText}>BETA GRATUITE</Text>
+                </View>
+              ) : (
+                <View
+                  style={[
+                    styles.planBadge,
+                    { backgroundColor: meta.bg, borderColor: meta.fg },
+                  ]}
+                >
+                  <Text style={[styles.planBadgeText, { color: meta.fg }]}>
+                    {meta.label}
+                  </Text>
+                </View>
+              )}
             </View>
 
-            <View style={styles.kvRow}>
-              <Text style={styles.kvLabel}>Statut</Text>
-              <Text style={styles.kvValue}>
-                {profile?.subscription_status?.toUpperCase() ?? "—"}
-              </Text>
-            </View>
-            <View style={styles.kvRow}>
-              <Text style={styles.kvLabel}>
-                {cancelScheduled ? "Accès Pro jusqu'au" : "Expiration"}
-              </Text>
-              <Text style={styles.kvValue}>{expiresLabel}</Text>
-            </View>
+            {betaMode ? (
+              <>
+                <Text style={styles.betaIntro}>
+                  🎉 Profitez de l'accès complet à MesureChâssis pendant la
+                  phase de test. Aucun paiement n'est requis.
+                </Text>
+                <Text style={styles.betaFeedback}>
+                  Vos retours nous aident à grandir ! Signalez-nous la moindre
+                  idée via{" "}
+                  <Text style={styles.bold}>{SUPPORT_EMAIL}</Text> 💬
+                </Text>
+                {isAdmin && (
+                  <TouchableOpacity
+                    testID="contact-support-button"
+                    onPress={openSupportMail}
+                    activeOpacity={0.85}
+                    style={[styles.btn, styles.btnPrimary, { marginTop: 14 }]}
+                  >
+                    <Ionicons name="mail" size={20} color="#000" />
+                    <Text style={styles.btnPrimaryText}>
+                      DONNER MON AVIS / CONTACTER LE SUPPORT
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </>
+            ) : (
+              <>
+                <View style={styles.kvRow}>
+                  <Text style={styles.kvLabel}>Statut</Text>
+                  <Text style={styles.kvValue}>
+                    {profile?.subscription_status?.toUpperCase() ?? "—"}
+                  </Text>
+                </View>
+                <View style={styles.kvRow}>
+                  <Text style={styles.kvLabel}>
+                    {cancelScheduled ? "Accès Pro jusqu'au" : "Expiration"}
+                  </Text>
+                  <Text style={styles.kvValue}>{expiresLabel}</Text>
+                </View>
+              </>
+            )}
 
             {isFree && (
               <View style={styles.freeUsageBox}>
@@ -577,6 +646,36 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   planBadgeText: { fontSize: 11, fontWeight: "900", letterSpacing: 1 },
+  betaBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: "#34d399",
+    backgroundColor: "#0b3b1c",
+  },
+  betaBadgeText: {
+    fontSize: 11,
+    fontWeight: "900",
+    letterSpacing: 1,
+    color: "#34d399",
+  },
+  betaIntro: {
+    color: colors.textPrimary,
+    fontSize: 13,
+    lineHeight: 19,
+    marginTop: 14,
+  },
+  betaFeedback: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    lineHeight: 18,
+    marginTop: 8,
+    fontStyle: "italic",
+  },
   kvRow: {
     flexDirection: "row",
     justifyContent: "space-between",

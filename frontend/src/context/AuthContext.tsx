@@ -23,6 +23,8 @@ export type CompanyProfile = {
   chantiers_lifetime_count?: number;
   cancel_at_period_end?: boolean;
   cancelled_at?: string | null;
+  /** 🚧 Quand True → mode Beta Gratuite (pas de paywall, accès illimité). */
+  beta_mode?: boolean;
 };
 
 export type SubscriptionLock = {
@@ -199,8 +201,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         hasRole,
       }}
     >
-      {/* Subscription paywall — covers everything when expired/suspended */}
-      {user && lock.expired ? (
+      {/* Subscription paywall — covers everything when expired/suspended.
+          🚧 BETA GRATUITE : on désactive ce verrou tant que la société est
+          flaggée `beta_mode=true` côté backend. */}
+      {user && lock.expired && !company?.beta_mode ? (
         <PaywallScreen
           status={lock.status}
           expires_at={lock.expires_at}
