@@ -235,6 +235,18 @@ backend:
         -agent: "testing"
         -comment: "PASS. (1) CSV header inclut les nouvelles colonnes enrichies 'L. haut', 'L. bas', 'H. gauche', 'H. droite', 'L. milieu', 'H. milieu', trapèze (L. petite, L. inter, H. petite, H. grande), isolation/finitions, angle pente, Alertes. Content-Type='text/csv; charset=utf-8'. (2) XLSX: magic 'PK', taille=6682 bytes (>1000), content-type spreadsheetml.sheet. Feuille Mesures avec toutes dims + feuille Photos site quand site_photos non-vide. (3) JSON: schema_version='mc.v2' (NOTE: review request mentionnait mc.v1 mais le code actuel renvoie mc.v2, ce qui est cohérent avec l'évolution du schéma), openings[].dimensions_mm dict présent sur les 3 ouvertures (standard rénovation, trapèze, porte), openings[].renovation_mode flag présent partout, openings[].construction (bloc/wall_type/isolation/finishes) présent. site_photos array présent (vide ici car chantier de test sans photos). Trapeze opening shape='trapezoidal' OK."
 
+  - task: "Wall Config global per chantier — PATCH /api/chantiers/{id}/wall-config + persist + RBAC"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/chantiers.py + /app/backend/models.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "main"
+        -comment: "PASS. (1) Admin PATCH /api/chantiers/{id}/wall-config {project_type, masonry_type:brique, gros_oeuvre_mm:200, insulation_mode:iti, iti_thickness_mm:100}→200, wall_config retourné dans la réponse. (2) GET /api/chantiers/{id} retourne wall_config persisté correctement (5 clés). (3) Technician PATCH /api/chantiers/{id}/wall-config→200 (RBAC ['admin','commercial','technician']). (4) PATCH sans token→401. (5) PATCH chantier inexistant→404. (6) Champ wall_config: Optional[dict] ajouté à Chantier et ChantierUpdate (free-form pour souplesse). Endpoint dédié pour ne pas ouvrir tout PATCH /chantiers aux techniciens."
+
   - task: "Latin-1 filename bug — _safe_filename() translit apostrophe/accents pour Content-Disposition"
     implemented: true
     working: true
@@ -248,6 +260,18 @@ backend:
         -comment: "PASS. Chantier créé avec client_name=\"M. d'Aujourd'hui\" (apostrophes ASCII). Export PDF→200 (magic %PDF-), Export CSV→200, Export XLSX→200. AUCUN 500. _safe_filename() (unicodedata NFKD + suppression diacritiques + re.sub des non-word) gère correctement apostrophes et accents (Étoile, Régnier-Marchand). Cleanup DELETE OK."
 
 frontend:
+  - task: "Wizard new-mesure — wall_config global (Skip Étape 1 + feuillures conditionnelles)"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/chantier/[id]/new-mesure.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "main"
+        -comment: "VALIDÉ VISUELLEMENT via screenshot tool. (1) Chantier SANS wall_config → wizard ouvre sur Étape 1/3 (CONFIGURATION DU MUR, pilule 1 active). (2) Après PATCH /chantiers/{id}/wall-config dans goNextFromStep1() → setWallConfigLocked(true) + setStep(1). (3) Chantier AVEC wall_config (chargé via useEffect) → setStep(1) directement, hydrateS1FromWallConfig() préremplit s1. Visuellement: pilules 1+2 actives, Étape 2/3 SÉLECTION DE LA MENUISERIE affichée d'emblée ✓. (4) Étape 3 reçoit s1MasonryType={s1.masonry_type}: showFeuillures=masonryHasFeuillures(masonry_type). Brique/Pierre/Bloc-béton → 3 champs feuillure_left/right/top affichés. Bloc Terre cuite → masqué ✓. (5) goBack(): si step=1 et wallConfigLocked=true → router.back() (pas de retour à l'étape 1 phantome). Backend PATCH wall-config testé OK (admin+tech 200, anonyme 401, bad id 404)."
+
   - task: "Bloc Signature supprimé de la page Clôture"
     implemented: true
     working: true
