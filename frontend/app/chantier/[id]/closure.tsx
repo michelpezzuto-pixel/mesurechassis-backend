@@ -14,7 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
-import { api, getToken, PDF_URL } from "@/src/services/api";
+import { api, buildAuthHeaders, PDF_URL } from "@/src/services/api";
 import { colors, blockMeta, statusMeta, NEXT_STATUS, CLOSURE_BUTTON_LABEL } from "@/src/theme";
 
 type Chantier = {
@@ -64,10 +64,8 @@ export default function Closure() {
   const exportPDF = async () => {
     setExporting(true);
     try {
-      const token = await getToken();
-      const r = await fetch(PDF_URL(String(id)), {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
+      const headers = await buildAuthHeaders();
+      const r = await fetch(PDF_URL(String(id)), { headers });
       const blob = await r.blob();
       // Convert blob -> base64 -> file URI usable by Sharing
       const reader = new FileReader();
@@ -117,10 +115,10 @@ export default function Closure() {
 
   const exportXLSX = async () => {
     try {
-      const token = await getToken();
+      const headers = await buildAuthHeaders();
       const r = await fetch(
         `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/chantiers/${id}/export.xlsx`,
-        { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+        { headers }
       );
       if (!r.ok) throw new Error("xlsx failed");
       const blob = await r.blob();

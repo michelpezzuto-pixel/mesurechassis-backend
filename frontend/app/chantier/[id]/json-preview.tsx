@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { JSON_URL, getToken } from "@/src/services/api";
+import { JSON_URL, buildAuthHeaders } from "@/src/services/api";
 import { colors } from "@/src/theme";
 
 /**
@@ -32,10 +32,8 @@ export default function JsonPreview() {
     setLoading(true);
     setError(null);
     try {
-      const token = await getToken();
-      const r = await fetch(JSON_URL(String(id)), {
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-      });
+      const headers = await buildAuthHeaders();
+      const r = await fetch(JSON_URL(String(id)), { headers });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const data = await r.json();
       setText(JSON.stringify(data, null, 2));

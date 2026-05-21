@@ -18,7 +18,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
-import { api, getToken, PDF_URL, JSON_URL, XLSX_URL, CSV_URL } from "@/src/services/api";
+import { api, buildAuthHeaders, PDF_URL, JSON_URL, XLSX_URL, CSV_URL } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { colors, statusMeta, blockMeta } from "@/src/theme";
 
@@ -442,8 +442,7 @@ export default function ChantierDetail() {
     const url = urlMap[kind](chantier.id);
     setExporting(kind);
     try {
-      const token = await getToken();
-      const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+      const headers = await buildAuthHeaders();
       if (Platform.OS === "web") {
         // Authenticated blob download via fetch
         const r = await fetch(url, { headers });

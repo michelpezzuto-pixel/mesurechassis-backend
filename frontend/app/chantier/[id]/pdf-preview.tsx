@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { api, PDF_URL, getToken } from "@/src/services/api";
+import { api, PDF_URL, buildAuthHeaders } from "@/src/services/api";
 import { colors, blockMeta, statusMeta } from "@/src/theme";
 
 /**
@@ -58,10 +58,8 @@ export default function PdfPreview() {
     if (!id) return;
     if (Platform.OS !== "web") return;
     try {
-      const token = await getToken();
-      const r = await fetch(PDF_URL(String(id)), {
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-      });
+      const headers = await buildAuthHeaders();
+      const r = await fetch(PDF_URL(String(id)), { headers });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const blob = await r.blob();
       setBlobUrl(URL.createObjectURL(blob));
@@ -123,10 +121,8 @@ export default function PdfPreview() {
         const FS: any = await import("expo-file-system/legacy");
         const Sharing = await import("expo-sharing");
         const dest = `${FS.cacheDirectory}${fileName}`;
-        const token = await getToken();
-        await FS.downloadAsync(PDF_URL(String(id)), dest, {
-          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        });
+        const headers = await buildAuthHeaders();
+        await FS.downloadAsync(PDF_URL(String(id)), dest, { headers });
         await Sharing.shareAsync(dest, {
           dialogTitle: "Partager le récapitulatif",
           mimeType: "application/pdf",

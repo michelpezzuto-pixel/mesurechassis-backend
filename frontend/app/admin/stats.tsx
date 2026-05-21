@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
-import { api, getToken } from "@/src/services/api";
+import { api, buildAuthHeaders } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { colors, statusMeta } from "@/src/theme";
 import * as Sharing from "expo-sharing";
@@ -73,10 +73,10 @@ export default function AdminStats() {
   const exportPerfPDF = async () => {
     setExporting(true);
     try {
-      const token = await getToken();
+      const headers = await buildAuthHeaders();
       const r = await fetch(
         `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/stats/commercials/export.pdf`,
-        { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+        { headers }
       );
       const blob = await r.blob();
       const reader = new FileReader();

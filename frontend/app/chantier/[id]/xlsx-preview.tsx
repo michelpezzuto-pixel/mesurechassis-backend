@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { XLSX_URL, getToken } from "@/src/services/api";
+import { XLSX_URL, buildAuthHeaders } from "@/src/services/api";
 import { colors } from "@/src/theme";
 
 /**
@@ -43,10 +43,8 @@ export default function XlsxPreview() {
         setBlobUrl(null);
         return;
       }
-      const token = await getToken();
-      const r = await fetch(XLSX_URL(String(id)), {
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-      });
+      const headers = await buildAuthHeaders();
+      const r = await fetch(XLSX_URL(String(id)), { headers });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const blob = await r.blob();
       setSize(blob.size);
@@ -102,10 +100,8 @@ export default function XlsxPreview() {
         const FS: any = await import("expo-file-system/legacy");
         const Sharing = await import("expo-sharing");
         const dest = `${FS.cacheDirectory}${fileName}`;
-        const token = await getToken();
-        await FS.downloadAsync(XLSX_URL(String(id)), dest, {
-          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        });
+        const headers = await buildAuthHeaders();
+        await FS.downloadAsync(XLSX_URL(String(id)), dest, { headers });
         await Sharing.shareAsync(dest, {
           dialogTitle: "Partager l'export Excel",
           mimeType:
