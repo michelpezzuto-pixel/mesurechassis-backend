@@ -315,7 +315,18 @@ export default function NewMesureWizard() {
         let chantierWallConfig: any = null;
         try {
           const cr = await api.get(`/chantiers/${id}`);
-          chantierWallConfig = (cr.data as any)?.wall_config || null;
+          const raw = (cr.data as any)?.wall_config;
+          // 🔒 On considère le wall_config "significatif" SEULEMENT s'il a
+          // au moins masonry_type ET insulation_mode renseignés. Un objet
+          // vide {} (truthy en JS) ne doit PAS déclencher le skip.
+          if (
+            raw &&
+            typeof raw === "object" &&
+            !!raw.masonry_type &&
+            !!raw.insulation_mode
+          ) {
+            chantierWallConfig = raw;
+          }
         } catch {
           /* noop — chantier introuvable, on continue avec une config vide */
         }
@@ -704,6 +715,13 @@ export default function NewMesureWizard() {
         ]);
         return;
       }
+      // 🔒 SAFETY NET — on retente la sauvegarde du wall_config juste avant
+      // d'enregistrer la mesure. Si le PATCH initial à l'étape 1→2 a échoué
+      // (réseau transitoire, etc.) ou si on est en mode édition d'une mesure
+      // antérieure à la fonctionnalité, on assure ici la persistance.
+      if (!editingId) {
+        await persistWallConfig();
+      }
       if (editingId) await api.patch(`/mesures/${editingId}`, payload);
       else await api.post("/mesures", payload);
       router.back();
@@ -742,33 +760,52 @@ export default function NewMesureWizard() {
   };
 
   // ────── Navigation ─────────────────────────────────────────────────
+  /** Construit le payload wall_config depuis l'état s1 courant. */
+  const buildWallConfigPayload = () => ({
+    project_type: s1.project_type,
+    masonry_type: s1.masonry_type,
+    gros_oeuvre_mm: parseNum(s1.gros_oeuvre_mm),
+    insulation_mode: s1.insulation_mode,
+    iti_thickness_mm: parseNum(s1.iti_thickness_mm),
+    ite_insul_thickness_mm: parseNum(s1.ite_insul_thickness_mm),
+    parement_type: s1.parement_type,
+    crepi_thickness_mm: parseNum(s1.crepi_thickness_mm),
+    coulisse_thickness_mm: parseNum(s1.coulisse_thickness_mm),
+    brique_pierre_thickness_mm: parseNum(s1.brique_pierre_thickness_mm),
+    structure_lame_air_mm: parseNum(s1.structure_lame_air_mm),
+    sill_already_installed: s1.sill_already_installed,
+    sill_thickness_mm: parseNum(s1.sill_thickness_mm),
+    has_breastwork: s1.has_breastwork,
+    has_horizontal_cut: s1.has_horizontal_cut,
+  });
+
+  /** Sauvegarde silencieuse du wall_config (idempotent). Renvoie true si OK. */
+  const persistWallConfig = async (): Promise<boolean> => {
+    try {
+      await api.patch(
+        `/chantiers/${id}/wall-config`,
+        buildWallConfigPayload()
+      );
+      setWallConfigLocked(true);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
   const goNextFromStep1 = async () => {
     if (!validateStep1()) return;
     // 🏗️ Sauvegarde la wall_config sur le chantier (1 seule fois pour
-    // tout le chantier). Si la sauvegarde échoue, on continue quand même
-    // pour ne pas bloquer le métreur — la config sera tentée au prochain
-    // châssis.
-    try {
-      await api.patch(`/chantiers/${id}/wall-config`, {
-        project_type: s1.project_type,
-        masonry_type: s1.masonry_type,
-        gros_oeuvre_mm: parseNum(s1.gros_oeuvre_mm),
-        insulation_mode: s1.insulation_mode,
-        iti_thickness_mm: parseNum(s1.iti_thickness_mm),
-        ite_insul_thickness_mm: parseNum(s1.ite_insul_thickness_mm),
-        parement_type: s1.parement_type,
-        crepi_thickness_mm: parseNum(s1.crepi_thickness_mm),
-        coulisse_thickness_mm: parseNum(s1.coulisse_thickness_mm),
-        brique_pierre_thickness_mm: parseNum(s1.brique_pierre_thickness_mm),
-        structure_lame_air_mm: parseNum(s1.structure_lame_air_mm),
-        sill_already_installed: s1.sill_already_installed,
-        sill_thickness_mm: parseNum(s1.sill_thickness_mm),
-        has_breastwork: s1.has_breastwork,
-        has_horizontal_cut: s1.has_horizontal_cut,
-      });
-      setWallConfigLocked(true);
-    } catch {
-      /* noop — on continue malgré l'erreur de sync */
+    // tout le chantier). Si la sauvegarde échoue, on AVERTIT l'utilisateur
+    // (mais on continue pour ne pas bloquer le métreur). Le submit final
+    // retentera également la sauvegarde (idempotent).
+    const ok = await persistWallConfig();
+    if (!ok) {
+      Alert.alert(
+        "Configuration non sauvegardée",
+        "La configuration du mur n'a pas pu être enregistrée sur le serveur. " +
+          "Vous pouvez continuer, elle sera re-tentée au moment d'enregistrer le châssis.",
+      );
     }
     setStep(1);
   };
