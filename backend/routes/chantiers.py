@@ -188,6 +188,37 @@ async def update_chantier(
     return Chantier(**doc)
 
 
+# ──────────────────────────────────────────────────────────────────────
+# Configuration du Mur (Étape 1 du wizard) — accessible aussi aux
+# techniciens car le terrain peut être configuré par le technicien lors
+# de la première visite. Endpoint dédié pour ne pas ouvrir tout PATCH.
+# ──────────────────────────────────────────────────────────────────────
+@router.patch("/chantiers/{chantier_id}/wall-config", response_model=Chantier)
+async def update_wall_config(
+    chantier_id: str,
+    payload: dict,
+    user=Depends(require_roles(["admin", "commercial", "technician"])),
+):
+    company = user.get("company_id", "default")
+    existing = await db.chantiers.find_one(
+        {"id": chantier_id, "company_id": company}
+    )
+    if not existing:
+        raise HTTPException(404, "Chantier introuvable")
+    # On accepte un dict free-form (project_type, masonry_type,
+    # gros_oeuvre_mm, insulation_mode, parement_type, etc.)
+    if not isinstance(payload, dict):
+        raise HTTPException(400, "Payload doit être un objet JSON")
+    await db.chantiers.update_one(
+        {"id": chantier_id, "company_id": company},
+        {"$set": {"wall_config": payload}},
+    )
+    doc = await db.chantiers.find_one(
+        {"id": chantier_id, "company_id": company}, {"_id": 0}
+    )
+    return Chantier(**doc)
+
+
 @router.delete("/chantiers/{chantier_id}")
 async def delete_chantier(
     chantier_id: str,

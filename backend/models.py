@@ -109,6 +109,11 @@ class ChantierUpdate(BaseModel):
     appointment_at: Optional[str] = None
     notes: Optional[str] = None
     site_photos: Optional[List[dict]] = None
+    # 🏗️ Configuration du mur (Étape 1 du wizard) — GLOBALE au chantier,
+    # saisie une seule fois lors de la création/première ouverture. Réutilisée
+    # par toutes les mesures pour les feuillures conditionnelles (Brique /
+    # Pierre / Bloc béton). Champ libre (dict) pour rester souple.
+    wall_config: Optional[dict] = None
 
 
 class Chantier(BaseModel):
@@ -129,6 +134,8 @@ class Chantier(BaseModel):
     signed_at: Optional[str] = None
     created_at: str
     site_photos: List[dict] = Field(default_factory=list)
+    # 🏗️ Configuration du mur — voir ChantierUpdate.
+    wall_config: Optional[dict] = None
 
 
 class SignatureIn(BaseModel):

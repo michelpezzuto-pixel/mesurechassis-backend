@@ -258,7 +258,11 @@ export default function NewMesureWizard() {
   const [labelError, setLabelError] = useState(false);
   const [photo, setPhoto] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [loadingEdit, setLoadingEdit] = useState(!!editingId);
+  // Loading initial : édition OU chargement de la wall_config du chantier
+  const [loadingInit, setLoadingInit] = useState(true);
+  // 🏗️ Si le chantier a déjà une wall_config → on saute l'étape 1
+  //    (configuration mur déjà faite une fois pour tout le chantier).
+  const [wallConfigLocked, setWallConfigLocked] = useState(false);
 
   const [s1, setS1] = useState<Step1Data>(initStep1());
   const [s1Err, setS1Err] = useState<Record<string, boolean>>({});
@@ -279,77 +283,111 @@ export default function NewMesureWizard() {
   const setS3Field = <K extends keyof Step3Data>(k: K, v: Step3Data[K]) =>
     setS3((p) => ({ ...p, [k]: v }));
 
-  // ────── Edit mode loader ────────────────────────────────────────────
+  /** Hydrate `s1` depuis une `wall_config` chargée depuis le chantier. */
+  const hydrateS1FromWallConfig = (opts: any) => {
+    if (!opts || typeof opts !== "object") return;
+    const toStr = (v: any) => (v == null || v === "" ? "" : String(v));
+    setS1({
+      project_type: opts.project_type || "renovation",
+      masonry_type: opts.masonry_type || null,
+      gros_oeuvre_mm: toStr(opts.gros_oeuvre_mm),
+      insulation_mode: opts.insulation_mode || null,
+      iti_thickness_mm: toStr(opts.iti_thickness_mm),
+      ite_insul_thickness_mm: toStr(opts.ite_insul_thickness_mm),
+      parement_type: opts.parement_type || null,
+      crepi_thickness_mm: toStr(opts.crepi_thickness_mm),
+      coulisse_thickness_mm: toStr(opts.coulisse_thickness_mm),
+      brique_pierre_thickness_mm: toStr(opts.brique_pierre_thickness_mm),
+      structure_lame_air_mm: toStr(opts.structure_lame_air_mm),
+      sill_already_installed:
+        opts.sill_already_installed == null ? null : !!opts.sill_already_installed,
+      sill_thickness_mm: toStr(opts.sill_thickness_mm),
+      has_breastwork: !!opts.has_breastwork,
+      has_horizontal_cut: !!opts.has_horizontal_cut,
+    });
+  };
+
+  // ────── Init loader : charge wall_config du chantier + edit éventuel ──
   useEffect(() => {
-    if (!editingId) return;
     (async () => {
       try {
-        const r = await api.get(`/mesures/${editingId}`);
-        const m = r.data as any;
-        const inferred = inferShape(m);
-        setShape(inferred);
-        setLabel(m.label || "");
-        setPhoto(m.photo_url || null);
-        const opts = m.options || {};
-        const toStr = (v: any) => (v == null || v === "" ? "" : String(v));
-        setS1({
-          project_type: opts.project_type || (m.renovation_mode ? "renovation" : "construction"),
-          masonry_type: opts.masonry_type || null,
-          gros_oeuvre_mm: toStr(opts.gros_oeuvre_mm),
-          insulation_mode: opts.insulation_mode || null,
-          iti_thickness_mm: toStr(opts.iti_thickness_mm),
-          ite_insul_thickness_mm: toStr(opts.ite_insul_thickness_mm),
-          parement_type: opts.parement_type || null,
-          crepi_thickness_mm: toStr(opts.crepi_thickness_mm),
-          coulisse_thickness_mm: toStr(opts.coulisse_thickness_mm),
-          brique_pierre_thickness_mm: toStr(opts.brique_pierre_thickness_mm),
-          structure_lame_air_mm: toStr(opts.structure_lame_air_mm),
-          sill_already_installed:
-            opts.sill_already_installed == null ? null : !!opts.sill_already_installed,
-          sill_thickness_mm: toStr(opts.sill_thickness_mm),
-          has_breastwork: !!opts.has_breastwork,
-          has_horizontal_cut: !!opts.has_horizontal_cut,
-        });
-        const isTrap = inferred === "trapeze";
-        const isReno = !!m.renovation_mode;
-        setS3((prev) => ({
-          ...prev,
-          bay_width: toStr(m.bay_width),
-          bay_height: isReno || isTrap ? "" : toStr(m.bay_height),
-          diag_1: toStr(m.bay_diagonal_1),
-          diag_1_state: m.bay_diagonal_1 ? "validated" : "manual",
-          diag_2: toStr(m.bay_diagonal_2),
-          diag_2_state: m.bay_diagonal_2 ? "validated" : "manual",
-          renovation_mode: isReno,
-          width_top: toStr(m.width_top),
-          width_bottom: toStr(m.width_bottom),
-          height_left: isReno ? toStr(m.height_left) : "",
-          height_right: isReno ? toStr(m.height_right) : "",
-          trap_height_left: isTrap ? toStr(m.height_left) : "",
-          trap_height_right: isTrap ? toStr(m.height_right) : "",
-          triangle_base: toStr(opts.triangle_base_mm),
-          triangle_height: toStr(opts.triangle_height_mm),
-          oeil_diameter: toStr(opts.oeil_diameter_mm),
-          garage_lintel: toStr(opts.garage_lintel_mm),
-          garage_ecoincon_left: toStr(opts.garage_ecoincon_left_mm),
-          garage_ecoincon_right: toStr(opts.garage_ecoincon_right_mm),
-          floor_reserve: toStr(m.floor_reserve),
-          has_1m_level_mark: !!opts.has_1m_level_mark,
-          trait_1m_brut_mm: toStr(opts.trait_1m_brut_mm),
-          feuillure_left_mm: toStr(opts.feuillure_left_mm),
-          feuillure_right_mm: toStr(opts.feuillure_right_mm),
-          feuillure_top_mm: toStr(opts.feuillure_top_mm),
-        }));
-        setStep(0);
-      } catch {
-        Alert.alert("Erreur", "Mesure introuvable.");
-        router.back();
+        // 1) Charge le chantier pour récupérer wall_config (si présent)
+        let chantierWallConfig: any = null;
+        try {
+          const cr = await api.get(`/chantiers/${id}`);
+          chantierWallConfig = (cr.data as any)?.wall_config || null;
+        } catch {
+          /* noop — chantier introuvable, on continue avec une config vide */
+        }
+        if (chantierWallConfig) {
+          hydrateS1FromWallConfig(chantierWallConfig);
+          setWallConfigLocked(true);
+        }
+
+        // 2) Si on est en edit mode : charge la mesure existante
+        if (editingId) {
+          try {
+            const r = await api.get(`/mesures/${editingId}`);
+            const m = r.data as any;
+            const inferred = inferShape(m);
+            setShape(inferred);
+            setLabel(m.label || "");
+            setPhoto(m.photo_url || null);
+            const opts = m.options || {};
+            const toStr = (v: any) => (v == null || v === "" ? "" : String(v));
+            // S'il n'y a pas de wall_config sur le chantier mais que la mesure
+            // possède une copie des champs maçonnerie, on hydrate quand même.
+            if (!chantierWallConfig) hydrateS1FromWallConfig(opts);
+            const isTrap = inferred === "trapeze";
+            const isReno = !!m.renovation_mode;
+            setS3((prev) => ({
+              ...prev,
+              bay_width: toStr(m.bay_width),
+              bay_height: isReno || isTrap ? "" : toStr(m.bay_height),
+              diag_1: toStr(m.bay_diagonal_1),
+              diag_1_state: m.bay_diagonal_1 ? "validated" : "manual",
+              diag_2: toStr(m.bay_diagonal_2),
+              diag_2_state: m.bay_diagonal_2 ? "validated" : "manual",
+              renovation_mode: isReno,
+              width_top: toStr(m.width_top),
+              width_bottom: toStr(m.width_bottom),
+              height_left: isReno ? toStr(m.height_left) : "",
+              height_right: isReno ? toStr(m.height_right) : "",
+              trap_height_left: isTrap ? toStr(m.height_left) : "",
+              trap_height_right: isTrap ? toStr(m.height_right) : "",
+              triangle_base: toStr(opts.triangle_base_mm),
+              triangle_height: toStr(opts.triangle_height_mm),
+              oeil_diameter: toStr(opts.oeil_diameter_mm),
+              garage_lintel: toStr(opts.garage_lintel_mm),
+              garage_ecoincon_left: toStr(opts.garage_ecoincon_left_mm),
+              garage_ecoincon_right: toStr(opts.garage_ecoincon_right_mm),
+              floor_reserve: toStr(m.floor_reserve),
+              has_1m_level_mark: !!opts.has_1m_level_mark,
+              trait_1m_brut_mm: toStr(opts.trait_1m_brut_mm),
+              feuillure_left_mm: toStr(opts.feuillure_left_mm),
+              feuillure_right_mm: toStr(opts.feuillure_right_mm),
+              feuillure_top_mm: toStr(opts.feuillure_top_mm),
+            }));
+            // En édition : on saute directement à l'étape 3 (cotes) — la
+            // forme est déjà connue et la wall_config est globale.
+            setStep(2);
+          } catch {
+            Alert.alert("Erreur", "Mesure introuvable.");
+            router.back();
+            return;
+          }
+        } else if (chantierWallConfig) {
+          // Création d'un NOUVEAU châssis sur un chantier déjà configuré
+          // → on saute l'étape 1 et on commence directement par la
+          // sélection de la forme.
+          setStep(1);
+        }
       } finally {
-        setLoadingEdit(false);
+        setLoadingInit(false);
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editingId]);
+  }, [editingId, id]);
 
   // ────── Pythagore ──────────────────────────────────────────────────
   const usesDiagonals = (sh: Shape | null) =>
@@ -704,8 +742,34 @@ export default function NewMesureWizard() {
   };
 
   // ────── Navigation ─────────────────────────────────────────────────
-  const goNextFromStep1 = () => {
+  const goNextFromStep1 = async () => {
     if (!validateStep1()) return;
+    // 🏗️ Sauvegarde la wall_config sur le chantier (1 seule fois pour
+    // tout le chantier). Si la sauvegarde échoue, on continue quand même
+    // pour ne pas bloquer le métreur — la config sera tentée au prochain
+    // châssis.
+    try {
+      await api.patch(`/chantiers/${id}/wall-config`, {
+        project_type: s1.project_type,
+        masonry_type: s1.masonry_type,
+        gros_oeuvre_mm: parseNum(s1.gros_oeuvre_mm),
+        insulation_mode: s1.insulation_mode,
+        iti_thickness_mm: parseNum(s1.iti_thickness_mm),
+        ite_insul_thickness_mm: parseNum(s1.ite_insul_thickness_mm),
+        parement_type: s1.parement_type,
+        crepi_thickness_mm: parseNum(s1.crepi_thickness_mm),
+        coulisse_thickness_mm: parseNum(s1.coulisse_thickness_mm),
+        brique_pierre_thickness_mm: parseNum(s1.brique_pierre_thickness_mm),
+        structure_lame_air_mm: parseNum(s1.structure_lame_air_mm),
+        sill_already_installed: s1.sill_already_installed,
+        sill_thickness_mm: parseNum(s1.sill_thickness_mm),
+        has_breastwork: s1.has_breastwork,
+        has_horizontal_cut: s1.has_horizontal_cut,
+      });
+      setWallConfigLocked(true);
+    } catch {
+      /* noop — on continue malgré l'erreur de sync */
+    }
     setStep(1);
   };
   const onPickShape = (sh: Shape) => {
@@ -713,11 +777,22 @@ export default function NewMesureWizard() {
     setStep(2);
   };
   const goBack = () => {
-    if (step === 0) router.back();
-    else setStep((step - 1) as Step);
+    // 🏗️ Si la config mur est verrouillée (déjà sauvée pour le chantier),
+    //    on saute l'étape 1 lors du retour aussi : étape 2 → quitte.
+    if (step === 2) {
+      setStep(1);
+    } else if (step === 1) {
+      if (wallConfigLocked) {
+        router.back();
+      } else {
+        setStep(0);
+      }
+    } else {
+      router.back();
+    }
   };
 
-  if (loadingEdit) {
+  if (loadingInit) {
     return (
       <SafeAreaView style={[styles.flex, { justifyContent: "center", alignItems: "center" }]}>
         <ActivityIndicator color={colors.primary} />
