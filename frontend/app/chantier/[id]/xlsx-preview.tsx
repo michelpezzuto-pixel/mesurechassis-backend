@@ -34,6 +34,15 @@ export default function XlsxPreview() {
     setLoading(true);
     setError(null);
     try {
+      // 🍏 EXPO GO iOS — `r.blob()` + `Blob.size` natifs déclenchent
+      // "globalThis.__turboModuleProxy is not a function". On NE PRÉ-CHARGE
+      // PAS le fichier sur natif : on attend le clic PARTAGER qui utilise
+      // expo-file-system pour télécharger directement en cache.
+      if (Platform.OS !== "web") {
+        setSize(null);
+        setBlobUrl(null);
+        return;
+      }
       const token = await getToken();
       const r = await fetch(XLSX_URL(String(id)), {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
@@ -41,9 +50,7 @@ export default function XlsxPreview() {
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const blob = await r.blob();
       setSize(blob.size);
-      if (Platform.OS === "web") {
-        setBlobUrl(URL.createObjectURL(blob));
-      }
+      setBlobUrl(URL.createObjectURL(blob));
     } catch (e: any) {
       setError(e?.message || "Génération Excel impossible.");
     } finally {
@@ -54,7 +61,7 @@ export default function XlsxPreview() {
   useEffect(() => {
     fetchFile();
     return () => {
-      if (blobUrl) {
+      if (blobUrl && Platform.OS === "web") {
         try { URL.revokeObjectURL(blobUrl); } catch { /* noop */ }
       }
     };

@@ -32,6 +32,14 @@ export default function PdfPreview() {
     setLoading(true);
     setError(null);
     try {
+      // 🍏 EXPO GO iOS — `URL.createObjectURL` + `Blob` natifs déclenchent
+      // "globalThis.__turboModuleProxy is not a function (it is undefined)".
+      // On NE PRÉ-CHARGE PAS le PDF sur natif : on attend le clic PARTAGER
+      // qui utilise expo-file-system pour télécharger directement en cache.
+      if (Platform.OS !== "web") {
+        setBlobUrl(null);
+        return;
+      }
       const token = await getToken();
       const r = await fetch(PDF_URL(String(id)), {
         headers: token ? { Authorization: `Bearer ${token}` } : undefined,
@@ -50,7 +58,7 @@ export default function PdfPreview() {
   useEffect(() => {
     fetchPdf();
     return () => {
-      if (blobUrl) {
+      if (blobUrl && Platform.OS === "web") {
         try {
           URL.revokeObjectURL(blobUrl);
         } catch {
@@ -178,9 +186,12 @@ export default function PdfPreview() {
           })
         ) : (
           <View style={styles.center}>
-            <Ionicons name="document-text" size={48} color={colors.textSecondary} />
+            <Ionicons name="document-text" size={64} color={colors.primary} />
+            <Text style={[styles.help, { fontSize: 15, fontWeight: "700", color: colors.textPrimary, marginTop: 8 }]}>
+              Récapitulatif prêt
+            </Text>
             <Text style={styles.help}>
-              Touchez « PARTAGER » pour ouvrir le récapitulatif dans une autre app.
+              Touchez « PARTAGER » pour ouvrir le PDF avec Mail, Files, AirDrop ou une autre app.
             </Text>
           </View>
         )}

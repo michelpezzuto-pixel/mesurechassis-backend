@@ -393,12 +393,12 @@ export default function ChantierDetail() {
     const adminEmail = user?.email || ""; // pré-remplit avec l'email du master admin connecté
 
     Alert.alert(
-      "Partage natif indisponible",
-      "Impossible d'ouvrir le partage natif sur cet appareil. Voulez-vous envoyer le fichier directement par email au bureau ?",
+      `Export ${kind.toUpperCase()} prêt`,
+      `Envoyer le fichier ${kind.toUpperCase()} par email à votre bureau ou à un collaborateur ?\n\nAstuce : pour télécharger le fichier brut, utilisez MesureChâssis depuis Safari/Chrome.`,
       [
         { text: "Annuler", style: "cancel" },
         {
-          text: "Oui, envoyer par email",
+          text: "Envoyer par email",
           onPress: async () => {
             const mailtoUrl = `mailto:${adminEmail}?subject=${encodeURIComponent(
               subject
@@ -490,6 +490,19 @@ export default function ChantierDetail() {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         if (kind === "csv" || kind === "json") {
           textContent = await r.text();
+        }
+
+        // 🍏 Sur iOS Expo Go, le partage natif de CSV/JSON via Sharing
+        // peut soit échouer silencieusement, soit ouvrir une feuille de
+        // partage où aucune app ne sait gérer le format. Pour CSV/JSON
+        // on bascule DIRECTEMENT sur le fallback `mailto:` (plus fiable).
+        if (
+          Platform.OS === "ios" &&
+          (kind === "csv" || kind === "json") &&
+          textContent != null
+        ) {
+          offerEmailFallback(kind, textContent, safe);
+          return;
         }
 
         // 2) Tentative native (download + share). Si ÇA PLANTE → fallback.
