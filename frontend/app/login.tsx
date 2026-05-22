@@ -43,10 +43,10 @@ export default function LoginScreen() {
     }
   };
 
-  const demo = async (role: 'admin' | 'commercial' | 'technicien') => {
+  const demo = async (role: 'admin' | 'solo' | 'technicien') => {
     const map = {
       admin: 'admin@demo.fr',
-      commercial: 'marc@mesureescalier.com',
+      solo: 'marc@mesureescalier.com',
       technicien: 'sophie@mesureescaliee.com',
     };
     setEmail(map[role]);
@@ -163,9 +163,9 @@ export default function LoginScreen() {
               <Ionicons name="shield-checkmark" size={16} color={C.ACCENT} />
               <Text style={styles.demoTxt}>ADMIN</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.demoBtn} onPress={() => demo('commercial')} testID="demo-commercial">
-              <Ionicons name="briefcase" size={16} color={C.ACCENT} />
-              <Text style={styles.demoTxt}>COMMERCIAL</Text>
+            <TouchableOpacity style={styles.demoBtn} onPress={() => demo('solo')} testID="demo-solo">
+              <MaterialCommunityIcons name="account-star" size={16} color={C.ACCENT} />
+              <Text style={styles.demoTxt}>ARTISAN</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.demoBtn} onPress={() => demo('technicien')} testID="demo-technicien">
               <MaterialCommunityIcons name="wrench" size={16} color={C.ACCENT} />

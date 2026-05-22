@@ -1,0 +1,36 @@
+{
+  "summary": "Iteration 2 (RBAC refactor, solo_mode, new screens) — 25/25 backend pytest cases pass. Frontend smoke verified on mobile viewport: 3 demo logins (admin / artisan-solo / technicien), 4-icon header, /stats, /settings (with Mode artisan unique toggle for admins), /team (with ARTISAN badge & technicien-only invite). Role-based visibility confirmed (technicien sees no team icon and no solo-mode switch).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "global", "issues": ["Lingering deprecation warnings: 'shadow*' props, expo-av in SDK 54, props.pointerEvents — non-blocking."]}
+    ],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_mesure_escalier.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Update /app/memory/test_credentials.md — it still labels marc@mesureescalier.com as 'Commercial'; should read 'Admin (mode artisan unique / solo_mode=true)'.",
+    "Consider exposing more consistent testIDs on the new screens for future automation: actual IDs in code are `back-btn`, `settings-input-name`, `settings-input-company`, `toggle-solo-mode`, `kpi-projects`, `kpi-measurements`, `kpi-validated`, `kpi-avg-steps`, `role-technicien`, `invite-name`, `invite-email`, `invite-password`, `invite-submit`. The review_request mentioned `solo-mode-switch`, `settings-fullname`, `settings-company`, `header-team` etc. — `header-team` exists, the others differ from what the request listed. Either align names or document them.",
+    "Optional: also seed/verify a `back-button` testID name to match common convention."
+  ],
+  "critical_code_review_comments": [
+    "server.py still ~980 lines — could be modularized.",
+    "`Role` type literal correctly restricts to ('admin','technicien'); InviteUserRequest.role literal restricts to 'technicien' (good — Pydantic returns 422 for 'commercial').",
+    "Migration logic in seed_demo_users is idempotent and backfills solo_mode=false on existing users.",
+    "has_technician_powers() correctly grants tech rights to admin when solo_mode=true."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_mesure_escalier.py (rewritten — 25 cases focused on new RBAC + solo_mode + stats)"
+  ],
+  "success_rate": {"backend": "100% (25/25)", "frontend": "All targeted flows pass visually (login×3, dashboard header×3 roles, stats KPIs, settings profile + solo toggle for admins, team list with ARTISAN badge, technicien restrictions)"},
+  "seed_data_creation": "Tests create TEST_-prefixed users/projects and clean up via admin token. seed_demo_users() auto-migrates legacy commercial→admin/technicien at startup as designed.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend 25 tests in /app/backend/tests/test_mesure_escalier.py cover: seed migration (admin/artisan/technicien), register defaults solo_mode=false, auth/me payload includes solo_mode, PUT /auth/me (admin can update solo_mode, technicien gets 403), users invite (technicien OK, commercial → 422), projects RBAC (admin create unlocked brouillon, artisan create auto-locks a_mesurer with technicien_id=self, technicien cannot create/edit/delete), measurement (admin-without-solo 403 on save & validate; technicien transmit→measure→validate happy path; artisan solo full create→measure→validate; admin toggling solo ON can measure existing brouillon and project auto-locks). Stats: admin returns integer team_size≥3, technicien team_size=null.\n\nFrontend testIDs that actually exist (verified by grep):\n  login: demo-admin, demo-solo, demo-technicien, login-input-email, login-input-password, login-submit-button\n  dashboard header: header-stats, header-settings, header-team, header-logout\n  stats: back-btn, kpi-projects, kpi-measurements, kpi-validated, kpi-avg-steps\n  settings: back-btn, settings-input-name, settings-input-company, settings-save, toggle-solo-mode\n  team: back-btn, btn-toggle-form, role-technicien, invite-name, invite-email, invite-password, invite-submit, delete-user-{id}\n\nNote the review_request mentioned testIDs (solo-mode-switch, settings-fullname, settings-company, demo-artisan, back-button) that DO NOT match implementation. Either rename in code or update the spec. UI behavior itself is correct per screenshots in /tmp/.",
+  "rca_of_issue": "N/A — no functional bugs detected this iteration."
+}

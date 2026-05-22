@@ -74,6 +74,10 @@ export const Auth = {
   async logout() {
     await setToken(null);
   },
+  async updateProfile(payload: { full_name?: string; company_name?: string; solo_mode?: boolean }) {
+    const { data } = await api.put('/auth/me', payload);
+    return data as User;
+  },
 };
 
 export const Projects = {
@@ -97,9 +101,20 @@ export const Measurements = {
 
 export const Team = {
   list: async () => (await api.get('/users')).data as User[],
-  invite: async (payload: { full_name: string; email: string; password: string; role: 'commercial' | 'technicien' }) =>
-    (await api.post('/users', payload)).data as User,
+  invite: async (payload: { full_name: string; email: string; password: string; role?: 'technicien' }) =>
+    (await api.post('/users', { ...payload, role: payload.role || 'technicien' })).data as User,
   remove: async (id: string) => (await api.delete(`/users/${id}`)).data,
+};
+
+export const Stats = {
+  get: async () => (await api.get('/stats')).data as {
+    total_projects: number;
+    by_status: Record<string, number>;
+    total_measurements: number;
+    validated_measurements: number;
+    average_steps: number | null;
+    team_size: number | null;
+  },
 };
 
 export const Exports = {

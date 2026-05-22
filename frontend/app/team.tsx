@@ -19,7 +19,7 @@ export default function TeamScreen() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<'commercial' | 'technicien'>('commercial');
+  const [role, setRole] = useState<'technicien'>('technicien');
   const [saving, setSaving] = useState(false);
 
   const load = useCallback(async () => {
@@ -75,7 +75,7 @@ export default function TeamScreen() {
 
               <Text style={styles.label}>RÔLE</Text>
               <View style={styles.roleRow}>
-                {(['commercial', 'technicien'] as const).map(r => (
+                {(['technicien'] as const).map(r => (
                   <TouchableOpacity
                     key={r}
                     style={[styles.roleBtn, role === r && styles.roleBtnActive]}
@@ -83,7 +83,7 @@ export default function TeamScreen() {
                     testID={`role-${r}`}
                   >
                     <MaterialCommunityIcons
-                      name={r === 'commercial' ? 'briefcase' : 'wrench'}
+                      name={'wrench'}
                       size={16}
                       color={role === r ? C.DARK : C.ACCENT}
                     />
@@ -112,14 +112,14 @@ export default function TeamScreen() {
           ) : (
             list.map(u => (
               <View key={u.id} style={styles.userCard}>
-                <View style={[styles.avatar, { backgroundColor: u.role === 'admin' ? C.ACCENT : u.role === 'commercial' ? C.INFO : C.WARN }]}>
+                <View style={[styles.avatar, { backgroundColor: u.role === 'admin' ? C.ACCENT : C.WARN }]}>
                   <Text style={{ color: C.DARK, fontWeight: '800', fontSize: 16 }}>{u.full_name.charAt(0)}</Text>
                 </View>
                 <View style={{ flex: 1, marginLeft: SP.md }}>
                   <Text style={styles.userName}>{u.full_name}</Text>
                   <Text style={styles.userEmail}>{u.email}</Text>
-                  <Text style={[styles.userRole, { color: u.role === 'admin' ? C.ACCENT : u.role === 'commercial' ? C.INFO : C.WARN }]}>
-                    {u.role.toUpperCase()}
+                  <Text style={[styles.userRole, { color: u.role === 'admin' ? C.ACCENT : C.WARN }]}>
+                    {u.role.toUpperCase()}{u.solo_mode ? '  ·  ARTISAN' : ''}
                   </Text>
                 </View>
                 {u.id !== user?.id && u.role !== 'admin' && (

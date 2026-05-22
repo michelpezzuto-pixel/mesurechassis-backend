@@ -60,11 +60,12 @@ export default function ProjectDetail() {
   }
 
   const m = project.measurement;
-  const canTransmit = !project.locked && (user?.role === 'admin' || (user?.role === 'commercial' && project.commercial_id === user.id));
-  const canEditClient = canTransmit;
-  const canMeasure = (user?.role === 'admin' || user?.role === 'technicien') && project.locked;
-  const canDelete = user?.role === 'admin' || (user?.role === 'commercial' && !project.locked && project.commercial_id === user.id);
-  const canValidate = (user?.role === 'admin' || user?.role === 'technicien') && m && !m.validated;
+  const isSolo = !!user?.solo_mode;
+  const canTransmit = !project.locked && user?.role === 'admin' && !isSolo;
+  const canEditClient = user?.role === 'admin' && !project.locked;
+  const canMeasure = (user?.role === 'technicien' && project.locked) || (user?.role === 'admin' && isSolo);
+  const canDelete = user?.role === 'admin';
+  const canValidate = (user?.role === 'technicien' || (user?.role === 'admin' && isSolo)) && m && !m.validated;
   const canExport = m;
 
   return (

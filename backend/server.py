@@ -66,7 +66,7 @@ app = FastAPI(title="MesureEscalier API")
 api = APIRouter(prefix="/api")
 security = HTTPBearer(auto_error=False)
 
-Role = Literal["admin", "commercial", "technicien"]
+Role = Literal["admin", "technicien"]
 ProjectStatus = Literal["brouillon", "a_mesurer", "a_verifier", "valide", "en_fabrication", "termine"]
 
 
@@ -130,7 +130,14 @@ class UserPublic(BaseModel):
     full_name: str
     role: Role
     company_name: Optional[str] = None
+    solo_mode: bool = False
     created_at: datetime
+
+
+class ProfileUpdate(BaseModel):
+    full_name: Optional[str] = None
+    company_name: Optional[str] = None
+    solo_mode: Optional[bool] = None
 
 
 class RegisterRequest(BaseModel):
@@ -154,7 +161,7 @@ class InviteUserRequest(BaseModel):
     full_name: str
     email: EmailStr
     password: str = Field(min_length=6)
-    role: Literal["commercial", "technicien"]
+    role: Literal["technicien"] = "technicien"
 
 
 class ProjectCreate(BaseModel):
@@ -309,6 +316,7 @@ async def register(req: RegisterRequest):
         "full_name": req.full_name,
         "company_name": req.company_name or req.full_name,
         "role": "admin",  # First registration creates a Master Admin
+        "solo_mode": False,
         "password_hash": hash_password(req.password),
         "created_at": now_utc(),
     }
@@ -327,12 +335,36 @@ async def login(req: LoginRequest):
     token = make_token(user["id"], user["role"])
     user.pop("password_hash", None)
     user.pop("_id", None)
+    user.setdefault("solo_mode", False)
     return AuthResponse(token=token, user=UserPublic(**user))
 
 
 @api.get("/auth/me", response_model=UserPublic)
 async def me(user=Depends(get_current_user)):
+    user.setdefault("solo_mode", False)
     return UserPublic(**user)
+
+
+@api.put("/auth/me", response_model=UserPublic)
+async def update_me(payload: ProfileUpdate, user=Depends(get_current_user)):
+    update = {k: v for k, v in payload.model_dump().items() if v is not None}
+    if "solo_mode" in update and user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Le mode artisan unique est réservé aux Admin")
+    if update:
+        await db.users.update_one({"id": user["id"]}, {"$set": update})
+    fresh = await db.users.find_one({"id": user["id"]}, {"_id": 0, "password_hash": 0})
+    fresh.setdefault("solo_mode", False)
+    return UserPublic(**fresh)
+
+
+# Helper: does this user have admin powers (admin always; technicien if solo_mode somehow set — not allowed)
+def has_admin_powers(user) -> bool:
+    return user["role"] == "admin"
+
+
+# Helper: does this user have technician powers (technicien always; admin if solo_mode)
+def has_technician_powers(user) -> bool:
+    return user["role"] == "technicien" or (user["role"] == "admin" and user.get("solo_mode"))
 
 
 # ------------------------------------------------------------
@@ -355,6 +387,7 @@ async def invite_user(req: InviteUserRequest, user=Depends(require_roles("admin"
         "full_name": req.full_name,
         "company_name": user.get("company_name"),
         "role": req.role,
+        "solo_mode": False,
         "password_hash": hash_password(req.password),
         "created_at": now_utc(),
     }
@@ -378,13 +411,14 @@ async def delete_user(uid: str, user=Depends(require_roles("admin"))):
 # Projects
 # ------------------------------------------------------------
 def project_visible_to(user) -> dict:
-    """MongoDB filter restricting projects to the user's scope."""
+    """MongoDB filter restricting projects to the user's scope.
+    - Admin: sees everything (own company).
+    - Technicien: sees projects assigned to them OR unassigned (a_mesurer).
+    """
     if user["role"] == "admin":
         return {}
-    if user["role"] == "commercial":
-        return {"commercial_id": user["id"]}
     if user["role"] == "technicien":
-        return {"technicien_id": user["id"]}
+        return {"$or": [{"technicien_id": user["id"]}, {"technicien_id": None}]}
     return {"_never_match": True}
 
 
@@ -398,20 +432,23 @@ async def list_projects(user=Depends(get_current_user), status_filter: Optional[
 
 
 @api.post("/projects")
-async def create_project(payload: ProjectCreate, user=Depends(require_roles("admin", "commercial"))):
+async def create_project(payload: ProjectCreate, user=Depends(require_roles("admin"))):
     pid = str(uuid.uuid4())
     doc = {
         "id": pid,
         **payload.model_dump(),
         "status": "brouillon",
-        "commercial_id": user["id"],
-        "technicien_id": None,
+        "commercial_id": user["id"],  # legacy field: stores creator id
+        "creator_id": user["id"],
+        "technicien_id": user["id"] if user.get("solo_mode") else None,
         "company_name": user.get("company_name"),
-        "locked": False,
-        "transmitted_at": None,
+        "locked": bool(user.get("solo_mode")),
+        "transmitted_at": now_utc() if user.get("solo_mode") else None,
         "created_at": now_utc(),
         "updated_at": now_utc(),
     }
+    if user.get("solo_mode"):
+        doc["status"] = "a_mesurer"
     await db.projects.insert_one(doc)
     doc.pop("_id", None)
     return doc
@@ -433,13 +470,8 @@ async def update_project(pid: str, payload: ProjectUpdate, user=Depends(get_curr
     p = await db.projects.find_one({"id": pid})
     if not p:
         raise HTTPException(status_code=404, detail="Chantier introuvable")
-    if user["role"] == "commercial":
-        if p["commercial_id"] != user["id"]:
-            raise HTTPException(status_code=403, detail="Non autorisé")
-        if p.get("locked"):
-            raise HTTPException(status_code=403, detail="Chantier verrouillé (déjà transmis)")
-    elif user["role"] == "technicien":
-        raise HTTPException(status_code=403, detail="Le technicien ne peut pas modifier l'identification client")
+    if user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Seuls les Admin peuvent modifier l'identification client")
     update = {k: v for k, v in payload.model_dump().items() if v is not None}
     update["updated_at"] = now_utc()
     await db.projects.update_one({"id": pid}, {"$set": update})
@@ -452,25 +484,18 @@ async def delete_project(pid: str, user=Depends(get_current_user)):
     p = await db.projects.find_one({"id": pid})
     if not p:
         raise HTTPException(status_code=404, detail="Chantier introuvable")
-    if user["role"] == "admin":
-        pass
-    elif user["role"] == "commercial":
-        if p["commercial_id"] != user["id"] or p.get("locked"):
-            raise HTTPException(status_code=403, detail="Suppression interdite (verrouillé ou non propriétaire)")
-    else:
-        raise HTTPException(status_code=403, detail="Suppression interdite")
+    if user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Suppression réservée aux Admin")
     await db.projects.delete_one({"id": pid})
     await db.measurements.delete_many({"project_id": pid})
     return {"ok": True}
 
 
 @api.post("/projects/{pid}/transmit")
-async def transmit_project(pid: str, user=Depends(require_roles("admin", "commercial"))):
+async def transmit_project(pid: str, user=Depends(require_roles("admin"))):
     p = await db.projects.find_one({"id": pid})
     if not p:
         raise HTTPException(status_code=404, detail="Chantier introuvable")
-    if user["role"] == "commercial" and p["commercial_id"] != user["id"]:
-        raise HTTPException(status_code=403, detail="Non autorisé")
     await db.projects.update_one(
         {"id": pid},
         {"$set": {"locked": True, "status": "a_mesurer", "transmitted_at": now_utc(), "updated_at": now_utc()}},
@@ -494,15 +519,23 @@ async def assign_technicien(pid: str, payload: AssignRequest, user=Depends(requi
 # Measurements
 # ------------------------------------------------------------
 @api.post("/projects/{pid}/measurement")
-async def save_measurement(pid: str, payload: MeasurementInput, user=Depends(require_roles("admin", "technicien"))):
+async def save_measurement(pid: str, payload: MeasurementInput, user=Depends(get_current_user)):
     p = await db.projects.find_one({"id": pid})
     if not p:
         raise HTTPException(status_code=404, detail="Chantier introuvable")
+    # Only technicien or admin+solo_mode can measure
+    if not has_technician_powers(user):
+        raise HTTPException(status_code=403, detail="Seuls les Techniciens peuvent saisir les mesures")
     if user["role"] == "technicien" and p.get("technicien_id") not in (user["id"], None):
         raise HTTPException(status_code=403, detail="Ce chantier ne vous est pas assigné")
     if user["role"] == "technicien" and p.get("technicien_id") is None:
-        # Self-assign on first measurement
         await db.projects.update_one({"id": pid}, {"$set": {"technicien_id": user["id"]}})
+    # Auto-lock + transmit if admin in solo_mode is measuring a brouillon
+    if user["role"] == "admin" and user.get("solo_mode") and not p.get("locked"):
+        await db.projects.update_one(
+            {"id": pid},
+            {"$set": {"locked": True, "transmitted_at": now_utc(), "technicien_id": user["id"]}},
+        )
 
     result = compute_stair(payload)
     doc = {
@@ -530,7 +563,9 @@ async def preview_measurement(pid: str, payload: MeasurementInput, user=Depends(
 
 
 @api.post("/projects/{pid}/measurement/validate")
-async def validate_measurement(pid: str, user=Depends(require_roles("admin", "technicien"))):
+async def validate_measurement(pid: str, user=Depends(get_current_user)):
+    if not has_technician_powers(user):
+        raise HTTPException(status_code=403, detail="Seuls les Techniciens peuvent valider la conception")
     m = await db.measurements.find_one({"project_id": pid})
     if not m:
         raise HTTPException(status_code=404, detail="Aucune mesure à valider")
@@ -830,6 +865,40 @@ async def integration_site(pid: str, user=Depends(get_current_user)):
     return payload
 
 
+@api.get("/stats")
+async def stats(user=Depends(get_current_user)):
+    """Statistiques globales (admin: tout, technicien: ses chantiers)."""
+    q = project_visible_to(user)
+    total = await db.projects.count_documents(q)
+    by_status = {}
+    for s in ["brouillon", "a_mesurer", "a_verifier", "valide", "en_fabrication", "termine"]:
+        by_status[s] = await db.projects.count_documents({**q, "status": s})
+    # Measurements stats
+    project_ids = [p["id"] async for p in db.projects.find(q, {"id": 1, "_id": 0})]
+    total_measurements = await db.measurements.count_documents({"project_id": {"$in": project_ids}}) if project_ids else 0
+    validated = await db.measurements.count_documents({"project_id": {"$in": project_ids}, "validated": True}) if project_ids else 0
+    # Average step count
+    avg_steps = None
+    if total_measurements:
+        cursor = db.measurements.find({"project_id": {"$in": project_ids}}, {"result.n_steps": 1, "_id": 0})
+        steps = [m["result"]["n_steps"] async for m in cursor if m.get("result")]
+        if steps:
+            avg_steps = round(sum(steps) / len(steps), 1)
+    # Team size (admin only)
+    team_size = None
+    if user["role"] == "admin":
+        team_size = await db.users.count_documents({})
+
+    return {
+        "total_projects": total,
+        "by_status": by_status,
+        "total_measurements": total_measurements,
+        "validated_measurements": validated,
+        "average_steps": avg_steps,
+        "team_size": team_size,
+    }
+
+
 @api.get("/")
 async def root():
     return {"app": "MesureEscalier", "version": "1.0", "status": "ok"}
@@ -852,20 +921,32 @@ async def seed_demo_users():
     demo = [
         {
             "email": "admin@demo.fr", "full_name": "Marie Dubois",
-            "company_name": "Menuiserie Demo SARL", "role": "admin", "password": "Demo1234!",
+            "company_name": "Escaliers Demo SARL", "role": "admin", "password": "Demo1234!",
+            "solo_mode": False,
         },
         {
-            "email": "marc@mesureescalier.com", "full_name": "Marc Commercial",
-            "company_name": "Menuiserie Demo SARL", "role": "commercial", "password": "Demo1234!",
+            "email": "marc@mesureescalier.com", "full_name": "Marc Artisan",
+            "company_name": "Marc Escaliers Indépendant", "role": "admin", "password": "Demo1234!",
+            "solo_mode": True,  # Artisan unique : admin + technicien
         },
         {
             "email": "sophie@mesureescaliee.com", "full_name": "Sophie Technicienne",
-            "company_name": "Menuiserie Demo SARL", "role": "technicien", "password": "Demo1234!",
+            "company_name": "Escaliers Demo SARL", "role": "technicien", "password": "Demo1234!",
+            "solo_mode": False,
         },
     ]
     for u in demo:
         existing = await db.users.find_one({"email": u["email"]})
         if existing:
+            # Migrate role if existing is "commercial" or missing solo_mode
+            updates = {}
+            if existing.get("role") == "commercial":
+                updates["role"] = u["role"]
+            if "solo_mode" not in existing:
+                updates["solo_mode"] = u["solo_mode"]
+            if updates:
+                await db.users.update_one({"id": existing["id"]}, {"$set": updates})
+                logger.info("Migrated demo user %s → %s", u["email"], updates)
             continue
         await db.users.insert_one({
             "id": str(uuid.uuid4()),
@@ -873,10 +954,18 @@ async def seed_demo_users():
             "full_name": u["full_name"],
             "company_name": u["company_name"],
             "role": u["role"],
+            "solo_mode": u["solo_mode"],
             "password_hash": hash_password(u["password"]),
             "created_at": now_utc(),
         })
-        logger.info("Seeded demo user %s (%s)", u["email"], u["role"])
+        logger.info("Seeded demo user %s (%s, solo=%s)", u["email"], u["role"], u["solo_mode"])
+
+    # Migrate any other lingering "commercial" users -> technicien
+    res = await db.users.update_many({"role": "commercial"}, {"$set": {"role": "technicien"}})
+    if res.modified_count:
+        logger.info("Migrated %d commercial → technicien", res.modified_count)
+    # Backfill solo_mode for old users
+    await db.users.update_many({"solo_mode": {"$exists": False}}, {"$set": {"solo_mode": False}})
 
 
 @app.on_event("startup")

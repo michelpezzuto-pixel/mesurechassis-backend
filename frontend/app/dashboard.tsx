@@ -58,7 +58,7 @@ export default function Dashboard() {
     router.replace('/login');
   };
 
-  const canCreate = user?.role === 'admin' || user?.role === 'commercial';
+  const canCreate = user?.role === 'admin';
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -67,14 +67,23 @@ export default function Dashboard() {
         <View style={{ flex: 1 }}>
           <Text style={styles.hello}>Bonjour</Text>
           <Text style={styles.name} numberOfLines={1}>{user?.full_name?.split(' ')[0] || '—'}</Text>
-          <Text style={styles.company} numberOfLines={1}>{(user?.company_name || '').toUpperCase()}</Text>
+          <Text style={styles.company} numberOfLines={1}>
+            {(user?.company_name || '').toUpperCase()}
+            {user?.solo_mode ? '  ·  ARTISAN' : ''}
+          </Text>
         </View>
         <View style={styles.iconRow}>
+          <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/stats')} testID="header-stats">
+            <Ionicons name="stats-chart" size={20} color={C.ACCENT} />
+          </TouchableOpacity>
           {user?.role === 'admin' && (
             <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/team')} testID="header-team">
               <Ionicons name="people" size={20} color={C.ACCENT} />
             </TouchableOpacity>
           )}
+          <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/settings')} testID="header-settings">
+            <Ionicons name="settings-sharp" size={20} color={C.ACCENT} />
+          </TouchableOpacity>
           <TouchableOpacity style={styles.iconBtn} onPress={handleLogout} testID="header-logout">
             <Feather name="log-out" size={20} color={C.ACCENT} />
           </TouchableOpacity>
@@ -193,9 +202,9 @@ const styles = StyleSheet.create({
   hello: { ...FONT.small, color: C.GRAY3 },
   name: { ...FONT.h1, fontSize: 26 },
   company: { ...FONT.label, color: C.ACCENT, marginTop: 2 },
-  iconRow: { flexDirection: 'row', gap: SP.sm },
+  iconRow: { flexDirection: 'row', gap: 6 },
   iconBtn: {
-    width: 42, height: 42, borderRadius: R.md,
+    width: 38, height: 38, borderRadius: R.md,
     borderWidth: 1, borderColor: C.BORDER,
     alignItems: 'center', justifyContent: 'center',
     backgroundColor: C.CARD,
