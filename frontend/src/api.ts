@@ -129,6 +129,49 @@ export const Measurements = {
   validate: async (pid: string) => (await api.post(`/projects/${pid}/measurement/validate`)).data,
 };
 
+// ── Multi-stair v2 (Stairs > Niveaux > Tronçons) ─────────────────────────
+export type TronconType = 'droit' | 'palier' | 'quart_bas' | 'quart_haut';
+
+export interface ApiTroncon { id: string; type: TronconType; longueur_mm: number; largeur_mm: number; order: number }
+export interface ApiNiveau  { id: string; label: string; hauteur_mm: number; sol_fini: boolean; reserve_mm: number; troncons: ApiTroncon[]; order: number }
+export interface ApiStair   { id: string; name: string; niveaux: ApiNiveau[]; created_at: string; updated_at: string }
+
+export interface StairCompute {
+  stair_id: string; name: string; n_niveaux: number;
+  total_height: number; total_steps: number; total_reculement: number; limon_length: number;
+  niveaux_calc: Array<{
+    niveau_id: string; label: string; hauteur_mm: number; hauteur_effective: number;
+    n_steps_niveau: number; h: number; g: number; blondel_value: number; valid_blondel: boolean;
+    slope_angle: number; total_reculement_marches: number; total_reculement_paliers: number; total_reculement: number;
+    troncons_calc: Array<{ troncon_id: string; type: TronconType; longueur_mm: number; n_marches: number }>;
+    warnings: string[];
+  }>;
+  warnings: string[];
+}
+
+export const Stairs = {
+  list: async (pid: string) => (await api.get(`/projects/${pid}/stairs`)).data as ApiStair[],
+  create: async (pid: string, name: string) => (await api.post(`/projects/${pid}/stairs`, { name })).data as ApiStair,
+  get: async (pid: string, sid: string) => (await api.get(`/projects/${pid}/stairs/${sid}`)).data as ApiStair,
+  rename: async (pid: string, sid: string, name: string) => (await api.patch(`/projects/${pid}/stairs/${sid}`, { name })).data,
+  remove: async (pid: string, sid: string) => (await api.delete(`/projects/${pid}/stairs/${sid}`)).data,
+  compute: async (pid: string, sid: string) => (await api.get(`/projects/${pid}/stairs/${sid}/compute`)).data as StairCompute,
+
+  addNiveau: async (pid: string, sid: string, niveau: { label: string; hauteur_mm: number; sol_fini: boolean; reserve_mm?: number }) =>
+    (await api.post(`/projects/${pid}/stairs/${sid}/niveaux`, niveau)).data as ApiNiveau,
+  updateNiveau: async (pid: string, sid: string, nid: string, patch: Partial<ApiNiveau>) =>
+    (await api.patch(`/projects/${pid}/stairs/${sid}/niveaux/${nid}`, patch)).data as ApiNiveau,
+  removeNiveau: async (pid: string, sid: string, nid: string) =>
+    (await api.delete(`/projects/${pid}/stairs/${sid}/niveaux/${nid}`)).data,
+
+  addTroncon: async (pid: string, sid: string, nid: string, t: { type: TronconType; longueur_mm: number; largeur_mm?: number }) =>
+    (await api.post(`/projects/${pid}/stairs/${sid}/niveaux/${nid}/troncons`, t)).data as ApiTroncon,
+  updateTroncon: async (pid: string, sid: string, nid: string, tid: string, patch: Partial<ApiTroncon>) =>
+    (await api.patch(`/projects/${pid}/stairs/${sid}/niveaux/${nid}/troncons/${tid}`, patch)).data as ApiTroncon,
+  removeTroncon: async (pid: string, sid: string, nid: string, tid: string) =>
+    (await api.delete(`/projects/${pid}/stairs/${sid}/niveaux/${nid}/troncons/${tid}`)).data,
+};
+
 export const Team = {
   list: async () => (await api.get('/users')).data as User[],
   invite: async (payload: { full_name: string; email: string; password: string; role?: 'technicien' }) =>

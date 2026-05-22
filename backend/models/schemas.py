@@ -107,6 +107,75 @@ class ProjectPhoto(BaseModel):
     created_at: datetime
 
 
+# ---------------------- Multi-stair v2 (Niveaux > Tronçons) ----------------------
+TronconType = Literal["droit", "palier", "quart_bas", "quart_haut"]
+
+
+class Troncon(BaseModel):
+    id: str
+    type: TronconType
+    # Longueur horizontale du tronçon en mm.
+    # - droit/quart_bas/quart_haut : reculement utile (marches enchaînées)
+    # - palier : longueur du palier (aucune marche, mais consomme du reculement)
+    longueur_mm: float
+    largeur_mm: float = 900
+    order: int = 0
+
+
+class TronconCreate(BaseModel):
+    type: TronconType
+    longueur_mm: float
+    largeur_mm: float = 900
+
+
+class TronconUpdate(BaseModel):
+    type: Optional[TronconType] = None
+    longueur_mm: Optional[float] = None
+    largeur_mm: Optional[float] = None
+    order: Optional[int] = None
+
+
+class Niveau(BaseModel):
+    id: str
+    label: str = "Niveau"       # "RDC", "R+1", ...
+    hauteur_mm: float            # hauteur brute du niveau (mm)
+    sol_fini: bool = True         # si False, on déduit reserve_mm de hauteur
+    reserve_mm: float = 0
+    troncons: List[Troncon] = []
+    order: int = 0
+
+
+class NiveauCreate(BaseModel):
+    label: str = "Niveau"
+    hauteur_mm: float
+    sol_fini: bool = True
+    reserve_mm: float = 0
+
+
+class NiveauUpdate(BaseModel):
+    label: Optional[str] = None
+    hauteur_mm: Optional[float] = None
+    sol_fini: Optional[bool] = None
+    reserve_mm: Optional[float] = None
+    order: Optional[int] = None
+
+
+class Stair(BaseModel):
+    id: str
+    name: str = "Escalier Principal"
+    niveaux: List[Niveau] = []
+    created_at: datetime = Field(default_factory=now_utc)
+    updated_at: datetime = Field(default_factory=now_utc)
+
+
+class StairCreate(BaseModel):
+    name: str = "Escalier Principal"
+
+
+class StairUpdate(BaseModel):
+    name: Optional[str] = None
+
+
 # ---------------------- Measurements ----------------------
 class MeasurementInput(BaseModel):
     # Phase 1 addition: titre libre de l'élément mesuré (ex. "Escalier Principal", "Escalier Cave")

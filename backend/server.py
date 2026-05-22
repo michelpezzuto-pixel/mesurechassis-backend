@@ -18,8 +18,10 @@ from routers import exports as exports_router
 from routers import voice as voice_router
 from routers import stats as stats_router
 from routers import integration as integration_router
+from routers import stairs_v2 as stairs_v2_router
+from services.migration_v2 import migrate_projects_to_stairs
 
-app = FastAPI(title="MesureEscalier API", version="1.3")
+app = FastAPI(title="MesureEscalier API", version="2.0")
 
 # Single /api prefix for the whole public surface
 api = APIRouter(prefix="/api")
@@ -30,11 +32,12 @@ api.include_router(exports_router.router)
 api.include_router(voice_router.router)
 api.include_router(stats_router.router)
 api.include_router(integration_router.router)
+api.include_router(stairs_v2_router.router)
 
 
 @api.get("/")
 async def root():
-    return {"app": "MesureEscalier", "version": "1.3", "status": "ok"}
+    return {"app": "MesureEscalier", "version": "2.0", "status": "ok"}
 
 
 app.include_router(api)
@@ -54,6 +57,8 @@ async def on_startup():
     await db.projects.create_index("created_at")
     await db.measurements.create_index("project_id", unique=True)
     await seed_demo_users()
+    # Migration v2 idempotente : transforme les anciens projets en stairs[]
+    await migrate_projects_to_stairs()
 
 
 @app.on_event("shutdown")

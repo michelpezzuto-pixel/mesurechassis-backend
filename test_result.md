@@ -1,23 +1,19 @@
 user_problem_statement: |
-  Phase 2-3 (partielle) — Centre de Pilotage interactif.
-  Backend additif :
-   - Nouveaux champs optionnels dans MeasurementInput : `forme_choisie` (Literal: droit/quart_bas/quart_haut/double_quart/helicoidal),
-     `largeur_volee` (default 900), `jour_escalier` (default 100)
-   - MeasurementResult expose désormais shape_key, largeur_volee, jour_escalier (echo)
-   - Moteur honore forme_choisie en override (sans casser le calcul Blondel)
-   - Le moteur math N'A PAS ÉTÉ MODIFIÉ dans sa logique de calcul des marches
-  Frontend :
-   - Nouvelle page /projects/[id]/result.tsx (Centre de Pilotage)
-   - Toggle Profil/Plan + nouveau composant PlanSketch
-   - Sélecteur de forme + Largeur volée + Jour escalier
-   - KPIs temps réel via /preview (debouncé)
-   - Sticky bottom : Modifier / Valider
+  REFONTE MAJEURE v2 — Multi-stairs (Niveaux > Tronçons).
+  - Backend : nouveaux modèles Stair / Niveau / Troncon + CRUD complet + endpoint /compute
+  - Service stairs_v2 : calcule h, g, Blondel par niveau et répartit les marches par tronçon
+  - Migration auto au démarrage (services/migration_v2.py) : 6 projets legacy migrés vers stairs[]
+  - Export PDF/DXF : fallback synthétique depuis stairs[] si pas de mesure legacy
+  - Suppression matériau (acier/bois/béton) → plus utilisé dans le wizard (champ legacy gardé optionnel default "bois")
+  - Frontend : nouvelle page Project Detail (liste d'escaliers + bouton AJOUTER UN ESCALIER + modal nommage)
+  - Nouvelle page /projects/[id]/stairs/[sid] : niveaux pliables + tronçons CRUD + croquis pédagogique SVG
+  - Le moteur math legacy (compute_stair) reste INTACT — 24/24 baseline tests PASS
 
 backend:
-  - task: "Nouveaux champs Trajectoire (forme_choisie, largeur_volee, jour_escalier)"
+  - task: "Multi-stairs v2 — CRUD Stair + Niveau + Troncon"
     implemented: true
     working: true
-    file: "/app/backend/models/schemas.py + /app/backend/services/stairs.py"
+    file: "/app/backend/routers/stairs_v2.py + /app/backend/services/stairs_v2.py + /app/backend/models/schemas.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
@@ -25,44 +21,66 @@ backend:
         -working: "NA"
         -agent: "main"
         -comment: |
-          Champs optionnels ajoutés à MeasurementInput. Le compute_stair les fait écho dans MeasurementResult
-          via shape_key, largeur_volee, jour_escalier. Si forme_choisie est fourni, il override la forme auto.
-          24/24 tests baseline PASS — moteur math intact.
+          15+ endpoints créés sous /api/projects/{pid}/stairs/*.
+          Test manuel OK : créer stair → niveau → tronçon droit → /compute renvoie n_steps, h, g, blondel.
         -working: true
         -agent: "testing"
         -comment: |
-          ✅ Phase 2 Trajectoire — 20/20 checks PASS via /app/backend_test.py (test_trajectoire_phase2).
-          • C2 preview forme_choisie="quart_bas" / largeur_volee=1100 / jour_escalier=120 → 200
-            - shape_key="quart_bas" ✅, largeur_volee=1100.0 ✅, jour_escalier=120.0 ✅
-            - shape="Quart-tournant bas (choix utilisateur)" ✅
-            - n_steps=15, h=180.0, g=270.0, blondel=630.0, valid_blondel=true ✅
-          • C3 preview SANS les 3 nouveaux champs → 200
-            - shape_key="quart_bas" (auto-détecté car recul_needed=3780 > recul_max=3500) ✅ défini
-            - largeur_volee=900.0 (default) ✅, jour_escalier=100.0 (default) ✅
-          • C4 preview forme_choisie="double_quart" largeur_volee=1000 → shape_key="double_quart" ✅
-          • C5 preview forme_choisie="helicoidal" → shape_key="helicoidal" ✅
-          • C6 POST /measurement (save) avec forme_choisie+largeur_volee+jour_escalier → 200
-            - input echo: forme_choisie="double_quart", largeur_volee=1050, jour_escalier=110 ✅
-            - result.shape_key="double_quart", result.largeur_volee=1050, result.jour_escalier=110 ✅
-          • C7 GET /projects/{pid} → measurement persistée contient forme_choisie/largeur_volee/jour_escalier ✅
-          
-          NON-RÉGRESSION COMPLÈTE (Section B 19/19 PASS) :
-          - Login admin/solo/technicien (is_locked=false, trial=90j) ✅
-          - Login expired → is_locked=true, GET /projects → 402 ✅
-          - CRUD projects (POST/GET/PUT/list) ✅
-          - Preview standard h=2700/recul=3500 → n_steps=15, h=180.0, valid_blondel=true (identique) ✅
-          - Save sans element_title → default "Escalier" ✅
-          - Export PDF (%PDF- header, 73KB) et DXF (commence par "0\nSECTION") ✅
-          - /api/stats admin ✅
-          - PUT /auth/me company_logo_base64 ✅
-          - Photos CRUD + limite 10 (11e rejetée HTTP 400) ✅
-          
-          Minor: 1 check de la suite A (recherche raw du texte "Escalier de cave" dans le PDF compressé)
-          est en FAIL mais c'est un défaut de la méthode de test (ReportLab compresse les streams) ;
-          la persistance element_title est déjà vérifiée par A2/A3 (PASS).
-          Total : 46/47 checks PASS, aucun problème fonctionnel.
+          Scénario A complet exécuté (20 sous-tests PASS) :
+          - POST /projects → POST /stairs ("Cave-to-RDC") → GET list → PATCH name ("Cave-Rénovée") OK
+          - POST 2 niveaux (RDC h=2700 sol_fini=true, R+1 h=2500 sol_fini=false reserve=50) OK
+          - POST tronçons (droit 3500x900, palier 1000, quart_bas 2800) OK
+          - GET /compute : total_height=5150.0 ✓, total_steps=29 ✓, total_reculement=7300.0 ✓, limon_length=8933.8 ✓
+          - niveaux_calc[0] RDC : n_steps=15, h=180.0, g=250.0, blondel=610 valid=true, droit=15 marches palier=0 ✓
+          - niveaux_calc[1] R+1 : hauteur_effective=2450 (2500-50 reserve), n=14, h=175, blondel=580 valid=true ✓
+          - PATCH troncon longueur_mm=4000 ✓, DELETE troncon/niveau/stair tous OK
+          Tous les calculs Blondel et la répartition marches/tronçons sont cohérents.
 
-  - task: "Non-régression moteur math (baseline)"
+  - task: "Migration v2 idempotente au startup"
+    implemented: true
+    working: true
+    file: "/app/backend/services/migration_v2.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "main"
+        -comment: |
+          6 projets legacy migrés vers stairs[] au démarrage (1 escalier "Escalier Principal" / 1 niveau / 1 tronçon droit).
+          Log : "Migration v2 : 6 projet(s) migré(s) vers stairs[]". Idempotente : ne re-traite pas les projets déjà migrés.
+        -working: true
+        -agent: "testing"
+        -comment: |
+          Scénario B validé :
+          - Log backend confirmé : "Migration v2 : 6 projet(s) migré(s) vers stairs[]"
+          - GET /projects (admin) → 8 projets, 7/8 ont au moins 1 escalier migré (le 8e est un projet créé après migration)
+          - GET /projects/{pid}/stairs/{sid} → structure complète (1 niveau "Niveau 1" + 1 tronçon droit) ✓
+          - GET /compute sur projet migré : total_steps=15 / total_height=2700 (cohérent avec mesure legacy h=2700/recul=3500) ✓
+          - Migration est idempotente (filter $or: [stairs:{$exists:false}, stairs:[]]) ; aucun re-traitement.
+
+  - task: "Export PDF v2 — fallback synthétique depuis stairs[]"
+    implemented: true
+    working: true
+    file: "/app/backend/routers/exports.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: "NA"
+        -agent: "main"
+        -comment: |
+          Si pas de mesure legacy mais des stairs[], on synthétise un measurement depuis le 1er escalier
+          pour ne pas casser le PDF/DXF historiques.
+        -working: true
+        -agent: "testing"
+        -comment: |
+          Scénario C validé sur projet v2 frais (aucun measurement legacy, uniquement stairs[]) :
+          - GET /export/pdf → HTTP 200, content-type application/pdf, header binaire %PDF-1.4 (4432 bytes) ✓
+          - GET /export/dxf → HTTP 200, contient "SECTION" (3574 bytes) ✓
+          _synthesize_measurement_from_stairs() reconstruit correctement les champs material/hauteur_brute/result.* depuis compute_v2.
+
+  - task: "Non-régression moteur math baseline"
     implemented: true
     working: true
     file: "/app/backend/tests/test_engine_regression.py"
@@ -72,12 +90,52 @@ backend:
     status_history:
         -working: true
         -agent: "main"
-        -comment: "24 tests pytest figés. PASS local après l'ajout des nouveaux champs."
+        -comment: "24 tests PASS après tous les ajouts v2 — le moteur Blondel original n'a pas été modifié."
+        -working: true
+        -agent: "testing"
+        -comment: |
+          Confirmé via test live : POST /api/projects/{pid}/measurement/preview avec
+          h=2700/recul=3500 → n_steps=15, h=180.0 (identique baseline). Aucune régression.
+
+  - task: "Paywall + RBAC sur endpoints v2"
+    implemented: true
+    working: true
+    file: "/app/backend/routers/stairs_v2.py + /app/backend/core/security.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: |
+          Scénario D validé :
+          - expired@demo.fr → POST /projects/{pid}/stairs renvoie 402 "Période d'essai terminée..." ✓
+          - sophie (technicien Escaliers Demo SARL) → GET /projects/{marc-pid}/stairs renvoie 404 (project_visible_to filter) ✓
+          - Tous les endpoints write v2 sont sous require_active_access (paywall), reads sous get_current_user ✓
+          - GET /projects expired → 402 ✓
+
+  - task: "Non-régression CRUD complète (photos, logo, element_title)"
+    implemented: true
+    working: true
+    file: "/app/backend/routers/projects.py + /app/backend/routers/auth.py + /app/backend/routers/measurements.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: |
+          Scénario E validé :
+          - Login admin/solo/tech : 3/3 actifs (is_locked=False, trial_days=90) ✓
+          - Photos CRUD (POST/GET/PATCH/DELETE) OK ✓
+          - Logo upload PUT /auth/me {company_logo_base64} OK (data URI persisté) ✓
+          - element_title legacy : POST /measurement persiste, GET /projects/{pid} le ressort dans measurement.element_title ✓
+          - Paywall actif partout (expired → 402 sur /projects, /stairs, etc.)
 
 metadata:
   created_by: "main_agent"
-  version: "1.7"
-  test_sequence: 7
+  version: "2.0"
+  test_sequence: 9
   run_ui: false
 
 test_plan:
@@ -89,45 +147,34 @@ test_plan:
 agent_communication:
     -agent: "main"
     -message: |
-      Ajout 3 champs optionnels (forme_choisie, largeur_volee, jour_escalier) sur MeasurementInput + echo dans MeasurementResult.
+      REFONTE v2 majeure. Tests focus sur les 15+ nouveaux endpoints + migration auto + fallback PDF.
+      Comptes (Demo1234!) :
+      - admin@demo.fr (Admin)
+      - marc@mesureescalier.com (Admin Solo) — recommandé pour les tests v2
+      - expired@demo.fr (paywall → 402 sur stairs/*)
     -agent: "testing"
     -message: |
-      ✅ Phase 2 Trajectoire backend — 46/47 checks PASS (test_trajectoire_phase2 + non-régression complète).
-      Tous les comportements demandés sont conformes :
-       • forme_choisie override correctement shape_key (quart_bas/quart_haut/double_quart/helicoidal)
-       • largeur_volee + jour_escalier sont echo dans MeasurementResult (et defaults 900/100 si omis)
-       • Save + GET project → 3 champs persistés en MongoDB (input + result.shape_key)
-       • Moteur math intact : h=2700/recul=3500 sans override → n_steps=15, h=180, blondel=630, valid_blondel=true
-       • Login 3 comptes actifs + paywall expired (402) OK
-       • Exports PDF/DXF, /stats, photos CRUD + limite 10, logo upload : tous OK
+      ✅ Tous les scénarios v2 PASSENT (54/54 tests automatisés exécutés via /app/backend_test_v2.py).
       
-      Seul "FAIL" : recherche raw substring "Escalier de cave" dans PDF compressé (test A6) — limitation
-      de la méthode de test (ReportLab compresse les streams). Le PDF est valide (200, %PDF-, 73KB) et
-      la persistance element_title est déjà confirmée par A2/A3.
+      RÉSULTATS :
+      - Section A — CRUD stairs/niveaux/troncons + compute v2 : 20/20 PASS
+        * compute renvoie total_height=5150, total_steps=29, niveaux_calc avec h/g/blondel cohérents
+        * RDC (h=2700, sol_fini=true) → 15 marches, h=180.0, g=250.0, blondel=610 valid
+        * R+1 (h=2500, sol_fini=false, reserve=50) → hauteur_effective=2450, 14 marches, h=175, blondel=580 valid
+        * Répartition marches par tronçon correcte (palier = 0 marches)
+        * PATCH/DELETE troncons/niveaux/stairs fonctionnent
+      - Section B — Migration v2 idempotente : 6/6 PASS
+        * 6 projets legacy migrés au boot (log confirmé)
+        * Structure migrée : 1 stair "Escalier Principal" + 1 niveau "Niveau 1" + 1 tronçon droit reconstruit depuis measurement legacy
+        * compute sur projet migré cohérent (total_steps=15 pour h=2700)
+      - Section C — Export PDF/DXF v2 fallback : 4/4 PASS
+        * GET /export/pdf sur projet v2 sans measurement legacy : 200 %PDF- binaire ✓
+        * GET /export/dxf : 200 contient SECTION ✓
+      - Section D — Paywall + RBAC : 3/3 PASS
+        * expired → POST /stairs = 402 ✓
+        * sophie (tech différente société) → GET /stairs autre admin = 404 ✓
+      - Section E — Non-régression complète : 13/13 PASS
+        * login 3 comptes actifs, measurement legacy /preview 15 marches h=180, photos CRUD, logo upload, element_title persisté, paywall partout
       
-      Backend prêt pour validation utilisateur via Expo Go (frontend non testé ici, par design).
-      
-      Tests à valider (admin@demo.fr / Demo1234!) :
-      
-      1. POST /api/projects/{pid}/measurement/preview avec body incluant forme_choisie="quart_bas",
-         largeur_volee=1100, jour_escalier=120 → 200
-         - Réponse contient shape_key == "quart_bas"
-         - Réponse contient largeur_volee == 1100, jour_escalier == 120
-         - Le shape (string) commence par "Quart-tournant bas (choix utilisateur)"
-      
-      2. POST /api/projects/{pid}/measurement/preview SANS forme_choisie (les autres champs requis) → 200
-         - shape_key est défini (par défaut "droit" ou auto-détecté)
-         - largeur_volee == 900 par défaut, jour_escalier == 100 par défaut
-      
-      3. POST /api/projects/{pid}/measurement avec forme_choisie="double_quart", largeur_volee=1000 → 200, sauvegardé
-      
-      4. GET /api/projects/{pid} → measurement contient forme_choisie + largeur_volee + jour_escalier
-      
-      5. NON-RÉGRESSION : tous les endpoints standard fonctionnent
-         - login 3 comptes actifs OK
-         - cas standard h=2700 / recul=3500 SANS forme_choisie → n_steps=15, h=180, valid_blondel=true (comportement IDENTIQUE à avant)
-         - exports PDF/DXF OK
-         - paywall toujours actif (expired@demo.fr → 402)
-         - element_title (Phase 1) toujours OK
-         - photos CRUD toujours OK
-         - logo upload toujours OK
+      AUCUNE RÉGRESSION DÉTECTÉE. Migration v2, CRUD v2, compute v2 et fallback PDF/DXF prêts pour production.
+      Le moteur math legacy (services/stairs.py) n'a pas été touché — comportement strictement identique.
