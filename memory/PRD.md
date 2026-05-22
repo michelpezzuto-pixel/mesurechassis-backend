@@ -21,11 +21,29 @@ Interrupteur dans les **Paramètres** (Admin uniquement) : active la fusion Admi
 - Mesures saisies sans étape de transmission.
 - Validation et exports directement accessibles.
 
-## Moteur de calcul (Loi de Blondel)
-Cible `2h + g ≈ 630 mm`. Pour chaque hauteur `H`, recherche du couple `(n, h, g)` minimisant l'écart à la cible, avec contraintes `150 ≤ h ≤ 220` et `200 ≤ g ≤ 350`. Forme déduite:
-- `reculement_max ≥ reculement_needed` → **Escalier Droit**
+## Moteur de calcul (Loi de Blondel + Règles de l'art v1.2)
+
+### Plages de référence
+- **Idéal** : h ≈ 175 mm, 2h + g ≈ 630 mm
+- **Limites strictes (règles de l'art)** :
+  - Giron `g ≥ 230 mm`
+  - Hauteur de marche `h ≤ 210 mm`
+  - `560 mm ≤ 2h + g ≤ 670 mm`
+- L'algorithme cherche le couple (n, h, g) minimisant l'écart à l'idéal **tout en respectant les limites dures**. Si aucun couple valide n'est trouvable pour un escalier droit → **rejet et forçage** vers quart-tournant ou hélicoïdal.
+
+### Forme déduite
+- `reculement_max ≥ reculement_needed` ET règles dures OK → **Escalier Droit**
 - 65% ≤ ratio < 100% → **Quart-tournant**
 - < 65% → **Hélicoïdal / colimaçon**
+
+### Ligne de foulée (escaliers tournants)
+Pour tout escalier tournant, le giron `g` est mesuré sur la **ligne de foulée** (centre géométrique du passage, ~50 cm de la rampe), pas aux extrémités des marches balancées. Cette précision est affichée dans la carte de résultat.
+
+### Échappée (sécurité)
+Input optionnel `hauteur_sous_plafond_tremie`. Si fourni, calcul de l'espace vertical libre sous la trémie. Si `< 2000 mm` → **alerte rouge critique** (risque choc à la tête).
+
+### Longueur du limon (atelier métallerie)
+`limon = √(H² + reculement²)` — dimension exacte de la poutre à découper. Mise en avant dans une carte dédiée (Vert Pomme), incluse dans le PDF (table de calcul) et le DXF (texte LIMON + layer dédié).
 
 ## Exports
 - **PDF** (`/api/projects/{id}/export/pdf`) — ReportLab : Identification client, table mesures, calculs, schéma 2D, notes.
