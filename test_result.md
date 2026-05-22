@@ -225,6 +225,43 @@ frontend:
             - DXF stair filter: 6984 bytes contains SECTION ✓
             - Bad stair_id: 200 (génère un PDF vide pour la stair, pas un crash) — comportement acceptable.
 
+frontend:
+  - task: "Refactor V2 — floor_index strict + ghost + shape DROIT/TOURNANT + DÉTAILS"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/projects/[id]/stairs/[sid]/index.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "main"
+        -comment: |
+          PHASE 5 — Refactor majeur (mai 2025) :
+
+          BACKEND :
+          • Niveau : `floor_index: int (-3..+7)` + `is_ghost: bool` (Pas d'escalier ici).
+          • Stair : `shape: 'droit' | 'tournant'`.
+          • Validation contigüité : un saut de niveau → HTTP 400 "Saut de niveau détecté : il manque [N]".
+          • Validation out-of-range : floor_index ∉ [-3,+7] → HTTP 422.
+          • Validation duplicate : floor_index existant → HTTP 400 "Le niveau X existe déjà".
+          • DROIT auto-crée 1 niveau RDC + 1 tronçon droit à la création de la stair.
+          • Label auto-dérivé du floor_index : -1→"Sous-sol", 0→"RDC", 1→"R+1", etc.
+          • Migration : backfill `shape` (heuristique) et `floor_index` (depuis label) sur tous les projets existants.
+          • Smoke test backend : 6 scénarios contigüité/ghost/range/dup/DROIT → tous OK.
+
+          FRONTEND :
+          • Modal popup "Ajouter escalier" : champ Nom + sélecteur Forme (DROIT card / TOURNANT card).
+          • Editor stair : badge `+0` (floor_index) au lieu d'index, label dérivé en titre, badge FANTÔME.
+          • Bouton "AJOUTER UN NIVEAU" + bouton "NIVEAU FANTÔME" (dashed border).
+          • Niveau ghost : section tronçons remplacée par notice "Pas d'escalier à ce niveau".
+          • Section "DÉTAILS DE LA SAISIE" en bas : récap forme, n niveaux, hauteur, reculement, marches, limon + per-niveau breakdown avec tronçons listés. **Plus jamais vide.**
+          • @shared-ui enrichi : Modal, Picker, Checkbox + KPI exposés depuis /shared-ui/index.
+          • Index header documentant la portabilité multi-app (MesureEscalier ↔ MesureChâssis).
+
+          INFRA :
+          • Supervisor expo : retiré `--tunnel` → plus de 502 ngrok zombie. Le preview localhost:3000 sert directement.
+
 metadata:
   created_by: "main_agent"
   version: "2.0"

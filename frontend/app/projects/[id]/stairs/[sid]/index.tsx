@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import Svg, { Line, Polygon, Rect, Text as SvgText, G, Circle } from 'react-native-svg';
-import { Stairs, ApiStair, ApiNiveau, ApiTroncon, StairCompute, TronconType } from '@/src/api';
+import { Stairs, ApiStair, ApiNiveau, ApiTroncon, StairCompute, TronconType, floorIndexToLabel, FLOOR_INDEX_RANGE } from '@/src/api';
 import { C, SP, R, FONT } from '@/src/theme';
 
 const TYPE_LABEL: Record<TronconType, string> = {
@@ -64,15 +64,32 @@ export default function StairEditor() {
   useFocusEffect(useCallback(() => { refresh(); }, [refresh]));
 
   // ── Niveau actions ──
-  const addNiveau = async () => {
+  /**
+   * Add a niveau using next-available floor_index :
+   *   - Si aucun niveau → 0 (RDC)
+   *   - Sinon → max(floor_index) + 1
+   *   - Bloqué à +7 (UI) ; le backend rejettera hors plage [-3..+7]
+   */
+  const nextFloorIndex = useMemo(() => {
+    if (!stair || stair.niveaux.length === 0) return 0;
+    const maxIdx = Math.max(...stair.niveaux.map(n => n.floor_index));
+    return Math.min(maxIdx + 1, 7);
+  }, [stair]);
+
+  const addNiveau = async (opts?: { ghost?: boolean; floor_index?: number }) => {
     if (!stair) return;
-    const label = `Niveau ${stair.niveaux.length + 1}`;
+    const fi = opts?.floor_index ?? nextFloorIndex;
     try {
-      const n = await Stairs.addNiveau(id!, sid!, { label, hauteur_mm: 2700, sol_fini: true });
-      setStair({ ...stair, niveaux: [...stair.niveaux, n] });
+      const n = await Stairs.addNiveau(id!, sid!, {
+        floor_index: fi,
+        is_ghost: !!opts?.ghost,
+        hauteur_mm: 2700,
+        sol_fini: true,
+      });
+      setStair({ ...stair, niveaux: [...stair.niveaux, n].sort((a, b) => a.floor_index - b.floor_index) });
       recompute();
     } catch (e: any) {
-      Alert.alert('Erreur', e?.response?.data?.detail || 'Erreur');
+      Alert.alert('Niveau invalide', e?.response?.data?.detail || 'Erreur');
     }
   };
 
@@ -248,10 +265,82 @@ export default function StairEditor() {
             })
           )}
 
-          <TouchableOpacity style={styles.addNivBtn} onPress={addNiveau} testID="btn-add-niveau">
-            <Ionicons name="add-circle-outline" size={20} color={C.ACCENT} />
-            <Text style={styles.addNivBtnTxt}>AJOUTER UN NIVEAU</Text>
-          </TouchableOpacity>
+          <View style={styles.addNivRow}>
+            <TouchableOpacity style={styles.addNivBtn} onPress={() => addNiveau()} testID="btn-add-niveau">
+              <Ionicons name="add-circle-outline" size={20} color={C.ACCENT} />
+              <Text style={styles.addNivBtnTxt}>AJOUTER UN NIVEAU</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.addNivBtn, styles.addGhostBtn]}
+              onPress={() => addNiveau({ ghost: true })}
+              testID="btn-add-niveau-ghost"
+            >
+              <Ionicons name="eye-off-outline" size={18} color={C.GRAY3} />
+              <Text style={[styles.addNivBtnTxt, { color: C.GRAY3, fontSize: 10 }]}>NIVEAU FANTÔME</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* DÉTAILS DE LA SAISIE — récap des inputs (data binding) */}
+          {compute && stair.niveaux.length > 0 && (
+            <View style={styles.recapCard} testID="detailed-data">
+              <Text style={styles.recapTitle}>DÉTAILS DE LA SAISIE</Text>
+              <View style={styles.recapRow}>
+                <Text style={styles.recapKey}>Forme</Text>
+                <Text style={styles.recapVal}>{stair.shape === 'droit' ? 'Droit' : 'Tournant'}</Text>
+              </View>
+              <View style={styles.recapRow}>
+                <Text style={styles.recapKey}>Nombre de niveaux</Text>
+                <Text style={styles.recapVal}>{compute.n_niveaux}</Text>
+              </View>
+              <View style={styles.recapRow}>
+                <Text style={styles.recapKey}>Hauteur totale</Text>
+                <Text style={styles.recapVal}>{Math.round(compute.total_height)} mm</Text>
+              </View>
+              <View style={styles.recapRow}>
+                <Text style={styles.recapKey}>Reculement total</Text>
+                <Text style={styles.recapVal}>{Math.round(compute.total_reculement)} mm</Text>
+              </View>
+              <View style={styles.recapRow}>
+                <Text style={styles.recapKey}>Nombre de marches</Text>
+                <Text style={styles.recapVal}>{compute.total_steps}</Text>
+              </View>
+              <View style={styles.recapRow}>
+                <Text style={styles.recapKey}>Longueur du limon</Text>
+                <Text style={styles.recapVal}>{Math.round(compute.limon_length)} mm</Text>
+              </View>
+
+              {/* Per-niveau breakdown */}
+              <View style={styles.recapDivider} />
+              {stair.niveaux.map(n => {
+                const nc = compute.niveaux_calc.find(x => x.niveau_id === n.id);
+                if (!nc) return null;
+                const niveauLabel = n.is_ghost
+                  ? `${n.label || floorIndexToLabel(n.floor_index)} (fantôme)`
+                  : (n.label || floorIndexToLabel(n.floor_index));
+                return (
+                  <View key={n.id} style={styles.recapNivBlock}>
+                    <Text style={styles.recapNivTitle}>{niveauLabel}</Text>
+                    <Text style={styles.recapNivLine}>
+                      H {Math.round(n.hauteur_mm)} · sol_fini {n.sol_fini ? 'oui' : 'non'}
+                      {!n.sol_fini && ` · réserve ${Math.round(n.reserve_mm)}`}
+                    </Text>
+                    {!n.is_ghost && (
+                      <Text style={styles.recapNivLine}>
+                        {nc.n_steps_niveau} marches · h {Math.round(nc.h)} · g {Math.round(nc.g)} · Blondel {Math.round(nc.blondel_value)}
+                      </Text>
+                    )}
+                    {n.troncons.length > 0 && (
+                      <Text style={styles.recapNivLine}>
+                        Tronçons : {n.troncons.map(t =>
+                          `${t.type.replace('_', '-')} ${Math.round(t.longueur_mm)}×${Math.round(t.largeur_mm)}`,
+                        ).join(' · ')}
+                      </Text>
+                    )}
+                  </View>
+                );
+              })}
+            </View>
+          )}
         </ScrollView>
 
         {/* Sticky bottom */}
@@ -293,24 +382,28 @@ function NiveauCard({
   return (
     <View style={styles.niveauCard}>
       <TouchableOpacity onPress={() => setExpanded(!expanded)} style={styles.niveauHead} activeOpacity={0.8}>
-        <View style={styles.niveauBadge}>
-          <Text style={styles.niveauNum}>{index + 1}</Text>
+        <View style={[styles.niveauBadge, niveau.is_ghost && { backgroundColor: 'transparent', borderColor: C.GRAY3 }]}>
+          <Text style={[styles.niveauNum, niveau.is_ghost && { color: C.GRAY3 }]}>{niveau.floor_index >= 0 ? `+${niveau.floor_index}` : niveau.floor_index}</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <TextInput
-            value={niveau.label}
-            onChangeText={(v) => onPatchLocal({ label: v })}
-            onEndEditing={(e) => onCommit({ label: e.nativeEvent.text })}
-            style={styles.niveauLabel}
-            maxLength={30}
-            testID={`niv-label-${niveau.id}`}
-          />
-          {calc && (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Text style={styles.niveauLabel}>{floorIndexToLabel(niveau.floor_index)}</Text>
+            {niveau.is_ghost && (
+              <View style={styles.ghostBadge}>
+                <Ionicons name="eye-off-outline" size={11} color={C.GRAY3} />
+                <Text style={styles.ghostBadgeTxt}>FANTÔME</Text>
+              </View>
+            )}
+          </View>
+          {!niveau.is_ghost && calc && (
             <Text style={styles.niveauMeta}>
               {calc.n_steps_niveau} marche{calc.n_steps_niveau > 1 ? 's' : ''} ·
               h {Math.round(calc.h)} mm · g {Math.round(calc.g)} mm
               {!calc.valid_blondel ? '  ⚠' : ''}
             </Text>
+          )}
+          {niveau.is_ghost && (
+            <Text style={styles.niveauMeta}>Pas d'escalier à ce niveau · H {Math.round(niveau.hauteur_mm)} mm</Text>
           )}
         </View>
         <TouchableOpacity onPress={onRemove} hitSlop={10} style={{ marginRight: 8 }}>
@@ -366,14 +459,24 @@ function NiveauCard({
           )}
 
           {/* Croquis pédagogique du niveau (Profil ou Plan selon viewMode) */}
-          {niveau.troncons.length > 0 && calc && (
+          {!niveau.is_ghost && niveau.troncons.length > 0 && calc && (
             viewMode === 'profile'
               ? <NiveauSketch niveau={niveau} calc={calc} />
               : <NiveauPlanSketch niveau={niveau} calc={calc} />
           )}
 
-          {/* Tronçons */}
-          <Text style={[styles.fieldLabel, { marginTop: SP.lg }]}>TRONÇONS ({niveau.troncons.length})</Text>
+          {niveau.is_ghost ? (
+            <View style={styles.ghostNotice}>
+              <Ionicons name="information-circle-outline" size={18} color={C.GRAY3} />
+              <Text style={styles.ghostNoticeTxt}>
+                Niveau « Pas d'escalier ici ». La hauteur compte dans le total mais aucun tronçon n'est rendu.
+                Utile pour maintenir la continuité des niveaux.
+              </Text>
+            </View>
+          ) : (
+            <>
+              {/* Tronçons */}
+              <Text style={[styles.fieldLabel, { marginTop: SP.lg }]}>TRONÇONS ({niveau.troncons.length})</Text>
           {niveau.troncons.map((t: ApiTroncon, ti: number) => {
             const tcalc = calc?.troncons_calc.find((c: any) => c.troncon_id === t.id);
             return (
@@ -437,6 +540,8 @@ function NiveauCard({
               <Ionicons name="add" size={18} color={C.DARK} />
               <Text style={styles.addTronconTxt}>AJOUTER UN TRONÇON</Text>
             </TouchableOpacity>
+          )}
+            </>
           )}
         </View>
       )}
@@ -699,6 +804,42 @@ const styles = StyleSheet.create({
   viewToggleBtnActive: { backgroundColor: C.ACCENT },
   viewToggleTxt: { ...FONT.label, color: C.GRAY3, fontSize: 11 },
   viewToggleTxtActive: { color: C.DARK },
+
+  // Add niveau row (regular + ghost)
+  addNivRow: { flexDirection: 'row', gap: SP.sm, marginTop: SP.md },
+  addGhostBtn: { backgroundColor: 'transparent', borderColor: C.BORDER, borderStyle: 'dashed' as any },
+  ghostBadge: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    paddingHorizontal: 6, paddingVertical: 2, borderRadius: R.pill,
+    borderWidth: 1, borderColor: C.GRAY3, backgroundColor: 'transparent',
+  },
+  ghostBadgeTxt: { ...FONT.label, fontSize: 9, color: C.GRAY3 },
+  ghostNotice: {
+    flexDirection: 'row', alignItems: 'flex-start', gap: SP.sm, padding: SP.md,
+    backgroundColor: C.BG_DEEPER, borderRadius: R.md, marginTop: SP.md,
+    borderLeftWidth: 3, borderLeftColor: C.GRAY3,
+  },
+  ghostNoticeTxt: { ...FONT.small, flex: 1, lineHeight: 18, fontSize: 11 },
+
+  // DÉTAILS DE LA SAISIE (recap)
+  recapCard: {
+    backgroundColor: C.CARD, borderRadius: R.lg, padding: SP.lg,
+    borderWidth: 1, borderColor: C.ACCENT, borderLeftWidth: 3,
+    marginTop: SP.lg,
+  },
+  recapTitle: { ...FONT.label, color: C.ACCENT, marginBottom: SP.md, fontSize: 11 },
+  recapRow: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    paddingVertical: 6,
+  },
+  recapKey: { ...FONT.small, fontSize: 12, color: C.GRAY3, flex: 1 },
+  recapVal: { ...FONT.body, fontSize: 13, color: C.WHITE, fontWeight: '600' },
+  recapDivider: { height: 1, backgroundColor: C.BORDER, marginVertical: SP.sm },
+  recapNivBlock: {
+    paddingVertical: SP.sm, borderBottomWidth: 1, borderBottomColor: C.BORDER,
+  },
+  recapNivTitle: { ...FONT.h3, fontSize: 13, color: C.ACCENT, marginBottom: 4 },
+  recapNivLine: { ...FONT.small, fontSize: 11, lineHeight: 16, marginTop: 2 },
 
   empty: { alignItems: 'center', padding: SP.xl, backgroundColor: C.CARD, borderRadius: R.lg, borderWidth: 1, borderStyle: 'dashed' as any, borderColor: C.BORDER, marginBottom: SP.md },
   emptyTitle: { ...FONT.h3, marginTop: SP.sm, fontSize: 14 },

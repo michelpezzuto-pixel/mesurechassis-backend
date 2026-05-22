@@ -19,6 +19,50 @@ from services.stairs_v2 import compute_stair as compute_stair_v2
 
 router = APIRouter(prefix="/projects/{pid}/stairs")
 
+# ── Floor index helpers (-3..+7) ──────────────────────────────────────────
+
+MIN_FLOOR = -3
+MAX_FLOOR = 7
+
+
+def floor_index_to_label(idx: int) -> str:
+    """Convertit un index numérique en libellé FR (-1=Sous-sol, 0=RDC, 1=R+1...)."""
+    if idx == 0:
+        return "RDC"
+    if idx == -1:
+        return "Sous-sol"
+    if idx < 0:
+        return f"Sous-sol {idx}"
+    return f"R+{idx}"
+
+
+def _validate_floor_index(idx: int) -> None:
+    if not (MIN_FLOOR <= idx <= MAX_FLOOR):
+        raise HTTPException(
+            status_code=422,
+            detail=f"floor_index hors plage [{MIN_FLOOR}..{MAX_FLOOR}]",
+        )
+
+
+def _validate_contiguity(niveaux: List[Dict[str, Any]], new_idx: int, exclude_id: str | None = None) -> None:
+    """La séquence des floor_index (avec le nouveau) doit être contiguë (sans saut).
+    Les niveaux ghost (is_ghost=True) comptent pour préserver la continuité.
+    """
+    existing = [n["floor_index"] for n in niveaux if n.get("id") != exclude_id and "floor_index" in n]
+    indices = sorted(set(existing + [new_idx]))
+    if not indices:
+        return
+    for prev, nxt in zip(indices, indices[1:]):
+        if nxt - prev != 1:
+            missing = list(range(prev + 1, nxt))
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    f"Saut de niveau détecté : il manque {missing}. "
+                    "Créez d'abord les niveaux intermédiaires ou cochez « Pas d'escalier ici »."
+                ),
+            )
+
 
 # ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -71,10 +115,31 @@ async def create_stair(pid: str, payload: StairCreate, user=Depends(require_acti
     new_stair = {
         "id": str(uuid.uuid4()),
         "name": payload.name.strip()[:80] or "Escalier",
+        "shape": payload.shape,
         "niveaux": [],
         "created_at": now_utc(),
         "updated_at": now_utc(),
     }
+    # If shape == "droit", create a default niveau RDC (floor_index=0) with single tronçon
+    if payload.shape == "droit":
+        n_id = str(uuid.uuid4())
+        new_stair["niveaux"].append({
+            "id": n_id,
+            "label": floor_index_to_label(0),
+            "floor_index": 0,
+            "is_ghost": False,
+            "hauteur_mm": 2700,
+            "sol_fini": True,
+            "reserve_mm": 0,
+            "troncons": [{
+                "id": str(uuid.uuid4()),
+                "type": "droit",
+                "longueur_mm": 3500,
+                "largeur_mm": 900,
+                "order": 0,
+            }],
+            "order": 0,
+        })
     stairs = p.get("stairs", []) or []
     stairs.append(new_stair)
     await _save_project(pid, stairs)
@@ -93,6 +158,8 @@ async def update_stair(pid: str, sid: str, payload: StairUpdate, user=Depends(re
     stair = _find_stair(p, sid)
     if payload.name is not None:
         stair["name"] = payload.name.strip()[:80] or stair["name"]
+    if payload.shape is not None:
+        stair["shape"] = payload.shape
     stair["updated_at"] = now_utc()
     await _save_project(pid, p["stairs"])
     return stair
@@ -114,16 +181,30 @@ async def delete_stair(pid: str, sid: str, user=Depends(require_active_access)):
 async def create_niveau(pid: str, sid: str, payload: NiveauCreate, user=Depends(require_active_access)):
     p = await _load_project(pid, user)
     stair = _find_stair(p, sid)
+    _validate_floor_index(payload.floor_index)
+    existing = stair.get("niveaux", []) or []
+    # Reject duplicate floor_index
+    if any(n.get("floor_index") == payload.floor_index for n in existing):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Le niveau {floor_index_to_label(payload.floor_index)} existe déjà sur cet escalier",
+        )
+    _validate_contiguity(existing, payload.floor_index)
+    label = (payload.label or "").strip() or floor_index_to_label(payload.floor_index)
     new_niv = {
         "id": str(uuid.uuid4()),
-        "label": payload.label.strip()[:40] or f"Niveau {len(stair.get('niveaux', [])) + 1}",
+        "label": label[:40],
+        "floor_index": payload.floor_index,
+        "is_ghost": bool(payload.is_ghost),
         "hauteur_mm": float(payload.hauteur_mm),
         "sol_fini": bool(payload.sol_fini),
         "reserve_mm": float(payload.reserve_mm or 0),
         "troncons": [],
-        "order": len(stair.get("niveaux", []) or []),
+        "order": payload.floor_index,
     }
-    stair.setdefault("niveaux", []).append(new_niv)
+    existing.append(new_niv)
+    existing.sort(key=lambda n: n.get("floor_index", 0))
+    stair["niveaux"] = existing
     stair["updated_at"] = now_utc()
     await _save_project(pid, p["stairs"])
     return new_niv
@@ -135,7 +216,20 @@ async def update_niveau(pid: str, sid: str, nid: str, payload: NiveauUpdate, use
     stair = _find_stair(p, sid)
     niveau = _find_niveau(stair, nid)
     data = payload.model_dump(exclude_none=True)
+    if "floor_index" in data:
+        _validate_floor_index(data["floor_index"])
+        _validate_contiguity(stair.get("niveaux") or [], data["floor_index"], exclude_id=nid)
+        # Auto-update the label if user didn't provide one explicitly
+        if "label" not in data:
+            data["label"] = floor_index_to_label(data["floor_index"])
+        data["order"] = data["floor_index"]
+    if data.get("is_ghost"):
+        # Vider les tronçons quand on rend le niveau ghost
+        niveau["troncons"] = []
     niveau.update(data)
+    # Re-sort niveaux par floor_index pour cohérence
+    niveaux = sorted(stair.get("niveaux") or [], key=lambda n: n.get("floor_index", n.get("order", 0)))
+    stair["niveaux"] = niveaux
     stair["updated_at"] = now_utc()
     await _save_project(pid, p["stairs"])
     return niveau

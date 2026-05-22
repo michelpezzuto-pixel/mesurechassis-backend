@@ -131,10 +131,37 @@ export const Measurements = {
 
 // ── Multi-stair v2 (Stairs > Niveaux > Tronçons) ─────────────────────────
 export type TronconType = 'droit' | 'palier' | 'quart_bas' | 'quart_haut';
+export type StairShape = 'droit' | 'tournant';
 
 export interface ApiTroncon { id: string; type: TronconType; longueur_mm: number; largeur_mm: number; order: number }
-export interface ApiNiveau  { id: string; label: string; hauteur_mm: number; sol_fini: boolean; reserve_mm: number; troncons: ApiTroncon[]; order: number }
-export interface ApiStair   { id: string; name: string; niveaux: ApiNiveau[]; created_at: string; updated_at: string }
+export interface ApiNiveau  {
+  id: string;
+  label: string;
+  floor_index: number;          // -3..+7 (0=RDC)
+  is_ghost: boolean;            // "Pas d'escalier ici"
+  hauteur_mm: number;
+  sol_fini: boolean;
+  reserve_mm: number;
+  troncons: ApiTroncon[];
+  order: number;
+}
+export interface ApiStair {
+  id: string;
+  name: string;
+  shape: StairShape;
+  niveaux: ApiNiveau[];
+  created_at: string;
+  updated_at: string;
+}
+
+// Floor index helpers (mirror du backend)
+export function floorIndexToLabel(idx: number): string {
+  if (idx === 0) return 'RDC';
+  if (idx === -1) return 'Sous-sol';
+  if (idx < 0) return `Sous-sol ${idx}`;
+  return `R+${idx}`;
+}
+export const FLOOR_INDEX_RANGE: number[] = [-3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7];
 
 export interface StairCompute {
   stair_id: string; name: string; n_niveaux: number;
@@ -151,13 +178,23 @@ export interface StairCompute {
 
 export const Stairs = {
   list: async (pid: string) => (await api.get(`/projects/${pid}/stairs`)).data as ApiStair[],
-  create: async (pid: string, name: string) => (await api.post(`/projects/${pid}/stairs`, { name })).data as ApiStair,
+  create: async (pid: string, payload: { name: string; shape: StairShape }) =>
+    (await api.post(`/projects/${pid}/stairs`, payload)).data as ApiStair,
   get: async (pid: string, sid: string) => (await api.get(`/projects/${pid}/stairs/${sid}`)).data as ApiStair,
+  update: async (pid: string, sid: string, patch: { name?: string; shape?: StairShape }) =>
+    (await api.patch(`/projects/${pid}/stairs/${sid}`, patch)).data as ApiStair,
   rename: async (pid: string, sid: string, name: string) => (await api.patch(`/projects/${pid}/stairs/${sid}`, { name })).data,
   remove: async (pid: string, sid: string) => (await api.delete(`/projects/${pid}/stairs/${sid}`)).data,
   compute: async (pid: string, sid: string) => (await api.get(`/projects/${pid}/stairs/${sid}/compute`)).data as StairCompute,
 
-  addNiveau: async (pid: string, sid: string, niveau: { label: string; hauteur_mm: number; sol_fini: boolean; reserve_mm?: number }) =>
+  addNiveau: async (pid: string, sid: string, niveau: {
+    floor_index: number;
+    is_ghost?: boolean;
+    label?: string;
+    hauteur_mm: number;
+    sol_fini: boolean;
+    reserve_mm?: number;
+  }) =>
     (await api.post(`/projects/${pid}/stairs/${sid}/niveaux`, niveau)).data as ApiNiveau,
   updateNiveau: async (pid: string, sid: string, nid: string, patch: Partial<ApiNiveau>) =>
     (await api.patch(`/projects/${pid}/stairs/${sid}/niveaux/${nid}`, patch)).data as ApiNiveau,

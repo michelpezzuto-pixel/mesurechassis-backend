@@ -22,6 +22,7 @@ export default function ProjectDetail() {
   const [loading, setLoading] = useState(true);
   const [addOpen, setAddOpen] = useState(false);
   const [newStairName, setNewStairName] = useState('');
+  const [newStairShape, setNewStairShape] = useState<'droit' | 'tournant'>('tournant');
   const [creating, setCreating] = useState(false);
 
   const load = useCallback(async () => {
@@ -66,13 +67,13 @@ export default function ProjectDetail() {
     ]);
   };
 
-  const openAddStair = () => { setNewStairName(''); setAddOpen(true); };
+  const openAddStair = () => { setNewStairName(''); setNewStairShape('tournant'); setAddOpen(true); };
 
   const createStair = async () => {
     const name = newStairName.trim() || `Escalier ${stairs.length + 1}`;
     setCreating(true);
     try {
-      const s = await Stairs.create(id!, name);
+      const s = await Stairs.create(id!, { name, shape: newStairShape });
       setStairs([...stairs, s]);
       setAddOpen(false);
       // Navigation directe vers l'éditeur
@@ -245,6 +246,41 @@ export default function ProjectDetail() {
               returnKeyType="done"
               testID="input-new-stair-name"
             />
+
+            {/* Shape selector — DROIT (simplifié) vs TOURNANT (multi-niveaux) */}
+            <Text style={styles.modalSubLabel}>FORME DE L'ESCALIER</Text>
+            <View style={styles.shapeRow}>
+              <TouchableOpacity
+                style={[styles.shapeBtn, newStairShape === 'droit' && styles.shapeBtnActive]}
+                onPress={() => setNewStairShape('droit')}
+                testID="shape-droit"
+              >
+                <MaterialCommunityIcons
+                  name="arrow-top-right"
+                  size={24}
+                  color={newStairShape === 'droit' ? C.DARK : C.GRAY3}
+                />
+                <Text style={[styles.shapeTitle, newStairShape === 'droit' && { color: C.DARK }]}>DROIT</Text>
+                <Text style={[styles.shapeHint, newStairShape === 'droit' && { color: C.DARK, opacity: 0.7 }]}>
+                  1 volée linéaire
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.shapeBtn, newStairShape === 'tournant' && styles.shapeBtnActive]}
+                onPress={() => setNewStairShape('tournant')}
+                testID="shape-tournant"
+              >
+                <MaterialCommunityIcons
+                  name="rotate-3d-variant"
+                  size={24}
+                  color={newStairShape === 'tournant' ? C.DARK : C.GRAY3}
+                />
+                <Text style={[styles.shapeTitle, newStairShape === 'tournant' && { color: C.DARK }]}>TOURNANT</Text>
+                <Text style={[styles.shapeHint, newStairShape === 'tournant' && { color: C.DARK, opacity: 0.7 }]}>
+                  Niveaux & tronçons
+                </Text>
+              </TouchableOpacity>
+            </View>
             <View style={{ flexDirection: 'row', gap: SP.sm, marginTop: SP.md }}>
               <TouchableOpacity style={[styles.modalBtn, styles.modalBtnGhost]} onPress={() => setAddOpen(false)}>
                 <Text style={[styles.modalBtnTxt, { color: C.WHITE }]}>ANNULER</Text>
@@ -315,4 +351,22 @@ const styles = StyleSheet.create({
   modalBtnGhost: { backgroundColor: 'transparent', borderWidth: 1, borderColor: C.BORDER },
   modalBtnPrimary: { backgroundColor: C.ACCENT },
   modalBtnTxt: { ...FONT.button, color: C.DARK, fontSize: 13 },
+
+  // Shape selector inside modal
+  modalSubLabel: { ...FONT.label, color: C.ACCENT, fontSize: 11, marginTop: SP.md },
+  shapeRow: { flexDirection: 'row', gap: SP.sm, marginTop: SP.sm },
+  shapeBtn: {
+    flex: 1,
+    paddingVertical: 14,
+    paddingHorizontal: 8,
+    backgroundColor: C.BG_DEEPER,
+    borderRadius: R.md,
+    borderWidth: 1,
+    borderColor: C.BORDER,
+    alignItems: 'center',
+    gap: 4,
+  },
+  shapeBtnActive: { backgroundColor: C.ACCENT, borderColor: C.ACCENT },
+  shapeTitle: { ...FONT.button, color: C.WHITE, fontSize: 12, marginTop: 4 },
+  shapeHint: { ...FONT.small, fontSize: 10, color: C.GRAY3, textAlign: 'center' },
 });

@@ -137,7 +137,9 @@ class TronconUpdate(BaseModel):
 
 class Niveau(BaseModel):
     id: str
-    label: str = "Niveau"       # "RDC", "R+1", ...
+    label: str = "Niveau"       # display label (auto-derived from floor_index server-side)
+    floor_index: int = 0        # ⬅️ NEW : -3..+7 (0=RDC, 1=R+1, -1=Sous-sol)
+    is_ghost: bool = False      # ⬅️ NEW : "Pas d'escalier ici" — préserve la continuité
     hauteur_mm: float            # hauteur brute du niveau (mm)
     sol_fini: bool = True         # si False, on déduit reserve_mm de hauteur
     reserve_mm: float = 0
@@ -146,7 +148,9 @@ class Niveau(BaseModel):
 
 
 class NiveauCreate(BaseModel):
-    label: str = "Niveau"
+    label: str = ""               # vide → auto-dérivé du floor_index ("RDC", "R+1", …)
+    floor_index: int = 0          # ⬅️ NEW : niveau strict -3..+7
+    is_ghost: bool = False        # ⬅️ NEW : "Pas d'escalier ici"
     hauteur_mm: float
     sol_fini: bool = True
     reserve_mm: float = 0
@@ -154,15 +158,21 @@ class NiveauCreate(BaseModel):
 
 class NiveauUpdate(BaseModel):
     label: Optional[str] = None
+    floor_index: Optional[int] = None      # ⬅️ NEW
+    is_ghost: Optional[bool] = None        # ⬅️ NEW
     hauteur_mm: Optional[float] = None
     sol_fini: Optional[bool] = None
     reserve_mm: Optional[float] = None
     order: Optional[int] = None
 
 
+StairShape = Literal["droit", "tournant"]
+
+
 class Stair(BaseModel):
     id: str
     name: str = "Escalier Principal"
+    shape: StairShape = "tournant"          # ⬅️ NEW : DROIT (simplifié) ou TOURNANT (multi-niveaux)
     niveaux: List[Niveau] = []
     created_at: datetime = Field(default_factory=now_utc)
     updated_at: datetime = Field(default_factory=now_utc)
@@ -170,10 +180,12 @@ class Stair(BaseModel):
 
 class StairCreate(BaseModel):
     name: str = "Escalier Principal"
+    shape: StairShape = "tournant"          # ⬅️ NEW
 
 
 class StairUpdate(BaseModel):
     name: Optional[str] = None
+    shape: Optional[StairShape] = None      # ⬅️ NEW
 
 
 # ---------------------- Measurements ----------------------
