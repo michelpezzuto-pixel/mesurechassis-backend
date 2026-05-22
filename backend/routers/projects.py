@@ -1,0 +1,109 @@
+"""Projects CRUD + transmit + assign."""
+from __future__ import annotations
+
+import uuid
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException
+
+from core.db import db
+from core.security import (
+    get_current_user, now_utc, project_visible_to, require_roles,
+)
+from models.schemas import AssignRequest, ProjectCreate, ProjectUpdate
+
+router = APIRouter(prefix="/projects")
+
+
+@router.get("")
+async def list_projects(user=Depends(get_current_user), status_filter: Optional[str] = None):
+    q = project_visible_to(user)
+    if status_filter and status_filter != "tous":
+        q["status"] = status_filter
+    return await db.projects.find(q, {"_id": 0}).sort("created_at", -1).to_list(2000)
+
+
+@router.post("")
+async def create_project(payload: ProjectCreate, user=Depends(require_roles("admin"))):
+    pid = str(uuid.uuid4())
+    doc = {
+        "id": pid,
+        **payload.model_dump(),
+        "status": "brouillon",
+        "commercial_id": user["id"],
+        "creator_id": user["id"],
+        "technicien_id": user["id"] if user.get("solo_mode") else None,
+        "company_name": user.get("company_name"),
+        "locked": bool(user.get("solo_mode")),
+        "transmitted_at": now_utc() if user.get("solo_mode") else None,
+        "created_at": now_utc(),
+        "updated_at": now_utc(),
+    }
+    if user.get("solo_mode"):
+        doc["status"] = "a_mesurer"
+    await db.projects.insert_one(doc)
+    doc.pop("_id", None)
+    return doc
+
+
+@router.get("/{pid}")
+async def get_project(pid: str, user=Depends(get_current_user)):
+    q = {"id": pid, **project_visible_to(user)}
+    p = await db.projects.find_one(q, {"_id": 0})
+    if not p:
+        raise HTTPException(status_code=404, detail="Chantier introuvable")
+    m = await db.measurements.find_one({"project_id": pid}, {"_id": 0})
+    p["measurement"] = m
+    return p
+
+
+@router.put("/{pid}")
+async def update_project(pid: str, payload: ProjectUpdate, user=Depends(get_current_user)):
+    p = await db.projects.find_one({"id": pid})
+    if not p:
+        raise HTTPException(status_code=404, detail="Chantier introuvable")
+    if user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Seuls les Admin peuvent modifier l'identification client")
+    update = {k: v for k, v in payload.model_dump().items() if v is not None}
+    update["updated_at"] = now_utc()
+    await db.projects.update_one({"id": pid}, {"$set": update})
+    return await db.projects.find_one({"id": pid}, {"_id": 0})
+
+
+@router.delete("/{pid}")
+async def delete_project(pid: str, user=Depends(get_current_user)):
+    p = await db.projects.find_one({"id": pid})
+    if not p:
+        raise HTTPException(status_code=404, detail="Chantier introuvable")
+    if user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Suppression réservée aux Admin")
+    await db.projects.delete_one({"id": pid})
+    await db.measurements.delete_many({"project_id": pid})
+    return {"ok": True}
+
+
+@router.post("/{pid}/transmit")
+async def transmit_project(pid: str, user=Depends(require_roles("admin"))):
+    p = await db.projects.find_one({"id": pid})
+    if not p:
+        raise HTTPException(status_code=404, detail="Chantier introuvable")
+    await db.projects.update_one(
+        {"id": pid},
+        {"$set": {
+            "locked": True, "status": "a_mesurer",
+            "transmitted_at": now_utc(), "updated_at": now_utc(),
+        }},
+    )
+    return {"ok": True}
+
+
+@router.post("/{pid}/assign")
+async def assign_technicien(pid: str, payload: AssignRequest, user=Depends(require_roles("admin"))):
+    tech = await db.users.find_one({"id": payload.technicien_id, "role": "technicien"})
+    if not tech:
+        raise HTTPException(status_code=404, detail="Technicien introuvable")
+    await db.projects.update_one(
+        {"id": pid},
+        {"$set": {"technicien_id": payload.technicien_id, "updated_at": now_utc()}},
+    )
+    return {"ok": True}
