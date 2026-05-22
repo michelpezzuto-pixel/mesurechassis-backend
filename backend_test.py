@@ -1,391 +1,312 @@
-"""
-Backend test suite for MesureEscalier Phase 1 polish.
-Focus: validate that adding optional `element_title` field to MeasurementInput
-did not break anything AND that it is correctly persisted/returned/exported.
+"""Backend tests — Export V2 PDF/DXF enrichment (May 2025).
 
-Tested against the public EXPO_PUBLIC_BACKEND_URL.
+Validates per-stair PDF sections, multi-stair DXF layers (STAIR_<NAME>_DROIT/PALIER/QUART_*),
+multi-stair export, legacy non-regression, paywall.
 """
 from __future__ import annotations
 
+import os
 import sys
 import requests
 
-BASE = "https://stair-pro.preview.emergentagent.com"
+BASE = os.environ.get("BACKEND_URL", "https://stair-pro.preview.emergentagent.com").rstrip("/")
 API = f"{BASE}/api"
 
-ADMIN = {"email": "admin@demo.fr", "password": "Demo1234!"}
-SOLO = {"email": "marc@mesureescalier.com", "password": "Demo1234!"}
-TECH = {"email": "sophie@mesureescaliee.com", "password": "Demo1234!"}
-EXPIRED = {"email": "expired@demo.fr", "password": "Demo1234!"}
+MARC = ("marc@mesureescalier.com", "Demo1234!")
+ADMIN = ("admin@demo.fr", "Demo1234!")
+EXPIRED = ("expired@demo.fr", "Demo1234!")
 
-results = []
-
-
-def log(ok, name, detail=""):
-    tag = "PASS" if ok else "FAIL"
-    print(f"[{tag}] {name} {('-> ' + detail) if detail else ''}")
-    results.append((ok, name, detail))
+RESULTS: list[tuple[str, bool, str]] = []
 
 
-def login(creds):
-    return requests.post(f"{API}/auth/login", json=creds, timeout=20)
+def record(name: str, ok: bool, msg: str = ""):
+    status = "PASS" if ok else "FAIL"
+    print(f"[{status}] {name}: {msg}")
+    RESULTS.append((name, ok, msg))
 
 
-def hdrs(token):
-    return {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+def login(email: str, password: str) -> str:
+    r = requests.post(f"{API}/auth/login", json={"email": email, "password": password}, timeout=30)
+    assert r.status_code == 200, f"Login {email} failed {r.status_code} {r.text}"
+    data = r.json()
+    return data.get("access_token") or data["token"]
 
 
-# ---------- A. element_title flow ----------
-def test_element_title_flow():
-    print("\n===== A. element_title flow =====")
-    r = login(ADMIN)
+def auth(token: str) -> dict:
+    return {"Authorization": f"Bearer {token}"}
+
+
+# ---------------- Tests ----------------
+
+def test_smoke_pdf_v2(token: str, pid: str, sid_main: str):
+    """Step 1: Export PDF for v2 project. Verify size > 5000, %PDF-1.4 header."""
+    r = requests.get(f"{API}/projects/{pid}/export/pdf", headers=auth(token), timeout=60)
     if r.status_code != 200:
-        log(False, "A0 login admin", f"HTTP {r.status_code} body={r.text[:200]}")
+        record("PDF V2 export — HTTP 200", False, f"status={r.status_code} body={r.text[:200]}")
         return None
-    admin = r.json()
-    token = admin["token"]
-    log(True, "A0 login admin", f"is_locked={admin['user'].get('is_locked')}")
+    record("PDF V2 export — HTTP 200", True, "status=200")
 
-    payload_proj = {
-        "client_nom": "Lefevre",
-        "client_prenom": "Camille",
-        "address": "12 rue des Acacias",
-        "postal_code": "44000",
-        "city": "Nantes",
-        "phone": "0612345678",
-        "notes": "Maison de campagne, cave + comble",
-    }
-    r = requests.post(f"{API}/projects", json=payload_proj, headers=hdrs(token), timeout=20)
-    if r.status_code != 200:
-        log(False, "A1 POST /projects", f"HTTP {r.status_code} {r.text[:200]}")
-        return token
-    pid = r.json()["id"]
-    log(True, "A1 POST /projects", f"id={pid}")
+    ct = r.headers.get("Content-Type", "")
+    record("PDF V2 — Content-Type", ct.startswith("application/pdf"), f"got {ct}")
 
-    meas_body = {
-        "element_title": "Escalier de cave",
-        "material": "bois",
-        "hauteur_brute": 2700,
-        "sols_finis_zero": True,
-        "reserve_bas": 0,
-        "reserve_haut": 0,
-        "epaisseur_dalle": 200,
-        "tremie_longueur": 2400,
-        "tremie_largeur": 900,
-        "reculement_max": 3500,
-        "remarques": "",
-    }
-    r = requests.post(f"{API}/projects/{pid}/measurement", json=meas_body, headers=hdrs(token), timeout=20)
-    if r.status_code != 200:
-        log(False, "A2 POST /measurement (element_title)", f"HTTP {r.status_code} {r.text[:300]}")
-        return token
-    saved = r.json()
-    log(saved.get("element_title") == "Escalier de cave",
-        "A2 POST /measurement element_title persisté",
-        f"element_title={saved.get('element_title')!r}")
+    body = r.content
+    record("PDF V2 — header %PDF-1.4", body.startswith(b"%PDF-1.4"), f"first 10 bytes: {body[:10]!r}")
+    size_ok = len(body) > 5000
+    record("PDF V2 — taille > 5000 bytes", size_ok, f"size={len(body)} bytes")
+    return len(body)
 
-    r = requests.get(f"{API}/projects/{pid}", headers=hdrs(token), timeout=20)
+
+def test_smoke_dxf_v2(token: str, pid: str):
+    """Step 2: Export DXF for v2 project. Verify layers STAIR_CAVE-TO-RDC_*, LIMON."""
+    r = requests.get(f"{API}/projects/{pid}/export/dxf", headers=auth(token), timeout=60)
     if r.status_code != 200:
-        log(False, "A3 GET /projects/{id}", f"HTTP {r.status_code}")
+        record("DXF V2 export — HTTP 200", False, f"status={r.status_code} body={r.text[:200]}")
+        return None
+    record("DXF V2 export — HTTP 200", True, "status=200")
+
+    ct = r.headers.get("Content-Type", "")
+    record("DXF V2 — Content-Type", ct.startswith("application/dxf"), f"got {ct}")
+
+    text = r.text
+    record("DXF V2 — contient SECTION", "SECTION" in text)
+    record("DXF V2 — contient ENDSEC", "ENDSEC" in text)
+
+    has_droit = "STAIR_CAVE-TO-RDC_DROIT" in text
+    has_palier = "STAIR_CAVE-TO-RDC_PALIER" in text
+    has_quart = "STAIR_CAVE-TO-RDC_QUART_HAUT" in text
+    has_any = has_droit or has_palier or has_quart
+    record("DXF V2 — layer STAIR_CAVE-TO-RDC_(DROIT|PALIER|QUART_HAUT)", has_any,
+           f"droit={has_droit} palier={has_palier} quart_haut={has_quart}")
+
+    record("DXF V2 — calque LIMON présent", "LIMON" in text, "limon trace required")
+    return len(text)
+
+
+def test_multi_stair_export(token: str, pid: str, base_pdf_size: int):
+    """Step 3: Add Mezzanine stair, ensure PDF grew & DXF has both stair prefixes."""
+    r = requests.post(f"{API}/projects/{pid}/stairs",
+                      headers=auth(token), json={"name": "Mezzanine"}, timeout=30)
+    if r.status_code != 200:
+        record("Multi-stair — create Mezzanine", False, f"{r.status_code} {r.text[:200]}")
+        return
+    sid_mezz = r.json()["id"]
+    record("Multi-stair — create Mezzanine", True, f"sid={sid_mezz}")
+
+    r = requests.post(f"{API}/projects/{pid}/stairs/{sid_mezz}/niveaux",
+                      headers=auth(token),
+                      json={"label": "Mezz", "hauteur_mm": 1800, "sol_fini": True, "reserve_mm": 0},
+                      timeout=30)
+    if r.status_code != 200:
+        record("Multi-stair — niveau Mezzanine", False, f"{r.status_code} {r.text[:200]}")
+        return
+    nid_mezz = r.json()["id"]
+    record("Multi-stair — niveau Mezzanine", True, "")
+
+    r = requests.post(f"{API}/projects/{pid}/stairs/{sid_mezz}/niveaux/{nid_mezz}/troncons",
+                      headers=auth(token),
+                      json={"type": "droit", "longueur_mm": 2500, "largeur_mm": 800},
+                      timeout=30)
+    record("Multi-stair — tronçon droit Mezzanine", r.status_code == 200, f"{r.status_code}")
+
+    r = requests.get(f"{API}/projects/{pid}/export/pdf", headers=auth(token), timeout=60)
+    if r.status_code != 200:
+        record("Multi-stair PDF — HTTP 200", False, f"{r.status_code}")
     else:
-        m = (r.json().get("measurement") or {})
-        log(m.get("element_title") == "Escalier de cave",
-            "A3 GET /projects/{id} measurement.element_title",
-            f"val={m.get('element_title')!r}")
+        new_size = len(r.content)
+        bigger = new_size > base_pdf_size
+        record("Multi-stair PDF — taille augmentée", bigger,
+               f"before={base_pdf_size}, after={new_size}")
 
-    meas_no_title = {k: v for k, v in meas_body.items() if k != "element_title"}
-    r = requests.post(f"{API}/projects/{pid}/measurement/preview", json=meas_no_title, headers=hdrs(token), timeout=20)
+    r = requests.get(f"{API}/projects/{pid}/export/dxf", headers=auth(token), timeout=60)
     if r.status_code != 200:
-        log(False, "A4 preview sans element_title", f"HTTP {r.status_code} {r.text[:300]}")
-    else:
-        res = r.json()
-        missing = {"n_steps", "h", "g", "blondel_value"} - set(res.keys())
-        log(not missing, "A4 preview sans element_title contient n_steps/h/g/blondel",
-            f"n_steps={res.get('n_steps')} h={res.get('h')} g={res.get('g')} blondel={res.get('blondel_value')}")
+        record("Multi-stair DXF — HTTP 200", False, f"{r.status_code}")
+        return
+    text = r.text
+    has_cave = "STAIR_CAVE-TO-RDC_" in text
+    has_mezz = "STAIR_MEZZANINE_" in text
+    record("Multi-stair DXF — deux préfixes de calques distincts",
+           has_cave and has_mezz, f"cave-to-rdc={has_cave} mezzanine={has_mezz}")
 
-    r = requests.post(f"{API}/projects/{pid}/measurement/validate", headers=hdrs(token), timeout=20)
-    log(r.status_code == 200, "A5 POST /measurement/validate", f"HTTP {r.status_code}")
 
-    r = requests.get(f"{API}/projects/{pid}/export/pdf", headers={"Authorization": f"Bearer {token}"}, timeout=30)
+def test_legacy_non_regression(admin_token: str):
+    """Step 4: legacy project (migrated) → PDF works, contains both legacy + v2 sections."""
+    r = requests.get(f"{API}/projects", headers=auth(admin_token), timeout=30)
     if r.status_code != 200:
-        log(False, "A6 GET /export/pdf", f"HTTP {r.status_code} {r.text[:200]}")
-    else:
-        content = r.content
-        log(content[:5] == b"%PDF-", "A6 GET /export/pdf header %PDF-", f"size={len(content)} bytes")
-        # ReportLab encodes plain text inside content streams; "Escalier de cave"
-        # should appear as raw substring in the uncompressed PDF.
-        found = b"Escalier de cave" in content
-        log(found, "A6 GET /export/pdf mentionne 'Escalier de cave'",
-            f"raw_search found={found}")
+        record("Legacy — list projects (admin)", False, f"{r.status_code}")
+        return
+    projects = r.json()
+    if not projects:
+        record("Legacy — list projects (admin)", False, "no projects")
+        return
+    record("Legacy — list projects (admin)", True, f"{len(projects)} projects")
 
-    return token, pid
-
-
-# ---------- B. Non-regression ----------
-def test_non_regression():
-    print("\n===== B. Non-régression =====")
-    tokens = {}
-    for label, creds in [("admin", ADMIN), ("solo", SOLO), ("technicien", TECH)]:
-        r = login(creds)
-        if r.status_code != 200:
-            log(False, f"B-login {label}", f"HTTP {r.status_code} {r.text[:200]}")
+    target = None
+    for p in projects:
+        full = requests.get(f"{API}/projects/{p['id']}", headers=auth(admin_token), timeout=30)
+        if full.status_code != 200:
             continue
-        u = r.json()["user"]
-        tokens[label] = r.json()["token"]
-        log(u.get("is_locked") is False, f"B-login {label} is_locked=false",
-            f"is_locked={u.get('is_locked')} trial_days_remaining={u.get('trial_days_remaining')}")
-
-    r = login(EXPIRED)
-    if r.status_code != 200:
-        log(False, "B-login expired", f"HTTP {r.status_code}")
-    else:
-        u = r.json()["user"]
-        tok_exp = r.json()["token"]
-        log(u.get("is_locked") is True, "B-login expired is_locked=true", f"is_locked={u.get('is_locked')}")
-        r2 = requests.get(f"{API}/projects", headers=hdrs(tok_exp), timeout=20)
-        log(r2.status_code == 402, "B expired GET /projects → 402", f"HTTP {r2.status_code}")
-
-    admin_tok = tokens.get("admin")
-    if not admin_tok:
+        pdoc = full.json()
+        if pdoc.get("measurement") and pdoc.get("stairs"):
+            target = pdoc
+            break
+    if not target:
+        record("Legacy — projet migré avec measurement + stairs[]", False,
+               "no project with both legacy measurement & v2 stairs[] found")
         return
+    record("Legacy — projet migré avec measurement + stairs[]", True,
+           f"pid={target['id']} client={target.get('client_nom')}")
 
-    payload_proj = {
-        "client_nom": "Moreau",
-        "client_prenom": "Julien",
-        "address": "5 impasse du Verger",
-        "postal_code": "75011",
-        "city": "Paris",
-        "phone": "0698765432",
-        "notes": "",
-    }
-    r = requests.post(f"{API}/projects", json=payload_proj, headers=hdrs(admin_tok), timeout=20)
-    log(r.status_code == 200, "B CRUD - POST /projects", f"HTTP {r.status_code}")
-    pid3 = r.json()["id"] if r.status_code == 200 else None
-
-    if pid3:
-        r = requests.get(f"{API}/projects/{pid3}", headers=hdrs(admin_tok), timeout=20)
-        log(r.status_code == 200, "B CRUD - GET /projects/{id}", f"HTTP {r.status_code}")
-        r = requests.put(f"{API}/projects/{pid3}", json={"notes": "Mise à jour test"}, headers=hdrs(admin_tok), timeout=20)
-        log(r.status_code == 200, "B CRUD - PUT /projects/{id}", f"HTTP {r.status_code}")
-        r = requests.get(f"{API}/projects", headers=hdrs(admin_tok), timeout=20)
-        log(r.status_code == 200 and isinstance(r.json(), list),
-            "B CRUD - GET /projects list",
-            f"HTTP {r.status_code} count={len(r.json()) if r.status_code == 200 else 'n/a'}")
-
-    meas_body = {
-        "material": "acier",
-        "hauteur_brute": 2700,
-        "sols_finis_zero": True,
-        "reserve_bas": 0,
-        "reserve_haut": 0,
-        "epaisseur_dalle": 200,
-        "tremie_longueur": 2400,
-        "tremie_largeur": 900,
-        "reculement_max": 3500,
-        "remarques": "",
-    }
-    if pid3:
-        r = requests.post(f"{API}/projects/{pid3}/measurement/preview", json=meas_body, headers=hdrs(admin_tok), timeout=20)
-        if r.status_code != 200:
-            log(False, "B Preview standard h=2700/recul=3500", f"HTTP {r.status_code} {r.text[:200]}")
-        else:
-            res = r.json()
-            ok = (res.get("n_steps") == 15 and 178 <= res.get("h", 0) <= 182 and res.get("valid_blondel") is True)
-            log(ok, "B Preview standard h=2700/recul=3500",
-                f"n_steps={res.get('n_steps')} h={res.get('h')} valid_blondel={res.get('valid_blondel')}")
-
-        r = requests.post(f"{API}/projects/{pid3}/measurement", json=meas_body, headers=hdrs(admin_tok), timeout=20)
-        default_title = r.json().get("element_title") if r.status_code == 200 else None
-        log(r.status_code == 200, "B Save measurement (sans element_title → default)",
-            f"HTTP {r.status_code} default element_title={default_title!r}")
-
-        r = requests.get(f"{API}/projects/{pid3}/export/dxf", headers=hdrs(admin_tok), timeout=30)
-        if r.status_code != 200:
-            log(False, "B Export DXF", f"HTTP {r.status_code}")
-        else:
-            txt = r.content[:80].decode(errors="ignore")
-            log("SECTION" in txt and txt.lstrip().startswith("0"),
-                "B Export DXF commence par 0\\nSECTION", f"prefix={txt[:40]!r}")
-
-    r = requests.get(f"{API}/stats", headers=hdrs(admin_tok), timeout=20)
-    log(r.status_code == 200, "B GET /api/stats admin", f"HTTP {r.status_code}")
-
-    tiny_png_b64 = (
-        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII="
-    )
-    r = requests.put(f"{API}/auth/me", json={"company_logo_base64": tiny_png_b64}, headers=hdrs(admin_tok), timeout=20)
-    log(r.status_code == 200, "B PUT /api/auth/me company_logo_base64", f"HTTP {r.status_code}")
-
-    if pid3:
-        r = requests.post(f"{API}/projects/{pid3}/photos",
-                          json={"base64": tiny_png_b64, "caption": "Vue d'ensemble"},
-                          headers=hdrs(admin_tok), timeout=20)
-        log(r.status_code == 200, "B Photos POST 1", f"HTTP {r.status_code}")
-        if r.status_code == 200:
-            photo_id = r.json()["id"]
-            r = requests.get(f"{API}/projects/{pid3}/photos", headers=hdrs(admin_tok), timeout=20)
-            log(r.status_code == 200 and len(r.json()) >= 1, "B Photos GET",
-                f"count={len(r.json()) if r.status_code==200 else 'n/a'}")
-            for i in range(9):
-                requests.post(f"{API}/projects/{pid3}/photos",
-                              json={"base64": tiny_png_b64, "caption": f"photo {i+2}"},
-                              headers=hdrs(admin_tok), timeout=20)
-            r = requests.post(f"{API}/projects/{pid3}/photos",
-                              json={"base64": tiny_png_b64, "caption": "photo 11 overlimit"},
-                              headers=hdrs(admin_tok), timeout=20)
-            log(r.status_code == 400, "B Photos limite 10 (11e rejetée)", f"HTTP {r.status_code}")
-            r = requests.delete(f"{API}/projects/{pid3}/photos/{photo_id}", headers=hdrs(admin_tok), timeout=20)
-            log(r.status_code == 200, "B Photos DELETE", f"HTTP {r.status_code}")
-
-        requests.delete(f"{API}/projects/{pid3}", headers=hdrs(admin_tok), timeout=20)
-
-
-# ---------- C. Phase 2 — Trajectoire (forme_choisie, largeur_volee, jour_escalier) ----------
-def test_trajectoire_phase2():
-    print("\n===== C. Phase 2 — Trajectoire =====")
-    r = login(ADMIN)
+    r = requests.get(f"{API}/projects/{target['id']}/export/pdf",
+                     headers=auth(admin_token), timeout=60)
     if r.status_code != 200:
-        log(False, "C0 login admin", f"HTTP {r.status_code}")
+        record("Legacy — GET /export/pdf 200", False, f"{r.status_code} {r.text[:200]}")
         return
-    token = r.json()["token"]
+    record("Legacy — GET /export/pdf 200", True, "")
+    body = r.content
+    record("Legacy — header %PDF-", body.startswith(b"%PDF-"), f"first 10: {body[:10]!r}")
+    record("Legacy — PDF taille raisonnable (legacy+v2)", len(body) > 4000, f"size={len(body)}")
 
-    payload_proj = {
-        "client_nom": "Bernard",
-        "client_prenom": "Élodie",
-        "address": "27 quai des Chartrons",
-        "postal_code": "33000",
-        "city": "Bordeaux",
-        "phone": "0556123456",
-        "notes": "Maison de ville - rénovation cage d'escalier",
-    }
-    r = requests.post(f"{API}/projects", json=payload_proj, headers=hdrs(token), timeout=20)
-    if r.status_code != 200:
-        log(False, "C1 POST /projects", f"HTTP {r.status_code} {r.text[:200]}")
+
+def test_paywall(pid: str):
+    """Step 5a: expired user → /export/pdf returns 402."""
+    try:
+        token = login(*EXPIRED)
+    except AssertionError as e:
+        record("Paywall — login expired", False, str(e))
         return
-    pid = r.json()["id"]
-    log(True, "C1 POST /projects", f"id={pid}")
+    record("Paywall — login expired", True, "")
 
-    base_body = {
-        "material": "bois",
-        "hauteur_brute": 2700,
-        "sols_finis_zero": True,
-        "reserve_bas": 0,
-        "reserve_haut": 0,
-        "epaisseur_dalle": 200,
-        "tremie_longueur": 2400,
-        "tremie_largeur": 900,
-        "reculement_max": 3500,
-        "remarques": "",
-    }
+    r = requests.get(f"{API}/projects/{pid}/export/pdf", headers=auth(token), timeout=30)
+    record("Paywall — expired GET /export/pdf renvoie 402", r.status_code == 402,
+           f"status={r.status_code}")
 
-    # C2: preview with forme_choisie=quart_bas + custom largeur_volee/jour_escalier
-    body_qb = {**base_body, "forme_choisie": "quart_bas", "largeur_volee": 1100, "jour_escalier": 120}
-    r = requests.post(f"{API}/projects/{pid}/measurement/preview", json=body_qb, headers=hdrs(token), timeout=20)
+
+def test_compute_blondel(token: str, pid: str, sid: str):
+    """Step 5b: /compute returns coherent values."""
+    r = requests.get(f"{API}/projects/{pid}/stairs/{sid}/compute",
+                     headers=auth(token), timeout=30)
     if r.status_code != 200:
-        log(False, "C2 preview quart_bas", f"HTTP {r.status_code} {r.text[:300]}")
-    else:
-        res = r.json()
-        log(res.get("shape_key") == "quart_bas", "C2 shape_key == 'quart_bas'", f"shape_key={res.get('shape_key')!r}")
-        log(res.get("largeur_volee") == 1100, "C2 largeur_volee == 1100 (echo)", f"largeur_volee={res.get('largeur_volee')}")
-        log(res.get("jour_escalier") == 120, "C2 jour_escalier == 120 (echo)", f"jour_escalier={res.get('jour_escalier')}")
-        shape = res.get("shape", "")
-        log(shape.startswith("Quart-tournant bas (choix utilisateur)"),
-            "C2 shape startswith 'Quart-tournant bas (choix utilisateur)'", f"shape={shape!r}")
-        ok_calc = (
-            isinstance(res.get("n_steps"), int)
-            and res.get("h") is not None
-            and res.get("g") is not None
-            and res.get("blondel_value") is not None
-            and res.get("valid_blondel") is not None
-        )
-        log(ok_calc, "C2 calc fields present (n_steps/h/g/blondel/valid_blondel)",
-            f"n={res.get('n_steps')} h={res.get('h')} g={res.get('g')} bl={res.get('blondel_value')} valid={res.get('valid_blondel')}")
+        record("Compute — GET /compute 200", False, f"{r.status_code} {r.text[:200]}")
+        return
+    record("Compute — GET /compute 200", True, "")
+    data = r.json()
+    total_steps = data.get("total_steps", 0)
+    record("Compute — total_steps cohérent (>0)", total_steps > 0,
+           f"total_steps={total_steps}")
+    niv0 = (data.get("niveaux_calc") or [{}])[0]
+    h = niv0.get("h", 0)
+    bl = niv0.get("blondel_value", 0)
+    valid = niv0.get("valid_blondel", False)
+    record("Compute — h ~180 RDC", 160 <= h <= 200, f"h={h}")
+    record("Compute — blondel 560-670 valid", valid and 560 <= bl <= 670,
+           f"blondel={bl} valid={valid}")
 
-    # C3: preview WITHOUT the 3 new fields → defaults echoed
-    r = requests.post(f"{API}/projects/{pid}/measurement/preview", json=base_body, headers=hdrs(token), timeout=20)
-    if r.status_code != 200:
-        log(False, "C3 preview sans nouveaux champs", f"HTTP {r.status_code} {r.text[:300]}")
-    else:
-        res = r.json()
-        log(res.get("shape_key") in {"droit", "quart_bas", "quart_haut", "double_quart", "helicoidal"},
-            "C3 shape_key défini",
-            f"shape_key={res.get('shape_key')!r}")
-        log(res.get("largeur_volee") == 900, "C3 largeur_volee default 900", f"val={res.get('largeur_volee')}")
-        log(res.get("jour_escalier") == 100, "C3 jour_escalier default 100", f"val={res.get('jour_escalier')}")
 
-    # C4: forme_choisie=double_quart
-    body_dq = {**base_body, "forme_choisie": "double_quart", "largeur_volee": 1000}
-    r = requests.post(f"{API}/projects/{pid}/measurement/preview", json=body_dq, headers=hdrs(token), timeout=20)
-    if r.status_code != 200:
-        log(False, "C4 preview double_quart", f"HTTP {r.status_code} {r.text[:200]}")
-    else:
-        res = r.json()
-        log(res.get("shape_key") == "double_quart", "C4 shape_key == 'double_quart'", f"shape_key={res.get('shape_key')!r}")
-        log(res.get("largeur_volee") == 1000, "C4 largeur_volee == 1000", f"val={res.get('largeur_volee')}")
-
-    # C5: forme_choisie=helicoidal
-    body_he = {**base_body, "forme_choisie": "helicoidal"}
-    r = requests.post(f"{API}/projects/{pid}/measurement/preview", json=body_he, headers=hdrs(token), timeout=20)
-    if r.status_code != 200:
-        log(False, "C5 preview helicoidal", f"HTTP {r.status_code} {r.text[:200]}")
-    else:
-        res = r.json()
-        log(res.get("shape_key") == "helicoidal", "C5 shape_key == 'helicoidal'", f"shape_key={res.get('shape_key')!r}")
-
-    # C6: SAVE measurement with the 3 fields
-    body_save = {**base_body, "forme_choisie": "double_quart", "largeur_volee": 1050, "jour_escalier": 110,
-                 "element_title": "Escalier Principal"}
-    r = requests.post(f"{API}/projects/{pid}/measurement", json=body_save, headers=hdrs(token), timeout=20)
-    if r.status_code != 200:
-        log(False, "C6 POST /measurement (save w/ trajectoire)", f"HTTP {r.status_code} {r.text[:300]}")
-    else:
-        saved = r.json()
-        log(saved.get("forme_choisie") == "double_quart",
-            "C6 saved.forme_choisie == 'double_quart'", f"val={saved.get('forme_choisie')!r}")
-        log(saved.get("largeur_volee") == 1050, "C6 saved.largeur_volee == 1050", f"val={saved.get('largeur_volee')}")
-        log(saved.get("jour_escalier") == 110, "C6 saved.jour_escalier == 110", f"val={saved.get('jour_escalier')}")
-        res = saved.get("result") or {}
-        log(res.get("shape_key") == "double_quart", "C6 result.shape_key == 'double_quart'",
-            f"shape_key={res.get('shape_key')!r}")
-        log(res.get("largeur_volee") == 1050 and res.get("jour_escalier") == 110,
-            "C6 result echo largeur/jour",
-            f"largeur={res.get('largeur_volee')} jour={res.get('jour_escalier')}")
-
-    # C7: GET project → persisted measurement contains the 3 fields
-    r = requests.get(f"{API}/projects/{pid}", headers=hdrs(token), timeout=20)
-    if r.status_code != 200:
-        log(False, "C7 GET /projects/{id}", f"HTTP {r.status_code}")
-    else:
-        m = (r.json().get("measurement") or {})
-        log(m.get("forme_choisie") == "double_quart",
-            "C7 persisted measurement.forme_choisie", f"val={m.get('forme_choisie')!r}")
-        log(m.get("largeur_volee") == 1050, "C7 persisted measurement.largeur_volee", f"val={m.get('largeur_volee')}")
-        log(m.get("jour_escalier") == 110, "C7 persisted measurement.jour_escalier", f"val={m.get('jour_escalier')}")
-        res = m.get("result") or {}
-        log(res.get("shape_key") == "double_quart",
-            "C7 persisted measurement.result.shape_key", f"val={res.get('shape_key')!r}")
-
-    # Cleanup
-    requests.delete(f"{API}/projects/{pid}", headers=hdrs(token), timeout=20)
-
+# ---------------- Orchestration ----------------
 
 def main():
-    print(f"Testing against: {API}\n")
-    test_element_title_flow()
-    test_non_regression()
-    test_trajectoire_phase2()
+    print(f"\n=== Backend Export V2 Tests against {API} ===\n")
 
-    print("\n===== SUMMARY =====")
-    passed = sum(1 for ok, *_ in results if ok)
-    total = len(results)
-    print(f"{passed}/{total} checks passed")
-    failed = [(n, d) for ok, n, d in results if not ok]
+    try:
+        marc_token = login(*MARC)
+        record("Auth — marc@mesureescalier.com", True, "")
+    except Exception as e:
+        record("Auth — marc@mesureescalier.com", False, str(e))
+        return summarize()
+
+    proj_payload = {
+        "client_nom": "Lemoine",
+        "client_prenom": "Théo",
+        "address": "12 rue des Limons",
+        "postal_code": "69000",
+        "city": "Lyon",
+        "phone": "0612345678",
+        "notes": "Projet test export V2",
+    }
+    r = requests.post(f"{API}/projects", headers=auth(marc_token), json=proj_payload, timeout=30)
+    if r.status_code != 200:
+        record("Setup — POST /projects", False, f"{r.status_code} {r.text[:200]}")
+        return summarize()
+    pid = r.json()["id"]
+    record("Setup — POST /projects", True, f"pid={pid}")
+
+    r = requests.post(f"{API}/projects/{pid}/stairs",
+                      headers=auth(marc_token), json={"name": "Cave-to-RDC"}, timeout=30)
+    if r.status_code != 200:
+        record("Setup — POST /stairs Cave-to-RDC", False, f"{r.status_code} {r.text[:200]}")
+        return summarize()
+    sid = r.json()["id"]
+    record("Setup — POST /stairs Cave-to-RDC", True, f"sid={sid}")
+
+    r = requests.post(f"{API}/projects/{pid}/stairs/{sid}/niveaux",
+                      headers=auth(marc_token),
+                      json={"label": "RDC", "hauteur_mm": 2700, "sol_fini": True, "reserve_mm": 0},
+                      timeout=30)
+    if r.status_code != 200:
+        record("Setup — niveau RDC", False, f"{r.status_code} {r.text[:200]}")
+        return summarize()
+    nid_rdc = r.json()["id"]
+    record("Setup — niveau RDC", True, "")
+
+    r = requests.post(f"{API}/projects/{pid}/stairs/{sid}/niveaux",
+                      headers=auth(marc_token),
+                      json={"label": "R+1", "hauteur_mm": 2500, "sol_fini": False, "reserve_mm": 50},
+                      timeout=30)
+    if r.status_code != 200:
+        record("Setup — niveau R+1", False, f"{r.status_code} {r.text[:200]}")
+        return summarize()
+    nid_r1 = r.json()["id"]
+    record("Setup — niveau R+1", True, "")
+
+    for ttype, longueur in [("droit", 2000), ("palier", 1000), ("quart_haut", 1500)]:
+        r = requests.post(
+            f"{API}/projects/{pid}/stairs/{sid}/niveaux/{nid_rdc}/troncons",
+            headers=auth(marc_token),
+            json={"type": ttype, "longueur_mm": longueur, "largeur_mm": 900},
+            timeout=30,
+        )
+        record(f"Setup — RDC tronçon {ttype} L={longueur}", r.status_code == 200,
+               f"{r.status_code} {r.text[:100] if r.status_code!=200 else ''}")
+
+    r = requests.post(
+        f"{API}/projects/{pid}/stairs/{sid}/niveaux/{nid_r1}/troncons",
+        headers=auth(marc_token),
+        json={"type": "droit", "longueur_mm": 3500, "largeur_mm": 900},
+        timeout=30,
+    )
+    record("Setup — R+1 tronçon droit L=3500", r.status_code == 200,
+           f"{r.status_code} {r.text[:100] if r.status_code!=200 else ''}")
+
+    pdf_size = test_smoke_pdf_v2(marc_token, pid, sid) or 0
+    test_smoke_dxf_v2(marc_token, pid)
+    test_multi_stair_export(marc_token, pid, pdf_size)
+
+    try:
+        admin_token = login(*ADMIN)
+        record("Auth — admin@demo.fr", True, "")
+        test_legacy_non_regression(admin_token)
+    except Exception as e:
+        record("Auth — admin@demo.fr", False, str(e))
+
+    test_paywall(pid)
+    test_compute_blondel(marc_token, pid, sid)
+
+    return summarize()
+
+
+def summarize():
+    print("\n=== SUMMARY ===")
+    passed = sum(1 for _, ok, _ in RESULTS if ok)
+    failed = sum(1 for _, ok, _ in RESULTS if not ok)
+    print(f"Total: {len(RESULTS)} | Passed: {passed} | Failed: {failed}")
     if failed:
-        print("\nFailures:")
-        for n, d in failed:
-            print(f"  - {n}: {d}")
-    sys.exit(0 if not failed else 1)
+        print("\nFailed tests:")
+        for name, ok, msg in RESULTS:
+            if not ok:
+                print(f"  - {name}: {msg}")
+    return failed == 0
 
 
 if __name__ == "__main__":
-    main()
+    success = main()
+    sys.exit(0 if success else 1)

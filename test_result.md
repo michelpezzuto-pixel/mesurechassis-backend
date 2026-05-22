@@ -79,6 +79,46 @@ backend:
           - GET /export/pdf → HTTP 200, content-type application/pdf, header binaire %PDF-1.4 (4432 bytes) ✓
           - GET /export/dxf → HTTP 200, contient "SECTION" (3574 bytes) ✓
           _synthesize_measurement_from_stairs() reconstruit correctement les champs material/hauteur_brute/result.* depuis compute_v2.
+        -working: "NA"
+        -agent: "main"
+        -comment: |
+          ⬆️ EXPORT v2 ENRICHI (mai 2025). Plus une simple synthèse du 1er escalier — désormais :
+          • PDF : section dédiée par escalier (n_stairs pages) avec table récap stair, table par niveau
+            (hauteur, sol fini, réserve, hauteur_eff, h, g, blondel, pente), table tronçons (#, type, L, largeur, marches),
+            warnings inline, et un dessin de profil multi-niveaux/tronçons avec légende couleurs
+            (vert=marches, bleu=palier, orange=quart-tournant).
+          • DXF : la fonction écrit désormais des marches individuelles (risers + treads),
+            des paliers horizontaux et des quart-tournants sur des calques distincts (`STAIR_<NAME>_DROIT/PALIER/QUART_*`)
+            par escalier, avec offsets X pour empiler plusieurs escaliers côte-à-côte.
+          • Le router DXF n'exige plus la présence d'une mesure legacy quand le projet a des stairs[].
+          • Smoke-test local OK : projet à 2 stairs (4 tronçons mixtes, 3 niveaux) → PDF 8464 bytes, DXF 9079 bytes.
+          • Legacy preserved : projet sans stairs mais avec measurement → PDF 4302 bytes, DXF 3568 bytes (calque STAIR_PROFILE intact).
+          • Regression tests : 24/24 PASS (moteur Blondel non touché).
+        -working: true
+        -agent: "testing"
+        -comment: |
+          ✅ Validation V2 enrichment (36/36 PASS) via /app/backend_test.py contre l'URL publique.
+          Scénario 1 (Smoke PDF V2 — marc / projet neuf 1 stair "Cave-to-RDC" / 2 niveaux RDC+R+1 /
+          4 tronçons mixtes droit+palier+quart_haut+droit) :
+          - GET /api/projects/{pid}/export/pdf → 200, Content-Type application/pdf, header %PDF-1.4,
+            taille 9640 bytes (>> 5000, confirme la section V2 enrichie).
+          Scénario 2 (Smoke DXF V2) :
+          - GET /export/dxf → 200, Content-Type application/dxf, contient SECTION + ENDSEC,
+            calques `STAIR_CAVE-TO-RDC_DROIT`, `STAIR_CAVE-TO-RDC_PALIER`, `STAIR_CAVE-TO-RDC_QUART_HAUT`
+            tous présents (les 3) + calque `LIMON` présent.
+          Scénario 3 (Multi-stair) : ajout 2e escalier "Mezzanine" (1 niveau h=1800 / 1 tronçon droit) :
+          - PDF taille passe de 9640 → 12896 bytes (page break + nouvelle section confirmés).
+          - DXF contient simultanément les préfixes `STAIR_CAVE-TO-RDC_` ET `STAIR_MEZZANINE_`
+            (offsets X effectifs).
+          Scénario 4 (Non-régression legacy) : admin@demo.fr → 12 projets, projet migré "Vidal"
+          (measurement legacy + stairs[] générés par migration_v2) → GET /export/pdf 200 %PDF-1.4
+          taille 8383 bytes : la section legacy ET la section V2 cohabitent sans crash.
+          Scénario 5 (Paywall + Blondel) :
+          - expired@demo.fr → login 200, mais GET /export/pdf renvoie 402 (paywall actif sur exports).
+          - GET /stairs/{sid}/compute sur le projet V2 : total_steps=29, niveau RDC h=180.0,
+            Blondel=610 valid=True (560-670). Calcul cohérent.
+          Aucune régression détectée. Le moteur Blondel reste intact et l'enrichissement V2
+          (PDF par-escalier + DXF multi-calques) est pleinement opérationnel.
 
   - task: "Non-régression moteur math baseline"
     implemented: true
@@ -139,7 +179,8 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Export PDF v2 — fallback synthétique depuis stairs[]"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -178,3 +219,44 @@ agent_communication:
       
       AUCUNE RÉGRESSION DÉTECTÉE. Migration v2, CRUD v2, compute v2 et fallback PDF/DXF prêts pour production.
       Le moteur math legacy (services/stairs.py) n'a pas été touché — comportement strictement identique.
+    -agent: "main"
+    -message: |
+      🎯 PHASE 2 — Export v2 ENRICHI (Mai 2025).
+      Plus de simple synthèse du 1er escalier — désormais : par-escalier section PDF (page break entre stairs)
+      avec table récap, tables par niveau (h, g, blondel, pente, hauteur eff, sol_fini/réserve),
+      tableau des tronçons (type, longueur, largeur, marches assignées), warnings inline, et un dessin de profil
+      multi-niveaux/tronçons coloré (vert=marches, bleu=palier, orange=quart-tournant).
+      DXF : marches individuelles (risers + treads) + paliers horizontaux + quart-tournants sur calques distincts
+      par escalier (`STAIR_<NAME>_DROIT/PALIER/QUART_*`), avec offsets X pour empiler plusieurs escaliers.
+      Le router /dxf n'exige plus de mesure legacy si stairs[] existe.
+      
+      Tests locaux :
+      - Projet 2-stairs / 3-niveaux / mixed tronçons → PDF 8464 bytes, DXF 9079 bytes
+      - Projet legacy (measurement seul) → PDF 4302 bytes, DXF 3568 bytes (calque STAIR_PROFILE intact)
+      - pytest tests/test_engine_regression.py → 24/24 PASS
+      
+      ⚠ DEMANDE : valider via deep_testing_backend_v2 que :
+      1. GET /api/projects/{pid}/export/pdf retourne 200 + %PDF- sur un projet avec multi-stairs/niveaux/tronçons,
+      2. GET /api/projects/{pid}/export/dxf retourne 200 + contient les calques STAIR_<NAME>_DROIT/PALIER/QUART_*,
+      3. Pas de régression sur projet legacy (single measurement).
+      Comptes : marc@mesureescalier.com / Demo1234! (admin solo, projets v2).
+    -agent: "testing"
+    -message: |
+      ✅ Phase 2 — Export V2 enrichment VALIDÉE : 36/36 tests PASS via /app/backend_test.py contre l'URL publique.
+      
+      Détails :
+      1. Smoke PDF V2 (marc, projet neuf, 1 stair "Cave-to-RDC", 2 niveaux RDC+R+1, 4 tronçons droit/palier/quart_haut/droit) :
+         → 200 application/pdf %PDF-1.4 9640 bytes (>> 5000, confirme l'enrichissement).
+      2. Smoke DXF V2 : 200 application/dxf, contient SECTION + ENDSEC, et les TROIS calques
+         `STAIR_CAVE-TO-RDC_DROIT`, `STAIR_CAVE-TO-RDC_PALIER`, `STAIR_CAVE-TO-RDC_QUART_HAUT`
+         + calque `LIMON` présent.
+      3. Multi-stair : ajout "Mezzanine" → PDF 9640 → 12896 bytes ✓ ; DXF contient simultanément
+         `STAIR_CAVE-TO-RDC_*` ET `STAIR_MEZZANINE_*` (offsets X opérationnels).
+      4. Non-régression legacy : admin@demo.fr, projet migré "Vidal" (measurement + stairs[]) →
+         /export/pdf 200 %PDF-1.4 8383 bytes (les deux sections cohabitent).
+      5. Paywall + Blondel : expired@demo.fr → /export/pdf renvoie 402 ✓ ;
+         compute V2 : total_steps=29, h=180.0, Blondel=610 valid (560-670).
+      
+      Aucune régression détectée. Le moteur Blondel reste inchangé, l'export V2 enrichi
+      (PDF par-escalier + DXF multi-calques) est pleinement opérationnel.
+      Test plan current_focus peut être marqué terminé.

@@ -83,11 +83,10 @@ async def export_dxf(pid: str, user=Depends(require_active_access)):
     if not p:
         raise HTTPException(status_code=404, detail="Chantier introuvable")
     m = await db.measurements.find_one({"project_id": pid}, {"_id": 0})
-    if not m and p.get("stairs"):
-        m = _synthesize_measurement_from_stairs(p)
-    if not m:
+    # V2 path : build_dxf_text reads project["stairs"] directly when available
+    if not m and not p.get("stairs"):
         raise HTTPException(status_code=400, detail="Aucune mesure disponible pour DXF")
-    dxf = build_dxf_text(p, m)
+    dxf = build_dxf_text(p, m or {})
     filename = f"chantier_{p.get('client_nom', 'export').lower()}.dxf"
     return StreamingResponse(
         io.BytesIO(dxf.encode()), media_type="application/dxf",

@@ -1,9 +1,18 @@
-"""PDF (ReportLab) + DXF (ASCII) builders for stair reports."""
+"""PDF (ReportLab) + DXF (ASCII) builders for stair reports.
+
+v2 enhancement (mai 2025):
+- `build_pdf_bytes` ajoute une section riche par escalier (Stairs > Niveaux > Tronçons)
+  lorsque le projet contient des `stairs[]` (non-mutuellement-exclusif avec la mesure legacy).
+- `build_dxf_text` produit un profil DXF multi-niveau / multi-tronçon précis dès qu'un
+  escalier v2 existe (paliers = horizontaux, marches = montée répartie, quart-tournants
+  marqués comme calques distincts pour le découpage atelier).
+"""
 from __future__ import annotations
 
 import base64
 import io
 import logging
+from typing import Any, Dict, List  # noqa: F401
 
 from reportlab.graphics.shapes import Drawing, Line, Polygon, Rect, String
 from reportlab.lib import colors
@@ -17,6 +26,15 @@ from reportlab.platypus import (
 )
 
 from core.security import now_utc
+from services.stairs_v2 import compute_stair as compute_v2
+
+# Labels FR pour tronçons
+TRONCON_LABEL = {
+    "droit": "Droit",
+    "palier": "Palier",
+    "quart_bas": "Quart-tournant BAS",
+    "quart_haut": "Quart-tournant HAUT",
+}
 
 log = logging.getLogger("mesure_escalier.exports")
 
@@ -125,6 +143,176 @@ def _stair_drawing(r: dict) -> Drawing:
     return d
 
 
+def _stair_v2_drawing(stair: dict, compute: dict) -> Drawing:
+    """Render a multi-niveau / multi-tronçon profile for a v2 stair.
+
+    Stack levels vertically. Within each level, walk tronçons left-to-right:
+    - palier   → horizontal segment (no rise)
+    - droit/quart_bas/quart_haut → ramp climbing by n_marches/h
+    Quart-tournants are colored differently for visual cue.
+    """
+    W, H = 170 * mm, 100 * mm
+    d = Drawing(W, H)
+    d.add(Rect(0, 0, W, H, fillColor=colors.HexColor("#F7F8FC"),
+               strokeColor=colors.HexColor("#E0E0E6")))
+
+    total_height = max(compute.get("total_height", 1), 1)
+    total_reculement = max(compute.get("total_reculement", 1), 1)
+    margin_x = 18 * mm
+    margin_y = 14 * mm
+    avail_w = W - 2 * margin_x
+    avail_h = H - 2 * margin_y
+    sx = avail_w / total_reculement
+    sy = avail_h / total_height
+
+    x0, y0 = margin_x, margin_y
+    # Reference floor + ceiling
+    d.add(Line(x0 - 6, y0, x0 + avail_w + 6, y0,
+               strokeColor=colors.HexColor("#9098A8"), strokeWidth=0.8))
+    d.add(Line(x0 - 6, y0 + avail_h, x0 + avail_w + 6, y0 + avail_h,
+               strokeColor=colors.HexColor("#9098A8"), strokeWidth=0.6,
+               strokeDashArray=[3, 2]))
+
+    # Walk through niveaux/tronçons
+    cx, cy = x0, y0
+    color_marche = colors.HexColor("#8CC63F")  # vert pomme
+    color_palier = colors.HexColor("#5BA8C7")  # bleu palier
+    color_quart = colors.HexColor("#F59E0B")   # orange tournant
+
+    niveaux = stair.get("niveaux") or []
+    niveaux_sorted = sorted(niveaux, key=lambda n: n.get("order", 0))
+    niveaux_calc = compute.get("niveaux_calc", [])
+
+    for ni, niv in enumerate(niveaux_sorted):
+        ncalc = next((c for c in niveaux_calc if c.get("niveau_id") == niv["id"]), None)
+        if not ncalc:
+            continue
+        niv_eff = ncalc.get("hauteur_effective", 0)
+        niv_n = max(ncalc.get("n_steps_niveau", 0), 1) if ncalc.get("n_steps_niveau") else 0
+        for t in sorted(niv.get("troncons") or [], key=lambda x: x.get("order", 0)):
+            tcalc = next((tc for tc in ncalc.get("troncons_calc", []) if tc.get("troncon_id") == t["id"]), None)
+            longueur = float(t.get("longueur_mm") or 0)
+            wpx = longueur * sx
+            if t["type"] == "palier":
+                d.add(Line(cx, cy, cx + wpx, cy, strokeColor=color_palier, strokeWidth=2.0))
+                cx += wpx
+            else:
+                # Rise proportional to marches assigned
+                marches = (tcalc or {}).get("n_marches", 0)
+                rise_mm = (marches / niv_n) * niv_eff if niv_n else 0
+                rise_px = rise_mm * sy
+                color = color_quart if t["type"] in ("quart_bas", "quart_haut") else color_marche
+                d.add(Line(cx, cy, cx + wpx, cy + rise_px, strokeColor=color, strokeWidth=2.0))
+                cx += wpx
+                cy += rise_px
+
+        # Marker between niveaux (small horizontal tick at niveau boundary)
+        if ni < len(niveaux_sorted) - 1:
+            d.add(Line(cx - 3, cy, cx + 3, cy, strokeColor=colors.HexColor("#1A1E2A"), strokeWidth=0.6))
+
+    # Hypotenuse / limon
+    d.add(Line(x0, y0, x0 + total_reculement * sx, y0 + total_height * sy,
+               strokeColor=colors.HexColor("#1A1E2A"), strokeWidth=0.5, strokeDashArray=[2, 2]))
+
+    # Labels
+    d.add(String(W / 2, y0 - 10,
+                 f"Reculement total {round(total_reculement)} mm",
+                 fontSize=9, fillColor=colors.HexColor("#1A1E2A"), textAnchor="middle"))
+    d.add(String(x0 - 10, y0 + avail_h / 2,
+                 f"H {round(total_height)} mm",
+                 fontSize=9, fillColor=colors.HexColor("#1A1E2A"), textAnchor="end"))
+    d.add(String(x0 + avail_w / 2, y0 + avail_h + 6,
+                 f"{compute.get('total_steps', 0)} marches · limon {round(compute.get('limon_length', 0))} mm",
+                 fontSize=9, fillColor=colors.HexColor("#8CC63F"), textAnchor="middle"))
+    # Legend
+    d.add(Rect(x0, H - 10, 8, 4, fillColor=color_marche, strokeColor=color_marche))
+    d.add(String(x0 + 12, H - 8, "Marches", fontSize=7, fillColor=colors.HexColor("#1A1E2A")))
+    d.add(Rect(x0 + 50, H - 10, 8, 4, fillColor=color_palier, strokeColor=color_palier))
+    d.add(String(x0 + 62, H - 8, "Palier", fontSize=7, fillColor=colors.HexColor("#1A1E2A")))
+    d.add(Rect(x0 + 95, H - 10, 8, 4, fillColor=color_quart, strokeColor=color_quart))
+    d.add(String(x0 + 107, H - 8, "Quart-tournant", fontSize=7, fillColor=colors.HexColor("#1A1E2A")))
+    return d
+
+
+def _build_v2_stair_story(stair: dict, h_style: ParagraphStyle, body: ParagraphStyle,
+                          table_style: TableStyle, sub_style: ParagraphStyle,
+                          warn_style: ParagraphStyle) -> list:
+    """Build a story section for one v2 stair (Niveaux + Tronçons + drawing)."""
+    out: list = []
+    c = compute_v2(stair)
+    out.append(Paragraph(f"Escalier — <b>{stair.get('name', 'Escalier')}</b>", h_style))
+
+    # Stair-level summary
+    summary_rows = [
+        ["Nombre de niveaux", str(c["n_niveaux"])],
+        ["Hauteur totale (mm)", str(round(c["total_height"]))],
+        ["Reculement total (mm)", str(round(c["total_reculement"]))],
+        ["Nombre de marches total", str(c["total_steps"])],
+        ["Longueur du limon (mm)", str(round(c["limon_length"]))],
+    ]
+    out.append(Table(summary_rows, colWidths=[60 * mm, 110 * mm], style=table_style))
+    out.append(Spacer(1, 8))
+
+    # Per-niveau tables
+    niveaux = sorted(stair.get("niveaux") or [], key=lambda n: n.get("order", 0))
+    for niv in niveaux:
+        ncalc = next((x for x in c["niveaux_calc"] if x.get("niveau_id") == niv["id"]), None)
+        if not ncalc:
+            continue
+        out.append(Spacer(1, 4))
+        out.append(Paragraph(f"Niveau · <b>{niv.get('label', '')}</b>", sub_style))
+        niv_rows = [
+            ["Hauteur (mm)", str(round(niv.get("hauteur_mm", 0)))],
+            ["Sol fini", "Oui" if niv.get("sol_fini", True) else "Non"],
+            ["Réserve sol (mm)", str(round(niv.get("reserve_mm", 0)))],
+            ["Hauteur effective (mm)", str(round(ncalc["hauteur_effective"]))],
+            ["Nombre de marches", str(ncalc["n_steps_niveau"])],
+            ["Hauteur marche h (mm)", str(round(ncalc["h"]))],
+            ["Giron g (mm)", str(round(ncalc["g"]))],
+            ["Loi de Blondel (2h+g)",
+             f'{round(ncalc["blondel_value"])}  ({"OK" if ncalc["valid_blondel"] else "Hors plage 560-670"})'],
+            ["Pente (°)", str(round(ncalc["slope_angle"], 1))],
+        ]
+        out.append(Table(niv_rows, colWidths=[60 * mm, 110 * mm], style=table_style))
+
+        # Tronçons table for this niveau
+        troncons = sorted(niv.get("troncons") or [], key=lambda x: x.get("order", 0))
+        if troncons:
+            tron_rows = [["#", "Type", "Longueur (mm)", "Largeur (mm)", "Marches"]]
+            for i, t in enumerate(troncons, 1):
+                tcalc = next((tc for tc in ncalc.get("troncons_calc", []) if tc.get("troncon_id") == t["id"]), {})
+                tron_rows.append([
+                    str(i),
+                    TRONCON_LABEL.get(t["type"], t["type"]),
+                    str(round(float(t.get("longueur_mm") or 0))),
+                    str(round(float(t.get("largeur_mm") or 900))),
+                    str(tcalc.get("n_marches", 0)),
+                ])
+            tron_style = TableStyle([
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1A1E2A")),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.HexColor("#8CC63F")),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, -1), 9),
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                ("GRID", (0, 0), (-1, -1), 0.3, colors.HexColor("#E0E0E6")),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                ("TOPPADDING", (0, 0), (-1, -1), 4),
+            ])
+            out.append(Spacer(1, 4))
+            out.append(Table(tron_rows, colWidths=[10 * mm, 50 * mm, 35 * mm, 35 * mm, 40 * mm], style=tron_style))
+
+        # Per-niveau warnings
+        for w in ncalc.get("warnings", []) or []:
+            out.append(Paragraph(f"⚠ {w}", warn_style))
+
+    # Stair drawing
+    out.append(Spacer(1, 8))
+    out.append(Paragraph("Schéma de profil — multi-niveaux & tronçons", sub_style))
+    out.append(_stair_v2_drawing(stair, c))
+    out.append(Spacer(1, 10))
+    return out
+
+
 def _photo_flowable(photo: dict, body_style: ParagraphStyle, caption_style: ParagraphStyle):
     """Build a flowable: photo (max ~80mm tall) + caption + spacer. Returns list or None."""
     img_reader = _decode_base64_image(photo.get("base64", ""))
@@ -173,6 +361,14 @@ def build_pdf_bytes(project: dict, measurement: dict, company_logo_base64: str |
     caption_style = ParagraphStyle(
         "caption", parent=body, fontSize=9, textColor=colors.HexColor("#1A1E2A"),
         alignment=1,  # center
+    )
+    sub_style = ParagraphStyle(
+        "sub_h", parent=styles["Heading3"], fontSize=11,
+        textColor=colors.HexColor("#1A1E2A"), spaceBefore=6, spaceAfter=2,
+    )
+    warn_style = ParagraphStyle(
+        "warn", parent=body, fontSize=9, textColor=colors.HexColor("#A66A00"),
+        spaceBefore=2, spaceAfter=2,
     )
     table_style = TableStyle([
         ("BACKGROUND", (0, 0), (0, -1), colors.HexColor("#F5F5F7")),
@@ -257,6 +453,15 @@ def build_pdf_bytes(project: dict, measurement: dict, company_logo_base64: str |
             for n in r["notes"]:
                 story.append(Paragraph(f"• {n}", body))
 
+    # ---- V2 — Multi-stair / Niveaux / Tronçons ----
+    stairs_v2 = project.get("stairs") or []
+    if stairs_v2:
+        story.append(Spacer(1, 14))
+        for idx, stair in enumerate(stairs_v2):
+            if idx > 0:
+                story.append(PageBreak())
+            story.extend(_build_v2_stair_story(stair, h_style, body, table_style, sub_style, warn_style))
+
     # ---- Photos de chantier ----
     photos = project.get("photos") or []
     if photos:
@@ -276,8 +481,108 @@ def build_pdf_bytes(project: dict, measurement: dict, company_logo_base64: str |
     return buf.getvalue()
 
 
+def _append_dxf_v2_stair(out: list, stair: dict, x_offset: float = 0.0) -> float:
+    """Append DXF lines for a v2 stair starting at x_offset. Returns next x_offset."""
+    c = compute_v2(stair)
+    cx, cy = x_offset, 0.0
+    layer_base = f"STAIR_{(stair.get('name') or 'X').upper().replace(' ', '_')[:16]}"
+
+    def line(x1, y1, x2, y2, layer):
+        out.extend([
+            "0", "LINE", "8", layer,
+            "10", f"{x1:.3f}", "20", f"{y1:.3f}", "30", "0.0",
+            "11", f"{x2:.3f}", "21", f"{y2:.3f}", "31", "0.0",
+        ])
+
+    def text(x, y, txt, height=20, layer="LABELS"):
+        out.extend([
+            "0", "TEXT", "8", layer,
+            "10", f"{x:.3f}", "20", f"{y:.3f}", "30", "0.0",
+            "40", f"{height:.3f}",
+            "1", txt,
+        ])
+
+    niveaux = sorted(stair.get("niveaux") or [], key=lambda n: n.get("order", 0))
+    niv_calc_by_id = {nc["niveau_id"]: nc for nc in c["niveaux_calc"]}
+
+    for niv in niveaux:
+        ncalc = niv_calc_by_id.get(niv["id"])
+        if not ncalc:
+            continue
+        niv_eff = ncalc["hauteur_effective"]
+        niv_n = max(ncalc["n_steps_niveau"], 1) if ncalc["n_steps_niveau"] else 0
+        troncons = sorted(niv.get("troncons") or [], key=lambda t: t.get("order", 0))
+        for t in troncons:
+            longueur = float(t.get("longueur_mm") or 0)
+            t_layer = f"{layer_base}_{t['type'].upper()}"
+            if t["type"] == "palier":
+                # Horizontal segment (top/bottom edge of palier)
+                line(cx, cy, cx + longueur, cy, f"{layer_base}_PALIER")
+                cx += longueur
+            else:
+                tcalc = next((tc for tc in ncalc.get("troncons_calc", []) if tc.get("troncon_id") == t["id"]), {})
+                marches = tcalc.get("n_marches", 0)
+                rise = (marches / niv_n) * niv_eff if niv_n else 0
+                if marches > 0 and rise > 0:
+                    h_step = rise / marches
+                    g_step = longueur / max(marches, 1)
+                    # Draw individual steps (staircase profile)
+                    sx, sy = cx, cy
+                    for _ in range(marches):
+                        sy += h_step
+                        line(sx, sy - h_step, sx, sy, t_layer)  # riser
+                        line(sx, sy, sx + g_step, sy, t_layer)  # tread
+                        sx += g_step
+                    # Limon (ramp line)
+                    line(cx, cy, cx + longueur, cy + rise, f"{layer_base}_LIMON")
+                    cx += longueur
+                    cy += rise
+                else:
+                    line(cx, cy, cx + longueur, cy, t_layer)
+                    cx += longueur
+        # Niveau boundary label
+        text(cx, cy, f"{niv.get('label', '')}: h={round(ncalc['h'])} g={round(ncalc['g'])} "
+                    f"{ncalc['n_steps_niveau']}m", height=18, layer=f"{layer_base}_LABEL")
+
+    # Stair summary text
+    text(x_offset, -120,
+         f"{stair.get('name', 'Escalier')} - {c['total_steps']} marches - "
+         f"H={round(c['total_height'])} - L={round(c['total_reculement'])} - "
+         f"Limon={round(c['limon_length'])}",
+         height=22, layer=f"{layer_base}_SUMMARY")
+
+    # Floor & ceiling refs for this stair
+    line(x_offset - 50, 0, cx + 50, 0, f"{layer_base}_FLOOR")
+    line(x_offset, c["total_height"], cx, c["total_height"], f"{layer_base}_CEILING")
+    return cx + 200  # gap before next stair
+
+
 def build_dxf_text(project: dict, measurement: dict) -> str:
-    """Generate a minimal AutoCAD-readable DXF (ASCII)."""
+    """Generate an AutoCAD-readable DXF (ASCII).
+
+    v2 prioritaire : si le projet contient des `stairs[]`, on génère un dessin
+    multi-escalier précis (paliers / marches / quart-tournants distincts par calque).
+    Sinon, on retombe sur la logique legacy basée sur `measurement.result`.
+    """
+    out = ["0", "SECTION", "2", "HEADER", "0", "ENDSEC",
+           "0", "SECTION", "2", "ENTITIES"]
+
+    # ── V2 path ──
+    stairs_v2 = project.get("stairs") or []
+    if stairs_v2:
+        offset = 0.0
+        for stair in stairs_v2:
+            offset = _append_dxf_v2_stair(out, stair, x_offset=offset)
+        out.extend([
+            "0", "TEXT", "8", "PROJECT",
+            "10", "0.0", "20", "-240.0", "30", "0.0",
+            "40", "28.0",
+            "1", f"MesureEscalier - {project.get('client_nom', '')} {project.get('client_prenom', '')}",
+        ])
+        out.extend(["0", "ENDSEC", "0", "EOF"])
+        return "\n".join(out)
+
+    # ── Legacy fallback (single measurement) ──
     r = measurement["result"]
     n = int(r["n_steps"])
     H = float(r["true_height"])
