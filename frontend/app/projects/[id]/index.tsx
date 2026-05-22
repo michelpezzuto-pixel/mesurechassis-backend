@@ -1,0 +1,223 @@
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
+import { Ionicons, MaterialCommunityIcons, Feather } from '@expo/vector-icons';
+import { Projects } from '@/src/api';
+import { useAuth } from '@/src/auth';
+import { C, SP, R, FONT, STATUS_LABELS, STATUS_COLOR } from '@/src/theme';
+import StairSketch from '@/src/StairSketch';
+
+export default function ProjectDetail() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
+  const { user } = useAuth();
+  const [project, setProject] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  const load = useCallback(async () => {
+    if (!id) return;
+    try {
+      const p = await Projects.get(id);
+      setProject(p);
+    } catch (e: any) {
+      Alert.alert('Erreur', e?.response?.data?.detail || 'Introuvable');
+      router.back();
+    } finally { setLoading(false); }
+  }, [id, router]);
+
+  useFocusEffect(useCallback(() => { setLoading(true); load(); }, [load]));
+
+  const transmit = async () => {
+    Alert.alert(
+      'Transmettre au technicien',
+      'Le chantier sera verrouillé. Vous ne pourrez plus modifier les informations.',
+      [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Confirmer', style: 'destructive', onPress: async () => {
+            try { await Projects.transmit(id!); load(); } catch (e: any) { Alert.alert('Erreur', e?.response?.data?.detail || 'Erreur'); }
+          },
+        },
+      ]
+    );
+  };
+
+  const remove = async () => {
+    Alert.alert('Supprimer ?', 'Action irréversible.', [
+      { text: 'Annuler', style: 'cancel' },
+      {
+        text: 'Supprimer', style: 'destructive', onPress: async () => {
+          try { await Projects.remove(id!); router.replace('/dashboard'); }
+          catch (e: any) { Alert.alert('Erreur', e?.response?.data?.detail || 'Erreur'); }
+        },
+      },
+    ]);
+  };
+
+  if (loading || !project) {
+    return <SafeAreaView style={styles.safe}><View style={styles.center}><ActivityIndicator color={C.ACCENT} size="large" /></View></SafeAreaView>;
+  }
+
+  const m = project.measurement;
+  const canTransmit = !project.locked && (user?.role === 'admin' || (user?.role === 'commercial' && project.commercial_id === user.id));
+  const canEditClient = canTransmit;
+  const canMeasure = (user?.role === 'admin' || user?.role === 'technicien') && project.locked;
+  const canDelete = user?.role === 'admin' || (user?.role === 'commercial' && !project.locked && project.commercial_id === user.id);
+  const canValidate = (user?.role === 'admin' || user?.role === 'technicien') && m && !m.validated;
+  const canExport = m;
+
+  return (
+    <SafeAreaView style={styles.safe} edges={['top']}>
+      <View style={styles.topbar}>
+        <TouchableOpacity onPress={() => router.back()} testID="back-btn"><Ionicons name="arrow-back" size={24} color={C.WHITE} /></TouchableOpacity>
+        <Text style={styles.title} numberOfLines={1}>{project.client_nom} {project.client_prenom || ''}</Text>
+        {canDelete ? (
+          <TouchableOpacity onPress={remove} testID="delete-project"><Feather name="trash-2" size={22} color={C.DANGER} /></TouchableOpacity>
+        ) : <View style={{ width: 22 }} />}
+      </View>
+
+      <ScrollView contentContainerStyle={{ padding: SP.lg, paddingBottom: 100 }}>
+        <View style={[styles.badge, { backgroundColor: STATUS_COLOR[project.status] + '22', borderColor: STATUS_COLOR[project.status] }]}>
+          <Text style={[styles.badgeTxt, { color: STATUS_COLOR[project.status] }]}>
+            {STATUS_LABELS[project.status]}
+          </Text>
+          {project.locked && <Ionicons name="lock-closed" size={12} color={STATUS_COLOR[project.status]} style={{ marginLeft: 6 }} />}
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardHead}>CLIENT</Text>
+          <Row icon="person" label="Nom" value={`${project.client_nom} ${project.client_prenom || ''}`} />
+          <Row icon="location" label="Adresse" value={`${project.address}${project.postal_code ? ', ' + project.postal_code : ''} ${project.city || ''}`} />
+          <Row icon="call" label="Téléphone" value={project.phone || '—'} />
+          <Row icon="document-text" label="Notes" value={project.notes || '—'} />
+        </View>
+
+        {m ? (
+          <View style={styles.card}>
+            <Text style={styles.cardHead}>MESURES & CALCULS</Text>
+            <View style={{ alignItems: 'center', marginBottom: SP.md }}>
+              <StairSketch
+                trueHeight={m.result.true_height}
+                reculement={m.result.reculement_needed}
+                n={m.result.n_steps}
+                h={m.result.h}
+                g={m.result.g}
+                tremieL={m.tremie_longueur}
+                tremieW={m.tremie_largeur}
+              />
+            </View>
+            <Text style={[styles.shape, { color: m.result.shape.includes('Droit') ? C.ACCENT : C.WARN }]}>
+              {m.result.shape}
+            </Text>
+            <View style={styles.kpiRow}>
+              <Kpi label="Marches" value={`${m.result.n_steps}`} />
+              <Kpi label="h" value={`${Math.round(m.result.h)} mm`} />
+              <Kpi label="g" value={`${Math.round(m.result.g)} mm`} />
+            </View>
+            <View style={styles.kpiRow}>
+              <Kpi label="Pente" value={`${m.result.slope_angle}°`} />
+              <Kpi label="Hypoténuse" value={`${Math.round(m.result.hypotenuse)}`} />
+              <Kpi label="2h+g" value={`${Math.round(m.result.blondel_value)}`} ok={m.result.valid_blondel} />
+            </View>
+            {m.result.notes && m.result.notes.length > 0 && (
+              <View style={{ marginTop: SP.md }}>
+                {m.result.notes.map((n: string, i: number) => (
+                  <Text key={i} style={styles.noteTxt}>• {n}</Text>
+                ))}
+              </View>
+            )}
+            {m.validated && (
+              <View style={styles.validatedBadge}>
+                <Ionicons name="checkmark-circle" size={18} color={C.ACCENT} />
+                <Text style={[styles.badgeTxt, { color: C.ACCENT, marginLeft: 6 }]}>CONCEPTION VALIDÉE</Text>
+              </View>
+            )}
+          </View>
+        ) : (
+          <View style={styles.card}>
+            <Text style={styles.cardHead}>MESURES TERRAIN</Text>
+            <Text style={styles.empty}>Aucune mesure prise. {canMeasure ? 'Démarrez la prise de mesures.' : 'En attente de transmission au technicien.'}</Text>
+          </View>
+        )}
+
+        {canEditClient && (
+          <TouchableOpacity style={styles.btn} onPress={transmit} testID="btn-transmit">
+            <MaterialCommunityIcons name="send" size={20} color={C.DARK} />
+            <Text style={styles.btnTxt}>TRANSMETTRE AU TECHNICIEN</Text>
+          </TouchableOpacity>
+        )}
+
+        {canMeasure && (
+          <TouchableOpacity style={[styles.btn, m ? styles.btnSecondary : null]} onPress={() => router.push(`/projects/${id}/measure`)} testID="btn-measure">
+            <MaterialCommunityIcons name="ruler-square" size={20} color={m ? C.WHITE : C.DARK} />
+            <Text style={[styles.btnTxt, m && { color: C.WHITE }]}>{m ? 'MODIFIER MESURES' : 'PRENDRE LES MESURES'}</Text>
+          </TouchableOpacity>
+        )}
+
+        {canValidate && (
+          <TouchableOpacity style={[styles.btn, { backgroundColor: C.INFO }]} onPress={async () => {
+            try { await (await import('@/src/api')).Measurements.validate(id!); load(); }
+            catch (e: any) { Alert.alert('Erreur', e?.response?.data?.detail || 'Erreur'); }
+          }} testID="btn-validate">
+            <Ionicons name="checkmark-circle" size={20} color={C.WHITE} />
+            <Text style={[styles.btnTxt, { color: C.WHITE }]}>VALIDER LA CONCEPTION</Text>
+          </TouchableOpacity>
+        )}
+
+        {canExport && (
+          <TouchableOpacity style={[styles.btn, styles.btnSecondary]} onPress={() => router.push(`/projects/${id}/export`)} testID="btn-goto-export">
+            <Ionicons name="share-outline" size={20} color={C.WHITE} />
+            <Text style={[styles.btnTxt, { color: C.WHITE }]}>EXPORTER PDF / DXF</Text>
+          </TouchableOpacity>
+        )}
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+function Row({ icon, label, value }: any) {
+  return (
+    <View style={styles.row}>
+      <Ionicons name={icon} size={16} color={C.ACCENT} style={{ marginTop: 2 }} />
+      <View style={{ flex: 1, marginLeft: SP.md }}>
+        <Text style={styles.rowLabel}>{label}</Text>
+        <Text style={styles.rowValue}>{value}</Text>
+      </View>
+    </View>
+  );
+}
+
+function Kpi({ label, value, ok }: { label: string; value: string; ok?: boolean }) {
+  return (
+    <View style={styles.kpi}>
+      <Text style={styles.kpiLabel}>{label}</Text>
+      <Text style={[styles.kpiValue, ok === false && { color: C.DANGER }]}>{value}</Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: C.DARK },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  topbar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: SP.lg, gap: SP.md, borderBottomWidth: 1, borderBottomColor: C.BORDER },
+  title: { ...FONT.h3, flex: 1, textAlign: 'center' },
+  badge: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', paddingHorizontal: SP.md, paddingVertical: 6, borderRadius: R.pill, borderWidth: 1, marginBottom: SP.md },
+  badgeTxt: { ...FONT.label, fontSize: 11 },
+  card: { backgroundColor: C.CARD, borderRadius: R.lg, padding: SP.lg, borderWidth: 1, borderColor: C.BORDER, marginBottom: SP.md },
+  cardHead: { ...FONT.label, color: C.ACCENT, marginBottom: SP.md },
+  row: { flexDirection: 'row', marginBottom: SP.sm },
+  rowLabel: { ...FONT.small },
+  rowValue: { ...FONT.body, marginTop: 2 },
+  shape: { ...FONT.h3, textAlign: 'center', marginBottom: SP.md },
+  kpiRow: { flexDirection: 'row', gap: SP.sm, marginBottom: SP.sm },
+  kpi: { flex: 1, backgroundColor: C.BG_DEEPER, padding: SP.md, borderRadius: R.md, alignItems: 'center', borderWidth: 1, borderColor: C.BORDER },
+  kpiLabel: { ...FONT.small, fontSize: 11 },
+  kpiValue: { ...FONT.h3, marginTop: 4, color: C.ACCENT },
+  noteTxt: { ...FONT.small, color: C.WARN, marginBottom: 2 },
+  validatedBadge: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: C.ACCENT_BG, borderRadius: R.md, padding: SP.md, marginTop: SP.md },
+  empty: { ...FONT.small },
+  btn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SP.sm, backgroundColor: C.ACCENT, borderRadius: R.md, paddingVertical: 16, marginTop: SP.md },
+  btnSecondary: { backgroundColor: C.CARD, borderWidth: 1, borderColor: C.BORDER },
+  btnTxt: { ...FONT.button, color: C.DARK, fontSize: 13 },
+});
