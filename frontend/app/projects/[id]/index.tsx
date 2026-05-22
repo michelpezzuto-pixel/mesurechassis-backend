@@ -106,21 +106,51 @@ export default function ProjectDetail() {
                 g={m.result.g}
                 tremieL={m.tremie_longueur}
                 tremieW={m.tremie_largeur}
+                limonLength={m.result.limon_length}
               />
             </View>
             <Text style={[styles.shape, { color: m.result.shape.includes('Droit') ? C.ACCENT : C.WARN }]}>
               {m.result.shape}
             </Text>
+            {m.result.echappee_critique && (
+              <View style={styles.alertCritical} testID="alert-echappee-critique">
+                <Ionicons name="warning" size={20} color={C.DANGER} />
+                <Text style={styles.alertCriticalTxt}>
+                  ⚠️ Échappée critique ({Math.round(m.result.echappee)} mm &lt; 2000 mm) : Risque de choc à la tête
+                </Text>
+              </View>
+            )}
             <View style={styles.kpiRow}>
               <Kpi label="Marches" value={`${m.result.n_steps}`} />
               <Kpi label="h" value={`${Math.round(m.result.h)} mm`} />
-              <Kpi label="g" value={`${Math.round(m.result.g)} mm`} />
+              <Kpi label={m.result.is_tournant ? 'g (foulée)' : 'g'} value={`${Math.round(m.result.g)} mm`} />
             </View>
             <View style={styles.kpiRow}>
               <Kpi label="Pente" value={`${m.result.slope_angle}°`} />
-              <Kpi label="Hypoténuse" value={`${Math.round(m.result.hypotenuse)}`} />
               <Kpi label="2h+g" value={`${Math.round(m.result.blondel_value)}`} ok={m.result.valid_blondel} />
+              {m.result.echappee !== null && m.result.echappee !== undefined ? (
+                <Kpi label="Échappée" value={`${Math.round(m.result.echappee)}`} ok={!m.result.echappee_critique} />
+              ) : (
+                <Kpi label="—" value="—" />
+              )}
             </View>
+
+            {/* Limon — atelier dimension */}
+            <View style={styles.limonCard} testID="kpi-limon">
+              <MaterialCommunityIcons name="ruler" size={24} color={C.ACCENT} />
+              <View style={{ flex: 1, marginLeft: SP.md }}>
+                <Text style={styles.limonLabel}>LONGUEUR DU LIMON</Text>
+                <Text style={styles.limonHint}>Dimension exacte pour l'atelier (découpe poutre)</Text>
+              </View>
+              <Text style={styles.limonValue}>{Math.round(m.result.limon_length || m.result.hypotenuse)} mm</Text>
+            </View>
+
+            {m.result.ligne_foulee_note && (
+              <View style={styles.fouleeNote}>
+                <MaterialCommunityIcons name="rotate-3d-variant" size={18} color={C.ACCENT} />
+                <Text style={styles.fouleeNoteTxt}>{m.result.ligne_foulee_note}</Text>
+              </View>
+            )}
             {m.result.notes && m.result.notes.length > 0 && (
               <View style={{ marginTop: SP.md }}>
                 {m.result.notes.map((n: string, i: number) => (
@@ -216,6 +246,14 @@ const styles = StyleSheet.create({
   kpiLabel: { ...FONT.small, fontSize: 11 },
   kpiValue: { ...FONT.h3, marginTop: 4, color: C.ACCENT },
   noteTxt: { ...FONT.small, color: C.WARN, marginBottom: 2 },
+  alertCritical: { flexDirection: 'row', alignItems: 'center', gap: SP.sm, padding: SP.md, backgroundColor: C.DANGER_BG, borderRadius: R.md, borderLeftWidth: 3, borderLeftColor: C.DANGER, marginBottom: SP.md },
+  alertCriticalTxt: { ...FONT.body, color: C.DANGER, flex: 1, fontWeight: '700', fontSize: 13 },
+  limonCard: { flexDirection: 'row', alignItems: 'center', padding: SP.md, backgroundColor: C.ACCENT_BG, borderRadius: R.md, borderLeftWidth: 3, borderLeftColor: C.ACCENT, marginTop: SP.md },
+  limonLabel: { ...FONT.label, color: C.ACCENT, fontSize: 11 },
+  limonHint: { ...FONT.small, fontSize: 11, marginTop: 2 },
+  limonValue: { ...FONT.h2, fontSize: 22, color: C.ACCENT },
+  fouleeNote: { flexDirection: 'row', alignItems: 'flex-start', gap: SP.sm, padding: SP.md, backgroundColor: C.BG_DEEPER, borderRadius: R.md, marginTop: SP.md, borderWidth: 1, borderColor: C.BORDER },
+  fouleeNoteTxt: { ...FONT.small, color: C.GRAY1, flex: 1, lineHeight: 18 },
   validatedBadge: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: C.ACCENT_BG, borderRadius: R.md, padding: SP.md, marginTop: SP.md },
   empty: { ...FONT.small },
   btn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SP.sm, backgroundColor: C.ACCENT, borderRadius: R.md, paddingVertical: 16, marginTop: SP.md },

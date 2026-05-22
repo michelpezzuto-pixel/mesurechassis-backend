@@ -1,0 +1,39 @@
+{
+  "summary": "Iteration 3 — Smart math engine upgrade — Backend 33/33 pytest cases pass (8 new + 25 regression). Frontend mobile flow verified end-to-end: artisan login → project → measure wizard step1 (material) → step2 (new 'Hauteur sous plafond trémie' optional field rendered, testID input-hauteur-plafond-tremie) → step3 result card displays Quart-tournant shape, échappée critique alert (1200<2000), KPI grid with 'g (foulée)' label (280), Limon featured card (5048 mm, Vert Pomme), ligne de foulée note, SVG sketch with Limon label. Numerical correctness confirmed: limon≈5048mm = sqrt(2800²+4200²); échappée=1200mm = 2600-(8*175). Integration endpoint exposes limon_length_mm, echappee_mm, echappee_critique, is_tournant. PDF & DXF exports succeed; DXF contains 'LIMON' and 'Echappee' text annotations.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "measure.tsx step 2", "issue": "The optional 'Hauteur sous plafond au niveau de la trémie (mm)' Field was declared in state (hauteurPlafondTremie) and wired into the payload, but was NOT rendered. Test agent added the missing <Field testID='input-hauteur-plafond-tremie'/> between Reculement and Remarques. Also cleaned up a duplicate/garbled StyleSheet trailer (orphan 'utton, color: C.WHITE,...' lines 430-433) that was causing a Metro SyntaxError. After fix, full wizard works.", "testID": "input-hauteur-plafond-tremie", "priority": "HIGH (was blocking the entire échappée UX)"}
+    ],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration3_math.py",
+    "/app/backend/tests/test_mesure_escalier.py",
+    "/app/test_reports/pytest/pytest_iteration3.xml",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Review and keep the small testing-agent fix in /app/frontend/app/projects/[id]/measure.tsx: added the missing Field for hauteur_sous_plafond_tremie and removed the orphan StyleSheet duplicate at end of file.",
+    "Consider also adding a placeholder/help text under the field (e.g. 'optionnel, pour calcul échappée') so users know it's optional.",
+    "memory/test_credentials.md is now correct (Marc labeled as Admin solo_mode=true)."
+  ],
+  "critical_code_review_comments": [
+    "compute_stair() is well-structured: hard rules (h≤210, g≥230, 560≤2h+g≤670) properly enforce tournant/hélicoïdal fallback. Échappée formula uses floor(x_tremie_start/g) which is the correct discrete step count under the slab.",
+    "limon_length is exposed both as 'hypotenuse' (back-compat) and 'limon_length'. Integration endpoint exposes both. Good.",
+    "DXF: LIMON line is drawn TWICE (once as HYPOTENUSE line, once as LIMON line) which overlaps but is acceptable; could be optimized.",
+    "server.py is now ~1100 lines — still single-file. Recommend modularization (calc engine, exports, auth) in a later iteration."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration3_math.py (new, 8 cases)",
+    "/app/frontend/app/projects/[id]/measure.tsx (added missing Field for input-hauteur-plafond-tremie + removed orphan StyleSheet block)"
+  ],
+  "success_rate": {"backend": "100% (33/33)", "frontend": "100% on targeted iter3 flows (échappée scenario end-to-end on mobile viewport)"},
+  "seed_data_creation": "Tests reuse the seeded marc@mesureescalier.com (artisan solo) and create TEST_IT3_* projects, cleaned via DELETE in fixtures.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Iter3 verified key formulas:\n- For hauteur_brute=2800, reculement_max=3500, tremie_l=1800, plafond_tremie=2600 → n=16, h=175, g=280, blondel=630 (OK), shape='Quart-tournant requis', is_tournant=true, ligne_foulee_note set, reculement_needed=4200, limon=5048, échappée=1200 (critique).\n- With reculement_max=5000 → 'Escalier Droit Recommandé', is_tournant=false, ligne_foulee_note=null.\n- Without hauteur_sous_plafond_tremie → echappee=null, echappee_critique=false.\n- For hauteur_brute=7000 with reculement_max=1500 → hard rules broken (h≈210, blondel >670) → is_tournant=true with 'Règles de l\\'art non respectées' note.\nFrontend testIDs in measure.tsx step 2/3: input-hauteur, input-ep-dalle, input-tremie-l, input-tremie-w, input-reculement, input-hauteur-plafond-tremie (NEW after fix), input-remarques, btn-next, btn-back, alert-echappee-critique, kpi-limon, svg-stair-sketch.\nFrontend project detail [id]/index.tsx already had alert-echappee-critique and kpi-limon rendered correctly (verified by grep).",
+  "rca_of_issue": "Single frontend bug: the new <Field/> for hauteur_sous_plafond_tremie was missing from measure.tsx step 2 render block (only the state hook + payload assignment existed). Additionally the file had a duplicated/garbled StyleSheet block at lines 430-433 causing 'Missing semicolon' Metro SyntaxError when the screen tried to render. Fix: inserted the Field component after the Reculement input and removed the orphan StyleSheet trailer. Verified via Playwright (mobile 375x667): artisan demo login → project → measure → input value 2600 → next → result card shows alert + limon 5048mm + échappée 1200mm + foulée note."
+}

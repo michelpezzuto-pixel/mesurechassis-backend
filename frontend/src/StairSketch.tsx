@@ -13,10 +13,11 @@ interface Props {
   height?: number;
   tremieL?: number;
   tremieW?: number;
+  limonLength?: number;
 }
 
 export default function StairSketch({
-  trueHeight, reculement, n, h, g, width = 320, height = 220, tremieL = 0,
+  trueHeight, reculement, n, h, g, width = 320, height = 220, tremieL = 0, limonLength,
 }: Props) {
   const m = 30;
   const aw = width - 2 * m;
@@ -49,8 +50,13 @@ export default function StairSketch({
       <Line x1={x0 - 12} y1={y0} x2={x0 + sw + 12} y2={y0} stroke={C.GRAY3} strokeWidth={1.5} />
       {/* Ceiling */}
       <Line x1={x0 - 12} y1={y0 - sh} x2={x0 + sw + 12} y2={y0 - sh} stroke={C.GRAY3} strokeWidth={1} strokeDasharray="4,3" />
-      {/* Hypotenuse (slope) */}
+      {/* Hypotenuse (slope = limon) */}
       <Line x1={x0} y1={y0} x2={x0 + sw} y2={y0 - sh} stroke={C.ACCENT} strokeWidth={1.5} strokeOpacity={0.6} strokeDasharray="3,3" />
+      {limonLength && limonLength > 0 && (
+        <SvgText x={x0 + sw / 2 + 8} y={y0 - sh / 2 + 4} fill={C.ACCENT} fontSize="10" fontWeight="bold">
+          Limon {Math.round(limonLength)}
+        </SvgText>
+      )}
       {/* Steps polyline */}
       <Polyline points={pts.join(' ')} fill="none" stroke={C.ACCENT} strokeWidth={2} />
       {/* Trémie */}

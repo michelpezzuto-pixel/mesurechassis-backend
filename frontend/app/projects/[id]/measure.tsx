@@ -35,6 +35,7 @@ export default function MeasureWizard() {
   const [tremieL, setTremieL] = useState('');
   const [tremieW, setTremieW] = useState('');
   const [recul, setRecul] = useState('');
+  const [hauteurPlafondTremie, setHauteurPlafondTremie] = useState('');
   const [remarques, setRemarques] = useState('');
 
   // Step 3
@@ -58,6 +59,7 @@ export default function MeasureWizard() {
         setTremieL(String(m.tremie_longueur));
         setTremieW(String(m.tremie_largeur));
         setRecul(String(m.reculement_max));
+        setHauteurPlafondTremie(m.hauteur_sous_plafond_tremie ? String(m.hauteur_sous_plafond_tremie) : '');
         setRemarques(m.remarques || '');
         setResult(m.result);
       }
@@ -95,6 +97,7 @@ export default function MeasureWizard() {
     tremie_largeur: Number(tremieW),
     reculement_max: Number(recul),
     remarques: remarques.trim(),
+    hauteur_sous_plafond_tremie: hauteurPlafondTremie ? Number(hauteurPlafondTremie) : null,
   });
 
   const saveAndValidate = async () => {
@@ -220,6 +223,14 @@ export default function MeasureWizard() {
 
               <Field label="Reculement maximal au sol (mm) *" value={recul} onChangeText={setRecul} keyboardType="numeric" testID="input-reculement" />
 
+              <Field
+                label="Hauteur sous plafond au niveau de la trémie (mm)"
+                value={hauteurPlafondTremie}
+                onChangeText={setHauteurPlafondTremie}
+                keyboardType="numeric"
+                testID="input-hauteur-plafond-tremie"
+              />
+
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: SP.lg }}>
                 <Text style={styles.label}>REMARQUES / OBSTACLES *</Text>
                 <TouchableOpacity
@@ -263,21 +274,55 @@ export default function MeasureWizard() {
                     g={result.g}
                     tremieL={Number(tremieL)}
                     tremieW={Number(tremieW)}
+                    limonLength={result.limon_length}
                   />
                 </View>
                 <Text style={[styles.shape, { color: result.shape.includes('Droit') ? C.ACCENT : C.WARN }]}>
                   {result.shape}
                 </Text>
+
+                {/* Échappée critique alert */}
+                {result.echappee_critique && (
+                  <View style={styles.alertCritical} testID="alert-echappee-critique">
+                    <Ionicons name="warning" size={20} color={C.DANGER} />
+                    <Text style={styles.alertCriticalTxt}>
+                      ⚠️ Échappée critique ({Math.round(result.echappee)} mm &lt; 2000 mm) : Risque de choc à la tête
+                    </Text>
+                  </View>
+                )}
+
                 <View style={styles.kpiRow}>
                   <Kpi label="Marches" value={`${result.n_steps}`} />
                   <Kpi label="h" value={`${Math.round(result.h)}`} />
-                  <Kpi label="g" value={`${Math.round(result.g)}`} />
+                  <Kpi label={result.is_tournant ? 'g (foulée)' : 'g'} value={`${Math.round(result.g)}`} />
                 </View>
                 <View style={styles.kpiRow}>
                   <Kpi label="Pente" value={`${result.slope_angle}°`} />
-                  <Kpi label="Hypot." value={`${Math.round(result.hypotenuse)}`} />
                   <Kpi label="2h+g" value={`${Math.round(result.blondel_value)}`} ok={result.valid_blondel} />
+                  {result.echappee !== null && result.echappee !== undefined ? (
+                    <Kpi label="Échappée" value={`${Math.round(result.echappee)}`} ok={!result.echappee_critique} />
+                  ) : (
+                    <Kpi label="Pente" value=" " />
+                  )}
                 </View>
+
+                {/* Limon — featured atelier dimension */}
+                <View style={styles.limonCard} testID="kpi-limon">
+                  <MaterialCommunityIcons name="ruler" size={24} color={C.ACCENT} />
+                  <View style={{ flex: 1, marginLeft: SP.md }}>
+                    <Text style={styles.limonLabel}>LONGUEUR DU LIMON</Text>
+                    <Text style={styles.limonHint}>Dimension exacte pour l'atelier (découpe poutre)</Text>
+                  </View>
+                  <Text style={styles.limonValue}>{Math.round(result.limon_length)} mm</Text>
+                </View>
+
+                {result.ligne_foulee_note && (
+                  <View style={styles.fouleeNote}>
+                    <MaterialCommunityIcons name="rotate-3d-variant" size={18} color={C.ACCENT} />
+                    <Text style={styles.fouleeNoteTxt}>{result.ligne_foulee_note}</Text>
+                  </View>
+                )}
+
                 {result.notes && result.notes.length > 0 && (
                   <View style={{ marginTop: SP.md }}>
                     {result.notes.map((n: string, i: number) => (
@@ -368,6 +413,14 @@ const styles = StyleSheet.create({
   resultCard: { backgroundColor: C.CARD, borderRadius: R.lg, padding: SP.lg, borderWidth: 1, borderColor: C.BORDER },
   shape: { ...FONT.h3, textAlign: 'center', marginBottom: SP.md },
   kpiRow: { flexDirection: 'row', gap: SP.sm, marginBottom: SP.sm },
+  alertCritical: { flexDirection: 'row', alignItems: 'center', gap: SP.sm, padding: SP.md, backgroundColor: C.DANGER_BG, borderRadius: R.md, borderLeftWidth: 3, borderLeftColor: C.DANGER, marginBottom: SP.md },
+  alertCriticalTxt: { ...FONT.body, color: C.DANGER, flex: 1, fontWeight: '700', fontSize: 13 },
+  limonCard: { flexDirection: 'row', alignItems: 'center', padding: SP.md, backgroundColor: C.ACCENT_BG, borderRadius: R.md, borderLeftWidth: 3, borderLeftColor: C.ACCENT, marginTop: SP.md },
+  limonLabel: { ...FONT.label, color: C.ACCENT, fontSize: 11 },
+  limonHint: { ...FONT.small, fontSize: 11, marginTop: 2 },
+  limonValue: { ...FONT.h2, fontSize: 22, color: C.ACCENT },
+  fouleeNote: { flexDirection: 'row', alignItems: 'flex-start', gap: SP.sm, padding: SP.md, backgroundColor: C.BG_DEEPER, borderRadius: R.md, marginTop: SP.md, borderWidth: 1, borderColor: C.BORDER },
+  fouleeNoteTxt: { ...FONT.small, color: C.GRAY1, flex: 1, lineHeight: 18 },
   footer: { flexDirection: 'row', padding: SP.lg, gap: SP.md, borderTopWidth: 1, borderTopColor: C.BORDER, backgroundColor: C.DARK },
   btnBack: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SP.sm, backgroundColor: C.CARD, borderRadius: R.md, paddingVertical: 16, borderWidth: 1, borderColor: C.BORDER },
   btnBackTxt: { ...FONT.button, color: C.WHITE, fontSize: 14 },

@@ -201,6 +201,8 @@ class MeasurementInput(BaseModel):
     tremie_largeur: float
     reculement_max: float
     remarques: str
+    # Optional ceiling height under trémie passage (mm) — used for échappée check
+    hauteur_sous_plafond_tremie: Optional[float] = None
 
 
 class MeasurementResult(BaseModel):
@@ -209,9 +211,14 @@ class MeasurementResult(BaseModel):
     h: float
     g: float
     slope_angle: float
-    hypotenuse: float
+    hypotenuse: float            # = limon_length (kept for backward-compat)
+    limon_length: float          # Longueur du limon (mm) = hypoténuse exacte
     reculement_needed: float
     shape: str
+    is_tournant: bool = False
+    ligne_foulee_note: Optional[str] = None
+    echappee: Optional[float] = None
+    echappee_critique: bool = False
     blondel_value: float
     valid_blondel: bool
     notes: List[str] = []
@@ -226,8 +233,66 @@ class MeasurementFull(MeasurementInput):
 
 
 # ------------------------------------------------------------
-# Calculation engine (Blondel's law)
+# Calculation engine (Blondel's law + hard safety limits)
 # ------------------------------------------------------------
+# Hard rules (règles de l'art FR):
+#   * Giron g ≥ 230 mm
+#   * Hauteur de marche h ≤ 210 mm
+#   * 560 ≤ 2h + g ≤ 670 mm
+#   * Idéal : h ≈ 175 mm, 2h+g ≈ 630 mm
+H_MIN = 150.0          # absolute soft minimum riser (mm)
+H_MAX_HARD = 210.0     # absolute maximum riser (mm) — non-negotiable
+G_MIN_HARD = 230.0     # absolute minimum tread (mm) — non-negotiable
+G_MAX = 350.0          # soft maximum tread
+BLONDEL_MIN = 560.0
+BLONDEL_MAX = 670.0
+BLONDEL_TARGET = 630.0
+H_TARGET = 175.0
+
+
+def _search_step_combination(true_h: float):
+    """Search the best (n, h, g) within hard safety limits.
+
+    Returns (n, h, g, valid_hard) where valid_hard=True if combination
+    satisfies the hard rules. If no combo passes, returns the closest
+    candidate with valid_hard=False.
+    """
+    best_valid = None
+    best_any = None
+    for n in range(8, 30):
+        h = true_h / n
+        if h < H_MIN:
+            continue
+        # Blondel target gives ideal giron
+        g = BLONDEL_TARGET - 2 * h
+        # clamp into acceptable range
+        g = max(200.0, min(G_MAX, g))
+        blondel = 2 * h + g
+        score = abs(h - H_TARGET) + abs(blondel - BLONDEL_TARGET) * 0.5
+        # Hard validation
+        hard_ok = (
+            h <= H_MAX_HARD
+            and g >= G_MIN_HARD
+            and BLONDEL_MIN <= blondel <= BLONDEL_MAX
+        )
+        if hard_ok and (best_valid is None or score < best_valid[0]):
+            best_valid = (score, n, h, g)
+        if best_any is None or score < best_any[0]:
+            best_any = (score, n, h, g)
+
+    if best_valid is not None:
+        _, n, h, g = best_valid
+        return n, h, g, True
+    if best_any is not None:
+        _, n, h, g = best_any
+        return n, h, g, False
+    # Last fallback (very large heights)
+    n = max(1, round(true_h / H_TARGET))
+    h = true_h / n
+    g = max(G_MIN_HARD, BLONDEL_TARGET - 2 * h)
+    return n, h, g, False
+
+
 def compute_stair(inp: MeasurementInput) -> MeasurementResult:
     # True height
     if inp.sols_finis_zero:
@@ -239,52 +304,83 @@ def compute_stair(inp: MeasurementInput) -> MeasurementResult:
     if true_h <= 0:
         raise HTTPException(status_code=400, detail="Hauteur effective invalide (négative ou nulle)")
 
-    # Ideal riser ~ 175mm, search best n
-    best = None
-    for n in range(8, 25):
-        h = true_h / n
-        if h < 150 or h > 220:
-            continue
-        g = 630 - 2 * h  # Blondel target 630mm
-        if g < 200 or g > 350:
-            continue
-        # closer to target h=175 and Blondel=630 is better
-        score = abs(h - 175) + abs((2 * h + g) - 630) * 0.5
-        if best is None or score < best[0]:
-            best = (score, n, h, g)
-
-    if best is None:
-        # Fallback: round to nearest 175mm
-        n = max(1, round(true_h / 175))
-        h = true_h / n
-        g = max(200, min(350, 630 - 2 * h))
-        notes.append("Hors plage idéale: ajustement manuel recommandé.")
-    else:
-        _, n, h, g = best
+    n, h, g, hard_ok = _search_step_combination(true_h)
 
     reculement_needed = (n - 1) * g  # treads = n-1
-    hypotenuse = math.sqrt(true_h ** 2 + reculement_needed ** 2)
+    limon = math.sqrt(true_h ** 2 + reculement_needed ** 2)
     slope = math.degrees(math.atan2(true_h, reculement_needed))
     blondel = 2 * h + g
-    valid_blondel = 600 <= blondel <= 640
+    valid_blondel = BLONDEL_MIN <= blondel <= BLONDEL_MAX
 
-    # Shape detection
-    if inp.reculement_max >= reculement_needed:
+    # ---- Shape detection (hard rules can force tournant/hélicoïdal) ----
+    is_tournant = False
+    ligne_foulee_note: Optional[str] = None
+
+    if not hard_ok:
+        # Hard safety rules broken on a straight stair → force tournant
+        if inp.reculement_max >= reculement_needed * 0.65:
+            shape = "Quart-tournant requis (règles de sécurité)"
+        else:
+            shape = "Hélicoïdal / colimaçon recommandé"
+        is_tournant = True
+        notes.append(
+            "Règles de l'art non respectées sur un escalier droit "
+            f"(h≤210 mm, g≥230 mm, 560≤2h+g≤670). "
+            f"Valeurs calculées : h={round(h)} g={round(g)} 2h+g={round(blondel)}."
+        )
+    elif inp.reculement_max >= reculement_needed:
         shape = "Escalier Droit Recommandé"
     elif inp.reculement_max >= reculement_needed * 0.65:
         shape = "Quart-tournant requis"
+        is_tournant = True
         notes.append("Reculement insuffisant pour escalier droit, quart-tournant nécessaire.")
     else:
         shape = "Double quart-tournant ou hélicoïdal"
-        notes.append("Reculement très limité: envisager un escalier hélicoïdal ou en colimaçon.")
+        is_tournant = True
+        notes.append("Reculement très limité : envisager un escalier hélicoïdal ou en colimaçon.")
+
+    if is_tournant:
+        ligne_foulee_note = (
+            "Le giron g est mesuré sur la LIGNE DE FOULÉE (centre géométrique "
+            "du passage, à ~50 cm de la rampe), et non aux extrémités des "
+            "marches balancées — gage d'un bon balancement et d'un confort de marche."
+        )
+        notes.append("Calcul giron référencé à la ligne de foulée (escalier tournant).")
 
     if not valid_blondel:
-        notes.append(f"Loi de Blondel hors plage: {round(blondel)}mm (idéal 600-640mm).")
+        notes.append(
+            f"⚠️ Loi de Blondel hors plage : 2h+g = {round(blondel)} mm "
+            f"(autorisé {int(BLONDEL_MIN)}–{int(BLONDEL_MAX)} mm)."
+        )
+    if h > H_MAX_HARD:
+        notes.append(f"⚠️ Hauteur de marche excessive : h = {round(h)} mm (max 210 mm).")
+    if g < G_MIN_HARD:
+        notes.append(f"⚠️ Giron insuffisant : g = {round(g)} mm (min 230 mm).")
 
     if slope > 42:
-        notes.append("Pente élevée (>42°): inconfortable, à valider client.")
+        notes.append("Pente élevée (>42°) : inconfortable, à valider client.")
     elif slope < 25:
-        notes.append("Pente faible (<25°): vérifier reculement.")
+        notes.append("Pente faible (<25°) : vérifier reculement.")
+
+    # ---- Échappée (headroom under trémie) ----
+    echappee: Optional[float] = None
+    echappee_critique = False
+    if inp.hauteur_sous_plafond_tremie is not None and inp.hauteur_sous_plafond_tremie > 0:
+        # Position horizontale du bord bas de la trémie (départ de la trémie depuis le pied de l'escalier)
+        x_tremie_start = max(0.0, reculement_needed - inp.tremie_longueur)
+        # Nombre de marches franchies AVANT d'entrer sous la trémie
+        if g > 0:
+            n_under_slab = max(0, math.floor(x_tremie_start / g))
+        else:
+            n_under_slab = 0
+        height_climbed = n_under_slab * h
+        echappee = round(inp.hauteur_sous_plafond_tremie - height_climbed, 1)
+        if echappee < 2000:
+            echappee_critique = True
+            notes.append(
+                f"⚠️ Échappée critique : {round(echappee)} mm (< 2000 mm). "
+                "Risque de choc à la tête — revoir la longueur de la trémie."
+            )
 
     return MeasurementResult(
         true_height=round(true_h, 1),
@@ -292,9 +388,14 @@ def compute_stair(inp: MeasurementInput) -> MeasurementResult:
         h=round(h, 1),
         g=round(g, 1),
         slope_angle=round(slope, 2),
-        hypotenuse=round(hypotenuse, 1),
+        hypotenuse=round(limon, 1),
+        limon_length=round(limon, 1),
         reculement_needed=round(reculement_needed, 1),
         shape=shape,
+        is_tournant=is_tournant,
+        ligne_foulee_note=ligne_foulee_note,
+        echappee=echappee,
+        echappee_critique=echappee_critique,
         blondel_value=round(blondel, 1),
         valid_blondel=valid_blondel,
         notes=notes,
@@ -656,19 +757,31 @@ def build_pdf_bytes(project: dict, measurement: dict) -> bytes:
         story.append(Table(meas_rows, colWidths=[60 * mm, 110 * mm],
                            style=table_style))
 
-        story.append(Paragraph("Calculs (Loi de Blondel)", h_style))
+        story.append(Paragraph("Calculs (Loi de Blondel + règles de l'art)", h_style))
         res_rows = [
             ["Forme déduite", r["shape"]],
             ["Hauteur effective H (mm)", str(r["true_height"])],
             ["Nombre de marches", str(r["n_steps"])],
             ["Hauteur marche h (mm)", str(r["h"])],
-            ["Giron g (mm)", str(r["g"])],
-            ["2h+g (mm)", f'{r["blondel_value"]} ({"OK" if r["valid_blondel"] else "Hors plage"})'],
+            ["Giron g (mm)" + (" (ligne de foulée)" if r.get("is_tournant") else ""), str(r["g"])],
+            ["2h+g (mm)", f'{r["blondel_value"]} ({"OK" if r["valid_blondel"] else "Hors plage 560-670"})'],
             ["Angle de pente (°)", str(r["slope_angle"])],
-            ["Hypoténuse (mm)", str(r["hypotenuse"])],
             ["Reculement requis (mm)", str(r["reculement_needed"])],
+            ["LONGUEUR DU LIMON (mm)", str(r.get("limon_length", r["hypotenuse"]))],
         ]
+        if r.get("echappee") is not None:
+            echappee_label = f'{r["echappee"]} mm'
+            if r.get("echappee_critique"):
+                echappee_label += " ⚠ CRITIQUE (<2000)"
+            res_rows.append(["Échappée sous trémie", echappee_label])
         story.append(Table(res_rows, colWidths=[60 * mm, 110 * mm], style=table_style))
+
+        if r.get("ligne_foulee_note"):
+            story.append(Spacer(1, 6))
+            story.append(Paragraph(
+                f"<i>Note balancement : {r['ligne_foulee_note']}</i>",
+                ParagraphStyle("foulee", parent=body, fontSize=9, textColor=colors.HexColor("#6FA32E")),
+            ))
 
         # SVG-ish sketch using ReportLab Drawing
         story.append(Spacer(1, 10))
@@ -791,6 +904,17 @@ def build_dxf_text(project: dict, measurement: dict) -> str:
     add_text(L / 2, -60, f"Reculement: {round(L)} mm")
     add_text(-80, H / 2, f"H: {round(H)} mm")
     add_text(L / 2, H + 30, f"{n} marches  h={r['h']}  g={r['g']}")
+    # NEW: Longueur du limon (donnée critique pour l'atelier)
+    limon_len = r.get("limon_length", r.get("hypotenuse"))
+    add_text(L * 0.4, H * 0.45,
+             f"LIMON: {round(limon_len)} mm (decoupe atelier)",
+             height=25, layer="LIMON")
+    add_line(0, 0, L, H, "LIMON")
+    # Échappée (si présente)
+    if r.get("echappee") is not None:
+        suffix = " - CRITIQUE" if r.get("echappee_critique") else ""
+        add_text(L * 0.7, H * 0.85, f"Echappee: {round(r['echappee'])} mm{suffix}",
+                 height=22, layer="ECHAPPEE")
     add_text(0, -120, f"MesureEscalier - {project.get('client_nom','')} {project.get('client_prenom','')}")
 
     out.extend(["0", "ENDSEC", "0", "EOF"])
@@ -853,10 +977,14 @@ async def integration_site(pid: str, user=Depends(get_current_user)):
             "reculement_mm": r["reculement_needed"],
             "slope_angle_deg": r["slope_angle"],
             "hypotenuse_mm": r["hypotenuse"],
+            "limon_length_mm": r.get("limon_length", r["hypotenuse"]),
             "n_steps": r["n_steps"],
             "step_h_mm": r["h"],
             "step_g_mm": r["g"],
             "shape": r["shape"],
+            "is_tournant": r.get("is_tournant", False),
+            "echappee_mm": r.get("echappee"),
+            "echappee_critique": r.get("echappee_critique", False),
             "tremie": {
                 "longueur_mm": m["tremie_longueur"],
                 "largeur_mm": m["tremie_largeur"],
