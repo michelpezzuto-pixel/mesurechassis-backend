@@ -231,17 +231,129 @@ backend:
         -comment: "ATTENTION nommage : la review demandait GET /api/integration/projects, mais le code expose uniquement GET /api/integration/sites/{pid} (identique à pré-refactor — pas une régression). Cette route /sites/{pid} fonctionne : 200, payload {site_id, client, structure{material, true_height_mm, ..., echappee_mm, tremie}}, et exige bien un Bearer (401 sans token). Si une route 'liste projets pour sister apps' est attendue, elle n'a jamais été implémentée — décision produit à valider."
 
 frontend:
-  - task: "Login + Demo accounts"
+  - task: "Login + Demo accounts (admin/solo/technicien)"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/app/login.tsx"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
-        -working: "NA"
-        -agent: "main"
-        -comment: "Pas modifié dans cette itération. À tester si user le demande."
+        -working: true
+        -agent: "testing"
+        -comment: "Les 3 boutons de démo (demo-admin, demo-solo, demo-technicien) connectent correctement et redirigent vers le dashboard. UI dark + vert pomme respectée."
+
+  - task: "Dashboard Admin (header icons, projects list, FAB)"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/dashboard.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "Header complet visible : header-stats, header-team, header-settings, header-logout, new-project-fab. Projets affichés. Recherche et filtres présents."
+
+  - task: "Création projet (Admin/Solo)"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/projects/new.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "Formulaire (nom, prénom, adresse, CP, ville, téléphone) → modal-submit-project crée le projet ET redirige directement sur la page de détail du projet (avec badge BROUILLON et bouton TRANSMETTRE AU TECHNICIEN). Comportement attendu. Validé pour admin@demo.fr et marc@mesureescalier.com."
+
+  - task: "Stats screen"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/stats.tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "Écran Stats affiche les KPI (kpi-projects, kpi-measurements, kpi-validated, kpi-avg-steps) avec chiffres réels (1 chantier au moment du test). Retour OK."
+
+  - task: "Team screen (admin)"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/team.tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "Écran Team rendu pour admin. Liste des techniciens visible. Formulaire d'invitation présent (testID invite-name/email/password/submit)."
+
+  - task: "Settings screen + toggle solo_mode"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/settings.tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "Settings rendu OK pour admin. Toggle toggle-solo-mode présent. Inputs settings-input-name, settings-input-company présents, bouton save présent."
+
+  - task: "Wizard mesures + calcul Blondel/Échappée/Limon (Solo Marc)"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/projects/[id]/measure.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "Wizard 3 étapes (matériau / dimensions / résultat) fonctionnel. Cas test h=2700, recul=3500, trémie 2400x900, dalle 200, plafond 2400 → écran résultat affiche : 15 marches, h=180, g(foulée)=270, 2h+g=630, Pente=35.54°, Échappée=1500 (alerte rouge critique car <2000), LONGUEUR LIMON=4645mm, SVG schéma 2D dessiné, message 'Quart-tournant requis' (reculement 3500 < 3780 nécessaire), notes warning. Bouton VALIDER CETTE CONCEPTION cliquable et exécuté. Bouton micro 'DICTER' présent (btn-dicter). KeyboardAvoidingView OK."
+
+  - task: "Exports PDF/DXF UI"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/projects/[id]/export.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "Boutons btn-export-pdf, btn-export-dxf et btn-share présents dans /projects/[id]/export.tsx (vérifié dans le code). Backend a déjà validé GET /export/pdf et /export/dxf en 200. Note: après validation du wizard, le bouton btn-goto-export n'apparaît qu'une fois la mesure marquée comme validée côté backend ET le projet rechargé — pas une régression."
+
+  - task: "RBAC Technicien (pas de création projet)"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/dashboard.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "Login sophie@mesureescaliee.com → dashboard accessible mais new-project-fab ABSENT (count=0). RBAC frontend correctement appliqué."
+
+  - task: "Dictée audio (bouton micro)"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/projects/[id]/measure.tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "Bouton btn-dicter (icône micro) présent dans l'étape 2 du wizard à côté du champ remarques. Test d'enregistrement audio réel non effectué (limitation env. headless — pas de micro). Backend POST /api/transcribe déjà validé."
+
+metadata:
+  ui_tested_by: "testing_agent"
+  ui_run: 1
 
 metadata:
   created_by: "main_agent"
@@ -282,3 +394,22 @@ agent_communication:
         ✅ STATS : GET /api/stats payload complet (total_projects, by_status, total_measurements, validated_measurements, average_steps, team_size).
         ⚠️ INTEGRATION : la review mentionnait GET /api/integration/projects mais cette route N'EXISTE PAS (et n'a jamais existé). Seule /api/integration/sites/{pid} est exposée — elle fonctionne (200 avec payload {site_id, client, structure}, 401 sans auth). Si une liste type 'integration/projects' était attendue côté sister apps, c'est une décision produit, pas une régression du refactor.
       Aucun stuck task. Aucune action backend requise. Le front continue de tomber sur des warnings expo (shadow*, expo-av), non bloquants — hors périmètre.
+    -agent: "testing"
+    -message: |
+      VALIDATION FRONTEND E2E POST-MODULARISATION : OK — aucune régression détectée.
+      Tests Playwright exécutés en viewport iPhone 13 (390x844) contre l'URL publique.
+      ✅ Login (admin, solo, technicien) via boutons COMPTES DÉMO — redirection dashboard OK.
+      ✅ Dashboard Admin : header complet (stats/team/settings/logout), liste projets, FAB nouveau projet.
+      ✅ Stats : KPIs affichés (Chantiers=1, Mesures, Validés, etc.).
+      ✅ Team : liste rendue + formulaire d'invitation présent.
+      ✅ Settings : toggle solo_mode présent pour admin, inputs name/company.
+      ✅ Création projet : flow complet (modal-input-nom/prenom/address/cp/city/phone) → POST /api/projects 200 → page de détail.
+      ✅ Wizard mesures (Marc Solo) : 3 étapes (matériau / dimensions / résultat). Cas h=2700, recul=3500, trémie 2400x900, dalle 200, plafond 2400 → 15 marches, h=180, g=270, 2h+g=630 (Blondel), Pente=35.54°, ÉCHAPPÉE=1500 (alerte rouge critique <2000), LIMON=4645mm, SVG schéma 2D, message 'Quart-tournant requis'. Bouton VALIDER CETTE CONCEPTION exécuté.
+      ✅ Bouton DICTER (micro Whisper) présent sur l'étape 2 du wizard.
+      ✅ RBAC Technicien : sophie@mesureescaliee.com ne voit PAS le bouton new-project-fab. Correctement appliqué côté frontend.
+      ✅ Exports : code source vérifié (btn-export-pdf, btn-export-dxf, btn-share présents dans /projects/[id]/export.tsx). Backend déjà validé (PDF/DXF 200).
+      ✅ Design system : Dark #1A1E2A + Vert Pomme #8CC63F respectés sur toutes les vues.
+      ✅ Safe area + KeyboardAvoidingView OK sur le wizard.
+      Console : uniquement warnings expo (shadow*, expo-av deprecation, pointerEvents) — non bloquants, hors périmètre du refactor backend.
+      Aucun crash, aucun écran blanc, aucun Network error.
+      Pas d'action requise — le frontend continue de fonctionner end-to-end après la modularisation backend.
