@@ -78,12 +78,15 @@ def compute_stair(inp: MeasurementInput) -> MeasurementResult:
 
     is_tournant = False
     ligne_foulee_note: Optional[str] = None
+    shape_key: str = "droit"
 
     if not hard_ok:
         if inp.reculement_max >= reculement_needed * 0.65:
             shape = "Quart-tournant requis (règles de sécurité)"
+            shape_key = "quart_bas"
         else:
             shape = "Hélicoïdal / colimaçon recommandé"
+            shape_key = "helicoidal"
         is_tournant = True
         notes.append(
             "Règles de l'art non respectées sur un escalier droit "
@@ -92,14 +95,30 @@ def compute_stair(inp: MeasurementInput) -> MeasurementResult:
         )
     elif inp.reculement_max >= reculement_needed:
         shape = "Escalier Droit Recommandé"
+        shape_key = "droit"
     elif inp.reculement_max >= reculement_needed * 0.65:
         shape = "Quart-tournant requis"
+        shape_key = "quart_bas"
         is_tournant = True
         notes.append("Reculement insuffisant pour escalier droit, quart-tournant nécessaire.")
     else:
         shape = "Double quart-tournant ou hélicoïdal"
+        shape_key = "double_quart"
         is_tournant = True
         notes.append("Reculement très limité : envisager un escalier hélicoïdal ou en colimaçon.")
+
+    # Override automatique si l'utilisateur a forcé une forme
+    if inp.forme_choisie:
+        shape_key = inp.forme_choisie
+        is_tournant = shape_key != "droit"
+        forme_label = {
+            "droit": "Escalier droit (choix utilisateur)",
+            "quart_bas": "Quart-tournant bas (choix utilisateur)",
+            "quart_haut": "Quart-tournant haut (choix utilisateur)",
+            "double_quart": "Double quart-tournant (choix utilisateur)",
+            "helicoidal": "Hélicoïdal (choix utilisateur)",
+        }
+        shape = forme_label.get(shape_key, shape)
 
     if is_tournant:
         ligne_foulee_note = (
@@ -147,6 +166,7 @@ def compute_stair(inp: MeasurementInput) -> MeasurementResult:
         limon_length=round(limon, 1),
         reculement_needed=round(reculement_needed, 1),
         shape=shape,
+        shape_key=shape_key,
         is_tournant=is_tournant,
         ligne_foulee_note=ligne_foulee_note,
         echappee=echappee,
@@ -154,4 +174,6 @@ def compute_stair(inp: MeasurementInput) -> MeasurementResult:
         blondel_value=round(blondel, 1),
         valid_blondel=valid_blondel,
         notes=notes,
+        largeur_volee=float(inp.largeur_volee or 900),
+        jour_escalier=float(inp.jour_escalier or 100),
     )

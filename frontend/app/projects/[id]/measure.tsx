@@ -109,9 +109,8 @@ export default function MeasureWizard() {
     setSaving(true);
     try {
       await Measurements.save(id!, buildPayload());
-      Alert.alert('Mesures enregistrées', 'Vous pouvez désormais valider la conception et exporter.', [
-        { text: 'OK', onPress: () => router.replace(`/projects/${id}`) },
-      ]);
+      // Redirige directement vers le Centre de pilotage (page de résultats interactive)
+      router.replace(`/projects/${id}/result` as any);
     } catch (e: any) {
       Alert.alert('Erreur', e?.response?.data?.detail || 'Sauvegarde impossible');
     } finally { setSaving(false); }

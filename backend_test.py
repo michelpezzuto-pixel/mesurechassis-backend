@@ -240,10 +240,140 @@ def test_non_regression():
         requests.delete(f"{API}/projects/{pid3}", headers=hdrs(admin_tok), timeout=20)
 
 
+# ---------- C. Phase 2 — Trajectoire (forme_choisie, largeur_volee, jour_escalier) ----------
+def test_trajectoire_phase2():
+    print("\n===== C. Phase 2 — Trajectoire =====")
+    r = login(ADMIN)
+    if r.status_code != 200:
+        log(False, "C0 login admin", f"HTTP {r.status_code}")
+        return
+    token = r.json()["token"]
+
+    payload_proj = {
+        "client_nom": "Bernard",
+        "client_prenom": "Élodie",
+        "address": "27 quai des Chartrons",
+        "postal_code": "33000",
+        "city": "Bordeaux",
+        "phone": "0556123456",
+        "notes": "Maison de ville - rénovation cage d'escalier",
+    }
+    r = requests.post(f"{API}/projects", json=payload_proj, headers=hdrs(token), timeout=20)
+    if r.status_code != 200:
+        log(False, "C1 POST /projects", f"HTTP {r.status_code} {r.text[:200]}")
+        return
+    pid = r.json()["id"]
+    log(True, "C1 POST /projects", f"id={pid}")
+
+    base_body = {
+        "material": "bois",
+        "hauteur_brute": 2700,
+        "sols_finis_zero": True,
+        "reserve_bas": 0,
+        "reserve_haut": 0,
+        "epaisseur_dalle": 200,
+        "tremie_longueur": 2400,
+        "tremie_largeur": 900,
+        "reculement_max": 3500,
+        "remarques": "",
+    }
+
+    # C2: preview with forme_choisie=quart_bas + custom largeur_volee/jour_escalier
+    body_qb = {**base_body, "forme_choisie": "quart_bas", "largeur_volee": 1100, "jour_escalier": 120}
+    r = requests.post(f"{API}/projects/{pid}/measurement/preview", json=body_qb, headers=hdrs(token), timeout=20)
+    if r.status_code != 200:
+        log(False, "C2 preview quart_bas", f"HTTP {r.status_code} {r.text[:300]}")
+    else:
+        res = r.json()
+        log(res.get("shape_key") == "quart_bas", "C2 shape_key == 'quart_bas'", f"shape_key={res.get('shape_key')!r}")
+        log(res.get("largeur_volee") == 1100, "C2 largeur_volee == 1100 (echo)", f"largeur_volee={res.get('largeur_volee')}")
+        log(res.get("jour_escalier") == 120, "C2 jour_escalier == 120 (echo)", f"jour_escalier={res.get('jour_escalier')}")
+        shape = res.get("shape", "")
+        log(shape.startswith("Quart-tournant bas (choix utilisateur)"),
+            "C2 shape startswith 'Quart-tournant bas (choix utilisateur)'", f"shape={shape!r}")
+        ok_calc = (
+            isinstance(res.get("n_steps"), int)
+            and res.get("h") is not None
+            and res.get("g") is not None
+            and res.get("blondel_value") is not None
+            and res.get("valid_blondel") is not None
+        )
+        log(ok_calc, "C2 calc fields present (n_steps/h/g/blondel/valid_blondel)",
+            f"n={res.get('n_steps')} h={res.get('h')} g={res.get('g')} bl={res.get('blondel_value')} valid={res.get('valid_blondel')}")
+
+    # C3: preview WITHOUT the 3 new fields → defaults echoed
+    r = requests.post(f"{API}/projects/{pid}/measurement/preview", json=base_body, headers=hdrs(token), timeout=20)
+    if r.status_code != 200:
+        log(False, "C3 preview sans nouveaux champs", f"HTTP {r.status_code} {r.text[:300]}")
+    else:
+        res = r.json()
+        log(res.get("shape_key") in {"droit", "quart_bas", "quart_haut", "double_quart", "helicoidal"},
+            "C3 shape_key défini",
+            f"shape_key={res.get('shape_key')!r}")
+        log(res.get("largeur_volee") == 900, "C3 largeur_volee default 900", f"val={res.get('largeur_volee')}")
+        log(res.get("jour_escalier") == 100, "C3 jour_escalier default 100", f"val={res.get('jour_escalier')}")
+
+    # C4: forme_choisie=double_quart
+    body_dq = {**base_body, "forme_choisie": "double_quart", "largeur_volee": 1000}
+    r = requests.post(f"{API}/projects/{pid}/measurement/preview", json=body_dq, headers=hdrs(token), timeout=20)
+    if r.status_code != 200:
+        log(False, "C4 preview double_quart", f"HTTP {r.status_code} {r.text[:200]}")
+    else:
+        res = r.json()
+        log(res.get("shape_key") == "double_quart", "C4 shape_key == 'double_quart'", f"shape_key={res.get('shape_key')!r}")
+        log(res.get("largeur_volee") == 1000, "C4 largeur_volee == 1000", f"val={res.get('largeur_volee')}")
+
+    # C5: forme_choisie=helicoidal
+    body_he = {**base_body, "forme_choisie": "helicoidal"}
+    r = requests.post(f"{API}/projects/{pid}/measurement/preview", json=body_he, headers=hdrs(token), timeout=20)
+    if r.status_code != 200:
+        log(False, "C5 preview helicoidal", f"HTTP {r.status_code} {r.text[:200]}")
+    else:
+        res = r.json()
+        log(res.get("shape_key") == "helicoidal", "C5 shape_key == 'helicoidal'", f"shape_key={res.get('shape_key')!r}")
+
+    # C6: SAVE measurement with the 3 fields
+    body_save = {**base_body, "forme_choisie": "double_quart", "largeur_volee": 1050, "jour_escalier": 110,
+                 "element_title": "Escalier Principal"}
+    r = requests.post(f"{API}/projects/{pid}/measurement", json=body_save, headers=hdrs(token), timeout=20)
+    if r.status_code != 200:
+        log(False, "C6 POST /measurement (save w/ trajectoire)", f"HTTP {r.status_code} {r.text[:300]}")
+    else:
+        saved = r.json()
+        log(saved.get("forme_choisie") == "double_quart",
+            "C6 saved.forme_choisie == 'double_quart'", f"val={saved.get('forme_choisie')!r}")
+        log(saved.get("largeur_volee") == 1050, "C6 saved.largeur_volee == 1050", f"val={saved.get('largeur_volee')}")
+        log(saved.get("jour_escalier") == 110, "C6 saved.jour_escalier == 110", f"val={saved.get('jour_escalier')}")
+        res = saved.get("result") or {}
+        log(res.get("shape_key") == "double_quart", "C6 result.shape_key == 'double_quart'",
+            f"shape_key={res.get('shape_key')!r}")
+        log(res.get("largeur_volee") == 1050 and res.get("jour_escalier") == 110,
+            "C6 result echo largeur/jour",
+            f"largeur={res.get('largeur_volee')} jour={res.get('jour_escalier')}")
+
+    # C7: GET project → persisted measurement contains the 3 fields
+    r = requests.get(f"{API}/projects/{pid}", headers=hdrs(token), timeout=20)
+    if r.status_code != 200:
+        log(False, "C7 GET /projects/{id}", f"HTTP {r.status_code}")
+    else:
+        m = (r.json().get("measurement") or {})
+        log(m.get("forme_choisie") == "double_quart",
+            "C7 persisted measurement.forme_choisie", f"val={m.get('forme_choisie')!r}")
+        log(m.get("largeur_volee") == 1050, "C7 persisted measurement.largeur_volee", f"val={m.get('largeur_volee')}")
+        log(m.get("jour_escalier") == 110, "C7 persisted measurement.jour_escalier", f"val={m.get('jour_escalier')}")
+        res = m.get("result") or {}
+        log(res.get("shape_key") == "double_quart",
+            "C7 persisted measurement.result.shape_key", f"val={res.get('shape_key')!r}")
+
+    # Cleanup
+    requests.delete(f"{API}/projects/{pid}", headers=hdrs(token), timeout=20)
+
+
 def main():
     print(f"Testing against: {API}\n")
     test_element_title_flow()
     test_non_regression()
+    test_trajectoire_phase2()
 
     print("\n===== SUMMARY =====")
     passed = sum(1 for ok, *_ in results if ok)

@@ -123,6 +123,13 @@ class MeasurementInput(BaseModel):
     remarques: str
     # Optional ceiling height under trémie passage (mm) — used for échappée
     hauteur_sous_plafond_tremie: Optional[float] = None
+    # Phase 2 — Trajectoire (interactive design center)
+    # Si vide → détection automatique selon reculement disponible.
+    forme_choisie: Optional[Literal["droit", "quart_bas", "quart_haut", "double_quart", "helicoidal"]] = None
+    # Largeur utile de la volée (mm), défaut 900mm (norme française).
+    largeur_volee: Optional[float] = 900
+    # Jour d'escalier — espace vide entre 2 volées en tournant (mm), défaut 100mm.
+    jour_escalier: Optional[float] = 100
 
 
 class MeasurementResult(BaseModel):
@@ -135,6 +142,8 @@ class MeasurementResult(BaseModel):
     limon_length: float          # Longueur du limon (mm) = hypoténuse exacte
     reculement_needed: float
     shape: str
+    # Phase 2: Trajectoire — clé machine-readable de la forme
+    shape_key: Literal["droit", "quart_bas", "quart_haut", "double_quart", "helicoidal"] = "droit"
     is_tournant: bool = False
     ligne_foulee_note: Optional[str] = None
     echappee: Optional[float] = None
@@ -142,6 +151,9 @@ class MeasurementResult(BaseModel):
     blondel_value: float
     valid_blondel: bool
     notes: List[str] = []
+    # Phase 2 — Géométrie de la trajectoire (echo pour SVG plan)
+    largeur_volee: float = 900
+    jour_escalier: float = 100
 
 
 class MeasurementFull(MeasurementInput):

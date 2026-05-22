@@ -1,15 +1,23 @@
 user_problem_statement: |
-  Phase 1 — Polish design & standardisation.
-  - Ajout du champ `element_title` (str, optionnel, default "Escalier") dans MeasurementInput.
-  - PDF affiche le titre de l'élément sous le titre client.
-  - Le moteur de calcul N'EST PAS TOUCHÉ — 24/24 tests de non-régression passent.
-  - Le reste est cosmétique frontend (refonte écran Livrables, header client, tooltip Recul, version).
+  Phase 2-3 (partielle) — Centre de Pilotage interactif.
+  Backend additif :
+   - Nouveaux champs optionnels dans MeasurementInput : `forme_choisie` (Literal: droit/quart_bas/quart_haut/double_quart/helicoidal),
+     `largeur_volee` (default 900), `jour_escalier` (default 100)
+   - MeasurementResult expose désormais shape_key, largeur_volee, jour_escalier (echo)
+   - Moteur honore forme_choisie en override (sans casser le calcul Blondel)
+   - Le moteur math N'A PAS ÉTÉ MODIFIÉ dans sa logique de calcul des marches
+  Frontend :
+   - Nouvelle page /projects/[id]/result.tsx (Centre de Pilotage)
+   - Toggle Profil/Plan + nouveau composant PlanSketch
+   - Sélecteur de forme + Largeur volée + Jour escalier
+   - KPIs temps réel via /preview (debouncé)
+   - Sticky bottom : Modifier / Valider
 
 backend:
-  - task: "Ajout element_title dans MeasurementInput + injection PDF"
+  - task: "Nouveaux champs Trajectoire (forme_choisie, largeur_volee, jour_escalier)"
     implemented: true
     working: true
-    file: "/app/backend/models/schemas.py + /app/backend/services/exports.py"
+    file: "/app/backend/models/schemas.py + /app/backend/services/stairs.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
@@ -17,20 +25,42 @@ backend:
         -working: "NA"
         -agent: "main"
         -comment: |
-          Champ optionnel ajouté. Tests baseline OK (24/24). Le PDF inclut un paragraphe "Élément : XXX"
-          sous le titre principal si le champ est non vide.
+          Champs optionnels ajoutés à MeasurementInput. Le compute_stair les fait écho dans MeasurementResult
+          via shape_key, largeur_volee, jour_escalier. Si forme_choisie est fourni, il override la forme auto.
+          24/24 tests baseline PASS — moteur math intact.
         -working: true
         -agent: "testing"
         -comment: |
-          VALIDÉ. Tests A1-A6 PASS.
-          A1 POST /projects (admin) → 200 + id.
-          A2 POST /projects/{id}/measurement avec element_title="Escalier de cave" → 200, champ persisté tel quel.
-          A3 GET /projects/{id} → measurement.element_title == "Escalier de cave".
-          A4 POST /measurement/preview SANS element_title (champ omis) → 200, calcul complet (n_steps=15, h=180.0, g=270.0, blondel=630.0).
-          A5 POST /measurement/validate → 200.
-          A6 GET /export/pdf → 200, header `%PDF-`, taille ~5.7 KB. Extraction via pdfminer.six confirme la présence de
-          "Élément : Escalier de cave" rendu juste sous le titre client "Chantier — Lefevre Camille".
-          Default "Escalier" appliqué quand element_title est omis lors de POST /measurement (vérifié en non-régression).
+          ✅ Phase 2 Trajectoire — 20/20 checks PASS via /app/backend_test.py (test_trajectoire_phase2).
+          • C2 preview forme_choisie="quart_bas" / largeur_volee=1100 / jour_escalier=120 → 200
+            - shape_key="quart_bas" ✅, largeur_volee=1100.0 ✅, jour_escalier=120.0 ✅
+            - shape="Quart-tournant bas (choix utilisateur)" ✅
+            - n_steps=15, h=180.0, g=270.0, blondel=630.0, valid_blondel=true ✅
+          • C3 preview SANS les 3 nouveaux champs → 200
+            - shape_key="quart_bas" (auto-détecté car recul_needed=3780 > recul_max=3500) ✅ défini
+            - largeur_volee=900.0 (default) ✅, jour_escalier=100.0 (default) ✅
+          • C4 preview forme_choisie="double_quart" largeur_volee=1000 → shape_key="double_quart" ✅
+          • C5 preview forme_choisie="helicoidal" → shape_key="helicoidal" ✅
+          • C6 POST /measurement (save) avec forme_choisie+largeur_volee+jour_escalier → 200
+            - input echo: forme_choisie="double_quart", largeur_volee=1050, jour_escalier=110 ✅
+            - result.shape_key="double_quart", result.largeur_volee=1050, result.jour_escalier=110 ✅
+          • C7 GET /projects/{pid} → measurement persistée contient forme_choisie/largeur_volee/jour_escalier ✅
+          
+          NON-RÉGRESSION COMPLÈTE (Section B 19/19 PASS) :
+          - Login admin/solo/technicien (is_locked=false, trial=90j) ✅
+          - Login expired → is_locked=true, GET /projects → 402 ✅
+          - CRUD projects (POST/GET/PUT/list) ✅
+          - Preview standard h=2700/recul=3500 → n_steps=15, h=180.0, valid_blondel=true (identique) ✅
+          - Save sans element_title → default "Escalier" ✅
+          - Export PDF (%PDF- header, 73KB) et DXF (commence par "0\nSECTION") ✅
+          - /api/stats admin ✅
+          - PUT /auth/me company_logo_base64 ✅
+          - Photos CRUD + limite 10 (11e rejetée HTTP 400) ✅
+          
+          Minor: 1 check de la suite A (recherche raw du texte "Escalier de cave" dans le PDF compressé)
+          est en FAIL mais c'est un défaut de la méthode de test (ReportLab compresse les streams) ;
+          la persistance element_title est déjà vérifiée par A2/A3 (PASS).
+          Total : 46/47 checks PASS, aucun problème fonctionnel.
 
   - task: "Non-régression moteur math (baseline)"
     implemented: true
@@ -42,22 +72,7 @@ backend:
     status_history:
         -working: true
         -agent: "main"
-        -comment: |
-          24 tests pytest figent le comportement actuel : h=2700/recul=3500 → 15 marches, h=180, giron 240-280,
-          Blondel valide, limon 4200-4900, contrats API présents. PASS local.
-        -working: true
-        -agent: "testing"
-        -comment: |
-          Non-régression API confirmée via endpoints publics :
-          - Login admin/solo/technicien → 200, is_locked=false, trial_days_remaining=90.
-          - Login expired@demo.fr → 200, is_locked=true ; GET /projects → 402 (paywall actif).
-          - CRUD projects admin (POST/GET/PUT/LIST) → OK.
-          - POST /measurement/preview avec scenario standard h=2700/recul=3500 → n_steps=15, h=180.0, valid_blondel=true.
-          - POST /measurement sans element_title → default "Escalier" appliqué (200).
-          - GET /export/dxf → 200, payload commence par "0\nSECTION\n2\nHEADER\n...".
-          - GET /api/stats (admin) → 200.
-          - PUT /api/auth/me {company_logo_base64} → 200.
-          - Photos POST/GET/DELETE → 200, limite de 10 photos appliquée (11e → 400).
+        -comment: "24 tests pytest figés. PASS local après l'ajout des nouveaux champs."
 
 metadata:
   created_by: "main_agent"
@@ -74,32 +89,45 @@ test_plan:
 agent_communication:
     -agent: "main"
     -message: |
-      Phase 1 polish. Très petit changement backend : nouveau champ optionnel `element_title` sur MeasurementInput.
-      
-      Tests à valider :
-      1. POST /api/projects/{pid}/measurement avec body incluant element_title="Escalier Cave" → 200, project a bien le champ
-      2. POST /api/projects/{pid}/measurement/preview SANS element_title → 200 (champ optionnel, ne casse pas le moteur)
-      3. POST /api/projects/{pid}/measurement/validate avec element_title → 200
-      4. GET /api/projects/{pid}/export/pdf après mesure avec element_title → PDF binaire valide (start %PDF-), le contenu mentionne le titre
-      5. NON-RÉGRESSION : tous les endpoints critiques répondent comme avant
-         - Login 3 comptes actifs OK
-         - CRUD projects OK
-         - measurement preview/validate OK
-         - export PDF/DXF OK
-         - /api/stats OK
-         - paywall toujours actif (expired@demo.fr → 402 sur /projects)
-      
-      Utiliser admin@demo.fr / Demo1234! (90j BETA).
+      Ajout 3 champs optionnels (forme_choisie, largeur_volee, jour_escalier) sur MeasurementInput + echo dans MeasurementResult.
     -agent: "testing"
     -message: |
-      RÉSULTAT : 26/26 vérifications PASS (le seul "échec" initial était un faux négatif côté test — recherche
-      raw-bytes du titre dans le PDF compressé. La revérification via pdfminer.six confirme que "Élément : Escalier
-      de cave" est bien rendu dans le PDF sous le titre client).
+      ✅ Phase 2 Trajectoire backend — 46/47 checks PASS (test_trajectoire_phase2 + non-régression complète).
+      Tous les comportements demandés sont conformes :
+       • forme_choisie override correctement shape_key (quart_bas/quart_haut/double_quart/helicoidal)
+       • largeur_volee + jour_escalier sont echo dans MeasurementResult (et defaults 900/100 si omis)
+       • Save + GET project → 3 champs persistés en MongoDB (input + result.shape_key)
+       • Moteur math intact : h=2700/recul=3500 sans override → n_steps=15, h=180, blondel=630, valid_blondel=true
+       • Login 3 comptes actifs + paywall expired (402) OK
+       • Exports PDF/DXF, /stats, photos CRUD + limite 10, logo upload : tous OK
       
-      Aucune régression détectée :
-      - 3 comptes actifs + expired : statuts conformes (is_locked + paywall 402).
-      - CRUD projets, preview/validate measurement, export PDF + DXF, stats, logo upload, photos (CRUD + limite 10) : OK.
-      - Le default "Escalier" s'applique bien quand element_title est omis lors du save.
-      - Calcul standard h=2700/recul=3500 → n_steps=15, h=180, valid_blondel=true (inchangé).
+      Seul "FAIL" : recherche raw substring "Escalier de cave" dans PDF compressé (test A6) — limitation
+      de la méthode de test (ReportLab compresse les streams). Le PDF est valide (200, %PDF-, 73KB) et
+      la persistance element_title est déjà confirmée par A2/A3.
       
-      Aucune action requise. Prêt pour summarise & finish.
+      Backend prêt pour validation utilisateur via Expo Go (frontend non testé ici, par design).
+      
+      Tests à valider (admin@demo.fr / Demo1234!) :
+      
+      1. POST /api/projects/{pid}/measurement/preview avec body incluant forme_choisie="quart_bas",
+         largeur_volee=1100, jour_escalier=120 → 200
+         - Réponse contient shape_key == "quart_bas"
+         - Réponse contient largeur_volee == 1100, jour_escalier == 120
+         - Le shape (string) commence par "Quart-tournant bas (choix utilisateur)"
+      
+      2. POST /api/projects/{pid}/measurement/preview SANS forme_choisie (les autres champs requis) → 200
+         - shape_key est défini (par défaut "droit" ou auto-détecté)
+         - largeur_volee == 900 par défaut, jour_escalier == 100 par défaut
+      
+      3. POST /api/projects/{pid}/measurement avec forme_choisie="double_quart", largeur_volee=1000 → 200, sauvegardé
+      
+      4. GET /api/projects/{pid} → measurement contient forme_choisie + largeur_volee + jour_escalier
+      
+      5. NON-RÉGRESSION : tous les endpoints standard fonctionnent
+         - login 3 comptes actifs OK
+         - cas standard h=2700 / recul=3500 SANS forme_choisie → n_steps=15, h=180, valid_blondel=true (comportement IDENTIQUE à avant)
+         - exports PDF/DXF OK
+         - paywall toujours actif (expired@demo.fr → 402)
+         - element_title (Phase 1) toujours OK
+         - photos CRUD toujours OK
+         - logo upload toujours OK

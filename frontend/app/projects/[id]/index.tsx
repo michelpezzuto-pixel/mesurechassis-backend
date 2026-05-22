@@ -212,6 +212,13 @@ export default function ProjectDetail() {
           </TouchableOpacity>
         )}
 
+        {!!m && (
+          <TouchableOpacity style={styles.btn} onPress={() => router.push(`/projects/${id}/result` as any)} testID="btn-goto-result">
+            <MaterialCommunityIcons name="tune-variant" size={20} color={C.DARK} />
+            <Text style={styles.btnTxt}>CENTRE DE PILOTAGE</Text>
+          </TouchableOpacity>
+        )}
+
         {canValidate && (
           <TouchableOpacity style={[styles.btn, { backgroundColor: C.INFO }]} onPress={async () => {
             try { await (await import('@/src/api')).Measurements.validate(id!); load(); }
