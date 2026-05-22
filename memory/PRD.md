@@ -9,15 +9,17 @@ Outil mobile de terrain pour installateurs d'escaliers, métalliers et technicie
 - **Voice**: OpenAI Whisper-1 via Emergent universal key
 - **Theme**: Dark `#1A1E2A` + accent Vert Pomme `#8CC63F`
 
-## Rôles (RBAC)
-| Rôle       | Droits |
-|------------|--------|
-| Admin      | Tout. Gère l'équipe, voit tous les chantiers, supprime n'importe quel chantier. |
-| Commercial | Crée des chantiers (Brouillon). Peut éditer/supprimer **uniquement en Brouillon**. Verrouille en cliquant « Transmettre au technicien ». |
-| Technicien | Voit les chantiers assignés (ou non assignés). Seul à pouvoir saisir les mesures, valider la conception et exporter. Ne peut pas créer de chantier. |
+## Rôles (RBAC simplifié v1.1)
+| Rôle | Droits |
+|---|---|
+| **Admin** | Tout. Gère l'équipe, crée et modifie tous les chantiers, statistiques, paramètres, suppression. |
+| **Technicien** | Terrain uniquement. Voit ses chantiers assignés + chantiers non assignés. Saisit les mesures, valide la conception, génère les exports PDF/DXF. **N'a pas accès à l'équipe.** |
 
-## Workflow
-`Brouillon` → (Commercial transmet) → `À mesurer` → (Technicien saisit) → `À vérifier` → (validation) → `Validé`
+### Mode artisan unique (solo_mode)
+Interrupteur dans les **Paramètres** (Admin uniquement) : active la fusion Admin + Technicien.
+- Création d'un chantier → instantanément verrouillé, statut `a_mesurer`, assigné à soi-même.
+- Mesures saisies sans étape de transmission.
+- Validation et exports directement accessibles.
 
 ## Moteur de calcul (Loi de Blondel)
 Cible `2h + g ≈ 630 mm`. Pour chaque hauteur `H`, recherche du couple `(n, h, g)` minimisant l'écart à la cible, avec contraintes `150 ≤ h ≤ 220` et `200 ≤ g ≤ 350`. Forme déduite:
