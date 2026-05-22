@@ -33,7 +33,7 @@ function fmt(mm: number): string {
   return `${Math.round(mm)} mm`;
 }
 
-export default function PlanSketch({
+function PlanSketchInner({
   shapeKey,
   n,
   reculement,
@@ -312,3 +312,7 @@ const styles = StyleSheet.create({
   wrap: { alignItems: 'center' },
   legend: { ...FONT.small, fontSize: 11, marginTop: SP.sm, textAlign: 'center' },
 });
+
+// React.memo : ne re-render que si une vraie prop a changé (toggle / forme / largeur / jour)
+const PlanSketch = React.memo(PlanSketchInner);
+export default PlanSketch;

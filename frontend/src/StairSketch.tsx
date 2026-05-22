@@ -16,7 +16,7 @@ interface Props {
   limonLength?: number;
 }
 
-export default function StairSketch({
+function StairSketchInner({
   trueHeight, reculement, n, h, g, width = 320, height = 220, tremieL = 0, limonLength,
 }: Props) {
   const m = 30;
@@ -81,3 +81,7 @@ export default function StairSketch({
     </Svg>
   );
 }
+
+// React.memo : skip re-render si rien n'a changé (gain énorme sur toggle Profil/Plan)
+const StairSketch = React.memo(StairSketchInner);
+export default StairSketch;

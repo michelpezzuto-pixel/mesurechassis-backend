@@ -81,13 +81,13 @@ export default function ResultScreen() {
         };
         const r = await Measurements.preview(id, payload);
         setResult(r);
-        // sauvegarde silencieuse de la nouvelle config
-        await Measurements.save(id, payload).catch(() => {});
+        // ⚡ Perf : on N'ENREGISTRE PAS sur chaque tweak (économise des appels tunnel/ngrok lents).
+        // La sauvegarde a lieu uniquement quand l'utilisateur clique "VALIDER LA CONCEPTION".
         setMeas(payload);
       } catch (e) {
         // silent fail — keep last result
       } finally { setPreviewing(false); }
-    }, 350);
+    }, 500);
   }, [meas, id, shape, largeurVolee, jourEscalier]);
 
   useEffect(() => {
@@ -96,9 +96,16 @@ export default function ResultScreen() {
   }, [shape, largeurVolee, jourEscalier]);
 
   const validate = async () => {
-    if (!id) return;
+    if (!id || !meas) return;
     setValidating(true);
     try {
+      // Sauvegarde la config finale + validation atomique
+      await Measurements.save(id, {
+        ...meas,
+        forme_choisie: shape,
+        largeur_volee: Math.max(700, parseInt(largeurVolee, 10) || 900),
+        jour_escalier: Math.max(50, parseInt(jourEscalier, 10) || 100),
+      });
       await Measurements.validate(id);
       router.replace(`/projects/${id}/export` as any);
     } catch (e: any) {

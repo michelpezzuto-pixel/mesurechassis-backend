@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList,
   RefreshControl, ActivityIndicator, Alert,
@@ -8,6 +8,7 @@ import { Ionicons, MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useAuth } from '@/src/auth';
 import { Projects, Project } from '@/src/api';
+import { storage } from '@/src/utils/storage';
 import { C, SP, R, FONT, STATUS_LABELS, STATUS_COLOR } from '@/src/theme';
 
 const FILTERS: { key: string; label: string }[] = [
@@ -18,6 +19,8 @@ const FILTERS: { key: string; label: string }[] = [
   { key: 'valide', label: 'VALIDÉ' },
 ];
 
+const PROJECTS_CACHE_KEY = 'me_projects_cache';
+
 export default function Dashboard() {
   const { user, signOut } = useAuth();
   const router = useRouter();
@@ -26,6 +29,9 @@ export default function Dashboard() {
   const [items, setItems] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  // ⚡ Évite les re-fetches en boucle sur navigations rapides : ne déclenche pas
+  // un loading si le dernier fetch date de moins de 4 secondes.
+  const lastFetchRef = useRef<number>(0);
 
   // Paywall guard — locked users get redirected
   useEffect(() => {
@@ -34,20 +40,44 @@ export default function Dashboard() {
     }
   }, [user?.is_locked, router]);
 
-  const load = useCallback(async () => {
+  // ⚡ Hydrate immédiatement depuis le cache au premier mount → rendu instantané
+  useEffect(() => {
+    (async () => {
+      try {
+        const cached = await storage.getItem(PROJECTS_CACHE_KEY, '' as string);
+        if (cached && typeof cached === 'string') {
+          const parsed = JSON.parse(cached) as Project[];
+          if (Array.isArray(parsed) && parsed.length) {
+            setItems(parsed);
+            setLoading(false);  // affiche le cache sans loader
+          }
+        }
+      } catch { /* ignore */ }
+    })();
+  }, []);
+
+  const load = useCallback(async (silent = false) => {
+    const now = Date.now();
+    // Throttle : si moins de 4s depuis le dernier fetch et que ce n'est pas un refresh manuel
+    if (silent && now - lastFetchRef.current < 4000 && items.length > 0) return;
+    lastFetchRef.current = now;
     try {
       const data = await Projects.list(filter);
       setItems(data);
+      // Cache pour le prochain cold start
+      if (filter === 'tous') {
+        await storage.setItem(PROJECTS_CACHE_KEY, JSON.stringify(data));
+      }
     } catch (e: any) {
-      Alert.alert('Erreur', e?.response?.data?.detail || 'Chargement impossible');
+      if (!silent) Alert.alert('Erreur', e?.response?.data?.detail || 'Chargement impossible');
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [filter]);
+  }, [filter, items.length]);
 
-  useFocusEffect(useCallback(() => { setLoading(true); load(); }, [load]));
-  useEffect(() => { load(); }, [load]);
+  useFocusEffect(useCallback(() => { load(true); }, [load]));
+  useEffect(() => { load(); }, [filter]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtered = items.filter(p => {
     if (!search) return true;
