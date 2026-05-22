@@ -2,8 +2,9 @@
 from __future__ import annotations
 
 import io
+from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
 
 from core.db import db
@@ -13,22 +14,53 @@ from services.exports import build_dxf_text, build_pdf_bytes
 router = APIRouter(prefix="/projects/{pid}/export")
 
 
+def _filter_project_for_export(
+    p: dict,
+    stair_id: Optional[str],
+    include_photos: bool,
+    include_notes: bool,
+) -> dict:
+    """Return a (shallow-copied) project dict respecting export filters."""
+    proj = dict(p)
+    if stair_id and proj.get("stairs"):
+        proj["stairs"] = [s for s in proj["stairs"] if s.get("id") == stair_id]
+    if not include_photos:
+        proj["photos"] = []
+    if not include_notes:
+        proj["notes"] = ""
+    return proj
+
+
 @router.get("/pdf")
-async def export_pdf(pid: str, user=Depends(require_active_access)):
+async def export_pdf(
+    pid: str,
+    stair_id: Optional[str] = Query(None, description="Filter to a single stair"),
+    include_photos: bool = Query(True),
+    include_notes: bool = Query(True),
+    include_logo: bool = Query(True),
+    user=Depends(require_active_access),
+):
     q = {"id": pid, **project_visible_to(user)}
     p = await db.projects.find_one(q, {"_id": 0})
     if not p:
         raise HTTPException(status_code=404, detail="Chantier introuvable")
+    p = _filter_project_for_export(p, stair_id, include_photos, include_notes)
     m = await db.measurements.find_one({"project_id": pid}, {"_id": 0})
     # Fallback v2 : si pas de mesure legacy mais des stairs[], on synthétise.
     if not m and p.get("stairs"):
         m = _synthesize_measurement_from_stairs(p)
     # Fetch the company logo from the project owner (admin)
-    owner_id = p.get("creator_id") or p.get("commercial_id")
-    owner = await db.users.find_one({"id": owner_id}, {"_id": 0, "company_logo_base64": 1, "company_name": 1}) if owner_id else None
-    company_logo = (owner or {}).get("company_logo_base64") or None
+    company_logo = None
+    if include_logo:
+        owner_id = p.get("creator_id") or p.get("commercial_id")
+        owner = (
+            await db.users.find_one({"id": owner_id}, {"_id": 0, "company_logo_base64": 1, "company_name": 1})
+            if owner_id else None
+        )
+        company_logo = (owner or {}).get("company_logo_base64") or None
     pdf = build_pdf_bytes(p, m, company_logo_base64=company_logo)
-    filename = f"chantier_{p.get('client_nom', 'export').lower()}.pdf"
+    suffix = f"_{stair_id[:6]}" if stair_id else ""
+    filename = f"chantier_{p.get('client_nom', 'export').lower()}{suffix}.pdf"
     return StreamingResponse(
         io.BytesIO(pdf), media_type="application/pdf",
         headers={"Content-Disposition": f'attachment; filename="{filename}"'},
@@ -77,17 +109,23 @@ def _synthesize_measurement_from_stairs(project: dict) -> dict | None:
 
 
 @router.get("/dxf")
-async def export_dxf(pid: str, user=Depends(require_active_access)):
+async def export_dxf(
+    pid: str,
+    stair_id: Optional[str] = Query(None),
+    user=Depends(require_active_access),
+):
     q = {"id": pid, **project_visible_to(user)}
     p = await db.projects.find_one(q, {"_id": 0})
     if not p:
         raise HTTPException(status_code=404, detail="Chantier introuvable")
+    if stair_id and p.get("stairs"):
+        p = {**p, "stairs": [s for s in p["stairs"] if s.get("id") == stair_id]}
     m = await db.measurements.find_one({"project_id": pid}, {"_id": 0})
-    # V2 path : build_dxf_text reads project["stairs"] directly when available
     if not m and not p.get("stairs"):
         raise HTTPException(status_code=400, detail="Aucune mesure disponible pour DXF")
     dxf = build_dxf_text(p, m or {})
-    filename = f"chantier_{p.get('client_nom', 'export').lower()}.dxf"
+    suffix = f"_{stair_id[:6]}" if stair_id else ""
+    filename = f"chantier_{p.get('client_nom', 'export').lower()}{suffix}.dxf"
     return StreamingResponse(
         io.BytesIO(dxf.encode()), media_type="application/dxf",
         headers={"Content-Disposition": f'attachment; filename="{filename}"'},

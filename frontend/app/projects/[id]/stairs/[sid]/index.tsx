@@ -140,7 +140,7 @@ export default function StairEditor() {
     ]);
   };
 
-  const goExport = () => router.push(`/projects/${id}/export` as any);
+  const goExport = () => router.push(`/projects/${id}/stairs/${sid}/export` as any);
 
   if (loading || !stair) {
     return (

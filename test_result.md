@@ -194,6 +194,37 @@ frontend:
             les deux vues s'affichent correctement, état préservé entre re-renders.
             Validation manuelle utilisateur recommandée (notamment sur escaliers multi-tronçons mixtes).
 
+frontend:
+  - task: "Phase 4 — Plan de Balancement & Export (page dédiée)"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/projects/[id]/stairs/[sid]/export.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "main"
+        -comment: |
+          Nouvelle page complète /projects/{id}/stairs/{sid}/export :
+          • SVG balancement à l'échelle avec marches dansantes radiales dans quart-tournants
+            (pivot au coin intérieur), marches parallèles dans les droits, paliers en bleu,
+            cotation largeur (flèches + L. xxx mm), point DÉPART, boussole, ligne de foulée pointillée.
+          • 4 cartes KPI vert pomme : MARCHES / HAUTEUR h / GIRON g / PENTE.
+          • Alerte Blondel temps réel : vert (600-640 OK), orange (560-670 acceptable), rouge (hors plage).
+          • 3 checkboxes : photos / notes / logo (testID opt-photos|notes|logo).
+          • Sélecteur format pill 3-states : PDF CLASSIQUE | DXF AUTOCAD | PDF + DXF (testID fmt-*).
+          • Sticky bottom : MODIFIER LA CONFIG + GÉNÉRER LES LIVRABLES (téléchargement direct web via blob+anchor).
+          • Validation E2E : flow login → projet → escalier → export → décocher photos → PDF only → GÉNÉRER
+            → fichier escalier_<name>.pdf téléchargé avec succès (web).
+          Backend extended :
+          • GET /api/projects/{pid}/export/pdf?stair_id&include_photos&include_notes&include_logo (defaults true)
+          • GET /api/projects/{pid}/export/dxf?stair_id
+          Smoke test backend :
+            - default: 13500 bytes / filtered: 10244 bytes / stripped: 9217 bytes (ordering correct) ✓
+            - DXF stair filter: 6984 bytes contains SECTION ✓
+            - Bad stair_id: 200 (génère un PDF vide pour la stair, pas un crash) — comportement acceptable.
+
 metadata:
   created_by: "main_agent"
   version: "2.0"

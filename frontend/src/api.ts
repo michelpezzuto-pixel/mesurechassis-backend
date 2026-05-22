@@ -191,8 +191,21 @@ export const Stats = {
 };
 
 export const Exports = {
-  pdfUrl: (id: string) => `${BASE}/api/projects/${id}/export/pdf`,
-  dxfUrl: (id: string) => `${BASE}/api/projects/${id}/export/dxf`,
+  pdfUrl: (id: string, opts?: { stair_id?: string; include_photos?: boolean; include_notes?: boolean; include_logo?: boolean }) => {
+    const params = new URLSearchParams();
+    if (opts?.stair_id) params.set('stair_id', opts.stair_id);
+    if (opts?.include_photos !== undefined) params.set('include_photos', String(opts.include_photos));
+    if (opts?.include_notes !== undefined) params.set('include_notes', String(opts.include_notes));
+    if (opts?.include_logo !== undefined) params.set('include_logo', String(opts.include_logo));
+    const qs = params.toString();
+    return `${BASE}/api/projects/${id}/export/pdf${qs ? `?${qs}` : ''}`;
+  },
+  dxfUrl: (id: string, opts?: { stair_id?: string }) => {
+    const params = new URLSearchParams();
+    if (opts?.stair_id) params.set('stair_id', opts.stair_id);
+    const qs = params.toString();
+    return `${BASE}/api/projects/${id}/export/dxf${qs ? `?${qs}` : ''}`;
+  },
 };
 
 export const Voice = {
