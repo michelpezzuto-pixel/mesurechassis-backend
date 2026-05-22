@@ -71,32 +71,58 @@ export default function ProjectDetail() {
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.topbar}>
-        <TouchableOpacity onPress={() => router.back()} testID="back-btn"><Ionicons name="arrow-back" size={24} color={C.WHITE} /></TouchableOpacity>
-        <Text style={styles.title} numberOfLines={1}>{project.client_nom} {project.client_prenom || ''}</Text>
+        <TouchableOpacity onPress={() => router.back()} testID="back-btn" hitSlop={10}>
+          <Ionicons name="arrow-back" size={24} color={C.WHITE} />
+        </TouchableOpacity>
+        <Text style={styles.topbarTitle}>CHANTIER</Text>
         {canDelete ? (
-          <TouchableOpacity onPress={remove} testID="delete-project"><Feather name="trash-2" size={22} color={C.DANGER} /></TouchableOpacity>
+          <TouchableOpacity onPress={remove} testID="delete-project" hitSlop={10}>
+            <Feather name="trash-2" size={22} color={C.DANGER} />
+          </TouchableOpacity>
         ) : <View style={{ width: 22 }} />}
       </View>
 
       <ScrollView contentContainerStyle={{ padding: SP.lg, paddingBottom: 100 }}>
-        <View style={[styles.badge, { backgroundColor: STATUS_COLOR[project.status] + '22', borderColor: STATUS_COLOR[project.status] }]}>
-          <Text style={[styles.badgeTxt, { color: STATUS_COLOR[project.status] }]}>
-            {STATUS_LABELS[project.status]}
+        {/* Header chantier : NOM CLIENT en évidence */}
+        <View style={styles.heroClient}>
+          <Text style={styles.heroLabel}>CLIENT</Text>
+          <Text style={styles.heroName} numberOfLines={2}>
+            {(`${project.client_nom} ${project.client_prenom || ''}`).trim().toUpperCase()}
           </Text>
-          {project.locked && <Ionicons name="lock-closed" size={12} color={STATUS_COLOR[project.status]} style={{ marginLeft: 6 }} />}
+          {!!project.address && (
+            <View style={styles.heroAddr}>
+              <Ionicons name="location-sharp" size={14} color={C.GRAY3} />
+              <Text style={styles.heroAddrTxt} numberOfLines={1}>
+                {project.address}{project.city ? `, ${project.city}` : ''}
+              </Text>
+            </View>
+          )}
+          <View style={[styles.badge, styles.heroBadge, { backgroundColor: STATUS_COLOR[project.status] + '22', borderColor: STATUS_COLOR[project.status] }]}>
+            <Text style={[styles.badgeTxt, { color: STATUS_COLOR[project.status] }]}>
+              {STATUS_LABELS[project.status]}
+            </Text>
+            {project.locked && <Ionicons name="lock-closed" size={11} color={STATUS_COLOR[project.status]} style={{ marginLeft: 6 }} />}
+          </View>
         </View>
 
         <View style={styles.card}>
-          <Text style={styles.cardHead}>CLIENT</Text>
-          <Row icon="person" label="Nom" value={`${project.client_nom} ${project.client_prenom || ''}`} />
-          <Row icon="location" label="Adresse" value={`${project.address}${project.postal_code ? ', ' + project.postal_code : ''} ${project.city || ''}`} />
+          <Text style={styles.cardHead}>COORDONNÉES</Text>
           <Row icon="call" label="Téléphone" value={project.phone || '—'} />
           <Row icon="document-text" label="Notes" value={project.notes || '—'} />
+          {project.postal_code && <Row icon="map" label="Code postal" value={project.postal_code} />}
         </View>
 
         {m ? (
           <View style={styles.card}>
-            <Text style={styles.cardHead}>MESURES & CALCULS</Text>
+            <View style={styles.measHead}>
+              <Text style={styles.cardHead}>MESURES & CALCULS</Text>
+              {!!m.element_title && (
+                <View style={styles.elemTitleBadge}>
+                  <MaterialCommunityIcons name="stairs" size={12} color={C.ACCENT} />
+                  <Text style={styles.elemTitleTxt} numberOfLines={1}>{m.element_title}</Text>
+                </View>
+              )}
+            </View>
             <View style={{ alignItems: 'center', marginBottom: SP.md }}>
               <StairSketch
                 trueHeight={m.result.true_height}
@@ -242,10 +268,28 @@ const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   topbar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: SP.lg, gap: SP.md, borderBottomWidth: 1, borderBottomColor: C.BORDER },
   title: { ...FONT.h3, flex: 1, textAlign: 'center' },
+  topbarTitle: { ...FONT.label, color: C.GRAY3, flex: 1, textAlign: 'center', fontSize: 12 },
+  // Hero client
+  heroClient: {
+    backgroundColor: C.CARD,
+    borderRadius: R.lg,
+    padding: SP.lg,
+    borderLeftWidth: 4,
+    borderLeftColor: C.ACCENT,
+    marginBottom: SP.md,
+  },
+  heroLabel: { ...FONT.label, color: C.ACCENT, fontSize: 11, marginBottom: 4 },
+  heroName: { ...FONT.h1, fontSize: 24, letterSpacing: 0.5, lineHeight: 30 },
+  heroAddr: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: SP.sm },
+  heroAddrTxt: { ...FONT.small, flex: 1 },
+  heroBadge: { marginTop: SP.md, marginBottom: 0 },
   badge: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', paddingHorizontal: SP.md, paddingVertical: 6, borderRadius: R.pill, borderWidth: 1, marginBottom: SP.md },
   badgeTxt: { ...FONT.label, fontSize: 11 },
   card: { backgroundColor: C.CARD, borderRadius: R.lg, padding: SP.lg, borderWidth: 1, borderColor: C.BORDER, marginBottom: SP.md },
   cardHead: { ...FONT.label, color: C.ACCENT, marginBottom: SP.md },
+  measHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: SP.sm, marginBottom: 4 },
+  elemTitleBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: C.ACCENT_BG, paddingHorizontal: SP.sm, paddingVertical: 4, borderRadius: R.pill, marginBottom: SP.md, borderWidth: 1, borderColor: C.ACCENT },
+  elemTitleTxt: { ...FONT.label, color: C.ACCENT, fontSize: 10, maxWidth: 180 },
   row: { flexDirection: 'row', marginBottom: SP.sm },
   rowLabel: { ...FONT.small },
   rowValue: { ...FONT.body, marginTop: 2 },

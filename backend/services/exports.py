@@ -185,7 +185,15 @@ def build_pdf_bytes(project: dict, measurement: dict, company_logo_base64: str |
     ])
 
     story = []
-    story.append(Paragraph(f"Chantier — {project.get('client_nom', '')} {project.get('client_prenom', '')}".strip(), title_style))
+    title_main = f"Chantier — {project.get('client_nom', '')} {project.get('client_prenom', '')}".strip()
+    story.append(Paragraph(title_main, title_style))
+
+    if measurement and (measurement.get("element_title") or "").strip():
+        story.append(Paragraph(
+            f"<font color='#8CC63F'>Élément :</font> {measurement['element_title']}",
+            ParagraphStyle("elemTitle", parent=styles["BodyText"], fontSize=11,
+                           textColor=colors.HexColor("#1A1E2A"), spaceAfter=10),
+        ))
 
     story.append(Paragraph("Client", h_style))
     client_rows = [

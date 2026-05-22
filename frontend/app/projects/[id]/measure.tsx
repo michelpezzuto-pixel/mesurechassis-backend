@@ -25,7 +25,10 @@ export default function MeasureWizard() {
   const [project, setProject] = useState<any>(null);
 
   // Step 1
+  const [elementTitle, setElementTitle] = useState('Escalier Principal');
   const [material, setMaterial] = useState<Material | null>(null);
+  // Tooltip "Recul au sol"
+  const [showReculHelp, setShowReculHelp] = useState(false);
   // Step 2
   const [hauteur, setHauteur] = useState('');
   const [solsZero, setSolsZero] = useState(true);
@@ -50,6 +53,7 @@ export default function MeasureWizard() {
       setProject(p);
       if (p.measurement) {
         const m = p.measurement;
+        setElementTitle(m.element_title || 'Escalier Principal');
         setMaterial(m.material);
         setHauteur(String(m.hauteur_brute));
         setSolsZero(m.sols_finis_zero);
@@ -87,6 +91,7 @@ export default function MeasureWizard() {
   };
 
   const buildPayload = () => ({
+    element_title: elementTitle.trim() || 'Escalier',
     material: material!,
     hauteur_brute: Number(hauteur),
     sols_finis_zero: solsZero,
@@ -169,6 +174,18 @@ export default function MeasureWizard() {
         <ScrollView contentContainerStyle={{ padding: SP.lg, paddingBottom: 100 }}>
           {step === 1 && (
             <>
+              <Text style={styles.section}>TITRE DE L'ÉLÉMENT</Text>
+              <Text style={styles.hint}>Permet d'identifier cette mesure quand un chantier en compte plusieurs.</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="ex. Escalier Principal, Escalier Cave..."
+                placeholderTextColor={C.GRAY3}
+                value={elementTitle}
+                onChangeText={setElementTitle}
+                maxLength={60}
+                testID="input-element-title"
+              />
+
               <Text style={styles.section}>MATÉRIAU</Text>
               <Text style={styles.hint}>Choisissez le matériau principal de l'escalier.</Text>
               <View style={styles.matGrid}>
@@ -221,7 +238,57 @@ export default function MeasureWizard() {
                 <View style={{ flex: 1 }}><Field label="Largeur (mm) *" value={tremieW} onChangeText={setTremieW} keyboardType="numeric" testID="input-tremie-w" /></View>
               </View>
 
-              <Field label="Reculement maximal au sol (mm) *" value={recul} onChangeText={setRecul} keyboardType="numeric" testID="input-reculement" />
+              <View style={styles.labelRow}>
+                <Text style={styles.label}>RECULEMENT MAXIMAL AU SOL (MM) *</Text>
+                <TouchableOpacity onPress={() => setShowReculHelp(true)} testID="btn-help-recul" hitSlop={10}>
+                  <Ionicons name="help-circle" size={22} color={C.ACCENT} />
+                </TouchableOpacity>
+              </View>
+              <TextInput
+                style={styles.input}
+                placeholder="ex. 3500"
+                placeholderTextColor={C.GRAY3}
+                value={recul}
+                onChangeText={setRecul}
+                keyboardType="numeric"
+                testID="input-reculement"
+              />
+
+              {/* Help Modal — Recul au sol */}
+              {showReculHelp && (
+                <View style={styles.helpOverlay}>
+                  <View style={styles.helpCard}>
+                    <View style={styles.helpHead}>
+                      <MaterialCommunityIcons name="ruler-square-compass" size={24} color={C.ACCENT} />
+                      <Text style={styles.helpTitle}>Reculement au sol</Text>
+                      <TouchableOpacity onPress={() => setShowReculHelp(false)} testID="btn-close-help">
+                        <Ionicons name="close" size={22} color={C.WHITE} />
+                      </TouchableOpacity>
+                    </View>
+                    <Text style={styles.helpTxt}>
+                      Le <Text style={{ color: C.ACCENT, fontWeight: '700' }}>reculement</Text> est la
+                      distance horizontale disponible au sol pour poser l'escalier, mesurée du pied
+                      de la première marche jusqu'au mur opposé (ou tout autre obstacle).
+                    </Text>
+                    <View style={styles.helpDiagram}>
+                      <View style={styles.helpDiagramStair} />
+                      <View style={styles.helpDiagramFloor} />
+                      <View style={styles.helpDiagramArrow}>
+                        <Ionicons name="arrow-back" size={16} color={C.ACCENT} />
+                        <Text style={styles.helpDiagramTxt}>RECULEMENT</Text>
+                        <Ionicons name="arrow-forward" size={16} color={C.ACCENT} />
+                      </View>
+                    </View>
+                    <Text style={[styles.helpTxt, { color: C.WARN }]}>
+                      ⚠️ Plus le reculement est court, plus l'escalier sera raide (et inversement).
+                      Pour un escalier confortable : ≥ 3500 mm sur 2700 mm de hauteur.
+                    </Text>
+                    <TouchableOpacity style={styles.helpOk} onPress={() => setShowReculHelp(false)}>
+                      <Text style={styles.helpOkTxt}>J'AI COMPRIS</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )}
 
               <Field
                 label="Hauteur sous plafond au niveau de la trémie (mm)"
@@ -404,7 +471,21 @@ const styles = StyleSheet.create({
   matCardActive: { backgroundColor: C.ACCENT, borderColor: C.ACCENT },
   matLabel: { ...FONT.button, color: C.WHITE, fontSize: 14, marginTop: SP.sm },
   label: { ...FONT.label, marginTop: SP.lg, marginBottom: SP.sm },
+  labelRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: SP.lg, marginBottom: SP.sm },
   small: { ...FONT.small, marginTop: 2, fontSize: 11 },
+  // Help modal (Recul au sol)
+  helpOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.85)', alignItems: 'center', justifyContent: 'center', padding: SP.lg, zIndex: 99 },
+  helpCard: { backgroundColor: C.CARD, borderRadius: R.lg, padding: SP.lg, width: '100%', maxWidth: 420, borderWidth: 1, borderColor: C.ACCENT },
+  helpHead: { flexDirection: 'row', alignItems: 'center', gap: SP.sm, marginBottom: SP.md },
+  helpTitle: { ...FONT.h3, flex: 1 },
+  helpTxt: { ...FONT.body, color: C.GRAY1, lineHeight: 21, marginBottom: SP.md },
+  helpDiagram: { height: 80, backgroundColor: C.BG_DEEPER, borderRadius: R.md, padding: SP.sm, marginBottom: SP.md, position: 'relative', justifyContent: 'flex-end' },
+  helpDiagramStair: { position: 'absolute', left: 12, top: 12, width: 0, height: 0, borderStyle: 'solid', borderLeftWidth: 0, borderRightWidth: 60, borderBottomWidth: 50, borderTopWidth: 0, borderRightColor: 'transparent', borderBottomColor: C.ACCENT, borderTopColor: 'transparent', borderLeftColor: 'transparent' },
+  helpDiagramFloor: { height: 2, backgroundColor: C.GRAY3, marginBottom: 8 },
+  helpDiagramArrow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4 },
+  helpDiagramTxt: { ...FONT.label, color: C.ACCENT, fontSize: 10 },
+  helpOk: { backgroundColor: C.ACCENT, borderRadius: R.md, paddingVertical: 12, alignItems: 'center' },
+  helpOkTxt: { ...FONT.button, color: C.DARK, fontSize: 13 },
   input: { backgroundColor: C.BG_DEEPER, borderWidth: 1, borderColor: C.BORDER, borderRadius: R.md, paddingHorizontal: SP.md, paddingVertical: 14, color: C.WHITE, fontSize: 16 },
   toggleRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.CARD, padding: SP.md, borderRadius: R.md, borderWidth: 1, borderColor: C.BORDER, marginTop: SP.lg },
   row: { flexDirection: 'row', gap: SP.md },

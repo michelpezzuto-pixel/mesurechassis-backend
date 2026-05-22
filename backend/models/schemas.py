@@ -109,6 +109,8 @@ class ProjectPhoto(BaseModel):
 
 # ---------------------- Measurements ----------------------
 class MeasurementInput(BaseModel):
+    # Phase 1 addition: titre libre de l'élément mesuré (ex. "Escalier Principal", "Escalier Cave")
+    element_title: Optional[str] = "Escalier"
     material: Literal["acier", "bois", "beton"]
     hauteur_brute: float
     sols_finis_zero: bool = True

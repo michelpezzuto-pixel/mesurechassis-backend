@@ -213,8 +213,22 @@ export default function SettingsScreen() {
 
           <Text style={styles.section}>À PROPOS</Text>
           <View style={styles.aboutCard}>
-            <Text style={styles.aboutLine}>MesureEscalier · v1.1</Text>
-            <Text style={styles.aboutLine}>info@mesureescalier.com</Text>
+            <View style={styles.aboutRow}>
+              <View style={styles.aboutBadge}>
+                <MaterialCommunityIcons name="stairs" size={20} color={C.ACCENT} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.aboutTitle}>MesureEscalier</Text>
+                <Text style={styles.aboutLine}>Version <Text style={{ color: C.ACCENT, fontWeight: '700' }}>1.2.0</Text> · Phase 1 polish</Text>
+              </View>
+            </View>
+            <View style={styles.aboutDivider} />
+            <Text style={styles.aboutLine}>
+              <Ionicons name="mail-outline" size={12} color={C.GRAY3} /> info@mesureescalier.com
+            </Text>
+            <Text style={styles.aboutLine}>
+              <Ionicons name="cloud-done-outline" size={12} color={C.ACCENT} /> Mises à jour automatiques (OTA)
+            </Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -244,7 +258,11 @@ const styles = StyleSheet.create({
   soloActive: { flexDirection: 'row', alignItems: 'center', marginTop: SP.md, paddingTop: SP.md, borderTopWidth: 1, borderTopColor: 'rgba(140,198,63,0.2)' },
   soloActiveTxt: { ...FONT.small, color: C.GRAY1, marginLeft: SP.sm, flex: 1 },
   aboutCard: { backgroundColor: C.CARD, borderRadius: R.lg, padding: SP.lg, borderWidth: 1, borderColor: C.BORDER },
+  aboutRow: { flexDirection: 'row', alignItems: 'center', gap: SP.md },
+  aboutBadge: { width: 42, height: 42, borderRadius: R.md, backgroundColor: C.ACCENT_BG, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.ACCENT },
+  aboutTitle: { ...FONT.h3, fontSize: 14 },
   aboutLine: { ...FONT.small, marginBottom: 4 },
+  aboutDivider: { height: 1, backgroundColor: C.BORDER, marginVertical: SP.md },
   logoCard: { backgroundColor: C.CARD, borderRadius: R.lg, padding: SP.lg, borderWidth: 1, borderColor: C.BORDER, alignItems: 'center' },
   logoPreviewWrap: { width: 140, height: 140, alignItems: 'center', justifyContent: 'center' },
   logoPreview: { width: 140, height: 140, borderRadius: R.md, backgroundColor: C.WHITE },

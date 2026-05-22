@@ -111,7 +111,7 @@ export default function Dashboard() {
           <MaterialCommunityIcons name="rocket-launch" size={26} color={C.ACCENT} />
           <View style={{ flex: 1, marginLeft: SP.md }}>
             <Text style={styles.betaTitle}>
-              BETA GRATUITE · {user.trial_days_remaining} JOUR{user.trial_days_remaining > 1 ? 'S' : ''} RESTANT{user.trial_days_remaining > 1 ? 'S' : ''}
+              BETA GRATUITE · {user.trial_days_remaining ?? 0} JOUR{(user.trial_days_remaining ?? 0) > 1 ? 'S' : ''} RESTANT{(user.trial_days_remaining ?? 0) > 1 ? 'S' : ''}
             </Text>
             <Text style={styles.betaTxt}>
               Vous avez accès à toutes les fonctionnalités pendant la phase de test (3 mois).

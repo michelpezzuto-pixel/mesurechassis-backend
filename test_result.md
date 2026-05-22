@@ -1,36 +1,15 @@
 user_problem_statement: |
-  Itération 4 — Ajout de 3 features majeures :
-  1. Logo entreprise sur PDF (admin upload via Settings, injecté dans en-tête PDF)
-  2. Photos de chantier (caméra/galerie, 10 max/projet, compression expo-image-manipulator, intégrées en fin de PDF)
-  3. Paywall trial 90 jours (trial_start_date à l'inscription, blocage HTTP 402 sur routes critiques au-delà, écran de blocage frontend)
-  Architecture: backend modularisé, shared-ui frontend, EAS Update configuré.
+  Phase 1 — Polish design & standardisation.
+  - Ajout du champ `element_title` (str, optionnel, default "Escalier") dans MeasurementInput.
+  - PDF affiche le titre de l'élément sous le titre client.
+  - Le moteur de calcul N'EST PAS TOUCHÉ — 24/24 tests de non-régression passent.
+  - Le reste est cosmétique frontend (refonte écran Livrables, header client, tooltip Recul, version).
 
 backend:
-  - task: "Logo entreprise — upload via PUT /api/auth/me et injection PDF"
+  - task: "Ajout element_title dans MeasurementInput + injection PDF"
     implemented: true
     working: true
-    file: "/app/backend/routers/auth.py + /app/backend/services/exports.py"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        -working: "NA"
-        -agent: "main"
-        -comment: "PUT /api/auth/me accepte company_logo_base64 (data URI ou raw). PDF en-tête (logo top-left + nom société + accent vert pomme + footer date/page) sur toutes les pages via SimpleDocTemplate onFirstPage/onLaterPages."
-        -working: true
-        -agent: "testing"
-        -comment: |
-          Tous les tests passent :
-          - PUT /api/auth/me { company_logo_base64: "data:image/png;base64,..." } → 200, retour avec logo non vide.
-          - GET /api/auth/me retourne bien le logo.
-          - Création projet + sauvegarde mesure (via technicien Sophie car admin@demo.fr n'a pas solo_mode → 403 attendu pour POST measurement) + GET /export/pdf → 200 binaire débutant par `%PDF-` (5691 bytes).
-          - PUT /api/auth/me { company_logo_base64: "" } → 200, et GET /auth/me confirme le logo vide.
-          Note : L'attente "save measurement avec token admin@demo.fr" du brief échoue car cet admin n'a pas solo_mode et la route /measurement exige technician_powers → on a contourné en assignant Sophie. Le flow PDF avec logo fonctionne. C'est conforme à l'architecture (admin pur ne saisit pas les mesures).
-
-  - task: "Photos de chantier — CRUD avec limite 10/projet"
-    implemented: true
-    working: true
-    file: "/app/backend/routers/projects.py + /app/backend/models/schemas.py"
+    file: "/app/backend/models/schemas.py + /app/backend/services/exports.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
@@ -38,68 +17,52 @@ backend:
         -working: "NA"
         -agent: "main"
         -comment: |
-          Routes: GET /api/projects/{pid}/photos, POST (ajoute, max 10), PATCH /{photo_id} (caption), DELETE /{photo_id}.
-          Stockage : array embarqué dans le document project { id, base64, caption, created_at }.
-          Listing projects exclut photos (lean payload). PDF inclut section "Photos de chantier" en fin.
-          ACL : admin (partout), solo, technicien assigné peuvent éditer ; autres seulement read via projet visible.
+          Champ optionnel ajouté. Tests baseline OK (24/24). Le PDF inclut un paragraphe "Élément : XXX"
+          sous le titre principal si le champ est non vide.
         -working: true
         -agent: "testing"
         -comment: |
-          Tous les tests passent avec marc@mesureescalier.com (solo) :
-          - GET /photos → 200 [].
-          - POST /photos → 200 avec id, base64, caption "Test trémie", created_at.
-          - 10 photos OK, 11ème → 400 detail="Limite atteinte (10 photos max par chantier)".
-          - PATCH /photos/{id} { caption: "Mise à jour" } → 200.
-          - GET /projects (liste) → champ `photos` absent (exclu). 
-          - GET /projects/{pid} (détail) → photos array de 10 items présent.
-          - DELETE /photos/{id} → 200.
-          - Sécurité : Sophie (technicienne non assignée au projet de marc) POST /photos → 404 (projet non visible via project_visible_to → marc.id != null/sophie.id).
+          VALIDÉ. Tests A1-A6 PASS.
+          A1 POST /projects (admin) → 200 + id.
+          A2 POST /projects/{id}/measurement avec element_title="Escalier de cave" → 200, champ persisté tel quel.
+          A3 GET /projects/{id} → measurement.element_title == "Escalier de cave".
+          A4 POST /measurement/preview SANS element_title (champ omis) → 200, calcul complet (n_steps=15, h=180.0, g=270.0, blondel=630.0).
+          A5 POST /measurement/validate → 200.
+          A6 GET /export/pdf → 200, header `%PDF-`, taille ~5.7 KB. Extraction via pdfminer.six confirme la présence de
+          "Élément : Escalier de cave" rendu juste sous le titre client "Chantier — Lefevre Camille".
+          Default "Escalier" appliqué quand element_title est omis lors de POST /measurement (vérifié en non-régression).
 
-  - task: "Paywall trial 90 jours — compute_access_state + require_active_access"
+  - task: "Non-régression moteur math (baseline)"
     implemented: true
     working: true
-    file: "/app/backend/core/security.py + /app/backend/core/config.py + /app/backend/services/seed.py"
+    file: "/app/backend/tests/test_engine_regression.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
-        -working: "NA"
+        -working: true
         -agent: "main"
         -comment: |
-          - TRIAL_DAYS=90 dans core/config.py.
-          - Chaque user a trial_start_date (datetime). Calcul state: trial_days_remaining, is_trial_active, is_locked.
-          - Register pose trial_start_date=now(). InviteUser hérite du trial_start de l'admin.
-          - Dependency require_active_access() → 402 si locked. Appliqué à : projects, measurements, exports, voice, stats.
-          - require_roles applique aussi le check paywall.
-          - /api/auth/me reste accessible même locked (200) pour que le frontend voie l'état.
-          - Seed : compte expired@demo.fr (trial_offset=100j) pour tester paywall sans attendre 90 jours.
+          24 tests pytest figent le comportement actuel : h=2700/recul=3500 → 15 marches, h=180, giron 240-280,
+          Blondel valide, limon 4200-4900, contrats API présents. PASS local.
         -working: true
         -agent: "testing"
         -comment: |
-          Tous les comportements paywall vérifiés :
-          - Login expired@demo.fr → 200 avec is_locked=true, trial_days_remaining=0, is_trial_active=false.
-          - Login admin@demo.fr → 200 avec is_locked=false, trial_days_remaining=90 (exact).
-          - Avec token expired : GET /auth/me → 200, PUT /auth/me {full_name} → 200 (édition profil OK).
-          - Avec token expired : GET /projects → 402, POST /projects → 402, GET /stats → 402, POST /projects/<any>/measurement/preview → 402 (le paywall fire avant le 404).
-          - Avec token admin actif : toutes ces routes → 200 (jamais 402). Preview sur projet inexistant → 200 car la route preview n'accède pas à la DB.
-
-frontend:
-  - task: "Settings — section LOGO ENTREPRISE (Admin only)"
-    implemented: true
-    working: "NA"
-    file: "/app/frontend/app/settings.tsx"
-    stuck_count: 0
-    priority: "medium"
-    needs_retesting: false
-    status_history:
-        -working: "NA"
-        -agent: "main"
-        -comment: "Pas dans le scope test (frontend testé seulement sur demande user)."
+          Non-régression API confirmée via endpoints publics :
+          - Login admin/solo/technicien → 200, is_locked=false, trial_days_remaining=90.
+          - Login expired@demo.fr → 200, is_locked=true ; GET /projects → 402 (paywall actif).
+          - CRUD projects admin (POST/GET/PUT/LIST) → OK.
+          - POST /measurement/preview avec scenario standard h=2700/recul=3500 → n_steps=15, h=180.0, valid_blondel=true.
+          - POST /measurement sans element_title → default "Escalier" appliqué (200).
+          - GET /export/dxf → 200, payload commence par "0\nSECTION\n2\nHEADER\n...".
+          - GET /api/stats (admin) → 200.
+          - PUT /api/auth/me {company_logo_base64} → 200.
+          - Photos POST/GET/DELETE → 200, limite de 10 photos appliquée (11e → 400).
 
 metadata:
   created_by: "main_agent"
-  version: "1.6"
-  test_sequence: 6
+  version: "1.7"
+  test_sequence: 7
   run_ui: false
 
 test_plan:
@@ -111,41 +74,32 @@ test_plan:
 agent_communication:
     -agent: "main"
     -message: |
-      Trois grosses features à valider backend uniquement (l'utilisateur testera le frontend lui-même sur Expo Go).
-
-      Comptes seedés (tous mot de passe Demo1234!) :
-      - admin@demo.fr (Admin)
-      - marc@mesureescalier.com (Admin Solo)
-      - sophie@mesureescaliee.com (Technicien)
-      - expired@demo.fr (Admin Solo, trial expiré il y a 10 jours)
-
-      Tests obligatoires : voir test_result.md backend (paywall, logo, photos) + régression.
+      Phase 1 polish. Très petit changement backend : nouveau champ optionnel `element_title` sur MeasurementInput.
+      
+      Tests à valider :
+      1. POST /api/projects/{pid}/measurement avec body incluant element_title="Escalier Cave" → 200, project a bien le champ
+      2. POST /api/projects/{pid}/measurement/preview SANS element_title → 200 (champ optionnel, ne casse pas le moteur)
+      3. POST /api/projects/{pid}/measurement/validate avec element_title → 200
+      4. GET /api/projects/{pid}/export/pdf après mesure avec element_title → PDF binaire valide (start %PDF-), le contenu mentionne le titre
+      5. NON-RÉGRESSION : tous les endpoints critiques répondent comme avant
+         - Login 3 comptes actifs OK
+         - CRUD projects OK
+         - measurement preview/validate OK
+         - export PDF/DXF OK
+         - /api/stats OK
+         - paywall toujours actif (expired@demo.fr → 402 sur /projects)
+      
+      Utiliser admin@demo.fr / Demo1234! (90j BETA).
     -agent: "testing"
     -message: |
-      Itération 4 — Backend testing complet : 37/37 PASS, 0 FAIL.
-
-      A. PAYWALL (11/11) :
-        - expired@demo.fr : login OK avec is_locked=true, days=0, is_trial_active=false.
-        - admin@demo.fr : login OK avec is_locked=false, days=90.
-        - Token expired : GET/PUT /auth/me → 200. GET /projects, POST /projects, GET /stats, POST /projects/<any>/measurement/preview → 402.
-        - Token admin actif : toutes ces routes → 200 (jamais 402).
-
-      B. LOGO (8/8) :
-        - PUT /auth/me { company_logo_base64 dataURI } → 200, GET le retourne.
-        - Création projet + mesure (sauvée via Sophie technicienne car admin@demo.fr n'a pas solo_mode → l'API exige technician_powers pour POST /measurement, contournement par assign + tech token). 
-        - GET /export/pdf → 200, binaire débutant par %PDF- (5691 bytes).
-        - PUT /auth/me { company_logo_base64: "" } → 200, GET confirme vide.
-
-      C. PHOTOS (9/9) :
-        - CRUD complet avec marc@ (solo) sur son propre projet.
-        - Limite 10 strictement appliquée (11ème → 400 "Limite atteinte (10 photos max par chantier)").
-        - GET /projects (liste) exclut bien le champ photos ; GET /projects/{pid} (détail) le contient.
-        - Sécurité : Sophie (non assignée) POST /photos sur projet de marc → 404 (project_visible_to filtre).
-
-      D. NON-RÉGRESSION (10/10) :
-        - Login admin/solo/tech OK.
-        - CRUD project + measurement preview/save/validate OK (avec solo).
-        - Export PDF → %PDF-, Export DXF → contient "SECTION".
-        - GET /stats avec admin actif → 200 avec total_projects.
-
-      Aucun bug, aucune régression. Backend prêt pour validation utilisateur du frontend sur Expo Go.
+      RÉSULTAT : 26/26 vérifications PASS (le seul "échec" initial était un faux négatif côté test — recherche
+      raw-bytes du titre dans le PDF compressé. La revérification via pdfminer.six confirme que "Élément : Escalier
+      de cave" est bien rendu dans le PDF sous le titre client).
+      
+      Aucune régression détectée :
+      - 3 comptes actifs + expired : statuts conformes (is_locked + paywall 402).
+      - CRUD projets, preview/validate measurement, export PDF + DXF, stats, logo upload, photos (CRUD + limite 10) : OK.
+      - Le default "Escalier" s'applique bien quand element_title est omis lors du save.
+      - Calcul standard h=2700/recul=3500 → n_steps=15, h=180, valid_blondel=true (inchangé).
+      
+      Aucune action requise. Prêt pour summarise & finish.
