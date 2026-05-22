@@ -1,0 +1,205 @@
+{
+  "app_name": "MesureEscalier",
+  "tech_stack": "React Native Expo (.js files)",
+  "theme_archetype": "Performance Pro (Dark Theme) - Construction Field Tool",
+  "design_philosophy": "A high-visibility, technical command center for field measurements. Clone the exact visual identity from provided MesureChâssis references, replacing all orange accents (#FF6B00 / #FF8C42) with Vert Pomme (#8CC63F).",
+  "colors": {
+    "accent_primary": "#8CC63F",
+    "background_dark": "#1A1E2A",
+    "background_light": "#F7F8FC",
+    "card_dark": "#232838",
+    "card_light": "#FFFFFF",
+    "gray1": "#F5F5F7",
+    "gray2": "#E0E0E6",
+    "gray3": "#9098A8",
+    "border_dark": "#2D3446",
+    "text_light": "#FFFFFF",
+    "text_dark": "#111827",
+    "text_muted": "#9098A8",
+    "danger": "#EF4444",
+    "beta_banner_bg": "rgba(140, 198, 63, 0.15)"
+  },
+  "typography": {
+    "font_family": "Inter, System Bold for headings",
+    "h1": {
+      "size": 24,
+      "weight": "bold",
+      "textTransform": "uppercase",
+      "color": "colors.text_light"
+    },
+    "h2": {
+      "size": 20,
+      "weight": "bold",
+      "textTransform": "uppercase",
+      "color": "colors.text_light"
+    },
+    "h3": {
+      "size": 18,
+      "weight": "bold",
+      "color": "colors.text_light"
+    },
+    "body": {
+      "size": 16,
+      "weight": "normal",
+      "color": "colors.text_light"
+    },
+    "small": {
+      "size": 14,
+      "weight": "normal",
+      "color": "colors.text_muted"
+    },
+    "button_label": {
+      "size": 16,
+      "weight": "bold",
+      "textTransform": "uppercase"
+    }
+  },
+  "spacing": {
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "xxl": 32
+  },
+  "components": {
+    "card": {
+      "backgroundColor": "colors.card_dark",
+      "borderRadius": 12,
+      "padding": 16,
+      "shadowColor": "#000",
+      "shadowOffset": { "width": 0, "height": 2 },
+      "shadowOpacity": 0.05,
+      "shadowRadius": 4,
+      "borderWidth": 1,
+      "borderColor": "colors.border_dark"
+    },
+    "input": {
+      "backgroundColor": "colors.background_dark",
+      "borderWidth": 1,
+      "borderColor": "colors.gray2",
+      "borderRadius": 8,
+      "paddingHorizontal": 12,
+      "paddingVertical": 10,
+      "color": "colors.text_light"
+    },
+    "button_primary": {
+      "backgroundColor": "colors.accent_primary",
+      "borderRadius": 10,
+      "paddingVertical": 14,
+      "paddingHorizontal": 24,
+      "alignItems": "center",
+      "textColor": "colors.background_dark"
+    },
+    "button_secondary": {
+      "backgroundColor": "transparent",
+      "borderWidth": 1,
+      "borderColor": "colors.gray2",
+      "borderRadius": 10,
+      "paddingVertical": 14,
+      "paddingHorizontal": 24,
+      "alignItems": "center",
+      "textColor": "colors.text_light"
+    },
+    "filter_pill": {
+      "borderRadius": 20,
+      "paddingHorizontal": 16,
+      "paddingVertical": 8,
+      "active": {
+        "backgroundColor": "colors.accent_primary",
+        "textColor": "colors.background_dark"
+      },
+      "inactive": {
+        "backgroundColor": "transparent",
+        "borderWidth": 1,
+        "borderColor": "colors.border_dark",
+        "textColor": "colors.gray3"
+      }
+    },
+    "stepper": {
+      "circleSize": 32,
+      "active": {
+        "backgroundColor": "colors.accent_primary",
+        "textColor": "colors.background_dark"
+      },
+      "inactive": {
+        "backgroundColor": "colors.gray3",
+        "textColor": "colors.text_light"
+      }
+    },
+    "floating_cta": {
+      "position": "absolute",
+      "bottom": 24,
+      "right": 24,
+      "backgroundColor": "colors.accent_primary",
+      "borderRadius": 30,
+      "paddingVertical": 16,
+      "paddingHorizontal": 24,
+      "shadowColor": "colors.accent_primary",
+      "shadowOpacity": 0.3,
+      "shadowRadius": 8
+    },
+    "icons": {
+      "library": "@expo/vector-icons (Ionicons / MaterialCommunityIcons)",
+      "defaultColor": "colors.gray3",
+      "activeColor": "colors.accent_primary"
+    }
+  },
+  "testing_attributes": {
+    "rule": "All interactive and key informational elements MUST include a 'testID' (React Native) attribute.",
+    "convention": "kebab-case, role-based. e.g. testID='login-submit-button'"
+  },
+  "screens": {
+    "login": {
+      "layout": "Tabs for Connexion / Inscription. Arrow-up logo centered. Form inputs below.",
+      "testIDs": ["login-tab-connexion", "login-tab-inscription", "login-input-email", "login-submit-button"]
+    },
+    "dashboard": {
+      "header": "Bonjour [Name], company name colored in accent_primary. Icons: équipe, stats, megaphone, settings, logout.",
+      "banner": "BETA banner card with beta_banner_bg, tinted text.",
+      "filters": "Search bar + Scrollable filter pills (Tous, À Mesurer, À Vérifier, En Fabrication).",
+      "list": "Projects list mapping to cards. Empty state if 0 projects.",
+      "cta": "Floating CTA '+ NOUVEAU CHANTIER' fixed bottom right.",
+      "testIDs": ["dashboard-search-input", "filter-pill-tous", "project-card-{id}", "new-project-fab"]
+    },
+    "new_project_modal": {
+      "layout": "Form container. Fields: Nom, Prénom, Adresse, Code Postal, Ville, Date du rendez-vous, Notes.",
+      "features": "'Dicter' (microphone) icon button inside Notes field.",
+      "testIDs": ["modal-input-nom", "modal-btn-dicter", "modal-submit-project"]
+    },
+    "measurement_flow": {
+      "layout": "Multi-step form with 1-2-3 circular stepper at top.",
+      "step1": "Material selection cards (Acier, Bois, Béton) with corresponding icons.",
+      "step2": "Numeric inputs (Hauteur, Réserves, Épaisseur dalle, Trémie L/l, Reculement). Toggles for 'Sols finis à zéro?'.",
+      "actions": "'Signaler un problème' button with red (colors.danger) outline.",
+      "testIDs": ["stepper-step-1", "material-card-acier", "input-hauteur", "toggle-sols-finis", "btn-signaler-probleme"]
+    },
+    "result_export": {
+      "layout": "Result card displaying dynamic 2D SVG stair elevation + Blondel's Law calculations.",
+      "actions": "PDF Export Button, DXF Export Button, Native Share Icon Button.",
+      "testIDs": ["svg-stair-sketch", "btn-export-pdf", "btn-export-dxf", "btn-share"]
+    }
+  },
+  "svg_stair_sketch_spec": {
+    "description": "A dynamic 2D React Native SVG component drawing a stair elevation based on inputs.",
+    "colors": {
+      "stroke": "colors.accent_primary",
+      "fill": "transparent",
+      "background": "colors.card_dark",
+      "text": "colors.text_light"
+    },
+    "elements": [
+      "Stair steps (marches/contremarches) outlined in accent color.",
+      "Dashed lines for slabs (dalles) and trémie.",
+      "Dimension lines with text indicating height and run."
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Use standard React Native components (View, Text, TouchableOpacity, TextInput) and StyleSheet or NativeWind for styling. (.js files, no .tsx)",
+    "Strictly adhere to the dark theme #1A1E2A as the primary background.",
+    "Ensure every button, input, tab, and card has a proper testID attribute for Expo testing.",
+    "Do NOT use any orange color codes (#FF6B00/#FF8C42). Replace all highlight states, active icons, and primary buttons with Vert Pomme #8CC63F.",
+    "For the SVG sketch, use react-native-svg to render the 2D elevation.",
+    "Remember that the mobile screen layouts must directly clone the MesureChâssis UX flow provided in the screenshots."
+  ]
+}
