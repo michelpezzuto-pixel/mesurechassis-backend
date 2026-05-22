@@ -172,6 +172,28 @@ backend:
           - element_title legacy : POST /measurement persiste, GET /projects/{pid} le ressort dans measurement.element_title ✓
           - Paywall actif partout (expired → 402 sur /projects, /stairs, etc.)
 
+frontend:
+  - task: "V2 Stair Editor — Toggle Profil/Plan multi-tronçons"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/projects/[id]/stairs/[sid].tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        -working: "NA"
+        -agent: "main"
+        -comment: |
+          Ajout d'un toggle pill PROFIL ↔ PLAN au-dessus de la liste des niveaux (sous KPI/warnings).
+          - Profil : composant existant NiveauSketch (vue de côté, polyligne montée + paliers).
+          - Plan (nouveau NiveauPlanSketch) : vue de dessus, walk des tronçons avec changement de
+            direction aux quart-tournants (quart_bas = +90° CW, quart_haut = +90° CCW),
+            scaling auto sur bounding box, rectangles colorés (vert marches / bleu palier / orange quart),
+            step lines (nez de marche), point DÉPART, boussole.
+          - Validation visuelle via screenshot tool : toggle fonctionnel sur projet Caron Léa,
+            les deux vues s'affichent correctement, état préservé entre re-renders.
+            Validation manuelle utilisateur recommandée (notamment sur escaliers multi-tronçons mixtes).
+
 metadata:
   created_by: "main_agent"
   version: "2.0"
@@ -179,8 +201,7 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "Export PDF v2 — fallback synthétique depuis stairs[]"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"

@@ -35,6 +35,7 @@ export default function StairEditor() {
   const [compute, setCompute] = useState<StairCompute | null>(null);
   const [loading, setLoading] = useState(true);
   const [computing, setComputing] = useState(false);
+  const [viewMode, setViewMode] = useState<'profile' | 'plan'>('profile');
 
   const refresh = useCallback(async () => {
     if (!id || !sid) return;
@@ -184,6 +185,40 @@ export default function StairEditor() {
             </View>
           )}
 
+          {/* View mode toggle (Profile / Plan) */}
+          {stair.niveaux.length > 0 && (
+            <View style={styles.viewToggle} testID="view-mode-toggle">
+              <TouchableOpacity
+                style={[styles.viewToggleBtn, viewMode === 'profile' && styles.viewToggleBtnActive]}
+                onPress={() => setViewMode('profile')}
+                testID="btn-view-profile"
+              >
+                <MaterialCommunityIcons
+                  name="stairs"
+                  size={16}
+                  color={viewMode === 'profile' ? C.DARK : C.GRAY3}
+                />
+                <Text style={[styles.viewToggleTxt, viewMode === 'profile' && styles.viewToggleTxtActive]}>
+                  PROFIL
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.viewToggleBtn, viewMode === 'plan' && styles.viewToggleBtnActive]}
+                onPress={() => setViewMode('plan')}
+                testID="btn-view-plan"
+              >
+                <MaterialCommunityIcons
+                  name="floor-plan"
+                  size={16}
+                  color={viewMode === 'plan' ? C.DARK : C.GRAY3}
+                />
+                <Text style={[styles.viewToggleTxt, viewMode === 'plan' && styles.viewToggleTxtActive]}>
+                  PLAN
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
           {/* Niveaux */}
           {stair.niveaux.length === 0 ? (
             <View style={styles.empty}>
@@ -200,6 +235,7 @@ export default function StairEditor() {
                   niveau={n}
                   index={idx}
                   calc={calc}
+                  viewMode={viewMode}
                   onPatchLocal={(patch) => updateNiveauLocal(n.id, patch)}
                   onCommit={(patch) => commitNiveau(n.id, patch)}
                   onRemove={() => removeNiveau(n)}
@@ -237,12 +273,13 @@ export default function StairEditor() {
 // ───────────────────────── NiveauCard ─────────────────────────
 
 function NiveauCard({
-  niveau, index, calc, onPatchLocal, onCommit, onRemove,
+  niveau, index, calc, viewMode, onPatchLocal, onCommit, onRemove,
   onAddTroncon, onPatchTronconLocal, onCommitTroncon, onRemoveTroncon,
 }: {
   niveau: ApiNiveau;
   index: number;
   calc: any;
+  viewMode: 'profile' | 'plan';
   onPatchLocal: (patch: Partial<ApiNiveau>) => void;
   onCommit: (patch: Partial<ApiNiveau>) => void;
   onRemove: () => void;
@@ -328,8 +365,12 @@ function NiveauCard({
             </View>
           )}
 
-          {/* Croquis pédagogique du niveau */}
-          {niveau.troncons.length > 0 && calc && <NiveauSketch niveau={niveau} calc={calc} />}
+          {/* Croquis pédagogique du niveau (Profil ou Plan selon viewMode) */}
+          {niveau.troncons.length > 0 && calc && (
+            viewMode === 'profile'
+              ? <NiveauSketch niveau={niveau} calc={calc} />
+              : <NiveauPlanSketch niveau={niveau} calc={calc} />
+          )}
 
           {/* Tronçons */}
           <Text style={[styles.fieldLabel, { marginTop: SP.lg }]}>TRONÇONS ({niveau.troncons.length})</Text>
@@ -463,6 +504,167 @@ function NiveauSketch({ niveau, calc }: { niveau: ApiNiveau; calc: any }) {
   );
 }
 
+// ───────────────────────── NiveauPlanSketch (vue de dessus, multi-tronçons) ─────────────────────────
+
+function NiveauPlanSketch({ niveau, calc }: { niveau: ApiNiveau; calc: any }) {
+  const W = 320, H = 220;
+  const PAD = 24;
+
+  // Walk tronçons, tracking position & direction. dir 0=right, 1=up, 2=left, 3=down.
+  // quart_bas turns right (clockwise from top-down) and quart_haut turns left.
+  // We compute the path in mm-space first, then scale to fit bounding box.
+  type Cell = {
+    troncon: ApiTroncon;
+    n_marches: number;
+    x: number; y: number;     // origin of segment (axis along direction)
+    dir: number;              // direction along which the segment extends (length)
+    perp: number;             // direction of width (perpendicular)
+    longueur: number;
+    largeur: number;
+  };
+
+  const cells: Cell[] = [];
+  let x = 0, y = 0, dir = 0; // start: facing right
+  const turn = (d: number, k: number) => (d + k + 4) % 4;
+  const dx = [1, 0, -1, 0];
+  const dy = [0, -1, 0, 1];
+
+  niveau.troncons.forEach(t => {
+    const tCalc = calc?.troncons_calc?.find((c: any) => c.troncon_id === t.id);
+    const L = t.longueur_mm || 0;
+    const W_t = t.largeur_mm || 900;
+    const perp = turn(dir, 1); // perpendicular = 90° CCW
+
+    if (t.type === 'quart_bas') {
+      // Quarter-turn going RIGHT (clockwise from above)
+      cells.push({ troncon: t, n_marches: tCalc?.n_marches ?? 0, x, y, dir, perp, longueur: L, largeur: W_t });
+      // Advance to end of segment
+      x += dx[dir] * L;
+      y += dy[dir] * L;
+      dir = turn(dir, -1); // turn right (CW)
+    } else if (t.type === 'quart_haut') {
+      cells.push({ troncon: t, n_marches: tCalc?.n_marches ?? 0, x, y, dir, perp, longueur: L, largeur: W_t });
+      x += dx[dir] * L;
+      y += dy[dir] * L;
+      dir = turn(dir, 1); // turn left (CCW)
+    } else {
+      cells.push({ troncon: t, n_marches: tCalc?.n_marches ?? 0, x, y, dir, perp, longueur: L, largeur: W_t });
+      x += dx[dir] * L;
+      y += dy[dir] * L;
+    }
+  });
+
+  // Compute bounding box (consider both length-extent and perpendicular width)
+  let minX = 0, maxX = 0, minY = 0, maxY = 0;
+  cells.forEach(c => {
+    const ex = c.x + dx[c.dir] * c.longueur;
+    const ey = c.y + dy[c.dir] * c.longueur;
+    // Perpendicular extent (centered)
+    const px1 = c.x + dx[c.perp] * (c.largeur / 2);
+    const py1 = c.y + dy[c.perp] * (c.largeur / 2);
+    const px2 = c.x - dx[c.perp] * (c.largeur / 2);
+    const py2 = c.y - dy[c.perp] * (c.largeur / 2);
+    [c.x, ex, px1, px2].forEach(xx => { minX = Math.min(minX, xx); maxX = Math.max(maxX, xx); });
+    [c.y, ey, py1, py2].forEach(yy => { minY = Math.min(minY, yy); maxY = Math.max(maxY, yy); });
+  });
+  const bboxW = Math.max(maxX - minX, 1);
+  const bboxH = Math.max(maxY - minY, 1);
+  const scale = Math.min((W - PAD * 2) / bboxW, (H - PAD * 2) / bboxH);
+  // Center
+  const ox = PAD + (W - PAD * 2 - bboxW * scale) / 2 - minX * scale;
+  const oy = PAD + (H - PAD * 2 - bboxH * scale) / 2 - minY * scale;
+  const tx = (xx: number) => ox + xx * scale;
+  const ty = (yy: number) => oy + yy * scale;
+
+  return (
+    <View style={{ alignItems: 'center', marginTop: SP.md, marginBottom: SP.sm }}>
+      <Svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
+        <Rect x={0} y={0} width={W} height={H} fill={C.BG_DEEPER} rx={10} />
+        {cells.map((c, i) => {
+          const isPalier = c.troncon.type === 'palier';
+          const isQuart = c.troncon.type === 'quart_bas' || c.troncon.type === 'quart_haut';
+          // Compute 4 corners of the segment rectangle
+          const px = dx[c.perp] * (c.largeur / 2);
+          const py = dy[c.perp] * (c.largeur / 2);
+          const ex = c.x + dx[c.dir] * c.longueur;
+          const ey = c.y + dy[c.dir] * c.longueur;
+          const pts = [
+            `${tx(c.x + px)},${ty(c.y + py)}`,
+            `${tx(ex + px)},${ty(ey + py)}`,
+            `${tx(ex - px)},${ty(ey - py)}`,
+            `${tx(c.x - px)},${ty(c.y - py)}`,
+          ].join(' ');
+          const fillColor = isPalier ? 'rgba(91,168,199,0.15)' : isQuart ? 'rgba(245,158,11,0.12)' : 'rgba(140,198,63,0.10)';
+          const strokeColor = isPalier ? '#5BA8C7' : isQuart ? C.WARN : C.ACCENT;
+
+          // Step lines (nez de marche) — only for marche tronçons
+          const stepLines = [];
+          if (!isPalier && c.n_marches > 1) {
+            const step = c.longueur / c.n_marches;
+            for (let k = 1; k < c.n_marches; k++) {
+              const sx = c.x + dx[c.dir] * step * k;
+              const sy = c.y + dy[c.dir] * step * k;
+              stepLines.push(
+                <Line
+                  key={`step-${i}-${k}`}
+                  x1={tx(sx + px)} y1={ty(sy + py)}
+                  x2={tx(sx - px)} y2={ty(sy - py)}
+                  stroke={strokeColor} strokeWidth={0.8} opacity={0.7}
+                />,
+              );
+            }
+          }
+
+          // Label center
+          const cxr = (c.x + ex) / 2;
+          const cyr = (c.y + ey) / 2;
+          const label = isPalier ? 'PALIER' :
+            c.troncon.type === 'quart_bas' ? '↻ BAS' :
+            c.troncon.type === 'quart_haut' ? '↺ HAUT' :
+            `${c.n_marches} m`;
+
+          return (
+            <G key={c.troncon.id}>
+              <Polygon points={pts} fill={fillColor} stroke={strokeColor} strokeWidth={1.5} />
+              {stepLines}
+              <SvgText
+                x={tx(cxr)} y={ty(cyr) + 3}
+                fontSize={9} fill={strokeColor} textAnchor="middle" fontWeight="bold"
+              >
+                {label}
+              </SvgText>
+            </G>
+          );
+        })}
+
+        {/* Start arrow (montée) */}
+        {cells.length > 0 && (
+          <G>
+            <Circle cx={tx(0)} cy={ty(0)} r={5} fill={C.ACCENT} />
+            <SvgText
+              x={tx(0)} y={ty(0) - 8}
+              fontSize={8} fill={C.ACCENT} textAnchor="middle" fontWeight="bold"
+            >
+              ↑ DÉPART
+            </SvgText>
+          </G>
+        )}
+
+        {/* Compass (top-right) */}
+        <G x={W - 30} y={20}>
+          <Circle cx={0} cy={0} r={11} fill="transparent" stroke={C.GRAY3} strokeWidth={0.8} />
+          <Line x1={0} y1={-8} x2={0} y2={8} stroke={C.GRAY3} strokeWidth={0.6} />
+          <Line x1={-8} y1={0} x2={8} y2={0} stroke={C.GRAY3} strokeWidth={0.6} />
+          <SvgText x={0} y={-13} fontSize={7} fill={C.GRAY3} textAnchor="middle">N</SvgText>
+        </G>
+      </Svg>
+      <Text style={styles.sketchLegend}>
+        Vue en plan — vert: marches · bleu: palier · orange: quart-tournant
+      </Text>
+    </View>
+  );
+}
+
 function KPI({ label, value, unit }: { label: string; value: any; unit?: string }) {
   return (
     <View style={styles.kpi}>
@@ -490,6 +692,13 @@ const styles = StyleSheet.create({
 
   warnBox: { flexDirection: 'row', backgroundColor: 'rgba(245,158,11,0.12)', borderColor: C.WARN, borderWidth: 1, borderLeftWidth: 4, borderRadius: R.md, padding: SP.md, marginBottom: SP.md },
   warnTxt: { ...FONT.small, color: C.WHITE, fontSize: 11, lineHeight: 16, marginBottom: 4 },
+
+  // View mode toggle (Profile / Plan)
+  viewToggle: { flexDirection: 'row', backgroundColor: C.CARD, borderRadius: R.pill, padding: 3, marginBottom: SP.md, borderWidth: 1, borderColor: C.BORDER },
+  viewToggleBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 8, borderRadius: R.pill },
+  viewToggleBtnActive: { backgroundColor: C.ACCENT },
+  viewToggleTxt: { ...FONT.label, color: C.GRAY3, fontSize: 11 },
+  viewToggleTxtActive: { color: C.DARK },
 
   empty: { alignItems: 'center', padding: SP.xl, backgroundColor: C.CARD, borderRadius: R.lg, borderWidth: 1, borderStyle: 'dashed' as any, borderColor: C.BORDER, marginBottom: SP.md },
   emptyTitle: { ...FONT.h3, marginTop: SP.sm, fontSize: 14 },
