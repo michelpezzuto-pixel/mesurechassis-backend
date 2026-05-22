@@ -202,6 +202,15 @@ export default function ProjectDetail() {
             <Text style={[styles.btnTxt, { color: C.WHITE }]}>EXPORTER PDF / DXF</Text>
           </TouchableOpacity>
         )}
+
+        <TouchableOpacity
+          style={[styles.btn, styles.btnSecondary]}
+          onPress={() => router.push(`/projects/${id}/photos`)}
+          testID="btn-goto-photos"
+        >
+          <Ionicons name="camera" size={20} color={C.WHITE} />
+          <Text style={[styles.btnTxt, { color: C.WHITE }]}>PHOTOS DE CHANTIER</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );

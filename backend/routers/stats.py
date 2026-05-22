@@ -4,13 +4,13 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends
 
 from core.db import db
-from core.security import get_current_user, project_visible_to
+from core.security import get_current_user, project_visible_to, require_active_access
 
 router = APIRouter()
 
 
 @router.get("/stats")
-async def stats(user=Depends(get_current_user)):
+async def stats(user=Depends(require_active_access)):
     q = project_visible_to(user)
     total = await db.projects.count_documents(q)
     by_status = {}

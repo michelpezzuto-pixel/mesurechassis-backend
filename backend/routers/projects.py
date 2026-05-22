@@ -1,4 +1,4 @@
-"""Projects CRUD + transmit + assign."""
+"""Projects CRUD + transmit + assign + photos."""
 from __future__ import annotations
 
 import uuid
@@ -8,19 +8,23 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from core.db import db
 from core.security import (
-    get_current_user, now_utc, project_visible_to, require_roles,
+    get_current_user, now_utc, project_visible_to, require_active_access,
+    require_roles,
 )
-from models.schemas import AssignRequest, ProjectCreate, ProjectUpdate
+from models.schemas import (
+    AssignRequest, PhotoCreate, PhotoUpdate, ProjectCreate, ProjectUpdate,
+)
 
 router = APIRouter(prefix="/projects")
 
 
 @router.get("")
-async def list_projects(user=Depends(get_current_user), status_filter: Optional[str] = None):
+async def list_projects(user=Depends(require_active_access), status_filter: Optional[str] = None):
     q = project_visible_to(user)
     if status_filter and status_filter != "tous":
         q["status"] = status_filter
-    return await db.projects.find(q, {"_id": 0}).sort("created_at", -1).to_list(2000)
+    # Exclude photos array from list view (can be heavy base64 payload)
+    return await db.projects.find(q, {"_id": 0, "photos": 0}).sort("created_at", -1).to_list(2000)
 
 
 @router.post("")
@@ -47,7 +51,7 @@ async def create_project(payload: ProjectCreate, user=Depends(require_roles("adm
 
 
 @router.get("/{pid}")
-async def get_project(pid: str, user=Depends(get_current_user)):
+async def get_project(pid: str, user=Depends(require_active_access)):
     q = {"id": pid, **project_visible_to(user)}
     p = await db.projects.find_one(q, {"_id": 0})
     if not p:
@@ -58,7 +62,7 @@ async def get_project(pid: str, user=Depends(get_current_user)):
 
 
 @router.put("/{pid}")
-async def update_project(pid: str, payload: ProjectUpdate, user=Depends(get_current_user)):
+async def update_project(pid: str, payload: ProjectUpdate, user=Depends(require_active_access)):
     p = await db.projects.find_one({"id": pid})
     if not p:
         raise HTTPException(status_code=404, detail="Chantier introuvable")
@@ -71,7 +75,7 @@ async def update_project(pid: str, payload: ProjectUpdate, user=Depends(get_curr
 
 
 @router.delete("/{pid}")
-async def delete_project(pid: str, user=Depends(get_current_user)):
+async def delete_project(pid: str, user=Depends(require_active_access)):
     p = await db.projects.find_one({"id": pid})
     if not p:
         raise HTTPException(status_code=404, detail="Chantier introuvable")
@@ -106,4 +110,80 @@ async def assign_technicien(pid: str, payload: AssignRequest, user=Depends(requi
         {"id": pid},
         {"$set": {"technicien_id": payload.technicien_id, "updated_at": now_utc()}},
     )
+    return {"ok": True}
+
+
+# ---------------------- Photos ----------------------
+PHOTO_MAX_PER_PROJECT = 10
+
+
+async def _ensure_can_edit_photos(pid: str, user) -> dict:
+    p = await db.projects.find_one({"id": pid, **project_visible_to(user)})
+    if not p:
+        raise HTTPException(status_code=404, detail="Chantier introuvable")
+    # Admin (anywhere) + Solo + Technicien assigné peuvent éditer photos
+    is_admin = user["role"] == "admin"
+    is_solo = bool(user.get("solo_mode"))
+    is_assigned_tech = user["role"] == "technicien" and p.get("technicien_id") == user["id"]
+    if not (is_admin or is_solo or is_assigned_tech):
+        raise HTTPException(status_code=403, detail="Accès interdit")
+    return p
+
+
+@router.get("/{pid}/photos")
+async def list_photos(pid: str, user=Depends(require_active_access)):
+    p = await db.projects.find_one({"id": pid, **project_visible_to(user)}, {"_id": 0, "photos": 1})
+    if p is None:
+        raise HTTPException(status_code=404, detail="Chantier introuvable")
+    return p.get("photos", []) or []
+
+
+@router.post("/{pid}/photos")
+async def add_photo(pid: str, payload: PhotoCreate, user=Depends(require_active_access)):
+    p = await _ensure_can_edit_photos(pid, user)
+    photos = p.get("photos", []) or []
+    if len(photos) >= PHOTO_MAX_PER_PROJECT:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Limite atteinte ({PHOTO_MAX_PER_PROJECT} photos max par chantier)",
+        )
+    b64 = (payload.base64 or "").strip()
+    if not b64:
+        raise HTTPException(status_code=400, detail="Image vide")
+    photo = {
+        "id": str(uuid.uuid4()),
+        "base64": b64,
+        "caption": (payload.caption or "")[:200],
+        "created_at": now_utc(),
+    }
+    await db.projects.update_one(
+        {"id": pid},
+        {"$push": {"photos": photo}, "$set": {"updated_at": now_utc()}},
+    )
+    return photo
+
+
+@router.patch("/{pid}/photos/{photo_id}")
+async def update_photo(pid: str, photo_id: str, payload: PhotoUpdate, user=Depends(require_active_access)):
+    await _ensure_can_edit_photos(pid, user)
+    if payload.caption is None:
+        return {"ok": True}
+    res = await db.projects.update_one(
+        {"id": pid, "photos.id": photo_id},
+        {"$set": {"photos.$.caption": payload.caption[:200], "updated_at": now_utc()}},
+    )
+    if res.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Photo introuvable")
+    return {"ok": True}
+
+
+@router.delete("/{pid}/photos/{photo_id}")
+async def delete_photo(pid: str, photo_id: str, user=Depends(require_active_access)):
+    await _ensure_can_edit_photos(pid, user)
+    res = await db.projects.update_one(
+        {"id": pid},
+        {"$pull": {"photos": {"id": photo_id}}, "$set": {"updated_at": now_utc()}},
+    )
+    if res.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Photo introuvable")
     return {"ok": True}

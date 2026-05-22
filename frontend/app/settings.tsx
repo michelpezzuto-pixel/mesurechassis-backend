@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView,
-  KeyboardAvoidingView, Platform, Alert, ActivityIndicator, Switch,
+  KeyboardAvoidingView, Platform, Alert, ActivityIndicator, Switch, Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -9,6 +9,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuth } from '@/src/auth';
 import { Auth } from '@/src/api';
 import { C, SP, R, FONT } from '@/src/theme';
+import { pickLogo } from '@/src/utils/imagePicker';
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -17,11 +18,14 @@ export default function SettingsScreen() {
   const [companyName, setCompanyName] = useState(user?.company_name || '');
   const [soloMode, setSoloMode] = useState(!!user?.solo_mode);
   const [saving, setSaving] = useState(false);
+  const [logoB64, setLogoB64] = useState<string | null | undefined>(user?.company_logo_base64 || null);
+  const [savingLogo, setSavingLogo] = useState(false);
 
   useEffect(() => {
     setFullName(user?.full_name || '');
     setCompanyName(user?.company_name || '');
     setSoloMode(!!user?.solo_mode);
+    setLogoB64(user?.company_logo_base64 || null);
   }, [user]);
 
   const save = async () => {
@@ -47,6 +51,39 @@ export default function SettingsScreen() {
       Alert.alert('Erreur', e?.response?.data?.detail || 'Erreur');
       setSoloMode(!val);
     } finally { setSaving(false); }
+  };
+
+  const onPickLogo = async () => {
+    if (savingLogo) return;
+    try {
+      const img = await pickLogo();
+      if (!img || !img.base64) return;
+      setSavingLogo(true);
+      const dataUri = `data:image/png;base64,${img.base64}`;
+      await Auth.updateProfile({ company_logo_base64: dataUri });
+      await refresh();
+      setLogoB64(dataUri);
+    } catch (e: any) {
+      Alert.alert('Erreur', e?.response?.data?.detail || "Impossible d'enregistrer le logo");
+    } finally { setSavingLogo(false); }
+  };
+
+  const onRemoveLogo = async () => {
+    Alert.alert('Supprimer le logo ?', "Vos PDF ne contiendront plus de logo personnalisé.", [
+      { text: 'Annuler', style: 'cancel' },
+      {
+        text: 'Supprimer', style: 'destructive', onPress: async () => {
+          setSavingLogo(true);
+          try {
+            await Auth.updateProfile({ company_logo_base64: '' });
+            await refresh();
+            setLogoB64(null);
+          } catch (e: any) {
+            Alert.alert('Erreur', e?.response?.data?.detail || 'Erreur');
+          } finally { setSavingLogo(false); }
+        },
+      },
+    ]);
   };
 
   return (
@@ -98,6 +135,50 @@ export default function SettingsScreen() {
           <TouchableOpacity style={styles.saveBtn} onPress={save} disabled={saving} testID="settings-save">
             {saving ? <ActivityIndicator color={C.DARK} /> : <Text style={styles.saveTxt}>ENREGISTRER LE PROFIL</Text>}
           </TouchableOpacity>
+
+          {/* Logo entreprise (Admin only) */}
+          {user?.role === 'admin' && (
+            <>
+              <Text style={styles.section}>LOGO ENTREPRISE</Text>
+              <View style={styles.logoCard}>
+                <View style={styles.logoPreviewWrap}>
+                  {logoB64 ? (
+                    <Image source={{ uri: logoB64.startsWith('data:') ? logoB64 : `data:image/png;base64,${logoB64}` }} style={styles.logoPreview} resizeMode="contain" />
+                  ) : (
+                    <View style={[styles.logoPreview, styles.logoPlaceholder]}>
+                      <MaterialCommunityIcons name="image-plus" size={36} color={C.GRAY3} />
+                    </View>
+                  )}
+                </View>
+                <Text style={styles.logoHint}>Apparaîtra en en-tête de tous vos rapports PDF (max 22×16 mm).</Text>
+                <View style={styles.logoActions}>
+                  <TouchableOpacity
+                    style={[styles.logoBtn, styles.logoBtnPrimary, savingLogo && { opacity: 0.5 }]}
+                    onPress={onPickLogo}
+                    disabled={savingLogo}
+                    testID="settings-logo-pick"
+                  >
+                    {savingLogo ? <ActivityIndicator color={C.DARK} /> : (
+                      <>
+                        <MaterialCommunityIcons name={logoB64 ? 'image-edit' : 'image-plus'} size={18} color={C.DARK} />
+                        <Text style={styles.logoBtnTxt}>{logoB64 ? 'CHANGER' : 'CHOISIR UN LOGO'}</Text>
+                      </>
+                    )}
+                  </TouchableOpacity>
+                  {logoB64 && !savingLogo && (
+                    <TouchableOpacity
+                      style={[styles.logoBtn, styles.logoBtnDanger]}
+                      onPress={onRemoveLogo}
+                      testID="settings-logo-remove"
+                    >
+                      <Ionicons name="trash-outline" size={18} color={C.DANGER} />
+                      <Text style={[styles.logoBtnTxt, { color: C.DANGER }]}>SUPPRIMER</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </View>
+            </>
+          )}
 
           {/* Solo mode (admin only) */}
           {user?.role === 'admin' && (
@@ -164,4 +245,14 @@ const styles = StyleSheet.create({
   soloActiveTxt: { ...FONT.small, color: C.GRAY1, marginLeft: SP.sm, flex: 1 },
   aboutCard: { backgroundColor: C.CARD, borderRadius: R.lg, padding: SP.lg, borderWidth: 1, borderColor: C.BORDER },
   aboutLine: { ...FONT.small, marginBottom: 4 },
+  logoCard: { backgroundColor: C.CARD, borderRadius: R.lg, padding: SP.lg, borderWidth: 1, borderColor: C.BORDER, alignItems: 'center' },
+  logoPreviewWrap: { width: 140, height: 140, alignItems: 'center', justifyContent: 'center' },
+  logoPreview: { width: 140, height: 140, borderRadius: R.md, backgroundColor: C.WHITE },
+  logoPlaceholder: { alignItems: 'center', justifyContent: 'center', backgroundColor: C.BG_DEEPER, borderWidth: 1, borderColor: C.BORDER, borderStyle: 'dashed' as any },
+  logoHint: { ...FONT.small, color: C.GRAY2, textAlign: 'center', marginTop: SP.md, paddingHorizontal: SP.md },
+  logoActions: { flexDirection: 'row', gap: SP.sm, marginTop: SP.lg, alignSelf: 'stretch' },
+  logoBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SP.sm, paddingVertical: 12, borderRadius: R.md, borderWidth: 1 },
+  logoBtnPrimary: { backgroundColor: C.ACCENT, borderColor: C.ACCENT },
+  logoBtnDanger: { backgroundColor: 'transparent', borderColor: C.DANGER },
+  logoBtnTxt: { ...FONT.button, color: C.DARK, fontSize: 12 },
 });

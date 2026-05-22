@@ -32,6 +32,20 @@ export interface User {
   full_name: string;
   role: Role;
   company_name?: string;
+  solo_mode?: boolean;
+  company_logo_base64?: string | null;
+  // Trial / subscription state
+  trial_start_date?: string;
+  trial_days_remaining?: number;
+  is_trial_active?: boolean;
+  subscription_active?: boolean;
+  is_locked?: boolean;
+}
+export interface ProjectPhoto {
+  id: string;
+  base64: string;
+  caption: string;
+  created_at: string;
 }
 export interface Project {
   id: string;
@@ -50,6 +64,7 @@ export interface Project {
   locked: boolean;
   created_at: string;
   updated_at: string;
+  photos?: ProjectPhoto[];
 }
 
 export const Auth = {
@@ -74,10 +89,25 @@ export const Auth = {
   async logout() {
     await setToken(null);
   },
-  async updateProfile(payload: { full_name?: string; company_name?: string; solo_mode?: boolean }) {
+  async updateProfile(payload: {
+    full_name?: string;
+    company_name?: string;
+    solo_mode?: boolean;
+    company_logo_base64?: string | null;
+  }) {
     const { data } = await api.put('/auth/me', payload);
     return data as User;
   },
+};
+
+export const Photos = {
+  list: async (pid: string) => (await api.get(`/projects/${pid}/photos`)).data as ProjectPhoto[],
+  add: async (pid: string, base64: string, caption?: string) =>
+    (await api.post(`/projects/${pid}/photos`, { base64, caption: caption || '' })).data as ProjectPhoto,
+  updateCaption: async (pid: string, photoId: string, caption: string) =>
+    (await api.patch(`/projects/${pid}/photos/${photoId}`, { caption })).data,
+  remove: async (pid: string, photoId: string) =>
+    (await api.delete(`/projects/${pid}/photos/${photoId}`)).data,
 };
 
 export const Projects = {

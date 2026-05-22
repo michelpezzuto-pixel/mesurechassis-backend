@@ -1,17 +1,90 @@
 """PDF (ReportLab) + DXF (ASCII) builders for stair reports."""
 from __future__ import annotations
 
+import base64
 import io
-import math
+import logging
 
 from reportlab.graphics.shapes import Drawing, Line, Polygon, Rect, String
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+from reportlab.lib.utils import ImageReader
+from reportlab.platypus import (
+    Image, KeepTogether, PageBreak, Paragraph, SimpleDocTemplate, Spacer,
+    Table, TableStyle,
+)
 
 from core.security import now_utc
+
+log = logging.getLogger("mesure_escalier.exports")
+
+# Page geometry
+PAGE_W, PAGE_H = A4
+LEFT_M = RIGHT_M = 20 * mm
+TOP_M = 28 * mm   # leave headroom for logo header
+BOTTOM_M = 18 * mm
+
+
+def _decode_base64_image(b64: str) -> ImageReader | None:
+    """Decode a base64 image (with or without data URI prefix) into an ImageReader."""
+    if not b64:
+        return None
+    try:
+        raw = b64.strip()
+        if "," in raw and raw.lower().startswith("data:"):
+            raw = raw.split(",", 1)[1]
+        return ImageReader(io.BytesIO(base64.b64decode(raw)))
+    except Exception as exc:  # noqa: BLE001
+        log.warning("Bad base64 image (%s): %s", type(exc).__name__, exc)
+        return None
+
+
+def _make_header_footer(company_name: str, logo_reader: ImageReader | None):
+    """Return an `on_page` callback drawing logo + company name as header,
+    and pagination as footer."""
+
+    def _draw(canvas, doc):  # noqa: ANN001
+        canvas.saveState()
+        # ---- Header ----
+        header_y = PAGE_H - 18 * mm
+        if logo_reader is not None:
+            try:
+                # Logo box: 22mm wide max, 16mm tall, top-left
+                canvas.drawImage(
+                    logo_reader,
+                    LEFT_M, header_y - 4 * mm,
+                    width=22 * mm, height=16 * mm,
+                    preserveAspectRatio=True, anchor="nw", mask="auto",
+                )
+            except Exception as exc:  # noqa: BLE001
+                log.warning("Header logo draw failed: %s", exc)
+
+        # Company name (top-right)
+        canvas.setFillColor(colors.HexColor("#1A1E2A"))
+        canvas.setFont("Helvetica-Bold", 11)
+        canvas.drawRightString(PAGE_W - RIGHT_M, header_y + 6, company_name or "MesureEscalier")
+        canvas.setFont("Helvetica", 8)
+        canvas.setFillColor(colors.HexColor("#8CC63F"))
+        canvas.drawRightString(PAGE_W - RIGHT_M, header_y - 5, "Rapport de chantier")
+
+        # Accent rule
+        canvas.setStrokeColor(colors.HexColor("#8CC63F"))
+        canvas.setLineWidth(1.4)
+        canvas.line(LEFT_M, header_y - 10, PAGE_W - RIGHT_M, header_y - 10)
+
+        # ---- Footer ----
+        canvas.setFillColor(colors.HexColor("#9098A8"))
+        canvas.setFont("Helvetica", 8)
+        canvas.drawString(
+            LEFT_M, BOTTOM_M - 8,
+            f"Généré le {now_utc().strftime('%d/%m/%Y %H:%M UTC')} — MesureEscalier",
+        )
+        canvas.drawRightString(PAGE_W - RIGHT_M, BOTTOM_M - 8, f"Page {doc.page}")
+        canvas.restoreState()
+
+    return _draw
 
 
 def _stair_drawing(r: dict) -> Drawing:
@@ -52,16 +125,55 @@ def _stair_drawing(r: dict) -> Drawing:
     return d
 
 
-def build_pdf_bytes(project: dict, measurement: dict) -> bytes:
+def _photo_flowable(photo: dict, body_style: ParagraphStyle, caption_style: ParagraphStyle):
+    """Build a flowable: photo (max ~80mm tall) + caption + spacer. Returns list or None."""
+    img_reader = _decode_base64_image(photo.get("base64", ""))
+    if img_reader is None:
+        return None
+    # Force a max bounding box: full width (170mm) × 80mm tall, keep aspect ratio
+    try:
+        img_w, img_h = img_reader.getSize()
+    except Exception:  # noqa: BLE001
+        img_w, img_h = 1280, 960
+    max_w = 170 * mm
+    max_h = 80 * mm
+    scale = min(max_w / img_w, max_h / img_h, 1.0)
+    draw_w = img_w * scale
+    draw_h = img_h * scale
+    # Re-wrap via Image() — needs a path-like, but accepts ImageReader via a small buffer trick:
+    # Easiest: re-decode bytes and feed BytesIO
+    raw = photo.get("base64", "")
+    if "," in raw and raw.lower().startswith("data:"):
+        raw = raw.split(",", 1)[1]
+    img_bytes = base64.b64decode(raw)
+    img = Image(io.BytesIO(img_bytes), width=draw_w, height=draw_h)
+    caption = (photo.get("caption") or "").strip() or "—"
+    parts = [
+        img,
+        Spacer(1, 4),
+        Paragraph(f"<i>{caption}</i>", caption_style),
+        Spacer(1, 12),
+    ]
+    return KeepTogether(parts)
+
+
+def build_pdf_bytes(project: dict, measurement: dict, company_logo_base64: str | None = None) -> bytes:
     buf = io.BytesIO()
-    doc = SimpleDocTemplate(buf, pagesize=A4, leftMargin=20 * mm, rightMargin=20 * mm,
-                            topMargin=18 * mm, bottomMargin=18 * mm)
+    doc = SimpleDocTemplate(
+        buf, pagesize=A4,
+        leftMargin=LEFT_M, rightMargin=RIGHT_M,
+        topMargin=TOP_M, bottomMargin=BOTTOM_M,
+    )
     styles = getSampleStyleSheet()
     title_style = ParagraphStyle("title", parent=styles["Title"], fontSize=20,
                                  textColor=colors.HexColor("#1A1E2A"), spaceAfter=8)
     h_style = ParagraphStyle("h2", parent=styles["Heading2"], fontSize=13,
                              textColor=colors.HexColor("#8CC63F"), spaceBefore=10, spaceAfter=4)
     body = styles["BodyText"]
+    caption_style = ParagraphStyle(
+        "caption", parent=body, fontSize=9, textColor=colors.HexColor("#1A1E2A"),
+        alignment=1,  # center
+    )
     table_style = TableStyle([
         ("BACKGROUND", (0, 0), (0, -1), colors.HexColor("#F5F5F7")),
         ("TEXTCOLOR", (0, 0), (-1, -1), colors.HexColor("#1A1E2A")),
@@ -73,9 +185,7 @@ def build_pdf_bytes(project: dict, measurement: dict) -> bytes:
     ])
 
     story = []
-    story.append(Paragraph("MesureEscalier — Rapport de chantier", title_style))
-    story.append(Paragraph(f"Société: {project.get('company_name', '-')}", body))
-    story.append(Spacer(1, 8))
+    story.append(Paragraph(f"Chantier — {project.get('client_nom', '')} {project.get('client_prenom', '')}".strip(), title_style))
 
     story.append(Paragraph("Client", h_style))
     client_rows = [
@@ -139,12 +249,22 @@ def build_pdf_bytes(project: dict, measurement: dict) -> bytes:
             for n in r["notes"]:
                 story.append(Paragraph(f"• {n}", body))
 
-    story.append(Spacer(1, 16))
-    story.append(Paragraph(
-        f"Généré le {now_utc().strftime('%d/%m/%Y %H:%M UTC')} — MesureEscalier",
-        ParagraphStyle("foot", parent=body, fontSize=8, textColor=colors.HexColor("#9098A8")),
-    ))
-    doc.build(story)
+    # ---- Photos de chantier ----
+    photos = project.get("photos") or []
+    if photos:
+        story.append(PageBreak())
+        story.append(Paragraph("Photos de chantier", h_style))
+        story.append(Spacer(1, 8))
+        for ph in photos:
+            flow = _photo_flowable(ph, body, caption_style)
+            if flow is not None:
+                story.append(flow)
+
+    # Build with header/footer
+    logo_reader = _decode_base64_image(company_logo_base64)
+    company_name = project.get("company_name") or "MesureEscalier"
+    page_cb = _make_header_footer(company_name, logo_reader)
+    doc.build(story, onFirstPage=page_cb, onLaterPages=page_cb)
     return buf.getvalue()
 
 

@@ -8,8 +8,8 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from core.db import db
 from core.security import (
-    get_current_user, hash_password, make_token, now_utc,
-    require_roles, verify_password,
+    compute_access_state, get_current_user, hash_password, make_token,
+    now_utc, require_roles, verify_password,
 )
 from models.schemas import (
     AuthResponse, InviteUserRequest, LoginRequest, ProfileUpdate,
@@ -25,6 +25,7 @@ async def register(req: RegisterRequest):
     if existing:
         raise HTTPException(status_code=409, detail="Email déjà utilisé")
     user_id = str(uuid.uuid4())
+    now = now_utc()
     user_doc = {
         "id": user_id,
         "email": req.email.lower(),
@@ -33,12 +34,16 @@ async def register(req: RegisterRequest):
         "role": "admin",
         "solo_mode": False,
         "password_hash": hash_password(req.password),
-        "created_at": now_utc(),
+        "created_at": now,
+        # Subscription / trial
+        "trial_start_date": now,
+        "subscription_active": False,
     }
     await db.users.insert_one(user_doc)
     token = make_token(user_id, "admin")
     user_doc.pop("password_hash")
     user_doc.pop("_id", None)
+    user_doc.update(compute_access_state(user_doc))
     return AuthResponse(token=token, user=UserPublic(**user_doc))
 
 
@@ -51,6 +56,7 @@ async def login(req: LoginRequest):
     user.pop("password_hash", None)
     user.pop("_id", None)
     user.setdefault("solo_mode", False)
+    user.update(compute_access_state(user))
     return AuthResponse(token=token, user=UserPublic(**user))
 
 
@@ -68,6 +74,7 @@ async def update_me(payload: ProfileUpdate, user=Depends(get_current_user)):
         await db.users.update_one({"id": user["id"]}, {"$set": update})
     fresh = await db.users.find_one({"id": user["id"]}, {"_id": 0, "password_hash": 0})
     fresh.setdefault("solo_mode", False)
+    fresh.update(compute_access_state(fresh))
     return UserPublic(**fresh)
 
 
@@ -76,6 +83,7 @@ async def list_users(user=Depends(require_roles("admin"))):
     rows = await db.users.find({}, {"_id": 0, "password_hash": 0}).to_list(1000)
     for r in rows:
         r.setdefault("solo_mode", False)
+        r.update(compute_access_state(r))
     return [UserPublic(**r) for r in rows]
 
 
@@ -84,6 +92,8 @@ async def invite_user(req: InviteUserRequest, user=Depends(require_roles("admin"
     if await db.users.find_one({"email": req.email.lower()}):
         raise HTTPException(status_code=409, detail="Email déjà utilisé")
     uid = str(uuid.uuid4())
+    # Inviting tech inherits the trial_start_date of the company creator (admin)
+    inherited_trial = user.get("trial_start_date") or now_utc()
     doc = {
         "id": uid,
         "email": req.email.lower(),
@@ -93,10 +103,13 @@ async def invite_user(req: InviteUserRequest, user=Depends(require_roles("admin"
         "solo_mode": False,
         "password_hash": hash_password(req.password),
         "created_at": now_utc(),
+        "trial_start_date": inherited_trial,
+        "subscription_active": bool(user.get("subscription_active")),
     }
     await db.users.insert_one(doc)
     doc.pop("password_hash")
     doc.pop("_id", None)
+    doc.update(compute_access_state(doc))
     return UserPublic(**doc)
 
 

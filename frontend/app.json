@@ -8,10 +8,19 @@
     "scheme": "mesureescalier",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
+    "runtimeVersion": { "policy": "appVersion" },
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
+    },
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSMicrophoneUsageDescription": "Dicter les remarques terrain à voix haute"
+        "NSMicrophoneUsageDescription": "Dicter les remarques terrain à voix haute",
+        "NSCameraUsageDescription": "Photographier vos chantiers d'escaliers",
+        "NSPhotoLibraryUsageDescription": "Joindre vos photos de chantier aux rapports",
+        "NSPhotoLibraryAddUsageDescription": "Enregistrer les rapports et photos générés"
       }
     },
     "android": {
@@ -20,7 +29,7 @@
         "backgroundColor": "#1A1E2A"
       },
       "edgeToEdgeEnabled": true,
-      "permissions": ["RECORD_AUDIO"]
+      "permissions": ["RECORD_AUDIO", "CAMERA", "READ_MEDIA_IMAGES"]
     },
     "web": {
       "bundler": "metro",

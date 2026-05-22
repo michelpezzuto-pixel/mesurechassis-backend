@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from openai import OpenAI
 
 from core.config import EMERGENT_LLM_KEY, logger
-from core.security import get_current_user
+from core.security import get_current_user, require_active_access
 
 router = APIRouter()
 
@@ -18,7 +18,7 @@ openai_client = OpenAI(
 
 
 @router.post("/transcribe")
-async def transcribe(audio: UploadFile = File(...), user=Depends(get_current_user)):
+async def transcribe(audio: UploadFile = File(...), user=Depends(require_active_access)):
     if not EMERGENT_LLM_KEY:
         raise HTTPException(status_code=503, detail="Clé LLM non configurée")
     try:

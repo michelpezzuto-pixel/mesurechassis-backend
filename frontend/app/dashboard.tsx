@@ -27,6 +27,13 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
+  // Paywall guard — locked users get redirected
+  useEffect(() => {
+    if (user?.is_locked) {
+      router.replace('/subscription-required');
+    }
+  }, [user?.is_locked, router]);
+
   const load = useCallback(async () => {
     try {
       const data = await Projects.list(filter);
@@ -90,16 +97,28 @@ export default function Dashboard() {
         </View>
       </View>
 
-      {/* Beta banner */}
-      <View style={styles.beta}>
-        <MaterialCommunityIcons name="rocket-launch" size={26} color={C.ACCENT} />
-        <View style={{ flex: 1, marginLeft: SP.md }}>
-          <Text style={styles.betaTitle}>BETA · ACCÈS COMPLET</Text>
-          <Text style={styles.betaTxt}>
-            Vous avez accès à toutes les fonctionnalités pendant la phase de test.
-          </Text>
+      {/* Trial / Beta banner — dynamic */}
+      {user?.subscription_active ? (
+        <View style={styles.beta}>
+          <MaterialCommunityIcons name="check-decagram" size={26} color={C.ACCENT} />
+          <View style={{ flex: 1, marginLeft: SP.md }}>
+            <Text style={styles.betaTitle}>ABONNEMENT ACTIF</Text>
+            <Text style={styles.betaTxt}>Accès complet à toutes les fonctionnalités.</Text>
+          </View>
         </View>
-      </View>
+      ) : user?.is_trial_active ? (
+        <View style={styles.beta}>
+          <MaterialCommunityIcons name="rocket-launch" size={26} color={C.ACCENT} />
+          <View style={{ flex: 1, marginLeft: SP.md }}>
+            <Text style={styles.betaTitle}>
+              BETA GRATUITE · {user.trial_days_remaining} JOUR{user.trial_days_remaining > 1 ? 'S' : ''} RESTANT{user.trial_days_remaining > 1 ? 'S' : ''}
+            </Text>
+            <Text style={styles.betaTxt}>
+              Vous avez accès à toutes les fonctionnalités pendant la phase de test (3 mois).
+            </Text>
+          </View>
+        </View>
+      ) : null}
 
       {/* Search */}
       <View style={styles.searchBox}>

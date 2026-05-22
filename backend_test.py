@@ -1,383 +1,448 @@
-"""MesureEscalier — End-to-end backend validation post-refactor.
+"""MesureEscalier — Backend tests for Iteration 4 features.
 
-Tests every critical /api/* route via the public external URL.
-Uses three pre-seeded demo accounts. No code mutation.
+Covers:
+  A. Paywall trial 90 days (admin@demo.fr active, expired@demo.fr locked)
+  B. Company logo upload + injection in PDF
+  C. Project photos CRUD with 10-per-project limit and ACL
+  D. Non-regression: login, projects CRUD, measurement preview/validate,
+     PDF/DXF exports, /api/stats.
 """
 from __future__ import annotations
 
-import io
-import json
-import os
 import sys
-import time
-from typing import Any, Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 import requests
 
 BASE = "https://stair-pro.preview.emergentagent.com/api"
 
-ADMIN = ("admin@demo.fr", "Demo1234!")
-SOLO = ("marc@mesureescalier.com", "Demo1234!")
-TECH = ("sophie@mesureescaliee.com", "Demo1234!")
+TINY_PNG_B64 = (
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk"
+    "YAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+)
+TINY_PNG_DATA_URI = "data:image/png;base64," + TINY_PNG_B64
 
-GREEN = "\033[92m"
-RED = "\033[91m"
-YELLOW = "\033[93m"
-RESET = "\033[0m"
+ACCOUNTS = {
+    "admin":   {"email": "admin@demo.fr",             "password": "Demo1234!"},
+    "solo":    {"email": "marc@mesureescalier.com",   "password": "Demo1234!"},
+    "tech":    {"email": "sophie@mesureescaliee.com", "password": "Demo1234!"},
+    "expired": {"email": "expired@demo.fr",           "password": "Demo1234!"},
+}
 
-results: Dict[str, Dict[str, Any]] = {}
-
-
-def log(name: str, ok: bool, detail: str = "") -> None:
-    color = GREEN if ok else RED
-    icon = "PASS" if ok else "FAIL"
-    print(f"{color}[{icon}]{RESET} {name}{(' :: ' + detail) if detail else ''}")
-    results.setdefault(name.split('|')[0].strip(), {"steps": []})
-    results[name.split('|')[0].strip()]["steps"].append({"name": name, "ok": ok, "detail": detail})
+results = []
 
 
-def H(token: str) -> Dict[str, str]:
-    return {"Authorization": f"Bearer {token}"}
+def log(status: str, name: str, detail: str = ""):
+    icon = {"PASS": "OK ", "FAIL": "XX ", "INFO": "-- "}.get(status, "?? ")
+    print(f"{icon}[{status}] {name}{' :: ' + detail if detail else ''}")
+    results.append((status, name, detail))
 
 
-def login(email: str, pwd: str) -> Tuple[Optional[str], Optional[Dict[str, Any]], int, Any]:
-    r = requests.post(f"{BASE}/auth/login", json={"email": email, "password": pwd}, timeout=20)
+def headers(token: Optional[str] = None) -> Dict[str, str]:
+    h = {"Content-Type": "application/json"}
+    if token:
+        h["Authorization"] = f"Bearer {token}"
+    return h
+
+
+def login(label: str) -> Tuple[Optional[str], Optional[dict]]:
+    r = requests.post(f"{BASE}/auth/login", json=ACCOUNTS[label], timeout=30)
     if r.status_code != 200:
-        return None, None, r.status_code, r.text
-    js = r.json()
-    return js.get("token"), js.get("user"), r.status_code, js
+        log("FAIL", f"Login {label}", f"HTTP {r.status_code}: {r.text[:200]}")
+        return None, None
+    data = r.json()
+    return data["token"], data["user"]
 
 
-# ------------------------------------------------------------------ AUTH
-def test_auth() -> Dict[str, str]:
-    tokens: Dict[str, str] = {}
-    for label, (e, p) in [("admin", ADMIN), ("solo", SOLO), ("tech", TECH)]:
-        tok, user, code, body = login(e, p)
-        ok = code == 200 and tok and user and user.get("email") == e
-        log(f"AUTH | login {label} ({e})", bool(ok),
-            f"http={code} role={user.get('role') if user else '?'} solo={user.get('solo_mode') if user else '?'}")
-        if ok:
-            tokens[label] = tok
+def test_paywall():
+    print("\n=== A. PAYWALL ===")
 
-    # /auth/me
-    for label, tok in tokens.items():
-        r = requests.get(f"{BASE}/auth/me", headers=H(tok), timeout=15)
-        ok = r.status_code == 200 and r.json().get("email")
-        log(f"AUTH | GET /auth/me ({label})", ok, f"http={r.status_code}")
-
-    # /auth/me without token => 401/403
-    r = requests.get(f"{BASE}/auth/me", timeout=10)
-    log("AUTH | GET /auth/me without token", r.status_code in (401, 403), f"http={r.status_code}")
-
-    # PUT /auth/me — change company_name (admin) and solo_mode toggle (admin only)
-    if "admin" in tokens:
-        original = requests.get(f"{BASE}/auth/me", headers=H(tokens["admin"])).json()
-        new_company = f"Escaliers Demo SARL — TEST {int(time.time())}"
-        r = requests.put(f"{BASE}/auth/me", headers=H(tokens["admin"]),
-                         json={"company_name": new_company, "solo_mode": False}, timeout=15)
-        ok = r.status_code == 200 and r.json().get("company_name") == new_company
-        log("AUTH | PUT /auth/me update company_name (admin)", ok, f"http={r.status_code}")
-        # restore
-        requests.put(f"{BASE}/auth/me", headers=H(tokens["admin"]),
-                     json={"company_name": original.get("company_name", "Escaliers Demo SARL")})
-
-    if "tech" in tokens:
-        r = requests.put(f"{BASE}/auth/me", headers=H(tokens["tech"]),
-                         json={"solo_mode": True}, timeout=15)
-        log("AUTH | PUT /auth/me solo_mode forbidden for tech", r.status_code == 403, f"http={r.status_code}")
-
-    return tokens
-
-
-# ------------------------------------------------------------------ PROJECTS
-def test_projects(tokens: Dict[str, str]) -> Dict[str, str]:
-    created: Dict[str, str] = {}
-
-    # GET /projects (admin)
-    r = requests.get(f"{BASE}/projects", headers=H(tokens["admin"]), timeout=15)
-    log("PROJECTS | GET /projects (admin)", r.status_code == 200 and isinstance(r.json(), list),
-        f"http={r.status_code} count={len(r.json()) if r.status_code == 200 else '?'}")
-
-    # GET /projects (tech) — should be filtered
-    r = requests.get(f"{BASE}/projects", headers=H(tokens["tech"]), timeout=15)
-    log("PROJECTS | GET /projects (tech)", r.status_code == 200 and isinstance(r.json(), list),
-        f"http={r.status_code} count={len(r.json()) if r.status_code == 200 else '?'}")
-
-    # POST /projects (admin)
-    payload = {
-        "client_nom": "Lefevre",
-        "client_prenom": "Caroline",
-        "address": "14 Rue des Tilleuls",
-        "postal_code": "44000",
-        "city": "Nantes",
-        "phone": "0240123456",
-        "notes": "Maison neuve, escalier béton sur dalle haute.",
-    }
-    r = requests.post(f"{BASE}/projects", headers=H(tokens["admin"]), json=payload, timeout=15)
-    ok = r.status_code == 200 and r.json().get("id")
-    log("PROJECTS | POST /projects (admin)", ok, f"http={r.status_code}")
-    if ok:
-        created["admin"] = r.json()["id"]
-
-    # POST /projects (tech) — should be forbidden
-    r = requests.post(f"{BASE}/projects", headers=H(tokens["tech"]), json=payload, timeout=15)
-    log("PROJECTS | POST /projects forbidden for tech", r.status_code == 403, f"http={r.status_code}")
-
-    # POST /projects (solo) — should auto-lock + a_mesurer
-    r = requests.post(f"{BASE}/projects", headers=H(tokens["solo"]),
-                     json={**payload, "client_nom": "Mercier", "address": "8 Allée des Pins"}, timeout=15)
-    if r.status_code == 200:
-        j = r.json()
-        ok = j.get("status") == "a_mesurer" and j.get("locked") is True and j.get("technicien_id")
-        log("PROJECTS | POST /projects (solo) auto-locks & a_mesurer", ok,
-            f"status={j.get('status')} locked={j.get('locked')}")
-        created["solo"] = j["id"]
+    token_exp, user_exp = login("expired")
+    if not token_exp:
+        return None, None
+    if (user_exp.get("is_locked") is True and user_exp.get("trial_days_remaining") == 0
+            and user_exp.get("is_trial_active") is False):
+        log("PASS", "Login expired -> is_locked=true, days=0, is_trial_active=false")
     else:
-        log("PROJECTS | POST /projects (solo)", False, f"http={r.status_code}")
+        log("FAIL", "Login expired",
+            f"is_locked={user_exp.get('is_locked')} "
+            f"days={user_exp.get('trial_days_remaining')} "
+            f"is_trial_active={user_exp.get('is_trial_active')}")
 
-    pid = created.get("admin")
-    if pid:
-        # GET /projects/{id}
-        r = requests.get(f"{BASE}/projects/{pid}", headers=H(tokens["admin"]), timeout=15)
-        log("PROJECTS | GET /projects/{id}", r.status_code == 200 and r.json().get("id") == pid,
-            f"http={r.status_code}")
+    token_adm, user_adm = login("admin")
+    if not token_adm:
+        return None, None
+    if user_adm.get("is_locked") is False and (user_adm.get("trial_days_remaining") or 0) > 0:
+        log("PASS", "Login admin@demo.fr -> active",
+            f"days_remaining={user_adm.get('trial_days_remaining')}")
+    else:
+        log("FAIL", "Login admin@demo.fr",
+            f"is_locked={user_adm.get('is_locked')} "
+            f"days={user_adm.get('trial_days_remaining')}")
+    if user_adm.get("trial_days_remaining") != 90:
+        log("INFO", "admin days_remaining != 90",
+            f"got {user_adm.get('trial_days_remaining')}")
 
-        # PUT /projects/{id}
-        r = requests.put(f"{BASE}/projects/{pid}", headers=H(tokens["admin"]),
-                         json={"notes": "Mise à jour — RDV reporté."}, timeout=15)
-        log("PROJECTS | PUT /projects/{id}", r.status_code == 200 and r.json().get("notes", "").startswith("Mise à jour"),
-            f"http={r.status_code}")
+    # With expired token
+    r = requests.get(f"{BASE}/auth/me", headers=headers(token_exp), timeout=30)
+    if r.status_code == 200:
+        log("PASS", "GET /auth/me (expired) -> 200")
+    else:
+        log("FAIL", "GET /auth/me (expired)", f"HTTP {r.status_code}: {r.text[:200]}")
 
-        # PUT by tech — forbidden
-        r = requests.put(f"{BASE}/projects/{pid}", headers=H(tokens["tech"]),
-                         json={"notes": "Tentative"}, timeout=15)
-        log("PROJECTS | PUT /projects/{id} forbidden for tech", r.status_code == 403, f"http={r.status_code}")
+    r = requests.put(f"{BASE}/auth/me", headers=headers(token_exp),
+                     json={"full_name": "Patrick Bloqué (test)"}, timeout=30)
+    if r.status_code == 200:
+        log("PASS", "PUT /auth/me (expired) -> 200")
+    else:
+        log("FAIL", "PUT /auth/me (expired)", f"HTTP {r.status_code}: {r.text[:200]}")
 
-        # POST /projects/{id}/transmit
-        r = requests.post(f"{BASE}/projects/{pid}/transmit", headers=H(tokens["admin"]), timeout=15)
-        log("PROJECTS | POST /projects/{id}/transmit", r.status_code == 200, f"http={r.status_code}")
+    r = requests.get(f"{BASE}/projects", headers=headers(token_exp), timeout=30)
+    if r.status_code == 402:
+        log("PASS", "GET /projects (expired) -> 402")
+    else:
+        log("FAIL", "GET /projects (expired)", f"HTTP {r.status_code}: {r.text[:200]}")
 
-        # Verify status changed
-        r2 = requests.get(f"{BASE}/projects/{pid}", headers=H(tokens["admin"]), timeout=15)
-        log("PROJECTS | transmit -> status=a_mesurer & locked",
-            r2.status_code == 200 and r2.json().get("status") == "a_mesurer" and r2.json().get("locked") is True,
-            f"status={r2.json().get('status')} locked={r2.json().get('locked')}")
+    r = requests.post(f"{BASE}/projects", headers=headers(token_exp),
+                      json={"client_nom": "X", "address": "Y"}, timeout=30)
+    if r.status_code == 402:
+        log("PASS", "POST /projects (expired) -> 402")
+    else:
+        log("FAIL", "POST /projects (expired)", f"HTTP {r.status_code}: {r.text[:200]}")
 
-    return created
+    r = requests.get(f"{BASE}/stats", headers=headers(token_exp), timeout=30)
+    if r.status_code == 402:
+        log("PASS", "GET /stats (expired) -> 402")
+    else:
+        log("FAIL", "GET /stats (expired)", f"HTTP {r.status_code}: {r.text[:200]}")
 
-
-# ---------------------------------------------------------- MEASUREMENTS
-def test_measurements(tokens: Dict[str, str], projects: Dict[str, str]) -> None:
-    pid = projects.get("admin")
-    if not pid:
-        log("MEASUREMENTS | skipped — no project", False, "no admin project")
-        return
-
-    # Preview (any auth user)
     payload = {
-        "material": "acier",
-        "hauteur_brute": 2700,
-        "sols_finis_zero": True,
-        "reserve_bas": 0,
-        "reserve_haut": 0,
-        "epaisseur_dalle": 200,
-        "tremie_longueur": 2400,
-        "tremie_largeur": 1000,
-        "reculement_max": 3500,
-        "remarques": "RDC vers étage, mesures conformes plan.",
-        "hauteur_sous_plafond_tremie": 2400,
+        "material": "bois", "hauteur_brute": 2700, "epaisseur_dalle": 200,
+        "tremie_longueur": 2400, "tremie_largeur": 900, "reculement_max": 3500,
+        "remarques": "",
     }
-    r = requests.post(f"{BASE}/projects/{pid}/measurement/preview",
-                      headers=H(tokens["tech"]), json=payload, timeout=15)
+    r = requests.post(f"{BASE}/projects/does-not-exist/measurement/preview",
+                      headers=headers(token_exp), json=payload, timeout=30)
+    if r.status_code == 402:
+        log("PASS", "POST /projects/<any>/measurement/preview (expired) -> 402")
+    else:
+        log("FAIL", "preview (expired)", f"HTTP {r.status_code}: {r.text[:200]}")
+
+    # Active admin: same routes must NEVER be 402
+    r = requests.get(f"{BASE}/projects", headers=headers(token_adm), timeout=30)
+    if r.status_code == 200:
+        log("PASS", "GET /projects (admin active) -> 200")
+    else:
+        log("FAIL", "GET /projects (admin active)", f"HTTP {r.status_code}: {r.text[:200]}")
+    r = requests.get(f"{BASE}/stats", headers=headers(token_adm), timeout=30)
+    if r.status_code == 200:
+        log("PASS", "GET /stats (admin active) -> 200")
+    else:
+        log("FAIL", "GET /stats (admin active)", f"HTTP {r.status_code}: {r.text[:200]}")
+    r = requests.post(f"{BASE}/projects/does-not-exist/measurement/preview",
+                      headers=headers(token_adm), json=payload, timeout=30)
+    if r.status_code in (200, 404):
+        log("PASS", f"preview (admin active) -> {r.status_code} (never 402)")
+    else:
+        log("FAIL", "preview (admin active)", f"HTTP {r.status_code}: {r.text[:200]}")
+
+    return token_adm, token_exp
+
+
+def test_logo(token_adm: str):
+    print("\n=== B. LOGO ENTREPRISE ===")
+
+    r = requests.put(f"{BASE}/auth/me", headers=headers(token_adm),
+                     json={"company_logo_base64": TINY_PNG_DATA_URI}, timeout=30)
+    if r.status_code == 200 and r.json().get("company_logo_base64"):
+        log("PASS", "PUT /auth/me set company_logo_base64 -> 200 with logo")
+    else:
+        log("FAIL", "PUT /auth/me set logo", f"HTTP {r.status_code}: {r.text[:200]}")
+
+    r = requests.get(f"{BASE}/auth/me", headers=headers(token_adm), timeout=30)
+    if r.status_code == 200 and r.json().get("company_logo_base64"):
+        log("PASS", "GET /auth/me returns company_logo_base64")
+    else:
+        log("FAIL", "GET /auth/me (logo)", f"HTTP {r.status_code}: {r.text[:200]}")
+
+    pcreate = {
+        "client_nom": "Durand", "client_prenom": "Marie",
+        "address": "12 rue des Lilas", "postal_code": "75011", "city": "Paris",
+        "phone": "0123456789", "notes": "Test logo PDF",
+    }
+    r = requests.post(f"{BASE}/projects", headers=headers(token_adm), json=pcreate, timeout=30)
     if r.status_code != 200:
-        log("MEASUREMENTS | preview (normal case)", False, f"http={r.status_code} body={r.text[:200]}")
+        log("FAIL", "Create project (admin) for PDF test",
+            f"HTTP {r.status_code}: {r.text[:200]}")
         return
-    res = r.json()
-    required = ["true_height", "n_steps", "h", "g", "limon_length", "blondel_value", "valid_blondel", "echappee"]
-    missing = [k for k in required if k not in res]
-    ok = not missing and res.get("valid_blondel") is True
-    log("MEASUREMENTS | preview (normal case 2700/3500/2400/200)", ok,
-        f"n={res.get('n_steps')} h={res.get('h')} g={res.get('g')} 2h+g={res.get('blondel_value')} limon={res.get('limon_length')} echappee={res.get('echappee')} valid={res.get('valid_blondel')} missing={missing}")
+    pid = r.json()["id"]
+    log("PASS", "Create project (admin) for PDF test", f"pid={pid}")
 
-    # Edge case — extreme small ceiling => échappée critique
-    payload_crit = {**payload, "hauteur_sous_plafond_tremie": 2000, "tremie_longueur": 1500}
-    r = requests.post(f"{BASE}/projects/{pid}/measurement/preview",
-                      headers=H(tokens["tech"]), json=payload_crit, timeout=15)
-    if r.status_code == 200:
-        rc = r.json()
-        log("MEASUREMENTS | preview detects échappée critique <2000",
-            rc.get("echappee_critique") is True or (rc.get("echappee") is not None and rc.get("echappee") < 2000),
-            f"echappee={rc.get('echappee')} critique={rc.get('echappee_critique')}")
-    else:
-        log("MEASUREMENTS | preview échappée critique", False, f"http={r.status_code}")
-
-    # Edge case — impossible Blondel (huge height, no reculement) => quart-tournant / hélicoïdal
-    payload_blondel = {**payload, "hauteur_brute": 3800, "reculement_max": 1500}
-    r = requests.post(f"{BASE}/projects/{pid}/measurement/preview",
-                      headers=H(tokens["tech"]), json=payload_blondel, timeout=15)
-    if r.status_code == 200:
-        rb = r.json()
-        log("MEASUREMENTS | preview detects tournant/hélicoïdal when reculement<<needed",
-            rb.get("is_tournant") is True or "tournant" in (rb.get("shape") or "").lower() or "hélic" in (rb.get("shape") or "").lower(),
-            f"shape={rb.get('shape')} is_tournant={rb.get('is_tournant')}")
-    else:
-        log("MEASUREMENTS | preview blondel-fail case", False, f"http={r.status_code}")
-
-    # POST measurement (save) — must be tech (or admin solo)
+    mpayload = {
+        "material": "bois", "hauteur_brute": 2700, "epaisseur_dalle": 200,
+        "tremie_longueur": 2400, "tremie_largeur": 900, "reculement_max": 3500,
+        "remarques": "Test logo",
+    }
     r = requests.post(f"{BASE}/projects/{pid}/measurement",
-                      headers=H(tokens["tech"]), json=payload, timeout=15)
-    if r.status_code == 403:
-        # tech not assigned — assign and retry
-        # Assign tech to the project via admin
-        # need tech id
-        me = requests.get(f"{BASE}/auth/me", headers=H(tokens["tech"])).json()
-        ar = requests.post(f"{BASE}/projects/{pid}/assign", headers=H(tokens["admin"]),
-                           json={"technicien_id": me["id"]}, timeout=15)
-        log("MEASUREMENTS | assign tech to project (helper)", ar.status_code == 200, f"http={ar.status_code}")
-        r = requests.post(f"{BASE}/projects/{pid}/measurement",
-                          headers=H(tokens["tech"]), json=payload, timeout=15)
-    log("MEASUREMENTS | POST save measurement (tech)", r.status_code == 200 and r.json().get("result"),
-        f"http={r.status_code}")
+                      headers=headers(token_adm), json=mpayload, timeout=30)
+    if r.status_code == 200:
+        log("PASS", "Save measurement (admin) -> 200")
+    elif r.status_code == 403:
+        # admin without solo_mode cannot save measurement -> use technician
+        log("INFO", "Admin (non-solo) cannot save measurement (403). "
+                   "Assigning technician for PDF flow.")
+        tok_tech, _ = login("tech")
+        if tok_tech:
+            r2 = requests.get(f"{BASE}/users", headers=headers(token_adm), timeout=30)
+            sophie_id = None
+            if r2.status_code == 200:
+                for u in r2.json():
+                    if u["email"] == "sophie@mesureescaliee.com":
+                        sophie_id = u["id"]
+                        break
+            if sophie_id:
+                requests.post(f"{BASE}/projects/{pid}/assign", headers=headers(token_adm),
+                              json={"technicien_id": sophie_id}, timeout=30)
+            r3 = requests.post(f"{BASE}/projects/{pid}/measurement",
+                               headers=headers(tok_tech), json=mpayload, timeout=30)
+            if r3.status_code == 200:
+                log("PASS", "Save measurement (via technician) -> 200")
+            else:
+                log("FAIL", "Save measurement (via technician)",
+                    f"HTTP {r3.status_code}: {r3.text[:200]}")
+    else:
+        log("FAIL", "Save measurement", f"HTTP {r.status_code}: {r.text[:200]}")
 
-    # Admin cannot save measurement (unless solo)
-    r2 = requests.post(f"{BASE}/projects/{pid}/measurement",
-                       headers=H(tokens["admin"]), json=payload, timeout=15)
-    log("MEASUREMENTS | POST measurement forbidden for non-solo admin", r2.status_code == 403, f"http={r2.status_code}")
+    r = requests.get(f"{BASE}/projects/{pid}/export/pdf",
+                     headers=headers(token_adm), timeout=60)
+    if r.status_code == 200 and r.content[:5] == b"%PDF-":
+        log("PASS", "GET /projects/{pid}/export/pdf -> %PDF- binary",
+            f"size={len(r.content)} bytes")
+    else:
+        log("FAIL", "Export PDF",
+            f"HTTP {r.status_code}, head={r.content[:32]!r}")
 
-    # Validate
-    r = requests.post(f"{BASE}/projects/{pid}/measurement/validate",
-                      headers=H(tokens["tech"]), timeout=15)
-    log("MEASUREMENTS | POST /validate (tech)", r.status_code == 200, f"http={r.status_code}")
+    r = requests.put(f"{BASE}/auth/me", headers=headers(token_adm),
+                     json={"company_logo_base64": ""}, timeout=30)
+    if r.status_code == 200:
+        val = r.json().get("company_logo_base64")
+        if val in (None, ""):
+            log("PASS", 'PUT /auth/me {"company_logo_base64": ""} -> cleared')
+        else:
+            log("FAIL", "Clear logo (PUT)",
+                f"still set: {str(val)[:60]!r}")
+    else:
+        log("FAIL", "Clear logo (PUT)", f"HTTP {r.status_code}: {r.text[:200]}")
+    r = requests.get(f"{BASE}/auth/me", headers=headers(token_adm), timeout=30)
+    if r.status_code == 200 and not r.json().get("company_logo_base64"):
+        log("PASS", "GET /auth/me after clear -> logo empty/null")
+    else:
+        log("FAIL", "GET /auth/me after clear",
+            f"logo={(r.json() or {}).get('company_logo_base64')!r}")
 
-    # Confirm project status now 'valide'
-    pr = requests.get(f"{BASE}/projects/{pid}", headers=H(tokens["admin"]), timeout=15)
-    log("MEASUREMENTS | project status -> 'valide' after validate",
-        pr.status_code == 200 and pr.json().get("status") == "valide",
-        f"status={pr.json().get('status') if pr.status_code == 200 else '?'}")
+    requests.delete(f"{BASE}/projects/{pid}", headers=headers(token_adm), timeout=30)
 
 
-# -------------------------------------------------------------- EXPORTS
-def test_exports(tokens: Dict[str, str], projects: Dict[str, str]) -> None:
-    pid = projects.get("admin")
-    if not pid:
-        log("EXPORTS | skipped — no project", False)
+def test_photos():
+    print("\n=== C. PHOTOS DE CHANTIER ===")
+    tok_solo, _ = login("solo")
+    if not tok_solo:
         return
-
-    # PDF — note: review request mentions JSON with pdf_base64, but code returns StreamingResponse.
-    # We test that endpoint returns 200 and content-length > 0 and the body starts with %PDF.
-    r = requests.get(f"{BASE}/projects/{pid}/export/pdf", headers=H(tokens["admin"]), timeout=30)
-    if r.status_code == 200:
-        starts_ok = r.content[:4] == b"%PDF"
-        log("EXPORTS | GET /export/pdf returns binary PDF", starts_ok,
-            f"ctype={r.headers.get('content-type')} size={len(r.content)} starts={r.content[:8]!r}")
-    else:
-        log("EXPORTS | GET /export/pdf", False, f"http={r.status_code} body={r.text[:200]}")
-
-    # Review request said POST /export/pdf — verify the verb actually used
-    rpost = requests.post(f"{BASE}/projects/{pid}/export/pdf", headers=H(tokens["admin"]), timeout=10)
-    log("EXPORTS | POST /export/pdf (review expects POST)", rpost.status_code in (200, 405),
-        f"http={rpost.status_code} (current implementation uses GET only — Method Not Allowed expected)")
-
-    # DXF
-    r = requests.get(f"{BASE}/projects/{pid}/export/dxf", headers=H(tokens["admin"]), timeout=30)
-    if r.status_code == 200:
-        text = r.content.decode(errors="replace")
-        ok = "SECTION" in text and "ENTITIES" in text
-        log("EXPORTS | GET /export/dxf returns DXF text", ok,
-            f"size={len(text)} header_ok={text[:32]!r}")
-    else:
-        log("EXPORTS | GET /export/dxf", False, f"http={r.status_code} body={r.text[:200]}")
-
-    rpost = requests.post(f"{BASE}/projects/{pid}/export/dxf", headers=H(tokens["admin"]), timeout=10)
-    log("EXPORTS | POST /export/dxf (review expects POST)", rpost.status_code in (200, 405),
-        f"http={rpost.status_code} (current implementation uses GET only)")
-
-
-# ---------------------------------------------------------------- VOICE
-def test_voice(tokens: Dict[str, str]) -> None:
-    # without file
-    r = requests.post(f"{BASE}/transcribe", headers=H(tokens["admin"]), timeout=10)
-    log("VOICE | POST /transcribe rejects missing file", r.status_code in (400, 422),
-        f"http={r.status_code}")
-    # without auth
-    r = requests.post(f"{BASE}/transcribe", timeout=10)
-    log("VOICE | POST /transcribe requires auth", r.status_code in (401, 403, 422),
-        f"http={r.status_code}")
-    # with empty fake audio bytes — will likely error 500 from OpenAI (expected, route is alive)
-    files = {"audio": ("audio.m4a", b"\x00" * 64, "audio/m4a")}
-    r = requests.post(f"{BASE}/transcribe", headers=H(tokens["admin"]), files=files, timeout=30)
-    log("VOICE | POST /transcribe route alive (fake bytes)", r.status_code in (200, 400, 500, 503),
-        f"http={r.status_code}")
-
-
-# ---------------------------------------------------------------- STATS
-def test_stats(tokens: Dict[str, str]) -> None:
-    r = requests.get(f"{BASE}/stats", headers=H(tokens["admin"]), timeout=15)
+    pcreate = {
+        "client_nom": "Lefebvre", "client_prenom": "Antoine",
+        "address": "8 chemin du Moulin", "postal_code": "44000", "city": "Nantes",
+        "phone": "0298765432", "notes": "Test photos",
+    }
+    r = requests.post(f"{BASE}/projects", headers=headers(tok_solo), json=pcreate, timeout=30)
     if r.status_code != 200:
-        log("STATS | GET /stats (admin)", False, f"http={r.status_code}")
+        log("FAIL", "Create project (solo) for photos test",
+            f"HTTP {r.status_code}: {r.text[:200]}")
         return
-    j = r.json()
-    needed = ["total_projects", "by_status", "total_measurements", "validated_measurements", "average_steps", "team_size"]
-    miss = [k for k in needed if k not in j]
-    log("STATS | GET /stats (admin) full payload", not miss and isinstance(j.get("by_status"), dict),
-        f"total={j.get('total_projects')} keys_missing={miss}")
+    pid = r.json()["id"]
+    log("PASS", "Create project (solo) for photos test", f"pid={pid}")
 
-    r2 = requests.get(f"{BASE}/stats", headers=H(tokens["tech"]), timeout=15)
-    log("STATS | GET /stats (tech)", r2.status_code == 200, f"http={r2.status_code}")
+    r = requests.get(f"{BASE}/projects/{pid}/photos", headers=headers(tok_solo), timeout=30)
+    if r.status_code == 200 and r.json() == []:
+        log("PASS", "GET /photos -> []")
+    else:
+        log("FAIL", "GET /photos initial", f"HTTP {r.status_code}: {r.text[:200]}")
+
+    r = requests.post(f"{BASE}/projects/{pid}/photos", headers=headers(tok_solo),
+                      json={"base64": TINY_PNG_B64, "caption": "Test trémie"}, timeout=30)
+    if (r.status_code == 200 and r.json().get("id") and r.json().get("base64")
+            and r.json().get("caption") == "Test trémie" and r.json().get("created_at")):
+        log("PASS", "POST first photo -> 200 with id, base64, caption, created_at")
+        first_id = r.json()["id"]
+    else:
+        log("FAIL", "POST first photo", f"HTTP {r.status_code}: {r.text[:300]}")
+        return
+
+    for i in range(9):
+        rr = requests.post(f"{BASE}/projects/{pid}/photos", headers=headers(tok_solo),
+                           json={"base64": TINY_PNG_B64, "caption": f"Photo {i+2}"},
+                           timeout=30)
+        if rr.status_code != 200:
+            log("FAIL", f"POST photo #{i+2}", f"HTTP {rr.status_code}: {rr.text[:200]}")
+            return
+
+    r11 = requests.post(f"{BASE}/projects/{pid}/photos", headers=headers(tok_solo),
+                       json={"base64": TINY_PNG_B64, "caption": "Trop"}, timeout=30)
+    detail = ""
+    try:
+        detail = r11.json().get("detail") or ""
+    except Exception:
+        pass
+    if r11.status_code == 400 and "Limite atteinte" in detail:
+        log("PASS", "11th photo -> 400 'Limite atteinte'")
+    else:
+        log("FAIL", "11th photo", f"HTTP {r11.status_code}: {r11.text[:200]}")
+
+    r = requests.patch(f"{BASE}/projects/{pid}/photos/{first_id}",
+                       headers=headers(tok_solo),
+                       json={"caption": "Mise à jour"}, timeout=30)
+    if r.status_code == 200:
+        log("PASS", "PATCH photo caption -> 200")
+    else:
+        log("FAIL", "PATCH photo", f"HTTP {r.status_code}: {r.text[:200]}")
+
+    r = requests.get(f"{BASE}/projects", headers=headers(tok_solo), timeout=30)
+    if r.status_code == 200:
+        proj = next((p for p in r.json() if p["id"] == pid), None)
+        if proj is not None and "photos" not in proj:
+            log("PASS", "GET /projects list excludes photos field")
+        else:
+            log("FAIL", "GET /projects list excludes photos",
+                f"proj keys: {list(proj.keys()) if proj else None}")
+    else:
+        log("FAIL", "GET /projects list", f"HTTP {r.status_code}")
+
+    r = requests.get(f"{BASE}/projects/{pid}", headers=headers(tok_solo), timeout=30)
+    body = r.json() if r.status_code == 200 else {}
+    photos_arr = body.get("photos")
+    if r.status_code == 200 and isinstance(photos_arr, list) and len(photos_arr) == 10:
+        log("PASS", "GET /projects/{pid} detail includes photos array (10 items)")
+    else:
+        log("FAIL", "GET /projects/{pid} detail with photos",
+            f"HTTP {r.status_code}, photos_type={type(photos_arr)}, "
+            f"len={len(photos_arr) if isinstance(photos_arr, list) else 'n/a'}")
+
+    r = requests.delete(f"{BASE}/projects/{pid}/photos/{first_id}",
+                        headers=headers(tok_solo), timeout=30)
+    if r.status_code == 200:
+        log("PASS", "DELETE photo -> 200")
+    else:
+        log("FAIL", "DELETE photo", f"HTTP {r.status_code}: {r.text[:200]}")
+
+    tok_tech, _ = login("tech")
+    if tok_tech:
+        r = requests.post(f"{BASE}/projects/{pid}/photos", headers=headers(tok_tech),
+                          json={"base64": TINY_PNG_B64, "caption": "hack"}, timeout=30)
+        if r.status_code == 404:
+            log("PASS", "Sophie POST /photos on marc's project -> 404 (not visible)")
+        else:
+            log("FAIL", "Sophie POST /photos (not assigned)",
+                f"HTTP {r.status_code}: {r.text[:200]}")
+
+    requests.delete(f"{BASE}/projects/{pid}", headers=headers(tok_solo), timeout=30)
 
 
-# ----------------------------------------------------------- INTEGRATION
-def test_integration(tokens: Dict[str, str], projects: Dict[str, str]) -> None:
-    # Review mentioned GET /api/integration/projects but actual code exposes /integration/sites/{pid}
-    r = requests.get(f"{BASE}/integration/projects", headers=H(tokens["admin"]), timeout=10)
-    log("INTEGRATION | GET /integration/projects (review-expected route)", r.status_code == 200,
-        f"http={r.status_code} (current implementation has /integration/sites/{{pid}} only — 404 expected)")
+def test_regression():
+    print("\n=== D. NON-REGRESSION ===")
+    for label in ("admin", "solo", "tech"):
+        tok, u = login(label)
+        if tok and u and not u.get("is_locked"):
+            log("PASS", f"Login {label} active -> ok",
+                f"days={u.get('trial_days_remaining')}")
+        else:
+            log("FAIL", f"Login {label}", f"user={u}")
 
-    pid = projects.get("admin")
-    if pid:
-        r = requests.get(f"{BASE}/integration/sites/{pid}", headers=H(tokens["admin"]), timeout=15)
-        ok = r.status_code == 200 and r.json().get("site_id") == pid
-        log("INTEGRATION | GET /integration/sites/{pid}", ok,
-            f"http={r.status_code} structure={'yes' if (r.status_code == 200 and r.json().get('structure')) else 'no'}")
-        # without auth
-        r = requests.get(f"{BASE}/integration/sites/{pid}", timeout=10)
-        log("INTEGRATION | GET /integration/sites/{pid} requires auth",
-            r.status_code in (401, 403), f"http={r.status_code}")
+    tok_solo, _ = login("solo")
+    pcreate = {
+        "client_nom": "Bernard", "client_prenom": "Julie",
+        "address": "3 place de la République", "postal_code": "69001",
+        "city": "Lyon", "phone": "0478451212", "notes": "Régression",
+    }
+    r = requests.post(f"{BASE}/projects", headers=headers(tok_solo), json=pcreate, timeout=30)
+    if r.status_code != 200:
+        log("FAIL", "Create project (solo regression)",
+            f"HTTP {r.status_code}: {r.text[:200]}")
+        return
+    pid = r.json()["id"]
+    log("PASS", "Create project (solo regression)")
+
+    mpayload = {
+        "material": "bois", "hauteur_brute": 2700, "epaisseur_dalle": 200,
+        "tremie_longueur": 2400, "tremie_largeur": 900, "reculement_max": 3500,
+        "remarques": "",
+    }
+    r = requests.post(f"{BASE}/projects/{pid}/measurement/preview",
+                      headers=headers(tok_solo), json=mpayload, timeout=30)
+    if r.status_code == 200 and "n_steps" in r.json():
+        log("PASS", "Measurement preview (solo)",
+            f"n_steps={r.json().get('n_steps')}")
+    else:
+        log("FAIL", "Measurement preview", f"HTTP {r.status_code}: {r.text[:200]}")
+
+    r = requests.post(f"{BASE}/projects/{pid}/measurement",
+                      headers=headers(tok_solo), json=mpayload, timeout=30)
+    if r.status_code == 200:
+        log("PASS", "Save measurement (solo)")
+    else:
+        log("FAIL", "Save measurement", f"HTTP {r.status_code}: {r.text[:200]}")
+
+    r = requests.post(f"{BASE}/projects/{pid}/measurement/validate",
+                      headers=headers(tok_solo), timeout=30)
+    if r.status_code == 200:
+        log("PASS", "Validate measurement (solo)")
+    else:
+        log("FAIL", "Validate measurement", f"HTTP {r.status_code}: {r.text[:200]}")
+
+    r = requests.get(f"{BASE}/projects/{pid}/export/pdf",
+                     headers=headers(tok_solo), timeout=60)
+    if r.status_code == 200 and r.content[:5] == b"%PDF-":
+        log("PASS", "Export PDF (solo)", f"size={len(r.content)}")
+    else:
+        log("FAIL", "Export PDF (solo)",
+            f"HTTP {r.status_code}, head={r.content[:32]!r}")
+
+    r = requests.get(f"{BASE}/projects/{pid}/export/dxf",
+                     headers=headers(tok_solo), timeout=30)
+    if r.status_code == 200 and (b"SECTION" in r.content or r.content.startswith(b"0\n")):
+        log("PASS", "Export DXF (solo)", f"size={len(r.content)}")
+    else:
+        log("FAIL", "Export DXF (solo)",
+            f"HTTP {r.status_code}, head={r.content[:40]!r}")
+
+    tok_adm, _ = login("admin")
+    r = requests.get(f"{BASE}/stats", headers=headers(tok_adm), timeout=30)
+    if r.status_code == 200 and "total_projects" in r.json():
+        log("PASS", "GET /stats (admin)", f"total={r.json().get('total_projects')}")
+    else:
+        log("FAIL", "GET /stats (admin)", f"HTTP {r.status_code}: {r.text[:200]}")
+
+    requests.delete(f"{BASE}/projects/{pid}", headers=headers(tok_solo), timeout=30)
 
 
-# ------------------------------------------------------------- CLEANUP
-def cleanup(tokens: Dict[str, str], projects: Dict[str, str]) -> None:
-    for label, pid in projects.items():
-        r = requests.delete(f"{BASE}/projects/{pid}", headers=H(tokens["admin"]), timeout=15)
-        log(f"CLEANUP | DELETE project ({label})", r.status_code == 200, f"http={r.status_code}")
+def main():
+    print(f"BASE={BASE}")
+    token_adm, _ = test_paywall()
+    if token_adm:
+        test_logo(token_adm)
+    test_photos()
+    test_regression()
 
-
-def main() -> int:
-    print(f"\n=== MesureEscalier backend post-refactor validation ===\nBASE={BASE}\n")
-    tokens = test_auth()
-    if not all(k in tokens for k in ("admin", "tech", "solo")):
-        print(f"{RED}Aborting: missing demo tokens.{RESET}")
-        return 1
-    projects = test_projects(tokens)
-    test_measurements(tokens, projects)
-    test_exports(tokens, projects)
-    test_voice(tokens)
-    test_stats(tokens)
-    test_integration(tokens, projects)
-    cleanup(tokens, projects)
-
-    # Summary
-    total = sum(len(v["steps"]) for v in results.values())
-    fails = [s for v in results.values() for s in v["steps"] if not s["ok"]]
-    print("\n===================== SUMMARY =====================")
-    print(f"Total checks: {total}   Failures: {len(fails)}")
+    print("\n=== SUMMARY ===")
+    passes = sum(1 for s, *_ in results if s == "PASS")
+    fails = sum(1 for s, *_ in results if s == "FAIL")
+    infos = sum(1 for s, *_ in results if s == "INFO")
+    print(f"PASS: {passes}  FAIL: {fails}  INFO: {infos}")
     if fails:
-        print(f"{RED}Failed steps:{RESET}")
-        for s in fails:
-            print(f"  - {s['name']} :: {s['detail']}")
-    print("===================================================\n")
-    return 0 if not fails else 2
+        print("\nFailed:")
+        for s, n, d in results:
+            if s == "FAIL":
+                print(f"  - {n} :: {d}")
+    sys.exit(0 if fails == 0 else 1)
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

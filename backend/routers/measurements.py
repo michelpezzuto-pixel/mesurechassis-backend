@@ -4,7 +4,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException
 
 from core.db import db
-from core.security import get_current_user, has_technician_powers, now_utc
+from core.security import get_current_user, has_technician_powers, now_utc, require_active_access
 from models.schemas import MeasurementInput
 from services.stairs import compute_stair
 
@@ -12,7 +12,7 @@ router = APIRouter(prefix="/projects/{pid}/measurement")
 
 
 @router.post("")
-async def save_measurement(pid: str, payload: MeasurementInput, user=Depends(get_current_user)):
+async def save_measurement(pid: str, payload: MeasurementInput, user=Depends(require_active_access)):
     p = await db.projects.find_one({"id": pid})
     if not p:
         raise HTTPException(status_code=404, detail="Chantier introuvable")
@@ -49,12 +49,12 @@ async def save_measurement(pid: str, payload: MeasurementInput, user=Depends(get
 
 
 @router.post("/preview")
-async def preview_measurement(pid: str, payload: MeasurementInput, user=Depends(get_current_user)):
+async def preview_measurement(pid: str, payload: MeasurementInput, user=Depends(require_active_access)):
     return compute_stair(payload)
 
 
 @router.post("/validate")
-async def validate_measurement(pid: str, user=Depends(get_current_user)):
+async def validate_measurement(pid: str, user=Depends(require_active_access)):
     if not has_technician_powers(user):
         raise HTTPException(status_code=403, detail="Seuls les Techniciens peuvent valider la conception")
     m = await db.measurements.find_one({"project_id": pid})

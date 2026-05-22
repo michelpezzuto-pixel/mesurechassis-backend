@@ -9,7 +9,7 @@ import jwt
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-from .config import JWT_ALGO, JWT_EXPIRES_HOURS, JWT_SECRET
+from .config import JWT_ALGO, JWT_EXPIRES_HOURS, JWT_SECRET, TRIAL_DAYS
 from .db import db
 
 security = HTTPBearer(auto_error=False)
@@ -53,6 +53,38 @@ async def get_current_user(creds: Optional[HTTPAuthorizationCredentials] = Depen
     if not user:
         raise HTTPException(status_code=401, detail="Utilisateur introuvable")
     user.setdefault("solo_mode", False)
+    # Compute trial / subscription state for downstream code & API responses
+    user.update(compute_access_state(user))
+    return user
+
+
+def compute_access_state(user: dict) -> dict:
+    """Returns trial / subscription fields ready to attach to a user dict."""
+    trial_start = user.get("trial_start_date") or user.get("created_at") or now_utc()
+    # Ensure tz-aware
+    if trial_start.tzinfo is None:
+        trial_start = trial_start.replace(tzinfo=timezone.utc)
+    elapsed = (now_utc() - trial_start).days
+    trial_days_remaining = max(0, TRIAL_DAYS - elapsed)
+    is_trial_active = trial_days_remaining > 0
+    subscription_active = bool(user.get("subscription_active"))
+    is_locked = (not is_trial_active) and (not subscription_active)
+    return {
+        "trial_start_date": trial_start,
+        "trial_days_remaining": trial_days_remaining,
+        "is_trial_active": is_trial_active,
+        "subscription_active": subscription_active,
+        "is_locked": is_locked,
+    }
+
+
+async def require_active_access(user=Depends(get_current_user)):
+    """Use this dependency on routes that must be blocked by the paywall."""
+    if user.get("is_locked"):
+        raise HTTPException(
+            status_code=402,
+            detail="Période d'essai terminée. Un abonnement actif est requis.",
+        )
     return user
 
 
@@ -62,6 +94,12 @@ def require_roles(*roles: str):
             raise HTTPException(
                 status_code=403,
                 detail=f"Accès refusé (rôles autorisés: {', '.join(roles)})",
+            )
+        # Roles also enforce paywall (admin/technicien are paid features)
+        if user.get("is_locked"):
+            raise HTTPException(
+                status_code=402,
+                detail="Période d'essai terminée. Un abonnement actif est requis.",
             )
         return user
     return checker

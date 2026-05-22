@@ -32,9 +32,10 @@ export default function LoginScreen() {
     }
     setLoading(true);
     try {
-      if (mode === 'login') await signIn(email.trim(), password);
-      else await signUp({ full_name: fullName.trim(), email: email.trim(), password, company_name: companyName.trim() || undefined });
-      router.replace('/dashboard');
+      let u;
+      if (mode === 'login') u = await signIn(email.trim(), password);
+      else u = await signUp({ full_name: fullName.trim(), email: email.trim(), password, company_name: companyName.trim() || undefined });
+      router.replace(u?.is_locked ? '/subscription-required' : '/dashboard');
     } catch (e: any) {
       const msg = e?.response?.data?.detail || 'Échec de la connexion';
       Alert.alert('Erreur', String(msg));
@@ -43,19 +44,20 @@ export default function LoginScreen() {
     }
   };
 
-  const demo = async (role: 'admin' | 'solo' | 'technicien') => {
+  const demo = async (role: 'admin' | 'solo' | 'technicien' | 'expired') => {
     const map = {
       admin: 'admin@demo.fr',
       solo: 'marc@mesureescalier.com',
       technicien: 'sophie@mesureescaliee.com',
+      expired: 'expired@demo.fr',
     };
     setEmail(map[role]);
     setPassword('Demo1234!');
     setMode('login');
     setLoading(true);
     try {
-      await signIn(map[role], 'Demo1234!');
-      router.replace('/dashboard');
+      const u = await signIn(map[role], 'Demo1234!');
+      router.replace(u?.is_locked ? '/subscription-required' : '/dashboard');
     } catch (e: any) {
       Alert.alert('Erreur', e?.response?.data?.detail || 'Échec démo');
     } finally {
@@ -172,6 +174,10 @@ export default function LoginScreen() {
               <Text style={styles.demoTxt}>TECHNICIEN</Text>
             </TouchableOpacity>
           </View>
+          <TouchableOpacity style={[styles.demoBtn, styles.demoExpired]} onPress={() => demo('expired')} testID="demo-expired">
+            <MaterialCommunityIcons name="lock-clock" size={16} color={C.WARN} />
+            <Text style={[styles.demoTxt, { color: C.WARN }]}>TESTER LE PAYWALL (essai expiré)</Text>
+          </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -229,4 +235,5 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: C.BORDER,
   },
   demoTxt: { ...FONT.button, color: C.WHITE, fontSize: 12 },
+  demoExpired: { marginTop: SP.md, borderColor: C.WARN },
 });

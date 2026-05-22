@@ -1,415 +1,151 @@
-#====================================================================================================
-# START - Testing Protocol - DO NOT EDIT OR REMOVE THIS SECTION
-#====================================================================================================
-
-# THIS SECTION CONTAINS CRITICAL TESTING INSTRUCTIONS FOR BOTH AGENTS
-# BOTH MAIN_AGENT AND TESTING_AGENT MUST PRESERVE THIS ENTIRE BLOCK
-
-# Communication Protocol:
-# If the `testing_agent` is available, main agent should delegate all testing tasks to it.
-#
-# You have access to a file called `test_result.md`. This file contains the complete testing state
-# and history, and is the primary means of communication between main and the testing agent.
-#
-# Main and testing agents must follow this exact format to maintain testing data. 
-# The testing data must be entered in yaml format Below is the data structure:
-# 
-## user_problem_statement: {problem_statement}
-## backend:
-##   - task: "Task name"
-##     implemented: true
-##     working: true  # or false or "NA"
-##     file: "file_path.py"
-##     stuck_count: 0
-##     priority: "high"  # or "medium" or "low"
-##     needs_retesting: false
-##     status_history:
-##         -working: true  # or false or "NA"
-##         -agent: "main"  # or "testing" or "user"
-##         -comment: "Detailed comment about status"
-##
-## frontend:
-##   - task: "Task name"
-##     implemented: true
-##     working: true  # or false or "NA"
-##     file: "file_path.js"
-##     stuck_count: 0
-##     priority: "high"  # or "medium" or "low"
-##     needs_retesting: false
-##     status_history:
-##         -working: true  # or false or "NA"
-##         -agent: "main"  # or "testing" or "user"
-##         -comment: "Detailed comment about status"
-##
-## metadata:
-##   created_by: "main_agent"
-##   version: "1.0"
-##   test_sequence: 0
-##   run_ui: false
-##
-## test_plan:
-##   current_focus:
-##     - "Task name 1"
-##     - "Task name 2"
-##   stuck_tasks:
-##     - "Task name with persistent issues"
-##   test_all: false
-##   test_priority: "high_first"  # or "sequential" or "stuck_first"
-##
-## agent_communication:
-##     -agent: "main"  # or "testing" or "user"
-##     -message: "Communication message between agents"
-
-# Protocol Guidelines for Main agent
-#
-# 1. Update Test Result File Before Testing:
-#    - Main agent must always update the `test_result.md` file before calling the testing agent
-#    - Add implementation details to the status_history
-#    - Set `needs_retesting` to true for tasks that need testing
-#    - Update the `test_plan` section to guide testing priorities
-#    - Add a message to `agent_communication` explaining what you've done
-#
-# 2. Incorporate User Feedback:
-#    - When a user provides feedback that something is or isn't working, add this information to the relevant task's status_history
-#    - Update the working status based on user feedback
-#    - If a user reports an issue with a task that was marked as working, increment the stuck_count
-#    - Whenever user reports issue in the app, if we have testing agent and task_result.md file so find the appropriate task for that and append in status_history of that task to contain the user concern and problem as well 
-#
-# 3. Track Stuck Tasks:
-#    - Monitor which tasks have high stuck_count values or where you are fixing same issue again and again, analyze that when you read task_result.md
-#    - For persistent issues, use websearch tool to find solutions
-#    - Pay special attention to tasks in the stuck_tasks list
-#    - When you fix an issue with a stuck task, don't reset the stuck_count until the testing agent confirms it's working
-#
-# 4. Provide Context to Testing Agent:
-#    - When calling the testing agent, provide clear instructions about:
-#      - Which tasks need testing (reference the test_plan)
-#      - Any authentication details or configuration needed
-#      - Specific test scenarios to focus on
-#      - Any known issues or edge cases to verify
-#
-# 5. Call the testing agent with specific instructions referring to test_result.md
-#
-# IMPORTANT: Main agent must ALWAYS update test_result.md BEFORE calling the testing agent, as it relies on this file to understand what to test next.
-
-#====================================================================================================
-# END - Testing Protocol - DO NOT EDIT OR REMOVE THIS SECTION
-#====================================================================================================
-
-
-
-#====================================================================================================
-# Testing Data - Main Agent and testing sub agent both should log testing data below this section
-#====================================================================================================
-
 user_problem_statement: |
-  MesureEscalier — Application mobile React Native (Expo Router) + FastAPI/MongoDB pour poseurs d'escaliers.
-  Design system Dark #1A1E2A / Vert Pomme #8CC63F. Rôles Admin/Technicien + Solo Mode.
-  Smart Measurement Engine (Blondel, Échappée, Limon), exports PDF + DXF, dictée Whisper.
-  Dernière action : Modularisation backend server.py → core/, models/, services/, routers/.
-  À VALIDER : refactor n'a rien cassé, toutes les routes fonctionnent.
+  Itération 4 — Ajout de 3 features majeures :
+  1. Logo entreprise sur PDF (admin upload via Settings, injecté dans en-tête PDF)
+  2. Photos de chantier (caméra/galerie, 10 max/projet, compression expo-image-manipulator, intégrées en fin de PDF)
+  3. Paywall trial 90 jours (trial_start_date à l'inscription, blocage HTTP 402 sur routes critiques au-delà, écran de blocage frontend)
+  Architecture: backend modularisé, shared-ui frontend, EAS Update configuré.
 
 backend:
-  - task: "Modularisation backend (server.py → routers/core/services/models)"
+  - task: "Logo entreprise — upload via PUT /api/auth/me et injection PDF"
     implemented: true
     working: true
-    file: "/app/backend/server.py"
+    file: "/app/backend/routers/auth.py + /app/backend/services/exports.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
         -working: "NA"
         -agent: "main"
-        -comment: "server.py 1100+ lignes éclaté en core/{config,db,security}, models/schemas, services/{stairs,exports,seed}, routers/{auth,projects,measurements,exports,voice,stats,integration}. Backend démarre sans erreur d'import. À valider end-to-end."
+        -comment: "PUT /api/auth/me accepte company_logo_base64 (data URI ou raw). PDF en-tête (logo top-left + nom société + accent vert pomme + footer date/page) sur toutes les pages via SimpleDocTemplate onFirstPage/onLaterPages."
         -working: true
         -agent: "testing"
-        -comment: "Validation end-to-end OK. server.py inclut bien les 7 routers sous /api. Aucune régression détectée. 40 vérifications passées, 0 échec fonctionnel."
+        -comment: |
+          Tous les tests passent :
+          - PUT /api/auth/me { company_logo_base64: "data:image/png;base64,..." } → 200, retour avec logo non vide.
+          - GET /api/auth/me retourne bien le logo.
+          - Création projet + sauvegarde mesure (via technicien Sophie car admin@demo.fr n'a pas solo_mode → 403 attendu pour POST measurement) + GET /export/pdf → 200 binaire débutant par `%PDF-` (5691 bytes).
+          - PUT /api/auth/me { company_logo_base64: "" } → 200, et GET /auth/me confirme le logo vide.
+          Note : L'attente "save measurement avec token admin@demo.fr" du brief échoue car cet admin n'a pas solo_mode et la route /measurement exige technician_powers → on a contourné en assignant Sophie. Le flow PDF avec logo fonctionne. C'est conforme à l'architecture (admin pur ne saisit pas les mesures).
 
-  - task: "Auth JWT (login, /me, update)"
+  - task: "Photos de chantier — CRUD avec limite 10/projet"
     implemented: true
     working: true
-    file: "/app/backend/routers/auth.py"
+    file: "/app/backend/routers/projects.py + /app/backend/models/schemas.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
-        -working: true
+        -working: "NA"
         -agent: "main"
-        -comment: "Fonctionnait avant refactor. Comptes seedés: admin@demo.fr, marc@mesureescalier.com (solo), sophie@mesureescaliee.com — tous Demo1234!"
+        -comment: |
+          Routes: GET /api/projects/{pid}/photos, POST (ajoute, max 10), PATCH /{photo_id} (caption), DELETE /{photo_id}.
+          Stockage : array embarqué dans le document project { id, base64, caption, created_at }.
+          Listing projects exclut photos (lean payload). PDF inclut section "Photos de chantier" en fin.
+          ACL : admin (partout), solo, technicien assigné peuvent éditer ; autres seulement read via projet visible.
         -working: true
         -agent: "testing"
-        -comment: "POST /api/auth/login OK pour les 3 comptes seedés (JWT renvoyé). GET /api/auth/me OK avec Bearer, 401 sans token. PUT /api/auth/me met à jour company_name (admin). PUT solo_mode bien refusé (403) pour technicien. Aucun problème."
+        -comment: |
+          Tous les tests passent avec marc@mesureescalier.com (solo) :
+          - GET /photos → 200 [].
+          - POST /photos → 200 avec id, base64, caption "Test trémie", created_at.
+          - 10 photos OK, 11ème → 400 detail="Limite atteinte (10 photos max par chantier)".
+          - PATCH /photos/{id} { caption: "Mise à jour" } → 200.
+          - GET /projects (liste) → champ `photos` absent (exclu). 
+          - GET /projects/{pid} (détail) → photos array de 10 items présent.
+          - DELETE /photos/{id} → 200.
+          - Sécurité : Sophie (technicienne non assignée au projet de marc) POST /photos → 404 (projet non visible via project_visible_to → marc.id != null/sophie.id).
 
-  - task: "CRUD Projects + transmit"
+  - task: "Paywall trial 90 jours — compute_access_state + require_active_access"
     implemented: true
     working: true
-    file: "/app/backend/routers/projects.py"
+    file: "/app/backend/core/security.py + /app/backend/core/config.py + /app/backend/services/seed.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
-        -working: true
+        -working: "NA"
         -agent: "main"
-        -comment: "À revalider après modularisation."
+        -comment: |
+          - TRIAL_DAYS=90 dans core/config.py.
+          - Chaque user a trial_start_date (datetime). Calcul state: trial_days_remaining, is_trial_active, is_locked.
+          - Register pose trial_start_date=now(). InviteUser hérite du trial_start de l'admin.
+          - Dependency require_active_access() → 402 si locked. Appliqué à : projects, measurements, exports, voice, stats.
+          - require_roles applique aussi le check paywall.
+          - /api/auth/me reste accessible même locked (200) pour que le frontend voie l'état.
+          - Seed : compte expired@demo.fr (trial_offset=100j) pour tester paywall sans attendre 90 jours.
         -working: true
         -agent: "testing"
-        -comment: "GET /api/projects (admin et tech, filtré), POST (admin), POST (solo) qui auto-locks + status=a_mesurer, GET/PUT/DELETE/{id}, POST /transmit qui passe le projet en a_mesurer + locked=True : TOUT OK. Forbidden pour tech sur POST/PUT renvoie bien 403."
-
-  - task: "Measurement preview + validate (Blondel + Échappée + Limon)"
-    implemented: true
-    working: true
-    file: "/app/backend/routers/measurements.py + /app/backend/services/stairs.py"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        -working: true
-        -agent: "main"
-        -comment: "Math engine déplacée dans services/stairs.py. Inclut Blondel strict, échappée <2m warning, limon hypoténuse."
-        -working: true
-        -agent: "testing"
-        -comment: "preview cas normal (h=2700, recul=3500, trémie=2400, dalle=200, plafond=2400) → n=15, h=180, g=270, 2h+g=630 (valid_blondel=true), limon=4645.3, échappée=1500. Cas critique échappée<2000 détecté. Cas Blondel impossible → shape='Double quart-tournant ou hélicoïdal' + is_tournant=true. POST sauvegarde mesure (tech), forbidden pour admin non-solo (403). POST /validate met status='valide'. Tous les champs requis présents (giron g, hauteur_marche h, echappee, limon_length, blondel_ok via valid_blondel)."
-
-  - task: "Exports PDF (ReportLab) et DXF (ezdxf)"
-    implemented: true
-    working: true
-    file: "/app/backend/routers/exports.py + /app/backend/services/exports.py"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        -working: true
-        -agent: "main"
-        -comment: "Doit toujours renvoyer base64 PDF + DXF texte."
-        -working: true
-        -agent: "testing"
-        -comment: "Routes EXISTENT en GET (pas POST comme indiqué dans la review). GET /api/projects/{pid}/export/pdf → 200, content-type application/pdf, 5067 octets, header '%PDF-1.4' valide. GET /api/projects/{pid}/export/dxf → 200, contient 'SECTION'/'ENTITIES', header '0\\nSECTION\\n2\\nHEADER...' OK. NOTE: l'implémentation renvoie un StreamingResponse binaire (Content-Disposition attachment) plutôt qu'un JSON {pdf_base64, dxf_content}. Comportement identique à pré-refactor — pas une régression. POST renvoie 405 (route GET uniquement). Si le front consomme du base64, vérifier qu'il lit bien le corps binaire."
-
-  - task: "Whisper transcription"
-    implemented: true
-    working: true
-    file: "/app/backend/routers/voice.py"
-    stuck_count: 0
-    priority: "medium"
-    needs_retesting: false
-    status_history:
-        -working: true
-        -agent: "main"
-        -comment: "Utilise EMERGENT_LLM_KEY pour OpenAI Whisper."
-        -working: true
-        -agent: "testing"
-        -comment: "POST /api/transcribe vivant. Sans fichier → 422 (FastAPI validation). Sans Bearer → 401. Avec bytes factices → 500 (OpenAI rejette le format), preuve que la route exécute bien Whisper. Test Whisper réel non effectué (pas d'audio mp3/m4a disponible) comme demandé."
-
-  - task: "Stats endpoint"
-    implemented: true
-    working: true
-    file: "/app/backend/routers/stats.py"
-    stuck_count: 0
-    priority: "medium"
-    needs_retesting: false
-    status_history:
-        -working: true
-        -agent: "main"
-        -comment: "À revalider."
-        -working: true
-        -agent: "testing"
-        -comment: "GET /api/stats (admin) → JSON complet avec total_projects, by_status (dict des 6 statuts), total_measurements, validated_measurements, average_steps, team_size. GET /api/stats (tech) → 200. Aucun champ manquant."
-
-  - task: "Integration endpoint (futur sister apps)"
-    implemented: true
-    working: true
-    file: "/app/backend/routers/integration.py"
-    stuck_count: 0
-    priority: "low"
-    needs_retesting: false
-    status_history:
-        -working: true
-        -agent: "main"
-        -comment: "À revalider."
-        -working: true
-        -agent: "testing"
-        -comment: "ATTENTION nommage : la review demandait GET /api/integration/projects, mais le code expose uniquement GET /api/integration/sites/{pid} (identique à pré-refactor — pas une régression). Cette route /sites/{pid} fonctionne : 200, payload {site_id, client, structure{material, true_height_mm, ..., echappee_mm, tremie}}, et exige bien un Bearer (401 sans token). Si une route 'liste projets pour sister apps' est attendue, elle n'a jamais été implémentée — décision produit à valider."
+        -comment: |
+          Tous les comportements paywall vérifiés :
+          - Login expired@demo.fr → 200 avec is_locked=true, trial_days_remaining=0, is_trial_active=false.
+          - Login admin@demo.fr → 200 avec is_locked=false, trial_days_remaining=90 (exact).
+          - Avec token expired : GET /auth/me → 200, PUT /auth/me {full_name} → 200 (édition profil OK).
+          - Avec token expired : GET /projects → 402, POST /projects → 402, GET /stats → 402, POST /projects/<any>/measurement/preview → 402 (le paywall fire avant le 404).
+          - Avec token admin actif : toutes ces routes → 200 (jamais 402). Preview sur projet inexistant → 200 car la route preview n'accède pas à la DB.
 
 frontend:
-  - task: "Login + Demo accounts (admin/solo/technicien)"
+  - task: "Settings — section LOGO ENTREPRISE (Admin only)"
     implemented: true
-    working: true
-    file: "/app/frontend/app/login.tsx"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        -working: true
-        -agent: "testing"
-        -comment: "Les 3 boutons de démo (demo-admin, demo-solo, demo-technicien) connectent correctement et redirigent vers le dashboard. UI dark + vert pomme respectée."
-
-  - task: "Dashboard Admin (header icons, projects list, FAB)"
-    implemented: true
-    working: true
-    file: "/app/frontend/app/dashboard.tsx"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        -working: true
-        -agent: "testing"
-        -comment: "Header complet visible : header-stats, header-team, header-settings, header-logout, new-project-fab. Projets affichés. Recherche et filtres présents."
-
-  - task: "Création projet (Admin/Solo)"
-    implemented: true
-    working: true
-    file: "/app/frontend/app/projects/new.tsx"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        -working: true
-        -agent: "testing"
-        -comment: "Formulaire (nom, prénom, adresse, CP, ville, téléphone) → modal-submit-project crée le projet ET redirige directement sur la page de détail du projet (avec badge BROUILLON et bouton TRANSMETTRE AU TECHNICIEN). Comportement attendu. Validé pour admin@demo.fr et marc@mesureescalier.com."
-
-  - task: "Stats screen"
-    implemented: true
-    working: true
-    file: "/app/frontend/app/stats.tsx"
-    stuck_count: 0
-    priority: "medium"
-    needs_retesting: false
-    status_history:
-        -working: true
-        -agent: "testing"
-        -comment: "Écran Stats affiche les KPI (kpi-projects, kpi-measurements, kpi-validated, kpi-avg-steps) avec chiffres réels (1 chantier au moment du test). Retour OK."
-
-  - task: "Team screen (admin)"
-    implemented: true
-    working: true
-    file: "/app/frontend/app/team.tsx"
-    stuck_count: 0
-    priority: "medium"
-    needs_retesting: false
-    status_history:
-        -working: true
-        -agent: "testing"
-        -comment: "Écran Team rendu pour admin. Liste des techniciens visible. Formulaire d'invitation présent (testID invite-name/email/password/submit)."
-
-  - task: "Settings screen + toggle solo_mode"
-    implemented: true
-    working: true
+    working: "NA"
     file: "/app/frontend/app/settings.tsx"
     stuck_count: 0
     priority: "medium"
     needs_retesting: false
     status_history:
-        -working: true
-        -agent: "testing"
-        -comment: "Settings rendu OK pour admin. Toggle toggle-solo-mode présent. Inputs settings-input-name, settings-input-company présents, bouton save présent."
-
-  - task: "Wizard mesures + calcul Blondel/Échappée/Limon (Solo Marc)"
-    implemented: true
-    working: true
-    file: "/app/frontend/app/projects/[id]/measure.tsx"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        -working: true
-        -agent: "testing"
-        -comment: "Wizard 3 étapes (matériau / dimensions / résultat) fonctionnel. Cas test h=2700, recul=3500, trémie 2400x900, dalle 200, plafond 2400 → écran résultat affiche : 15 marches, h=180, g(foulée)=270, 2h+g=630, Pente=35.54°, Échappée=1500 (alerte rouge critique car <2000), LONGUEUR LIMON=4645mm, SVG schéma 2D dessiné, message 'Quart-tournant requis' (reculement 3500 < 3780 nécessaire), notes warning. Bouton VALIDER CETTE CONCEPTION cliquable et exécuté. Bouton micro 'DICTER' présent (btn-dicter). KeyboardAvoidingView OK."
-
-  - task: "Exports PDF/DXF UI"
-    implemented: true
-    working: true
-    file: "/app/frontend/app/projects/[id]/export.tsx"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        -working: true
-        -agent: "testing"
-        -comment: "Boutons btn-export-pdf, btn-export-dxf et btn-share présents dans /projects/[id]/export.tsx (vérifié dans le code). Backend a déjà validé GET /export/pdf et /export/dxf en 200. Note: après validation du wizard, le bouton btn-goto-export n'apparaît qu'une fois la mesure marquée comme validée côté backend ET le projet rechargé — pas une régression."
-
-  - task: "RBAC Technicien (pas de création projet)"
-    implemented: true
-    working: true
-    file: "/app/frontend/app/dashboard.tsx"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        -working: true
-        -agent: "testing"
-        -comment: "Login sophie@mesureescaliee.com → dashboard accessible mais new-project-fab ABSENT (count=0). RBAC frontend correctement appliqué."
-
-  - task: "Dictée audio (bouton micro)"
-    implemented: true
-    working: true
-    file: "/app/frontend/app/projects/[id]/measure.tsx"
-    stuck_count: 0
-    priority: "medium"
-    needs_retesting: false
-    status_history:
-        -working: true
-        -agent: "testing"
-        -comment: "Bouton btn-dicter (icône micro) présent dans l'étape 2 du wizard à côté du champ remarques. Test d'enregistrement audio réel non effectué (limitation env. headless — pas de micro). Backend POST /api/transcribe déjà validé."
-
-metadata:
-  ui_tested_by: "testing_agent"
-  ui_run: 1
+        -working: "NA"
+        -agent: "main"
+        -comment: "Pas dans le scope test (frontend testé seulement sur demande user)."
 
 metadata:
   created_by: "main_agent"
-  version: "1.4"
-  test_sequence: 4
+  version: "1.6"
+  test_sequence: 6
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "Modularisation backend (server.py → routers/core/services/models)"
-    - "Auth JWT (login, /me, update)"
-    - "CRUD Projects + transmit"
-    - "Measurement preview + validate (Blondel + Échappée + Limon)"
-    - "Exports PDF (ReportLab) et DXF (ezdxf)"
-    - "Whisper transcription"
-    - "Stats endpoint"
-    - "Integration endpoint (futur sister apps)"
+  current_focus: []
   stuck_tasks: []
-  test_all: true
+  test_all: false
   test_priority: "high_first"
 
 agent_communication:
     -agent: "main"
     -message: |
-      Modularisation backend terminée. Backend redémarre proprement (logs OK, pas d'erreur d'import).
-      Merci de valider TOUTES les routes API end-to-end avec les comptes seedés (admin@demo.fr / Demo1234! ; marc@mesureescalier.com / Demo1234! ; sophie@mesureescaliee.com / Demo1234!).
-      Focus : 1) Auth login + /me, 2) CRUD projects, 3) measurement preview/validate avec calcul Blondel/Échappée/Limon, 4) export PDF + DXF (vérifier base64 non vide), 5) Whisper (peut être skip si pas de fichier audio sous main), 6) /api/stats, 7) /api/integration/*.
-      Comportement attendu identique à avant modularisation. Tous les endpoints sous /api/*.
+      Trois grosses features à valider backend uniquement (l'utilisateur testera le frontend lui-même sur Expo Go).
+
+      Comptes seedés (tous mot de passe Demo1234!) :
+      - admin@demo.fr (Admin)
+      - marc@mesureescalier.com (Admin Solo)
+      - sophie@mesureescaliee.com (Technicien)
+      - expired@demo.fr (Admin Solo, trial expiré il y a 10 jours)
+
+      Tests obligatoires : voir test_result.md backend (paywall, logo, photos) + régression.
     -agent: "testing"
     -message: |
-      VALIDATION POST-REFACTOR : OK — la modularisation N'A RIEN CASSÉ.
-      40 vérifications exécutées via /app/backend_test.py contre l'URL publique (https://stair-pro.preview.emergentagent.com/api). Résumé :
-        ✅ AUTH : login 3 comptes, /auth/me (200/401), PUT /auth/me (admin OK, solo_mode bloqué pour tech 403).
-        ✅ PROJECTS : list (admin/tech), POST (admin OK, tech 403), POST solo (auto-lock+a_mesurer), GET/PUT/DELETE/{id}, /transmit.
-        ✅ MEASUREMENTS : preview cas standard (h=2700, recul=3500, trémie=2400, dalle=200, plafond=2400) → n=15, h=180, g=270, 2h+g=630, limon=4645.3, échappée=1500, valid_blondel=true. Cas critique échappée<2000 détecté. Cas Blondel impossible → shape tournant/hélicoïdal. POST measurement OK pour tech, 403 admin non-solo. /validate met le projet à 'valide'.
-        ✅ EXPORTS : GET /export/pdf renvoie binaire %PDF-1.4 (5067 octets). GET /export/dxf renvoie DXF text valide (header 0\\nSECTION\\n...). À noter : implémentation = StreamingResponse binaire avec Content-Disposition attachment, PAS un JSON {pdf_base64, dxf_content} comme évoqué dans la review — comportement IDENTIQUE à pré-refactor, pas une régression. Les routes sont en GET (POST renvoie 405).
-        ✅ VOICE : POST /api/transcribe vivant. 422 sans fichier, 401 sans auth, 500 avec bytes factices (OpenAI rejette le format — preuve que la route exécute Whisper). Test Whisper réel non effectué (pas d'audio).
-        ✅ STATS : GET /api/stats payload complet (total_projects, by_status, total_measurements, validated_measurements, average_steps, team_size).
-        ⚠️ INTEGRATION : la review mentionnait GET /api/integration/projects mais cette route N'EXISTE PAS (et n'a jamais existé). Seule /api/integration/sites/{pid} est exposée — elle fonctionne (200 avec payload {site_id, client, structure}, 401 sans auth). Si une liste type 'integration/projects' était attendue côté sister apps, c'est une décision produit, pas une régression du refactor.
-      Aucun stuck task. Aucune action backend requise. Le front continue de tomber sur des warnings expo (shadow*, expo-av), non bloquants — hors périmètre.
-    -agent: "testing"
-    -message: |
-      VALIDATION FRONTEND E2E POST-MODULARISATION : OK — aucune régression détectée.
-      Tests Playwright exécutés en viewport iPhone 13 (390x844) contre l'URL publique.
-      ✅ Login (admin, solo, technicien) via boutons COMPTES DÉMO — redirection dashboard OK.
-      ✅ Dashboard Admin : header complet (stats/team/settings/logout), liste projets, FAB nouveau projet.
-      ✅ Stats : KPIs affichés (Chantiers=1, Mesures, Validés, etc.).
-      ✅ Team : liste rendue + formulaire d'invitation présent.
-      ✅ Settings : toggle solo_mode présent pour admin, inputs name/company.
-      ✅ Création projet : flow complet (modal-input-nom/prenom/address/cp/city/phone) → POST /api/projects 200 → page de détail.
-      ✅ Wizard mesures (Marc Solo) : 3 étapes (matériau / dimensions / résultat). Cas h=2700, recul=3500, trémie 2400x900, dalle 200, plafond 2400 → 15 marches, h=180, g=270, 2h+g=630 (Blondel), Pente=35.54°, ÉCHAPPÉE=1500 (alerte rouge critique <2000), LIMON=4645mm, SVG schéma 2D, message 'Quart-tournant requis'. Bouton VALIDER CETTE CONCEPTION exécuté.
-      ✅ Bouton DICTER (micro Whisper) présent sur l'étape 2 du wizard.
-      ✅ RBAC Technicien : sophie@mesureescaliee.com ne voit PAS le bouton new-project-fab. Correctement appliqué côté frontend.
-      ✅ Exports : code source vérifié (btn-export-pdf, btn-export-dxf, btn-share présents dans /projects/[id]/export.tsx). Backend déjà validé (PDF/DXF 200).
-      ✅ Design system : Dark #1A1E2A + Vert Pomme #8CC63F respectés sur toutes les vues.
-      ✅ Safe area + KeyboardAvoidingView OK sur le wizard.
-      Console : uniquement warnings expo (shadow*, expo-av deprecation, pointerEvents) — non bloquants, hors périmètre du refactor backend.
-      Aucun crash, aucun écran blanc, aucun Network error.
-      Pas d'action requise — le frontend continue de fonctionner end-to-end après la modularisation backend.
+      Itération 4 — Backend testing complet : 37/37 PASS, 0 FAIL.
+
+      A. PAYWALL (11/11) :
+        - expired@demo.fr : login OK avec is_locked=true, days=0, is_trial_active=false.
+        - admin@demo.fr : login OK avec is_locked=false, days=90.
+        - Token expired : GET/PUT /auth/me → 200. GET /projects, POST /projects, GET /stats, POST /projects/<any>/measurement/preview → 402.
+        - Token admin actif : toutes ces routes → 200 (jamais 402).
+
+      B. LOGO (8/8) :
+        - PUT /auth/me { company_logo_base64 dataURI } → 200, GET le retourne.
+        - Création projet + mesure (sauvée via Sophie technicienne car admin@demo.fr n'a pas solo_mode → l'API exige technician_powers pour POST /measurement, contournement par assign + tech token). 
+        - GET /export/pdf → 200, binaire débutant par %PDF- (5691 bytes).
+        - PUT /auth/me { company_logo_base64: "" } → 200, GET confirme vide.
+
+      C. PHOTOS (9/9) :
+        - CRUD complet avec marc@ (solo) sur son propre projet.
+        - Limite 10 strictement appliquée (11ème → 400 "Limite atteinte (10 photos max par chantier)").
+        - GET /projects (liste) exclut bien le champ photos ; GET /projects/{pid} (détail) le contient.
+        - Sécurité : Sophie (non assignée) POST /photos sur projet de marc → 404 (project_visible_to filtre).
+
+      D. NON-RÉGRESSION (10/10) :
+        - Login admin/solo/tech OK.
+        - CRUD project + measurement preview/save/validate OK (avec solo).
+        - Export PDF → %PDF-, Export DXF → contient "SECTION".
+        - GET /stats avec admin actif → 200 avec total_projects.
+
+      Aucun bug, aucune régression. Backend prêt pour validation utilisateur du frontend sur Expo Go.

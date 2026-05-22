@@ -22,13 +22,21 @@ class UserPublic(BaseModel):
     role: Role
     company_name: Optional[str] = None
     solo_mode: bool = False
+    company_logo_base64: Optional[str] = None  # data URI or raw base64
     created_at: datetime
+    # Subscription / trial state
+    trial_start_date: Optional[datetime] = None
+    trial_days_remaining: int = 0
+    is_trial_active: bool = False
+    subscription_active: bool = False
+    is_locked: bool = False
 
 
 class ProfileUpdate(BaseModel):
     full_name: Optional[str] = None
     company_name: Optional[str] = None
     solo_mode: Optional[bool] = None
+    company_logo_base64: Optional[str] = None  # "" or None to clear, base64 string to set
 
 
 class RegisterRequest(BaseModel):
@@ -80,6 +88,23 @@ class ProjectUpdate(BaseModel):
 
 class AssignRequest(BaseModel):
     technicien_id: str
+
+
+# ---------------------- Project Photos ----------------------
+class PhotoCreate(BaseModel):
+    base64: str  # raw base64 (no data URI prefix)
+    caption: Optional[str] = ""
+
+
+class PhotoUpdate(BaseModel):
+    caption: Optional[str] = None
+
+
+class ProjectPhoto(BaseModel):
+    id: str
+    base64: str
+    caption: str = ""
+    created_at: datetime
 
 
 # ---------------------- Measurements ----------------------
