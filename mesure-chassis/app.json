@@ -16,7 +16,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.bruxmove.mesurechassis",
+      "bundleIdentifier": "com.mesurechassis.chassis",
       "buildNumber": "1",
       "infoPlist": {
         "NSMicrophoneUsageDescription": "Dicter les remarques terrain à voix haute",
@@ -26,7 +26,7 @@
       }
     },
     "android": {
-      "package": "com.bruxmove.mesurechassis",
+      "package": "com.mesurechassis.chassis",
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
