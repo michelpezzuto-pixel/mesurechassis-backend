@@ -356,7 +356,50 @@ test_plan:
 agent_communication:
     -agent: "main"
     -message: |
-      🛠 BUGFIX CRITIQUE — Empty state CHANTIER (Mai 2025).
+      🎯 PRIORITÉ 2 — ENRICHISSEMENT MÉTIER (Mai 2025).
+      
+      Pousse la différenciation 1/4 T vs 2/4 T au-delà du backend auto-seed :
+      l'UI elle-même parle désormais le vocabulaire de l'artisan terrain.
+      
+      **1. Auto-seed étendu à la création (POST stair) :**
+         - shape=droit            → [Droit 3500]
+         - shape=quart_tournant   → [Droit 1500, Quart_bas 1200, Droit 1500]
+         - shape=demi_tournant    → [Droit 1200, Quart_bas 1000, Droit 900, Quart_haut 1000, Droit 1200]
+         Plus besoin de PATCH après création pour seed.
+      
+      **2. Labels contextuels métier (contextualTronconLabel) :**
+         Le titre de chaque tronçon dépend de SA POSITION + de la forme :
+         - 1/4 T (3 sections) : "Volée BAS" · "Quart Tournant" · "Volée HAUT"
+         - 2/4 T (5 sections) : "Volée BAS" · "Premier Quart" · "Repos Intermédiaire"
+                                · "Second Quart" · "Volée HAUT"
+         Le type technique (Droit, Quart-tournant BAS/HAUT, Palier) reste affiché
+         en sous-titre gris pour traçabilité.
+      
+      **3. Smart Picker (suggestNextTroncon) :**
+         Le bouton "AJOUTER UN TRONÇON" devient contextuel et propose le prochain
+         tronçon attendu de la séquence métier :
+         - Bouton fermé affiche "AJOUTER : <TYPE SUGGÉRÉ>" (ex. "AJOUTER : QUART-TOURNANT BAS")
+         - Bouton ouvert affiche les 4 options + ÉTOILE ★ sur la suggestion
+         - Hint pédagogique en haut : "💡 Ajoutez le Premier Quart" / "💡 Terminez par la Volée HAUT"
+         - Options non recommandées sont visuellement atténuées (opacity 0.4)
+         - Quand la séquence est complète, affiche "Structure 1/4 T complète. Vous pouvez ajuster."
+      
+      **4. Validation visuelle (screenshots localhost:3000) :**
+         - 2/4 T → Tronçons listés "1. Volée BAS · Droit" / "2. Premier Quart · Quart-tournant BAS"
+                  / "3. Repos Intermédiaire · Droit" / "4. Second Quart · Quart-tournant HAUT"
+                  / "5. Volée HAUT · Droit"
+         - 1/4 T → "1. Volée BAS · Droit" / "2. Quart Tournant · Quart-tournant BAS" / "3. Volée HAUT · Droit"
+         - Smart picker : badge "★ AJOUTER : <type>" sur le bouton suggéré
+      
+      **Tests backend :** 20/20 PASS (test_mesure_escalier.py).
+      
+      **Fichiers modifiés :**
+      - /app/backend/routers/stairs_v2.py — POST stair auto-seed étendu aux 3 formes
+      - /app/frontend/app/projects/[id]/stairs/[sid]/index.tsx — contextualTronconLabel,
+        suggestNextTroncon, NiveauCard accepte stairShape, picker refactored avec
+        hint + suggestion étoile + options atténuées
+
+
       
       L'écran "Aucun escalier" était une impasse bloquante (aucun CTA visible
       directement dans le bloc empty, le bouton "AJOUTER UN ESCALIER" était

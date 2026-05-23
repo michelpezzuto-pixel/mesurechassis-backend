@@ -120,8 +120,15 @@ async def create_stair(pid: str, payload: StairCreate, user=Depends(require_acti
         "created_at": now_utc(),
         "updated_at": now_utc(),
     }
-    # If shape == "droit", create a default niveau RDC (floor_index=0) with single tronçon
-    if payload.shape == "droit":
+    # Auto-seed default niveau RDC + canonical tronçon sequence based on shape.
+    # Keeps UX consistent : the editor always opens with editable data.
+    seed_templates = {
+        "droit":           [("droit", 3500)],
+        "quart_tournant":  [("droit", 1500), ("quart_bas", 1200), ("droit", 1500)],
+        "demi_tournant":   [("droit", 1200), ("quart_bas", 1000), ("droit", 900), ("quart_haut", 1000), ("droit", 1200)],
+    }
+    template = seed_templates.get(payload.shape)
+    if template:
         n_id = str(uuid.uuid4())
         new_stair["niveaux"].append({
             "id": n_id,
@@ -131,13 +138,19 @@ async def create_stair(pid: str, payload: StairCreate, user=Depends(require_acti
             "hauteur_mm": 2700,
             "sol_fini": True,
             "reserve_mm": 0,
-            "troncons": [{
-                "id": str(uuid.uuid4()),
-                "type": "droit",
-                "longueur_mm": 3500,
-                "largeur_mm": 900,
-                "order": 0,
-            }],
+            "epaisseur_dalle_mm": 200,
+            "hauteur_sous_plafond_mm": 2500,
+            "entry_mode": "hauteur",
+            "troncons": [
+                {
+                    "id": str(uuid.uuid4()),
+                    "type": t_type,
+                    "longueur_mm": t_len,
+                    "largeur_mm": 900,
+                    "order": i,
+                }
+                for i, (t_type, t_len) in enumerate(template)
+            ],
             "order": 0,
         })
     stairs = p.get("stairs", []) or []

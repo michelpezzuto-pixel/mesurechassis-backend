@@ -313,6 +313,7 @@ export default function StairEditor() {
                   niveau={n}
                   index={idx}
                   calc={calc}
+                  stairShape={stair.shape}
                   onPatchLocal={(patch) => updateNiveauLocal(n.id, patch)}
                   onCommit={(patch) => commitNiveau(n.id, patch)}
                   onRemove={() => removeNiveau(n)}
@@ -1022,13 +1023,129 @@ const droitStyles = StyleSheet.create({
 
 // ───────────────────────── NiveauCard ─────────────────────────
 
+// ───────────────────────── Tronçon helpers — contextual labels + smart picker ─────────────────────────
+//
+// Pour un escalier tournant, le label métier d'un tronçon dépend de SA POSITION
+// dans la séquence ET de la forme (1/4 T vs 2/4 T).
+//
+// Exemples (1/4 T) :   1.Droit→Volée BAS · 2.Quart_bas→Quart Tournant · 3.Droit→Volée HAUT
+// Exemples (2/4 T) :   1.Droit→Volée BAS · 2.Quart_bas→Premier Quart · 3.Droit→Repos Intermédiaire
+//                      4.Quart_haut→Second Quart · 5.Droit→Volée HAUT
+
+function contextualTronconLabel(t: ApiTroncon, index: number, all: ApiTroncon[], shape: StairShape): string {
+  const total = all.length;
+  const totalDroits = all.filter(x => x.type === 'droit').length;
+  const droitOrder = all.slice(0, index + 1).filter(x => x.type === 'droit').length; // 1-based
+  const quartOrder = all.slice(0, index + 1).filter(x => x.type === 'quart_bas' || x.type === 'quart_haut').length;
+
+  if (shape === 'droit') {
+    return TYPE_LABEL[t.type]; // pas de contexte spécial
+  }
+
+  if (shape === 'quart_tournant' || shape === 'tournant') {
+    if (t.type === 'droit') {
+      if (droitOrder === 1) return 'Volée BAS';
+      if (droitOrder === totalDroits) return 'Volée HAUT';
+      return `Volée ${droitOrder}`;
+    }
+    if (t.type === 'quart_bas' || t.type === 'quart_haut') return 'Quart Tournant';
+    if (t.type === 'palier') return 'Palier de repos';
+  }
+
+  if (shape === 'demi_tournant') {
+    if (t.type === 'droit') {
+      if (droitOrder === 1) return 'Volée BAS';
+      if (droitOrder === totalDroits) return 'Volée HAUT';
+      return 'Repos Intermédiaire';
+    }
+    if (t.type === 'quart_bas' || t.type === 'quart_haut') {
+      return quartOrder === 1 ? 'Premier Quart' : 'Second Quart';
+    }
+    if (t.type === 'palier') return 'Palier intermédiaire';
+  }
+
+  return TYPE_LABEL[t.type];
+}
+
+// Suggère le prochain type de tronçon à ajouter, basé sur la forme et la séquence courante.
+// Renvoie : { suggested: TronconType | null, allowed: TronconType[], hint: string }
+interface PickerSuggestion {
+  suggested: TronconType | null;
+  allowed: TronconType[];
+  hint: string;
+}
+
+function suggestNextTroncon(troncons: ApiTroncon[], shape: StairShape): PickerSuggestion {
+  const last = troncons[troncons.length - 1];
+  const n_quarts = troncons.filter(t => t.type === 'quart_bas' || t.type === 'quart_haut').length;
+
+  // Droit shape: only droit allowed
+  if (shape === 'droit') {
+    return {
+      suggested: troncons.length === 0 ? 'droit' : null,
+      allowed: ['droit'],
+      hint: 'Escalier droit : un seul tronçon Droit suffit.',
+    };
+  }
+
+  // 1/4 Tournant : séquence canonique [droit, quart_bas, droit]
+  if (shape === 'quart_tournant' || shape === 'tournant') {
+    if (troncons.length === 0) {
+      return { suggested: 'droit', allowed: ['droit'], hint: 'Commencez par la Volée BAS (tronçon Droit).' };
+    }
+    if (n_quarts === 0) {
+      // Pas encore de quart : suggère un quart_bas après une volée droite
+      if (last?.type === 'droit') {
+        return { suggested: 'quart_bas', allowed: ['quart_bas', 'quart_haut', 'palier', 'droit'], hint: 'Ajoutez le Quart Tournant (entre les 2 volées).' };
+      }
+      return { suggested: 'droit', allowed: ['droit', 'quart_bas', 'quart_haut'], hint: 'Continuez la séquence.' };
+    }
+    // 1+ quart présent : compléter avec une volée HAUT
+    if (last?.type === 'quart_bas' || last?.type === 'quart_haut' || last?.type === 'palier') {
+      return { suggested: 'droit', allowed: ['droit'], hint: 'Terminez par la Volée HAUT (tronçon Droit).' };
+    }
+    return { suggested: null, allowed: ['droit', 'quart_bas', 'quart_haut', 'palier'], hint: 'Structure 1/4 T complète. Vous pouvez ajuster.' };
+  }
+
+  // 2/4 Tournant : séquence canonique [droit, quart_bas, droit/palier, quart_haut, droit]
+  if (shape === 'demi_tournant') {
+    if (troncons.length === 0) {
+      return { suggested: 'droit', allowed: ['droit'], hint: 'Commencez par la Volée BAS (tronçon Droit).' };
+    }
+    if (n_quarts === 0) {
+      return last?.type === 'droit'
+        ? { suggested: 'quart_bas', allowed: ['quart_bas', 'droit'], hint: 'Ajoutez le Premier Quart.' }
+        : { suggested: 'droit', allowed: ['droit'], hint: 'Continuez la séquence.' };
+    }
+    if (n_quarts === 1) {
+      if (last?.type === 'quart_bas' || last?.type === 'quart_haut') {
+        return { suggested: 'droit', allowed: ['droit', 'palier'], hint: 'Ajoutez la section intermédiaire (Droite ou Palier).' };
+      }
+      if (last?.type === 'droit' || last?.type === 'palier') {
+        return { suggested: 'quart_haut', allowed: ['quart_haut', 'droit', 'palier'], hint: 'Ajoutez le Second Quart pour clore le demi-tour.' };
+      }
+    }
+    if (n_quarts === 2) {
+      if (last?.type === 'quart_bas' || last?.type === 'quart_haut') {
+        return { suggested: 'droit', allowed: ['droit'], hint: 'Terminez par la Volée HAUT (tronçon Droit).' };
+      }
+      return { suggested: null, allowed: ['droit', 'palier'], hint: 'Structure 2/4 T complète. Vous pouvez ajuster.' };
+    }
+  }
+
+  return { suggested: null, allowed: ['droit', 'quart_bas', 'quart_haut', 'palier'], hint: '' };
+}
+
+// ───────────────────────── NIVEAU CARD ─────────────────────────
+
 function NiveauCard({
-  niveau, index, calc, onPatchLocal, onCommit, onRemove,
+  niveau, index, calc, stairShape, onPatchLocal, onCommit, onRemove,
   onAddTroncon, onPatchTronconLocal, onCommitTroncon, onRemoveTroncon,
 }: {
   niveau: ApiNiveau;
   index: number;
   calc: any;
+  stairShape: StairShape;
   onPatchLocal: (patch: Partial<ApiNiveau>) => void;
   onCommit: (patch: Partial<ApiNiveau>) => void;
   onRemove: () => void;
@@ -1143,7 +1260,10 @@ function NiveauCard({
                   <View style={styles.tronconBadge}>
                     <MaterialCommunityIcons name={TYPE_ICON[t.type]} size={16} color={C.ACCENT} />
                   </View>
-                  <Text style={styles.tronconTitle}>{ti + 1}. {TYPE_LABEL[t.type]}</Text>
+                  <Text style={styles.tronconTitle}>
+                    {ti + 1}. {contextualTronconLabel(t, ti, niveau.troncons, stairShape)}
+                    <Text style={styles.tronconTypeSub}>  · {TYPE_LABEL[t.type]}</Text>
+                  </Text>
                   {tcalc && <Text style={styles.tronconCount}>{tcalc.n_marches} marche{tcalc.n_marches > 1 ? 's' : ''}</Text>}
                   <TouchableOpacity onPress={() => onRemoveTroncon(t)} hitSlop={10}>
                     <Ionicons name="close" size={18} color={C.DANGER} />
@@ -1175,30 +1295,64 @@ function NiveauCard({
             );
           })}
 
-          {/* Add tronçon picker */}
-          {tronconPickerOpen ? (
-            <View style={styles.pickerRow}>
-              {(['droit', 'quart_bas', 'quart_haut', 'palier'] as TronconType[]).map(type => (
-                <TouchableOpacity
-                  key={type}
-                  style={styles.pickerBtn}
-                  onPress={() => { onAddTroncon(type); setTronconPickerOpen(false); }}
-                  testID={`add-troncon-${type}`}
-                >
-                  <MaterialCommunityIcons name={TYPE_ICON[type]} size={18} color={C.ACCENT} />
-                  <Text style={styles.pickerTxt}>{TYPE_LABEL[type]}</Text>
-                </TouchableOpacity>
-              ))}
-              <TouchableOpacity style={[styles.pickerBtn, { borderColor: C.BORDER }]} onPress={() => setTronconPickerOpen(false)}>
-                <Ionicons name="close" size={18} color={C.GRAY3} />
+          {/* Add tronçon picker — Smart : adapté à la forme + position dans la séquence */}
+          {(() => {
+            const suggestion = suggestNextTroncon(niveau.troncons, stairShape);
+            return tronconPickerOpen ? (
+              <View style={styles.pickerWrap}>
+                {!!suggestion.hint && (
+                  <View style={styles.pickerHintRow}>
+                    <Ionicons name="bulb-outline" size={12} color={C.ACCENT} />
+                    <Text style={styles.pickerHintTxt}>{suggestion.hint}</Text>
+                  </View>
+                )}
+                <View style={styles.pickerRow}>
+                  {(['droit', 'quart_bas', 'quart_haut', 'palier'] as TronconType[]).map(type => {
+                    const allowed = suggestion.allowed.includes(type);
+                    const isSuggested = suggestion.suggested === type;
+                    return (
+                      <TouchableOpacity
+                        key={type}
+                        style={[
+                          styles.pickerBtn,
+                          isSuggested && styles.pickerBtnSuggested,
+                          !allowed && styles.pickerBtnDimmed,
+                        ]}
+                        onPress={() => { onAddTroncon(type); setTronconPickerOpen(false); }}
+                        testID={`add-troncon-${type}`}
+                      >
+                        <MaterialCommunityIcons name={TYPE_ICON[type]} size={18} color={isSuggested ? C.DARK : (allowed ? C.ACCENT : C.GRAY3)} />
+                        <Text style={[styles.pickerTxt, isSuggested && styles.pickerTxtSuggested, !allowed && { color: C.GRAY3 }]}>
+                          {TYPE_LABEL[type]}
+                        </Text>
+                        {isSuggested && (
+                          <View style={styles.suggestBadge}>
+                            <Text style={styles.suggestBadgeTxt}>★</Text>
+                          </View>
+                        )}
+                      </TouchableOpacity>
+                    );
+                  })}
+                  <TouchableOpacity style={[styles.pickerBtn, { borderColor: C.BORDER }]} onPress={() => setTronconPickerOpen(false)}>
+                    <Ionicons name="close" size={18} color={C.GRAY3} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={[styles.addTronconBtn, suggestion.suggested && styles.addTronconBtnHighlighted]}
+                onPress={() => setTronconPickerOpen(true)}
+                testID={`add-troncon-niv-${niveau.id}`}
+              >
+                <Ionicons name="add" size={18} color={C.DARK} />
+                <Text style={styles.addTronconTxt}>
+                  {suggestion.suggested
+                    ? `AJOUTER : ${TYPE_LABEL[suggestion.suggested].toUpperCase()}`
+                    : 'AJOUTER UN TRONÇON'}
+                </Text>
               </TouchableOpacity>
-            </View>
-          ) : (
-            <TouchableOpacity style={styles.addTronconBtn} onPress={() => setTronconPickerOpen(true)} testID={`add-troncon-niv-${niveau.id}`}>
-              <Ionicons name="add" size={18} color={C.DARK} />
-              <Text style={styles.addTronconTxt}>AJOUTER UN TRONÇON</Text>
-            </TouchableOpacity>
-          )}
+            );
+          })()}
             </>
           )}
         </View>
@@ -1538,7 +1692,31 @@ const styles = StyleSheet.create({
   pickerTxt: { ...FONT.label, color: C.ACCENT, fontSize: 10 },
 
   addTronconBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SP.sm, paddingVertical: 10, marginTop: SP.md, borderRadius: R.md, backgroundColor: C.ACCENT },
+  addTronconBtnHighlighted: { borderWidth: 2, borderColor: '#fff' },
   addTronconTxt: { ...FONT.button, color: C.DARK, fontSize: 11 },
+
+  // ── Smart picker (P2 contextual) ──────────────────────────────────
+  pickerWrap: { marginTop: SP.md },
+  pickerHintRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    paddingHorizontal: SP.sm, paddingVertical: 6,
+    backgroundColor: 'rgba(140,198,63,0.10)', borderRadius: R.md,
+    marginBottom: SP.sm, borderWidth: 1, borderColor: C.ACCENT,
+  },
+  pickerHintTxt: { ...FONT.small, fontSize: 11, color: C.ACCENT, flex: 1 },
+  pickerBtnSuggested: {
+    backgroundColor: C.ACCENT, borderColor: C.ACCENT, borderWidth: 2,
+  },
+  pickerBtnDimmed: { opacity: 0.4 },
+  pickerTxtSuggested: { color: C.DARK, fontWeight: '700' as any },
+  suggestBadge: {
+    position: 'absolute', top: -6, right: -6,
+    width: 16, height: 16, borderRadius: 8,
+    backgroundColor: C.DARK, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: C.ACCENT,
+  },
+  suggestBadgeTxt: { fontSize: 10, color: C.ACCENT, fontWeight: '700' as any, lineHeight: 12 },
+  tronconTypeSub: { ...FONT.small, fontSize: 10, color: C.GRAY3, fontWeight: '400' as any },
 
   addNivBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SP.sm, paddingVertical: 14, borderRadius: R.md, borderWidth: 1, borderColor: C.ACCENT, borderStyle: 'dashed' as any, marginTop: SP.sm, backgroundColor: 'transparent' },
   addNivBtnTxt: { ...FONT.button, color: C.ACCENT, fontSize: 12 },
