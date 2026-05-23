@@ -44,16 +44,38 @@ export default function ProjectDetail() {
 
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
-  const canEdit = !project?.locked && (user?.role === 'admin' || user?.solo_mode || project?.technicien_id === user?.id);
-  const canDelete = user?.role === 'admin' && !project?.locked;
+  // ⚠️ Règle d'édition :
+  //   - ADMIN : toujours autorisé (même sur projet verrouillé) → peut intervenir partout.
+  //   - SOLO MODE : autorisé tant que le projet n'est pas verrouillé.
+  //   - TECHNICIEN ASSIGNÉ : autorisé tant que le projet n'est pas verrouillé.
+  //   - AUTRES : interdits.
+  const isAdmin = user?.role === 'admin';
+  const canEdit = isAdmin || (!project?.locked && (user?.solo_mode || project?.technicien_id === user?.id));
+  const canDelete = isAdmin;  // Admin peut toujours supprimer; les autres jamais.
+  const canUnlock = isAdmin && !!project?.locked;
+
+  const unlockProject = () => {
+    Alert.alert(
+      'Déverrouiller le chantier ?',
+      'Le chantier repassera en statut Brouillon et redeviendra modifiable.',
+      [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Déverrouiller', onPress: async () => {
+            try { await Projects.unlock(id!); load(); }
+            catch (e: any) { Alert.alert('Erreur', e?.response?.data?.detail || 'Erreur'); }
+          },
+        },
+      ],
+    );
+  };
 
   const transmit = async () => {
     Alert.alert('Transmettre au technicien', 'Le chantier sera verrouillé.', [
       { text: 'Annuler', style: 'cancel' },
       {
         text: 'Confirmer', style: 'destructive', onPress: async () => {
-          try { await Projects.transmit(id!); load(); } catch (e: any) { Alert.alert('Erreur', e?.response?.data?.detail || 'Erreur'); }
-        },
+          try { await Projects.transmit(id!); load(); } catch (e: any) { Alert.alert('Erreur', e?.response?.data?.detail || 'Erreur'); }        },
       },
     ]);
   };
@@ -204,6 +226,17 @@ export default function ProjectDetail() {
                   Chantier verrouillé — déverrouillage admin nécessaire pour ajouter un escalier.
                 </Text>
               </View>
+            )}
+            {canUnlock && (
+              <TouchableOpacity
+                style={styles.emptyUnlockCta}
+                onPress={unlockProject}
+                testID="btn-unlock-project"
+                activeOpacity={0.8}
+              >
+                <Ionicons name="lock-open" size={18} color={C.DARK} />
+                <Text style={styles.emptyCtaTxt}>DÉVERROUILLER CE CHANTIER</Text>
+              </TouchableOpacity>
             )}
           </View>
         ) : (
@@ -559,6 +592,11 @@ const styles = StyleSheet.create({
     backgroundColor: C.ACCENT, borderRadius: R.md, alignSelf: 'stretch',
   },
   emptyCtaTxt: { ...FONT.button, fontSize: 13, color: C.DARK, letterSpacing: 0.5 },
+  emptyUnlockCta: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SP.sm,
+    marginTop: SP.sm, paddingVertical: 12, paddingHorizontal: SP.lg,
+    backgroundColor: C.WARN, borderRadius: R.md, alignSelf: 'stretch',
+  },
   emptyLocked: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     marginTop: SP.md, paddingHorizontal: SP.md, paddingVertical: SP.sm,

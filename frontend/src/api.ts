@@ -120,6 +120,7 @@ export const Projects = {
   update: async (id: string, payload: Partial<Project>) => (await api.put(`/projects/${id}`, payload)).data as Project,
   remove: async (id: string) => (await api.delete(`/projects/${id}`)).data,
   transmit: async (id: string) => (await api.post(`/projects/${id}/transmit`)).data,
+  unlock:   async (id: string) => (await api.post(`/projects/${id}/unlock`)).data,
   assign: async (id: string, technicien_id: string) => (await api.post(`/projects/${id}/assign`, { technicien_id })).data,
 };
 

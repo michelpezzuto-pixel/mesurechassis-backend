@@ -356,7 +356,53 @@ test_plan:
 agent_communication:
     -agent: "main"
     -message: |
-      🎯 PRIORITÉ 2 — ENRICHISSEMENT MÉTIER (Mai 2025).
+      🚨 BUGFIX CRITIQUE — Admin bloqué sur chantier verrouillé (Mai 2025).
+      
+      **Symptôme remonté** : le user (rôle admin) ne voyait NI le CTA
+      "AJOUTER MON PREMIER ESCALIER", NI le FAB "+" sur ses chantiers
+      transmis (status=a_mesurer, locked=True). Tous les correctifs précédents
+      étaient bien déployés mais cachés derrière `canEdit=false`.
+      
+      **Root cause** : ligne 47 de `app/projects/[id]/index.tsx` :
+          canEdit = !project?.locked && (role===admin || solo_mode || techId===userId);
+      Le `!project?.locked` court-circuitait l'admin, l'empêchant d'éditer son
+      propre chantier verrouillé — alors qu'un admin doit toujours pouvoir
+      intervenir (corriger une mesure, ajouter un escalier oublié, etc.).
+      
+      **Correctifs appliqués** :
+      
+      1. **Frontend (`/app/frontend/app/projects/[id]/index.tsx`)**
+         - Logique d'édition refondue :
+             canEdit = isAdmin || (!locked && (solo_mode || techId===userId))
+         - `canUnlock = isAdmin && project.locked` → bouton orange
+           "DÉVERROUILLER CE CHANTIER" affiché dans l'empty state
+           si admin sur projet locked.
+         - Handler `unlockProject()` avec confirmation Alert.
+      
+      2. **Backend (`/app/backend/routers/projects.py`)**
+         - Nouvel endpoint `POST /api/projects/{pid}/unlock` (admin only)
+         - Repasse `locked=False`, `status='brouillon'`, unset `transmitted_at`.
+      
+      3. **API client (`/app/frontend/src/api.ts`)**
+         - `Projects.unlock(pid)` ajouté.
+      
+      4. **Migration silencieuse des stairs legacy** :
+         - 7 escaliers "Escalier Principal" avec shape='tournant' (legacy alias)
+           et 0 niveaux ont été migrés via PATCH shape='quart_tournant' →
+           auto-seed backend → 3 tronçons générés par stair. Plus de spinner mort.
+      
+      **Validation visuelle** : screenshot du projet "Hhh Bbb" (id f0f88cd0...)
+      qui est locked → admin voit maintenant le bouton vert "AJOUTER UN ESCALIER",
+      le FAB "+" vert flottant en bas-droite, et la liste des escaliers existants.
+      
+      **Tests backend** : 20/20 PASS (test_mesure_escalier.py).
+      
+      **Fichiers modifiés** :
+      - /app/frontend/app/projects/[id]/index.tsx (logique canEdit + unlockProject + bouton)
+      - /app/frontend/src/api.ts (Projects.unlock)
+      - /app/backend/routers/projects.py (POST /projects/{pid}/unlock)
+
+
       
       Pousse la différenciation 1/4 T vs 2/4 T au-delà du backend auto-seed :
       l'UI elle-même parle désormais le vocabulaire de l'artisan terrain.

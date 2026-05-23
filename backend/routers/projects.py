@@ -101,6 +101,23 @@ async def transmit_project(pid: str, user=Depends(require_roles("admin"))):
     return {"ok": True}
 
 
+@router.post("/{pid}/unlock")
+async def unlock_project(pid: str, user=Depends(require_roles("admin"))):
+    """Admin uniquement : déverrouille un chantier transmis pour pouvoir
+    le ré-éditer (corriger des mesures, ajouter un escalier oublié, etc.)."""
+    p = await db.projects.find_one({"id": pid})
+    if not p:
+        raise HTTPException(status_code=404, detail="Chantier introuvable")
+    await db.projects.update_one(
+        {"id": pid},
+        {"$set": {
+            "locked": False, "status": "brouillon",
+            "updated_at": now_utc(),
+        }, "$unset": {"transmitted_at": ""}},
+    )
+    return {"ok": True}
+
+
 @router.post("/{pid}/assign")
 async def assign_technicien(pid: str, payload: AssignRequest, user=Depends(require_roles("admin"))):
     tech = await db.users.find_one({"id": payload.technicien_id, "role": "technicien"})
