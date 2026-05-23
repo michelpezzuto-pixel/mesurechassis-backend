@@ -184,6 +184,48 @@ async def update_stair(pid: str, sid: str, payload: StairUpdate, user=Depends(re
                 }],
                 "order": 0,
             }]
+        # When switching to a tournant shape (1/4 or 2/4) and no niveau exists,
+        # seed a default RDC niveau with the canonical tronçon sequence.
+        # - quart_tournant (1/4 T)   → [droit, quart_bas, droit]   (1 angle)
+        # - demi_tournant  (2/4 T)   → [droit, quart_bas, droit, quart_haut, droit] (2 angles)
+        elif payload.shape in ("quart_tournant", "demi_tournant") and not (stair.get("niveaux") or []):
+            if payload.shape == "quart_tournant":
+                template = [
+                    ("droit",     1500),
+                    ("quart_bas", 1200),
+                    ("droit",     1500),
+                ]
+            else:  # demi_tournant
+                template = [
+                    ("droit",     1200),
+                    ("quart_bas", 1000),
+                    ("droit",      900),
+                    ("quart_haut", 1000),
+                    ("droit",     1200),
+                ]
+            stair["niveaux"] = [{
+                "id": str(uuid.uuid4()),
+                "label": floor_index_to_label(0),
+                "floor_index": 0,
+                "is_ghost": False,
+                "hauteur_mm": 2700,
+                "sol_fini": True,
+                "reserve_mm": 0,
+                "epaisseur_dalle_mm": 200,
+                "hauteur_sous_plafond_mm": 2500,
+                "entry_mode": "hauteur",
+                "troncons": [
+                    {
+                        "id": str(uuid.uuid4()),
+                        "type": t_type,
+                        "longueur_mm": t_len,
+                        "largeur_mm": 900,
+                        "order": i,
+                    }
+                    for i, (t_type, t_len) in enumerate(template)
+                ],
+                "order": 0,
+            }]
     stair["updated_at"] = now_utc()
     await _save_project(pid, p["stairs"])
     return stair

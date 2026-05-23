@@ -348,12 +348,50 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Refactor Master V2 — Shape selector + Split visual (Coupe/Plan) + Auto-seed PATCH"
+    - "Priorité 2 — Différenciation 1/4 vs 2/4 Tournant (auto-seed + detection + smart banner)"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
+    -agent: "main"
+    -message: |
+      🎯 PRIORITÉ 2 — Différenciation 1/4 Tournant vs 2/4 Tournant TERMINÉE (Mai 2025).
+      
+      Le comportement métier est désormais nettement distingué :
+      
+      **1. Auto-seed backend (PATCH stair) :**
+      - shape='quart_tournant' (1/4 T) → [droit 1500, quart_bas 1200, droit 1500] (1 angle)
+      - shape='demi_tournant'  (2/4 T) → [droit 1200, quart_bas 1000, droit 900, quart_haut 1000, droit 1200] (2 angles + section intermédiaire)
+      - shape='droit'          → [droit 3500] (déjà en place)
+      
+      **2. Frontend intelligence — `detectStructure()` :**
+      - Compte les `quart_bas + quart_haut` dans tous les tronçons saisis
+      - Détecte automatiquement : 0/1/2+ angles
+      - Compare avec la forme attendue → matches_shape boolean
+      
+      **3. Composant `ShapeStructureBanner` :**
+      - Affiché en tête du flux Tournant (sous la barre de chips)
+      - Mode CONFORME (vert) : "Structure 1/4 Tournant détectée (1 angle, 2 volées droites)"
+        ou "Structure 2/4 Tournant détectée (2 angles, 3 volées droites)"
+      - Mode WARNING (orange) : "Un seul angle détecté — il en faut 2 pour un 2/4 Tournant"
+        avec hint contextuel : "Ajoutez un second quart-tournant + section intermédiaire (droite ou palier)."
+      - CTA "↻ STRUCTURE TYPE" qui supprime tous les niveaux puis re-PATCH la forme
+        → déclenche l'auto-seed backend → restaure la structure canonique
+      - Affichage de la SÉQUENCE sous forme de pills colorées : [D] → [Q↻] → [D] → [Q↺] → [D]
+        (vert pour droit, orange pour quart, bleu pour palier)
+      
+      **4. Validation visuelle (screenshots localhost:3000) :**
+      - 1/4 T : banner vert "Conforme", séquence [D|Q↻|D], split COUPE/PLAN nickel
+      - 2/4 T : banner vert "Conforme", séquence [D|Q↻|D|Q↺|D], plan en forme de U
+      - 2/4 T cassé (1 quart supprimé) : banner orange + CTA "STRUCTURE TYPE" visible
+      
+      **Tests backend :** 20/20 PASS (test_mesure_escalier.py).
+      
+      **Fichiers modifiés :**
+      - /app/backend/routers/stairs_v2.py — auto-seed PATCH étendu aux 3 formes
+      - /app/frontend/app/projects/[id]/stairs/[sid]/index.tsx — detectStructure, ShapeStructureBanner, StructureBadge, loadStructureTemplate
+
     -agent: "main"
     -message: |
       🎯 REFACTOR MASTER V2 — Phase 1 terminée (Mai 2025).

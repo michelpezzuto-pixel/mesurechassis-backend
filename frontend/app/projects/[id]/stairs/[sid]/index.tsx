@@ -92,6 +92,35 @@ export default function StairEditor() {
     }
   }, [stair, id, sid, recompute]);
 
+  // Charge la structure type officielle de la forme courante : supprime tous les
+  // niveaux existants puis re-PATCH la forme → déclenche l'auto-seed backend.
+  // Utile quand l'utilisateur a saisi une structure incomplète/erronée.
+  const loadStructureTemplate = useCallback(() => {
+    if (!stair) return;
+    Alert.alert(
+      'Charger la structure type ?',
+      `Cela remplacera la structure actuelle par le modèle officiel pour ${stair.shape === 'demi_tournant' ? '2/4 Tournant (2 angles + section intermédiaire)' : '1/4 Tournant (1 angle entre 2 volées)'}.`,
+      [
+        { text: 'Annuler', style: 'cancel' },
+        { text: 'Charger', onPress: async () => {
+          try {
+            // Delete all existing niveaux
+            for (const n of stair.niveaux) {
+              await Stairs.removeNiveau(id!, sid!, n.id);
+            }
+            // Re-PATCH same shape → triggers auto-seed
+            await Stairs.update(id!, sid!, { shape: stair.shape });
+            const fresh = await Stairs.get(id!, sid!);
+            setStair(fresh);
+            recompute();
+          } catch (e: any) {
+            Alert.alert('Erreur', e?.response?.data?.detail || 'Impossible de charger le template');
+          }
+        }},
+      ],
+    );
+  }, [stair, id, sid, recompute]);
+
   useFocusEffect(useCallback(() => { refresh(); }, [refresh]));
 
   // ── Niveau actions ──
@@ -256,6 +285,15 @@ export default function StairEditor() {
             <HelicoidalPlaceholder />
           ) : (
           <>
+
+          {/* ─── Structure Banner (intelligence Tournant 1/4 vs 2/4) ─── */}
+          {(stair.shape === 'quart_tournant' || stair.shape === 'demi_tournant' || stair.shape === 'tournant') && (
+            <ShapeStructureBanner
+              shape={stair.shape}
+              troncons={stair.niveaux.flatMap(n => n.troncons || [])}
+              onLoadTemplate={loadStructureTemplate}
+            />
+          )}
 
           {/* View mode toggle (Profile / Plan) — removed: Split view is the new default */}
 
@@ -498,6 +536,151 @@ function SplitVisualBlock({ niveau, calc }: { niveau: ApiNiveau; calc: any }) {
         </View>
         <NiveauPlanSketch niveau={niveau} calc={calc} width={sketchW} height={140} showLegend={false} />
       </View>
+    </View>
+  );
+}
+
+// ───────────────────────── Structure Detection (Tournant intelligence) ─────────────────────────
+//
+// Détecte la structure réelle d'un escalier tournant à partir de la séquence
+// de tronçons saisie. Permet de comparer avec la forme attendue (1/4 T ou 2/4 T)
+// et d'afficher un banner intelligent (✓ Conforme · ⚠ Incomplète · ⚠ Surdimensionnée).
+//
+// Règles métier :
+//  - 1/4 Tournant  : 1 tronçon `quart_*` (1 angle de 90°)
+//  - 2/4 Tournant  : 2 tronçons `quart_*` (2 angles, total 180°) — section intermédiaire
+//                    obligatoire entre les 2 quarts (droite ou palier)
+//  - Palier seul   : compté comme 1/4 transition par défaut
+
+type StructureKind = 'quart' | 'demi' | 'droit_only' | 'unknown';
+interface StructureInfo {
+  kind: StructureKind;
+  n_quarts: number;
+  n_paliers: number;
+  n_droits: number;
+  matches_shape: boolean;
+  message: string;
+  hint?: string;
+}
+
+function detectStructure(troncons: ApiTroncon[], expectedShape: StairShape): StructureInfo {
+  const n_quarts = troncons.filter(t => t.type === 'quart_bas' || t.type === 'quart_haut').length;
+  const n_paliers = troncons.filter(t => t.type === 'palier').length;
+  const n_droits = troncons.filter(t => t.type === 'droit').length;
+
+  let kind: StructureKind = 'unknown';
+  if (n_quarts === 0 && n_paliers === 0) kind = 'droit_only';
+  else if (n_quarts === 1) kind = 'quart';
+  else if (n_quarts >= 2) kind = 'demi';
+  else if (n_paliers >= 1) kind = 'quart'; // un palier 180° peut faire office
+
+  const isQuartExpected = expectedShape === 'quart_tournant' || expectedShape === 'tournant';
+  const isDemiExpected = expectedShape === 'demi_tournant';
+
+  let matches_shape = false;
+  let message = '';
+  let hint: string | undefined;
+
+  if (isQuartExpected) {
+    if (kind === 'quart') {
+      matches_shape = true;
+      message = `Structure 1/4 Tournant détectée (${n_quarts} angle, ${n_droits} volée${n_droits > 1 ? 's' : ''} droite${n_droits > 1 ? 's' : ''})`;
+    } else if (kind === 'droit_only') {
+      message = 'Aucun angle saisi pour le moment';
+      hint = 'Ajoutez un tronçon quart-tournant (BAS ou HAUT) entre 2 volées droites.';
+    } else if (kind === 'demi') {
+      message = `${n_quarts} angles détectés — forme 2/4 Tournant plus adaptée`;
+      hint = 'Basculez vers 2/4 T ou supprimez un quart-tournant pour rester en 1/4 T.';
+    } else {
+      message = 'Structure incomplète';
+    }
+  } else if (isDemiExpected) {
+    if (kind === 'demi') {
+      matches_shape = true;
+      message = `Structure 2/4 Tournant détectée (${n_quarts} angles, ${n_droits} volée${n_droits > 1 ? 's' : ''} droite${n_droits > 1 ? 's' : ''})`;
+    } else if (kind === 'quart') {
+      message = `Un seul angle détecté — il en faut 2 pour un 2/4 Tournant`;
+      hint = 'Ajoutez un second quart-tournant + section intermédiaire (droite ou palier).';
+    } else if (kind === 'droit_only') {
+      message = 'Aucun angle saisi pour le moment';
+      hint = 'Un 2/4 Tournant requiert 2 quart-tournants encadrant une section intermédiaire.';
+    } else {
+      message = 'Structure incomplète';
+    }
+  } else {
+    message = '';
+  }
+
+  return { kind, n_quarts, n_paliers, n_droits, matches_shape, message, hint };
+}
+
+// Visual badge representing the structure (sequence of section icons)
+function StructureBadge({ troncons }: { troncons: ApiTroncon[] }) {
+  if (troncons.length === 0) {
+    return <Text style={styles.structEmptyTxt}>—</Text>;
+  }
+  return (
+    <View style={styles.structRow}>
+      {troncons.map((t, i) => (
+        <React.Fragment key={t.id}>
+          <View style={[styles.structPill, t.type === 'palier' && styles.structPillPalier, (t.type === 'quart_bas' || t.type === 'quart_haut') && styles.structPillQuart]}>
+            <MaterialCommunityIcons name={TYPE_ICON[t.type]} size={11} color={C.WHITE} />
+            <Text style={styles.structPillTxt}>
+              {t.type === 'droit' ? 'D' : t.type === 'palier' ? 'P' : t.type === 'quart_bas' ? 'Q↻' : 'Q↺'}
+            </Text>
+          </View>
+          {i < troncons.length - 1 && <Ionicons name="chevron-forward" size={11} color={C.GRAY3} />}
+        </React.Fragment>
+      ))}
+    </View>
+  );
+}
+
+// Banner : "Structure 1/4 Tournant détectée ✓" or warnings + "Charger structure type" CTA
+function ShapeStructureBanner({
+  shape, troncons, onLoadTemplate,
+}: {
+  shape: StairShape;
+  troncons: ApiTroncon[];
+  onLoadTemplate: () => void;
+}) {
+  // Hidden when shape is not tournant
+  if (shape !== 'quart_tournant' && shape !== 'demi_tournant' && shape !== 'tournant') return null;
+  const info = detectStructure(troncons, shape);
+  const isEmpty = troncons.length === 0;
+
+  return (
+    <View
+      style={[styles.structBanner, info.matches_shape ? styles.structBannerOk : styles.structBannerWarn]}
+      testID="shape-structure-banner"
+    >
+      <View style={styles.structHeader}>
+        <Ionicons
+          name={info.matches_shape ? 'checkmark-circle' : (isEmpty ? 'information-circle' : 'warning')}
+          size={16}
+          color={info.matches_shape ? C.ACCENT : C.WARN}
+        />
+        <View style={{ flex: 1, marginLeft: SP.sm }}>
+          <Text style={[styles.structTitle, { color: info.matches_shape ? C.ACCENT : C.WARN }]}>
+            {info.message || (shape === 'demi_tournant' ? '2/4 Tournant' : '1/4 Tournant')}
+          </Text>
+          {!!info.hint && (
+            <Text style={styles.structHint}>{info.hint}</Text>
+          )}
+        </View>
+        {!info.matches_shape && (
+          <TouchableOpacity style={styles.structCta} onPress={onLoadTemplate} testID="btn-load-template">
+            <Ionicons name="reload-circle-outline" size={14} color={C.DARK} />
+            <Text style={styles.structCtaTxt}>STRUCTURE TYPE</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+      {!isEmpty && (
+        <View style={styles.structSeqWrap}>
+          <Text style={styles.structSeqLabel}>SÉQUENCE</Text>
+          <StructureBadge troncons={troncons} />
+        </View>
+      )}
     </View>
   );
 }
@@ -1422,4 +1605,38 @@ const styles = StyleSheet.create({
     marginBottom: 4, alignSelf: 'stretch', justifyContent: 'center',
   },
   splitTitle: { ...FONT.label, fontSize: 9, color: C.ACCENT, letterSpacing: 0.8 },
+
+  // ── Shape Structure Banner (intelligence Tournant : 1/4 vs 2/4) ────
+  structBanner: {
+    borderRadius: R.lg, padding: SP.md,
+    marginBottom: SP.md, borderWidth: 1, borderLeftWidth: 4,
+  },
+  structBannerOk: { backgroundColor: 'rgba(140,198,63,0.10)', borderColor: C.ACCENT, borderLeftColor: C.ACCENT },
+  structBannerWarn: { backgroundColor: 'rgba(245,158,11,0.10)', borderColor: 'rgba(245,158,11,0.4)', borderLeftColor: C.WARN },
+  structHeader: { flexDirection: 'row', alignItems: 'center' },
+  structTitle: { ...FONT.h3, fontSize: 13 },
+  structHint: { ...FONT.small, fontSize: 11, color: C.GRAY3, marginTop: 2 },
+  structCta: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    paddingHorizontal: SP.sm, paddingVertical: 6,
+    borderRadius: R.pill, backgroundColor: C.ACCENT,
+  },
+  structCtaTxt: { ...FONT.label, fontSize: 9, color: C.DARK, fontWeight: '700' as any, letterSpacing: 0.5 },
+  structSeqWrap: {
+    marginTop: SP.sm, paddingTop: SP.sm,
+    borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.06)',
+    flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6,
+  },
+  structSeqLabel: { ...FONT.label, fontSize: 9, color: C.GRAY3, letterSpacing: 0.8 },
+  structRow: { flexDirection: 'row', alignItems: 'center', gap: 4, flexWrap: 'wrap' },
+  structPill: {
+    flexDirection: 'row', alignItems: 'center', gap: 3,
+    paddingHorizontal: 7, paddingVertical: 3,
+    borderRadius: R.pill, backgroundColor: 'rgba(140,198,63,0.45)',
+    borderWidth: 1, borderColor: C.ACCENT,
+  },
+  structPillPalier: { backgroundColor: 'rgba(56,189,248,0.45)', borderColor: '#38bdf8' },
+  structPillQuart: { backgroundColor: 'rgba(245,158,11,0.50)', borderColor: C.WARN },
+  structPillTxt: { ...FONT.label, fontSize: 9, color: C.WHITE, fontWeight: '700' as any },
+  structEmptyTxt: { ...FONT.small, fontSize: 11, color: C.GRAY3, fontStyle: 'italic' as any },
 });
