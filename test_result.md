@@ -299,6 +299,47 @@ frontend:
           • Frontend : 14 routes (auth + project CRUD + stair editor V2 + stair export V2)
           • Tests : 44 intégration + 24 regression = 68 tests passants
 
+frontend:
+  - task: "Master V2 Refactor — 4 shapes + HT/ED/HSP linked + Hybride build"
+    implemented: true
+    working: true
+    file: "/app/frontend/app/projects/[id]/index.tsx + [sid]/index.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "main"
+        -comment: |
+          MASTER V2 REFACTOR (mai 2025) — Refactor majeur pour atteindre la "Base-Mère" production.
+
+          BACKEND :
+          • `Stair.shape` étendu de 2 → 5 valeurs :
+            'droit' | 'quart_tournant' | 'demi_tournant' | 'helicoidal' | 'tournant' (alias V2.0).
+          • `Niveau` enrichi avec 3 champs liés :
+            - `epaisseur_dalle_mm` (ED, mm)
+            - `hauteur_sous_plafond_mm` (HSP, mm)
+            - `entry_mode: 'hauteur'|'hsp'` (verrouillage UI du champ auto-calculé)
+          • Schema migration auto au startup (idempotent).
+          • Tests 44 passing.
+
+          FRONTEND :
+          • Modal popup création : grid 2×2 de 4 cartes (DROIT, 1/4 TOURNANT, 2/4 TOURNANT, HÉLICOÏDAL).
+            - HÉLICOÏDAL : disabled visuel + badge orange "BIENTÔT" + Alert "Bientôt disponible".
+          • DroitForm refondu — section "HAUTEURS — SAISIE LIÉE" :
+            - 3 champs HT/ED/HSP en saisie liée
+            - L'un des 2 (HT ou HSP) est verrouillé selon entry_mode, affiché en italique gris avec badge "🔒 AUTO"
+            - Tap sur champ verrouillé → switch entry_mode (devient saisissable, l'autre se verrouille)
+            - Calcul instantané (HT = HSP + ED ; HSP = HT − ED)
+          • Section "EMPRISE AU SOL" : Largeur + Longueur (inchangé).
+          • Validation Blondel inline (vert/orange).
+          • Validation E2E screenshot OK : modal 4 shapes ✓, DROIT avec HT/ED/HSP + lock ✓.
+
+          INFRA (HYBRIDE choix ① b) :
+          • Metro reste actif sur port 3000 pour Expo Go.
+          • `./build-web.sh` génère `/app/frontend/dist/` (49s) pour fallback statique navigateur.
+          • `--serve` du script bascule supervisor sur serve dist si l'utilisateur veut couper Metro.
+
 metadata:
   created_by: "main_agent"
   version: "2.0"

@@ -410,6 +410,51 @@ function DroitForm({
     );
   }
 
+  // HT / ED / HSP — logique de saisie liée
+  // - entry_mode='hauteur' → HT saisi, HSP verrouillé (HSP = HT - ED)
+  // - entry_mode='hsp'     → HSP saisi, HT verrouillé (HT = HSP + ED)
+  const entryMode = niveau.entry_mode || 'hauteur';
+  const HT = Math.round(niveau.hauteur_mm || 0);
+  const ED = Math.round(niveau.epaisseur_dalle_mm || 0);
+  const HSP = entryMode === 'hauteur' ? HT - ED : Math.round(niveau.hauteur_sous_plafond_mm || 0);
+  const HTeff = entryMode === 'hsp' ? HSP + ED : HT;
+
+  // Switch entry mode (clic sur le champ verrouillé)
+  const switchEntryMode = () => {
+    const newMode = entryMode === 'hauteur' ? 'hsp' : 'hauteur';
+    onCommitNiveau(niveau.id, {
+      entry_mode: newMode,
+      hauteur_sous_plafond_mm: HSP,
+    });
+  };
+
+  const updateHT = (v: number) => {
+    onPatchNiveauLocal(niveau.id, { hauteur_mm: v, hauteur_sous_plafond_mm: v - ED, entry_mode: 'hauteur' });
+  };
+  const commitHT = (v: number) => {
+    onCommitNiveau(niveau.id, { hauteur_mm: v, hauteur_sous_plafond_mm: v - ED, entry_mode: 'hauteur' });
+  };
+  const updateED = (v: number) => {
+    if (entryMode === 'hauteur') {
+      onPatchNiveauLocal(niveau.id, { epaisseur_dalle_mm: v, hauteur_sous_plafond_mm: HT - v });
+    } else {
+      onPatchNiveauLocal(niveau.id, { epaisseur_dalle_mm: v, hauteur_mm: HSP + v });
+    }
+  };
+  const commitED = (v: number) => {
+    if (entryMode === 'hauteur') {
+      onCommitNiveau(niveau.id, { epaisseur_dalle_mm: v, hauteur_sous_plafond_mm: HT - v });
+    } else {
+      onCommitNiveau(niveau.id, { epaisseur_dalle_mm: v, hauteur_mm: HSP + v });
+    }
+  };
+  const updateHSP = (v: number) => {
+    onPatchNiveauLocal(niveau.id, { hauteur_sous_plafond_mm: v, hauteur_mm: v + ED, entry_mode: 'hsp' });
+  };
+  const commitHSP = (v: number) => {
+    onCommitNiveau(niveau.id, { hauteur_sous_plafond_mm: v, hauteur_mm: v + ED, entry_mode: 'hsp' });
+  };
+
   const blondelOk = !!niveauCalc?.valid_blondel;
   const blondelVal = niveauCalc ? Math.round(niveauCalc.blondel_value) : 0;
   const marches = niveauCalc?.n_steps_niveau ?? 0;
@@ -418,58 +463,67 @@ function DroitForm({
 
   return (
     <View>
-      <Text style={droitStyles.section}>DIMENSIONS DE L'ESCALIER DROIT</Text>
+      <Text style={droitStyles.section}>HAUTEURS — SAISIE LIÉE</Text>
+      <Text style={droitStyles.hint}>
+        Saisissez 2 valeurs au choix ; la 3ᵉ se calcule auto. Le champ verrouillé est en gris.
+      </Text>
 
-      <View style={droitStyles.field} testID="droit-field-hauteur">
-        <Text style={droitStyles.label}>HAUTEUR</Text>
-        <Text style={droitStyles.hint}>Du sol fini bas au sol fini haut (mm)</Text>
-        <View style={droitStyles.inputRow}>
-          <TextInput
-            value={String(Math.round(niveau.hauteur_mm))}
-            onChangeText={(v) => onPatchNiveauLocal(niveau.id, { hauteur_mm: Number(v) || 0 })}
-            onEndEditing={(e) => onCommitNiveau(niveau.id, { hauteur_mm: Number(e.nativeEvent.text) || 0 })}
-            keyboardType="numeric"
-            style={droitStyles.input}
-            placeholderTextColor={C.GRAY3}
-            testID="droit-input-hauteur"
-          />
-          <Text style={droitStyles.unit}>mm</Text>
-        </View>
-      </View>
+      {/* Hauteur Totale */}
+      <DroitField
+        label="HAUTEUR TOTALE (HT)"
+        hint="Du sol fini bas au sol fini haut"
+        value={HTeff}
+        locked={entryMode === 'hsp'}
+        onTapLocked={switchEntryMode}
+        onChange={updateHT}
+        onCommit={commitHT}
+        testID="droit-input-ht"
+      />
 
-      <View style={droitStyles.field} testID="droit-field-largeur">
-        <Text style={droitStyles.label}>LARGEUR D'ESCALIER</Text>
-        <Text style={droitStyles.hint}>Largeur utile de passage (mm)</Text>
-        <View style={droitStyles.inputRow}>
-          <TextInput
-            value={String(Math.round(troncon.largeur_mm))}
-            onChangeText={(v) => onPatchTronconLocal(niveau.id, troncon.id, { largeur_mm: Number(v) || 0 })}
-            onEndEditing={(e) => onCommitTroncon(niveau.id, troncon.id, { largeur_mm: Number(e.nativeEvent.text) || 0 })}
-            keyboardType="numeric"
-            style={droitStyles.input}
-            placeholderTextColor={C.GRAY3}
-            testID="droit-input-largeur"
-          />
-          <Text style={droitStyles.unit}>mm</Text>
-        </View>
-      </View>
+      {/* Épaisseur Dalle */}
+      <DroitField
+        label="ÉPAISSEUR DALLE (ED)"
+        hint="Plancher + revêtement de la dalle haute"
+        value={ED}
+        locked={false}
+        onChange={updateED}
+        onCommit={commitED}
+        testID="droit-input-ed"
+      />
 
-      <View style={droitStyles.field} testID="droit-field-longueur">
-        <Text style={droitStyles.label}>LONGUEUR (RECULEMENT)</Text>
-        <Text style={droitStyles.hint}>Emprise au sol entre départ et arrivée (mm)</Text>
-        <View style={droitStyles.inputRow}>
-          <TextInput
-            value={String(Math.round(troncon.longueur_mm))}
-            onChangeText={(v) => onPatchTronconLocal(niveau.id, troncon.id, { longueur_mm: Number(v) || 0 })}
-            onEndEditing={(e) => onCommitTroncon(niveau.id, troncon.id, { longueur_mm: Number(e.nativeEvent.text) || 0 })}
-            keyboardType="numeric"
-            style={droitStyles.input}
-            placeholderTextColor={C.GRAY3}
-            testID="droit-input-longueur"
-          />
-          <Text style={droitStyles.unit}>mm</Text>
-        </View>
-      </View>
+      {/* Hauteur Sous Plafond */}
+      <DroitField
+        label="HAUTEUR SOUS PLAFOND (HSP)"
+        hint="HT − ED · = espace utile sous dalle"
+        value={HSP}
+        locked={entryMode === 'hauteur'}
+        onTapLocked={switchEntryMode}
+        onChange={updateHSP}
+        onCommit={commitHSP}
+        testID="droit-input-hsp"
+      />
+
+      <Text style={[droitStyles.section, { marginTop: SP.lg }]}>EMPRISE AU SOL</Text>
+
+      <DroitField
+        label="LARGEUR D'ESCALIER"
+        hint="Largeur utile de passage"
+        value={Math.round(troncon.largeur_mm)}
+        locked={false}
+        onChange={(v) => onPatchTronconLocal(niveau.id, troncon.id, { largeur_mm: v })}
+        onCommit={(v) => onCommitTroncon(niveau.id, troncon.id, { largeur_mm: v })}
+        testID="droit-input-largeur"
+      />
+
+      <DroitField
+        label="LONGUEUR (RECULEMENT)"
+        hint="Emprise au sol entre départ et arrivée"
+        value={Math.round(troncon.longueur_mm)}
+        locked={false}
+        onChange={(v) => onPatchTronconLocal(niveau.id, troncon.id, { longueur_mm: v })}
+        onCommit={(v) => onCommitTroncon(niveau.id, troncon.id, { longueur_mm: v })}
+        testID="droit-input-longueur"
+      />
 
       {/* Validation Blondel — minimaliste */}
       {niveauCalc && (
@@ -496,8 +550,58 @@ function DroitForm({
   );
 }
 
+/** Champ numérique réutilisable avec état verrouillé (auto-calculé). */
+function DroitField({
+  label, hint, value, locked, onTapLocked, onChange, onCommit, testID,
+}: {
+  label: string;
+  hint?: string;
+  value: number;
+  locked?: boolean;
+  onTapLocked?: () => void;
+  onChange: (v: number) => void;
+  onCommit: (v: number) => void;
+  testID?: string;
+}) {
+  return (
+    <View style={droitStyles.field}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+        <Text style={droitStyles.label}>{label}</Text>
+        {locked && (
+          <View style={droitStyles.lockBadge}>
+            <Ionicons name="lock-closed" size={9} color={C.GRAY3} />
+            <Text style={droitStyles.lockBadgeTxt}>AUTO</Text>
+          </View>
+        )}
+      </View>
+      {!!hint && <Text style={droitStyles.hint}>{hint}</Text>}
+      <TouchableOpacity
+        activeOpacity={locked ? 0.7 : 1}
+        onPress={() => locked && onTapLocked && onTapLocked()}
+        style={[droitStyles.inputRow, locked && droitStyles.inputRowLocked]}
+      >
+        <TextInput
+          value={String(value)}
+          onChangeText={(v) => !locked && onChange(Number(v) || 0)}
+          onEndEditing={(e) => !locked && onCommit(Number(e.nativeEvent.text) || 0)}
+          editable={!locked}
+          selectTextOnFocus={!locked}
+          keyboardType="numeric"
+          style={[droitStyles.input, locked && droitStyles.inputLocked]}
+          placeholderTextColor={C.GRAY3}
+          testID={testID}
+        />
+        <Text style={droitStyles.unit}>mm</Text>
+      </TouchableOpacity>
+      {locked && (
+        <Text style={droitStyles.lockHint}>Tap pour saisir cette valeur (l'autre deviendra auto)</Text>
+      )}
+    </View>
+  );
+}
+
 const droitStyles = StyleSheet.create({
-  section: { ...FONT.label, color: C.ACCENT, fontSize: 11, marginBottom: SP.md, marginTop: SP.sm },
+  section: { ...FONT.label, color: C.ACCENT, fontSize: 11, marginBottom: SP.sm, marginTop: SP.sm },
   field: { marginBottom: SP.lg },
   label: { ...FONT.label, fontSize: 11, marginBottom: 2 },
   hint: { ...FONT.small, fontSize: 11, marginBottom: SP.sm, color: C.GRAY3 },
@@ -506,8 +610,17 @@ const droitStyles = StyleSheet.create({
     backgroundColor: C.CARD, borderRadius: R.md,
     paddingHorizontal: SP.md, borderWidth: 1, borderColor: C.BORDER,
   },
+  inputRowLocked: { backgroundColor: 'rgba(255,255,255,0.03)', borderColor: C.BORDER, opacity: 0.65 },
   input: { flex: 1, ...FONT.h3, fontSize: 18, color: C.WHITE, paddingVertical: 14 },
+  inputLocked: { color: C.GRAY3, fontStyle: 'italic' as any },
   unit: { ...FONT.label, color: C.GRAY3, fontSize: 11 },
+  lockBadge: {
+    flexDirection: 'row', alignItems: 'center', gap: 2,
+    paddingHorizontal: 5, paddingVertical: 1, borderRadius: R.pill,
+    borderWidth: 1, borderColor: C.GRAY3, backgroundColor: 'transparent',
+  },
+  lockBadgeTxt: { ...FONT.label, fontSize: 8, color: C.GRAY3 },
+  lockHint: { ...FONT.small, fontSize: 10, fontStyle: 'italic' as any, marginTop: 4, color: C.GRAY3 },
   blondelBox: {
     flexDirection: 'row', alignItems: 'center',
     padding: SP.md, borderRadius: R.md, borderWidth: 1, borderLeftWidth: 4,

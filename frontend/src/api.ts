@@ -127,7 +127,15 @@ export const Projects = {
 
 // ── Multi-stair v2 (Stairs > Niveaux > Tronçons) ─────────────────────────
 export type TronconType = 'droit' | 'palier' | 'quart_bas' | 'quart_haut';
-export type StairShape = 'droit' | 'tournant';
+/**
+ * Formes officielles d'escalier :
+ * - 'droit'           → 1 volée linéaire (UI ultra-épurée : H/L/Long)
+ * - 'quart_tournant'  → 1/4 tournant (UI multi-section avec 1 quart-tournant)
+ * - 'demi_tournant'   → 2/4 tournant (UI multi-section avec 2 quart-tournants ou palier intermédiaire)
+ * - 'helicoidal'      → escalier hélicoïdal (UI dédiée — bientôt disponible)
+ * - 'tournant'        → alias de rétrocompat V2.0 (== quart_tournant par défaut)
+ */
+export type StairShape = 'droit' | 'quart_tournant' | 'demi_tournant' | 'helicoidal' | 'tournant';
 
 export interface ApiTroncon { id: string; type: TronconType; longueur_mm: number; largeur_mm: number; order: number }
 export interface ApiNiveau  {
@@ -135,9 +143,13 @@ export interface ApiNiveau  {
   label: string;
   floor_index: number;          // -3..+7 (0=RDC)
   is_ghost: boolean;            // "Pas d'escalier ici"
-  hauteur_mm: number;
-  sol_fini: boolean;
+  hauteur_mm: number;           // HT — Hauteur Totale
+  sol_fini: boolean;            // niveau bas fini ?
   reserve_mm: number;
+  // Champs liés HT/ED/HSP (mai 2025)
+  epaisseur_dalle_mm: number;        // ED
+  hauteur_sous_plafond_mm: number;   // HSP = HT - ED
+  entry_mode: 'hauteur' | 'hsp';     // quel champ a été saisi par l'utilisateur
   troncons: ApiTroncon[];
   order: number;
 }

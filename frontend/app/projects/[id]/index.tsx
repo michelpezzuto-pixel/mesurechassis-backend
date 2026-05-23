@@ -22,7 +22,7 @@ export default function ProjectDetail() {
   const [loading, setLoading] = useState(true);
   const [addOpen, setAddOpen] = useState(false);
   const [newStairName, setNewStairName] = useState('');
-  const [newStairShape, setNewStairShape] = useState<'droit' | 'tournant'>('tournant');
+  const [newStairShape, setNewStairShape] = useState<'droit' | 'quart_tournant' | 'demi_tournant' | 'helicoidal'>('quart_tournant');
   const [creating, setCreating] = useState(false);
 
   const load = useCallback(async () => {
@@ -67,7 +67,7 @@ export default function ProjectDetail() {
     ]);
   };
 
-  const openAddStair = () => { setNewStairName(''); setNewStairShape('tournant'); setAddOpen(true); };
+  const openAddStair = () => { setNewStairName(''); setNewStairShape('quart_tournant'); setAddOpen(true); };
 
   const createStair = async () => {
     const name = newStairName.trim() || `Escalier ${stairs.length + 1}`;
@@ -255,38 +255,47 @@ export default function ProjectDetail() {
               testID="input-new-stair-name"
             />
 
-            {/* Shape selector — DROIT (simplifié) vs TOURNANT (multi-niveaux) */}
+            {/* Shape selector — 4 formes officielles */}
             <Text style={styles.modalSubLabel}>FORME DE L'ESCALIER</Text>
-            <View style={styles.shapeRow}>
+            <View style={styles.shapeGrid}>
               <TouchableOpacity
                 style={[styles.shapeBtn, newStairShape === 'droit' && styles.shapeBtnActive]}
                 onPress={() => setNewStairShape('droit')}
                 testID="shape-droit"
               >
-                <MaterialCommunityIcons
-                  name="arrow-top-right"
-                  size={24}
-                  color={newStairShape === 'droit' ? C.DARK : C.GRAY3}
-                />
+                <MaterialCommunityIcons name="arrow-top-right" size={24} color={newStairShape === 'droit' ? C.DARK : C.GRAY3} />
                 <Text style={[styles.shapeTitle, newStairShape === 'droit' && { color: C.DARK }]}>DROIT</Text>
-                <Text style={[styles.shapeHint, newStairShape === 'droit' && { color: C.DARK, opacity: 0.7 }]}>
-                  1 volée linéaire
-                </Text>
+                <Text style={[styles.shapeHint, newStairShape === 'droit' && { color: C.DARK, opacity: 0.7 }]}>1 volée linéaire</Text>
               </TouchableOpacity>
+
               <TouchableOpacity
-                style={[styles.shapeBtn, newStairShape === 'tournant' && styles.shapeBtnActive]}
-                onPress={() => setNewStairShape('tournant')}
-                testID="shape-tournant"
+                style={[styles.shapeBtn, newStairShape === 'quart_tournant' && styles.shapeBtnActive]}
+                onPress={() => setNewStairShape('quart_tournant')}
+                testID="shape-quart-tournant"
               >
-                <MaterialCommunityIcons
-                  name="rotate-3d-variant"
-                  size={24}
-                  color={newStairShape === 'tournant' ? C.DARK : C.GRAY3}
-                />
-                <Text style={[styles.shapeTitle, newStairShape === 'tournant' && { color: C.DARK }]}>TOURNANT</Text>
-                <Text style={[styles.shapeHint, newStairShape === 'tournant' && { color: C.DARK, opacity: 0.7 }]}>
-                  Niveaux & tronçons
-                </Text>
+                <MaterialCommunityIcons name="rotate-right" size={24} color={newStairShape === 'quart_tournant' ? C.DARK : C.GRAY3} />
+                <Text style={[styles.shapeTitle, newStairShape === 'quart_tournant' && { color: C.DARK }]}>1/4 TOURNANT</Text>
+                <Text style={[styles.shapeHint, newStairShape === 'quart_tournant' && { color: C.DARK, opacity: 0.7 }]}>Sections + palier</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.shapeBtn, newStairShape === 'demi_tournant' && styles.shapeBtnActive]}
+                onPress={() => setNewStairShape('demi_tournant')}
+                testID="shape-demi-tournant"
+              >
+                <MaterialCommunityIcons name="rotate-3d-variant" size={24} color={newStairShape === 'demi_tournant' ? C.DARK : C.GRAY3} />
+                <Text style={[styles.shapeTitle, newStairShape === 'demi_tournant' && { color: C.DARK }]}>2/4 TOURNANT</Text>
+                <Text style={[styles.shapeHint, newStairShape === 'demi_tournant' && { color: C.DARK, opacity: 0.7 }]}>Demi-tour 180°</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.shapeBtn, styles.shapeBtnDisabled]}
+                onPress={() => Alert.alert('Bientôt disponible', 'L\'escalier hélicoïdal sera disponible dans une prochaine mise à jour.')}
+                testID="shape-helicoidal"
+              >
+                <MaterialCommunityIcons name="rotate-orbit" size={24} color={C.GRAY3} />
+                <Text style={[styles.shapeTitle, { color: C.GRAY3 }]}>HÉLICOÏDAL</Text>
+                <View style={styles.bientotBadge}><Text style={styles.bientotTxt}>BIENTÔT</Text></View>
               </TouchableOpacity>
             </View>
             <View style={{ flexDirection: 'row', gap: SP.sm, marginTop: SP.md }}>
@@ -360,12 +369,14 @@ const styles = StyleSheet.create({
   modalBtnPrimary: { backgroundColor: C.ACCENT },
   modalBtnTxt: { ...FONT.button, color: C.DARK, fontSize: 13 },
 
-  // Shape selector inside modal
+  // Shape selector inside modal (4 formes, grid 2×2)
   modalSubLabel: { ...FONT.label, color: C.ACCENT, fontSize: 11, marginTop: SP.md },
   shapeRow: { flexDirection: 'row', gap: SP.sm, marginTop: SP.sm },
+  shapeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: SP.sm, marginTop: SP.sm },
   shapeBtn: {
-    flex: 1,
-    paddingVertical: 14,
+    flexBasis: '48%',
+    flexGrow: 1,
+    paddingVertical: 12,
     paddingHorizontal: 8,
     backgroundColor: C.BG_DEEPER,
     borderRadius: R.md,
@@ -373,8 +384,16 @@ const styles = StyleSheet.create({
     borderColor: C.BORDER,
     alignItems: 'center',
     gap: 4,
+    minHeight: 88,
+    justifyContent: 'center',
   },
   shapeBtnActive: { backgroundColor: C.ACCENT, borderColor: C.ACCENT },
-  shapeTitle: { ...FONT.button, color: C.WHITE, fontSize: 12, marginTop: 4 },
-  shapeHint: { ...FONT.small, fontSize: 10, color: C.GRAY3, textAlign: 'center' },
+  shapeBtnDisabled: { opacity: 0.5 },
+  shapeTitle: { ...FONT.button, color: C.WHITE, fontSize: 11, marginTop: 2, textAlign: 'center' },
+  shapeHint: { ...FONT.small, fontSize: 9, color: C.GRAY3, textAlign: 'center' },
+  bientotBadge: {
+    marginTop: 4, paddingHorizontal: 6, paddingVertical: 2, borderRadius: R.pill,
+    borderWidth: 1, borderColor: C.WARN, backgroundColor: 'transparent',
+  },
+  bientotTxt: { ...FONT.label, color: C.WARN, fontSize: 8 },
 });

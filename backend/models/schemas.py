@@ -138,35 +138,46 @@ class TronconUpdate(BaseModel):
 class Niveau(BaseModel):
     id: str
     label: str = "Niveau"       # display label (auto-derived from floor_index server-side)
-    floor_index: int = 0        # ⬅️ NEW : -3..+7 (0=RDC, 1=R+1, -1=Sous-sol)
-    is_ghost: bool = False      # ⬅️ NEW : "Pas d'escalier ici" — préserve la continuité
-    hauteur_mm: float            # hauteur brute du niveau (mm)
-    sol_fini: bool = True         # si False, on déduit reserve_mm de hauteur
+    floor_index: int = 0        # ⬅️ -3..+7 (0=RDC, 1=R+1, -1=Sous-sol)
+    is_ghost: bool = False      # ⬅️ "Pas d'escalier ici" — préserve la continuité
+    hauteur_mm: float            # hauteur brute du niveau (mm) = Hauteur Totale (HT)
+    sol_fini: bool = True         # niveau bas fini ; si False, on déduit reserve_mm
     reserve_mm: float = 0
+    # Logique HT / ED / HSP (mai 2025) — saisie liée, l'un des 3 est auto-calculé
+    epaisseur_dalle_mm: float = 0        # ED : épaisseur de la dalle haute (mm)
+    hauteur_sous_plafond_mm: float = 0   # HSP : HT - ED (mm) — calculé ou saisi
+    entry_mode: Literal["hauteur", "hsp"] = "hauteur"   # ⬅️ champ saisi par l'utilisateur ; l'autre est verrouillé
     troncons: List[Troncon] = []
     order: int = 0
 
 
 class NiveauCreate(BaseModel):
     label: str = ""               # vide → auto-dérivé du floor_index ("RDC", "R+1", …)
-    floor_index: int = 0          # ⬅️ NEW : niveau strict -3..+7
-    is_ghost: bool = False        # ⬅️ NEW : "Pas d'escalier ici"
+    floor_index: int = 0          # niveau strict -3..+7
+    is_ghost: bool = False        # "Pas d'escalier ici"
     hauteur_mm: float
     sol_fini: bool = True
     reserve_mm: float = 0
+    epaisseur_dalle_mm: float = 0
+    hauteur_sous_plafond_mm: float = 0
+    entry_mode: Literal["hauteur", "hsp"] = "hauteur"
 
 
 class NiveauUpdate(BaseModel):
     label: Optional[str] = None
-    floor_index: Optional[int] = None      # ⬅️ NEW
-    is_ghost: Optional[bool] = None        # ⬅️ NEW
+    floor_index: Optional[int] = None
+    is_ghost: Optional[bool] = None
     hauteur_mm: Optional[float] = None
     sol_fini: Optional[bool] = None
     reserve_mm: Optional[float] = None
+    epaisseur_dalle_mm: Optional[float] = None
+    hauteur_sous_plafond_mm: Optional[float] = None
+    entry_mode: Optional[Literal["hauteur", "hsp"]] = None
     order: Optional[int] = None
 
 
-StairShape = Literal["droit", "tournant"]
+# 4 formes officielles + 'tournant' conservé en alias pour rétrocompat V1
+StairShape = Literal["droit", "quart_tournant", "demi_tournant", "helicoidal", "tournant"]
 
 
 class Stair(BaseModel):
