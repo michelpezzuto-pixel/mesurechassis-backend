@@ -5,7 +5,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons, Feather } from '@expo/vector-icons';
-import { Projects, Stairs, ApiStair } from '@/src/api';
+import Svg, { Line, Polyline, Path, Polygon, Rect, Circle, Text as SvgText, G } from 'react-native-svg';
+import { Projects, Stairs, ApiStair, StairShape } from '@/src/api';
 import { useAuth } from '@/src/auth';
 import { C, SP, R, FONT, STATUS_LABELS, STATUS_COLOR } from '@/src/theme';
 
@@ -22,7 +23,8 @@ export default function ProjectDetail() {
   const [loading, setLoading] = useState(true);
   const [addOpen, setAddOpen] = useState(false);
   const [newStairName, setNewStairName] = useState('');
-  const [newStairShape, setNewStairShape] = useState<'droit' | 'quart_tournant' | 'demi_tournant' | 'helicoidal'>('quart_tournant');
+  const [newStairShape, setNewStairShape] = useState<'droit' | 'quart_tournant' | 'demi_tournant' | 'helicoidal' | null>(null);
+  const [niveauFini, setNiveauFini] = useState(true);
   const [creating, setCreating] = useState(false);
 
   const load = useCallback(async () => {
@@ -67,16 +69,33 @@ export default function ProjectDetail() {
     ]);
   };
 
-  const openAddStair = () => { setNewStairName(''); setNewStairShape('quart_tournant'); setAddOpen(true); };
+  const openAddStair = () => {
+    setNewStairName('');
+    setNewStairShape(null);
+    setNiveauFini(true);
+    setAddOpen(true);
+  };
 
   const createStair = async () => {
+    if (!newStairShape) {
+      Alert.alert('Sélection requise', 'Choisissez d\'abord une forme d\'escalier.');
+      return;
+    }
+    if (newStairShape === 'helicoidal') {
+      Alert.alert('Bientôt disponible', "L'escalier hélicoïdal sera disponible dans une prochaine mise à jour.");
+      return;
+    }
     const name = newStairName.trim() || `Escalier ${stairs.length + 1}`;
     setCreating(true);
     try {
-      const s = await Stairs.create(id!, { name, shape: newStairShape });
+      const s = await Stairs.create(id!, { name, shape: newStairShape as StairShape });
+      // Pour DROIT, mettre à jour le niveau RDC auto-créé si NIVEAU FINI décoché
+      if (newStairShape === 'droit' && !niveauFini && s.niveaux[0]) {
+        await Stairs.updateNiveau(id!, s.id, s.niveaux[0].id, { sol_fini: false });
+        s.niveaux[0].sol_fini = false;
+      }
       setStairs([...stairs, s]);
       setAddOpen(false);
-      // Navigation directe vers l'éditeur
       router.push(`/projects/${id}/stairs/${s.id}` as any);
     } catch (e: any) {
       Alert.alert('Erreur', e?.response?.data?.detail || 'Création impossible');
@@ -230,91 +249,248 @@ export default function ProjectDetail() {
         )}
       </ScrollView>
 
-      {/* Modal "Nom de l'escalier" */}
+      {/* Modal "Aucun escalier" — choix forme + nom (UI image_42 style fiches techniques) */}
       <Modal visible={addOpen} transparent animationType="fade" onRequestClose={() => setAddOpen(false)}>
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.modalBg}>
-          <View style={styles.modalCard}>
+          <View style={styles.modalCardBig}>
             <View style={styles.modalHead}>
-              <MaterialCommunityIcons name="stairs-up" size={22} color={C.ACCENT} />
-              <Text style={styles.modalTitle}>NOM DE L'ESCALIER</Text>
-              <TouchableOpacity onPress={() => setAddOpen(false)}><Ionicons name="close" size={22} color={C.WHITE} /></TouchableOpacity>
+              <View>
+                <Text style={styles.modalKicker}>{project?.client_nom?.toUpperCase()} {project?.client_prenom || ''}</Text>
+                <Text style={styles.modalTitleBig}>AUCUN ESCALIER</Text>
+              </View>
+              <TouchableOpacity onPress={() => setAddOpen(false)} hitSlop={10}>
+                <Ionicons name="close" size={22} color={C.WHITE} />
+              </TouchableOpacity>
             </View>
+
             <Text style={styles.modalHint}>
-              Donne un nom clair pour identifier cet escalier (ex. Cave-to-RDC, Escalier principal, Mezzanine…)
+              Sélectionnez la forme · attribuez un nom · puis configurez.
             </Text>
-            <TextInput
-              value={newStairName}
-              onChangeText={setNewStairName}
-              placeholder="Cave-to-RDC"
-              placeholderTextColor={C.GRAY3}
-              style={styles.modalInput}
-              autoFocus
-              maxLength={60}
-              onSubmitEditing={createStair}
-              returnKeyType="done"
-              testID="input-new-stair-name"
-            />
 
-            {/* Shape selector — 4 formes officielles */}
-            <Text style={styles.modalSubLabel}>FORME DE L'ESCALIER</Text>
-            <View style={styles.shapeGrid}>
-              <TouchableOpacity
-                style={[styles.shapeBtn, newStairShape === 'droit' && styles.shapeBtnActive]}
-                onPress={() => setNewStairShape('droit')}
-                testID="shape-droit"
-              >
-                <MaterialCommunityIcons name="arrow-top-right" size={24} color={newStairShape === 'droit' ? C.DARK : C.GRAY3} />
-                <Text style={[styles.shapeTitle, newStairShape === 'droit' && { color: C.DARK }]}>DROIT</Text>
-                <Text style={[styles.shapeHint, newStairShape === 'droit' && { color: C.DARK, opacity: 0.7 }]}>1 volée linéaire</Text>
-              </TouchableOpacity>
+            <ScrollView style={{ flexGrow: 0, maxHeight: 460 }} contentContainerStyle={{ paddingBottom: SP.sm }}>
+              {/* Grille 2×2 de fiches techniques */}
+              <View style={styles.cardsGrid}>
+                <ShapeCardDroit
+                  active={newStairShape === 'droit'}
+                  onPress={() => setNewStairShape('droit')}
+                  niveauFini={niveauFini}
+                  onToggleNiveauFini={() => setNiveauFini(!niveauFini)}
+                />
+                <ShapeCardQuart
+                  active={newStairShape === 'quart_tournant'}
+                  onPress={() => setNewStairShape('quart_tournant')}
+                />
+                <ShapeCardDemi
+                  active={newStairShape === 'demi_tournant'}
+                  onPress={() => setNewStairShape('demi_tournant')}
+                />
+                <ShapeCardHelico
+                  onPress={() => Alert.alert('Bientôt disponible', "L'escalier hélicoïdal sera disponible dans une prochaine mise à jour.")}
+                />
+              </View>
 
-              <TouchableOpacity
-                style={[styles.shapeBtn, newStairShape === 'quart_tournant' && styles.shapeBtnActive]}
-                onPress={() => setNewStairShape('quart_tournant')}
-                testID="shape-quart-tournant"
-              >
-                <MaterialCommunityIcons name="rotate-right" size={24} color={newStairShape === 'quart_tournant' ? C.DARK : C.GRAY3} />
-                <Text style={[styles.shapeTitle, newStairShape === 'quart_tournant' && { color: C.DARK }]}>1/4 TOURNANT</Text>
-                <Text style={[styles.shapeHint, newStairShape === 'quart_tournant' && { color: C.DARK, opacity: 0.7 }]}>Sections + palier</Text>
-              </TouchableOpacity>
+              {/* Nom de l'escalier */}
+              <Text style={styles.modalSubLabel}>NOM DE L'ESCALIER</Text>
+              <TextInput
+                value={newStairName}
+                onChangeText={setNewStairName}
+                placeholder="Cave-to-RDC, Terrasse, Intérieur..."
+                placeholderTextColor={C.GRAY3}
+                style={styles.modalInput}
+                maxLength={60}
+                returnKeyType="done"
+                testID="input-new-stair-name"
+              />
+            </ScrollView>
 
-              <TouchableOpacity
-                style={[styles.shapeBtn, newStairShape === 'demi_tournant' && styles.shapeBtnActive]}
-                onPress={() => setNewStairShape('demi_tournant')}
-                testID="shape-demi-tournant"
-              >
-                <MaterialCommunityIcons name="rotate-3d-variant" size={24} color={newStairShape === 'demi_tournant' ? C.DARK : C.GRAY3} />
-                <Text style={[styles.shapeTitle, newStairShape === 'demi_tournant' && { color: C.DARK }]}>2/4 TOURNANT</Text>
-                <Text style={[styles.shapeHint, newStairShape === 'demi_tournant' && { color: C.DARK, opacity: 0.7 }]}>Demi-tour 180°</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[styles.shapeBtn, styles.shapeBtnDisabled]}
-                onPress={() => Alert.alert('Bientôt disponible', 'L\'escalier hélicoïdal sera disponible dans une prochaine mise à jour.')}
-                testID="shape-helicoidal"
-              >
-                <MaterialCommunityIcons name="rotate-orbit" size={24} color={C.GRAY3} />
-                <Text style={[styles.shapeTitle, { color: C.GRAY3 }]}>HÉLICOÏDAL</Text>
-                <View style={styles.bientotBadge}><Text style={styles.bientotTxt}>BIENTÔT</Text></View>
-              </TouchableOpacity>
-            </View>
+            {/* Bottom : ANNULER + CONFIGURER */}
             <View style={{ flexDirection: 'row', gap: SP.sm, marginTop: SP.md }}>
               <TouchableOpacity style={[styles.modalBtn, styles.modalBtnGhost]} onPress={() => setAddOpen(false)}>
                 <Text style={[styles.modalBtnTxt, { color: C.WHITE }]}>ANNULER</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.modalBtn, styles.modalBtnPrimary, creating && { opacity: 0.6 }]}
+                style={[
+                  styles.modalBtn, styles.modalBtnPrimary,
+                  (!newStairShape || newStairShape === 'helicoidal' || creating) && { opacity: 0.4 },
+                ]}
                 onPress={createStair}
-                disabled={creating}
+                disabled={!newStairShape || newStairShape === 'helicoidal' || creating}
                 testID="btn-create-stair"
               >
-                {creating ? <ActivityIndicator color={C.DARK} /> : <Text style={styles.modalBtnTxt}>CRÉER</Text>}
+                {creating
+                  ? <ActivityIndicator color={C.DARK} />
+                  : <Text style={styles.modalBtnTxt}>CONFIGURER →</Text>}
               </TouchableOpacity>
             </View>
           </View>
         </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
+  );
+}
+
+// ╔═══════════════════════════════════════════════════════╗
+//   SHAPE CARDS — 4 fiches techniques visuelles (image_42)
+//   Chaque carte : SVG profil + plan, flèches métier rouges,
+//   libellés dimensions, état active = bord vert + halo.
+// ╚═══════════════════════════════════════════════════════╝
+
+const RED = '#E11D48';
+const GREEN = C.ACCENT;
+const GRAY = '#9098A8';
+const ARROW = (id: string) => null; // arrowhead defined per-svg
+
+function CardFrame({
+  title, active, onPress, children, testID,
+}: { title: string; active: boolean; onPress: () => void; children: React.ReactNode; testID?: string }) {
+  return (
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={onPress}
+      style={[styles.shapeCard, active && styles.shapeCardActive]}
+      testID={testID}
+    >
+      <View style={styles.shapeCardSvg}>{children}</View>
+      <Text style={[styles.shapeCardTitle, active && { color: C.ACCENT }]}>{title}</Text>
+    </TouchableOpacity>
+  );
+}
+
+function ShapeCardDroit({
+  active, onPress, niveauFini, onToggleNiveauFini,
+}: { active: boolean; onPress: () => void; niveauFini: boolean; onToggleNiveauFini: () => void }) {
+  return (
+    <CardFrame title="DROIT" active={active} onPress={onPress} testID="shape-droit">
+      <Svg width="100%" height="100" viewBox="0 0 140 100">
+        {/* Profil : escalier qui monte */}
+        <Polyline points="20,80 20,72 32,72 32,64 44,64 44,56 56,56 56,48 68,48 68,40" stroke={C.WHITE} strokeWidth="1.5" fill="none"/>
+        {/* Sol bas/haut */}
+        <Line x1="12" y1="80" x2="78" y2="80" stroke={GRAY} strokeWidth="0.8"/>
+        <Line x1="62" y1="40" x2="92" y2="40" stroke={GRAY} strokeWidth="0.8"/>
+        {/* Dalle (vert) */}
+        <Rect x="62" y="32" width="30" height="8" fill="rgba(140,198,63,0.25)" stroke={GREEN} strokeWidth="0.8"/>
+        {/* Flèche HAUTEUR TOTALE (rouge gauche) */}
+        <Line x1="10" y1="80" x2="10" y2="40" stroke={RED} strokeWidth="1"/>
+        <Polygon points="10,40 7,46 13,46" fill={RED}/>
+        <Polygon points="10,80 7,74 13,74" fill={RED}/>
+        <SvgText x="2" y="62" fontSize="5" fill={RED} fontWeight="bold">HT</SvgText>
+        {/* Flèche ÉPAISSEUR DALLE (vert) */}
+        <Line x1="96" y1="32" x2="96" y2="40" stroke={GREEN} strokeWidth="1"/>
+        <SvgText x="98" y="38" fontSize="5" fill={GREEN} fontWeight="bold">ED</SvgText>
+        {/* Plan */}
+        <Rect x="100" y="60" width="32" height="22" fill="none" stroke={C.WHITE} strokeWidth="1"/>
+        {/* Marches plan */}
+        <Line x1="100" y1="66" x2="132" y2="66" stroke={GRAY} strokeWidth="0.4"/>
+        <Line x1="100" y1="72" x2="132" y2="72" stroke={GRAY} strokeWidth="0.4"/>
+        <Line x1="100" y1="78" x2="132" y2="78" stroke={GRAY} strokeWidth="0.4"/>
+        <SvgText x="116" y="56" fontSize="4" fill={RED} fontWeight="bold" textAnchor="middle">L</SvgText>
+        <SvgText x="136" y="73" fontSize="4" fill={RED} fontWeight="bold">l</SvgText>
+      </Svg>
+      {/* NIVEAU FINI checkbox (DROIT-only, sous le dessin) */}
+      <TouchableOpacity
+        onPress={(e) => { e.stopPropagation?.(); onToggleNiveauFini(); }}
+        style={styles.nivFiniRow}
+        testID="droit-niveau-fini"
+      >
+        <View style={[styles.nivFiniBox, niveauFini && styles.nivFiniBoxOn]}>
+          {niveauFini && <Ionicons name="checkmark" size={11} color={C.DARK} />}
+        </View>
+        <Text style={styles.nivFiniLabel}>NIVEAU FINI</Text>
+      </TouchableOpacity>
+    </CardFrame>
+  );
+}
+
+function ShapeCardQuart({ active, onPress }: { active: boolean; onPress: () => void }) {
+  return (
+    <CardFrame title="1/4 TOURNANT" active={active} onPress={onPress} testID="shape-quart-tournant">
+      <Svg width="100%" height="100" viewBox="0 0 140 100">
+        {/* L-shape plan */}
+        <Polygon points="20,75 60,75 60,40 95,40 95,55 75,55 75,90 20,90" fill="none" stroke={C.WHITE} strokeWidth="1.5"/>
+        {/* Marches lignes parallèles section A horizontale */}
+        <Line x1="80" y1="40" x2="80" y2="55" stroke={GRAY} strokeWidth="0.5"/>
+        <Line x1="85" y1="40" x2="85" y2="55" stroke={GRAY} strokeWidth="0.5"/>
+        <Line x1="90" y1="40" x2="90" y2="55" stroke={GRAY} strokeWidth="0.5"/>
+        {/* Marches section B verticale */}
+        <Line x1="60" y1="60" x2="75" y2="60" stroke={GRAY} strokeWidth="0.5"/>
+        <Line x1="60" y1="68" x2="75" y2="68" stroke={GRAY} strokeWidth="0.5"/>
+        <Line x1="60" y1="76" x2="75" y2="76" stroke={GRAY} strokeWidth="0.5"/>
+        {/* Dansantes au coin */}
+        <Line x1="60" y1="55" x2="75" y2="40" stroke={GRAY} strokeWidth="0.5"/>
+        {/* Flèches LONGUEUR A (haut) */}
+        <Line x1="60" y1="32" x2="95" y2="32" stroke={RED} strokeWidth="1"/>
+        <Polygon points="60,32 64,30 64,34" fill={RED}/>
+        <Polygon points="95,32 91,30 91,34" fill={RED}/>
+        <SvgText x="77" y="29" fontSize="4" fill={RED} fontWeight="bold" textAnchor="middle">LONG. A</SvgText>
+        {/* Flèche LONGUEUR B (gauche) */}
+        <Line x1="12" y1="75" x2="12" y2="90" stroke={RED} strokeWidth="1"/>
+        <Polygon points="12,75 10,79 14,79" fill={RED}/>
+        <Polygon points="12,90 10,86 14,86" fill={RED}/>
+        <SvgText x="2" y="86" fontSize="4" fill={RED} fontWeight="bold">L.B</SvgText>
+        {/* Largeur */}
+        <SvgText x="40" y="97" fontSize="4" fill={RED} fontWeight="bold">l</SvgText>
+      </Svg>
+    </CardFrame>
+  );
+}
+
+function ShapeCardDemi({ active, onPress }: { active: boolean; onPress: () => void }) {
+  return (
+    <CardFrame title="2/4 TOURNANT" active={active} onPress={onPress} testID="shape-demi-tournant">
+      <Svg width="100%" height="100" viewBox="0 0 140 100">
+        {/* U-shape plan */}
+        <Polygon points="20,25 50,25 50,65 90,65 90,25 120,25 120,85 20,85" fill="none" stroke={C.WHITE} strokeWidth="1.5"/>
+        {/* Marches section A (gauche bas) */}
+        <Line x1="20" y1="72" x2="50" y2="72" stroke={GRAY} strokeWidth="0.5"/>
+        <Line x1="20" y1="78" x2="50" y2="78" stroke={GRAY} strokeWidth="0.5"/>
+        {/* Section B (haut, palier) */}
+        <Line x1="55" y1="40" x2="85" y2="40" stroke={GRAY} strokeWidth="0.5"/>
+        <Line x1="55" y1="50" x2="85" y2="50" stroke={GRAY} strokeWidth="0.5"/>
+        {/* Section C (droite bas) */}
+        <Line x1="90" y1="72" x2="120" y2="72" stroke={GRAY} strokeWidth="0.5"/>
+        <Line x1="90" y1="78" x2="120" y2="78" stroke={GRAY} strokeWidth="0.5"/>
+        {/* Flèches : LONG A en bas, LARGEUR à droite */}
+        <Line x1="20" y1="92" x2="50" y2="92" stroke={RED} strokeWidth="1"/>
+        <Polygon points="20,92 24,90 24,94" fill={RED}/>
+        <Polygon points="50,92 46,90 46,94" fill={RED}/>
+        <SvgText x="35" y="98" fontSize="4" fill={RED} fontWeight="bold" textAnchor="middle">L.A</SvgText>
+        <Line x1="90" y1="92" x2="120" y2="92" stroke={RED} strokeWidth="1"/>
+        <Polygon points="90,92 94,90 94,94" fill={RED}/>
+        <Polygon points="120,92 116,90 116,94" fill={RED}/>
+        <SvgText x="105" y="98" fontSize="4" fill={RED} fontWeight="bold" textAnchor="middle">L.B</SvgText>
+        <SvgText x="125" y="78" fontSize="4" fill={RED} fontWeight="bold">l</SvgText>
+      </Svg>
+    </CardFrame>
+  );
+}
+
+function ShapeCardHelico({ onPress }: { onPress: () => void }) {
+  return (
+    <TouchableOpacity activeOpacity={0.7} onPress={onPress} style={[styles.shapeCard, styles.shapeCardDisabled]} testID="shape-helicoidal">
+      <View style={styles.shapeCardSvg}>
+        <Svg width="100%" height="100" viewBox="0 0 140 100">
+          {/* Cercle plan (gauche) */}
+          <Circle cx="40" cy="55" r="28" fill="none" stroke={GRAY} strokeWidth="1"/>
+          <Circle cx="40" cy="55" r="8" fill="none" stroke={GRAY} strokeWidth="1"/>
+          {/* Marches radiales */}
+          {[0,30,60,90,120,150,180,210,240,270,300,330].map(a => {
+            const rad = (a * Math.PI) / 180;
+            const x1 = 40 + 8 * Math.cos(rad);
+            const y1 = 55 + 8 * Math.sin(rad);
+            const x2 = 40 + 28 * Math.cos(rad);
+            const y2 = 55 + 28 * Math.sin(rad);
+            return <Line key={a} x1={x1} y1={y1} x2={x2} y2={y2} stroke={GRAY} strokeWidth="0.4"/>;
+          })}
+          {/* Spiral profile (droite) */}
+          <Path d="M85 80 L85 70 Q95 70 95 60 Q105 60 105 50 Q115 50 115 40 Q125 40 125 30" stroke={GRAY} strokeWidth="1" fill="none"/>
+          <SvgText x="40" y="14" fontSize="4" fill={GRAY} fontWeight="bold" textAnchor="middle">RAYON r</SvgText>
+        </Svg>
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+        <Text style={[styles.shapeCardTitle, { color: C.GRAY3 }]}>HÉLICOÏDAL</Text>
+        <View style={styles.bientotBadge}><Text style={styles.bientotTxt}>BIENTÔT</Text></View>
+      </View>
+    </TouchableOpacity>
   );
 }
 
@@ -368,6 +544,50 @@ const styles = StyleSheet.create({
   modalBtnGhost: { backgroundColor: 'transparent', borderWidth: 1, borderColor: C.BORDER },
   modalBtnPrimary: { backgroundColor: C.ACCENT },
   modalBtnTxt: { ...FONT.button, color: C.DARK, fontSize: 13 },
+
+  // Modal "Aucun escalier" (image_42)
+  modalCardBig: {
+    width: '100%', maxWidth: 520,
+    backgroundColor: C.CARD, borderRadius: R.lg, padding: SP.lg,
+    borderWidth: 1, borderColor: C.BORDER,
+  },
+  modalKicker: { ...FONT.label, fontSize: 9, color: C.GRAY3 },
+  modalTitleBig: { ...FONT.h2, fontSize: 18, color: C.WHITE, marginTop: 2 },
+  cardsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: SP.sm, marginTop: SP.sm, marginBottom: SP.md },
+
+  shapeCard: {
+    flexBasis: '48%', flexGrow: 1,
+    backgroundColor: C.BG_DEEPER,
+    borderRadius: R.md,
+    borderWidth: 1.5, borderColor: C.BORDER,
+    padding: 10,
+    minHeight: 150,
+  },
+  shapeCardActive: {
+    borderColor: C.ACCENT,
+    backgroundColor: 'rgba(140,198,63,0.06)',
+  },
+  shapeCardDisabled: {
+    opacity: 0.55, flexBasis: '48%', flexGrow: 1,
+    backgroundColor: C.BG_DEEPER, borderRadius: R.md,
+    borderWidth: 1.5, borderColor: C.BORDER, padding: 10, minHeight: 150,
+  },
+  shapeCardSvg: { backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: 6, marginBottom: 6, paddingVertical: 4 },
+  shapeCardTitle: { ...FONT.button, fontSize: 12, color: C.WHITE, textAlign: 'center' },
+
+  nivFiniRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    marginTop: 6, paddingTop: 6,
+    borderTopWidth: 1, borderTopColor: C.BORDER,
+    justifyContent: 'center',
+  },
+  nivFiniBox: {
+    width: 16, height: 16, borderRadius: 4,
+    borderWidth: 1.5, borderColor: C.GRAY3,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  nivFiniBoxOn: { backgroundColor: C.ACCENT, borderColor: C.ACCENT },
+  nivFiniLabel: { ...FONT.label, fontSize: 9, color: C.WHITE },
 
   // Shape selector inside modal (4 formes, grid 2×2)
   modalSubLabel: { ...FONT.label, color: C.ACCENT, fontSize: 11, marginTop: SP.md },
