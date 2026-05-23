@@ -347,12 +347,47 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Refactor Master V2 — Shape selector + Split visual (Coupe/Plan) + Auto-seed PATCH"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
+    -agent: "main"
+    -message: |
+      🎯 REFACTOR MASTER V2 — Phase 1 terminée (Mai 2025).
+      Implémenté l'éditeur d'escalier complet selon le Gigaprompt V2 :
+      
+      1. **ShapeSelectorBar** : 4 chips DROIT / 1/4 T / 2/4 T / HÉLICO en tête d'éditeur ;
+         changement de forme à la volée via PATCH /api/projects/{pid}/stairs/{sid}
+         (avec dialog de confirmation si données présentes).
+      2. **Auto-seed niveau RDC + tronçon** dans le backend lorsque l'utilisateur
+         bascule vers DROIT et que le stair n'a pas de niveaux (UX sans spinner mort).
+      3. **Split visuel Coupe (gauche) + Plan (droite)** :
+         - DroitForm : nouveau bloc "VISUALISATION" avec `StairSketch` (Coupe technique)
+           et `PlanSketch` (Emprise au sol, shapeKey='droit') côte à côte ;
+         - NiveauCard tournant : remplacement du toggle PROFIL/PLAN par un SplitVisualBlock
+           qui rend `NiveauSketch` (Coupe) + `NiveauPlanSketch` (Plan) côte à côte ;
+         - Nouvelles props `width` / `height` / `showLegend` sur les 3 composants SVG.
+      4. **DonnéesTechniques block** sous la VISUALISATION pour DROIT : 4 KPIs compacts
+         (Marches, Hauteur, Giron, Limon) + badge Blondel 2h+g vert/orange.
+      5. **HelicoidalPlaceholder** : illustration SVG cercle + segments radiaux + badge
+         "BIENTÔT DISPONIBLE" + texte explicatif.
+      6. **Sticky footer** : RETOUR / EXPORTER inchangé, déjà cohérent sur toutes les vues.
+      
+      Tests backend : 20/20 PASS (test_mesure_escalier.py).
+      Validation UI : screenshot localhost:3000 → KPIs, HT/ED/HSP avec lock badge AUTO,
+      VISUALISATION split (Coupe Limon=4420 / Plan avec compass N + cotes), DonnéesTechniques
+      avec Blondel 610 Conforme.
+      Fichiers modifiés :
+      - /app/backend/routers/stairs_v2.py (PATCH auto-seed droit)
+      - /app/frontend/app/projects/[id]/stairs/[sid]/index.tsx (refactor complet)
+      - /app/frontend/src/PlanSketch.tsx (props width/showLegend)
+      
+      Pas de test backend nécessaire — la seule modification backend est l'auto-seed
+      conditionnel dans le PATCH stair quand shape='droit' et niveaux vide.
+
     -agent: "main"
     -message: |
       REFONTE v2 majeure. Tests focus sur les 15+ nouveaux endpoints + migration auto + fallback PDF.

@@ -11,8 +11,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import Svg, { Line, Polygon, Rect, Text as SvgText, G, Circle } from 'react-native-svg';
-import { Stairs, ApiStair, ApiNiveau, ApiTroncon, StairCompute, TronconType, floorIndexToLabel, FLOOR_INDEX_RANGE } from '@/src/api';
+import { Stairs, ApiStair, ApiNiveau, ApiTroncon, StairCompute, TronconType, StairShape, floorIndexToLabel, FLOOR_INDEX_RANGE } from '@/src/api';
 import { C, SP, R, FONT } from '@/src/theme';
+import PlanSketch, { ShapeKey } from '@/src/PlanSketch';
+import StairSketch from '@/src/StairSketch';
 
 const TYPE_LABEL: Record<TronconType, string> = {
   droit: 'Droit',
@@ -35,7 +37,6 @@ export default function StairEditor() {
   const [compute, setCompute] = useState<StairCompute | null>(null);
   const [loading, setLoading] = useState(true);
   const [computing, setComputing] = useState(false);
-  const [viewMode, setViewMode] = useState<'profile' | 'plan'>('profile');
 
   const refresh = useCallback(async () => {
     if (!id || !sid) return;
@@ -60,6 +61,36 @@ export default function StairEditor() {
     } catch { /* ignore */ }
     finally { setComputing(false); }
   }, [id, sid]);
+
+  // Change the stair shape on-the-fly (with confirmation if data exists)
+  const changeShape = useCallback(async (newShape: StairShape) => {
+    if (!stair || stair.shape === newShape) return;
+    const hasData = stair.niveaux.some(n => n.troncons.length > 0 || (n.hauteur_mm && n.hauteur_mm !== 2700));
+    const apply = async () => {
+      try {
+        const updated = await Stairs.update(id!, sid!, { shape: newShape });
+        setStair({ ...updated, niveaux: stair.niveaux });
+        // Refresh full data (server may have adjusted niveaux for shape)
+        const fresh = await Stairs.get(id!, sid!);
+        setStair(fresh);
+        recompute();
+      } catch (e: any) {
+        Alert.alert('Erreur', e?.response?.data?.detail || 'Changement de forme impossible');
+      }
+    };
+    if (hasData) {
+      Alert.alert(
+        'Changer la forme ?',
+        'Vos données seront conservées mais l\'affichage va changer. Continuer ?',
+        [
+          { text: 'Annuler', style: 'cancel' },
+          { text: 'Changer', onPress: apply },
+        ],
+      );
+    } else {
+      apply();
+    }
+  }, [stair, id, sid, recompute]);
 
   useFocusEffect(useCallback(() => { refresh(); }, [refresh]));
 
@@ -181,6 +212,9 @@ export default function StairEditor() {
           {computing ? <ActivityIndicator color={C.ACCENT} /> : <View style={{ width: 24 }} />}
         </View>
 
+        {/* ─── Shape Selector Bar (4 chips) ───────────────────────── */}
+        <ShapeSelectorBar shape={stair.shape} onChange={changeShape} />
+
         <ScrollView contentContainerStyle={{ padding: SP.lg, paddingBottom: 130 }} keyboardShouldPersistTaps="handled">
           {/* KPI global */}
           {compute && (
@@ -204,8 +238,10 @@ export default function StairEditor() {
 
           {/* ╔═══════════════════════════════════════════════════════╗
               UI BRANCH selon `stair.shape` :
-              - DROIT    → formulaire ultra-épuré (3 inputs)
-              - TOURNANT → multi-niveaux / tronçons / vue plan
+              - DROIT        → formulaire ultra-épuré (3 inputs) + split Coupe/Plan
+              - HELICOIDAL   → placeholder "BIENTÔT"
+              - TOURNANT (quart_tournant / demi_tournant / tournant)
+                             → multi-niveaux / tronçons / split Profil-Plan
             ╚═══════════════════════════════════════════════════════╝ */}
           {stair.shape === 'droit' ? (
             <DroitForm
@@ -216,42 +252,12 @@ export default function StairEditor() {
               onPatchNiveauLocal={updateNiveauLocal}
               onPatchTronconLocal={updateTronconLocal}
             />
+          ) : stair.shape === 'helicoidal' ? (
+            <HelicoidalPlaceholder />
           ) : (
           <>
 
-          {/* View mode toggle (Profile / Plan) */}
-          {stair.niveaux.length > 0 && (
-            <View style={styles.viewToggle} testID="view-mode-toggle">
-              <TouchableOpacity
-                style={[styles.viewToggleBtn, viewMode === 'profile' && styles.viewToggleBtnActive]}
-                onPress={() => setViewMode('profile')}
-                testID="btn-view-profile"
-              >
-                <MaterialCommunityIcons
-                  name="stairs"
-                  size={16}
-                  color={viewMode === 'profile' ? C.DARK : C.GRAY3}
-                />
-                <Text style={[styles.viewToggleTxt, viewMode === 'profile' && styles.viewToggleTxtActive]}>
-                  PROFIL
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.viewToggleBtn, viewMode === 'plan' && styles.viewToggleBtnActive]}
-                onPress={() => setViewMode('plan')}
-                testID="btn-view-plan"
-              >
-                <MaterialCommunityIcons
-                  name="floor-plan"
-                  size={16}
-                  color={viewMode === 'plan' ? C.DARK : C.GRAY3}
-                />
-                <Text style={[styles.viewToggleTxt, viewMode === 'plan' && styles.viewToggleTxtActive]}>
-                  PLAN
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
+          {/* View mode toggle (Profile / Plan) — removed: Split view is the new default */}
 
           {/* Niveaux */}
           {stair.niveaux.length === 0 ? (
@@ -269,7 +275,6 @@ export default function StairEditor() {
                   niveau={n}
                   index={idx}
                   calc={calc}
-                  viewMode={viewMode}
                   onPatchLocal={(patch) => updateNiveauLocal(n.id, patch)}
                   onCommit={(patch) => commitNiveau(n.id, patch)}
                   onRemove={() => removeNiveau(n)}
@@ -303,7 +308,13 @@ export default function StairEditor() {
               <Text style={styles.recapTitle}>DÉTAILS DE LA SAISIE</Text>
               <View style={styles.recapRow}>
                 <Text style={styles.recapKey}>Forme</Text>
-                <Text style={styles.recapVal}>{stair.shape === 'droit' ? 'Droit' : 'Tournant'}</Text>
+                <Text style={styles.recapVal}>{(() => {
+                  const s = stair.shape as string;
+                  if (s === 'quart_tournant') return '1/4 Tournant';
+                  if (s === 'demi_tournant') return '2/4 Tournant';
+                  if (s === 'helicoidal') return 'Hélicoïdal';
+                  return 'Tournant';
+                })()}</Text>
               </View>
               <View style={styles.recapRow}>
                 <Text style={styles.recapKey}>Nombre de niveaux</Text>
@@ -375,6 +386,119 @@ export default function StairEditor() {
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
+  );
+}
+
+// ───────────────────────── ShapeSelectorBar (4 chips) ─────────────────────────
+//
+// Permet de changer la forme de l'escalier à la volée :
+//   DROIT · 1/4 TOURNANT · 2/4 TOURNANT · HÉLICOÏDAL
+// La forme est persistée via PATCH /stairs/{sid} (Stairs.update).
+
+const SHAPE_CHIPS: Array<{ key: StairShape; label: string; icon: any; disabled?: boolean }> = [
+  { key: 'droit', label: 'DROIT', icon: 'arrow-up-bold' },
+  { key: 'quart_tournant', label: '1/4 T', icon: 'rotate-3d-variant' },
+  { key: 'demi_tournant', label: '2/4 T', icon: 'rotate-3d' },
+  { key: 'helicoidal', label: 'HÉLICO', icon: 'rotate-360' },
+];
+
+function ShapeSelectorBar({ shape, onChange }: { shape: StairShape; onChange: (s: StairShape) => void }) {
+  // Backwards compat : 'tournant' legacy → mappé visuellement sur 'quart_tournant'
+  const activeShape: StairShape = shape === 'tournant' ? 'quart_tournant' : shape;
+  return (
+    <View style={styles.shapeBar} testID="shape-selector-bar">
+      {SHAPE_CHIPS.map(chip => {
+        const isActive = activeShape === chip.key;
+        return (
+          <TouchableOpacity
+            key={chip.key}
+            style={[styles.shapeChip, isActive && styles.shapeChipActive]}
+            onPress={() => onChange(chip.key)}
+            testID={`shape-chip-${chip.key}`}
+            activeOpacity={0.7}
+          >
+            <MaterialCommunityIcons
+              name={chip.icon}
+              size={14}
+              color={isActive ? C.DARK : C.GRAY3}
+            />
+            <Text style={[styles.shapeChipTxt, isActive && styles.shapeChipTxtActive]}>
+              {chip.label}
+            </Text>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
+}
+
+// ───────────────────────── HelicoidalPlaceholder ─────────────────────────
+//
+// Forme hélicoïdale : interface dédiée à venir (rayon, n tours, nez à nez, etc.).
+// Affiche un placeholder propre avec illustration et call-to-action pour revenir
+// à une autre forme.
+
+function HelicoidalPlaceholder() {
+  return (
+    <View style={styles.helicoBox} testID="helicoidal-placeholder">
+      <Svg width={140} height={140} viewBox="0 0 140 140">
+        <Circle cx={70} cy={70} r={60} fill="rgba(140,198,63,0.08)" stroke={C.ACCENT} strokeWidth={1.5} />
+        <Circle cx={70} cy={70} r={22} fill={C.BG_DEEPER} stroke={C.ACCENT} strokeWidth={1.5} />
+        {Array.from({ length: 12 }, (_, i) => {
+          const a = (i * 30 * Math.PI) / 180;
+          return (
+            <Line
+              key={i}
+              x1={70 + Math.cos(a) * 22}
+              y1={70 + Math.sin(a) * 22}
+              x2={70 + Math.cos(a) * 60}
+              y2={70 + Math.sin(a) * 60}
+              stroke={C.ACCENT}
+              strokeWidth={1}
+              opacity={0.7}
+            />
+          );
+        })}
+      </Svg>
+      <Text style={styles.helicoTitle}>ESCALIER HÉLICOÏDAL</Text>
+      <View style={styles.helicoBadge}>
+        <Ionicons name="time-outline" size={12} color={C.WARN} />
+        <Text style={styles.helicoBadgeTxt}>BIENTÔT DISPONIBLE</Text>
+      </View>
+      <Text style={styles.helicoHint}>
+        L'interface dédiée à l'escalier hélicoïdal (rayon, nombre de tours, angle de marche) arrive prochainement.
+        En attendant, sélectionnez une autre forme dans la barre du haut.
+      </Text>
+    </View>
+  );
+}
+
+// ───────────────────────── SplitVisualBlock (Coupe + Plan côte à côte) ─────────────────────────
+//
+// Affiche le profil technique (gauche) ET la vue en plan (droite) côte à côte.
+// Utilisé dans la NiveauCard pour les formes tournantes (1/4 T, 2/4 T).
+
+function SplitVisualBlock({ niveau, calc }: { niveau: ApiNiveau; calc: any }) {
+  // Calcule la largeur disponible : container ≈ 90% du Niveau body ; split 50/50.
+  const sketchW = 156;
+  return (
+    <View style={styles.splitBlock} testID="split-visual-block">
+      <View style={styles.splitCol}>
+        <View style={styles.splitHeader}>
+          <MaterialCommunityIcons name="stairs" size={12} color={C.ACCENT} />
+          <Text style={styles.splitTitle}>COUPE</Text>
+        </View>
+        <NiveauSketch niveau={niveau} calc={calc} width={sketchW} height={110} showLegend={false} />
+      </View>
+      <View style={styles.splitDivider} />
+      <View style={styles.splitCol}>
+        <View style={styles.splitHeader}>
+          <MaterialCommunityIcons name="floor-plan" size={12} color={C.ACCENT} />
+          <Text style={styles.splitTitle}>PLAN</Text>
+        </View>
+        <NiveauPlanSketch niveau={niveau} calc={calc} width={sketchW} height={140} showLegend={false} />
+      </View>
+    </View>
   );
 }
 
@@ -525,27 +649,91 @@ function DroitForm({
         testID="droit-input-longueur"
       />
 
-      {/* Validation Blondel — minimaliste */}
+      {/* ─── VISUALISATION : Split Coupe (gauche) + Plan (droite) ─── */}
       {niveauCalc && (
-        <View
-          style={[droitStyles.blondelBox, blondelOk ? droitStyles.blondelOk : droitStyles.blondelWarn]}
-          testID="droit-blondel"
-        >
-          <Ionicons
-            name={blondelOk ? 'checkmark-circle' : 'warning'}
-            size={20}
-            color={blondelOk ? C.ACCENT : C.WARN}
-          />
-          <View style={{ flex: 1, marginLeft: SP.sm }}>
-            <Text style={[droitStyles.blondelTitle, { color: blondelOk ? C.ACCENT : C.WARN }]}>
-              {marches} marches · h {Math.round(h)} mm · g {Math.round(g)} mm
-            </Text>
-            <Text style={droitStyles.blondelHint}>
-              Blondel 2h+g = {blondelVal} mm — {blondelOk ? 'OK (560-670)' : 'Hors plage 560-670'}
-            </Text>
+        <View style={{ marginTop: SP.lg }}>
+          <Text style={droitStyles.section}>VISUALISATION</Text>
+          <View style={styles.splitBlock} testID="droit-split-visual">
+            <View style={styles.splitCol}>
+              <View style={styles.splitHeader}>
+                <MaterialCommunityIcons name="stairs" size={12} color={C.ACCENT} />
+                <Text style={styles.splitTitle}>COUPE TECHNIQUE</Text>
+              </View>
+              <StairSketch
+                trueHeight={HTeff}
+                reculement={troncon.longueur_mm || 1}
+                n={Math.max(marches, 1)}
+                h={h || 1}
+                g={g || 1}
+                width={156}
+                height={150}
+                limonLength={niveauCalc ? Math.round((compute?.limon_length) || 0) : 0}
+              />
+            </View>
+            <View style={styles.splitDivider} />
+            <View style={styles.splitCol}>
+              <View style={styles.splitHeader}>
+                <MaterialCommunityIcons name="floor-plan" size={12} color={C.ACCENT} />
+                <Text style={styles.splitTitle}>EMPRISE AU SOL</Text>
+              </View>
+              <PlanSketch
+                shapeKey="droit"
+                n={Math.max(marches, 1)}
+                reculement={troncon.longueur_mm || 1}
+                largeurVolee={troncon.largeur_mm || 900}
+                jourEscalier={0}
+                width={156}
+                height={150}
+                showLegend={false}
+              />
+            </View>
           </View>
         </View>
       )}
+
+      {/* ─── DONNÉES TECHNIQUES : KPI compact + Blondel validation ─── */}
+      {niveauCalc && (
+        <View style={droitStyles.dataBlock} testID="droit-data-block">
+          <Text style={droitStyles.section}>DONNÉES TECHNIQUES</Text>
+          <View style={droitStyles.kpiGrid}>
+            <DataCell label="MARCHES" value={String(marches)} unit="" />
+            <DataCell label="HAUTEUR" value={String(Math.round(h))} unit="mm" />
+            <DataCell label="GIRON" value={String(Math.round(g))} unit="mm" />
+            <DataCell label="LIMON" value={String(Math.round(compute?.limon_length || 0))} unit="mm" />
+          </View>
+          <View
+            style={[droitStyles.blondelBox, blondelOk ? droitStyles.blondelOk : droitStyles.blondelWarn]}
+            testID="droit-blondel"
+          >
+            <Ionicons
+              name={blondelOk ? 'checkmark-circle' : 'warning'}
+              size={20}
+              color={blondelOk ? C.ACCENT : C.WARN}
+            />
+            <View style={{ flex: 1, marginLeft: SP.sm }}>
+              <Text style={[droitStyles.blondelTitle, { color: blondelOk ? C.ACCENT : C.WARN }]}>
+                Blondel 2h+g = {blondelVal} mm
+              </Text>
+              <Text style={droitStyles.blondelHint}>
+                {blondelOk ? '✓ Conforme (plage 560–670 mm)' : '⚠ Hors plage 560–670 mm — ajustez HT ou longueur'}
+              </Text>
+            </View>
+          </View>
+        </View>
+      )}
+    </View>
+  );
+}
+
+/** Cellule data type tableau de bord. */
+function DataCell({ label, value, unit }: { label: string; value: string; unit?: string }) {
+  return (
+    <View style={droitStyles.dataCell}>
+      <Text style={droitStyles.dataCellLabel}>{label}</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 2 }}>
+        <Text style={droitStyles.dataCellVal}>{value}</Text>
+        {!!unit && <Text style={droitStyles.dataCellUnit}>{unit}</Text>}
+      </View>
     </View>
   );
 }
@@ -621,6 +809,23 @@ const droitStyles = StyleSheet.create({
   },
   lockBadgeTxt: { ...FONT.label, fontSize: 8, color: C.GRAY3 },
   lockHint: { ...FONT.small, fontSize: 10, fontStyle: 'italic' as any, marginTop: 4, color: C.GRAY3 },
+  // ── Data block (KPI + Blondel groupés) ───────────────────────────
+  dataBlock: {
+    marginTop: SP.lg,
+    backgroundColor: C.CARD,
+    borderRadius: R.lg,
+    padding: SP.md,
+    borderWidth: 1, borderColor: C.BORDER, borderLeftWidth: 3, borderLeftColor: C.ACCENT,
+  },
+  kpiGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: SP.sm, marginBottom: SP.md },
+  dataCell: {
+    flexGrow: 1, minWidth: '22%',
+    backgroundColor: C.BG_DEEPER, borderRadius: R.md, padding: SP.sm,
+    alignItems: 'center', borderWidth: 1, borderColor: C.BORDER,
+  },
+  dataCellLabel: { ...FONT.label, fontSize: 9, color: C.GRAY3 },
+  dataCellVal: { ...FONT.h2, color: C.ACCENT, fontSize: 16 },
+  dataCellUnit: { ...FONT.small, color: C.GRAY3, fontSize: 9 },
   blondelBox: {
     flexDirection: 'row', alignItems: 'center',
     padding: SP.md, borderRadius: R.md, borderWidth: 1, borderLeftWidth: 4,
@@ -635,13 +840,12 @@ const droitStyles = StyleSheet.create({
 // ───────────────────────── NiveauCard ─────────────────────────
 
 function NiveauCard({
-  niveau, index, calc, viewMode, onPatchLocal, onCommit, onRemove,
+  niveau, index, calc, onPatchLocal, onCommit, onRemove,
   onAddTroncon, onPatchTronconLocal, onCommitTroncon, onRemoveTroncon,
 }: {
   niveau: ApiNiveau;
   index: number;
   calc: any;
-  viewMode: 'profile' | 'plan';
   onPatchLocal: (patch: Partial<ApiNiveau>) => void;
   onCommit: (patch: Partial<ApiNiveau>) => void;
   onRemove: () => void;
@@ -731,11 +935,9 @@ function NiveauCard({
             </View>
           )}
 
-          {/* Croquis pédagogique du niveau (Profil ou Plan selon viewMode) */}
+          {/* SPLIT VISUEL : Gauche = COUPE (Profil) · Droite = PLAN (Emprise) */}
           {!niveau.is_ghost && niveau.troncons.length > 0 && calc && (
-            viewMode === 'profile'
-              ? <NiveauSketch niveau={niveau} calc={calc} />
-              : <NiveauPlanSketch niveau={niveau} calc={calc} />
+            <SplitVisualBlock niveau={niveau} calc={calc} />
           )}
 
           {niveau.is_ghost ? (
@@ -824,8 +1026,8 @@ function NiveauCard({
 
 // ───────────────────────── NiveauSketch (croquis pédagogique) ─────────────────────────
 
-function NiveauSketch({ niveau, calc }: { niveau: ApiNiveau; calc: any }) {
-  const W = 320, H = 130;
+function NiveauSketch({ niveau, calc, width = 320, height = 130, showLegend = true }: { niveau: ApiNiveau; calc: any; width?: number; height?: number; showLegend?: boolean }) {
+  const W = width, H = height;
   const hauteur = niveau.hauteur_mm || 0;
   const totalLen = niveau.troncons.reduce((s, t) => s + t.longueur_mm, 0) || 1;
   const M = 36;
@@ -877,15 +1079,17 @@ function NiveauSketch({ niveau, calc }: { niveau: ApiNiveau; calc: any }) {
           );
         })}
       </Svg>
-      <Text style={styles.sketchLegend}>Vue de profil — flèches : hauteur ({Math.round(hauteur)} mm) et longueurs par tronçon (mm)</Text>
+      {showLegend && (
+        <Text style={styles.sketchLegend}>Vue de profil — flèches : hauteur ({Math.round(hauteur)} mm) et longueurs par tronçon (mm)</Text>
+      )}
     </View>
   );
 }
 
 // ───────────────────────── NiveauPlanSketch (vue de dessus, multi-tronçons) ─────────────────────────
 
-function NiveauPlanSketch({ niveau, calc }: { niveau: ApiNiveau; calc: any }) {
-  const W = 320, H = 220;
+function NiveauPlanSketch({ niveau, calc, width = 320, height = 220, showLegend = true }: { niveau: ApiNiveau; calc: any; width?: number; height?: number; showLegend?: boolean }) {
+  const W = width, H = height;
   const PAD = 24;
 
   // Walk tronçons, tracking position & direction. dir 0=right, 1=up, 2=left, 3=down.
@@ -1036,9 +1240,11 @@ function NiveauPlanSketch({ niveau, calc }: { niveau: ApiNiveau; calc: any }) {
           <SvgText x={0} y={-13} fontSize={7} fill={C.GRAY3} textAnchor="middle">N</SvgText>
         </G>
       </Svg>
-      <Text style={styles.sketchLegend}>
-        Vue en plan — vert: marches · bleu: palier · orange: quart-tournant
-      </Text>
+      {showLegend && (
+        <Text style={styles.sketchLegend}>
+          Vue en plan — vert: marches · bleu: palier · orange: quart-tournant
+        </Text>
+      )}
     </View>
   );
 }
@@ -1159,4 +1365,61 @@ const styles = StyleSheet.create({
   btnGhost: { backgroundColor: C.CARD, borderColor: C.BORDER },
   btnPrimary: { backgroundColor: C.ACCENT, borderColor: C.ACCENT },
   btnTxt: { ...FONT.button, color: C.DARK, fontSize: 12 },
+
+  // ── Shape Selector Bar (4 chips: DROIT, 1/4 T, 2/4 T, HÉLICO) ────────
+  shapeBar: {
+    flexDirection: 'row', gap: 6, padding: SP.sm,
+    paddingHorizontal: SP.md,
+    backgroundColor: C.BG_DEEPER,
+    borderBottomWidth: 1, borderBottomColor: C.BORDER,
+  },
+  shapeChip: {
+    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 4, paddingVertical: 8, paddingHorizontal: 4,
+    borderRadius: R.pill, borderWidth: 1, borderColor: C.BORDER,
+    backgroundColor: C.CARD,
+  },
+  shapeChipActive: {
+    backgroundColor: C.ACCENT, borderColor: C.ACCENT,
+  },
+  shapeChipTxt: { ...FONT.label, fontSize: 10, color: C.GRAY3, letterSpacing: 0.5 },
+  shapeChipTxtActive: { color: C.DARK, fontWeight: '700' as any },
+
+  // ── Helicoidal placeholder ─────────────────────────────────────────
+  helicoBox: {
+    alignItems: 'center', padding: SP.xl,
+    backgroundColor: C.CARD, borderRadius: R.lg,
+    borderWidth: 1, borderColor: C.BORDER,
+    marginTop: SP.md,
+  },
+  helicoTitle: { ...FONT.h3, fontSize: 14, marginTop: SP.md, letterSpacing: 1 },
+  helicoBadge: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    paddingHorizontal: 8, paddingVertical: 3, borderRadius: R.pill,
+    backgroundColor: 'rgba(245,158,11,0.12)', borderWidth: 1, borderColor: C.WARN,
+    marginTop: SP.sm,
+  },
+  helicoBadgeTxt: { ...FONT.label, fontSize: 9, color: C.WARN },
+  helicoHint: {
+    ...FONT.small, fontSize: 12, lineHeight: 18,
+    textAlign: 'center', marginTop: SP.md, color: C.GRAY3, maxWidth: 320,
+  },
+
+  // ── Split visual block (Coupe + Plan côte à côte) ──────────────────
+  splitBlock: {
+    flexDirection: 'row', gap: 0,
+    backgroundColor: C.BG_DEEPER, borderRadius: R.md,
+    padding: SP.sm,
+    borderWidth: 1, borderColor: C.BORDER,
+    marginTop: SP.sm, marginBottom: SP.sm,
+  },
+  splitCol: { flex: 1, alignItems: 'center' },
+  splitDivider: { width: 1, backgroundColor: C.BORDER, marginHorizontal: 4 },
+  splitHeader: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    paddingVertical: 4, paddingHorizontal: 8,
+    borderBottomWidth: 1, borderBottomColor: C.BORDER,
+    marginBottom: 4, alignSelf: 'stretch', justifyContent: 'center',
+  },
+  splitTitle: { ...FONT.label, fontSize: 9, color: C.ACCENT, letterSpacing: 0.8 },
 });

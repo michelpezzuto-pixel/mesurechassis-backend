@@ -160,6 +160,30 @@ async def update_stair(pid: str, sid: str, payload: StairUpdate, user=Depends(re
         stair["name"] = payload.name.strip()[:80] or stair["name"]
     if payload.shape is not None:
         stair["shape"] = payload.shape
+        # When switching to "droit" and no niveau exists, seed default RDC + 1 tronçon
+        # so the DroitForm has data to bind to (UX continuity).
+        if payload.shape == "droit" and not (stair.get("niveaux") or []):
+            n_id = str(uuid.uuid4())
+            stair["niveaux"] = [{
+                "id": n_id,
+                "label": floor_index_to_label(0),
+                "floor_index": 0,
+                "is_ghost": False,
+                "hauteur_mm": 2700,
+                "sol_fini": True,
+                "reserve_mm": 0,
+                "epaisseur_dalle_mm": 200,
+                "hauteur_sous_plafond_mm": 2500,
+                "entry_mode": "hauteur",
+                "troncons": [{
+                    "id": str(uuid.uuid4()),
+                    "type": "droit",
+                    "longueur_mm": 3500,
+                    "largeur_mm": 900,
+                    "order": 0,
+                }],
+                "order": 0,
+            }]
     stair["updated_at"] = now_utc()
     await _save_project(pid, p["stairs"])
     return stair

@@ -23,7 +23,9 @@ interface Props {
   reculement: number;     // mm — longueur dispo
   largeurVolee: number;   // mm — largeur utile escalier
   jourEscalier: number;   // mm — espace entre les 2 volées en tournant
+  width?: number;
   height?: number;
+  showLegend?: boolean;
 }
 
 const ACCENT = C.ACCENT;
@@ -39,9 +41,11 @@ function PlanSketchInner({
   reculement,
   largeurVolee,
   jourEscalier,
+  width = 360,
   height = 320,
+  showLegend = true,
 }: Props) {
-  const W = 360;
+  const W = width;
   const H = height;
 
   // Compute scale: bounding box depends on shape
@@ -104,15 +108,15 @@ function PlanSketchInner({
         </G>
       </Svg>
 
-      <Text style={styles.legend}>
-        Vue en plan (de dessus) · {n} marches · L. volée {fmt(largeurVolee)}
-        {shapeKey !== 'droit' && shapeKey !== 'helicoidal' && ` · Jour ${fmt(jourEscalier)}`}
-      </Text>
+      {showLegend && (
+        <Text style={styles.legend}>
+          Vue en plan (de dessus) · {n} marches · L. volée {fmt(largeurVolee)}
+          {shapeKey !== 'droit' && shapeKey !== 'helicoidal' && ` · Jour ${fmt(jourEscalier)}`}
+        </Text>
+      )}
     </View>
   );
-}
-
-// ── Helper sub-views ────────────────────────────────────────────────────────
+}// ── Helper sub-views ────────────────────────────────────────────────────────
 
 function DroitView({ W, H, scale, n, reculement, largeurVolee }: any) {
   const w = largeurVolee * scale;
