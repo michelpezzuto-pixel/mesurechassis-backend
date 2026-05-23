@@ -262,6 +262,43 @@ frontend:
           INFRA :
           • Supervisor expo : retiré `--tunnel` → plus de 502 ngrok zombie. Le preview localhost:3000 sert directement.
 
+frontend:
+  - task: "Cleanup V1 legacy (base-mère)"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py + frontend cleanup"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "main"
+        -comment: |
+          🧹 NETTOYAGE V1 — Base-Mère propre (mai 2025).
+
+          BACKEND :
+          • Supprimé `routers/measurements.py` (endpoint V1 /projects/{pid}/measurement) — plus aucun appel frontend.
+          • Supprimé l'import + include_router dans `server.py`.
+          • Supprimé `tests/test_iteration3_math.py` (intégration V1 obsolète, math couvert par test_engine_regression).
+          • Supprimé la classe `TestMeasurement` de `tests/test_mesure_escalier.py` (V1).
+          • `services/stairs.py` (moteur math V1) PRÉSERVÉ — utilisé par regression tests, aucun changement.
+
+          FRONTEND :
+          • Supprimé `app/projects/[id]/export.tsx` (page export V1 niveau projet — superseded par stair-level).
+          • Bouton EXPORTER du projet redirige désormais vers `/projects/{id}/stairs/{first_stair_id}/export`.
+          • Supprimé `Measurements.*` du client API (`src/api.ts`).
+
+          VALIDATION :
+          • Lint Python : All checks passed ✓
+          • Tests : 44 passed / 0 failed (avant : 43 + 14 fails sur V1)
+          • Regression Blondel : 24/24 PASS ✓
+          • Smoke screenshot : projet view + redirection EXPORTER OK
+          
+          STRUCTURE FINALE :
+          • Backend : 7 routers (auth, projects, exports, voice, stats, integration, stairs_v2)
+          • Frontend : 14 routes (auth + project CRUD + stair editor V2 + stair export V2)
+          • Tests : 44 intégration + 24 regression = 68 tests passants
+
 metadata:
   created_by: "main_agent"
   version: "2.0"

@@ -220,16 +220,13 @@ class TestProjectsRBAC:
         assert any(p["id"] == pid for p in t_list)
 
 
-# ---------- MEASUREMENT ----------
-_MEAS = {
-    "material": "bois", "hauteur_brute": 2700, "sols_finis_zero": True,
-    "reserve_bas": 0, "reserve_haut": 0, "epaisseur_dalle": 200,
-    "tremie_longueur": 2200, "tremie_largeur": 900, "reculement_max": 3500,
-    "remarques": "ok",
-}
+# NOTE — TestMeasurement (V1 endpoint /projects/{pid}/measurement) supprimé.
+# La V1 a été déprécié au profit de la V2 multi-stairs (cf. routers/stairs_v2.py).
+# Tests V2 couverts par : test_engine_regression.py + smoke tests deep_testing_backend_v2.
 
 
-class TestMeasurement:
+# ---------- STATS ----------
+class TestStats:
     def test_admin_no_solo_cannot_measure(self, tokens, admin_project):
         pid, tok = admin_project
         r = requests.post(f"{BASE_URL}/api/projects/{pid}/measurement",

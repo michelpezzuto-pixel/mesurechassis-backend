@@ -201,9 +201,17 @@ export default function ProjectDetail() {
         )}
 
         {stairs.length > 0 && canEdit && (
-          <TouchableOpacity style={styles.exportBtn} onPress={() => router.push(`/projects/${id}/export` as any)} testID="btn-export">
+          <TouchableOpacity
+            style={styles.exportBtn}
+            onPress={() => router.push(`/projects/${id}/stairs/${stairs[0].id}/export` as any)}
+            testID="btn-export"
+          >
             <Ionicons name="share-outline" size={18} color={C.WHITE} />
-            <Text style={styles.exportBtnTxt}>EXPORTER LES LIVRABLES</Text>
+            <Text style={styles.exportBtnTxt}>
+              {stairs.length === 1
+                ? 'EXPORTER LES LIVRABLES'
+                : `EXPORTER (${stairs[0].name.toUpperCase()})`}
+            </Text>
           </TouchableOpacity>
         )}
 

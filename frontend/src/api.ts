@@ -123,11 +123,7 @@ export const Projects = {
   assign: async (id: string, technicien_id: string) => (await api.post(`/projects/${id}/assign`, { technicien_id })).data,
 };
 
-export const Measurements = {
-  save: async (pid: string, payload: any) => (await api.post(`/projects/${pid}/measurement`, payload)).data,
-  preview: async (pid: string, payload: any) => (await api.post(`/projects/${pid}/measurement/preview`, payload)).data,
-  validate: async (pid: string) => (await api.post(`/projects/${pid}/measurement/validate`)).data,
-};
+// ── Measurements API (V1 legacy) supprimée — utiliser Stairs.* (V2) à la place ──
 
 // ── Multi-stair v2 (Stairs > Niveaux > Tronçons) ─────────────────────────
 export type TronconType = 'droit' | 'palier' | 'quart_bas' | 'quart_haut';

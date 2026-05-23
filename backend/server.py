@@ -1,6 +1,6 @@
 """MesureEscalier — Application entry point.
 
-Composed of modular routers (auth, projects, measurements, exports,
+Composed of modular routers (auth, projects, exports,
 voice, stats, integration). Startup events seed demo users and
 ensure MongoDB indexes.
 """
@@ -13,7 +13,6 @@ from core.db import client, db
 from services.seed import seed_demo_users
 from routers import auth as auth_router
 from routers import projects as projects_router
-from routers import measurements as measurements_router
 from routers import exports as exports_router
 from routers import voice as voice_router
 from routers import stats as stats_router
@@ -27,7 +26,6 @@ app = FastAPI(title="MesureEscalier API", version="2.0")
 api = APIRouter(prefix="/api")
 api.include_router(auth_router.router)
 api.include_router(projects_router.router)
-api.include_router(measurements_router.router)
 api.include_router(exports_router.router)
 api.include_router(voice_router.router)
 api.include_router(stats_router.router)
