@@ -356,7 +356,42 @@ test_plan:
 agent_communication:
     -agent: "main"
     -message: |
-      🎯 PRIORITÉ 2 — Différenciation 1/4 Tournant vs 2/4 Tournant TERMINÉE (Mai 2025).
+      🛠 BUGFIX CRITIQUE — Empty state CHANTIER (Mai 2025).
+      
+      L'écran "Aucun escalier" était une impasse bloquante (aucun CTA visible
+      directement dans le bloc empty, le bouton "AJOUTER UN ESCALIER" était
+      séparé et pas évident). Résolu en 3 améliorations cumulatives :
+      
+      1. **CTA embarqué dans l'empty state** :
+         - Bordure pointillée VERTE (accent) au lieu de gris
+         - Icône stairs-up VERTE (accent) au lieu de gris terne
+         - Hint mis à jour : "choisissez la forme (Droit, 1/4 T, 2/4 T, Hélicoïdal)..."
+         - Bouton plein vert "+ AJOUTER MON PREMIER ESCALIER" directement
+           dans le bloc empty (testID="btn-add-first-stair")
+      
+      2. **FAB "+" flottant** en bas-droite, toujours visible quand canEdit :
+         - Rond 56×56px vert avec bord sombre + ombre
+         - Position absolute right/bottom 16px
+         - testID="fab-add-stair"
+      
+      3. **Banner verrou contextuel** : si canEdit=false (projet locked),
+         affiche un encadré orange "Chantier verrouillé — déverrouillage
+         admin nécessaire" au lieu de laisser l'utilisateur sans explication.
+      
+      **Flux validé en screenshot** :
+      - Empty state → CTA primaire vert visible
+      - Click CTA → modal AUCUN ESCALIER s'ouvre avec les 4 cartes techniques
+        (DROIT + checkbox Niveau Fini, 1/4 TOURNANT L-shape, 2/4 TOURNANT U-shape,
+        HÉLICOÏDAL avec badge BIENTÔT)
+      - Input nom + bouton CONFIGURER →
+      - FAB "+" reste accessible en permanence en bas-droite
+      
+      **Tests backend** : 20/20 PASS (test_mesure_escalier.py).
+      
+      **Fichier modifié** :
+      - /app/frontend/app/projects/[id]/index.tsx (empty state + FAB + styles)
+
+
       
       Le comportement métier est désormais nettement distingué :
       

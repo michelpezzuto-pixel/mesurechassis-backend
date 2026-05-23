@@ -179,10 +179,32 @@ export default function ProjectDetail() {
         </View>
 
         {stairs.length === 0 ? (
-          <View style={styles.empty}>
-            <MaterialCommunityIcons name="stairs-up" size={56} color={C.GRAY3} />
+          <View style={styles.empty} testID="empty-no-stair">
+            <MaterialCommunityIcons name="stairs-up" size={56} color={C.ACCENT} />
             <Text style={styles.emptyTitle}>Aucun escalier</Text>
-            <Text style={styles.emptyHint}>Ajoutez votre premier escalier ci-dessous, donnez-lui un nom (ex. Cave-to-RDC), puis configurez ses niveaux et tronçons.</Text>
+            <Text style={styles.emptyHint}>
+              Ajoutez votre premier escalier : choisissez la forme (Droit, 1/4 T, 2/4 T, Hélicoïdal),
+              donnez-lui un nom (ex. Cave-to-RDC), puis configurez ses niveaux.
+            </Text>
+            {canEdit && (
+              <TouchableOpacity
+                style={styles.emptyCta}
+                onPress={openAddStair}
+                testID="btn-add-first-stair"
+                activeOpacity={0.8}
+              >
+                <Ionicons name="add-circle" size={22} color={C.DARK} />
+                <Text style={styles.emptyCtaTxt}>AJOUTER MON PREMIER ESCALIER</Text>
+              </TouchableOpacity>
+            )}
+            {!canEdit && (
+              <View style={styles.emptyLocked}>
+                <Ionicons name="lock-closed" size={14} color={C.WARN} />
+                <Text style={styles.emptyLockedTxt}>
+                  Chantier verrouillé — déverrouillage admin nécessaire pour ajouter un escalier.
+                </Text>
+              </View>
+            )}
           </View>
         ) : (
           stairs.map(s => (
@@ -248,6 +270,18 @@ export default function ProjectDetail() {
           </TouchableOpacity>
         )}
       </ScrollView>
+
+      {/* FAB "+" floating add stair (visible when canEdit, always reachable) */}
+      {canEdit && !addOpen && (
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={openAddStair}
+          testID="fab-add-stair"
+          activeOpacity={0.85}
+        >
+          <Ionicons name="add" size={32} color={C.DARK} />
+        </TouchableOpacity>
+      )}
 
       {/* Modal "Aucun escalier" — choix forme + nom (UI image_42 style fiches techniques) */}
       <Modal visible={addOpen} transparent animationType="fade" onRequestClose={() => setAddOpen(false)}>
@@ -516,9 +550,29 @@ const styles = StyleSheet.create({
   section: { ...FONT.label, color: C.ACCENT },
   sectionCount: { ...FONT.label, color: C.GRAY3 },
 
-  empty: { alignItems: 'center', padding: SP.xl, backgroundColor: C.CARD, borderRadius: R.lg, borderWidth: 1, borderColor: C.BORDER, borderStyle: 'dashed' as any, marginBottom: SP.md },
+  empty: { alignItems: 'center', padding: SP.xl, backgroundColor: C.CARD, borderRadius: R.lg, borderWidth: 1, borderColor: C.ACCENT, borderStyle: 'dashed' as any, marginBottom: SP.md },
   emptyTitle: { ...FONT.h3, marginTop: SP.md },
-  emptyHint: { ...FONT.small, textAlign: 'center', marginTop: SP.sm, lineHeight: 19, paddingHorizontal: SP.md },
+  emptyHint: { ...FONT.small, textAlign: 'center', marginTop: SP.sm, lineHeight: 19, paddingHorizontal: SP.md, color: C.GRAY3 },
+  emptyCta: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SP.sm,
+    marginTop: SP.lg, paddingVertical: 14, paddingHorizontal: SP.lg,
+    backgroundColor: C.ACCENT, borderRadius: R.md, alignSelf: 'stretch',
+  },
+  emptyCtaTxt: { ...FONT.button, fontSize: 13, color: C.DARK, letterSpacing: 0.5 },
+  emptyLocked: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    marginTop: SP.md, paddingHorizontal: SP.md, paddingVertical: SP.sm,
+    backgroundColor: 'rgba(245,158,11,0.10)', borderRadius: R.md,
+    borderWidth: 1, borderColor: C.WARN,
+  },
+  emptyLockedTxt: { ...FONT.small, fontSize: 11, color: C.WARN, flex: 1 },
+  fab: {
+    position: 'absolute', right: SP.lg, bottom: SP.lg + 8,
+    width: 56, height: 56, borderRadius: 28,
+    backgroundColor: C.ACCENT, alignItems: 'center', justifyContent: 'center',
+    elevation: 8, shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 8, shadowOffset: { width: 0, height: 4 },
+    borderWidth: 2, borderColor: C.DARK,
+  },
 
   stairCard: { flexDirection: 'row', alignItems: 'center', gap: SP.md, backgroundColor: C.CARD, borderRadius: R.lg, padding: SP.md, borderWidth: 1, borderColor: C.BORDER, marginBottom: SP.sm },
   stairIcon: { width: 48, height: 48, borderRadius: R.md, backgroundColor: C.ACCENT_BG, borderWidth: 1, borderColor: C.ACCENT, alignItems: 'center', justifyContent: 'center' },
