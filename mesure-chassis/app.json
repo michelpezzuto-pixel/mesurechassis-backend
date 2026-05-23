@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "MesureEscalier",
-    "slug": "mesure-escalier",
+    "name": "MesureChassis",
+    "slug": "mesure-chassis",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "mesureescalier",
+    "scheme": "mesurechassis",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "runtimeVersion": { "policy": "appVersion" },
@@ -16,17 +16,17 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.bruxmove.mesureescalier",
+      "bundleIdentifier": "com.bruxmove.mesurechassis",
       "buildNumber": "1",
       "infoPlist": {
         "NSMicrophoneUsageDescription": "Dicter les remarques terrain à voix haute",
-        "NSCameraUsageDescription": "Photographier vos chantiers d'escaliers",
+        "NSCameraUsageDescription": "Photographier vos chantiers de châssis",
         "NSPhotoLibraryUsageDescription": "Joindre vos photos de chantier aux rapports",
         "NSPhotoLibraryAddUsageDescription": "Enregistrer les rapports et photos générés"
       }
     },
     "android": {
-      "package": "com.bruxmove.mesureescalier",
+      "package": "com.bruxmove.mesurechassis",
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
