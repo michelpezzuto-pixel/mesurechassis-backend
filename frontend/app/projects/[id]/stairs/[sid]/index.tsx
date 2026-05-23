@@ -202,6 +202,23 @@ export default function StairEditor() {
             </View>
           )}
 
+          {/* ╔═══════════════════════════════════════════════════════╗
+              UI BRANCH selon `stair.shape` :
+              - DROIT    → formulaire ultra-épuré (3 inputs)
+              - TOURNANT → multi-niveaux / tronçons / vue plan
+            ╚═══════════════════════════════════════════════════════╝ */}
+          {stair.shape === 'droit' ? (
+            <DroitForm
+              stair={stair}
+              compute={compute}
+              onCommitNiveau={commitNiveau}
+              onCommitTroncon={commitTroncon}
+              onPatchNiveauLocal={updateNiveauLocal}
+              onPatchTronconLocal={updateTronconLocal}
+            />
+          ) : (
+          <>
+
           {/* View mode toggle (Profile / Plan) */}
           {stair.niveaux.length > 0 && (
             <View style={styles.viewToggle} testID="view-mode-toggle">
@@ -341,6 +358,8 @@ export default function StairEditor() {
               })}
             </View>
           )}
+          </>
+          )}
         </ScrollView>
 
         {/* Sticky bottom */}
@@ -358,6 +377,147 @@ export default function StairEditor() {
     </SafeAreaView>
   );
 }
+
+// ───────────────────────── DROIT FORM (ultra-épuré) ─────────────────────────
+//
+// Quand `stair.shape === 'droit'` on n'expose QUE :
+//   • Hauteur  (mm) → niveau.hauteur_mm
+//   • Largeur  (mm) → troncon.largeur_mm
+//   • Longueur (mm) → troncon.longueur_mm
+// + Badge Blondel (vert/orange) avec marches calculées.
+// Aucune gestion de niveau, aucun picker tronçon, aucune section "détails".
+
+function DroitForm({
+  stair, compute, onCommitNiveau, onCommitTroncon, onPatchNiveauLocal, onPatchTronconLocal,
+}: {
+  stair: ApiStair;
+  compute: StairCompute | null;
+  onCommitNiveau: (nid: string, patch: Partial<ApiNiveau>) => void;
+  onCommitTroncon: (nid: string, tid: string, patch: Partial<ApiTroncon>) => void;
+  onPatchNiveauLocal: (nid: string, patch: Partial<ApiNiveau>) => void;
+  onPatchTronconLocal: (nid: string, tid: string, patch: Partial<ApiTroncon>) => void;
+}) {
+  const niveau = stair.niveaux[0];
+  const troncon = niveau?.troncons[0];
+  const niveauCalc = compute?.niveaux_calc.find(n => n.niveau_id === niveau?.id);
+
+  if (!niveau || !troncon) {
+    return (
+      <View style={{ alignItems: 'center', padding: SP.xl }}>
+        <ActivityIndicator color={C.ACCENT} />
+        <Text style={[FONT.small, { marginTop: SP.md }]}>Préparation de l'escalier droit...</Text>
+      </View>
+    );
+  }
+
+  const blondelOk = !!niveauCalc?.valid_blondel;
+  const blondelVal = niveauCalc ? Math.round(niveauCalc.blondel_value) : 0;
+  const marches = niveauCalc?.n_steps_niveau ?? 0;
+  const h = niveauCalc?.h ?? 0;
+  const g = niveauCalc?.g ?? 0;
+
+  return (
+    <View>
+      <Text style={droitStyles.section}>DIMENSIONS DE L'ESCALIER DROIT</Text>
+
+      <View style={droitStyles.field} testID="droit-field-hauteur">
+        <Text style={droitStyles.label}>HAUTEUR</Text>
+        <Text style={droitStyles.hint}>Du sol fini bas au sol fini haut (mm)</Text>
+        <View style={droitStyles.inputRow}>
+          <TextInput
+            value={String(Math.round(niveau.hauteur_mm))}
+            onChangeText={(v) => onPatchNiveauLocal(niveau.id, { hauteur_mm: Number(v) || 0 })}
+            onEndEditing={(e) => onCommitNiveau(niveau.id, { hauteur_mm: Number(e.nativeEvent.text) || 0 })}
+            keyboardType="numeric"
+            style={droitStyles.input}
+            placeholderTextColor={C.GRAY3}
+            testID="droit-input-hauteur"
+          />
+          <Text style={droitStyles.unit}>mm</Text>
+        </View>
+      </View>
+
+      <View style={droitStyles.field} testID="droit-field-largeur">
+        <Text style={droitStyles.label}>LARGEUR D'ESCALIER</Text>
+        <Text style={droitStyles.hint}>Largeur utile de passage (mm)</Text>
+        <View style={droitStyles.inputRow}>
+          <TextInput
+            value={String(Math.round(troncon.largeur_mm))}
+            onChangeText={(v) => onPatchTronconLocal(niveau.id, troncon.id, { largeur_mm: Number(v) || 0 })}
+            onEndEditing={(e) => onCommitTroncon(niveau.id, troncon.id, { largeur_mm: Number(e.nativeEvent.text) || 0 })}
+            keyboardType="numeric"
+            style={droitStyles.input}
+            placeholderTextColor={C.GRAY3}
+            testID="droit-input-largeur"
+          />
+          <Text style={droitStyles.unit}>mm</Text>
+        </View>
+      </View>
+
+      <View style={droitStyles.field} testID="droit-field-longueur">
+        <Text style={droitStyles.label}>LONGUEUR (RECULEMENT)</Text>
+        <Text style={droitStyles.hint}>Emprise au sol entre départ et arrivée (mm)</Text>
+        <View style={droitStyles.inputRow}>
+          <TextInput
+            value={String(Math.round(troncon.longueur_mm))}
+            onChangeText={(v) => onPatchTronconLocal(niveau.id, troncon.id, { longueur_mm: Number(v) || 0 })}
+            onEndEditing={(e) => onCommitTroncon(niveau.id, troncon.id, { longueur_mm: Number(e.nativeEvent.text) || 0 })}
+            keyboardType="numeric"
+            style={droitStyles.input}
+            placeholderTextColor={C.GRAY3}
+            testID="droit-input-longueur"
+          />
+          <Text style={droitStyles.unit}>mm</Text>
+        </View>
+      </View>
+
+      {/* Validation Blondel — minimaliste */}
+      {niveauCalc && (
+        <View
+          style={[droitStyles.blondelBox, blondelOk ? droitStyles.blondelOk : droitStyles.blondelWarn]}
+          testID="droit-blondel"
+        >
+          <Ionicons
+            name={blondelOk ? 'checkmark-circle' : 'warning'}
+            size={20}
+            color={blondelOk ? C.ACCENT : C.WARN}
+          />
+          <View style={{ flex: 1, marginLeft: SP.sm }}>
+            <Text style={[droitStyles.blondelTitle, { color: blondelOk ? C.ACCENT : C.WARN }]}>
+              {marches} marches · h {Math.round(h)} mm · g {Math.round(g)} mm
+            </Text>
+            <Text style={droitStyles.blondelHint}>
+              Blondel 2h+g = {blondelVal} mm — {blondelOk ? 'OK (560-670)' : 'Hors plage 560-670'}
+            </Text>
+          </View>
+        </View>
+      )}
+    </View>
+  );
+}
+
+const droitStyles = StyleSheet.create({
+  section: { ...FONT.label, color: C.ACCENT, fontSize: 11, marginBottom: SP.md, marginTop: SP.sm },
+  field: { marginBottom: SP.lg },
+  label: { ...FONT.label, fontSize: 11, marginBottom: 2 },
+  hint: { ...FONT.small, fontSize: 11, marginBottom: SP.sm, color: C.GRAY3 },
+  inputRow: {
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: C.CARD, borderRadius: R.md,
+    paddingHorizontal: SP.md, borderWidth: 1, borderColor: C.BORDER,
+  },
+  input: { flex: 1, ...FONT.h3, fontSize: 18, color: C.WHITE, paddingVertical: 14 },
+  unit: { ...FONT.label, color: C.GRAY3, fontSize: 11 },
+  blondelBox: {
+    flexDirection: 'row', alignItems: 'center',
+    padding: SP.md, borderRadius: R.md, borderWidth: 1, borderLeftWidth: 4,
+    marginTop: SP.sm,
+  },
+  blondelOk: { backgroundColor: 'rgba(140,198,63,0.10)', borderColor: C.ACCENT },
+  blondelWarn: { backgroundColor: 'rgba(245,158,11,0.10)', borderColor: C.WARN },
+  blondelTitle: { ...FONT.h3, fontSize: 13 },
+  blondelHint: { ...FONT.small, fontSize: 11, marginTop: 2 },
+});
 
 // ───────────────────────── NiveauCard ─────────────────────────
 
