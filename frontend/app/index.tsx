@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   ScrollView,
   StyleSheet,
@@ -15,6 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useAuth, Role } from "@/src/context/AuthContext";
+import { api } from "@/src/services/api";
 import { colors } from "@/src/theme";
 
 const ROLES: { value: Role; label: string; icon: keyof typeof Ionicons.glyphMap; desc: string }[] = [
@@ -32,6 +34,94 @@ export default function SignIn() {
   const [name, setName] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  // ─── Mot de passe oublié (modal) ───
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotStep, setForgotStep] = useState<"request" | "reset">("request");
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotCode, setForgotCode] = useState("");
+  const [forgotNewPassword, setForgotNewPassword] = useState("");
+  const [forgotSubmitting, setForgotSubmitting] = useState(false);
+  const [forgotBetaCode, setForgotBetaCode] = useState<string | null>(null);
+
+  const requestResetCode = async () => {
+    const em = forgotEmail.trim().toLowerCase();
+    if (!em || !em.includes("@")) {
+      Alert.alert("Email invalide", "Veuillez saisir une adresse email valide.");
+      return;
+    }
+    setForgotSubmitting(true);
+    setForgotBetaCode(null);
+    try {
+      const r = await api.post("/auth/forgot-password", { email: em });
+      const code = (r.data as any)?.beta_reset_code as string | undefined;
+      if (code) {
+        // Mode BETA : on affiche le code à l'écran (Resend non branché)
+        setForgotBetaCode(code);
+      }
+      setForgotStep("reset");
+    } catch (e: any) {
+      Alert.alert(
+        "Erreur",
+        e?.response?.data?.detail || "Impossible d'envoyer le code. Réessayez.",
+      );
+    } finally {
+      setForgotSubmitting(false);
+    }
+  };
+
+  const doResetPassword = async () => {
+    if (!forgotCode || forgotCode.length !== 6) {
+      Alert.alert("Code invalide", "Veuillez saisir les 6 chiffres reçus.");
+      return;
+    }
+    if (forgotNewPassword.length < 6) {
+      Alert.alert("Mot de passe trop court", "Au moins 6 caractères.");
+      return;
+    }
+    setForgotSubmitting(true);
+    try {
+      await api.post("/auth/reset-password", {
+        email: forgotEmail.trim().toLowerCase(),
+        code: forgotCode.trim(),
+        new_password: forgotNewPassword,
+      });
+      Alert.alert(
+        "✅ Mot de passe modifié",
+        "Vous pouvez maintenant vous reconnecter avec votre nouveau mot de passe.",
+      );
+      // Pré-remplit l'email sur l'écran login + ferme
+      setEmail(forgotEmail.trim().toLowerCase());
+      setPassword("");
+      closeForgot();
+    } catch (e: any) {
+      Alert.alert(
+        "Erreur",
+        e?.response?.data?.detail || "Code invalide ou expiré.",
+      );
+    } finally {
+      setForgotSubmitting(false);
+    }
+  };
+
+  const openForgot = () => {
+    setForgotEmail(email || "");
+    setForgotStep("request");
+    setForgotCode("");
+    setForgotNewPassword("");
+    setForgotBetaCode(null);
+    setForgotOpen(true);
+  };
+
+  const closeForgot = () => {
+    setForgotOpen(false);
+    setForgotEmail("");
+    setForgotCode("");
+    setForgotNewPassword("");
+    setForgotBetaCode(null);
+    setForgotStep("request");
+  };
+
   // État post-signup : permet d'afficher l'écran "Vérifiez votre email"
   const [pendingVerification, setPendingVerification] = useState<{
     email: string;
@@ -265,10 +355,155 @@ export default function SignIn() {
               </Text>
             )}
           </TouchableOpacity>
+
+          {mode === "login" && (
+            <TouchableOpacity
+              testID="forgot-password-link"
+              onPress={openForgot}
+              activeOpacity={0.7}
+              style={{ alignItems: "center", marginTop: 14, padding: 8 }}
+            >
+              <Text style={{ color: colors.primary, fontSize: 13, fontWeight: "700", letterSpacing: 0.4 }}>
+                Mot de passe oublié ?
+              </Text>
+            </TouchableOpacity>
+          )}
             </>
           )}
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {/* ────── MODAL Mot de passe oublié ────── */}
+      <Modal
+        visible={forgotOpen}
+        animationType="slide"
+        transparent
+        onRequestClose={closeForgot}
+      >
+        <View style={styles.modalBackdrop}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ width: "100%", maxWidth: 460 }}
+          >
+            <View style={styles.modalCard}>
+              <View style={styles.modalHeader}>
+                <View style={styles.modalIconWrap}>
+                  <Ionicons name="key" size={20} color={colors.primary} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.modalTitle}>
+                    {forgotStep === "request"
+                      ? "Mot de passe oublié"
+                      : "Saisir le code reçu"}
+                  </Text>
+                  <Text style={styles.modalSubtitle}>
+                    {forgotStep === "request"
+                      ? "Saisissez votre email pour recevoir un code"
+                      : `Code envoyé à ${forgotEmail}`}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={closeForgot}
+                  hitSlop={10}
+                  style={styles.modalClose}
+                >
+                  <Ionicons name="close" size={20} color={colors.textPrimary} />
+                </TouchableOpacity>
+              </View>
+
+              {forgotStep === "request" ? (
+                <>
+                  <TextInput
+                    testID="forgot-email-input"
+                    value={forgotEmail}
+                    onChangeText={setForgotEmail}
+                    placeholder="vous@entreprise.fr"
+                    placeholderTextColor={colors.placeholder}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    keyboardType="email-address"
+                    style={styles.modalInput}
+                  />
+                  <TouchableOpacity
+                    testID="forgot-send-button"
+                    onPress={requestResetCode}
+                    disabled={forgotSubmitting}
+                    style={[styles.primaryBtn, { marginTop: 12 }]}
+                    activeOpacity={0.85}
+                  >
+                    {forgotSubmitting ? (
+                      <ActivityIndicator color="#000" />
+                    ) : (
+                      <Text style={styles.primaryBtnText}>RECEVOIR LE CODE</Text>
+                    )}
+                  </TouchableOpacity>
+                  <Text style={styles.modalHint}>
+                    Vous recevrez un code à 6 chiffres valable 30 minutes.
+                  </Text>
+                </>
+              ) : (
+                <>
+                  {forgotBetaCode && (
+                    <View style={styles.betaCodeBox}>
+                      <Text style={styles.betaCodeLabel}>
+                        🛟 MODE BETA — Votre code :
+                      </Text>
+                      <Text style={styles.betaCodeValue}>{forgotBetaCode}</Text>
+                      <Text style={styles.betaCodeHint}>
+                        (Email non encore activé en production — code affiché
+                        ici en attendant)
+                      </Text>
+                    </View>
+                  )}
+                  <TextInput
+                    testID="forgot-code-input"
+                    value={forgotCode}
+                    onChangeText={(v) => setForgotCode(v.replace(/\D/g, "").slice(0, 6))}
+                    placeholder="123456"
+                    placeholderTextColor={colors.placeholder}
+                    keyboardType="number-pad"
+                    style={[styles.modalInput, { fontSize: 22, letterSpacing: 8, textAlign: "center" }]}
+                    maxLength={6}
+                  />
+                  <Text style={styles.modalLabel}>Nouveau mot de passe</Text>
+                  <TextInput
+                    testID="forgot-new-password-input"
+                    value={forgotNewPassword}
+                    onChangeText={setForgotNewPassword}
+                    placeholder="Min. 6 caractères"
+                    placeholderTextColor={colors.placeholder}
+                    secureTextEntry
+                    style={styles.modalInput}
+                  />
+                  <TouchableOpacity
+                    testID="forgot-reset-button"
+                    onPress={doResetPassword}
+                    disabled={forgotSubmitting}
+                    style={[styles.primaryBtn, { marginTop: 12 }]}
+                    activeOpacity={0.85}
+                  >
+                    {forgotSubmitting ? (
+                      <ActivityIndicator color="#000" />
+                    ) : (
+                      <Text style={styles.primaryBtnText}>
+                        RÉINITIALISER LE MOT DE PASSE
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setForgotStep("request")}
+                    style={{ marginTop: 10, alignItems: "center" }}
+                  >
+                    <Text style={{ color: colors.textSecondary, fontSize: 12 }}>
+                      Renvoyer un code
+                    </Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+          </KeyboardAvoidingView>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -367,6 +602,114 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: "900",
     letterSpacing: 1.2,
+  },
+
+  // ────── Modal Mot de passe oublié ──────
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.75)",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  modalCard: {
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 16,
+  },
+  modalIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.bg,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalTitle: {
+    color: colors.textPrimary,
+    fontSize: 16,
+    fontWeight: "900",
+    letterSpacing: 0.3,
+  },
+  modalSubtitle: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    marginTop: 2,
+  },
+  modalClose: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.bg,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+  },
+  modalInput: {
+    backgroundColor: colors.bg,
+    color: colors.textPrimary,
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 14,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    marginTop: 8,
+  },
+  modalLabel: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    fontWeight: "700",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
+    marginTop: 14,
+  },
+  modalHint: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    marginTop: 10,
+    textAlign: "center",
+    fontStyle: "italic",
+  },
+  betaCodeBox: {
+    backgroundColor: "rgba(255, 107, 26, 0.10)",
+    borderWidth: 1,
+    borderColor: "rgba(255, 107, 26, 0.45)",
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 12,
+    alignItems: "center",
+  },
+  betaCodeLabel: {
+    color: colors.primary,
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 0.6,
+  },
+  betaCodeValue: {
+    color: colors.primary,
+    fontSize: 28,
+    fontWeight: "900",
+    letterSpacing: 8,
+    marginTop: 6,
+  },
+  betaCodeHint: {
+    color: colors.textSecondary,
+    fontSize: 10,
+    marginTop: 4,
+    fontStyle: "italic",
+    textAlign: "center",
   },
   demoBlock: { marginTop: 32 },
   demoTitle: {

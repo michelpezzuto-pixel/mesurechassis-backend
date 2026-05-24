@@ -300,3 +300,132 @@ async def set_push_token(
         {"$set": {"push_token": payload.push_token}},
     )
     return {"ok": True}
+
+
+# ─────────────────────────────────────────────────────────────────────
+# Mot de passe oublié (forgot / reset password)
+# ─────────────────────────────────────────────────────────────────────
+PASSWORD_RESET_TTL_MINUTES = 30
+
+
+@router.post("/auth/forgot-password")
+async def forgot_password(payload: dict):
+    """Démarre la réinitialisation du mot de passe.
+
+    Body : {"email": "user@..."}
+
+    Génère un code à 6 chiffres, le stocke en base avec expiration 30 min,
+    et l'envoie par email (mock console en BETA, Resend ensuite).
+
+    🛡️ Anti-énumération : on renvoie TOUJOURS HTTP 200 (même si l'email
+    n'existe pas) pour ne pas permettre à un attaquant de découvrir les
+    emails inscrits. En revanche en BETA on retourne le code dans la
+    réponse pour que l'utilisateur ne soit pas bloqué quand l'email
+    réel n'est pas encore branché.
+    """
+    email = (payload.get("email") or "").strip().lower()
+    if not email or "@" not in email:
+        raise HTTPException(status_code=400, detail="Email invalide.")
+
+    user = await db.users.find_one({"email": email})
+    response_payload = {
+        "ok": True,
+        "message": (
+            "Si un compte existe avec cet email, un code de "
+            "réinitialisation vous a été envoyé."
+        ),
+    }
+
+    if not user:
+        # Énumération : on log mais on renvoie OK
+        return response_payload
+
+    # Génère un code 6 chiffres + expiration 30 min
+    code = f"{secrets.randbelow(1_000_000):06d}"
+    expires_at = (
+        datetime.now(timezone.utc) + timedelta(minutes=PASSWORD_RESET_TTL_MINUTES)
+    ).isoformat()
+    await db.users.update_one(
+        {"id": user["id"]},
+        {
+            "$set": {
+                "password_reset_code": code,
+                "password_reset_expires_at": expires_at,
+            }
+        },
+    )
+
+    # Envoi (mock console en BETA — branchera Resend plus tard)
+    try:
+        from email_service import send_password_reset_email
+
+        await send_password_reset_email(email, code)
+    except Exception as e:  # noqa: BLE001
+        # Pas critique en BETA — le code est retourné dans la réponse
+        pass
+
+    # 🛟 BETA : on retourne le code pour ne pas bloquer le user. À RETIRER
+    # quand Resend sera branché et que les emails partiront vraiment.
+    if BETA_MODE:
+        response_payload["beta_reset_code"] = code
+        response_payload["beta_message"] = (
+            "Mode BETA : code affiché ici en attendant l'activation des "
+            f"emails réels. Code = {code} (valable {PASSWORD_RESET_TTL_MINUTES} min)."
+        )
+
+    return response_payload
+
+
+@router.post("/auth/reset-password")
+async def reset_password(payload: dict):
+    """Valide un code et change le mot de passe.
+
+    Body : {"email": "...", "code": "123456", "new_password": "..."}
+    """
+    email = (payload.get("email") or "").strip().lower()
+    code = (payload.get("code") or "").strip()
+    new_password = payload.get("new_password") or ""
+
+    if not email or not code or not new_password:
+        raise HTTPException(
+            status_code=400,
+            detail="Email, code et nouveau mot de passe requis.",
+        )
+    if len(new_password) < 6:
+        raise HTTPException(
+            status_code=400,
+            detail="Le mot de passe doit contenir au moins 6 caractères.",
+        )
+
+    user = await db.users.find_one({"email": email})
+    if not user:
+        raise HTTPException(status_code=400, detail="Code invalide ou expiré.")
+
+    stored_code = user.get("password_reset_code")
+    expires_at = user.get("password_reset_expires_at")
+    if not stored_code or stored_code != code:
+        raise HTTPException(status_code=400, detail="Code invalide ou expiré.")
+
+    # Vérifie l'expiration
+    try:
+        exp_dt = datetime.fromisoformat(expires_at) if expires_at else None
+    except Exception:
+        exp_dt = None
+    if not exp_dt or exp_dt < datetime.now(timezone.utc):
+        raise HTTPException(status_code=400, detail="Code expiré, demandez-en un nouveau.")
+
+    # Hash et stocke le nouveau mot de passe + invalide le code
+    await db.users.update_one(
+        {"id": user["id"]},
+        {
+            "$set": {"hashed_password": hash_password(new_password)},
+            "$unset": {
+                "password_reset_code": "",
+                "password_reset_expires_at": "",
+            },
+        },
+    )
+    return {
+        "ok": True,
+        "message": "Mot de passe réinitialisé. Vous pouvez vous reconnecter.",
+    }

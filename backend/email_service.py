@@ -80,6 +80,30 @@ def send_verification_email(*, to: str, name: str, link: str) -> dict:
     )
 
 
+async def send_password_reset_email(email: str, code: str) -> dict:
+    """Envoie le code de réinitialisation par email.
+
+    Pour l'instant : mock console (le code est aussi retourné dans
+    la réponse HTTP en mode BETA pour ne pas bloquer l'utilisateur).
+    Quand Resend sera branché, on basculera ici sur un envoi réel.
+    """
+    body = (
+        f"Bonjour,\n\n"
+        f"Vous avez demandé la réinitialisation de votre mot de passe sur MesureChâssis.\n\n"
+        f"Votre code de vérification :\n\n"
+        f"   ▶  {code}  ◀\n\n"
+        f"Ce code est valable 30 minutes.\n"
+        f"Si vous n'êtes pas à l'origine de cette demande, ignorez ce message.\n\n"
+        f"L'équipe MesureChâssis"
+    )
+    return send_email(
+        to=email,
+        subject="Réinitialisation de votre mot de passe — MesureChâssis",
+        body=body,
+        link=None,
+    )
+
+
 def send_invitation_email(
     *, to: str, name: str, role: str, company_name: str, link: str
 ) -> dict:
