@@ -1,0 +1,52 @@
+[
+  {
+    "id": "1",
+    "question": "Comment créer mon premier projet ?",
+    "answer": "Cliquez sur le bouton '+' vert sur l'écran d'accueil, donnez un nom à votre chantier, puis validez."
+  },
+  {
+    "id": "2",
+    "question": "Pourquoi mon application ne calcule rien ?",
+    "answer": "Vérifiez que tous les champs de mesures (largeur/hauteur) sont remplis et que le type de châssis est bien sélectionné."
+  },
+  {
+    "id": "3",
+    "question": "Pose en tableau ou feuillure : que choisir ?",
+    "answer": "Tableau : mesurez l'ouverture entre les murs. Feuillure : mesurez la largeur totale incluant les feuillures. Consultez le guide de pose."
+  },
+  {
+    "id": "4",
+    "question": "Comment inviter un ami sur l'app ?",
+    "answer": "Votre ami doit télécharger l'application et créer son propre compte via le bouton 'S'inscrire'. Ne partagez pas vos identifiants personnels."
+  },
+  {
+    "id": "5",
+    "question": "Puis-je modifier un projet après export ?",
+    "answer": "Oui, allez dans l'onglet 'Mes Projets', sélectionnez le chantier concerné, et modifiez vos valeurs."
+  },
+  {
+    "id": "6",
+    "question": "Comment exporter un devis/mesure ?",
+    "answer": "Dans la vue projet, cliquez sur le bouton 'EXPORTER' en bas de page pour générer votre PDF récapitulatif."
+  },
+  {
+    "id": "7",
+    "question": "Le bouton 'Connexion' tourne à l'infini.",
+    "answer": "Vérifiez votre connexion internet. Si elle est active, fermez et relancez l'application."
+  },
+  {
+    "id": "8",
+    "question": "Puis-je ajouter une note sur une mesure ?",
+    "answer": "Oui, dans l'éditeur de châssis, utilisez le champ 'Notes' en bas de chaque ligne de mesure."
+  },
+  {
+    "id": "9",
+    "question": "Que signifie le badge 'Suggéré' ★ ?",
+    "answer": "C'est notre aide au calcul. Le système détecte une configuration cohérente avec vos mesures précédentes."
+  },
+  {
+    "id": "10",
+    "question": "Comment signaler un bug ou une idée ?",
+    "answer": "Utilisez le bouton 'Aide' > 'Support' dans l'app, remplissez le formulaire, et nous recevrons votre retour directement."
+  }
+]

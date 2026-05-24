@@ -23,6 +23,7 @@ import { useAuth } from "@/src/context/AuthContext";
 import { subscribeQueueSize, syncQueue, enqueueChantier, isNetworkError } from "@/src/services/offlineQueue";
 import { colors, statusMeta, READY_FOR_EXPORT_BADGE } from "@/src/theme";
 import TrialCountdownBanner from "@/src/components/TrialCountdownBanner";
+import ChatHelp from "@/src/components/ChatHelp";
 
 type Chantier = {
   id: string;
@@ -50,6 +51,7 @@ export default function Dashboard() {
   const [filter, setFilter] = useState("all");
   const [q, setQ] = useState("");
   const [newModal, setNewModal] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
   const [newFirstName, setNewFirstName] = useState("");
   const [newLastName, setNewLastName] = useState("");
   const [newAddr, setNewAddr] = useState("");
@@ -319,6 +321,15 @@ export default function Dashboard() {
             <Ionicons name="settings-outline" size={22} color={colors.primary} />
           </TouchableOpacity>
         )}
+        <TouchableOpacity
+          testID="help-button"
+          onPress={() => setHelpOpen(true)}
+          style={[styles.logoutBtn, { marginRight: 8 }]}
+          activeOpacity={0.7}
+          hitSlop={6}
+        >
+          <Ionicons name="help-circle-outline" size={22} color={colors.primary} />
+        </TouchableOpacity>
         <TouchableOpacity
           testID="logout-button"
           onPress={logout}
@@ -613,6 +624,13 @@ export default function Dashboard() {
           </View>
         </KeyboardAvoidingView>
       </Modal>
+
+      {/* Centre d'aide / FAQ */}
+      <ChatHelp
+        visible={helpOpen}
+        onClose={() => setHelpOpen(false)}
+        onContactSupport={() => router.push("/company-profile")}
+      />
     </SafeAreaView>
   );
 }
