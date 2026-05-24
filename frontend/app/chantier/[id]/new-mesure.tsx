@@ -41,6 +41,7 @@ import {
 import { api } from "@/src/services/api";
 import { enqueueMesure, isOnline } from "@/src/services/offlineQueue";
 import { colors } from "@/src/theme";
+import { ShapeIcon } from "@/src/components/ShapeIcon";
 
 // ════════════════════════════════════════════════════════════════════════
 // Types & constantes
@@ -1292,7 +1293,12 @@ function Step2Shape({
                 <Text style={styles.shapeLetter}>{s.letter}</Text>
               </View>
               <View style={styles.shapeIconBox}>
-                <Ionicons name={s.icon} size={32} color={active ? colors.primary : colors.textPrimary} />
+                <ShapeIcon
+                  shape={s.key}
+                  size={48}
+                  color={active ? colors.primary : colors.textPrimary}
+                  strokeWidth={1.8}
+                />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={[styles.shapeTitle, active && { color: colors.primary }]}>{s.label}</Text>
@@ -1823,7 +1829,7 @@ const styles = StyleSheet.create({
   shapeCardActive: { borderColor: colors.primary, backgroundColor: "#1a0e05" },
   shapeLetterBadge: { width: 28, height: 28, borderRadius: 14, backgroundColor: colors.primary, alignItems: "center", justifyContent: "center" },
   shapeLetter: { color: "#000", fontWeight: "900", fontSize: 12 },
-  shapeIconBox: { width: 36, alignItems: "center" },
+  shapeIconBox: { width: 56, height: 56, alignItems: "center", justifyContent: "center" },
   shapeTitle: { color: colors.textPrimary, fontWeight: "900", fontSize: 14, letterSpacing: 0.4 },
   shapeDesc: { color: colors.textSecondary, fontSize: 11, marginTop: 2, lineHeight: 15 },
   modeToggle: {
