@@ -72,6 +72,20 @@ async def get_playstore_tablet_asset(filename: str):
     return FileResponse(path, media_type="image/jpeg", filename=filename)
 
 
+@api.get("/_downloads/site-mesurechassis")
+async def download_site_zip():
+    """Endpoint temporaire pour télécharger l'archive du site vitrine."""
+    path = "/app/site_mesurechassis_final.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="site_mesurechassis_final.zip",
+    )
+
+
+
 app.include_router(api)
 
 app.add_middleware(
