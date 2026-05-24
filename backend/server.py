@@ -58,6 +58,7 @@ _TABLET_ALLOWED = {
     "03_selection_menuiserie.jpeg",
     "04_prise_cotes_rectangle.jpeg",
     "05_prise_cotes_trapeze.jpeg",
+    "06_dashboard_nouveau_layout.jpeg",
 }
 
 
