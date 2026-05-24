@@ -1,0 +1,552 @@
+<!-- ============================================================
+     SECTION "CONFIG MUR" — à insérer dans guide.html
+     Charte : #121214 dark, #FF6B35 orange, Syne + DM Sans
+     ============================================================ -->
+
+<section id="config-mur" class="guide-section">
+  <style>
+    /* ── Variables locales (reprend la charte globale du site) ── */
+    #config-mur {
+      --bg:        #121214;
+      --bg2:       #1a1a1e;
+      --bg3:       #222227;
+      --orange:    #FF6B35;
+      --orange-dim:#cc5529;
+      --text:      #f0f0f0;
+      --muted:     #9ca3af;
+      --border:    rgba(255,255,255,0.10);
+      font-family: 'DM Sans', sans-serif;
+      background:  var(--bg);
+      color:       var(--text);
+      padding:     80px 0;
+    }
+
+    #config-mur .section-inner {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* En-tête de section */
+    #config-mur .section-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,107,53,0.12);
+      border: 1px solid rgba(255,107,53,0.30);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--orange);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    #config-mur h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 12px;
+      line-height: 1.15;
+    }
+
+    #config-mur .section-lead {
+      font-size: 17px;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 620px;
+      margin: 0 0 56px;
+    }
+
+    /* Étapes numérotées */
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .step-item {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 0 24px;
+      position: relative;
+    }
+
+    /* Ligne verticale reliant les étapes */
+    .step-item:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 27px;
+      top: 56px;
+      bottom: -8px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--orange) 0%, rgba(255,107,53,0.15) 100%);
+    }
+
+    .step-number {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(255,107,53,0.12);
+      border: 2px solid var(--orange);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--orange);
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-content {
+      padding: 12px 0 48px;
+    }
+
+    .step-content h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: #fff;
+      margin: 0 0 8px;
+    }
+
+    .step-content p {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin: 0 0 16px;
+    }
+
+    /* Champ simulé (capture écran app) */
+    .app-mockup {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 12px;
+    }
+
+    .app-mockup .mockup-header {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .field-row.triple {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .field-item {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+
+    .field-item .field-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 4px;
+      letter-spacing: 0.04em;
+    }
+
+    .field-item .field-value {
+      font-size: 15px;
+      font-weight: 500;
+      color: #fff;
+    }
+
+    .field-item .field-value.placeholder {
+      color: #555;
+      font-style: italic;
+    }
+
+    .field-item.highlight {
+      border-color: rgba(255,107,53,0.40);
+      background: rgba(255,107,53,0.06);
+    }
+
+    .field-item.highlight .field-value {
+      color: var(--orange);
+    }
+
+    /* Orientation toggle */
+    .orientation-toggle {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .orientation-btn {
+      flex: 1;
+      padding: 8px 0;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg3);
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      cursor: default;
+    }
+
+    .orientation-btn.active {
+      background: rgba(255,107,53,0.12);
+      border-color: rgba(255,107,53,0.40);
+      color: var(--orange);
+      font-weight: 500;
+    }
+
+    /* Alerte / tip */
+    .tip-box {
+      display: flex;
+      gap: 12px;
+      background: rgba(255,107,53,0.07);
+      border-left: 3px solid var(--orange);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin-top: 12px;
+    }
+
+    .tip-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      line-height: 1.4;
+    }
+
+    .tip-box p {
+      font-size: 14px;
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    .tip-box strong {
+      color: var(--orange);
+    }
+
+    /* Tableau récap types de mur */
+    .wall-types-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .wall-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      transition: border-color 0.2s;
+    }
+
+    .wall-card:hover {
+      border-color: rgba(255,107,53,0.35);
+    }
+
+    .wall-card .wall-icon {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .wall-card .wall-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .wall-card .wall-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Récap final */
+    .recap-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 32px;
+      margin-top: 56px;
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+    }
+
+    .recap-box .recap-icon {
+      font-size: 40px;
+      flex-shrink: 0;
+    }
+
+    .recap-box h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+      margin: 0 0 10px;
+    }
+
+    .recap-checklist {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .recap-checklist li {
+      font-size: 14px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .recap-checklist li::before {
+      content: '';
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: rgba(255,107,53,0.15);
+      border: 1.5px solid var(--orange);
+      flex-shrink: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8l3 3 6-6' stroke='%23FF6B35' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-size: 14px;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    @media (max-width: 640px) {
+      .field-row.triple { grid-template-columns: 1fr 1fr; }
+      .recap-box { flex-direction: column; gap: 16px; }
+      .step-item { grid-template-columns: 44px 1fr; }
+      .step-number { width: 44px; height: 44px; font-size: 17px; }
+    }
+  </style>
+
+  <div class="section-inner">
+
+    <!-- En-tête -->
+    <div class="section-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+      Config mur
+    </div>
+
+    <h2>Configurer le type de mur</h2>
+    <p class="section-lead">
+      Avant de saisir vos mesures de châssis, renseignez les paramètres du mur de pose.
+      Ces informations permettent à l'application de calculer automatiquement les tolérances
+      et les feuillures adaptées à votre chantier.
+    </p>
+
+    <!-- Étapes -->
+    <div class="steps-list">
+
+      <!-- Étape 1 -->
+      <div class="step-item">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h3>Accéder à la configuration du mur</h3>
+          <p>
+            Dans l'écran de prise de mesures, appuyez sur le bouton <strong style="color:#fff">Config mur</strong>
+            en haut à droite de la fiche chantier. L'écran de paramétrage s'ouvre par-dessus la fiche active.
+          </p>
+          <div class="tip-box">
+            <span class="tip-icon">💡</span>
+            <p>La configuration est <strong>commune à toutes les ouvertures</strong> de la même fiche chantier.
+            Si le chantier comporte plusieurs types de murs différents, créez une fiche par mur.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Étape 2 -->
+      <div class="step-item">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h3>Choisir le type de mur</h3>
+          <p>
+            Sélectionnez le matériau et la structure portante du mur.
+            Ce choix détermine les règles de pose et les jeux de montage appliqués
+            lors de la génération du rapport.
+          </p>
+
+          <div class="wall-types-grid">
+            <div class="wall-card">
+              <div class="wall-icon">🧱</div>
+              <div class="wall-name">Maçonnerie</div>
+              <div class="wall-desc">Briques, parpaings, béton. Jeu standard 10–15 mm par côté.</div>
+            </div>
+            <div class="wall-card">
+              <div class="wall-icon">🪵</div>
+              <div class="wall-name">Ossature bois</div>
+              <div class="wall-desc">Colombage ou panneau. Jeu réduit 5–8 mm, fixation directe.</div>
+            </div>
+            <div class="wall-card">
+              <div class="wall-icon">🏗️</div>
+              <div class="wall-name">Béton banché</div>
+              <div class="wall-desc">Voiles lisses. Chevilles ou tiges filetées. Jeu 8–12 mm.</div>
+            </div>
+            <div class="wall-card">
+              <div class="wall-icon">🔲</div>
+              <div class="wall-name">Baie sèche / ITI</div>
+              <div class="wall-desc">Isolation intérieure. Mesure prise après doublage.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Étape 3 -->
+      <div class="step-item">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h3>Renseigner les épaisseurs</h3>
+          <p>
+            Saisissez l'épaisseur du mur nu, ainsi que les éventuels doublages
+            (isolation, plaque de plâtre). L'application calcule automatiquement
+            le nez de feuillure disponible.
+          </p>
+
+          <div class="app-mockup">
+            <div class="mockup-header">Écran Config mur — épaisseurs</div>
+            <div class="field-row triple">
+              <div class="field-item">
+                <div class="field-label">Épaisseur mur</div>
+                <div class="field-value">200 mm</div>
+              </div>
+              <div class="field-item">
+                <div class="field-label">Doublage int.</div>
+                <div class="field-value">50 mm</div>
+              </div>
+              <div class="field-item highlight">
+                <div class="field-label">Nez calculé</div>
+                <div class="field-value">150 mm</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tip-box" style="margin-top:12px">
+            <span class="tip-icon">⚠️</span>
+            <p>Si le doublage n'est pas encore posé au moment du relevé,
+            cochez <strong>« Doublage à venir »</strong> — la mesure sera prise sur le brut
+            et la réserve sera soustraite automatiquement.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Étape 4 -->
+      <div class="step-item">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <h3>Définir le sens d'ouverture et le type de pose</h3>
+          <p>
+            Précisez si le châssis sera posé en tableau, en feuillure ou en applique.
+            Pour les châssis ouvrants, indiquez le sens de battement depuis l'intérieur.
+          </p>
+
+          <div class="app-mockup">
+            <div class="mockup-header">Écran Config mur — pose et ouverture</div>
+            <div class="field-row">
+              <div class="field-item">
+                <div class="field-label">Type de pose</div>
+                <div class="field-value">En feuillure</div>
+              </div>
+              <div class="field-item">
+                <div class="field-label">Jeu de pose</div>
+                <div class="field-value">12 mm</div>
+              </div>
+            </div>
+            <div class="field-item" style="margin-bottom:10px">
+              <div class="field-label">Sens d'ouverture (depuis intérieur)</div>
+              <div class="orientation-toggle">
+                <div class="orientation-btn active">⟵ Gauche</div>
+                <div class="orientation-btn">Droite ⟶</div>
+                <div class="orientation-btn">↕ Oscillo-battant</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Étape 5 -->
+      <div class="step-item">
+        <div class="step-number">5</div>
+        <div class="step-content">
+          <h3>Ajouter des notes chantier (optionnel)</h3>
+          <p>
+            Le champ <strong style="color:#fff">Notes mur</strong> vous permet de consigner
+            des informations contextuelles : état du tableau, présence d'un linteau en acier,
+            coffre de volet, etc. Ces notes apparaissent dans le rapport PDF transmis au fabricant.
+          </p>
+
+          <div class="app-mockup">
+            <div class="mockup-header">Exemple de note</div>
+            <div class="field-item">
+              <div class="field-label">Notes mur</div>
+              <div class="field-value" style="font-size:14px; line-height:1.5; color:#d1d5db; font-weight:400">
+                Linteau en H métallique — prévoir bavette alu étanche. Tableau légèrement en biais côté gauche (∓3 mm).
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Étape 6 (dernière, pas de ligne) -->
+      <div class="step-item">
+        <div class="step-number">6</div>
+        <div class="step-content">
+          <h3>Valider et revenir à la prise de mesures</h3>
+          <p>
+            Appuyez sur <strong style="color:#fff">Enregistrer la configuration</strong>.
+            L'application revient automatiquement à la fiche chantier, prête pour la saisie
+            des ouvertures. Un bandeau orange confirme que la config mur est active.
+          </p>
+
+          <div class="app-mockup">
+            <div class="mockup-header">Bandeau de confirmation</div>
+            <div style="display:flex; align-items:center; gap:10px; background:rgba(255,107,53,0.12); border:1px solid rgba(255,107,53,0.35); border-radius:8px; padding:12px 16px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF6B35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              <span style="color:#FF6B35; font-size:14px; font-weight:500;">Config mur enregistrée — Maçonnerie · 200 mm · Feuillure · Jeu 12 mm</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /steps-list -->
+
+    <!-- Récap -->
+    <div class="recap-box">
+      <div class="recap-icon">📋</div>
+      <div>
+        <h4>Récapitulatif — ce que l'app enregistre</h4>
+        <ul class="recap-checklist">
+          <li>Type de mur (matériau et structure)</li>
+          <li>Épaisseur brute et doublage éventuel</li>
+          <li>Nez de feuillure calculé automatiquement</li>
+          <li>Type de pose (tableau / feuillure / applique)</li>
+          <li>Jeu de montage appliqué</li>
+          <li>Sens de battement des ouvrants</li>
+          <li>Notes libres associées au mur</li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- /section-inner -->
+</section>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>MesureChâssis — Tableau de bord projet</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#121214;color:#f0f0f0;font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-height:1.6;padding:32px 24px;max-width:960px;margin:0 auto}
+h1{font-family:'Syne',sans-serif;font-size:32px;font-weight:700;color:#fff;margin-bottom:4px}
+.subtitle{color:#9ca3af;font-size:15px;margin-bottom:40px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#FF6B35;margin-right:8px}
+.section-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:#FF6B35;margin:36px 0 14px}
+.card{background:#1a1a1e;border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:20px 24px;margin-bottom:12px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.kv{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.kv:last-child{border-bottom:none}
+.kv .k{color:#9ca3af;font-size:14px}
+.kv .v{font-size:14px;font-weight:500;color:#fff;text-align:right}
+.kv .v a{color:#FF6B35;text-decoration:none}
+.badge{display:inline-block;padding:3px 10px;border-radius:100px;font-size:12px;font-weight:500}
+.badge-orange{background:rgba(255,107,53,.15);color:#FF6B35;border:1px solid rgba(255,107,53,.3)}
+.badge-green{background:rgba(74,222,128,.10);color:#4ade80;border:1px solid rgba(74,222,128,.25)}
+.badge-yellow{background:rgba(251,191,36,.10);color:#fbbf24;border:1px solid rgba(251,191,36,.25)}
+.badge-gray{background:rgba(255,255,255,.07);color:#9ca3af;border:1px solid rgba(255,255,255,.12)}
+.price-card{background:#1a1a1e;border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:20px 24px}
+.price-card.featured{border-color:rgba(255,107,53,.35)}
+.price-card .plan{font-family:'Syne',sans-serif;font-size:16px;font-weight:600;color:#fff;margin-bottom:4px}
+.price-card .amount{font-size:28px;font-weight:700;color:#FF6B35;line-height:1;margin:10px 0 4px}
+.price-card .amount span{font-size:14px;color:#9ca3af;font-weight:400}
+.price-card ul{list-style:none;margin-top:12px}
+.price-card ul li{font-size:13px;color:#9ca3af;padding:3px 0;padding-left:18px;position:relative}
+.price-card ul li::before{content:'›';position:absolute;left:0;color:#FF6B35}
+.step-row{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.step-row:last-child{border-bottom:none}
+.step-num{width:28px;height:28px;border-radius:50%;background:rgba(255,107,53,.12);border:1.5px solid #FF6B35;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#FF6B35;flex-shrink:0;margin-top:2px}
+.step-body .step-title{font-weight:500;color:#fff;font-size:14px;margin-bottom:2px}
+.step-body .step-desc{font-size:13px;color:#9ca3af}
+@media(max-width:600px){.grid-2,.grid-3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<h1><span class="dot"></span>MesureChâssis</h1>
+<p class="subtitle">Tableau de bord projet — Menuiserie B2B · mesurechassis.com</p>
+
+<!-- SITE WEB -->
+<div class="section-title">🌐 Site web</div>
+<div class="card">
+  <div class="kv"><span class="k">Domaine</span><span class="v"><a href="https://mesurechassis.com">mesurechassis.com</a></span></div>
+  <div class="kv"><span class="k">Hébergeur</span><span class="v">Plesk / Easy Host</span></div>
+  <div class="kv"><span class="k">Pages</span><span class="v">index · guide · confidentialite · mentions-legales · contact</span></div>
+  <div class="kv"><span class="k">Charte</span><span class="v">Dark #121214 · Orange #FF6B35 · Syne + DM Sans</span></div>
+  <div class="kv"><span class="k">og-image</span><span class="v"><span class="badge badge-green">✓ Généré 1200×630</span></span></div>
+  <div class="kv"><span class="k">Guide — Section Config mur</span><span class="v"><span class="badge badge-green">✓ Généré</span></span></div>
+</div>
+
+<!-- APPLICATION -->
+<div class="section-title">📱 Application</div>
+<div class="card">
+  <div class="kv"><span class="k">Nom complet</span><span class="v">MesureChâssis — Prise de mesures menuiserie B2B</span></div>
+  <div class="kv"><span class="k">Stack</span><span class="v">React Native / Expo</span></div>
+  <div class="kv"><span class="k">Projet Emergent</span><span class="v">window-field-app</span></div>
+  <div class="kv"><span class="k">Bundle ID</span><span class="v">com.mesurechassis.chassis</span></div>
+  <div class="kv"><span class="k">Preview</span><span class="v">QR Code via EXPO_PUBLIC_BACKEND_URL · /app/frontend/.env</span></div>
+  <div class="kv"><span class="k">APK Android</span><span class="v"><span class="badge badge-green">✓ v1.0.0 buildé</span></span></div>
+  <div class="kv"><span class="k">Mode actuel</span><span class="v"><span class="badge badge-orange">BETA GRATUITE · paywall masqué</span></span></div>
+</div>
+
+<!-- TARIFICATION -->
+<div class="section-title">💶 Tarification</div>
+<div class="grid-2">
+  <div class="price-card">
+    <div class="plan">Artisan</div>
+    <div class="amount">24,99 €<span>/mois</span></div>
+    <ul>
+      <li>1 utilisateur</li>
+      <li>Accès total à toutes les fonctions</li>
+    </ul>
+  </div>
+  <div class="price-card featured">
+    <div class="plan">Entreprise</div>
+    <div class="amount">54,99 €<span>/mois</span></div>
+    <ul>
+      <li>Admin + 1 tech + 1 commercial inclus</li>
+      <li>+4,99 €/mois par utilisateur supp.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- CONFORMITÉ -->
+<div class="section-title">🔒 Conformité &amp; Infrastructure</div>
+<div class="card">
+  <div class="kv"><span class="k">RGPD</span><span class="v"><span class="badge badge-green">✓ Soft-delete + opt-in marketing</span></span></div>
+  <div class="kv"><span class="k">CGV + Privacy</span><span class="v"><span class="badge badge-green">✓ Disponibles in-app</span></span></div>
+  <div class="kv"><span class="k">Emails transactionnels</span><span class="v"><span class="badge badge-green">✓ Resend · domaine vérifié</span></span></div>
+  <div class="kv"><span class="k">Adresse contact</span><span class="v"><a href="mailto:info@mesurechassis.com">info@mesurechassis.com</a></span></div>
+  <div class="kv"><span class="k">Suppression compte</span><span class="v"><a href="https://mesurechassis.com/confidentialite.html#suppression-compte">confidentialite.html#suppression-compte</a></span></div>
+  <div class="kv"><span class="k">Propriétaire</span><span class="v">Michel Pezzuto · Rue Stain 1E, 5140 Sombreffe, Belgique</span></div>
+</div>
+
+<!-- GOOGLE PLAY -->
+<div class="section-title">🚀 Google Play</div>
+<div class="card">
+  <div class="kv"><span class="k">Compte développeur</span><span class="v"><span class="badge badge-green">✓ Créé</span></span></div>
+  <div class="kv"><span class="k">ID compte</span><span class="v">883065985765625785</span></div>
+  <div class="kv"><span class="k">Validation identité</span><span class="v"><span class="badge badge-yellow">⏳ Email attendu sous 1–3 jours</span></span></div>
+  <div class="kv"><span class="k">APK v1.0.0</span><span class="v"><span class="badge badge-green">✓ Buildé et prêt</span></span></div>
+  <div class="kv"><span class="k">Soumission Play Store</span><span class="v"><span class="badge badge-gray">En attente validation</span></span></div>
+</div>
+
+<!-- PROCHAINES ÉTAPES -->
+<div class="section-title">📋 Prochaines étapes</div>
+<div class="card">
+  <div class="step-row">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <div class="step-title">Recevoir l'email de validation Google</div>
+      <div class="step-desc">Sous 1–3 jours ouvrables. Puis soumettre l'APK v1.0.0 sur la console Play.</div>
+    </div>
+  </div>
+  <div class="step-row">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <div class="step-title">Ajouter les captures "Config mur" dans guide.html</div>
+      <div class="step-desc">Intégrer le fichier <code style="color:#FF6B35;font-size:12px">section-config-mur.html</code> livré, puis y insérer les screenshots de l'app.</div>
+    </div>
+  </div>
+  <div class="step-row">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <div class="step-title">Déployer og-image.jpg sur le serveur</div>
+      <div class="step-desc">Uploader <code style="color:#FF6B35;font-size:12px">og-image.jpg</code> à la racine du site. Vérifier les balises <code style="color:#FF6B35;font-size:12px">&lt;meta og:image&gt;</code> sur les 5 pages.</div>
+    </div>
+  </div>
+</div>
+
+<p style="color:#555;font-size:12px;text-align:center;margin-top:32px">MesureChâssis · info@mesurechassis.com · Généré le <script>document.write(new Date().toLocaleDateString('fr-BE',{day:'2-digit',month:'long',year:'numeric'}))</script></p>
+
+</body>
+</html>
