@@ -27,6 +27,36 @@ export type ShapeKey =
   | "oeil_de_boeuf"
   | "coulissant_levant";
 
+/**
+ * Normalise un `block_type` persisté en DB (qui peut venir d'anciennes
+ * versions du wizard : "standard", "coulissant", "porte", etc.) vers
+ * la clé canonique ShapeKey utilisée par les icônes line-art.
+ */
+export function blockTypeToShape(blockType?: string | null): ShapeKey {
+  switch (blockType) {
+    case "rect":
+    case "standard":
+      return "rect";
+    case "porte":
+    case "porte_entree":
+      return "porte_entree";
+    case "porte_garage":
+      return "porte_garage";
+    case "trapeze":
+      return "trapeze";
+    case "triangle":
+      return "triangle";
+    case "oeil_de_boeuf":
+    case "oeil_boeuf":
+      return "oeil_de_boeuf";
+    case "coulissant":
+    case "coulissant_levant":
+      return "coulissant_levant";
+    default:
+      return "rect"; // fallback safe
+  }
+}
+
 type Props = {
   shape: ShapeKey;
   size?: number;

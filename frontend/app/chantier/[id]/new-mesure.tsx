@@ -42,6 +42,7 @@ import { api } from "@/src/services/api";
 import { enqueueMesure, isOnline } from "@/src/services/offlineQueue";
 import { colors } from "@/src/theme";
 import { ShapeIcon } from "@/src/components/ShapeIcon";
+import { MeasureGuide } from "@/src/components/MeasureGuide";
 
 // ════════════════════════════════════════════════════════════════════════
 // Types & constantes
@@ -1383,6 +1384,12 @@ function Step3Cotes({
         Étape 3/3 · {SHAPES.find((s) => s.key === shape)?.label}
       </Text>
 
+      {/* 📐 Guide visuel — montre où prendre les cotes */}
+      <MeasureGuide shape={shape} />
+      <Text style={styles.guideHint}>
+        ↑ Repérez les cotes à mesurer sur le schéma, puis renseignez-les ci-dessous.
+      </Text>
+
       <View ref={labelRef} style={{ marginTop: 14 }}>
         <Text style={[styles.label, labelError && { color: colors.anomaly }]}>
           LIBELLÉ / RÉFÉRENCE DU CHÂSSIS * {labelError && <Text style={styles.errInline}> ⚠ OBLIGATOIRE</Text>}
@@ -1775,6 +1782,15 @@ const styles = StyleSheet.create({
   sectionLabel: { color: colors.textSecondary, fontSize: 11, fontWeight: "900", letterSpacing: 0.8, marginBottom: 8 },
   errInline: { color: colors.anomaly, fontWeight: "900" },
   helperText: { color: colors.placeholder, fontSize: 12, marginBottom: 8, marginTop: 4, lineHeight: 16 },
+  guideHint: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    fontStyle: "italic",
+    textAlign: "center",
+    marginTop: -2,
+    marginBottom: 4,
+    paddingHorizontal: 8,
+  },
   label: { color: colors.textSecondary, fontSize: 11, fontWeight: "700", letterSpacing: 0.6, marginBottom: 6 },
   input: {
     backgroundColor: colors.inputBg, color: colors.textPrimary, borderRadius: 10,

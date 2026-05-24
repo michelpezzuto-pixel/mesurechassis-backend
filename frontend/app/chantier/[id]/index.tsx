@@ -19,6 +19,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { api, buildAuthHeaders, PDF_URL, JSON_URL, XLSX_URL, CSV_URL } from "@/src/services/api";
+import { ShapeIcon, blockTypeToShape } from "@/src/components/ShapeIcon";
 import { useAuth } from "@/src/context/AuthContext";
 import { colors, statusMeta, blockMeta } from "@/src/theme";
 
@@ -737,7 +738,12 @@ export default function ChantierDetail() {
                   <Image source={{ uri: item.photo_url }} style={styles.mesureThumb} />
                 ) : (
                   <View style={styles.mesureThumbPlaceholder}>
-                    <Ionicons name={block.icon as any} size={28} color={colors.textSecondary} />
+                    <ShapeIcon
+                      shape={blockTypeToShape(item.block_type)}
+                      size={40}
+                      color={colors.textPrimary}
+                      strokeWidth={1.8}
+                    />
                   </View>
                 )}
                 <View style={{ flex: 1 }}>
