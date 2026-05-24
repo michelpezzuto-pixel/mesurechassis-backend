@@ -83,38 +83,69 @@ export default function TeamAdmin() {
     }, [fetchMembers])
   );
 
+  const [extraSeatInfo, setExtraSeatInfo] = useState<null | {
+    next_seat_index: number;
+    extra_seats_total: number;
+    seat_price_eur: number;
+    extra_amount_eur: number;
+    free_seats: number;
+    seats_used: number;
+    message?: string;
+  }>(null);
+
+  /** Effectue l'appel POST /admin/invitations. Si `confirmExtraSeat=true`,
+   *  le backend acceptera de créer un siège payant (>2 sièges). */
+  const doInvite = useCallback(
+    async (confirmExtraSeat: boolean) => {
+      setSubmitting(true);
+      setLastInviteLink(null);
+      try {
+        const res = await api.post("/admin/invitations", {
+          name: name.trim(),
+          email: email.trim(),
+          role,
+          confirm_extra_seat: confirmExtraSeat,
+        });
+        setLastInviteLink(res.data?.verification_link ?? null);
+        setExtraSeatInfo(null);
+        Alert.alert(
+          "✅ Invitation envoyée",
+          `${email.trim()} recevra un email pour définir son mot de passe.`,
+        );
+        setName("");
+        setEmail("");
+        await fetchMembers();
+      } catch (e: any) {
+        const status = e?.response?.status;
+        const detail = e?.response?.data?.detail;
+        // 402 Payment Required → seat additionnel : on affiche la popup
+        // avec le détail tarifaire au lieu de l'Alert d'erreur.
+        if (
+          status === 402 &&
+          typeof detail === "object" &&
+          detail?.code === "EXTRA_SEAT_REQUIRED"
+        ) {
+          setExtraSeatInfo(detail);
+          return;
+        }
+        Alert.alert(
+          "Erreur",
+          typeof detail === "string" ? detail : "Invitation impossible.",
+        );
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [name, email, role, fetchMembers],
+  );
+
   const submitInvite = async () => {
     if (!email.trim() || !name.trim()) {
       Alert.alert("Champs requis", "Nom et email sont obligatoires.");
       return;
     }
-    setSubmitting(true);
-    setLastInviteLink(null);
-    try {
-      const res = await api.post("/admin/invitations", {
-        name: name.trim(),
-        email: email.trim(),
-        role,
-      });
-      setLastInviteLink(res.data?.verification_link ?? null);
-      Alert.alert(
-        "✅ Invitation envoyée",
-        `${email.trim()} recevra un email pour définir son mot de passe.`
-      );
-      setName("");
-      setEmail("");
-      await fetchMembers();
-    } catch (e: any) {
-      const detail = e?.response?.data?.detail;
-      Alert.alert(
-        "Erreur",
-        typeof detail === "string"
-          ? detail
-          : "Invitation impossible."
-      );
-    } finally {
-      setSubmitting(false);
-    }
+    // 1er appel : confirm_extra_seat=false (le backend décide s'il faut afficher la popup)
+    await doInvite(false);
   };
 
   if (loading) {
@@ -345,6 +376,88 @@ export default function TeamAdmin() {
           </View>
         </KeyboardAvoidingView>
       </Modal>
+
+      {/* === Modal supplément de siège (HTTP 402 EXTRA_SEAT_REQUIRED) === */}
+      <Modal
+        visible={!!extraSeatInfo}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setExtraSeatInfo(null)}
+      >
+        <View style={styles.extraBackdrop}>
+          <View style={styles.extraCard}>
+            <View style={styles.extraIconWrap}>
+              <Ionicons name="card" size={28} color="#000" />
+            </View>
+            <Text style={styles.extraTitle}>SUPPLÉMENT UTILISATEUR</Text>
+            <Text style={styles.extraDesc}>
+              Votre forfait{" "}
+              <Text style={styles.extraBold}>Entreprise (54,99 €/mois)</Text>{" "}
+              comprend{" "}
+              <Text style={styles.extraBold}>
+                {extraSeatInfo?.free_seats ?? 2} sièges gratuits
+              </Text>{" "}
+              (1 commercial + 1 technicien). Cet ajout sera votre{" "}
+              <Text style={styles.extraBold}>
+                {extraSeatInfo?.next_seat_index ?? "?"}
+                {(extraSeatInfo?.next_seat_index ?? 0) === 1 ? "er" : "ème"}
+              </Text>{" "}
+              utilisateur.
+            </Text>
+            <View style={styles.extraPriceBox}>
+              <Text style={styles.extraPriceLabel}>SUPPLÉMENT MENSUEL</Text>
+              <Text style={styles.extraPriceValue}>
+                +{(extraSeatInfo?.seat_price_eur ?? 4.99).toFixed(2)} € /mois
+              </Text>
+              {extraSeatInfo &&
+                extraSeatInfo.extra_seats_total > 1 && (
+                  <Text style={styles.extraPriceSub}>
+                    Total sièges payants après ajout :{" "}
+                    {extraSeatInfo.extra_seats_total} (
+                    {extraSeatInfo.extra_amount_eur.toFixed(2)} €/mois)
+                  </Text>
+                )}
+            </View>
+            <Text style={styles.extraFine}>
+              La facturation prendra effet lors de l'activation par
+              l'utilisateur invité. Vous pouvez retirer un utilisateur à
+              tout moment pour ajuster votre facture.
+            </Text>
+            <View style={styles.extraActions}>
+              <TouchableOpacity
+                testID="extra-seat-cancel"
+                onPress={() => setExtraSeatInfo(null)}
+                style={[stylestyles.extraBtn, s.extraBtnGhost]}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.extraBtnGhostText}>ANNULER</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                testID="extra-seat-confirm"
+                onPress={() => doInvite(true)}
+                disabled={submitting}
+                style={[
+                  styles.extraBtn,
+                  s.extraBtnPrimary,
+                  submitting && { opacity: 0.6 },
+                ]}
+                activeOpacity={0.85}
+              >
+                {submitting ? (
+                  <ActivityIndicator color="#000" />
+                ) : (
+                  <>
+                    <Ionicons name="checkmark-circle" size={16} color="#000" />
+                    <Text style={styles.extraBtnPrimaryText}>
+                      CONFIRMER ET INVITER
+                    </Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -535,5 +648,120 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     fontSize: 13,
     letterSpacing: 0.8,
+  },
+  // === Modal supplément (HTTP 402 EXTRA_SEAT_REQUIRED) ===
+  extraBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.7)",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  extraCard: {
+    width: "100%",
+    maxWidth: 420,
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    padding: 22,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    alignItems: "center",
+  },
+  extraIconWrap: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+  },
+  extraTitle: {
+    color: colors.textPrimary,
+    fontSize: 14,
+    fontWeight: "900",
+    letterSpacing: 1.2,
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  extraDesc: {
+    color: colors.textSecondary,
+    fontSize: 13,
+    lineHeight: 19,
+    textAlign: "center",
+    marginBottom: 14,
+  },
+  extraBold: { color: colors.textPrimary, fontWeight: "800" },
+  extraPriceBox: {
+    width: "100%",
+    backgroundColor: "rgba(255, 107, 26, 0.12)",
+    borderColor: colors.primary,
+    borderWidth: 1.5,
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  extraPriceLabel: {
+    color: colors.primary,
+    fontSize: 10,
+    fontWeight: "900",
+    letterSpacing: 1.5,
+  },
+  extraPriceValue: {
+    color: colors.textPrimary,
+    fontSize: 24,
+    fontWeight: "900",
+    marginTop: 4,
+    letterSpacing: 0.4,
+  },
+  extraPriceSub: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    marginTop: 6,
+    textAlign: "center",
+  },
+  extraFine: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    lineHeight: 16,
+    textAlign: "center",
+    marginBottom: 16,
+    fontStyle: "italic",
+  },
+  extraActions: {
+    flexDirection: "row",
+    gap: 10,
+    width: "100%",
+  },
+  extraBtn: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    paddingVertical: 13,
+    borderRadius: 10,
+  },
+  extraBtnGhost: {
+    borderWidth: 1,
+    borderColor: colors.borderStrong,
+    backgroundColor: "transparent",
+  },
+  extraBtnGhostText: {
+    color: colors.textPrimary,
+    fontWeight: "800",
+    letterSpacing: 0.6,
+    fontSize: 12,
+  },
+  extraBtnPrimary: {
+    backgroundColor: colors.primary,
+  },
+  extraBtnPrimaryText: {
+    color: "#000",
+    fontWeight: "900",
+    letterSpacing: 0.6,
+    fontSize: 12,
   },
 });
