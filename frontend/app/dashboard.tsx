@@ -271,67 +271,45 @@ export default function Dashboard() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
+      {/* ────── Rangée 1 : identité utilisateur ────── */}
       <View style={styles.topBar}>
         <View style={{ flex: 1 }}>
           <Text style={styles.welcome}>Bonjour</Text>
           <Text style={styles.userName} numberOfLines={1}>
             {user?.name}
           </Text>
-          {user?.company_id && user.company_id !== "default" && (
-            <Text style={styles.companyTag} numberOfLines={1}>
-              {user.company_id}
-            </Text>
-          )}
+          <View style={styles.roleChipsRow}>
+            <View style={styles.roleChip}>
+              <Ionicons
+                name={
+                  user?.role === "admin"
+                    ? "shield-checkmark"
+                    : user?.role === "commercial"
+                      ? "briefcase"
+                      : user?.role === "technician"
+                        ? "construct"
+                        : "person"
+                }
+                size={11}
+                color={colors.primary}
+              />
+              <Text style={styles.roleChipText}>
+                {user?.role === "admin"
+                  ? "Administrateur"
+                  : user?.role === "commercial"
+                    ? "Commercial"
+                    : user?.role === "technician"
+                      ? "Technicien"
+                      : "Artisan"}
+              </Text>
+            </View>
+            {user?.company_id && user.company_id !== "default" && (
+              <Text style={styles.companyTag} numberOfLines={1}>
+                · {user.company_id}
+              </Text>
+            )}
+          </View>
         </View>
-        {user?.role === "admin" && (
-          <TouchableOpacity
-            testID="admin-team-button"
-            onPress={() => router.push("/admin/team")}
-            style={[styles.logoutBtn, { marginRight: 8 }]}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="people-outline" size={22} color={colors.primary} />
-          </TouchableOpacity>
-        )}
-        {user?.role === "admin" && (
-          <TouchableOpacity
-            testID="admin-stats-button"
-            onPress={() => router.push("/admin/stats")}
-            style={[styles.logoutBtn, { marginRight: 8 }]}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="stats-chart" size={22} color={colors.primary} />
-          </TouchableOpacity>
-        )}
-        {user?.role === "admin" && (
-          <TouchableOpacity
-            testID="admin-feedbacks-button"
-            onPress={() => router.push("/admin/feedbacks")}
-            style={[styles.logoutBtn, { marginRight: 8 }]}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="megaphone-outline" size={22} color={colors.primary} />
-          </TouchableOpacity>
-        )}
-        {user?.role === "admin" && (
-          <TouchableOpacity
-            testID="company-profile-button"
-            onPress={() => router.push("/company-profile")}
-            style={[styles.logoutBtn, { marginRight: 8 }]}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="settings-outline" size={22} color={colors.primary} />
-          </TouchableOpacity>
-        )}
-        <TouchableOpacity
-          testID="help-button"
-          onPress={() => setHelpOpen(true)}
-          style={[styles.logoutBtn, { marginRight: 8 }]}
-          activeOpacity={0.7}
-          hitSlop={6}
-        >
-          <Ionicons name="help-circle-outline" size={22} color={colors.primary} />
-        </TouchableOpacity>
         <TouchableOpacity
           testID="logout-button"
           onPress={logout}
@@ -339,6 +317,64 @@ export default function Dashboard() {
           activeOpacity={0.7}
         >
           <Ionicons name="log-out-outline" size={22} color={colors.textPrimary} />
+        </TouchableOpacity>
+      </View>
+
+      {/* ────── Rangée 2 : actions ────── */}
+      <View style={styles.actionsBar}>
+        {user?.role === "admin" && (
+          <TouchableOpacity
+            testID="admin-team-button"
+            onPress={() => router.push("/admin/team")}
+            style={styles.actionBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="people-outline" size={20} color={colors.primary} />
+            <Text style={styles.actionBtnText}>Équipe</Text>
+          </TouchableOpacity>
+        )}
+        {user?.role === "admin" && (
+          <TouchableOpacity
+            testID="admin-stats-button"
+            onPress={() => router.push("/admin/stats")}
+            style={styles.actionBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="stats-chart" size={20} color={colors.primary} />
+            <Text style={styles.actionBtnText}>Stats</Text>
+          </TouchableOpacity>
+        )}
+        {user?.role === "admin" && (
+          <TouchableOpacity
+            testID="admin-feedbacks-button"
+            onPress={() => router.push("/admin/feedbacks")}
+            style={styles.actionBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="megaphone-outline" size={20} color={colors.primary} />
+            <Text style={styles.actionBtnText}>Retours</Text>
+          </TouchableOpacity>
+        )}
+        {user?.role === "admin" && (
+          <TouchableOpacity
+            testID="company-profile-button"
+            onPress={() => router.push("/company-profile")}
+            style={styles.actionBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="settings-outline" size={20} color={colors.primary} />
+            <Text style={styles.actionBtnText}>Profil</Text>
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity
+          testID="help-button"
+          onPress={() => setHelpOpen(true)}
+          style={styles.actionBtn}
+          activeOpacity={0.7}
+          hitSlop={6}
+        >
+          <Ionicons name="help-circle-outline" size={20} color={colors.primary} />
+          <Text style={styles.actionBtnText}>Aide</Text>
         </TouchableOpacity>
       </View>
 
@@ -674,6 +710,58 @@ const styles = StyleSheet.create({
     borderColor: colors.borderSubtle,
     alignItems: "center",
     justifyContent: "center",
+  },
+  roleChipsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    marginTop: 6,
+    gap: 6,
+  },
+  roleChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 999,
+    backgroundColor: "rgba(255, 107, 26, 0.10)",
+    borderWidth: 1,
+    borderColor: "rgba(255, 107, 26, 0.35)",
+  },
+  roleChipText: {
+    color: colors.primary,
+    fontSize: 10,
+    fontWeight: "800",
+    letterSpacing: 0.4,
+  },
+  actionsBar: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-end",
+    gap: 6,
+    paddingHorizontal: 16,
+    paddingBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderSubtle,
+  },
+  actionBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    minHeight: 36,
+  },
+  actionBtnText: {
+    color: colors.textPrimary,
+    fontSize: 11,
+    fontWeight: "700",
+    letterSpacing: 0.3,
   },
   searchWrap: {
     marginHorizontal: 16,

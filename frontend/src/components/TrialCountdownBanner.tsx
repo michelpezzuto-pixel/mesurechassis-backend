@@ -53,24 +53,16 @@ export default function TrialCountdownBanner() {
   return (
     <TouchableOpacity
       testID="beta-banner"
-      activeOpacity={0.85}
+      activeOpacity={0.7}
       onPress={openSupportMail}
       style={styles.wrap}
     >
-      <View style={styles.iconWrap}>
-        <Ionicons name="rocket" size={20} color="#34d399" />
-      </View>
-      <View style={{ flex: 1 }}>
-        <Text style={styles.title}>BETA GRATUITE · ACCÈS COMPLET</Text>
-        <Text style={styles.sub}>
-          Vous avez accès à toutes les fonctionnalités pendant la phase de test.
-        </Text>
-        <Text style={styles.feedback}>
-          💬 Vos retours nous aident à grandir ! Signalez-nous la moindre idée
-          via {SUPPORT_EMAIL}
-        </Text>
-      </View>
-      <Ionicons name="chevron-forward" size={18} color="#34d399" />
+      <View style={styles.dot} />
+      <Text style={styles.label}>BETA · gratuit</Text>
+      <Text style={styles.feedback} numberOfLines={1}>
+        Vos retours sont précieux
+      </Text>
+      <Ionicons name="chevron-forward" size={12} color="#34d399" />
     </TouchableOpacity>
   );
 }
@@ -79,39 +71,32 @@ const styles = StyleSheet.create({
   wrap: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderRadius: 12,
+    gap: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
     borderWidth: 1,
-    borderColor: "#34d399",
-    backgroundColor: "#0b3b1c",
-    marginBottom: 12,
+    borderColor: "rgba(52, 211, 153, 0.35)",
+    backgroundColor: "rgba(52, 211, 153, 0.08)",
+    alignSelf: "flex-start",
+    marginBottom: 10,
   },
-  iconWrap: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.06)",
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "#34d399",
   },
-  title: {
-    fontSize: 12,
+  label: {
+    fontSize: 10,
     fontWeight: "900",
-    letterSpacing: 0.8,
+    letterSpacing: 0.6,
     color: "#34d399",
-  },
-  sub: {
-    color: colors.textPrimary,
-    fontSize: 12,
-    marginTop: 2,
-    fontWeight: "600",
   },
   feedback: {
     color: colors.textSecondary,
-    fontSize: 11,
-    marginTop: 4,
+    fontSize: 10,
     fontStyle: "italic",
+    maxWidth: 160,
   },
 });
