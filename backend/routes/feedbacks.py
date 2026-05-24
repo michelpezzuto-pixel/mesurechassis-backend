@@ -24,6 +24,7 @@ async def create_feedback(payload: FeedbackCreate, user=Depends(auth_user)):
         "id": str(uuid.uuid4()),
         "user_id": user["id"],
         "user_email": user["email"],
+        "user_name": user.get("name", ""),
         "page_context": payload.page_context,
         "user_comment": payload.user_comment,
         "screenshot_data": payload.screenshot_data,

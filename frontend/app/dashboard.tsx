@@ -346,17 +346,23 @@ export default function Dashboard() {
             <Text style={styles.actionBtnText}>Stats</Text>
           </TouchableOpacity>
         )}
-        {user?.role === "admin" && (
-          <TouchableOpacity
-            testID="admin-feedbacks-button"
-            onPress={() => router.push("/admin/feedbacks")}
-            style={styles.actionBtn}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="megaphone-outline" size={20} color={colors.primary} />
-            <Text style={styles.actionBtnText}>Retours</Text>
-          </TouchableOpacity>
-        )}
+        {/* Feedback — bouton unique pour tous les rôles (admin/commercial/technicien).
+            Ouvre la page /feedback qui inclut un formulaire dépliable de
+            nouveau message ET l'historique des retours (tous pour admin,
+            personnels pour les autres rôles). */}
+        <TouchableOpacity
+          testID="feedback-button"
+          onPress={() => router.push("/feedback")}
+          style={styles.actionBtn}
+          activeOpacity={0.7}
+        >
+          <Ionicons
+            name="chatbubble-ellipses-outline"
+            size={20}
+            color={colors.primary}
+          />
+          <Text style={styles.actionBtnText}>Feedback</Text>
+        </TouchableOpacity>
         {user?.role === "admin" && (
           <TouchableOpacity
             testID="company-profile-button"
@@ -368,20 +374,6 @@ export default function Dashboard() {
             <Text style={styles.actionBtnText}>Profil</Text>
           </TouchableOpacity>
         )}
-        {/* Mes retours — accessible à tous (admin/commercial/technicien) */}
-        <TouchableOpacity
-          testID="my-feedbacks-button"
-          onPress={() => router.push("/my-feedbacks")}
-          style={styles.actionBtn}
-          activeOpacity={0.7}
-        >
-          <Ionicons
-            name="chatbubble-ellipses-outline"
-            size={20}
-            color={colors.primary}
-          />
-          <Text style={styles.actionBtnText}>Mes retours</Text>
-        </TouchableOpacity>
       </View>
 
       <View style={{ paddingHorizontal: 16 }}>

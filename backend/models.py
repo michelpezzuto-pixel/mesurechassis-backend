@@ -247,6 +247,7 @@ class Feedback(BaseModel):
     id: str
     user_id: str
     user_email: str
+    user_name: Optional[str] = None
     page_context: str
     user_comment: str
     screenshot_data: Optional[str] = None
