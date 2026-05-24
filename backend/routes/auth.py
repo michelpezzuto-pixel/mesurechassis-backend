@@ -355,22 +355,27 @@ async def forgot_password(payload: dict):
         },
     )
 
-    # Envoi (mock console en BETA — branchera Resend plus tard)
+    # Envoi via Resend (fallback mock console si la clé est absente)
+    email_result: dict = {}
     try:
         from email_service import send_password_reset_email
 
-        await send_password_reset_email(email, code)
-    except Exception as e:  # noqa: BLE001
-        # Pas critique en BETA — le code est retourné dans la réponse
-        pass
+        email_result = await send_password_reset_email(email, code)
+    except Exception:  # noqa: BLE001
+        # Toute exception inattendue → on bascule en mode dégradé
+        email_result = {"delivered": False}
 
-    # 🛟 BETA : on retourne le code pour ne pas bloquer le user. À RETIRER
-    # quand Resend sera branché et que les emails partiront vraiment.
-    if BETA_MODE:
+    delivered = bool(email_result.get("delivered"))
+
+    # 🛟 Sécurité : on n'expose JAMAIS le code en clair si Resend a envoyé.
+    # En revanche, si l'envoi a échoué ET qu'on est en BETA, on retourne
+    # le code pour ne pas bloquer l'utilisateur (clé Resend en cours de
+    # config, domaine pas vérifié, etc.).
+    if not delivered and BETA_MODE:
         response_payload["beta_reset_code"] = code
         response_payload["beta_message"] = (
-            "Mode BETA : code affiché ici en attendant l'activation des "
-            f"emails réels. Code = {code} (valable {PASSWORD_RESET_TTL_MINUTES} min)."
+            "Email non envoyé (mode dégradé). Code = "
+            f"{code} (valable {PASSWORD_RESET_TTL_MINUTES} min)."
         )
 
     return response_payload

@@ -1,9 +1,14 @@
-"""Service d'envoi d'email — MOCK MVP.
+"""Service d'envoi d'email — Backend Resend HTTP API.
 
-Pour la production, remplacer le corps de `send_email` par une intégration
-SendGrid / Resend / SMTP. Le présent module enregistre l'email dans les logs
-et retourne le payload sous forme de dict (consommé par les routes pour
-exposer le lien de vérification dans la réponse API, utile en démo).
+Resend permet d'envoyer des emails transactionnels via une simple requête HTTP
+authentifiée. Si la clé n'est pas configurée OU si l'appel échoue, on
+fallback en MOCK console (utile en local + non bloquant pour les tests).
+
+Variables d'env :
+    RESEND_API_KEY   : clé secrète Resend (`re_...`)
+    MAIL_FROM        : expéditeur ("MesureChâssis <info@mesurechassis.com>")
+    MAIL_SUPPORT     : adresse support utilisée pour les notifs internes
+    FRONTEND_URL     : base URL pour construire les liens
 """
 from __future__ import annotations
 
@@ -11,18 +16,23 @@ import logging
 import os
 from typing import Optional
 
+import httpx
+
 logger = logging.getLogger("mesurechassis.email")
 
-FROM_EMAIL = os.getenv("MAIL_FROM", "noreply@mesurechassis.fr")
-FRONTEND_URL = os.getenv("FRONTEND_URL", "")  # ex. https://app.mesurechassis.fr
+RESEND_API_KEY = os.getenv("RESEND_API_KEY", "").strip()
+RESEND_API_URL = "https://api.resend.com/emails"
+FROM_EMAIL = os.getenv("MAIL_FROM", "MesureChâssis <info@mesurechassis.com>")
+REPLY_TO_EMAIL = os.getenv("MAIL_REPLY_TO", "").strip()
+MAIL_SUPPORT = os.getenv("MAIL_SUPPORT", "info@mesurechassis.com")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "")  # ex. https://mesurechassis.com
 
 
+# ─────────────────────────────────────────────────────────────────────
+# Helpers
+# ─────────────────────────────────────────────────────────────────────
 def _build_link(path: str, token: str) -> str:
-    """Construit le lien public pour activation / invitation.
-
-    Pour le preview Expo, on retourne un chemin relatif. Le front-end
-    expo-router gère `/verify?token=...` et `/invite?token=...`.
-    """
+    """Construit le lien public pour activation / invitation."""
     base = FRONTEND_URL.rstrip("/") if FRONTEND_URL else ""
     if base:
         return f"{base}{path}?token={token}"
@@ -37,16 +47,113 @@ def build_invitation_link(token: str) -> str:
     return _build_link("/invite", token)
 
 
+def _body_to_html(body: str) -> str:
+    """Convertit un texte brut en HTML simple (préserve les sauts de ligne)."""
+    safe = (
+        body.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+    )
+    paragraphs = "".join(
+        f"<p style='margin:0 0 12px 0;line-height:1.55;font-size:14px;color:#1f2937;'>"
+        f"{p.replace(chr(10), '<br/>')}</p>"
+        for p in safe.split("\n\n")
+        if p.strip()
+    )
+    return (
+        "<div style='font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;"
+        "max-width:560px;margin:0 auto;padding:24px;background:#ffffff;'>"
+        "<div style='border-bottom:2px solid #f59e0b;padding-bottom:12px;margin-bottom:16px;'>"
+        "<h1 style='font-size:18px;margin:0;color:#111827;letter-spacing:0.4px;'>"
+        "MesureChâssis</h1></div>"
+        f"{paragraphs}"
+        "<div style='margin-top:24px;padding-top:12px;border-top:1px solid #e5e7eb;"
+        "font-size:11px;color:#9ca3af;text-align:center;'>"
+        "MesureChâssis — Prise de mesures pour menuiseries professionnelles"
+        "</div></div>"
+    )
+
+
+# ─────────────────────────────────────────────────────────────────────
+# Envoi générique
+# ─────────────────────────────────────────────────────────────────────
 def send_email(
     *,
     to: str,
     subject: str,
     body: str,
     link: Optional[str] = None,
+    html: Optional[str] = None,
 ) -> dict:
-    """Mock d'envoi. Log dans la console + retourne le payload."""
-    logger.info(
-        "─────────────────  📧 EMAIL (MOCK)  ─────────────────"
+    """Envoie un email via Resend.
+
+    Fallback MOCK en console si :
+      - `RESEND_API_KEY` absent
+      - appel Resend en échec (erreur réseau, 4xx/5xx)
+
+    Le payload retourné contient `delivered: bool` pour signaler à
+    l'appelant si l'envoi réel a réussi ou si on est resté en mock.
+    """
+    payload_log = {"to": to, "subject": subject, "body": body, "link": link}
+
+    if not RESEND_API_KEY:
+        _mock_log(to, subject, body, link, reason="RESEND_API_KEY manquante")
+        payload_log["delivered"] = False
+        return payload_log
+
+    html_content = html or _body_to_html(body)
+    resend_payload = {
+        "from": FROM_EMAIL,
+        "to": [to],
+        "subject": subject,
+        "text": body,
+        "html": html_content,
+    }
+    if REPLY_TO_EMAIL:
+        resend_payload["reply_to"] = REPLY_TO_EMAIL
+    headers = {
+        "Authorization": f"Bearer {RESEND_API_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    try:
+        with httpx.Client(timeout=10.0) as client:
+            r = client.post(RESEND_API_URL, json=resend_payload, headers=headers)
+        if r.status_code >= 400:
+            logger.warning(
+                "📧 Resend FAIL (%s) for %s — %s",
+                r.status_code,
+                to,
+                r.text[:400],
+            )
+            _mock_log(to, subject, body, link, reason=f"Resend HTTP {r.status_code}")
+            payload_log["delivered"] = False
+            payload_log["error"] = r.text[:400]
+            return payload_log
+        data = r.json() if r.content else {}
+        logger.info(
+            "📧 Resend OK → %s (subject=%r, id=%s)",
+            to,
+            subject,
+            data.get("id", "?"),
+        )
+        payload_log["delivered"] = True
+        payload_log["resend_id"] = data.get("id")
+        return payload_log
+    except Exception as e:  # noqa: BLE001
+        logger.exception("📧 Resend exception → fallback mock : %s", e)
+        _mock_log(to, subject, body, link, reason=f"Exception: {e}")
+        payload_log["delivered"] = False
+        payload_log["error"] = str(e)
+        return payload_log
+
+
+def _mock_log(
+    to: str, subject: str, body: str, link: Optional[str], reason: str
+) -> None:
+    """Log MOCK lorsque Resend n'a pas pu envoyer."""
+    logger.warning(
+        "─────────  📧 EMAIL (MOCK — %s)  ─────────", reason
     )
     logger.info(" From    : %s", FROM_EMAIL)
     logger.info(" To      : %s", to)
@@ -56,12 +163,12 @@ def send_email(
     logger.info(" Body    :")
     for line in body.splitlines():
         logger.info("   %s", line)
-    logger.info(
-        "─────────────────────────────────────────────────────"
-    )
-    return {"to": to, "subject": subject, "body": body, "link": link}
+    logger.warning("──────────────────────────────────────────────")
 
 
+# ─────────────────────────────────────────────────────────────────────
+# Templates spécifiques (un par cas d'usage)
+# ─────────────────────────────────────────────────────────────────────
 def send_verification_email(*, to: str, name: str, link: str) -> dict:
     body = (
         f"Bonjour {name},\n\n"
@@ -81,26 +188,51 @@ def send_verification_email(*, to: str, name: str, link: str) -> dict:
 
 
 async def send_password_reset_email(email: str, code: str) -> dict:
-    """Envoie le code de réinitialisation par email.
+    """Envoie le code de réinitialisation par email via Resend.
 
-    Pour l'instant : mock console (le code est aussi retourné dans
-    la réponse HTTP en mode BETA pour ne pas bloquer l'utilisateur).
-    Quand Resend sera branché, on basculera ici sur un envoi réel.
+    Le bloc HTML met le code en gros caractères pour éviter les erreurs
+    de saisie sur mobile.
     """
     body = (
-        f"Bonjour,\n\n"
-        f"Vous avez demandé la réinitialisation de votre mot de passe sur MesureChâssis.\n\n"
-        f"Votre code de vérification :\n\n"
-        f"   ▶  {code}  ◀\n\n"
-        f"Ce code est valable 30 minutes.\n"
-        f"Si vous n'êtes pas à l'origine de cette demande, ignorez ce message.\n\n"
-        f"L'équipe MesureChâssis"
+        "Bonjour,\n\n"
+        "Vous avez demandé la réinitialisation de votre mot de passe sur MesureChâssis.\n\n"
+        f"Votre code de vérification : {code}\n\n"
+        "Ce code est valable 30 minutes.\n"
+        "Si vous n'êtes pas à l'origine de cette demande, ignorez ce message.\n\n"
+        "L'équipe MesureChâssis"
+    )
+    # HTML enrichi avec code en évidence
+    html = (
+        "<div style='font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;"
+        "max-width:560px;margin:0 auto;padding:24px;background:#ffffff;'>"
+        "<div style='border-bottom:2px solid #f59e0b;padding-bottom:12px;margin-bottom:20px;'>"
+        "<h1 style='font-size:18px;margin:0;color:#111827;letter-spacing:0.4px;'>"
+        "MesureChâssis</h1></div>"
+        "<p style='font-size:14px;color:#1f2937;line-height:1.55;margin:0 0 16px;'>Bonjour,</p>"
+        "<p style='font-size:14px;color:#1f2937;line-height:1.55;margin:0 0 16px;'>"
+        "Vous avez demandé la réinitialisation de votre mot de passe.</p>"
+        "<div style='background:#fffbeb;border:2px solid #f59e0b;border-radius:8px;"
+        "padding:18px;text-align:center;margin:20px 0;'>"
+        "<div style='font-size:11px;color:#92400e;letter-spacing:1px;font-weight:700;"
+        "margin-bottom:8px;'>VOTRE CODE</div>"
+        f"<div style='font-size:34px;font-weight:900;letter-spacing:8px;color:#111827;"
+        f"font-family:monospace;'>{code}</div></div>"
+        "<p style='font-size:13px;color:#6b7280;line-height:1.55;margin:0 0 8px;'>"
+        "Ce code est valable <strong>30 minutes</strong>.</p>"
+        "<p style='font-size:13px;color:#6b7280;line-height:1.55;margin:0 0 24px;'>"
+        "Si vous n'êtes pas à l'origine de cette demande, ignorez ce message — "
+        "votre mot de passe ne sera pas modifié.</p>"
+        "<div style='margin-top:24px;padding-top:12px;border-top:1px solid #e5e7eb;"
+        "font-size:11px;color:#9ca3af;text-align:center;'>"
+        "MesureChâssis — Prise de mesures pour menuiseries professionnelles"
+        "</div></div>"
     )
     return send_email(
         to=email,
         subject="Réinitialisation de votre mot de passe — MesureChâssis",
         body=body,
         link=None,
+        html=html,
     )
 
 

@@ -12,6 +12,8 @@ import {
   LayoutAnimation,
   UIManager,
   KeyboardAvoidingView,
+  Linking,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -87,6 +89,37 @@ export const ChatHelp: React.FC<Props> = ({
     setOpenId(null);
     onClose();
   };
+
+  /** Ouvre l'app mail de l'utilisateur avec un sujet pré-rempli vers le support. */
+  const handleContactSupport = useCallback(async () => {
+    const to = "info@mesurechassis.com";
+    const subject = encodeURIComponent("Question MesureChâssis");
+    const body = encodeURIComponent(
+      "Bonjour,\n\nJ'ai une question concernant l'application MesureChâssis :\n\n" +
+        "[Décrivez votre question ici]\n\n" +
+        "Merci pour votre retour.\n",
+    );
+    const url = `mailto:${to}?subject=${subject}&body=${body}`;
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (!supported) {
+        Alert.alert(
+          "Aucune application mail trouvée",
+          `Envoyez votre question à ${to}`,
+        );
+        return;
+      }
+      await Linking.openURL(url);
+      handleClose();
+      // Fallback custom — si l'app parente a fourni un callback, on l'appelle
+      onContactSupport?.();
+    } catch {
+      Alert.alert(
+        "Impossible d'ouvrir l'application mail",
+        `Envoyez votre question à ${to}`,
+      );
+    }
+  }, [onContactSupport]);
 
   return (
     <Modal
@@ -245,21 +278,21 @@ export const ChatHelp: React.FC<Props> = ({
             )}
           </ScrollView>
 
-          {/* Footer — CTA support */}
+          {/* Footer — CTA mail support */}
           <View style={styles.footer}>
             <Text style={styles.footerHint}>Pas trouvé votre réponse ?</Text>
             <TouchableOpacity
               testID="chat-help-contact-support"
-              onPress={() => {
-                handleClose();
-                onContactSupport?.();
-              }}
+              onPress={handleContactSupport}
               activeOpacity={0.85}
               style={styles.footerCta}
             >
-              <Ionicons name="chatbubble-ellipses" size={16} color="#000" />
-              <Text style={styles.footerCtaText}>CONTACTER LE SUPPORT</Text>
+              <Ionicons name="mail" size={16} color="#000" />
+              <Text style={styles.footerCtaText}>POSER UNE QUESTION</Text>
             </TouchableOpacity>
+            <Text style={styles.footerMailHint}>
+              info@mesurechassis.com
+            </Text>
           </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
@@ -458,6 +491,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "900",
     letterSpacing: 0.8,
+  },
+  footerMailHint: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    textAlign: "center",
+    letterSpacing: 0.3,
+    opacity: 0.7,
+    marginTop: 2,
   },
 });
 

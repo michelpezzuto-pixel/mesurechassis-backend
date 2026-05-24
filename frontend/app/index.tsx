@@ -446,12 +446,24 @@ export default function SignIn() {
                   {forgotBetaCode && (
                     <View style={styles.betaCodeBox}>
                       <Text style={styles.betaCodeLabel}>
-                        🛟 MODE BETA — Votre code :
+                        ⚠️ Email indisponible — Code de secours :
                       </Text>
                       <Text style={styles.betaCodeValue}>{forgotBetaCode}</Text>
                       <Text style={styles.betaCodeHint}>
-                        (Email non encore activé en production — code affiché
-                        ici en attendant)
+                        L'envoi d'email a échoué. Utilisez ce code de secours.
+                      </Text>
+                    </View>
+                  )}
+                  {!forgotBetaCode && (
+                    <View style={styles.mailInfoBox}>
+                      <Ionicons
+                        name="mail-outline"
+                        size={18}
+                        color={colors.primary}
+                      />
+                      <Text style={styles.mailInfoText}>
+                        Consultez votre boîte mail. Vérifiez aussi les
+                        spams/courriers indésirables.
                       </Text>
                     </View>
                   )}
@@ -710,6 +722,24 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontStyle: "italic",
     textAlign: "center",
+  },
+  mailInfoBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    backgroundColor: "rgba(255, 165, 0, 0.08)",
+    borderWidth: 1,
+    borderColor: "rgba(255, 165, 0, 0.30)",
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    marginBottom: 12,
+  },
+  mailInfoText: {
+    flex: 1,
+    color: colors.textPrimary,
+    fontSize: 12,
+    lineHeight: 17,
   },
   demoBlock: { marginTop: 32 },
   demoTitle: {
