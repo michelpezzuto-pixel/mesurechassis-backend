@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Image,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -212,9 +213,11 @@ export default function SignIn() {
       >
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.brandWrap}>
-            <View style={styles.logoBox}>
-              <Ionicons name="arrow-up" size={36} color={colors.primary} />
-            </View>
+            <Image
+              source={require("../assets/images/icon.png")}
+              style={styles.brandLogo}
+              resizeMode="contain"
+            />
             <Text style={styles.brand}>MESURECHÂSSIS</Text>
             <Text style={styles.tagline}>Mesures terrain · Menuiseries pro</Text>
           </View>
@@ -663,6 +666,11 @@ const styles = StyleSheet.create({
   center: { alignItems: "center", justifyContent: "center" },
   scroll: { padding: 24, paddingBottom: 60 },
   brandWrap: { alignItems: "center", marginTop: 16, marginBottom: 32 },
+  brandLogo: {
+    width: 84,
+    height: 84,
+    marginBottom: 12,
+  },
   logoBox: {
     width: 72,
     height: 72,
