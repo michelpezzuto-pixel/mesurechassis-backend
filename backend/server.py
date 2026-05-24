@@ -9,8 +9,10 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 
-from fastapi import APIRouter, FastAPI
+from fastapi import APIRouter, FastAPI, HTTPException
+from fastapi.responses import FileResponse
 from starlette.middleware.cors import CORSMiddleware
+import os
 
 from db import client as mongo_client
 from routes import auth as auth_routes
@@ -44,6 +46,30 @@ api.include_router(feedbacks_routes.router)
 api.include_router(company_routes.router)
 api.include_router(stats_routes.router)
 api.include_router(exports_routes.router)
+
+# ─────────────────────────────────────────────────────────────────────
+# Route publique TEMPORAIRE pour télécharger les screenshots tablette
+# destinés à Google Play Console. À retirer après la mise en ligne.
+# ─────────────────────────────────────────────────────────────────────
+_TABLET_SHOTS_DIR = "/app/playstore_tablet_screenshots"
+_TABLET_ALLOWED = {
+    "01_dashboard.jpeg",
+    "02_statistiques.jpeg",
+    "03_selection_menuiserie.jpeg",
+    "04_prise_cotes_rectangle.jpeg",
+    "05_prise_cotes_trapeze.jpeg",
+}
+
+
+@api.get("/_assets/playstore-tablet/{filename}")
+async def get_playstore_tablet_asset(filename: str):
+    if filename not in _TABLET_ALLOWED:
+        raise HTTPException(status_code=404, detail="Not found")
+    path = os.path.join(_TABLET_SHOTS_DIR, filename)
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="File missing on disk")
+    return FileResponse(path, media_type="image/jpeg", filename=filename)
+
 
 app.include_router(api)
 

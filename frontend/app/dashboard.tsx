@@ -22,6 +22,7 @@ import { api } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { subscribeQueueSize, syncQueue, enqueueChantier, isNetworkError } from "@/src/services/offlineQueue";
 import { colors, statusMeta, READY_FOR_EXPORT_BADGE } from "@/src/theme";
+import { useResponsive } from "@/src/utils/responsive";
 import TrialCountdownBanner from "@/src/components/TrialCountdownBanner";
 import ChatHelp from "@/src/components/ChatHelp";
 
@@ -52,6 +53,7 @@ export default function Dashboard() {
   const [q, setQ] = useState("");
   const [newModal, setNewModal] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const { isTablet } = useResponsive();
   const [newFirstName, setNewFirstName] = useState("");
   const [newLastName, setNewLastName] = useState("");
   const [newAddr, setNewAddr] = useState("");
@@ -394,7 +396,13 @@ export default function Dashboard() {
           data={items}
           keyExtractor={(i) => i.id}
           renderItem={renderItem}
-          contentContainerStyle={{ padding: 16, paddingBottom: 120 }}
+          contentContainerStyle={{
+            padding: 16,
+            paddingBottom: 120,
+            maxWidth: isTablet ? 900 : "100%",
+            width: "100%",
+            alignSelf: "center",
+          }}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}

@@ -13,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import { api, buildAuthHeaders } from "@/src/services/api";
+import { useResponsive } from "@/src/utils/responsive";
 import { useAuth } from "@/src/context/AuthContext";
 import { colors, statusMeta } from "@/src/theme";
 import * as Sharing from "expo-sharing";
@@ -36,6 +37,7 @@ type Commercials = {
 export default function AdminStats() {
   const { user } = useAuth();
   const router = useRouter();
+  const { isTablet } = useResponsive();
   const [data, setData] = useState<Stats | null>(null);
   const [perf, setPerf] = useState<Commercials | null>(null);
   const [loading, setLoading] = useState(true);
@@ -118,7 +120,13 @@ export default function AdminStats() {
   return (
     <SafeAreaView style={styles.flex} edges={["bottom"]}>
       <ScrollView
-        contentContainerStyle={{ padding: 16, paddingBottom: 40 }}
+        contentContainerStyle={{
+          padding: 16,
+          paddingBottom: 40,
+          maxWidth: isTablet ? 900 : "100%",
+          width: "100%",
+          alignSelf: "center",
+        }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

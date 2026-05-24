@@ -43,6 +43,7 @@ import { enqueueMesure, isOnline } from "@/src/services/offlineQueue";
 import { colors } from "@/src/theme";
 import { ShapeIcon } from "@/src/components/ShapeIcon";
 import { MeasureGuide } from "@/src/components/MeasureGuide";
+import { useResponsive } from "@/src/utils/responsive";
 
 // ════════════════════════════════════════════════════════════════════════
 // Types & constantes
@@ -253,6 +254,7 @@ export default function NewMesureWizard() {
   const { id, mesure_id } = useLocalSearchParams<{ id: string; mesure_id?: string }>();
   const editingId = (mesure_id as string) || null;
   const router = useRouter();
+  const { isTablet } = useResponsive();
 
   const [step, setStep] = useState<Step>(0);
   const [shape, setShape] = useState<Shape | null>(null);
@@ -870,7 +872,13 @@ export default function NewMesureWizard() {
 
         <ScrollView
           ref={scrollRef}
-          contentContainerStyle={{ padding: 16, paddingBottom: 200 }}
+          contentContainerStyle={{
+            padding: 16,
+            paddingBottom: 200,
+            maxWidth: isTablet ? 900 : "100%",
+            width: "100%",
+            alignSelf: "center",
+          }}
           keyboardShouldPersistTaps="handled"
         >
           {step === 0 && <Step1Config s1={s1} setField={setS1Field} err={s1Err} />}
