@@ -44,6 +44,9 @@ class InvitationCreate(BaseModel):
     name: str
     email: EmailStr
     role: str  # "commercial" | "technician"
+    # Seats Entreprise : l'admin doit confirmer le siège payant (>2)
+    # après avoir vu la popup informative.
+    confirm_extra_seat: Optional[bool] = False
 
 
 class InvitationAccept(BaseModel):

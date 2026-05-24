@@ -64,6 +64,49 @@ async def create_invitation(
             "Pour inviter des collaborateurs, passez à un compte Entreprise.",
         )
 
+    # 💰 Seats Entreprise : 2 sièges gratuits inclus (1 commercial + 1 technicien).
+    # À partir du 3ème siège facturable → +4,99 €/utilisateur/mois.
+    # On compte les users actifs/pending NON supprimés et NON admin de cette
+    # company. Le master admin n'est pas facturé comme "siège".
+    seats_used = await db.users.count_documents(
+        {
+            "company_id": company_id,
+            "status": {"$ne": "deleted"},
+            "role": {"$in": ["commercial", "technician"]},
+        }
+    )
+    FREE_SEATS = 2
+    SEAT_PRICE_EUR = 4.99
+    # Le user qu'on s'apprête à créer occupera le siège (seats_used + 1).
+    next_seat_index = seats_used + 1
+    extra_seat_billed = next_seat_index > FREE_SEATS
+    extra_seats_total = max(0, next_seat_index - FREE_SEATS)
+    extra_amount_eur = round(extra_seats_total * SEAT_PRICE_EUR, 2)
+
+    # Le frontend peut envoyer confirm_extra_seat=true pour valider l'ajout
+    # d'un siège payant (sinon on retourne 402 Payment Required avec les
+    # détails pour afficher la popup).
+    confirm_extra = bool(payload.confirm_extra_seat) if hasattr(payload, "confirm_extra_seat") else False
+    if extra_seat_billed and not confirm_extra:
+        raise HTTPException(
+            status_code=402,
+            detail={
+                "code": "EXTRA_SEAT_REQUIRED",
+                "message": (
+                    f"Ce sera votre {next_seat_index}ème utilisateur. Les 2 "
+                    "premiers sièges (1 commercial + 1 technicien) sont "
+                    "inclus dans votre abonnement Entreprise. Au-delà, "
+                    f"chaque utilisateur supplémentaire coûte {SEAT_PRICE_EUR:.2f} €/mois."
+                ),
+                "free_seats": FREE_SEATS,
+                "seats_used": seats_used,
+                "next_seat_index": next_seat_index,
+                "extra_seats_total": extra_seats_total,
+                "seat_price_eur": SEAT_PRICE_EUR,
+                "extra_amount_eur": extra_amount_eur,
+            },
+        )
+
     email_lower = payload.email.lower()
     existing = await db.users.find_one({"email": email_lower})
     if existing:

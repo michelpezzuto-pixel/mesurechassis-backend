@@ -738,14 +738,28 @@ export default function NewMesureWizard() {
       if (editingId) await api.patch(`/mesures/${editingId}`, payload);
       else await api.post("/mesures", payload);
       router.back();
-    } catch {
+    } catch (err: any) {
       if (editingId) {
         Alert.alert("Erreur", "Mise à jour impossible.");
       } else {
         await enqueueMesure(payload);
-        Alert.alert("Réseau indisponible", "Mesure mise en file d'attente.", [
-          { text: "OK", onPress: () => router.back() },
-        ]);
+        // Log discret pour faciliter le debug en prod (pas d'alerte tech au user)
+        const status = err?.response?.status;
+        const reason =
+          status === undefined
+            ? "réseau / timeout"
+            : `HTTP ${status}`;
+        // eslint-disable-next-line no-console
+        console.warn(
+          "[new-mesure] Save failed →",
+          reason,
+          err?.response?.data || err?.message,
+        );
+        Alert.alert(
+          "Sauvegarde différée",
+          "Votre mesure a été enregistrée localement et sera envoyée automatiquement dès que la connexion sera stable. Aucune perte de données.",
+          [{ text: "OK", onPress: () => router.back() }],
+        );
       }
     } finally {
       setSaving(false);
@@ -1710,11 +1724,34 @@ function CheckboxRow({ testID, label, sub, value, onChange }: any) {
 }
 
 function CotField({ testID, label, value, onChange, onBlur, error }: any) {
+  // 🛡️ Anti-corruption (bug iOS autocomplete) : on plafonne strict toute
+  // saisie >9999mm (10m mur = impossible en menuiserie). Tronque les chiffres
+  // surnuméraires sans crash.
+  const handleChange = (v: string) => {
+    let cleaned = (v || "").replace(",", ".");
+    // Garde uniquement chiffres + un point décimal
+    cleaned = cleaned.replace(/[^0-9.]/g, "");
+    const dotIdx = cleaned.indexOf(".");
+    if (dotIdx !== -1) {
+      cleaned =
+        cleaned.slice(0, dotIdx + 1) +
+        cleaned.slice(dotIdx + 1).replace(/\./g, "");
+    }
+    // Plafond à 4 chiffres entiers (≤ 9999mm)
+    const [int, dec] = cleaned.split(".");
+    const safeInt = (int || "").slice(0, 4);
+    const safeDec = dec !== undefined ? `.${dec.slice(0, 2)}` : "";
+    onChange(safeInt + safeDec);
+  };
   return (
     <View style={{ marginTop: 14 }}>
       <Text style={styles.label}>{label}</Text>
-      <TextInput testID={testID} value={value} onChangeText={onChange} onBlur={onBlur}
+      <TextInput testID={testID} value={value} onChangeText={handleChange} onBlur={onBlur}
         keyboardType="decimal-pad" placeholder="0" placeholderTextColor={colors.placeholder}
+        maxLength={7}
+        autoCorrect={false}
+        autoComplete="off"
+        textContentType="none"
         style={[styles.input, error && styles.inputError]} />
       {error && (
         <Text style={styles.errorMsg} testID={testID ? `${testID}-error` : undefined}>

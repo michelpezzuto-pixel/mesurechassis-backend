@@ -16,7 +16,10 @@ router = APIRouter()
 
 # Mesures éditables uniquement par Commercial / Technicien.
 # Admin est exclu (bypass possible via Mode Artisan Unique).
-EDIT_ROLES = ["commercial", "technician"]
+# Admin inclus : un Master Admin (Artisan solo OU Entreprise) doit pouvoir
+# créer/éditer/supprimer ses propres mesures sans dépendre d'un commercial
+# ou technicien — sinon un compte solo serait bloqué.
+EDIT_ROLES = ["admin", "commercial", "technician"]
 
 
 @router.post("/mesures", response_model=Mesure)

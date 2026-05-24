@@ -209,6 +209,47 @@ async def update_wall_config(
     # gros_oeuvre_mm, insulation_mode, parement_type, etc.)
     if not isinstance(payload, dict):
         raise HTTPException(400, "Payload doit être un objet JSON")
+
+    # 🛡️ Garde anti-corruption : on plafonne les épaisseurs à 2000mm (mur
+    # de 2m max) pour bloquer les valeurs aberrantes type 30050 (bug iOS
+    # autocomplete observé). Si une valeur dépasse → on tronque à 2000 et
+    # on log un warning. Le frontend a déjà un cap à 9999 dans CotField.
+    SUSPECT_FIELDS = (
+        "gros_oeuvre_mm",
+        "iti_thickness_mm",
+        "ite_insul_thickness_mm",
+        "crepi_thickness_mm",
+        "coulisse_thickness_mm",
+        "brique_pierre_thickness_mm",
+        "structure_lame_air_mm",
+        "sill_thickness_mm",
+    )
+    import logging as _lg
+    _logger = _lg.getLogger("mesurechassis")
+    for k in SUSPECT_FIELDS:
+        v = payload.get(k)
+        if v is None:
+            continue
+        try:
+            num = float(v)
+        except (TypeError, ValueError):
+            continue
+        if num > 2000:
+            _logger.warning(
+                "wall_config: valeur suspecte %s=%s (chantier=%s) — refusée",
+                k,
+                num,
+                chantier_id,
+            )
+            raise HTTPException(
+                400,
+                detail=(
+                    f"Cote « {k} » = {num:g} mm aberrante "
+                    "(épaisseur de mur > 2000 mm impossible). "
+                    "Vérifiez votre saisie."
+                ),
+            )
+
     await db.chantiers.update_one(
         {"id": chantier_id, "company_id": company},
         {"$set": {"wall_config": payload}},

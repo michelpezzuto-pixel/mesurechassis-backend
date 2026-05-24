@@ -639,39 +639,52 @@ export default function CompanyProfile() {
             )}
           </View>
 
-          {/* === ARTISAN MODE === */}
+          {/* === TYPE DE COMPTE (lecture seule — défini à l'inscription) === */}
           <View style={styles.card}>
-            <Text style={styles.section}>MODE ARTISAN UNIQUE</Text>
+            <Text style={styles.section}>TYPE DE COMPTE</Text>
             <Text style={styles.help}>
-              Activez ce mode si vous êtes{" "}
-              <Text style={styles.bold}>seul à utiliser l'application</Text>{" "}
-              (artisan indépendant). Vous accéderez instantanément à{" "}
-              <Text style={styles.bold}>toutes les fonctionnalités</Text> sans
-              restriction de rôle.
+              Le type de compte est défini lors de l'inscription et ne peut
+              pas être modifié ici. Pour changer de formule, contactez le
+              support à{" "}
+              <Text style={styles.bold}>info@mesurechassis.com</Text>.
             </Text>
-
-            <View style={styles.toggleRow}>
+            <View style={styles.accountTypeBox}>
+              <View
+                style={[
+                  styles.accountTypeIcon,
+                  {
+                    backgroundColor:
+                      profile?.account_type === "artisan"
+                        ? "rgba(255, 107, 26, 0.18)"
+                        : "rgba(59, 130, 246, 0.18)",
+                  },
+                ]}
+              >
+                <Ionicons
+                  name={
+                    profile?.account_type === "artisan" ? "person" : "business"
+                  }
+                  size={20}
+                  color={
+                    profile?.account_type === "artisan"
+                      ? colors.primary
+                      : "#3B82F6"
+                  }
+                />
+              </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.toggleLabel}>Activer le mode artisan</Text>
-                <Text style={styles.toggleSub}>
-                  {artisanMode ? "✅ Accès total" : "⛔ Restrictions par rôle"}
+                <Text style={styles.accountTypeTitle}>
+                  {profile?.account_type === "artisan"
+                    ? "Compte Artisan"
+                    : "Compte Entreprise"}
+                </Text>
+                <Text style={styles.accountTypeDesc}>
+                  {profile?.account_type === "artisan"
+                    ? "Compte solo, 1 utilisateur unique — 24,99 €/mois"
+                    : "Admin + Commercial + Technicien inclus — 54,99 €/mois (+4,99 €/utilisateur supplémentaire)"}
                 </Text>
               </View>
-              <Switch
-                testID="artisan-mode-switch"
-                value={artisanMode}
-                onValueChange={setArtisanMode}
-                disabled={!isAdmin}
-                trackColor={{ false: colors.borderStrong, true: colors.primary }}
-                thumbColor={artisanMode ? "#fff" : "#f4f3f4"}
-              />
             </View>
-
-            {!isAdmin && (
-              <Text style={styles.warnNote}>
-                ⚠ Seul l'administrateur de la société peut modifier ce paramètre.
-              </Text>
-            )}
           </View>
 
           {isAdmin && (
@@ -967,6 +980,37 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 10,
     fontWeight: "700",
+  },
+  // === Type de compte (lecture seule) ===
+  accountTypeBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+    marginTop: 14,
+    padding: 14,
+    backgroundColor: colors.bg,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+  },
+  accountTypeIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  accountTypeTitle: {
+    color: colors.textPrimary,
+    fontWeight: "900",
+    fontSize: 14,
+    letterSpacing: 0.3,
+  },
+  accountTypeDesc: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    marginTop: 4,
+    lineHeight: 17,
   },
   // === Logo entreprise ===
   logoBox: {
