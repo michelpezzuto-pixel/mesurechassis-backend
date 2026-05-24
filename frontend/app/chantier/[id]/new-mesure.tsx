@@ -1444,16 +1444,6 @@ function Step3Cotes({
         </View>
       )}
 
-      <View style={styles.sketchBox}>
-        <Sketch
-          values={{
-            bay_width: s3.bay_width,
-            bay_height: s3.bay_height,
-            bay_diagonal: s3.diag_1,
-          }}
-        />
-      </View>
-
       {/* Cotes — Trapèze */}
       {shape === "trapeze" && (
         <>
