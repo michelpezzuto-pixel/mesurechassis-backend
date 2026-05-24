@@ -44,7 +44,7 @@ const FILTERS: { key: "all" | "measure" | "verify" | "fab" | "done"; label: stri
 ];
 
 export default function Dashboard() {
-  const { user, signOut } = useAuth();
+  const { user, signOut, company } = useAuth();
   const router = useRouter();
   const [items, setItems] = useState<Chantier[]>([]);
   const [loading, setLoading] = useState(true);
