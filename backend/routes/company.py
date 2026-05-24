@@ -19,6 +19,7 @@ def _to_profile(doc: dict, company_id: str) -> CompanyProfile:
         name=doc.get("name") or company_id,
         artisan_mode=bool(doc.get("artisan_mode", False)),
         account_type=str(doc.get("account_type") or "entreprise"),
+        logo_base64=doc.get("logo_base64"),
         subscription_status=doc.get("subscription_status", "trial"),
         subscription_expires_at=doc.get("subscription_expires_at"),
         plan=doc.get("plan", "trial"),

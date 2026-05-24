@@ -150,6 +150,9 @@ class CompanyProfile(BaseModel):
     # Type de compte choisi à l'inscription. Conditionne l'UX et les
     # règles métier (Artisan = solo, RBAC bypassé ; Entreprise = équipe).
     account_type: str = "entreprise"  # artisan | entreprise
+    # Logo entreprise (data URL base64 PNG/JPG) — apposé sur les PDF
+    # générés en mention "DOCUMENT INTERNE". Optionnel.
+    logo_base64: Optional[str] = None
     subscription_status: str = "trial"  # trial | active | suspended
     subscription_expires_at: Optional[str] = None
     # --- Plan & Freemium (anti-fraud) ---
@@ -167,6 +170,9 @@ class CompanyProfile(BaseModel):
 class CompanyProfileUpdate(BaseModel):
     name: Optional[str] = None
     artisan_mode: Optional[bool] = None
+    # Logo entreprise : data URL base64 (PNG/JPG). Apposé sur les PDF
+    # générés (document INTERNE).
+    logo_base64: Optional[str] = None
     # Les champs subscription_*, plan, cancel_* sont updatés uniquement
     # via /platform/... ou /company/subscription/{cancel|reactivate}.
 

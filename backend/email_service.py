@@ -84,6 +84,7 @@ def send_email(
     body: str,
     link: Optional[str] = None,
     html: Optional[str] = None,
+    reply_to_override: Optional[str] = None,
 ) -> dict:
     """Envoie un email via Resend.
 
@@ -93,6 +94,9 @@ def send_email(
 
     Le payload retourné contient `delivered: bool` pour signaler à
     l'appelant si l'envoi réel a réussi ou si on est resté en mock.
+
+    `reply_to_override` permet de spécifier un Reply-To différent du défaut
+    (utile pour les feedbacks où on veut que la réponse aille au client).
     """
     payload_log = {"to": to, "subject": subject, "body": body, "link": link}
 
@@ -109,8 +113,8 @@ def send_email(
         "text": body,
         "html": html_content,
     }
-    if REPLY_TO_EMAIL:
-        resend_payload["reply_to"] = REPLY_TO_EMAIL
+    if REPLY_TO_EMAIL or reply_to_override:
+        resend_payload["reply_to"] = reply_to_override or REPLY_TO_EMAIL
     headers = {
         "Authorization": f"Bearer {RESEND_API_KEY}",
         "Content-Type": "application/json",
@@ -293,7 +297,13 @@ def send_feedback_email(
     user_comment: str,
     page_context: Optional[str] = None,
 ) -> dict:
-    """Notification interne : un utilisateur signale un bug ou suggère une amélioration."""
+    """Notification interne : un utilisateur signale un bug ou suggère une amélioration.
+
+    Envoie le mail avec `reply_to=<sender_email>` afin que cliquer sur "Répondre"
+    dans la boîte mail destinataire pré-remplisse une réponse directement vers
+    l'utilisateur qui a soumis le feedback. Le HTML inclut un bouton "RÉPONDRE
+    AU CLIENT" en mailto: pour les clients mail qui n'exposeraient pas reply-to.
+    """
     ctx_line = f"\n   Page : {page_context}" if page_context else ""
     body = (
         "Un nouveau feedback utilisateur a été soumis :\n\n"
@@ -302,10 +312,65 @@ def send_feedback_email(
         "─── MESSAGE ───\n"
         f"{user_comment}\n"
         "──────────────\n\n"
-        "Connectez-vous à l'espace admin pour traiter ce feedback."
+        f"Pour répondre directement : {sender_email}"
+    )
+    # HTML enrichi avec bouton de réponse cliquable (mailto)
+    safe_comment = (
+        (user_comment or "")
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace("\n", "<br/>")
+    )
+    safe_page = (page_context or "").replace("<", "&lt;").replace(">", "&gt;")
+    reply_subject = (
+        f"Re%3A%20Feedback%20MesureCh%C3%A2ssis"  # URL-encoded "Re: Feedback MesureChâssis"
+    )
+    reply_body = (
+        f"Bonjour%20{sender_name.split()[0] if sender_name else ''}%2C%0A%0A"
+        f"Merci%20pour%20votre%20retour.%0A%0A"
+    )
+    html = (
+        "<div style='font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;"
+        "max-width:600px;margin:0 auto;padding:24px;background:#ffffff;'>"
+        "<div style='border-bottom:2px solid #f59e0b;padding-bottom:12px;margin-bottom:18px;'>"
+        "<h1 style='font-size:18px;margin:0;color:#111827;letter-spacing:0.4px;'>"
+        "💬 Nouveau feedback utilisateur</h1></div>"
+        "<table style='width:100%;font-size:13px;color:#374151;margin-bottom:14px;border-collapse:collapse;'>"
+        f"<tr><td style='padding:6px 0;color:#6b7280;width:90px;'>De</td>"
+        f"<td style='padding:6px 0;'><strong>{sender_name}</strong> "
+        f"&lt;<a href='mailto:{sender_email}' style='color:#ea580c;text-decoration:none;'>{sender_email}</a>&gt;</td></tr>"
+        f"<tr><td style='padding:6px 0;color:#6b7280;'>Société</td>"
+        f"<td style='padding:6px 0;'>{company_name}</td></tr>"
+        + (
+            f"<tr><td style='padding:6px 0;color:#6b7280;'>Page</td>"
+            f"<td style='padding:6px 0;'><code style='background:#f3f4f6;padding:2px 6px;border-radius:4px;'>"
+            f"{safe_page}</code></td></tr>"
+            if safe_page
+            else ""
+        )
+        + "</table>"
+        "<div style='background:#fffbeb;border-left:3px solid #f59e0b;padding:14px 16px;border-radius:6px;margin-bottom:20px;'>"
+        "<div style='font-size:11px;color:#92400e;letter-spacing:0.8px;font-weight:700;margin-bottom:8px;'>"
+        "MESSAGE</div>"
+        f"<div style='font-size:14px;color:#1f2937;line-height:1.55;'>{safe_comment}</div>"
+        "</div>"
+        # Bouton mailto: répondre au client
+        "<div style='text-align:center;margin:24px 0 10px;'>"
+        f"<a href='mailto:{sender_email}?subject={reply_subject}&body={reply_body}' "
+        "style='display:inline-block;background:#ea580c;color:#ffffff;text-decoration:none;"
+        "padding:12px 22px;border-radius:8px;font-weight:800;letter-spacing:0.6px;font-size:13px;'>"
+        "📩 RÉPONDRE AU CLIENT</a></div>"
+        f"<p style='text-align:center;font-size:11px;color:#9ca3af;margin:6px 0 0;'>"
+        f"Ou répondez directement à ce mail — l'adresse de réponse est <strong>{sender_email}</strong>.</p>"
+        "<div style='margin-top:24px;padding-top:12px;border-top:1px solid #e5e7eb;"
+        "font-size:11px;color:#9ca3af;text-align:center;'>"
+        "MesureChâssis · Notification interne</div></div>"
     )
     return send_email(
         to=to,
         subject=f"[Feedback] {sender_name} — {company_name}",
         body=body,
+        html=html,
+        reply_to_override=sender_email,
     )

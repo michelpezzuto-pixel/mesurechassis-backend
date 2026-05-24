@@ -111,10 +111,96 @@ async def export_pdf(
     styles = getSampleStyleSheet()
     story: list[Any] = []
 
-    story.append(
-        Paragraph("<b>MesureChâssis</b> — Fiche Chantier", styles["Title"])
+    # ---- En-tête : logo entreprise + branding + mention DOCUMENT INTERNE
+    company_doc = await db.companies.find_one(
+        {"company_id": user.get("company_id", "default")},
+        {"_id": 0, "name": 1, "logo_base64": 1},
+    ) or {}
+    company_name = company_doc.get("name") or "MesureChâssis"
+    logo_uri = company_doc.get("logo_base64") or ""
+
+    header_logo_cell: Any = ""
+    if logo_uri:
+        try:
+            if logo_uri.startswith("data:"):
+                _, b64 = logo_uri.split(",", 1)
+            else:
+                b64 = logo_uri
+            logo_bytes = base64.b64decode(b64)
+            # Pré-validation PNG/JPG via PIL pour éviter qu'un fichier corrompu
+            # ne crash doc.build() (lève "broken data stream").
+            try:
+                from PIL import Image as PILImage
+
+                with PILImage.open(io.BytesIO(logo_bytes)) as _img:
+                    _img.verify()
+            except Exception:
+                raise ValueError("logo image invalid")
+            logo_io = io.BytesIO(logo_bytes)
+            header_logo_cell = RLImage(
+                logo_io, width=35 * mm, height=20 * mm, kind="proportional"
+            )
+        except Exception:
+            header_logo_cell = ""
+
+    header_right = [
+        Paragraph(
+            f'<font size="14"><b>{company_name}</b></font>',
+            styles["Normal"],
+        ),
+        Spacer(1, 2),
+        Paragraph(
+            '<font size="8" color="#666666">via MesureChâssis</font>',
+            styles["Normal"],
+        ),
+    ]
+    header_tbl = Table(
+        [[header_logo_cell, header_right]],
+        colWidths=[40 * mm, 120 * mm],
     )
-    story.append(Spacer(1, 12))
+    header_tbl.setStyle(
+        TableStyle(
+            [
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                ("ALIGN", (0, 0), (0, 0), "LEFT"),
+                ("ALIGN", (1, 0), (1, 0), "RIGHT"),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+                ("TOPPADDING", (0, 0), (-1, -1), 0),
+            ]
+        )
+    )
+    story.append(header_tbl)
+    story.append(Spacer(1, 6))
+    # Bandeau orange "DOCUMENT INTERNE"
+    internal_banner = Table(
+        [[Paragraph(
+            '<font color="#FFFFFF" size="9"><b>DOCUMENT INTERNE</b> — '
+            "Fiche technique de mesurage, usage strictement interne</font>",
+            styles["Normal"],
+        )]],
+        colWidths=[160 * mm],
+    )
+    internal_banner.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#FF5A00")),
+                ("LEFTPADDING", (0, 0), (-1, -1), 8),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 8),
+                ("TOPPADDING", (0, 0), (-1, -1), 4),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+            ]
+        )
+    )
+    story.append(internal_banner)
+    story.append(Spacer(1, 10))
+
+    story.append(
+        Paragraph(
+            f"<b>Fiche Chantier</b>",
+            styles["Title"],
+        )
+    )
+    story.append(Spacer(1, 8))
     story.append(
         Paragraph(f"<b>Client :</b> {chantier['client_name']}", styles["Normal"])
     )

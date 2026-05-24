@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Image,
   KeyboardAvoidingView,
   Linking,
   Modal,
@@ -16,6 +17,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 import { useFocusEffect, useRouter } from "expo-router";
 import { api } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
@@ -28,6 +30,8 @@ type Profile = {
   company_id: string;
   name?: string;
   artisan_mode?: boolean;
+  account_type?: "artisan" | "entreprise";
+  logo_base64?: string | null;
   subscription_status?: string;
   subscription_expires_at?: string | null;
   plan?: Plan;
@@ -95,6 +99,9 @@ export default function CompanyProfile() {
   const { user, company, refreshCompany } = useAuth();
   const [name, setName] = useState("");
   const [artisanMode, setArtisanMode] = useState(false);
+  /** Logo entreprise data URL (PNG/JPG base64) — affiché en PDF. */
+  const [logoBase64, setLogoBase64] = useState<string | null>(null);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -106,6 +113,7 @@ export default function CompanyProfile() {
       const res = await api.get<Profile>("/company/profile");
       setName(res.data?.name ?? "");
       setArtisanMode(!!res.data?.artisan_mode);
+      setLogoBase64(res.data?.logo_base64 ?? null);
       setProfile(res.data);
     } catch {
       Alert.alert("Erreur", "Impossible de charger le profil société.");
@@ -120,12 +128,91 @@ export default function CompanyProfile() {
     }, [fetchProfile])
   );
 
+  /** Sélectionne un logo depuis la galerie et l'enregistre en base64 dans la company. */
+  const pickLogo = useCallback(async () => {
+    try {
+      // iOS/Android nécessitent la permission galerie. En web pas besoin.
+      if (Platform.OS !== "web") {
+        const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!perm.granted) {
+          Alert.alert(
+            "Accès refusé",
+            "Autorisez l'accès à la galerie pour choisir un logo.",
+          );
+          return;
+        }
+      }
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [16, 9],
+        quality: 0.85,
+        base64: true,
+      });
+      if (result.canceled || !result.assets?.[0]) return;
+      const asset = result.assets[0];
+      const mime = asset.mimeType || "image/png";
+      const dataUrl = `data:${mime};base64,${asset.base64}`;
+      // Sanity check : 500 KB max ≈ ~700_000 chars b64
+      if ((asset.base64?.length ?? 0) > 800_000) {
+        Alert.alert(
+          "Logo trop volumineux",
+          "Le logo doit faire moins de ~500 KB. Choisissez une image plus petite ou recadrez-la.",
+        );
+        return;
+      }
+      setUploadingLogo(true);
+      await api.patch("/company/profile", { logo_base64: dataUrl });
+      setLogoBase64(dataUrl);
+      await refreshCompany();
+      Alert.alert(
+        "✅ Logo enregistré",
+        "Votre logo apparaîtra désormais en haut des PDF générés.",
+      );
+    } catch (e: any) {
+      Alert.alert(
+        "Erreur",
+        e?.response?.data?.detail ||
+          "Impossible d'enregistrer le logo. Réessayez.",
+      );
+    } finally {
+      setUploadingLogo(false);
+    }
+  }, [refreshCompany]);
+
+  const removeLogo = useCallback(() => {
+    Alert.alert(
+      "Supprimer le logo ?",
+      "Les PDF générés n'auront plus de logo personnalisé.",
+      [
+        { text: "Annuler", style: "cancel" },
+        {
+          text: "Supprimer",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              setUploadingLogo(true);
+              await api.patch("/company/profile", { logo_base64: "" });
+              setLogoBase64(null);
+              await refreshCompany();
+            } catch {
+              Alert.alert("Erreur", "Suppression impossible.");
+            } finally {
+              setUploadingLogo(false);
+            }
+          },
+        },
+      ],
+    );
+  }, [refreshCompany]);
+
   const save = async () => {
     setSaving(true);
     try {
       await api.patch("/company/profile", {
         name: name.trim() || null,
         artisan_mode: artisanMode,
+        logo_base64: logoBase64,
       });
       await refreshCompany();
       await fetchProfile();
@@ -406,6 +493,90 @@ export default function CompanyProfile() {
             />
           </View>
 
+          {/* === LOGO ENTREPRISE === */}
+          <View style={styles.card}>
+            <Text style={styles.section}>LOGO ENTREPRISE</Text>
+            <Text style={styles.help}>
+              Apposé en haut de vos{" "}
+              <Text style={styles.bold}>PDF de mesurage</Text> (document
+              interne uniquement). Formats recommandés : PNG/JPG, ratio 16:9,
+              fond clair.
+            </Text>
+
+            <View style={styles.logoBox}>
+              {logoBase64 ? (
+                <Image
+                  source={{ uri: logoBase64 }}
+                  style={styles.logoPreview}
+                  resizeMode="contain"
+                />
+              ) : (
+                <View style={styles.logoEmpty}>
+                  <Ionicons
+                    name="image-outline"
+                    size={36}
+                    color={colors.textSecondary}
+                  />
+                  <Text style={styles.logoEmptyText}>Aucun logo</Text>
+                </View>
+              )}
+            </View>
+
+            <View style={styles.logoActions}>
+              <TouchableOpacity
+                testID="company-logo-pick"
+                onPress={pickLogo}
+                disabled={!isAdmin || uploadingLogo}
+                activeOpacity={0.85}
+                style={[
+                  styles.logoBtnPrimary,
+                  (!isAdmin || uploadingLogo) && { opacity: 0.5 },
+                ]}
+              >
+                {uploadingLogo ? (
+                  <ActivityIndicator color="#000" />
+                ) : (
+                  <>
+                    <Ionicons
+                      name={logoBase64 ? "swap-horizontal" : "cloud-upload"}
+                      size={16}
+                      color="#000"
+                    />
+                    <Text style={styles.logoBtnPrimaryText}>
+                      {logoBase64 ? "REMPLACER" : "CHOISIR UN LOGO"}
+                    </Text>
+                  </>
+                )}
+              </TouchableOpacity>
+
+              {logoBase64 && (
+                <TouchableOpacity
+                  testID="company-logo-remove"
+                  onPress={removeLogo}
+                  disabled={!isAdmin || uploadingLogo}
+                  activeOpacity={0.85}
+                  style={[
+                    styles.logoBtnGhost,
+                    (!isAdmin || uploadingLogo) && { opacity: 0.5 },
+                  ]}
+                >
+                  <Ionicons
+                    name="trash-outline"
+                    size={16}
+                    color={colors.alert}
+                  />
+                  <Text style={styles.logoBtnGhostText}>SUPPRIMER</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {!isAdmin && (
+              <Text style={styles.warnNote}>
+                ⓘ Seul l'administrateur peut modifier le logo.
+              </Text>
+            )}
+          </View>
+
           {/* === ARTISAN MODE === */}
           <View style={styles.card}>
             <Text style={styles.section}>MODE ARTISAN UNIQUE</Text>
@@ -609,6 +780,72 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 10,
     fontWeight: "700",
+  },
+  // === Logo entreprise ===
+  logoBox: {
+    marginTop: 14,
+    backgroundColor: colors.bg,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    borderStyle: "dashed",
+    borderRadius: 12,
+    minHeight: 130,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+  },
+  logoPreview: {
+    width: "100%",
+    height: 110,
+  },
+  logoEmpty: {
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+  },
+  logoEmptyText: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    letterSpacing: 0.4,
+  },
+  logoActions: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 12,
+  },
+  logoBtnPrimary: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    backgroundColor: colors.primary,
+    borderRadius: 10,
+    paddingVertical: 12,
+  },
+  logoBtnPrimaryText: {
+    color: "#000",
+    fontWeight: "900",
+    letterSpacing: 0.6,
+    fontSize: 12,
+  },
+  logoBtnGhost: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderColor: colors.alert,
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+  },
+  logoBtnGhostText: {
+    color: colors.alert,
+    fontWeight: "800",
+    letterSpacing: 0.6,
+    fontSize: 12,
   },
   btn: {
     minHeight: 52,

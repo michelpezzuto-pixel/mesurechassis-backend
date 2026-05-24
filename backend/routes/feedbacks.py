@@ -15,7 +15,7 @@ from models import Feedback, FeedbackCreate
 
 router = APIRouter()
 
-SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL", "support@mesurechassis.fr")
+SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL", "info@mesurechassis.com")
 
 
 @router.post("/feedbacks", response_model=Feedback)
