@@ -111,7 +111,26 @@ async def register(payload: dict):
                 "user": user_to_public(user_doc).model_dump()}
 
     # ---- Master Admin mode (nouveau flux, double opt-in) ----------------
-    company_name = payload.get("company_name") or name
+    # Lot D : account_type "artisan" (compte solo, artisan_mode=true)
+    # vs "entreprise" (compte avec équipe). Défaut = entreprise (legacy).
+    account_type_raw = str(payload.get("account_type") or "entreprise").lower()
+    if account_type_raw not in {"artisan", "entreprise"}:
+        account_type_raw = "entreprise"
+    is_artisan = account_type_raw == "artisan"
+
+    # Pour un Artisan, le nom de société par défaut = nom de l'utilisateur
+    # (auto-entrepreneur), pour une Entreprise on impose company_name explicite.
+    company_name = payload.get("company_name")
+    if is_artisan:
+        company_name = (company_name or name).strip() or name
+    else:
+        company_name = (company_name or "").strip()
+        if not company_name:
+            raise HTTPException(
+                status_code=400,
+                detail="Le nom de l'entreprise est requis pour un compte Entreprise.",
+            )
+
     base_slug = company_name.strip().lower()
     safe_slug = "".join(c if c.isalnum() else "-" for c in base_slug).strip("-")
     company_id = f"{safe_slug or 'co'}-{uuid.uuid4().hex[:6]}"
@@ -138,7 +157,9 @@ async def register(payload: dict):
         company_doc = {
             "company_id": company_id,
             "name": company_name,
-            "artisan_mode": False,
+            "account_type": account_type_raw,
+            # Artisan → artisan_mode automatique (bypass RBAC complet)
+            "artisan_mode": is_artisan,
             "subscription_status": "active",
             "subscription_expires_at": beta_expires,
             "plan": "pro",
@@ -151,7 +172,8 @@ async def register(payload: dict):
         company_doc = {
             "company_id": company_id,
             "name": company_name,
-            "artisan_mode": False,
+            "account_type": account_type_raw,
+            "artisan_mode": is_artisan,
             "subscription_status": "trial",
             "plan": "trial",
             "chantiers_lifetime_count": 0,

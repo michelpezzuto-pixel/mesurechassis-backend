@@ -147,6 +147,9 @@ class CompanyProfile(BaseModel):
     company_id: str
     name: Optional[str] = None
     artisan_mode: bool = False
+    # Type de compte choisi à l'inscription. Conditionne l'UX et les
+    # règles métier (Artisan = solo, RBAC bypassé ; Entreprise = équipe).
+    account_type: str = "entreprise"  # artisan | entreprise
     subscription_status: str = "trial"  # trial | active | suspended
     subscription_expires_at: Optional[str] = None
     # --- Plan & Freemium (anti-fraud) ---

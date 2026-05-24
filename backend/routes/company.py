@@ -18,6 +18,7 @@ def _to_profile(doc: dict, company_id: str) -> CompanyProfile:
         company_id=doc.get("company_id", company_id),
         name=doc.get("name") or company_id,
         artisan_mode=bool(doc.get("artisan_mode", False)),
+        account_type=str(doc.get("account_type") or "entreprise"),
         subscription_status=doc.get("subscription_status", "trial"),
         subscription_expires_at=doc.get("subscription_expires_at"),
         plan=doc.get("plan", "trial"),

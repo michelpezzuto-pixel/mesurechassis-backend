@@ -33,6 +33,12 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [companyName, setCompanyName] = useState("");
+  // Lot D — type de compte choisi à l'inscription :
+  //   "artisan"   : auto-entrepreneur seul, artisan_mode=true automatique
+  //   "entreprise": société avec équipe (Admin + commerciaux + techniciens)
+  const [accountType, setAccountType] = useState<"artisan" | "entreprise">(
+    "artisan",
+  );
   const [submitting, setSubmitting] = useState(false);
 
   // ─── Mot de passe oublié (modal) ───
@@ -141,6 +147,17 @@ export default function SignIn() {
       Alert.alert("Champs requis", "Le nom complet est obligatoire.");
       return;
     }
+    if (
+      mode === "register" &&
+      accountType === "entreprise" &&
+      !companyName.trim()
+    ) {
+      Alert.alert(
+        "Nom de l'entreprise requis",
+        "Pour un compte Entreprise, saisissez le nom de votre société.",
+      );
+      return;
+    }
     setSubmitting(true);
     try {
       if (mode === "login") {
@@ -152,7 +169,10 @@ export default function SignIn() {
           name.trim(),
           email.trim(),
           password,
-          companyName.trim() || undefined
+          accountType === "entreprise"
+            ? companyName.trim() || undefined
+            : companyName.trim() || undefined,
+          accountType,
         );
         setPendingVerification({
           email: email.trim(),
@@ -282,26 +302,135 @@ export default function SignIn() {
             <>
           {mode === "register" && (
             <>
-              <Text style={styles.label}>Nom complet (Master Admin)</Text>
+              {/* Lot D — Sélecteur Artisan vs Entreprise */}
+              <Text style={styles.label}>Type de compte</Text>
+              <View style={styles.typeRow}>
+                <TouchableOpacity
+                  testID="account-type-artisan"
+                  onPress={() => setAccountType("artisan")}
+                  activeOpacity={0.85}
+                  style={[
+                    styles.typeCard,
+                    accountType === "artisan" && styles.typeCardActive,
+                  ]}
+                >
+                  <View
+                    style={[
+                      styles.typeIconWrap,
+                      accountType === "artisan" && styles.typeIconWrapActive,
+                    ]}
+                  >
+                    <Ionicons
+                      name="person"
+                      size={22}
+                      color={
+                        accountType === "artisan"
+                          ? "#000"
+                          : colors.textSecondary
+                      }
+                    />
+                  </View>
+                  <Text
+                    style={[
+                      styles.typeTitle,
+                      accountType === "artisan" && styles.typeTitleActive,
+                    ]}
+                  >
+                    Artisan
+                  </Text>
+                  <Text style={styles.typeDesc}>
+                    Compte solo, simple et rapide
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  testID="account-type-entreprise"
+                  onPress={() => setAccountType("entreprise")}
+                  activeOpacity={0.85}
+                  style={[
+                    styles.typeCard,
+                    accountType === "entreprise" && styles.typeCardActive,
+                  ]}
+                >
+                  <View
+                    style={[
+                      styles.typeIconWrap,
+                      accountType === "entreprise" && styles.typeIconWrapActive,
+                    ]}
+                  >
+                    <Ionicons
+                      name="business"
+                      size={22}
+                      color={
+                        accountType === "entreprise"
+                          ? "#000"
+                          : colors.textSecondary
+                      }
+                    />
+                  </View>
+                  <Text
+                    style={[
+                      styles.typeTitle,
+                      accountType === "entreprise" && styles.typeTitleActive,
+                    ]}
+                  >
+                    Entreprise
+                  </Text>
+                  <Text style={styles.typeDesc}>
+                    Équipe : Admin, commerciaux & techniciens
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <Text style={styles.label}>
+                {accountType === "artisan"
+                  ? "Votre nom complet"
+                  : "Nom complet (Master Admin)"}
+              </Text>
               <TextInput
                 testID="register-name-input"
                 value={name}
                 onChangeText={setName}
-                placeholder="ex. Marc Dubois"
+                placeholder={
+                  accountType === "artisan"
+                    ? "ex. Jean Dupont"
+                    : "ex. Marc Dubois"
+                }
                 placeholderTextColor={colors.placeholder}
                 style={styles.input}
               />
-              <Text style={styles.label}>
-                Nom de la société (optionnel — votre nom par défaut)
-              </Text>
-              <TextInput
-                testID="register-company-input"
-                value={companyName}
-                onChangeText={setCompanyName}
-                placeholder="ex. Menuiseries Dubois SARL"
-                placeholderTextColor={colors.placeholder}
-                style={styles.input}
-              />
+
+              {accountType === "entreprise" ? (
+                <>
+                  <Text style={styles.label}>
+                    Nom de l'entreprise{" "}
+                    <Text style={{ color: colors.alert }}>*</Text>
+                  </Text>
+                  <TextInput
+                    testID="register-company-input"
+                    value={companyName}
+                    onChangeText={setCompanyName}
+                    placeholder="ex. Menuiseries Dubois SARL"
+                    placeholderTextColor={colors.placeholder}
+                    style={styles.input}
+                  />
+                </>
+              ) : (
+                <>
+                  <Text style={styles.label}>
+                    Nom commercial (optionnel)
+                  </Text>
+                  <TextInput
+                    testID="register-company-input"
+                    value={companyName}
+                    onChangeText={setCompanyName}
+                    placeholder="ex. JD Menuiserie"
+                    placeholderTextColor={colors.placeholder}
+                    style={styles.input}
+                  />
+                </>
+              )}
+
               <View style={styles.infoBox}>
                 <Ionicons
                   name="information-circle"
@@ -309,10 +438,19 @@ export default function SignIn() {
                   color={colors.primary}
                 />
                 <Text style={styles.infoBoxText}>
-                  L'inscription crée un compte{" "}
-                  <Text style={styles.bold}>Master Admin</Text> pour une
-                  nouvelle société. Les Commerciaux et Techniciens sont
-                  invités par l'Admin depuis l'application (écran Équipe).
+                  {accountType === "artisan" ? (
+                    <>
+                      <Text style={styles.bold}>Mode Artisan</Text> : un
+                      compte unique, ultra-simple. Tous les accès sont
+                      activés (mesures + chantiers + exports).
+                    </>
+                  ) : (
+                    <>
+                      <Text style={styles.bold}>Mode Entreprise</Text> :
+                      vous serez Admin. Les Commerciaux et Techniciens
+                      sont invités par email depuis l'écran « Équipe ».
+                    </>
+                  )}
                 </Text>
               </View>
             </>
@@ -838,4 +976,56 @@ const styles = StyleSheet.create({
   },
   infoBoxText: { color: colors.textSecondary, fontSize: 12, flex: 1, lineHeight: 17 },
   bold: { color: colors.textPrimary, fontWeight: "800" },
+  // Lot D — Sélecteur Artisan/Entreprise
+  typeRow: {
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 8,
+  },
+  typeCard: {
+    flex: 1,
+    backgroundColor: colors.surface,
+    borderWidth: 1.5,
+    borderColor: colors.borderSubtle,
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+    alignItems: "center",
+    minHeight: 110,
+  },
+  typeCardActive: {
+    borderColor: colors.primary,
+    backgroundColor: "rgba(255, 107, 26, 0.08)",
+  },
+  typeIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.bg,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 8,
+  },
+  typeIconWrapActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  typeTitle: {
+    color: colors.textPrimary,
+    fontSize: 14,
+    fontWeight: "900",
+    letterSpacing: 0.3,
+  },
+  typeTitleActive: {
+    color: colors.primary,
+  },
+  typeDesc: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    textAlign: "center",
+    marginTop: 4,
+    lineHeight: 14,
+  },
 });

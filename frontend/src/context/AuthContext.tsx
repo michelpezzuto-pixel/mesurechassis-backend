@@ -17,6 +17,8 @@ export type CompanyProfile = {
   company_id: string;
   name: string;
   artisan_mode: boolean;
+  /** Lot D — "artisan" (solo) ou "entreprise" (équipe). */
+  account_type?: "artisan" | "entreprise";
   subscription_status?: string;
   subscription_expires_at?: string;
   plan?: "free" | "trial" | "pro";
@@ -44,7 +46,8 @@ type AuthCtx = {
     name: string,
     email: string,
     password: string,
-    companyName?: string
+    companyName?: string,
+    accountType?: "artisan" | "entreprise",
   ) => Promise<{ verification_link?: string; message?: string }>;
   verifyEmail: (token: string) => Promise<void>;
   acceptInvitation: (
@@ -130,14 +133,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     name: string,
     email: string,
     password: string,
-    companyName?: string
+    companyName?: string,
+    accountType?: "artisan" | "entreprise",
   ): Promise<{ verification_link?: string; message?: string }> => {
-    const res = await api.post("/auth/register", {
+    const body: Record<string, unknown> = {
       name,
       email,
       password,
-      company_name: companyName && companyName.length > 0 ? companyName : name,
-    });
+      company_name:
+        companyName && companyName.length > 0 ? companyName : name,
+    };
+    if (accountType) body.account_type = accountType;
+    const res = await api.post("/auth/register", body);
     // Pas de token : compte en pending_verification.
     return {
       verification_link: res.data?.verification_link,
