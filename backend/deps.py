@@ -170,6 +170,11 @@ async def auth_user(authorization: Optional[str] = Header(None)) -> dict:
         raise HTTPException(status_code=401, detail="User not found")
     # Double opt-in : refus immédiat des comptes non vérifiés / suspendus.
     status = user.get("status") or "active"
+    # 🛡️ RGPD soft-delete : invalidation immédiate des JWT zombies.
+    # Si un attaquant détient un token volé d'un user supprimé, on lui
+    # refuse l'accès sans révéler la raison exacte (sécurité).
+    if status == "deleted":
+        raise HTTPException(status_code=401, detail="Compte supprimé.")
     if status == "pending_verification":
         raise HTTPException(
             status_code=403,

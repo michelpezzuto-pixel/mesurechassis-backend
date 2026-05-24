@@ -487,7 +487,8 @@ async def delete_my_account(
     """
     password = str(payload.get("password") or "").strip()
     marketing_optin = bool(payload.get("marketing_optin", False))
-    confirm_text = str(payload.get("confirm_text") or "").strip().upper()
+    # B1 — Conserver la casse stricte : "SUPPRIMER" exact, pas "supprimer".
+    confirm_text = str(payload.get("confirm_text") or "").strip()
 
     if not password:
         raise HTTPException(
@@ -503,7 +504,12 @@ async def delete_my_account(
     user_doc = await db.users.find_one({"id": user["id"]})
     if not user_doc:
         raise HTTPException(status_code=404, detail="Utilisateur introuvable.")
-    if not verify_password(password, user_doc.get("hashed_password", "")):
+    # B2 — Garde contre un éventuel double-DELETE : si le compte est déjà
+    # soft-deleted, hashed_password est vide → verify_password lèverait
+    # passlib.exc.UnknownHashError (500). On retourne 400 explicite.
+    if not user_doc.get("hashed_password"):
+        raise HTTPException(status_code=400, detail="Mot de passe incorrect.")
+    if not verify_password(password, user_doc["hashed_password"]):
         raise HTTPException(status_code=400, detail="Mot de passe incorrect.")
 
     now_iso = datetime.now(timezone.utc).isoformat()
