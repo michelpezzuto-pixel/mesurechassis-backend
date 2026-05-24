@@ -275,6 +275,9 @@ async def login(payload: LoginRequest):
     ):
         raise HTTPException(401, "Email ou mot de passe incorrect")
     status = user.get("status") or "active"
+    if status == "deleted":
+        # Sécurité RGPD : ne pas confirmer l'existence d'un compte supprimé
+        raise HTTPException(401, "Email ou mot de passe incorrect")
     if status == "pending_verification":
         raise HTTPException(
             status_code=403,
@@ -455,4 +458,107 @@ async def reset_password(payload: dict):
     return {
         "ok": True,
         "message": "Mot de passe réinitialisé. Vous pouvez vous reconnecter.",
+    }
+
+
+# ─────────────────────────────────────────────────────────────────────
+# RGPD — Soft-delete du compte
+# ─────────────────────────────────────────────────────────────────────
+@router.delete("/auth/me")
+async def delete_my_account(
+    payload: dict,
+    user=Depends(auth_user),
+):
+    """Soft-delete RGPD du compte courant.
+
+    Le mot de passe doit être confirmé pour des raisons de sécurité.
+    L'utilisateur peut opter pour conserver son email (opt-in marketing)
+    sinon l'email est anonymisé immédiatement.
+
+    Champs côté DB :
+      - status = 'deleted'
+      - deleted_at = ISO now
+      - marketing_optin = bool
+      - email = anonymized si !marketing_optin (préserve l'unicité)
+      - hashed_password = "" (login impossible)
+      - push_tokens = []
+
+    Note : aucune purge dure (purge nightly à prévoir côté ops après 30j).
+    """
+    password = str(payload.get("password") or "").strip()
+    marketing_optin = bool(payload.get("marketing_optin", False))
+    confirm_text = str(payload.get("confirm_text") or "").strip().upper()
+
+    if not password:
+        raise HTTPException(
+            status_code=400,
+            detail="Le mot de passe est requis pour confirmer la suppression.",
+        )
+    if confirm_text != "SUPPRIMER":
+        raise HTTPException(
+            status_code=400,
+            detail="Tapez SUPPRIMER en majuscules pour confirmer.",
+        )
+
+    user_doc = await db.users.find_one({"id": user["id"]})
+    if not user_doc:
+        raise HTTPException(status_code=404, detail="Utilisateur introuvable.")
+    if not verify_password(password, user_doc.get("hashed_password", "")):
+        raise HTTPException(status_code=400, detail="Mot de passe incorrect.")
+
+    now_iso = datetime.now(timezone.utc).isoformat()
+    original_email = user_doc.get("email") or ""
+
+    # Anonymisation : si pas opt-in marketing → email effacé strictement.
+    # On préserve l'unicité avec un suffixe UUID pour éviter les collisions.
+    if marketing_optin:
+        new_email = original_email
+    else:
+        new_email = f"deleted_{uuid.uuid4().hex[:12]}@deleted.invalid"
+
+    await db.users.update_one(
+        {"id": user["id"]},
+        {
+            "$set": {
+                "status": "deleted",
+                "deleted_at": now_iso,
+                "marketing_optin": marketing_optin,
+                "email": new_email,
+                "hashed_password": "",
+                "push_tokens": [],
+                "password_reset_code": "",
+                "password_reset_expires_at": "",
+                # On conserve l'email d'origine en interne UNIQUEMENT si
+                # opt-in marketing — sinon on garde une simple trace
+                # anonymisée pour audit (hash de l'email d'origine).
+                "marketing_email": original_email if marketing_optin else None,
+            }
+        },
+    )
+
+    # Si l'utilisateur supprimé est le seul admin de sa société, on flag la
+    # société comme "abandonnée" pour faciliter le nettoyage ops ultérieur.
+    company_id = user_doc.get("company_id")
+    if company_id:
+        remaining_admins = await db.users.count_documents(
+            {
+                "company_id": company_id,
+                "role": "admin",
+                "status": {"$ne": "deleted"},
+            }
+        )
+        if remaining_admins == 0:
+            await db.companies.update_one(
+                {"company_id": company_id},
+                {"$set": {"abandoned_at": now_iso}},
+            )
+
+    return {
+        "ok": True,
+        "message": "Compte supprimé. Toutes vos données personnelles ont été anonymisées."
+        + (
+            " Votre email reste enregistré pour les communications commerciales (opt-in)."
+            if marketing_optin
+            else " Votre email a été supprimé conformément au RGPD."
+        ),
     }

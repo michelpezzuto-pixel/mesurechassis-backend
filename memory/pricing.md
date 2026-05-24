@@ -6,10 +6,10 @@
 ## Plans
 
 ### 🧑‍🔧 Artisan (compte solo)
-- 1 utilisateur unique
+- 1 utilisateur unique (PAS d'équipe — pas d'écran Équipe visible)
 - Tous les accès activés (mesures + chantiers + exports)
 - Pas de gestion d'équipe
-- **Prix** : à confirmer (probablement ~19-29 €/mois, à valider avec l'utilisateur)
+- **Prix : 24,99 €/mois TTC**
 
 ### 🏢 Entreprise
 - Compte Admin + équipe

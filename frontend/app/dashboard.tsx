@@ -17,7 +17,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
-import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { api } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { subscribeQueueSize, syncQueue, enqueueChantier, isNetworkError } from "@/src/services/offlineQueue";
@@ -25,6 +24,7 @@ import { colors, statusMeta, READY_FOR_EXPORT_BADGE } from "@/src/theme";
 import { useResponsive } from "@/src/utils/responsive";
 import TrialCountdownBanner from "@/src/components/TrialCountdownBanner";
 import ChatHelp from "@/src/components/ChatHelp";
+import AppointmentPicker from "@/src/components/AppointmentPicker";
 
 type Chantier = {
   id: string;
@@ -322,7 +322,9 @@ export default function Dashboard() {
 
       {/* ────── Rangée 2 : actions ────── */}
       <View style={styles.actionsBar}>
-        {user?.role === "admin" && (
+        {/* L'Équipe n'est dispo que pour les comptes Entreprise. Un Artisan
+            solo n'a pas de sous-comptes à gérer. */}
+        {user?.role === "admin" && company?.account_type !== "artisan" && (
           <TouchableOpacity
             testID="admin-team-button"
             onPress={() => router.push("/admin/team")}
@@ -366,16 +368,6 @@ export default function Dashboard() {
             <Text style={styles.actionBtnText}>Profil</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity
-          testID="help-button"
-          onPress={() => setHelpOpen(true)}
-          style={styles.actionBtn}
-          activeOpacity={0.7}
-          hitSlop={6}
-        >
-          <Ionicons name="help-circle-outline" size={20} color={colors.primary} />
-          <Text style={styles.actionBtnText}>Aide</Text>
-        </TouchableOpacity>
       </View>
 
       <View style={{ paddingHorizontal: 16 }}>
@@ -551,68 +543,52 @@ export default function Dashboard() {
               </View>
 
               <Text style={styles.label}>Date du rendez-vous</Text>
-              {Platform.OS === "web" ? (
-                // Native HTML5 calendar picker — crash-proof, never tries to parse partial text.
-                <View style={styles.input}>
-                  {React.createElement("input", {
-                    type: "date",
-                    "data-testid": "new-appointment-input",
-                    value: newAppt ? newAppt.slice(0, 10) : "",
-                    onChange: (e: any) => {
-                      const raw = e?.target?.value ?? "";
-                      // raw is YYYY-MM-DD from native picker — append default time
-                      setNewAppt(raw ? `${raw}T09:00` : "");
-                    },
-                    min: "2024-01-01",
-                    max: "2030-12-31",
-                    style: {
-                      width: "100%",
-                      backgroundColor: "transparent",
-                      color: colors.textPrimary,
-                      border: "none",
-                      outline: "none",
+              <TouchableOpacity
+                testID="new-appointment-picker"
+                onPress={() => setShowDatePicker(true)}
+                style={[styles.input, { justifyContent: "center", minHeight: 56 }]}
+                activeOpacity={0.75}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                  <Ionicons
+                    name="calendar"
+                    size={20}
+                    color={newAppt ? colors.primary : colors.placeholder}
+                  />
+                  <Text
+                    style={{
+                      color: newAppt ? colors.textPrimary : colors.placeholder,
                       fontSize: 16,
-                      fontFamily: "inherit",
-                      colorScheme: "dark",
-                    },
-                  })}
-                </View>
-              ) : (
-                <TouchableOpacity
-                  testID="new-appointment-picker"
-                  onPress={() => setShowDatePicker(true)}
-                  style={[styles.input, { justifyContent: "center" }]}
-                  activeOpacity={0.7}
-                >
-                  <Text style={{ color: newAppt ? colors.textPrimary : colors.placeholder, fontSize: 16 }}>
+                      fontWeight: newAppt ? "700" : "400",
+                      flex: 1,
+                    }}
+                    numberOfLines={1}
+                  >
                     {newAppt
                       ? new Date(newAppt).toLocaleString("fr-FR", {
-                          weekday: "short",
+                          weekday: "long",
                           day: "2-digit",
                           month: "short",
                           year: "numeric",
                           hour: "2-digit",
                           minute: "2-digit",
                         })
-                      : "📅 Choisir une date et une heure"}
+                      : "Choisir une date et une heure"}
                   </Text>
-                </TouchableOpacity>
-              )}
-              {showDatePicker && Platform.OS !== "web" && (
-                <DateTimePicker
-                  value={newAppt ? new Date(newAppt) : new Date()}
-                  mode="datetime"
-                  display={Platform.OS === "ios" ? "spinner" : "default"}
-                  onChange={(e: DateTimePickerEvent, date?: Date) => {
-                    setShowDatePicker(Platform.OS === "ios"); // iOS keeps open
-                    if (date) {
-                      // Persist as ISO-ish "YYYY-MM-DDTHH:mm"
-                      const iso = date.toISOString().slice(0, 16);
-                      setNewAppt(iso);
-                    }
-                  }}
-                />
-              )}
+                  <Ionicons
+                    name="chevron-forward"
+                    size={18}
+                    color={colors.textSecondary}
+                  />
+                </View>
+              </TouchableOpacity>
+              <AppointmentPicker
+                visible={showDatePicker}
+                value={newAppt || null}
+                onClose={() => setShowDatePicker(false)}
+                onConfirm={(iso) => setNewAppt(iso)}
+                title="Date du rendez-vous"
+              />
 
               <View style={styles.notesLabelRow}>
                 <Text style={styles.label}>Notes &amp; Instructions</Text>
@@ -669,6 +645,18 @@ export default function Dashboard() {
         </KeyboardAvoidingView>
       </Modal>
 
+      {/* ────── FAB Aide (flottant en bas, couleur flashy bleue) ────── */}
+      <TouchableOpacity
+        testID="help-fab"
+        onPress={() => setHelpOpen(true)}
+        activeOpacity={0.85}
+        style={styles.helpFab}
+        hitSlop={8}
+      >
+        <Ionicons name="help-circle" size={26} color="#FFFFFF" />
+        <Text style={styles.helpFabText}>AIDE</Text>
+      </TouchableOpacity>
+
       {/* Centre d'aide / FAQ */}
       <ChatHelp
         visible={helpOpen}
@@ -683,6 +671,33 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   flex: { flex: 1 },
   center: { alignItems: "center", justifyContent: "center" },
+  // FAB Aide — bouton flottant flashy (bleu cyan) en bas à droite
+  helpFab: {
+    position: "absolute",
+    right: 20,
+    bottom: 24,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "#3B82F6",
+    borderRadius: 30,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    elevation: 8,
+    shadowColor: "#3B82F6",
+    shadowOpacity: 0.55,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    borderWidth: 2,
+    borderColor: "#60A5FA",
+    zIndex: 50,
+  },
+  helpFabText: {
+    color: "#FFFFFF",
+    fontWeight: "900",
+    letterSpacing: 1.2,
+    fontSize: 13,
+  },
   topBar: {
     flexDirection: "row",
     alignItems: "center",

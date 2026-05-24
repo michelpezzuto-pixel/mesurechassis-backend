@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  Linking,
   RefreshControl,
   StyleSheet,
   Text,
@@ -79,6 +80,40 @@ export default function AdminFeedbacks() {
     ]);
   };
 
+  /** Ouvre l'app mail de l'admin avec un brouillon de réponse pré-rempli vers l'utilisateur. */
+  const replyByMail = useCallback(async (fb: Feedback) => {
+    const subject = encodeURIComponent(
+      "Re: Votre retour MesureChâssis",
+    );
+    const quote = (fb.user_comment || "")
+      .split("\n")
+      .map((l) => `> ${l}`)
+      .join("\n");
+    const body = encodeURIComponent(
+      `Bonjour,\n\nMerci pour votre retour concernant MesureChâssis.\n\n` +
+        `Votre message :\n${quote}\n\n` +
+        `Notre réponse :\n[Tapez ici votre réponse]\n\n` +
+        `Cordialement,\nL'équipe MesureChâssis`,
+    );
+    const url = `mailto:${fb.user_email}?subject=${subject}&body=${body}`;
+    try {
+      const ok = await Linking.canOpenURL(url);
+      if (!ok) {
+        Alert.alert(
+          "Aucune app mail trouvée",
+          `Envoyez votre réponse à ${fb.user_email}`,
+        );
+        return;
+      }
+      await Linking.openURL(url);
+    } catch {
+      Alert.alert(
+        "Impossible d'ouvrir l'app mail",
+        `Envoyez votre réponse à ${fb.user_email}`,
+      );
+    }
+  }, []);
+
   if (loading) {
     return (
       <View style={[styles.flex, styles.center]}>
@@ -143,15 +178,26 @@ export default function AdminFeedbacks() {
                   <Text style={styles.snapshotJson}>
                     {JSON.stringify(item.encoded_data_snapshot, null, 2)}
                   </Text>
-                  <TouchableOpacity
-                    testID={`feedback-delete-${item.id}`}
-                    onPress={() => remove(item.id)}
-                    style={styles.deleteBtn}
-                    activeOpacity={0.7}
-                  >
-                    <Ionicons name="trash" size={16} color="#fff" />
-                    <Text style={styles.deleteBtnText}>Supprimer</Text>
-                  </TouchableOpacity>
+                  <View style={styles.actionsRow}>
+                    <TouchableOpacity
+                      testID={`feedback-reply-${item.id}`}
+                      onPress={() => replyByMail(item)}
+                      style={styles.replyBtn}
+                      activeOpacity={0.85}
+                    >
+                      <Ionicons name="mail" size={16} color="#000" />
+                      <Text style={styles.replyBtnText}>RÉPONDRE PAR MAIL</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      testID={`feedback-delete-${item.id}`}
+                      onPress={() => remove(item.id)}
+                      style={styles.deleteBtn}
+                      activeOpacity={0.85}
+                    >
+                      <Ionicons name="trash" size={16} color="#fff" />
+                      <Text style={styles.deleteBtnText}>SUPPRIMER</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               )}
             </TouchableOpacity>
@@ -219,8 +265,28 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.borderSubtle,
   },
-  deleteBtn: {
+  actionsRow: {
+    flexDirection: "row",
+    gap: 10,
     marginTop: 12,
+    flexWrap: "wrap",
+  },
+  replyBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: colors.primary,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 6,
+  },
+  replyBtnText: {
+    color: "#000",
+    fontWeight: "900",
+    letterSpacing: 0.5,
+    fontSize: 12,
+  },
+  deleteBtn: {
     alignSelf: "flex-start",
     flexDirection: "row",
     alignItems: "center",
@@ -230,7 +296,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 6,
   },
-  deleteBtnText: { color: "#fff", fontWeight: "700" },
+  deleteBtnText: { color: "#fff", fontWeight: "700", letterSpacing: 0.5, fontSize: 12 },
   empty: { alignItems: "center", padding: 50, gap: 8 },
   emptyText: { color: colors.textSecondary },
 });

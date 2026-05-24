@@ -96,7 +96,7 @@ function planMeta(plan: Plan | undefined): { label: string; bg: string; fg: stri
 
 export default function CompanyProfile() {
   const router = useRouter();
-  const { user, company, refreshCompany } = useAuth();
+  const { user, company, refreshCompany, logout } = useAuth();
   const [name, setName] = useState("");
   const [artisanMode, setArtisanMode] = useState(false);
   /** Logo entreprise data URL (PNG/JPG base64) — affiché en PDF. */
@@ -107,6 +107,12 @@ export default function CompanyProfile() {
   const [saving, setSaving] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+  // Lot E — RGPD soft-delete
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleteOptin, setDeleteOptin] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -205,6 +211,62 @@ export default function CompanyProfile() {
       ],
     );
   }, [refreshCompany]);
+
+  /** Lot E — Soft-delete RGPD du compte courant. */
+  const doDeleteAccount = useCallback(async () => {
+    if (!deletePassword.trim()) {
+      Alert.alert("Mot de passe requis", "Saisissez votre mot de passe.");
+      return;
+    }
+    if (deleteConfirmText.trim().toUpperCase() !== "SUPPRIMER") {
+      Alert.alert(
+        "Confirmation invalide",
+        "Tapez SUPPRIMER en majuscules pour confirmer.",
+      );
+      return;
+    }
+    setDeleting(true);
+    try {
+      const res = await api.delete("/auth/me", {
+        data: {
+          password: deletePassword,
+          confirm_text: deleteConfirmText.trim().toUpperCase(),
+          marketing_optin: deleteOptin,
+        },
+      });
+      const msg =
+        (res?.data as any)?.message ||
+        "Compte supprimé. Toutes vos données ont été anonymisées.";
+      setDeleteOpen(false);
+      setDeletePassword("");
+      setDeleteConfirmText("");
+      setDeleteOptin(false);
+      Alert.alert("✅ Compte supprimé", msg, [
+        {
+          text: "OK",
+          onPress: async () => {
+            try {
+              await logout();
+            } catch {
+              /* ignore */
+            }
+          },
+        },
+      ]);
+    } catch (e: any) {
+      Alert.alert(
+        "Suppression impossible",
+        e?.response?.data?.detail || "Une erreur s'est produite.",
+      );
+    } finally {
+      setDeleting(false);
+    }
+  }, [
+    deletePassword,
+    deleteConfirmText,
+    deleteOptin,
+    logout,
+  ]);
 
   const save = async () => {
     setSaving(true);
@@ -631,6 +693,29 @@ export default function CompanyProfile() {
             </TouchableOpacity>
           )}
 
+          {/* === LOT E — ZONE DANGER : Suppression du compte (RGPD) === */}
+          <View style={[styles.card, styles.dangerCard]}>
+            <View style={styles.dangerHeader}>
+              <Ionicons name="warning" size={18} color={colors.alert} />
+              <Text style={styles.dangerTitle}>ZONE DANGER</Text>
+            </View>
+            <Text style={styles.help}>
+              Vous pouvez supprimer définitivement votre compte. Toutes vos
+              données personnelles seront anonymisées conformément au{" "}
+              <Text style={styles.bold}>RGPD</Text>. Cette action est{" "}
+              <Text style={styles.bold}>irréversible</Text>.
+            </Text>
+            <TouchableOpacity
+              testID="open-delete-account"
+              onPress={() => setDeleteOpen(true)}
+              activeOpacity={0.85}
+              style={styles.dangerBtn}
+            >
+              <Ionicons name="trash-bin" size={16} color="#fff" />
+              <Text style={styles.dangerBtnText}>SUPPRIMER MON COMPTE</Text>
+            </TouchableOpacity>
+          </View>
+
           {/* === FEEDBACK BUTTON === */}
           <FeedbackButton />
         </ScrollView>
@@ -681,6 +766,108 @@ export default function CompanyProfile() {
                     <ActivityIndicator color="#fff" />
                   ) : (
                     <Text style={styles.btnDangerText}>CONFIRMER</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        {/* === Modal Suppression de compte (RGPD) === */}
+        <Modal
+          visible={deleteOpen}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setDeleteOpen(false)}
+        >
+          <View style={styles.modalBackdrop}>
+            <View style={styles.modalCard}>
+              <View style={styles.modalHead}>
+                <Ionicons name="warning" size={20} color={colors.alert} />
+                <Text style={styles.modalTitle}>SUPPRIMER MON COMPTE</Text>
+              </View>
+              <Text style={styles.modalBody}>
+                Cette action est <Text style={styles.bold}>irréversible</Text>.
+                Toutes vos données personnelles seront anonymisées
+                conformément au RGPD.
+              </Text>
+
+              <Text style={styles.labelSmall}>Votre mot de passe</Text>
+              <TextInput
+                testID="delete-password-input"
+                value={deletePassword}
+                onChangeText={setDeletePassword}
+                placeholder="Mot de passe actuel"
+                placeholderTextColor={colors.placeholder}
+                secureTextEntry
+                style={styles.input}
+              />
+
+              <Text style={styles.labelSmall}>
+                Tapez <Text style={styles.bold}>SUPPRIMER</Text> pour confirmer
+              </Text>
+              <TextInput
+                testID="delete-confirm-input"
+                value={deleteConfirmText}
+                onChangeText={setDeleteConfirmText}
+                placeholder="SUPPRIMER"
+                placeholderTextColor={colors.placeholder}
+                autoCapitalize="characters"
+                style={styles.input}
+              />
+
+              <TouchableOpacity
+                testID="delete-optin-toggle"
+                onPress={() => setDeleteOptin((v) => !v)}
+                activeOpacity={0.75}
+                style={styles.optinRow}
+              >
+                <View
+                  style={[
+                    styles.checkbox,
+                    deleteOptin && styles.checkboxChecked,
+                  ]}
+                >
+                  {deleteOptin && (
+                    <Ionicons name="checkmark" size={16} color="#000" />
+                  )}
+                </View>
+                <Text style={styles.optinText}>
+                  Je souhaite continuer à recevoir des offres commerciales
+                  de MesureChâssis (mon email sera conservé uniquement à cette
+                  fin).
+                </Text>
+              </TouchableOpacity>
+              <Text style={styles.optinHint}>
+                Si vous décochez cette case, votre email sera effacé
+                strictement conformément au RGPD.
+              </Text>
+
+              <View style={styles.modalActions}>
+                <TouchableOpacity
+                  testID="cancel-delete-account"
+                  onPress={() => {
+                    setDeleteOpen(false);
+                    setDeletePassword("");
+                    setDeleteConfirmText("");
+                  }}
+                  disabled={deleting}
+                  activeOpacity={0.85}
+                  style={[styles.btn, styles.btnGhost, { flex: 1 }]}
+                >
+                  <Text style={styles.btnGhostText}>ANNULER</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  testID="confirm-delete-account"
+                  onPress={doDeleteAccount}
+                  disabled={deleting}
+                  activeOpacity={0.85}
+                  style={[styles.btn, styles.btnDanger, { flex: 1 }]}
+                >
+                  {deleting ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <Text style={styles.btnDangerText}>SUPPRIMER</Text>
                   )}
                 </TouchableOpacity>
               </View>
@@ -846,6 +1033,85 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     letterSpacing: 0.6,
     fontSize: 12,
+  },
+  // === Lot E — Suppression de compte (Zone Danger) ===
+  dangerCard: {
+    borderColor: "rgba(239, 68, 68, 0.35)",
+    backgroundColor: "rgba(239, 68, 68, 0.06)",
+  },
+  dangerHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 10,
+  },
+  dangerTitle: {
+    color: colors.alert,
+    fontSize: 13,
+    fontWeight: "900",
+    letterSpacing: 1.2,
+  },
+  dangerBtn: {
+    marginTop: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    backgroundColor: colors.alert,
+    borderRadius: 10,
+    paddingVertical: 12,
+  },
+  dangerBtnText: {
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: "900",
+    letterSpacing: 0.8,
+  },
+  labelSmall: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    fontWeight: "700",
+    letterSpacing: 0.5,
+    marginTop: 12,
+    marginBottom: 6,
+  },
+  optinRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+    marginTop: 14,
+    padding: 12,
+    backgroundColor: colors.bg,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 5,
+    borderWidth: 2,
+    borderColor: colors.borderStrong,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.bg,
+  },
+  checkboxChecked: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  optinText: {
+    flex: 1,
+    color: colors.textPrimary,
+    fontSize: 12,
+    lineHeight: 17,
+  },
+  optinHint: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    fontStyle: "italic",
+    marginTop: 6,
+    marginBottom: 4,
   },
   btn: {
     minHeight: 52,
