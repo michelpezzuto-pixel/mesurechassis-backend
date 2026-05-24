@@ -1161,6 +1161,19 @@ export default function ChantierDetail() {
             <Text style={styles.btnPrimaryText}>AJOUTER UNE OUVERTURE</Text>
           </TouchableOpacity>
         )}
+        {canEditMesures && chantier?.wall_config?.masonry_type && (
+          <TouchableOpacity
+            testID="edit-wall-config-button"
+            onPress={() => router.push(`/chantier/${id}/new-mesure?edit_wall_config=1`)}
+            style={[styles.btn, styles.btnSecondary]}
+            activeOpacity={0.85}
+          >
+            <Ionicons name="construct-outline" size={20} color={colors.primary} />
+            <Text style={[styles.btnSecondaryText, { color: colors.primary }]}>
+              MODIFIER LA STRUCTURE DU MUR
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <Modal visible={assignOpen} transparent animationType="fade" onRequestClose={() => setAssignOpen(false)}>

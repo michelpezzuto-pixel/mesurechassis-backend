@@ -42,20 +42,6 @@ export default function SignIn() {
     if (!loading && user) router.replace("/dashboard");
   }, [user, loading, router]);
 
-  const fillDemo = (kind: Role) => {
-    if (kind === "admin") {
-      setEmail("admin@mesurechassis.fr");
-      setPassword("admin123");
-    } else if (kind === "commercial") {
-      setEmail("commercial@mesurechassis.fr");
-      setPassword("commercial123");
-    } else {
-      setEmail("tech@mesurechassis.fr");
-      setPassword("tech123");
-    }
-    setMode("login");
-  };
-
   const onSubmit = async () => {
     if (!email.trim() || !password.trim()) {
       Alert.alert("Champs requis", "Email et mot de passe sont obligatoires.");
@@ -279,24 +265,6 @@ export default function SignIn() {
               </Text>
             )}
           </TouchableOpacity>
-
-          <View style={styles.demoBlock}>
-            <Text style={styles.demoTitle}>Comptes de démo</Text>
-            <View style={styles.demoRow}>
-              {ROLES.map((r) => (
-                <TouchableOpacity
-                  key={r.value}
-                  testID={`demo-${r.value}`}
-                  onPress={() => fillDemo(r.value)}
-                  style={styles.demoBtn}
-                  activeOpacity={0.7}
-                >
-                  <Ionicons name={r.icon} size={18} color={colors.primary} />
-                  <Text style={styles.demoBtnText}>{r.label}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
             </>
           )}
         </ScrollView>

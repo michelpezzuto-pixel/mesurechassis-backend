@@ -251,8 +251,9 @@ const masonryHasFeuillures = (m: MasonryType | null): boolean =>
 // ════════════════════════════════════════════════════════════════════════
 
 export default function NewMesureWizard() {
-  const { id, mesure_id } = useLocalSearchParams<{ id: string; mesure_id?: string }>();
+  const { id, mesure_id, edit_wall_config } = useLocalSearchParams<{ id: string; mesure_id?: string; edit_wall_config?: string }>();
   const editingId = (mesure_id as string) || null;
+  const wallEditOnly = edit_wall_config === "1";
   const router = useRouter();
   const { isTablet } = useResponsive();
 
@@ -337,6 +338,14 @@ export default function NewMesureWizard() {
         if (chantierWallConfig) {
           hydrateS1FromWallConfig(chantierWallConfig);
           setWallConfigLocked(true);
+        }
+        // 🎯 Mode "Modifier la structure du mur" : on FORCE l'Étape 1 même
+        // si wall_config existe (l'utilisateur veut justement la corriger).
+        if (wallEditOnly) {
+          setWallConfigLocked(false);
+          setStep(0);
+          setLoading(false);
+          return;
         }
 
         // 2) Si on est en edit mode : charge la mesure existante
@@ -810,6 +819,16 @@ export default function NewMesureWizard() {
         "La configuration du mur n'a pas pu être enregistrée sur le serveur. " +
           "Vous pouvez continuer, elle sera re-tentée au moment d'enregistrer le châssis.",
       );
+    }
+    // 🎯 Mode "Modifier la structure du mur" : on a fait notre job, retour
+    // direct à la fiche chantier (pas de navigation vers l'étape 2).
+    if (wallEditOnly) {
+      Alert.alert(
+        "Configuration enregistrée",
+        "La structure du mur a été mise à jour pour ce chantier.",
+        [{ text: "OK", onPress: () => router.back() }],
+      );
+      return;
     }
     setStep(1);
   };
