@@ -53,6 +53,19 @@ async def create_feedback(payload: FeedbackCreate, user=Depends(auth_user)):
     return Feedback(**doc)
 
 
+@router.get("/feedbacks/mine", response_model=List[Feedback])
+async def list_my_feedbacks(user=Depends(auth_user)):
+    """Retourne les feedbacks que l'utilisateur courant a lui-même soumis."""
+    docs = (
+        await db.feedbacks.find(
+            {"user_id": user["id"]}, {"_id": 0}
+        )
+        .sort("created_at", -1)
+        .to_list(200)
+    )
+    return [Feedback(**d) for d in docs]
+
+
 @router.get("/feedbacks", response_model=List[Feedback])
 async def list_feedbacks(user=Depends(require_admin)):
     docs = (

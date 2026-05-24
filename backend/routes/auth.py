@@ -63,9 +63,29 @@ async def _create_verification(
     return token
 
 
+import hashlib
+
+from fastapi import Request
+
+
+def _device_fingerprint(req: Request) -> str:
+    """Calcule un hash SHA-256 de l'IP + User-Agent du client.
+
+    Utilisé pour détecter les inscriptions répétées depuis le même
+    appareil après suppression (anti-fraude essai gratuit).
+    """
+    ip = (
+        req.headers.get("x-forwarded-for", "").split(",")[0].strip()
+        or req.client.host
+        or "unknown"
+    )
+    ua = req.headers.get("user-agent", "unknown")[:200]
+    return hashlib.sha256(f"{ip}|{ua}".encode("utf-8")).hexdigest()
+
+
 # --- Master Admin self-signup (création d'une nouvelle société) ---------
 @router.post("/auth/register")
-async def register(payload: dict):
+async def register(payload: dict, request: Request):
     """Inscription — Dual-mode :
 
     * **Master Admin (nouveau flux)** : payload `{name, email, password, company_name?}`
@@ -87,6 +107,33 @@ async def register(payload: dict):
     existing = await db.users.find_one({"email": email_lower})
     if existing:
         raise HTTPException(400, "Email déjà enregistré")
+
+    # 🛡️ Anti-fraude essai gratuit — détecte les inscriptions répétées
+    # depuis le même appareil après suppression de compte.
+    # Bloque si un user a été soft-deleted ou si une company a été
+    # abandonnée depuis ce fingerprint dans les 180 derniers jours.
+    fingerprint = _device_fingerprint(request)
+    # Bypass pour les inscriptions legacy (tests internes avec champ `role`)
+    # et bypass complet en mode BETA pour ne pas gêner les premiers tests.
+    if "role" not in payload and not BETA_MODE:
+        cutoff = (
+            datetime.now(timezone.utc) - timedelta(days=180)
+        ).isoformat()
+        flagged = await db.users.find_one(
+            {
+                "signup_fingerprint": fingerprint,
+                "status": "deleted",
+                "deleted_at": {"$gte": cutoff},
+            },
+            {"_id": 0, "id": 1},
+        )
+        if flagged:
+            raise HTTPException(
+                403,
+                "Un compte précédent a été supprimé depuis cet appareil "
+                "récemment. Pour reprendre votre activité, contactez le "
+                "support à info@mesurechassis.com.",
+            )
 
     # ---- Legacy mode ----------------------------------------------------
     if "role" in payload:
@@ -144,6 +191,9 @@ async def register(payload: dict):
         "hashed_password": hash_password(password),
         "status": "pending_verification",
         "email_verified_at": None,
+        # Fingerprint anti-fraude (IP + UA hash) — utilisé pour bloquer
+        # les recréations de comptes après suppression.
+        "signup_fingerprint": fingerprint,
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.users.insert_one(user_doc)
@@ -169,12 +219,18 @@ async def register(payload: dict):
             "created_at": datetime.now(timezone.utc).isoformat(),
         }
     else:
+        # Prod : essai gratuit 90 jours sans CB.
+        trial_expires = (
+            datetime.now(timezone.utc) + timedelta(days=90)
+        ).isoformat()
         company_doc = {
             "company_id": company_id,
             "name": company_name,
             "account_type": account_type_raw,
             "artisan_mode": is_artisan,
             "subscription_status": "trial",
+            "subscription_expires_at": trial_expires,
+            "trial_expires_at": trial_expires,
             "plan": "trial",
             "chantiers_lifetime_count": 0,
             "cancel_at_period_end": False,

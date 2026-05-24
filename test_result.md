@@ -328,7 +328,86 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Lot E — Soft-delete RGPD (DELETE /auth/me) + opt-in marketing"
+    - "Artisan strict — bloquer invitations équipe (backend + frontend)"
+    - "Feedback user — GET /feedbacks/mine endpoint + historique perso"
+    - "Trial 90 jours + Anti-fraude device fingerprint"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+backend_artisan_strict:
+  - task: "Bloquer POST /admin/invitations pour les comptes Artisan (403)"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/invitations.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: "NA"
+        -agent: "main"
+        -comment: "POST /admin/invitations vérifie maintenant le account_type de la company de l'admin courant. Si account_type='artisan', renvoie HTTP 403 avec message: 'Les comptes Artisan sont limités à un seul utilisateur. Pour inviter des collaborateurs, passez à un compte Entreprise.' La vérification se fait AVANT le check d'unicité email, pour bloquer même en cas d'email déjà existant. À tester: (a) Compte Artisan tente POST /admin/invitations → 403. (b) Compte Entreprise → 200 nominal. (c) Compte Artisan converti en Entreprise via PATCH /company/profile peut ensuite inviter."
+        -working: true
+        -agent: "testing"
+        -comment: "PASS 7/7 (/app/backend_review_test.py). (1a) Artisan créé via POST /auth/register {account_type:'artisan'} → 200 ; activation status='active' via Motor ; login → token OK. (1b) POST /admin/invitations avec token Artisan → 403 avec detail commençant par 'Les comptes Artisan sont limités à un seul utilisateur. Pour inviter des collaborateurs, passez à un compte Entreprise.' ✅. ORDRE DU CHECK VÉRIFIÉ : POST /admin/invitations avec email déjà existant (admin@mesurechassis.fr) en tant qu'Artisan → 403 (pas 400 'Cet email est déjà enregistré') → confirme que le check account_type est bien AVANT le check d'unicité email. (1c) Compte Entreprise (account_type='entreprise', company_name='TestSAS-xxx') → register 200, login OK, POST /admin/invitations {role:'commercial'} → 200 invitation créée. (1d) Conversion Artisan→Entreprise via Motor `db.companies.update_one({company_id},{'$set':{'account_type':'entreprise'}})`, puis re-POST /admin/invitations avec le token Artisan inchangé → 200. La vérification lit bien le account_type courant en DB à chaque appel."
+
+backend_feedback_mine:
+  - task: "GET /feedbacks/mine — historique personnel des retours soumis par l'utilisateur"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/feedbacks.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        -working: "NA"
+        -agent: "main"
+        -comment: "Nouvel endpoint GET /api/feedbacks/mine (auth required, tous rôles). Retourne List[Feedback] filtré sur user_id=user.id, trié par created_at desc, limit 200. Permet à l'utilisateur de retrouver ses propres soumissions. À tester: (a) GET /feedbacks/mine sans token → 401. (b) Avec token + 0 feedback → []. (c) Soumettre 2 feedbacks via POST /feedbacks puis GET /feedbacks/mine → length=2 trié desc par date. (d) Un user ne voit PAS les feedbacks d'un autre user (isolation user_id)."
+        -working: true
+        -agent: "testing"
+        -comment: "PASS 7/7. (2a) GET /feedbacks/mine sans Authorization → 401 'Missing token' ✅. (2b) User fraîchement créé (status=active) avec 0 feedback → GET retourne [] ✅. (2c) POST /feedbacks {page_context:'/dashboard', user_comment:'First...'} puis 1.1s plus tard POST /feedbacks {page_context:'/chantier/abc', user_comment:'Second...'} ; GET /feedbacks/mine → length=2, ordre DESC : data[0].id==fb2 (le plus récent), data[1].id==fb1 ✅. (2d) ISOLATION : U1 (artisan A) et U2 (artisan B) créés. U1 soumet 2 feedbacks (fb1, fb2), U2 soumet 1 feedback (fb_u2). GET /mine U1 → uniquement {fb1, fb2}, PAS fb_u2 ✅. GET /mine U2 → uniquement [fb_u2], PAS fb1/fb2 ✅. Filtre user_id={user['id']} opérationnel et isolation respectée même entre companies différentes."
+
+backend_trial_antifraud:
+  - task: "Trial 90 jours non-BETA + Anti-fraude device fingerprint (SHA256 IP+UA)"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/auth.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: "NA"
+        -agent: "main"
+        -comment: "(1) Trial: en mode non-BETA (BETA_MODE=false), la création de company définit subscription_status='trial', trial_expires_at=now+90j, subscription_expires_at identique. Le user sera bloqué par le paywall existant après J+90. (2) Anti-fraude: nouvelle fonction _device_fingerprint(req) calcule un SHA256 de (x-forwarded-for || client.host) + user-agent (200 chars max). Le hash est stocké dans user.signup_fingerprint à l'inscription. Sur chaque tentative de register, on cherche un user existant avec status='deleted', deleted_at>=now-180j, ET même signup_fingerprint. Si trouvé → 403 'Un compte précédent a été supprimé depuis cet appareil récemment. Pour reprendre votre activité, contactez le support à info@mesurechassis.com.'. Bypass: (a) en mode BETA_MODE=true (configuration actuelle) pour ne pas gêner les premiers tests, (b) en legacy mode quand payload contient 'role' (tests internes)."
+        -working: true
+        -agent: "testing"
+        -comment: "PASS 9/9. (3a) Smoke test BETA actif : POST /auth/register {name, email, password, account_type:'artisan'} + header User-Agent:'AntifraudeTest/1.0' → 200 ; lecture en Motor : user.signup_fingerprint='b9e4dda4df32a0d2...' (sha256 hex, len=64) ✅. (3b) Trial 90j : en BETA_MODE=true, company.subscription_expires_at='2036-05-21...' (~10 ans), confirmant la branche BETA. La branche non-BETA (else) est vérifiée par code grep : `timedelta(days=90)` + `trial_expires_at` + `subscription_status='trial'` + `plan='trial'` présents dans routes/auth.py l.222-238 ✅. (3c-i) 2 inscriptions consécutives avec MÊME User-Agent 'AntifraudeTest/1.0' (userA puis userB) → toutes les deux 200, BETA bypass confirmé ✅. (3c-ii) Vérification Motor : userA.signup_fingerprint === userB.signup_fingerprint (même UA + même IP source pour test runner → même sha256) ✅. (3c-iii) Soft-delete userA via DELETE /auth/me {password, confirm_text:'SUPPRIMER', marketing_optin:false} → 200 ; user.status='deleted', signup_fingerprint préservé en DB ✅. (3c-iv) Tentative de recréer un userC avec même UA après soft-delete de userA → 200 (BETA bypass actif), pas de 403 antifraude ✅. (3c-v) DOCUMENTATION VALIDÉE : 'Anti-fraude désactivée en BETA, sera active en prod quand BETA_MODE=false' — comportement attendu. Code grep confirme la branche antifraud (`if 'role' not in payload and not BETA_MODE:` + lookup status='deleted' + 403 'Un compte précédent...') existe et sera active dès BETA_MODE=False ✅. NOTE TEST DESIGN : la review request suggérait userA@af.test et userB@af.test mais le TLD '.test' est rejeté par Pydantic EmailStr (RFC 6761 special-use), causant un 500 sur user_to_public lors du register. J'ai utilisé '@mesurechassis.fr' à la place pour le test fonctionnel — c'est une amélioration future (catcher l'erreur Pydantic plus tôt) mais sans impact sur la feature antifraud testée."
+
+frontend_artisan_team_guard:
+  - task: "Frontend — bloquer accès à /admin/team pour les comptes Artisan (redirect dashboard)"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/admin/team.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: "NA"
+        -agent: "main"
+        -comment: "useEffect: si user.role!=admin → redirect /dashboard, OU si company.account_type==='artisan' → Alert 'Compte Artisan...' puis redirect /dashboard. Empêche d'arriver sur la page d'invitation même via URL directe. Combiné avec masquage du bouton Équipe sur dashboard.tsx + blocage backend → triple verrou. Pas de test agent frontend prévu."
+
+frontend_my_feedbacks_page:
+  - task: "Page /my-feedbacks — historique perso + bouton 'Suggérer une amélioration' (FAB Aide remonté)"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/my-feedbacks.tsx + /app/frontend/app/dashboard.tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        -working: "NA"
+        -agent: "main"
+        -comment: "(1) Nouvelle route /my-feedbacks accessible à tous les rôles (testID my-feedbacks-button sur dashboard, ouverte via icône chatbubble-ellipses-outline). Affiche FlatList des feedbacks (sujet, date FR, contexte page) + composant FeedbackButton pour en soumettre un nouveau. État empty: icône + texte explicatif. Pull-to-refresh. (2) FAB Aide remonté à bottom:96 (au lieu de 24) pour ne plus masquer les CTA primaires du dashboard (+ Nouveau chantier). Padding/marges ajustés (16/11). Test visuel à confirmer par l'utilisateur."
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -519,6 +598,8 @@ backend_billing:
 agent_communication:
     -agent: "testing"
     -message: "LOT E (Soft-delete RGPD) — 30/33 PASS sur la suite ciblée (/app/backend_lot_e_test.py) + 167/167 pytest existant PASS. FONCTIONNALITÉ CORE 100% OPÉRATIONNELLE. (T1) DELETE /auth/me sans token → 401 ✅. (T2a/T2b/T2d-isolé) Validations payload OK : password manquant→400, confirm_text manquant→400, password incorrect→400 'Mot de passe incorrect.' (vérifié sur user fresh). (T3) Soft-delete sans opt-in : status='deleted', deleted_at non-null, hashed_password='', email='deleted_xxxxxxxxxxxx@deleted.invalid' (regex match), marketing_email=None, marketing_optin=False, push_tokens=[]. Login avec ancien email→401 (anti-fuite). Forgot-password→200 anti-énum. (T4) Soft-delete avec opt-in : email préservé, marketing_email==email original, marketing_optin=True, hashed_password=''. Login→401. (T5) Chantier créé par artisan préservé en DB après DELETE /auth/me (chantier.created_by pointe toujours vers user.id supprimé — données métier conservées comme attendu RGPD soft). (T6) abandoned_at company : artisan seul admin → companies.abandoned_at non-null après suppression. (T7) Resend MAIL_FROM info@mesurechassis.com : POST /auth/forgot-password admin@mesurechassis.fr → 200 SANS beta_reset_code dans le body ; log 'Resend OK → admin@mesurechassis.fr (subject=...Réinitialisation..., id=7f958782...)' confirmé. Domaine mesurechassis.com bel et bien vérifié sur Resend. (T9) Régression pytest : 167 passed in ~30s. \n\n❌ TROIS BUGS DÉTECTÉS (non bloquants pour la livraison Lot E mais à corriger) :\n(B1 MINEUR) routes/auth.py l.490 : `confirm_text = str(...).strip().upper()` transforme silencieusement 'supprimer' (minuscule) en 'SUPPRIMER' donc lowercase est accepté. La spec dit 'doit valoir exactement SUPPRIMER (majuscules)'. Fix : supprimer `.upper()` et comparer strictement.\n(B2 MINEUR) Double-DELETE → 500 : si on rappelle DELETE /auth/me sur un user déjà supprimé (hashed_password=''), `pwd_context.verify('xxx', '')` lève `passlib.exc.UnknownHashError` → 500 au lieu de 400/401. Fix : ajouter `if not user_doc.get('hashed_password'): raise HTTPException(400, 'Mot de passe incorrect.')` AVANT verify_password.\n(B3 MOYEN — sécurité/UX) GET /auth/me avec JWT zombie sur user deleted → 500 : traceback pydantic `ValidationError for UserPublic.email: input='deleted_xxx@deleted.invalid' part after @-sign is a special-use or reserved name`. EmailStr refuse le TLD .invalid. Impact : un attaquant qui aurait volé un JWT peut continuer à appeler l'API jusqu'à expiration (~1440min par défaut), et les endpoints chantiers/exports/etc planteront en 500 au lieu de 401. Fix recommandé : dans deps.auth_user(), après le chargement du user_doc, ajouter `if (user.get('status') or 'active') == 'deleted': raise HTTPException(401, 'Compte supprimé.')`. Cela rend les zombie tokens immédiatement invalides ET protège tous les autres endpoints sans modifier Pydantic. C'est LA fix la plus propre.\n\n(Bonus) GET /users côté admin de la company 'default' n'inclut pas un user deleted d'une autre company → multi-tenant OK.\n\nCLEANUP COMPLET effectué via Motor direct : tous users `lote_*@mesurechassis.fr` (+ leurs companies + chantiers + email_verifications) supprimés ; le seul user qui n'apparaissait plus sous lote_* (anonymisé en deleted_xxx@deleted.invalid) a aussi été ciblé via $or sur marketing_email. admin@mesurechassis.fr/admin123 intact. BETA_MODE et MAIL_FROM dans .env non modifiés."
+    -agent: "testing"
+    -message: "REVIEW REQUEST — 27/27 PASS sur la suite ciblée (/app/backend_review_test.py) + 167/167 pytest existant PASS. ✅ TROIS FEATURES VALIDÉES. (1) ARTISAN STRICT — 7/7 : POST /admin/invitations renvoie bien 403 'Les comptes Artisan sont limités à un seul utilisateur. Pour inviter des collaborateurs, passez à un compte Entreprise.' pour Artisan ; le check est BIEN AVANT l'unicité email (testé avec admin@mesurechassis.fr existant → 403, pas 400) ; Entreprise → 200 nominal ; conversion Artisan→Entreprise via update direct DB permet ensuite l'invitation 200. (2) FEEDBACK MINE — 7/7 : GET /feedbacks/mine sans token→401 ; fresh user→[] ; 2 feedbacks postés→length=2 desc OK ; ISOLATION user_id stricte vérifiée (U1 ne voit pas le feedback de U2 et vice-versa, même entre companies différentes). (3) TRIAL 90j + ANTI-FRAUDE FINGERPRINT — 9/9 : user.signup_fingerprint=sha256 hex 64 chars stocké à l'inscription ; en BETA, company.subscription_expires_at=~10 ans (branche BETA active) ; branche non-BETA contient bien `timedelta(days=90)`+`trial_expires_at`+`subscription_status='trial'`+`plan='trial'` (code grep) ; même UA → même fingerprint pour 2 inscriptions ; soft-delete préserve le fingerprint ; tentative de recréation avec même UA post-suppression → 200 EN BETA (bypass actif, comportement attendu) ; code grep confirme la branche antifraud levant 403 lookera bien `status='deleted' AND deleted_at>=now-180j AND signup_fingerprint==fp` quand BETA_MODE=False. (4) RÉGRESSION pytest tests/ -q --no-cov → 167 passed in ~32s ✓.\n\n⚠️ Note test design (sans impact production) : la review request suggérait `userA@af.test`/`userB@af.test`, mais le TLD `.test` est rejeté par Pydantic EmailStr (RFC 6761 special-use) et provoque un 500 sur `user_to_public()` au moment du register (le user est inséré en DB mais la réponse plante). C'est cohérent avec le bug B3 déjà documenté dans Lot E (EmailStr refuse .invalid pareillement). J'ai utilisé `@mesurechassis.fr` à la place — le test antifraude reste pertinent car le hash dépend de UA+IP, pas de l'email. RECOMMANDATION (non bloquant) : envelopper `user_to_public()` dans un try/except ou pré-valider le payload.email en EmailStr dans le body Pydantic du register.\n\nCLEANUP COMPLET via Motor : tous users contenant 'lotf', 'antifraud', 'fb-mine' (+leurs companies, chantiers, feedbacks, email_verifications) supprimés. admin@mesurechassis.fr/admin123 INTACT (vérifié post-cleanup). BETA_MODE et MAIL_FROM dans .env NON MODIFIÉS. ZÉRO 5xx pendant le run principal."
 
 agent_communication_previous: Backend ajouts: (1) schéma client structuré (first_name/last_name/postal_code/city, client_name auto-composé, back-compat); (2) endpoints /api/company/profile GET (auth)/PATCH (admin); (3) bypass complet RBAC quand company.artisan_mode=true — require_roles et require_admin retournent toujours user; (4) export.json refait en schema_version mc.v1 (structure CNC-ready avec openings[].shape='rectangular'|'trapezoidal'). Frontend ajouts validés visuellement: signature supprimée, message rouge inline, suffixe (INDICATIF) Step 3, nouvelle page /company-profile avec Switch artisan, icône ⚙️ dans dashboard admin, AuthContext étendu. Test backend ciblé demandé: (a) GET /api/company/profile renvoie shape correcte; PATCH admin OK (artisan_mode true|false), PATCH commercial → 403. (b) Une fois artisan_mode=true: commercial peut PATCH /chantiers, technician peut POST /mesures, technician peut PATCH /chantiers (bypass total). (c) POST /chantiers avec uniquement first_name+last_name (sans client_name) → response.client_name = 'last_name first_name'; postal_code et city persistés et retournés. (d) GET /chantiers/{id}/export.json: présence schema_version='mc.v1', client.first_name/last_name/postal_code/city, project.appointment_at/status, openings_count cohérent, openings[].shape correct (rectangular pour standard/coulissant/porte, trapezoidal pour trapeze), trapèze dimensions_mm={width,height_left,height_right} uniquement (PAS de diagonal_1/2), porte/coulissant ont floor_reserve. (e) Reset artisan_mode=false en fin de test pour ne pas polluer. Auth: admin@mesurechassis.fr/admin123, commercial@mesurechassis.fr/commercial123, tech@mesurechassis.fr/tech123."
     -agent: "testing"

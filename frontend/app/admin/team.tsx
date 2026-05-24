@@ -41,7 +41,7 @@ const ROLE_COLOR: Record<string, string> = {
 };
 
 export default function TeamAdmin() {
-  const { user } = useAuth();
+  const { user, company } = useAuth();
   const router = useRouter();
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,12 +52,19 @@ export default function TeamAdmin() {
   const [submitting, setSubmitting] = useState(false);
   const [lastInviteLink, setLastInviteLink] = useState<string | null>(null);
 
-  // Garde admin-only
+  // Garde admin-only + Artisan (compte solo, pas d'équipe possible)
   useEffect(() => {
     if (user && user.role !== "admin") {
       router.replace("/dashboard");
+    } else if (company?.account_type === "artisan") {
+      // Lot D — un Artisan n'a pas d'équipe à gérer.
+      Alert.alert(
+        "Compte Artisan",
+        "Les comptes Artisan sont limités à un seul utilisateur. Pour inviter des collaborateurs, passez à un compte Entreprise.",
+      );
+      router.replace("/dashboard");
     }
-  }, [user, router]);
+  }, [user, company, router]);
 
   const fetchMembers = useCallback(async () => {
     try {

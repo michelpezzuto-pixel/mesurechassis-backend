@@ -368,6 +368,20 @@ export default function Dashboard() {
             <Text style={styles.actionBtnText}>Profil</Text>
           </TouchableOpacity>
         )}
+        {/* Mes retours — accessible à tous (admin/commercial/technicien) */}
+        <TouchableOpacity
+          testID="my-feedbacks-button"
+          onPress={() => router.push("/my-feedbacks")}
+          style={styles.actionBtn}
+          activeOpacity={0.7}
+        >
+          <Ionicons
+            name="chatbubble-ellipses-outline"
+            size={20}
+            color={colors.primary}
+          />
+          <Text style={styles.actionBtnText}>Mes retours</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={{ paddingHorizontal: 16 }}>
@@ -672,20 +686,22 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   center: { alignItems: "center", justifyContent: "center" },
   // FAB Aide — bouton flottant flashy (bleu cyan) en bas à droite
+  // Positionné au-dessus du bouton "+ Nouveau chantier" pour ne pas
+  // cacher le texte des cartes (offset 90px).
   helpFab: {
     position: "absolute",
-    right: 20,
-    bottom: 24,
+    right: 16,
+    bottom: 96,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
     backgroundColor: "#3B82F6",
     borderRadius: 30,
-    paddingHorizontal: 18,
-    paddingVertical: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 11,
     elevation: 8,
     shadowColor: "#3B82F6",
-    shadowOpacity: 0.55,
+    shadowOpacity: 0.5,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 4 },
     borderWidth: 2,
@@ -695,8 +711,8 @@ const styles = StyleSheet.create({
   helpFabText: {
     color: "#FFFFFF",
     fontWeight: "900",
-    letterSpacing: 1.2,
-    fontSize: 13,
+    letterSpacing: 1.1,
+    fontSize: 12,
   },
   topBar: {
     flexDirection: "row",

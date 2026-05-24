@@ -50,12 +50,25 @@ async def create_invitation(
             400,
             f"Rôle invalide. Autorisés : {sorted(VALID_INVITE_ROLES)}",
         )
+
+    # 🚫 Compte Artisan : pas d'équipe possible. Les Artisans paient un
+    # abonnement solo (24,99 €/mois), ils ne peuvent inviter personne.
+    company_id = user.get("company_id", "default")
+    company_doc = await db.companies.find_one(
+        {"company_id": company_id}, {"_id": 0, "account_type": 1}
+    ) or {}
+    if (company_doc.get("account_type") or "entreprise") == "artisan":
+        raise HTTPException(
+            403,
+            "Les comptes Artisan sont limités à un seul utilisateur. "
+            "Pour inviter des collaborateurs, passez à un compte Entreprise.",
+        )
+
     email_lower = payload.email.lower()
     existing = await db.users.find_one({"email": email_lower})
     if existing:
         raise HTTPException(400, "Cet email est déjà enregistré.")
 
-    company_id = user.get("company_id", "default")
     user_doc = {
         "id": str(uuid.uuid4()),
         "name": payload.name,
