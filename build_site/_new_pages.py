@@ -465,7 +465,7 @@ def make_telecharger() -> str:
   <div style="font-size:1.5rem">ℹ️</div>
   <div>
     <strong style="color:var(--white)">En attente de validation officielle</strong>
-    <p style="margin:.25rem 0 0;font-size:.92rem">Notre application est en cours de soumission auprès du Google Play Store et de l'App Store. En attendant, accédez à la version bêta complète via le canal Internal Testing (Android) ou recevez une notification dès la sortie iOS.</p>
+    <p style="margin:.25rem 0 0;font-size:.92rem">Notre application est en cours de soumission auprès du Google Play Store et de l'App Store. En attendant la validation officielle, laissez-nous votre email pour être averti dès la sortie sur l'une ou l'autre plateforme.</p>
   </div>
 </div>
 
@@ -475,11 +475,11 @@ def make_telecharger() -> str:
     <span class="icon-os">🤖</span>
     <h3>Android</h3>
     <div class="platform">Téléphones &amp; tablettes · Android 9+</div>
-    <span class="status-badge status-beta">● Bêta disponible</span>
-    <a href="{ANDROID_URL}" target="_blank" rel="noopener" class="dl-btn dl-btn-primary">
-      ⬇️ Rejoindre le test interne
+    <span class="status-badge status-soon">⏳ Bientôt disponible</span>
+    <a href="#notify" class="dl-btn dl-btn-disabled" onclick="document.getElementById('notify').scrollIntoView({{behavior:'smooth'}});return false;">
+      🔔 Recevoir une notification
     </a>
-    <p class="dl-info">Cliquez sur le lien, acceptez de devenir testeur, puis téléchargez l'application depuis le Play Store comme une app classique. Mises à jour automatiques.</p>
+    <p class="dl-info">Notre application est en cours de validation par le Google Play Store. Laissez votre email ci-dessous, vous serez averti dès la sortie officielle.</p>
   </div>
 
   <div class="dl-card">
@@ -490,17 +490,17 @@ def make_telecharger() -> str:
     <a href="#notify" class="dl-btn dl-btn-disabled" onclick="document.getElementById('notify').scrollIntoView({{behavior:'smooth'}});return false;">
       🔔 Recevoir une notification
     </a>
-    <p class="dl-info">Notre version iOS est en cours de soumission TestFlight. Laissez votre email ci-dessous, vous serez averti dès l'ouverture du bêta-test.</p>
+    <p class="dl-info">Notre version iOS est en cours de soumission auprès de l'App Store. Laissez votre email ci-dessous, vous serez averti dès la sortie officielle.</p>
   </div>
 
 </div>
 
-<h2 id="notify">Soyez averti dès la sortie iOS</h2>
+<h2 id="notify">Soyez averti dès la sortie</h2>
 <form class="notify-form" id="notifyForm" onsubmit="return submitNotify(event)">
-  <p style="margin-bottom:1rem">Entrez votre email pour recevoir un lien d'installation TestFlight dès qu'il sera disponible. Aucun spam, aucune utilisation commerciale.</p>
+  <p style="margin-bottom:1rem">Entrez votre email pour recevoir un lien d'installation dès que l'application sera disponible sur le Play Store ou l'App Store. Aucun spam, aucune utilisation commerciale, désinscription en 1 clic.</p>
   <input type="email" name="email" placeholder="vous@entreprise.fr" required aria-label="Votre email">
   <button type="submit">🔔 Me prévenir dès la sortie</button>
-  <p id="notifyFeedback" style="margin-top:.75rem;color:var(--green);text-align:center;display:none">✅ Merci ! Nous vous écrirons dès que la version iOS sera prête.</p>
+  <p id="notifyFeedback" style="margin-top:.75rem;color:var(--green);text-align:center;display:none">✅ Merci ! Nous vous écrirons dès que l'application sera prête.</p>
 </form>
 
 <h2>Version Web (accessible immédiatement)</h2>

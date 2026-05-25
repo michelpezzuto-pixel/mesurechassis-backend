@@ -34,18 +34,11 @@ Site vitrine complet prêt à déployer sur **Easyhost** (ou tout hébergement A
 
 ---
 
-## ⚠️ AVANT DE DÉPLOYER : 1 SEULE MODIFICATION
+## ✅ AUCUNE MODIFICATION REQUISE AVANT DÉPLOIEMENT
 
-Le lien **Internal Testing Play Store** n'a pas été fourni. Vous devez le remplacer dans 1 fichier :
+Tous les fichiers sont prêts. Vous pouvez les uploader directement sur Easyhost.
 
-### Fichier : `telecharger.html`
-
-Cherchez (Ctrl+F) :
-```
-https://play.google.com/apps/internaltest/REMPLACER_PAR_VOTRE_LIEN_INTERNAL_TESTING
-```
-
-Remplacez par votre vraie URL (ex: `https://play.google.com/apps/internaltest/4701234567890123456`).
+> ℹ️ **Note** : L'application est en cours de validation par le Google Play Store et l'App Store. La page `telecharger.html` affiche actuellement un bouton "Bientôt disponible — Recevoir une notification" pour les deux plateformes. Dès que votre application sera validée, contactez-moi pour mettre à jour les vrais liens de téléchargement.
 
 ---
 
