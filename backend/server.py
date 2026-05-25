@@ -85,6 +85,24 @@ async def download_site_zip():
     )
 
 
+@api.get("/_gallery/{filename}")
+async def gallery_file(filename: str):
+    """Galerie temporaire pour visualiser les images extraites du PDF utilisateur."""
+    # Sécurité : pas de path traversal
+    if "/" in filename or ".." in filename:
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    path = os.path.join("/app/frontend/assets/marketing_screenshots/pdf_images", filename)
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Not found")
+    if filename.endswith(".html"):
+        return FileResponse(path, media_type="text/html")
+    if filename.endswith(".jpg") or filename.endswith(".jpeg"):
+        return FileResponse(path, media_type="image/jpeg")
+    if filename.endswith(".png"):
+        return FileResponse(path, media_type="image/png")
+    return FileResponse(path)
+
+
 
 app.include_router(api)
 
