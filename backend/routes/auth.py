@@ -251,7 +251,18 @@ async def register(payload: dict, request: Request):
         user_id=user_doc["id"], email=email_lower, kind="verify"
     )
     link = build_verification_link(token)
+    # On envoie tout de même l'email pour info, mais on n'attend plus de
+    # vérification : `auto_verify` a déjà mis le compte en `active`.
     send_verification_email(to=email_lower, name=name, link=link)
+
+    if auto_verify:
+        # Mode auto-vérification : on NE renvoie PAS verification_link au
+        # frontend afin qu'il n'affiche pas l'écran "Pending verification".
+        # L'utilisateur peut se connecter directement.
+        return {
+            "user": user_to_public(user_doc).model_dump(),
+            "message": "Compte créé avec succès. Vous pouvez vous connecter.",
+        }
 
     return {
         "user": user_to_public(user_doc).model_dump(),

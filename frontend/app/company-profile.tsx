@@ -150,8 +150,10 @@ export default function CompanyProfile() {
       }
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [16, 9],
+        // allowsEditing désactivé : le bouton système "Redimensionner" prêtait
+        // à confusion. L'utilisateur sélectionne directement son image et on
+        // gère la taille via le contrôle 500 KB en aval.
+        allowsEditing: false,
         quality: 0.85,
         base64: true,
       });

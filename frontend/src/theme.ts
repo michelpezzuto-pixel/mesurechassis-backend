@@ -88,8 +88,10 @@ export const statusMeta: Record<
 };
 
 // Transitions du pipeline : statut actuel → statut suivant après "Clôturer"
+// Workflow Admin : a_mesurer → devis_a_faire → technique_a_valider → en_fabrication
+// (l'Admin transmet d'abord au commercial avant la validation technique)
 export const NEXT_STATUS: Record<string, string> = {
-  a_mesurer: "technique_a_valider",
+  a_mesurer: "devis_a_faire",
   devis_a_faire: "technique_a_valider",
   technique_a_valider: "en_fabrication",
   a_verifier: "en_fabrication",
