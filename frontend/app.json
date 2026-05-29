@@ -16,7 +16,7 @@
       }
     },
     "android": {
-      "package": "com.mesurechassis.app",
+      "package": "com.mesurechassis.escalier",
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",

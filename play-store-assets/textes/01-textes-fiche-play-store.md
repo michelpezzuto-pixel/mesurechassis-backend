@@ -76,7 +76,7 @@ Téléchargez MesureChâssis et reprenez le contrôle de vos mesures. Votre atel
 
 Conçu en Belgique 🇧🇪 par des passionnés du secteur menuiserie.
 Site web : https://mesurechassis.com
-Support : support@mesurechassis.com
+Support : info@mesurechassis.com
 ```
 
 ---
@@ -106,7 +106,7 @@ Merci aux 20 testeurs qui ont participé à la phase fermée !
 
 | Champ | Valeur |
 |-------|--------|
-| **Email développeur** | support@mesurechassis.com |
+| **Email développeur** | info@mesurechassis.com |
 | **Site web** | https://mesurechassis.com |
 | **Téléphone** | (optionnel — vous pouvez le laisser vide) |
 | **Politique de confidentialité** | https://mesurechassis.com/confidentialite.html |
