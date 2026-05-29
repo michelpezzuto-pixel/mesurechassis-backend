@@ -85,6 +85,19 @@ async def download_site_zip():
     )
 
 
+@api.get("/_downloads/play-store-assets")
+async def download_play_store_zip():
+    """Pack d'assets et textes prêts à coller dans Google Play Console."""
+    path = "/app/play-store-mesurechassis.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="play-store-mesurechassis.zip",
+    )
+
+
 @api.get("/_gallery/{filename}")
 async def gallery_file(filename: str):
     """Galerie temporaire pour visualiser les images extraites du PDF utilisateur."""
