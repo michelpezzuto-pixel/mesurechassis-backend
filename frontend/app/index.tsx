@@ -32,6 +32,9 @@ export default function SignIn() {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  // Œil show/hide pour les mots de passe (login, register, reset)
+  const [showPassword, setShowPassword] = useState(false);
+  const [showResetPassword, setShowResetPassword] = useState(false);
   const [name, setName] = useState("");
   const [companyName, setCompanyName] = useState("");
   // Lot D — type de compte choisi à l'inscription :
@@ -472,15 +475,31 @@ export default function SignIn() {
             style={styles.input}
           />
           <Text style={styles.label}>Mot de passe</Text>
-          <TextInput
-            testID="login-password-input"
-            value={password}
-            onChangeText={setPassword}
-            placeholder="••••••••"
-            placeholderTextColor={colors.placeholder}
-            secureTextEntry
-            style={styles.input}
-          />
+          <View style={styles.passwordWrap}>
+            <TextInput
+              testID="login-password-input"
+              value={password}
+              onChangeText={setPassword}
+              placeholder="••••••••"
+              placeholderTextColor={colors.placeholder}
+              secureTextEntry={!showPassword}
+              autoCapitalize="none"
+              autoCorrect={false}
+              style={styles.passwordInput}
+            />
+            <TouchableOpacity
+              onPress={() => setShowPassword((v) => !v)}
+              style={styles.eyeBtn}
+              activeOpacity={0.6}
+              accessibilityLabel={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+            >
+              <Ionicons
+                name={showPassword ? "eye-off-outline" : "eye-outline"}
+                size={22}
+                color={colors.textSecondary}
+              />
+            </TouchableOpacity>
+          </View>
 
           <TouchableOpacity
             testID="login-submit-button"
@@ -620,15 +639,30 @@ export default function SignIn() {
                     maxLength={6}
                   />
                   <Text style={styles.modalLabel}>Nouveau mot de passe</Text>
-                  <TextInput
-                    testID="forgot-new-password-input"
-                    value={forgotNewPassword}
-                    onChangeText={setForgotNewPassword}
-                    placeholder="Min. 6 caractères"
-                    placeholderTextColor={colors.placeholder}
-                    secureTextEntry
-                    style={styles.modalInput}
-                  />
+                  <View style={[styles.passwordWrap, { backgroundColor: colors.bg }]}>
+                    <TextInput
+                      testID="forgot-new-password-input"
+                      value={forgotNewPassword}
+                      onChangeText={setForgotNewPassword}
+                      placeholder="Min. 6 caractères"
+                      placeholderTextColor={colors.placeholder}
+                      secureTextEntry={!showResetPassword}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      style={styles.passwordInput}
+                    />
+                    <TouchableOpacity
+                      onPress={() => setShowResetPassword((v) => !v)}
+                      style={styles.eyeBtn}
+                      activeOpacity={0.6}
+                    >
+                      <Ionicons
+                        name={showResetPassword ? "eye-off-outline" : "eye-outline"}
+                        size={22}
+                        color={colors.textSecondary}
+                      />
+                    </TouchableOpacity>
+                  </View>
                   <TouchableOpacity
                     testID="forgot-reset-button"
                     onPress={doResetPassword}
@@ -727,6 +761,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     fontSize: 16,
     fontWeight: "600",
+  },
+  // ----- Champ mot de passe avec œil show/hide -----
+  passwordWrap: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.inputBg,
+    borderColor: colors.borderSubtle,
+    borderWidth: 2,
+    borderRadius: 8,
+    minHeight: 56,
+    paddingHorizontal: 14,
+  },
+  passwordInput: {
+    flex: 1,
+    color: colors.textPrimary,
+    fontSize: 16,
+    fontWeight: "600",
+    minHeight: 52,
+    paddingVertical: 0,
+  },
+  eyeBtn: {
+    paddingHorizontal: 8,
+    paddingVertical: 8,
+    minHeight: 44,
+    minWidth: 44,
+    justifyContent: "center",
+    alignItems: "center",
   },
   roleRow: { flexDirection: "row", gap: 8 },
   roleCard: {
