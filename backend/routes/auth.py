@@ -501,10 +501,18 @@ async def reset_password(payload: dict):
         raise HTTPException(status_code=400, detail="Code expiré, demandez-en un nouveau.")
 
     # Hash et stocke le nouveau mot de passe + invalide le code
+    # IMPORTANT : si l'utilisateur a réussi à recevoir le code par email et à le
+    # valider, cela PROUVE qu'il possède bien cette adresse. On en profite donc
+    # pour auto-vérifier son email (passe de pending_verification → active).
+    now_iso = datetime.now(timezone.utc).isoformat()
+    set_fields = {"hashed_password": hash_password(new_password)}
+    if (user.get("status") or "active") == "pending_verification":
+        set_fields["status"] = "active"
+        set_fields["email_verified_at"] = now_iso
     await db.users.update_one(
         {"id": user["id"]},
         {
-            "$set": {"hashed_password": hash_password(new_password)},
+            "$set": set_fields,
             "$unset": {
                 "password_reset_code": "",
                 "password_reset_expires_at": "",
