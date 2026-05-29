@@ -1,6 +1,7 @@
 """Routes d'authentification + gestion utilisateurs + double opt-in."""
 from __future__ import annotations
 
+import os
 import secrets
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -182,6 +183,14 @@ async def register(payload: dict, request: Request):
     safe_slug = "".join(c if c.isalnum() else "-" for c in base_slug).strip("-")
     company_id = f"{safe_slug or 'co'}-{uuid.uuid4().hex[:6]}"
 
+    # Mode auto-vérification (activé tant que les DNS Resend ne sont pas
+    # configurés sur le domaine d'envoi). Permet à l'utilisateur de se
+    # connecter immédiatement sans attendre l'email — l'email de
+    # vérification est tout de même envoyé pour info.
+    # Pour désactiver (production stricte) : MC_AUTO_VERIFY_ON_REGISTER=0
+    auto_verify = os.getenv("MC_AUTO_VERIFY_ON_REGISTER", "1") == "1"
+    now_iso_reg = datetime.now(timezone.utc).isoformat()
+
     user_doc = {
         "id": str(uuid.uuid4()),
         "name": name,
@@ -189,12 +198,12 @@ async def register(payload: dict, request: Request):
         "role": "admin",
         "company_id": company_id,
         "hashed_password": hash_password(password),
-        "status": "pending_verification",
-        "email_verified_at": None,
+        "status": "active" if auto_verify else "pending_verification",
+        "email_verified_at": now_iso_reg if auto_verify else None,
         # Fingerprint anti-fraude (IP + UA hash) — utilisé pour bloquer
         # les recréations de comptes après suppression.
         "signup_fingerprint": fingerprint,
-        "created_at": datetime.now(timezone.utc).isoformat(),
+        "created_at": now_iso_reg,
     }
     await db.users.insert_one(user_doc)
     # 🚧 BETA GRATUITE : les nouveaux comptes naissent directement en
