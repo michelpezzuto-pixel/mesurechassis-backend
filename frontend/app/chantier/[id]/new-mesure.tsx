@@ -1452,7 +1452,14 @@ function Step3Cotes({
     shape === "porte_entree" || shape === "porte_garage" || shape === "coulissant_levant";
   // M3 FIX — Feuillures : masquage si "coupe horizontale" est OFF dans Step 1
   // (en plus de la maçonnerie qui doit avoir des feuillures).
-  const showFeuillures = masonryHasFeuillures(s1MasonryType) && !!s1HasHorizontalCut;
+  // 🚪 Sur une porte de garage / coulissant levant, les feuillures n'ont
+  // PAS de sens (pose en applique ou sous linteau, pas en feuillure), donc
+  // on masque la section même si la maçonnerie en a habituellement.
+  const showFeuillures =
+    masonryHasFeuillures(s1MasonryType) &&
+    !!s1HasHorizontalCut &&
+    shape !== "porte_garage" &&
+    shape !== "coulissant_levant";
   const Sketch = shape === "trapeze" || shape === "triangle" ? RawBaySchemaTrapeze : RawBaySchemaRect;
 
   const validateDiag = (which: 1 | 2) =>
@@ -1565,6 +1572,13 @@ function Step3Cotes({
           <CotField testID="input-bay-height" label="HAUTEUR (mm) *" value={s3.bay_height}
             onChange={(v) => setField("bay_height", v.replace(",", "."))} onBlur={onBlurDimension} error={!!err.bay_height} />
           <Text style={[styles.sectionLabel, { marginTop: 18 }]}>SPÉCIFIQUES PORTE DE GARAGE</Text>
+          <Text style={styles.helperText}>
+            📏 Mesures spécifiques à la pose d'une porte sectionnelle :
+            le linteau est la hauteur sous-plafond disponible au-dessus de
+            la baie ; les écoinçons sont la largeur de mur plein disponible
+            de part et d'autre de la baie pour fixer les rails verticaux
+            (minimum 100 mm recommandé).
+          </Text>
           <CotField testID="input-garage-lintel" label="LINTEAU (mm) *" value={s3.garage_lintel}
             onChange={(v) => setField("garage_lintel", v.replace(",", "."))} error={!!err.garage_lintel} />
           <View style={styles.row2}>
