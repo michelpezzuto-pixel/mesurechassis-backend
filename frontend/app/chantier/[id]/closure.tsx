@@ -178,25 +178,31 @@ export default function Closure() {
   }, [id, router, nextStatus]);
 
   const cloturer = () => {
-    if (!nextStatus) return;
+    if (!nextStatus || !chantier) return;
+    const description =
+      CLOSURE_DESCRIPTION_BY_STATUS[chantier.status] ||
+      `Le chantier passera en « ${statusMeta[nextStatus]?.label ?? nextStatus} ».`;
     const confirmText =
       nextStatus === "cloture"
-        ? "Marquer ce chantier comme 'Terminé / Livré' ?\n\nLe chantier sera archivé en lecture seule. Vous pourrez toujours consulter les mesures et exports."
-        : `Faire avancer ce chantier à l'étape suivante du pipeline ?\n\nProchaine étape : ${
-            statusMeta[nextStatus]?.label ?? nextStatus
-          }`;
+        ? "Marquer ce chantier comme « Terminé / Livré » ?\n\nIl sera archivé en lecture seule. Vous pourrez toujours consulter les mesures et les exports."
+        : description;
     if (Platform.OS === "web") {
       const ok = typeof window !== "undefined" && window.confirm(confirmText);
       if (ok) performClosure();
       return;
     }
     Alert.alert(
-      "Faire avancer le statut ?",
+      nextStatus === "cloture"
+        ? "Clôturer définitivement ?"
+        : "Confirmer la transition ?",
       confirmText,
       [
         { text: "Annuler", style: "cancel" },
         {
-          text: nextStatus === "cloture" ? "Confirmer la clôture" : "Confirmer",
+          text:
+            nextStatus === "cloture"
+              ? "Oui, clôturer"
+              : "Oui, confirmer",
           style: "destructive",
           onPress: performClosure,
         },
