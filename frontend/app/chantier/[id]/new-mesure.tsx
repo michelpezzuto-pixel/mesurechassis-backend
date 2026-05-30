@@ -469,8 +469,10 @@ export default function NewMesureWizard() {
         err.structure_lame_air_mm = true;
     }
     if (s1.sill_already_installed == null) err.sill_already_installed = true;
-    if (s1.sill_already_installed === false && !parseNum(s1.sill_thickness_mm))
-      err.sill_thickness_mm = true;
+    // C6 FIX : si seuil "non posé", on accepte une valeur vide (= pas de seuil,
+    // épaisseur = 0). Cela débloque les châssis sans seuil (porte de garage,
+    // certains coulissants, etc.) ou les rénovations où le menuisier ne pose
+    // pas de seuil.
     setS1Err(err);
     return Object.keys(err).length === 0;
   };
@@ -927,6 +929,7 @@ export default function NewMesureWizard() {
               labelError={labelError}
               labelRef={labelRef}
               s1MasonryType={s1.masonry_type}
+              s1HasHorizontalCut={s1.has_horizontal_cut}
               s3={s3}
               setField={setS3Field}
               err={s3Err}
@@ -1372,6 +1375,7 @@ function Step3Cotes({
   labelError,
   labelRef,
   s1MasonryType,
+  s1HasHorizontalCut,
   s3,
   setField,
   err,
@@ -1389,6 +1393,7 @@ function Step3Cotes({
   labelError: boolean;
   labelRef: React.RefObject<View>;
   s1MasonryType: MasonryType | null;
+  s1HasHorizontalCut: boolean;
   s3: Step3Data;
   setField: <K extends keyof Step3Data>(k: K, v: Step3Data[K]) => void;
   err: Record<string, boolean>;
@@ -1408,7 +1413,9 @@ function Step3Cotes({
   const show1mLevel = shape === "porte_entree" || shape === "coulissant_levant";
   const showFloorReserve =
     shape === "porte_entree" || shape === "porte_garage" || shape === "coulissant_levant";
-  const showFeuillures = masonryHasFeuillures(s1MasonryType);
+  // M3 FIX — Feuillures : masquage si "coupe horizontale" est OFF dans Step 1
+  // (en plus de la maçonnerie qui doit avoir des feuillures).
+  const showFeuillures = masonryHasFeuillures(s1MasonryType) && !!s1HasHorizontalCut;
   const Sketch = shape === "trapeze" || shape === "triangle" ? RawBaySchemaTrapeze : RawBaySchemaRect;
 
   const validateDiag = (which: 1 | 2) =>
