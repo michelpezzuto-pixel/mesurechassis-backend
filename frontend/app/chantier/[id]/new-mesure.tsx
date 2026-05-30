@@ -617,7 +617,14 @@ export default function NewMesureWizard() {
       sill_already_installed: s1.sill_already_installed,
       sill_thickness_mm:
         s1.sill_already_installed === false ? parseNum(s1.sill_thickness_mm) : null,
-      has_breastwork: s1.has_breastwork,
+      // M3 FIX — Allège : seulement pour Rectangle / Trapèze / Triangle /
+      // Œil-de-bœuf. Forcée à false pour les portes et coulissants car
+      // ces formes n'ont jamais d'allège.
+      has_breastwork: (
+        shape === "porte_entree" ||
+        shape === "porte_garage" ||
+        shape === "coulissant_levant"
+      ) ? false : s1.has_breastwork,
       has_horizontal_cut: s1.has_horizontal_cut,
       // Étape 2
       shape,

@@ -49,6 +49,9 @@ export default function TeamAdmin() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<"commercial" | "technician">("commercial");
+  // A3 — Mot de passe attribué directement par l'Admin
+  const [memberPassword, setMemberPassword] = useState("");
+  const [showMemberPassword, setShowMemberPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [lastInviteLink, setLastInviteLink] = useState<string | null>(null);
 
@@ -93,33 +96,43 @@ export default function TeamAdmin() {
     message?: string;
   }>(null);
 
-  /** Effectue l'appel POST /admin/invitations. Si `confirmExtraSeat=true`,
-   *  le backend acceptera de créer un siège payant (>2 sièges). */
+  /** A3 — Création directe d'un membre par l'Admin (nom + email +
+   *  mot de passe). L'invitation par email est remplacée par cet appel
+   *  direct car les emails Hotmail/Outlook étaient peu fiables.
+   *  L'Admin transmet manuellement les identifiants au collaborateur.
+   */
   const doInvite = useCallback(
     async (confirmExtraSeat: boolean) => {
       setSubmitting(true);
       setLastInviteLink(null);
       try {
-        const res = await api.post("/admin/invitations", {
+        // Vérif locale du mot de passe
+        if (!memberPassword || memberPassword.length < 6) {
+          Alert.alert("Mot de passe trop court", "6 caractères minimum.");
+          setSubmitting(false);
+          return;
+        }
+        const res = await api.post("/team/members", {
           name: name.trim(),
           email: email.trim(),
+          password: memberPassword,
           role,
-          confirm_extra_seat: confirmExtraSeat,
         });
-        setLastInviteLink(res.data?.verification_link ?? null);
         setExtraSeatInfo(null);
         Alert.alert(
-          "✅ Invitation envoyée",
-          `${email.trim()} recevra un email pour définir son mot de passe.`,
+          "✅ Collaborateur créé",
+          `Identifiants à transmettre à ${name.trim()} :\n\n` +
+          `📧 Email : ${email.trim()}\n` +
+          `🔐 Mot de passe : ${memberPassword}\n\n` +
+          `(Communiquez ces identifiants par SMS / WhatsApp / papier — l'application n'envoie PAS d'email.)`,
         );
         setName("");
         setEmail("");
+        setMemberPassword("");
         await fetchMembers();
       } catch (e: any) {
         const status = e?.response?.status;
         const detail = e?.response?.data?.detail;
-        // 402 Payment Required → seat additionnel : on affiche la popup
-        // avec le détail tarifaire au lieu de l'Alert d'erreur.
         if (
           status === 402 &&
           typeof detail === "object" &&
@@ -296,6 +309,35 @@ export default function TeamAdmin() {
               autoCapitalize="none"
               style={styles.input}
             />
+
+            <Text style={styles.label}>Mot de passe (vous le transmettrez)</Text>
+            <View style={styles.passwordWrap}>
+              <TextInput
+                testID="invite-form-password"
+                value={memberPassword}
+                onChangeText={setMemberPassword}
+                placeholder="Min. 6 caractères"
+                placeholderTextColor={colors.placeholder}
+                secureTextEntry={!showMemberPassword}
+                autoCapitalize="none"
+                autoCorrect={false}
+                style={styles.passwordInput}
+              />
+              <TouchableOpacity
+                onPress={() => setShowMemberPassword((v) => !v)}
+                style={styles.eyeBtn}
+                activeOpacity={0.6}
+              >
+                <Ionicons
+                  name={showMemberPassword ? "eye-off-outline" : "eye-outline"}
+                  size={22}
+                  color={colors.textSecondary}
+                />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.hintText}>
+              💡 Vous transmettrez ces identifiants à votre collaborateur par SMS ou WhatsApp.
+            </Text>
 
             <Text style={styles.label}>Rôle</Text>
             <View style={styles.roleRow}>
@@ -587,6 +629,37 @@ const styles = StyleSheet.create({
     paddingVertical: Platform.OS === "ios" ? 13 : 9,
     fontSize: 15,
     minHeight: 46,
+  },
+  passwordWrap: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.surface,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.borderStrong,
+    paddingHorizontal: 12,
+    minHeight: 46,
+  },
+  passwordInput: {
+    flex: 1,
+    color: colors.textPrimary,
+    fontSize: 15,
+    paddingVertical: Platform.OS === "ios" ? 13 : 9,
+  },
+  eyeBtn: {
+    paddingHorizontal: 6,
+    paddingVertical: 6,
+    minHeight: 40,
+    minWidth: 40,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  hintText: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    marginTop: 4,
+    marginBottom: 6,
+    fontStyle: "italic",
   },
   roleRow: { flexDirection: "row", gap: 10, marginBottom: 4 },
   roleCard: {

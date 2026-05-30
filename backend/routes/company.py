@@ -54,6 +54,199 @@ async def update_company_profile(
     return _to_profile(doc, company_id)
 
 
+# --- C5 : Toggle Artisan ↔ Entreprise ----------------------------------
+@router.post("/company/switch-account-type", response_model=CompanyProfile)
+async def switch_account_type(
+    payload: dict, user=Depends(require_admin)
+):
+    """Bascule entre Artisan (24.99€) et Entreprise (54.99€).
+
+    - Artisan → Entreprise : passe le tarif et débloque la gestion d'équipe.
+    - Entreprise → Artisan : retombe à 24.99€, bloque les équipes.
+      Refuse le passage si des collaborateurs (commerciaux/techniciens)
+      existent encore — l'Admin doit d'abord les supprimer.
+    """
+    target = (payload or {}).get("account_type", "").strip().lower()
+    if target not in ("artisan", "entreprise"):
+        raise HTTPException(400, "account_type doit valoir 'artisan' ou 'entreprise'")
+
+    company_id = user.get("company_id", "default")
+    doc = await ensure_company(company_id)
+    current = (doc.get("account_type") or "entreprise").lower()
+    if current == target:
+        return _to_profile(doc, company_id)
+
+    # Entreprise → Artisan : vérifier qu'il n'y a pas de membres
+    if target == "artisan":
+        members_count = await db.users.count_documents({
+            "company_id": company_id,
+            "role": {"$in": ["commercial", "technician"]},
+        })
+        if members_count > 0:
+            raise HTTPException(
+                409,
+                f"Impossible de basculer en Artisan : {members_count} collaborateur(s) "
+                "encore actif(s). Supprimez-les d'abord depuis la page Équipe.",
+            )
+
+    new_plan = "artisan" if target == "artisan" else "entreprise"
+    await db.companies.update_one(
+        {"company_id": company_id},
+        {"$set": {
+            "account_type": target,
+            "artisan_mode": (target == "artisan"),
+            "plan": new_plan,
+        }},
+        upsert=True,
+    )
+    doc = await ensure_company(company_id)
+    return _to_profile(doc, company_id)
+
+
+# --- A3 : Créer un membre d'équipe avec mot de passe direct -----------
+@router.post("/team/members")
+async def create_team_member(payload: dict, user=Depends(require_admin)):
+    """L'Admin crée directement un membre (Commercial ou Technicien) en
+    fournissant nom + email + mot de passe. Pas d'invitation par email :
+    l'Admin communique manuellement les identifiants au collaborateur.
+
+    Réservé aux comptes Entreprise.
+    """
+    from datetime import datetime, timezone
+    import uuid
+    from deps import hash_password
+
+    company_id = user.get("company_id", "default")
+    doc = await ensure_company(company_id)
+    if (doc.get("account_type") or "entreprise").lower() == "artisan":
+        raise HTTPException(403, "Gestion d'équipe non disponible en mode Artisan. Passez en Entreprise.")
+
+    name = (payload.get("name") or "").strip()
+    email = (payload.get("email") or "").strip().lower()
+    password = payload.get("password") or ""
+    role = (payload.get("role") or "").strip().lower()
+
+    if not name:
+        raise HTTPException(400, "Nom requis")
+    if not email or "@" not in email:
+        raise HTTPException(400, "Email valide requis")
+    if not password or len(password) < 6:
+        raise HTTPException(400, "Mot de passe : 6 caractères minimum")
+    if role not in ("commercial", "technician"):
+        raise HTTPException(400, "Rôle doit être 'commercial' ou 'technician'")
+
+    existing = await db.users.find_one({"email": email})
+    if existing:
+        raise HTTPException(409, "Un compte avec cet email existe déjà")
+
+    now_iso = datetime.now(timezone.utc).isoformat()
+    user_doc = {
+        "id": str(uuid.uuid4()),
+        "name": name,
+        "email": email,
+        "role": role,
+        "company_id": company_id,
+        "hashed_password": hash_password(password),
+        "status": "active",
+        "email_verified_at": now_iso,
+        "created_by_admin": user["id"],
+        "created_at": now_iso,
+    }
+    await db.users.insert_one(user_doc)
+    return {
+        "ok": True,
+        "user": {
+            "id": user_doc["id"],
+            "name": name,
+            "email": email,
+            "role": role,
+        },
+        "message": "Collaborateur créé. Transmettez-lui ses identifiants.",
+    }
+
+
+@router.patch("/team/members/{member_id}/password")
+async def reset_member_password(member_id: str, payload: dict, user=Depends(require_admin)):
+    """L'Admin réinitialise le mot de passe d'un membre. Le membre sera
+    automatiquement déconnecté (token invalidé via mise à jour password).
+    """
+    from deps import hash_password
+    new_pw = payload.get("password") or ""
+    if len(new_pw) < 6:
+        raise HTTPException(400, "Mot de passe : 6 caractères minimum")
+    company_id = user.get("company_id", "default")
+    member = await db.users.find_one({"id": member_id, "company_id": company_id})
+    if not member:
+        raise HTTPException(404, "Membre introuvable")
+    if member.get("role") == "admin":
+        raise HTTPException(403, "Impossible de modifier le mot de passe d'un Admin")
+    await db.users.update_one(
+        {"id": member_id},
+        {"$set": {"hashed_password": hash_password(new_pw)}},
+    )
+    return {"ok": True, "message": "Mot de passe mis à jour"}
+
+
+@router.delete("/team/members/{member_id}")
+async def delete_team_member(member_id: str, user=Depends(require_admin)):
+    """L'Admin supprime un membre de l'équipe."""
+    company_id = user.get("company_id", "default")
+    member = await db.users.find_one({"id": member_id, "company_id": company_id})
+    if not member:
+        raise HTTPException(404, "Membre introuvable")
+    if member.get("role") == "admin":
+        raise HTTPException(403, "Impossible de supprimer un Admin")
+    await db.users.delete_one({"id": member_id})
+    return {"ok": True}
+
+
+# --- M1 : Support contact endpoint ------------------------------------
+def _send_support_email(*, to: str, subject: str, html: str) -> dict:
+    from email_service import send_email
+    return send_email(to=to, subject=subject, body="", html=html)
+
+
+@router.post("/support/contact")
+async def contact_support(payload: dict, user=Depends(auth_user)):
+    """Reçoit un message de support et l'envoie via Resend à info@."""
+    from datetime import datetime, timezone
+    import uuid
+
+    subject = (payload.get("subject") or "Demande de support").strip()[:200]
+    message = (payload.get("message") or "").strip()
+    if not message:
+        raise HTTPException(400, "Message vide")
+
+    ticket = {
+        "id": str(uuid.uuid4()),
+        "user_id": user["id"],
+        "user_email": user.get("email"),
+        "user_name": user.get("name"),
+        "subject": subject,
+        "message": message[:5000],
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "status": "open",
+    }
+    await db.support_tickets.insert_one(ticket)
+
+    # Email vers info@mesurechassis.com
+    try:
+        _send_support_email(
+            to="info@mesurechassis.com",
+            subject=f"[Support MC] {subject}",
+            html=(
+                f"<h3>Nouvelle demande de support</h3>"
+                f"<p><b>De :</b> {user.get('name')} &lt;{user.get('email')}&gt;</p>"
+                f"<p><b>Sujet :</b> {subject}</p>"
+                f"<hr/><pre style='white-space:pre-wrap'>{message[:5000]}</pre>"
+            ),
+        )
+    except Exception:
+        pass  # le ticket reste en DB même si l'email échoue
+
+    return {"ok": True, "message": "Votre demande a bien été envoyée. Nous vous répondrons sous 24h."}
+
+
 # --- Subscription cancellation (Master Admin) ---------------------------
 @router.post("/company/subscription/cancel", response_model=CompanyProfile)
 async def cancel_subscription(user=Depends(require_admin)):
