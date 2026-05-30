@@ -227,7 +227,7 @@ async def export_pdf(
         story.append(Spacer(1, 8))
         story.append(
             Paragraph(
-                f"<b>#{i} — {m.get('label', '')} ({block_label(m['block_type'])})</b>",
+                f"<b>#{i} — {m.get('label', '')} ({block_label(m['block_type'], m.get('options'))})</b>",
                 styles["Heading3"],
             )
         )
@@ -427,7 +427,7 @@ async def export_json(
             "id": m.get("id"),
             "label": m.get("label"),
             "block_type": bt,
-            "block_label": block_label(bt or ""),
+            "block_label": block_label(bt or "", m.get("options")),
             "created_at": m.get("created_at"),
             "alerts": m.get("alerts") or [],
             "slope_angle_deg": m.get("slope_angle_deg"),
@@ -600,7 +600,7 @@ async def export_csv(
                 chantier.get("city") or "",
                 status_label(chantier.get("status") or ""),
                 m.get("label") or "",
-                block_label(bt),
+                block_label(bt, m.get("options")),
                 "trapezoidal" if is_trap else "rectangular",
                 "oui" if is_renov else "non",
                 m.get("bay_width") or "",
@@ -765,7 +765,7 @@ async def export_xlsx(
             if key == "wall_type" and v:
                 v = WALL_TYPE_LABELS.get(v, v)
             elif key == "block_type" and v:
-                v = block_label(v)
+                v = block_label(v, m.get("options"))
             elif key == "alerts":
                 v = " ; ".join(v) if v else ""
             elif key in ("diag_1_verified", "diag_2_verified"):

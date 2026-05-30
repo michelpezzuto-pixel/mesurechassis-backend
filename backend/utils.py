@@ -18,7 +18,28 @@ def status_label(s: str) -> str:
     }.get(s, s)
 
 
-def block_label(b: str) -> str:
+def block_label(b: str, options: dict | None = None) -> str:
+    """Retourne le libellé d'affichage d'une mesure.
+
+    Priorité 1 : la forme exacte stockée dans `options.shape` (porte_garage,
+    triangle, oeil_de_boeuf…). C'est la valeur précise saisie dans le wizard.
+    Priorité 2 : le `block_type` générique stocké en DB (porte, trapeze…).
+    """
+    SHAPE_LABELS = {
+        "rect": "Rectangle / Carré",
+        "porte_entree": "Porte d'entrée",
+        "porte_garage": "Porte de garage",
+        "trapeze": "Trapèze",
+        "triangle": "Triangle",
+        "oeil_de_boeuf": "Œil-de-bœuf",
+        "coulissant_levant": "Coulissant levant",
+    }
+    # Priorité 1 : forme exacte (options.shape)
+    if options and isinstance(options, dict):
+        shape = options.get("shape")
+        if shape and shape in SHAPE_LABELS:
+            return SHAPE_LABELS[shape]
+    # Priorité 2 : block_type générique
     return {
         "standard": "Standard",
         "coulissant": "Coulissant",
