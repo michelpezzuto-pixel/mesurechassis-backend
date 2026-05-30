@@ -21,7 +21,7 @@ import * as ImagePicker from "expo-image-picker";
 import { api, buildAuthHeaders, PDF_URL, JSON_URL, XLSX_URL, CSV_URL } from "@/src/services/api";
 import { ShapeIcon, blockTypeToShape } from "@/src/components/ShapeIcon";
 import { useAuth } from "@/src/context/AuthContext";
-import { colors, statusMeta, blockMeta } from "@/src/theme";
+import { colors, statusMeta, blockMeta, shapeMeta } from "@/src/theme";
 
 type SitePhoto = { uri: string; caption: string };
 
@@ -736,6 +736,10 @@ export default function ChantierDetail() {
         }
         renderItem={({ item, index }) => {
           const block = blockMeta[item.block_type] ?? { label: item.block_type, icon: "square-outline" };
+          // Récupère la forme précise (porte_garage vs porte_entree, etc.)
+          // depuis options.shape pour afficher le bon label + icône.
+          const trueShape = blockTypeToShape(item.block_type, item.options);
+          const trueLabel = shapeMeta[trueShape]?.label ?? block.label;
           return (
             <View testID={`mesure-card-${item.id}`} style={styles.mesureCard}>
               <View style={styles.mesureRow}>
@@ -744,7 +748,7 @@ export default function ChantierDetail() {
                 ) : (
                   <View style={styles.mesureThumbPlaceholder}>
                     <ShapeIcon
-                      shape={blockTypeToShape(item.block_type)}
+                      shape={trueShape}
                       size={40}
                       color={colors.textPrimary}
                       strokeWidth={1.8}
@@ -755,7 +759,7 @@ export default function ChantierDetail() {
                   <Text style={styles.mesureLabel}>
                     #{index + 1} · {item.label}
                   </Text>
-                  <Text style={styles.mesureType}>{block.label}</Text>
+                  <Text style={styles.mesureType}>{trueLabel}</Text>
                   {item.slope_angle_deg != null && (
                     <Text style={styles.slope}>Pente : {item.slope_angle_deg}°</Text>
                   )}

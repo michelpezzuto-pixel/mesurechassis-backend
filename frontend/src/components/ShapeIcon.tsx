@@ -28,11 +28,31 @@ export type ShapeKey =
   | "coulissant_levant";
 
 /**
- * Normalise un `block_type` persisté en DB (qui peut venir d'anciennes
- * versions du wizard : "standard", "coulissant", "porte", etc.) vers
- * la clé canonique ShapeKey utilisée par les icônes line-art.
+ * Récupère la VRAIE forme d'une mesure depuis ses options ou par fallback
+ * sur block_type. Privilégie `options.shape` qui contient la valeur exacte
+ * (porte_entree, porte_garage, triangle, trapeze…), car block_type est
+ * une catégorie générique ("porte" couvre porte d'entrée + garage,
+ * "trapeze" couvre trapèze + triangle).
  */
-export function blockTypeToShape(blockType?: string | null): ShapeKey {
+export function blockTypeToShape(
+  blockType?: string | null,
+  options?: Record<string, any> | null,
+): ShapeKey {
+  // Priorité 1 : la forme exacte stockée dans options.shape
+  const optShape = options?.shape;
+  if (optShape) {
+    switch (optShape) {
+      case "rect":
+      case "porte_entree":
+      case "porte_garage":
+      case "trapeze":
+      case "triangle":
+      case "oeil_de_boeuf":
+      case "coulissant_levant":
+        return optShape;
+    }
+  }
+  // Priorité 2 : fallback sur block_type (catégorie générique)
   switch (blockType) {
     case "rect":
     case "standard":

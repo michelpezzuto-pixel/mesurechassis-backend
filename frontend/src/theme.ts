@@ -162,3 +162,16 @@ export const blockMeta: Record<string, { label: string; icon: string }> = {
   porte: { label: "Porte", icon: "exit-outline" },
   trapeze: { label: "Trapèze", icon: "triangle-outline" },
 };
+
+// Labels précis par forme (options.shape) — affichés en priorité dans la liste
+// des mesures. block_type étant générique ("porte" = porte d'entrée OU
+// porte de garage), on lit options.shape pour distinguer.
+export const shapeMeta: Record<string, { label: string }> = {
+  rect: { label: "Rectangle / Carré" },
+  porte_entree: { label: "Porte d'entrée" },
+  porte_garage: { label: "Porte de garage" },
+  trapeze: { label: "Trapèze" },
+  triangle: { label: "Triangle" },
+  oeil_de_boeuf: { label: "Œil-de-bœuf" },
+  coulissant_levant: { label: "Coulissant levant" },
+};
