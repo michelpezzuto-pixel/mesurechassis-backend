@@ -271,7 +271,7 @@ export default function TeamAdmin() {
         })}
       </ScrollView>
 
-      {/* Modal Invitation */}
+      {/* Modal Invitation — scrollable + keyboard-safe */}
       <Modal
         visible={modalOpen}
         transparent
@@ -279,113 +279,149 @@ export default function TeamAdmin() {
         onRequestClose={() => setModalOpen(false)}
       >
         <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
           style={styles.modalBackdrop}
         >
           <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>INVITER UN MEMBRE</Text>
-            <Text style={styles.modalSub}>
-              Un email avec un lien d'activation sera envoyé.
-            </Text>
-
-            <Text style={styles.label}>Nom complet</Text>
-            <TextInput
-              testID="invite-form-name"
-              value={name}
-              onChangeText={setName}
-              placeholder="ex. Sophie Martin"
-              placeholderTextColor={colors.placeholder}
-              style={styles.input}
-            />
-
-            <Text style={styles.label}>Email professionnel</Text>
-            <TextInput
-              testID="invite-form-email"
-              value={email}
-              onChangeText={setEmail}
-              placeholder="prenom.nom@entreprise.fr"
-              placeholderTextColor={colors.placeholder}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              style={styles.input}
-            />
-
-            <Text style={styles.label}>Mot de passe (vous le transmettrez)</Text>
-            <View style={styles.passwordWrap}>
-              <TextInput
-                testID="invite-form-password"
-                value={memberPassword}
-                onChangeText={setMemberPassword}
-                placeholder="Min. 6 caractères"
-                placeholderTextColor={colors.placeholder}
-                secureTextEntry={!showMemberPassword}
-                autoCapitalize="none"
-                autoCorrect={false}
-                style={styles.passwordInput}
-              />
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>INVITER UN MEMBRE</Text>
               <TouchableOpacity
-                onPress={() => setShowMemberPassword((v) => !v)}
-                style={styles.eyeBtn}
-                activeOpacity={0.6}
+                onPress={() => {
+                  setModalOpen(false);
+                  setLastInviteLink(null);
+                }}
+                hitSlop={12}
+                activeOpacity={0.7}
               >
                 <Ionicons
-                  name={showMemberPassword ? "eye-off-outline" : "eye-outline"}
-                  size={22}
+                  name="close"
+                  size={26}
                   color={colors.textSecondary}
                 />
               </TouchableOpacity>
             </View>
-            <Text style={styles.hintText}>
-              💡 Vous transmettrez ces identifiants à votre collaborateur par SMS ou WhatsApp.
+            <Text style={styles.modalSub}>
+              Le compte sera créé directement. Vous transmettrez les
+              identifiants par SMS/WhatsApp.
             </Text>
 
-            <Text style={styles.label}>Rôle</Text>
-            <View style={styles.roleRow}>
-              {(["commercial", "technician"] as const).map((r) => (
+            <ScrollView
+              style={{ maxHeight: 460 }}
+              contentContainerStyle={{ paddingBottom: 8 }}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator
+            >
+              <Text style={styles.label}>Nom complet</Text>
+              <TextInput
+                testID="invite-form-name"
+                value={name}
+                onChangeText={setName}
+                placeholder="ex. Sophie Martin"
+                placeholderTextColor={colors.placeholder}
+                returnKeyType="next"
+                style={styles.input}
+              />
+
+              <Text style={styles.label}>Email professionnel</Text>
+              <TextInput
+                testID="invite-form-email"
+                value={email}
+                onChangeText={setEmail}
+                placeholder="prenom.nom@entreprise.fr"
+                placeholderTextColor={colors.placeholder}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                returnKeyType="next"
+                style={styles.input}
+              />
+
+              <Text style={styles.label}>
+                Mot de passe (vous le transmettrez)
+              </Text>
+              <View style={styles.passwordWrap}>
+                <TextInput
+                  testID="invite-form-password"
+                  value={memberPassword}
+                  onChangeText={setMemberPassword}
+                  placeholder="Min. 6 caractères"
+                  placeholderTextColor={colors.placeholder}
+                  secureTextEntry={!showMemberPassword}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  returnKeyType="done"
+                  style={styles.passwordInput}
+                />
                 <TouchableOpacity
-                  key={r}
-                  testID={`invite-role-${r}`}
-                  onPress={() => setRole(r)}
-                  activeOpacity={0.85}
-                  style={[
-                    styles.roleCard,
-                    role === r && {
-                      backgroundColor: "rgba(255,90,0,0.1)",
-                      borderColor: colors.primary,
-                    },
-                  ]}
+                  onPress={() => setShowMemberPassword((v) => !v)}
+                  style={styles.eyeBtn}
+                  activeOpacity={0.6}
                 >
                   <Ionicons
-                    name={r === "commercial" ? "briefcase" : "construct"}
-                    size={20}
-                    color={role === r ? colors.primary : colors.textSecondary}
+                    name={
+                      showMemberPassword ? "eye-off-outline" : "eye-outline"
+                    }
+                    size={22}
+                    color={colors.textSecondary}
                   />
-                  <Text
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.hintText}>
+                💡 Vous transmettrez ces identifiants à votre collaborateur
+                par SMS ou WhatsApp.
+              </Text>
+
+              <Text style={styles.label}>Rôle</Text>
+              <View style={styles.roleRow}>
+                {(["commercial", "technician"] as const).map((r) => (
+                  <TouchableOpacity
+                    key={r}
+                    testID={`invite-role-${r}`}
+                    onPress={() => setRole(r)}
+                    activeOpacity={0.85}
                     style={[
-                      styles.roleCardLabel,
-                      role === r && { color: colors.primary },
+                      styles.roleCard,
+                      role === r && {
+                        backgroundColor: "rgba(255,90,0,0.1)",
+                        borderColor: colors.primary,
+                      },
                     ]}
                   >
-                    {ROLE_LABEL[r]}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            {lastInviteLink && (
-              <View style={styles.devLinkBox}>
-                <Text style={styles.devLinkLabel}>
-                  🔧 DÉMO — Lien d'invitation (mode dev) :
-                </Text>
-                <Text
-                  testID="last-invitation-link"
-                  selectable
-                  style={styles.devLinkValue}
-                >
-                  {lastInviteLink}
-                </Text>
+                    <Ionicons
+                      name={r === "commercial" ? "briefcase" : "construct"}
+                      size={20}
+                      color={
+                        role === r ? colors.primary : colors.textSecondary
+                      }
+                    />
+                    <Text
+                      style={[
+                        styles.roleCardLabel,
+                        role === r && { color: colors.primary },
+                      ]}
+                    >
+                      {ROLE_LABEL[r]}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
               </View>
-            )}
+
+              {lastInviteLink && (
+                <View style={styles.devLinkBox}>
+                  <Text style={styles.devLinkLabel}>
+                    🔧 DÉMO — Lien d'invitation (mode dev) :
+                  </Text>
+                  <Text
+                    testID="last-invitation-link"
+                    selectable
+                    style={styles.devLinkValue}
+                  >
+                    {lastInviteLink}
+                  </Text>
+                </View>
+              )}
+            </ScrollView>
 
             <View style={styles.modalActions}>
               <TouchableOpacity
@@ -409,8 +445,12 @@ export default function TeamAdmin() {
                   <ActivityIndicator color="#000" />
                 ) : (
                   <>
-                    <Ionicons name="mail" size={16} color="#000" />
-                    <Text style={styles.btnPrimaryText}>ENVOYER</Text>
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={16}
+                      color="#000"
+                    />
+                    <Text style={styles.btnPrimaryText}>CRÉER LE COMPTE</Text>
                   </>
                 )}
               </TouchableOpacity>
@@ -609,6 +649,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     letterSpacing: 1,
     marginBottom: 4,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   modalSub: { color: colors.textSecondary, fontSize: 12, marginBottom: 14 },
   label: {

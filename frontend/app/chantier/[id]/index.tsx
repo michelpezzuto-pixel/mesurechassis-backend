@@ -102,13 +102,14 @@ export default function ChantierDetail() {
   const isSoloArtisan = usersLoaded && teamSize === 1;
   // 📐 Qui peut PRENDRE / MODIFIER des mesures ?
   //  - Commercial & Technicien : toujours (sur chantiers non-fab)
-  //  - Admin : seulement en mode Artisan (compte solo) ou Mode Artisan activé.
-  //    En mode Entreprise classique, l'Admin n'effectue PAS de relevé
-  //    technique : il créé le chantier et le transmet au Commercial.
+  //  - Admin : UNIQUEMENT en compte Artisan (compte solo par design)
+  //    ou en Mode Artisan activé. En compte Entreprise — même si
+  //    l'Admin est seul (équipe pas encore invitée) — il NE PEUT
+  //    PAS prendre de mesures. Son rôle : créer le chantier et le
+  //    transmettre au Commercial / Technicien.
   const isArtisanAccount =
     (company?.account_type || "").toLowerCase() === "artisan";
-  const adminCanMeasure =
-    roleIsAdmin && (isArtisanAccount || artisanMode || isSoloArtisan);
+  const adminCanMeasure = roleIsAdmin && (isArtisanAccount || artisanMode);
   const canMeasure = roleIsCommercial || roleIsTechnician || adminCanMeasure;
   // 🔒 Qui peut valider le passage en fabrication ?
   // - Mode Solo (teamSize=1) : admin ou technicien
