@@ -1664,7 +1664,7 @@ function Step3Cotes({
       )}
 
       {/* 🆕 Feuillures conditionnelles (Brique/Pierre/Bloc béton) */}
-      {showFeuillures && (
+      {showFeuillures && shape !== "oeil_de_boeuf" && (
         <>
           <Text style={[styles.sectionLabel, { marginTop: 22 }]}>FEUILLURES (optionnel)</Text>
           <Text style={styles.helperText}>
@@ -1676,6 +1676,31 @@ function Step3Cotes({
             onChange={(v) => setField("feuillure_right_mm", v.replace(",", "."))} />
           <CotField testID="input-feuillure-top" label="FEUILLURE HAUTE (mm)" value={s3.feuillure_top_mm}
             onChange={(v) => setField("feuillure_top_mm", v.replace(",", "."))} />
+        </>
+      )}
+
+      {/* 🆕 Œil-de-bœuf : feuillure circulaire unique (identique tout autour) */}
+      {showFeuillures && shape === "oeil_de_boeuf" && (
+        <>
+          <Text style={[styles.sectionLabel, { marginTop: 22 }]}>FEUILLURE (optionnel)</Text>
+          <Text style={styles.helperText}>
+            La feuillure d'un œil-de-bœuf est circulaire et identique sur
+            toute la périphérie. Une seule mesure suffit.
+          </Text>
+          <CotField
+            testID="input-feuillure-circular"
+            label="FEUILLURE CIRCULAIRE (mm)"
+            value={s3.feuillure_left_mm}
+            onChange={(v) => {
+              // On stocke la même valeur dans les 3 champs pour garder
+              // une compatibilité totale avec les exports historiques
+              // (PDF, XLSX, etc.) qui parcourent les 3 champs distincts.
+              const clean = v.replace(",", ".");
+              setField("feuillure_left_mm", clean);
+              setField("feuillure_right_mm", clean);
+              setField("feuillure_top_mm", clean);
+            }}
+          />
         </>
       )}
 
