@@ -37,7 +37,9 @@ db = client[DB_NAME]
 VALID_ROLES = {"admin", "commercial", "technician"}
 VALID_STATUSES = {
     "devis_a_faire",
+    "a_mesurer",
     "technique_a_valider",
+    "a_verifier",
     "en_commande",
     "en_fabrication",
     "cloture",
