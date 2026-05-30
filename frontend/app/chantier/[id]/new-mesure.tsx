@@ -181,6 +181,9 @@ type Step3Data = {
   feuillure_left_mm: string;
   feuillure_right_mm: string;
   feuillure_top_mm: string;
+  // 🆕 Allège — par-mesure (uniquement formes : rect, trapeze, triangle, oeil)
+  has_breastwork: boolean;
+  breastwork_height_mm: string;
 };
 
 const initStep3 = (): Step3Data => ({
@@ -209,6 +212,8 @@ const initStep3 = (): Step3Data => ({
   feuillure_left_mm: "",
   feuillure_right_mm: "",
   feuillure_top_mm: "",
+  has_breastwork: false,
+  breastwork_height_mm: "",
 });
 
 const parseNum = (s: string) => {
@@ -391,6 +396,8 @@ export default function NewMesureWizard() {
               feuillure_left_mm: toStr(opts.feuillure_left_mm),
               feuillure_right_mm: toStr(opts.feuillure_right_mm),
               feuillure_top_mm: toStr(opts.feuillure_top_mm),
+              has_breastwork: !!opts.has_breastwork,
+              breastwork_height_mm: toStr(opts.breastwork_height_mm),
             }));
             // En édition : on saute directement à l'étape 3 (cotes) — la
             // forme est déjà connue et la wall_config est globale.
@@ -554,6 +561,18 @@ export default function NewMesureWizard() {
     if (shape === "porte_garage" && !parseNum(s3.floor_reserve)) {
       err.floor_reserve = true;
     }
+    // Allège : si cochée, la hauteur est obligatoire (uniquement pour
+    // les formes qui peuvent en avoir).
+    if (
+      s3.has_breastwork &&
+      (shape === "rect" ||
+        shape === "trapeze" ||
+        shape === "triangle" ||
+        shape === "oeil_de_boeuf") &&
+      !parseNum(s3.breastwork_height_mm)
+    ) {
+      err.breastwork_height_mm = true;
+    }
     setS3Err(err);
     return ok && Object.keys(err).length === 0;
   };
@@ -617,14 +636,22 @@ export default function NewMesureWizard() {
       sill_already_installed: s1.sill_already_installed,
       sill_thickness_mm:
         s1.sill_already_installed === false ? parseNum(s1.sill_thickness_mm) : null,
-      // M3 FIX — Allège : seulement pour Rectangle / Trapèze / Triangle /
-      // Œil-de-bœuf. Forcée à false pour les portes et coulissants car
-      // ces formes n'ont jamais d'allège.
+      // Allège — désormais par-mesure (Étape 3). Uniquement pour
+      // Rectangle / Trapèze / Triangle / Œil-de-bœuf. Forcée à false
+      // pour les portes et coulissants (jamais d'allège).
       has_breastwork: (
         shape === "porte_entree" ||
         shape === "porte_garage" ||
         shape === "coulissant_levant"
-      ) ? false : s1.has_breastwork,
+      ) ? false : s3.has_breastwork,
+      breastwork_height_mm:
+        s3.has_breastwork &&
+        (shape === "rect" ||
+          shape === "trapeze" ||
+          shape === "triangle" ||
+          shape === "oeil_de_boeuf")
+          ? parseNum(s3.breastwork_height_mm)
+          : null,
       has_horizontal_cut: s1.has_horizontal_cut,
       // Étape 2
       shape,
@@ -1269,19 +1296,16 @@ function Step1Config({
 
       <Text style={[styles.sectionLabel, { marginTop: 22 }]}>OPTIONS GLOBALES</Text>
       <CheckboxRow
-        testID="opt-breastwork"
-        label="Allège"
-        sub="Maçonnerie sous la baie (facultatif)"
-        value={s1.has_breastwork}
-        onChange={(v) => setField("has_breastwork", v)}
-      />
-      <CheckboxRow
         testID="opt-horizontal-cut"
         label="Coupe horizontale (Retour de butée)"
         sub="Présence d'un retour de butée horizontal"
         value={s1.has_horizontal_cut}
         onChange={(v) => setField("has_horizontal_cut", v)}
       />
+      <Text style={styles.helpHint}>
+        💡 L'option « Allège » est désormais saisie par ouverture
+        (étape « Cotes »), car elle peut varier d'une baie à l'autre.
+      </Text>
     </View>
   );
 }
@@ -1635,6 +1659,34 @@ function Step3Cotes({
             onChange={(v) => setField("feuillure_right_mm", v.replace(",", "."))} />
           <CotField testID="input-feuillure-top" label="FEUILLURE HAUTE (mm)" value={s3.feuillure_top_mm}
             onChange={(v) => setField("feuillure_top_mm", v.replace(",", "."))} />
+        </>
+      )}
+
+      {/* 🆕 Allège — par ouverture (rect / trapèze / triangle / œil-de-bœuf) */}
+      {(shape === "rect" ||
+        shape === "trapeze" ||
+        shape === "triangle" ||
+        shape === "oeil_de_boeuf") && (
+        <>
+          <Text style={[styles.sectionLabel, { marginTop: 22 }]}>ALLÈGE</Text>
+          <CheckboxRow
+            testID="opt-breastwork"
+            label="Cette ouverture a une allège"
+            sub="Maçonnerie sous la baie (varie selon les ouvertures)"
+            value={s3.has_breastwork}
+            onChange={(v) => setField("has_breastwork", v)}
+          />
+          {s3.has_breastwork && (
+            <CotField
+              testID="input-breastwork-height"
+              label="HAUTEUR DE L'ALLÈGE (mm) *"
+              value={s3.breastwork_height_mm}
+              onChange={(v) =>
+                setField("breastwork_height_mm", v.replace(",", "."))
+              }
+              error={!!err.breastwork_height_mm}
+            />
+          )}
         </>
       )}
 

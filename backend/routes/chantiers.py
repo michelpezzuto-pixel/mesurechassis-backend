@@ -188,6 +188,38 @@ async def update_chantier(
     update = {k: v for k, v in payload.model_dump().items() if v is not None}
     if "status" in update and update["status"] not in VALID_STATUSES:
         raise HTTPException(400, "Invalid status")
+    # --- RBAC par transition de statut --------------------------------------
+    # Workflow strict (sauf mode Artisan où l'Admin a tous les droits) :
+    #   devis_a_faire        → a_mesurer            : Admin/Commercial
+    #   a_mesurer            → technique_a_valider  : Commercial/Admin
+    #   technique_a_valider  → en_fabrication       : Technicien
+    #   en_fabrication       → cloture              : Technicien
+    if "status" in update:
+        old_status = existing.get("status")
+        new_status = update["status"]
+        role = user.get("role")
+        company_doc = await db.companies.find_one({"company_id": company}) or {}
+        is_artisan_mode = bool(
+            company_doc.get("artisan_mode")
+            or company_doc.get("account_type") == "artisan"
+        )
+        if not is_artisan_mode and old_status != new_status:
+            allowed_transitions: dict[tuple[str, str], set[str]] = {
+                ("devis_a_faire", "a_mesurer"): {"admin", "commercial"},
+                ("a_mesurer", "technique_a_valider"): {"commercial", "admin"},
+                ("technique_a_valider", "en_fabrication"): {"technician"},
+                ("a_verifier", "en_fabrication"): {"technician"},
+                ("en_fabrication", "cloture"): {"technician"},
+                ("en_commande", "cloture"): {"technician"},
+            }
+            key = (old_status, new_status)
+            if key in allowed_transitions and role not in allowed_transitions[key]:
+                raise HTTPException(
+                    403,
+                    f"Cette transition ({old_status} → {new_status}) est "
+                    f"réservée aux rôles : "
+                    f"{', '.join(sorted(allowed_transitions[key]))}.",
+                )
     if update:
         await db.chantiers.update_one(
             {"id": chantier_id, "company_id": company}, {"$set": update}
