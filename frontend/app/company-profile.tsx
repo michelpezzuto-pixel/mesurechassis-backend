@@ -4,7 +4,6 @@ import {
   Alert,
   Image,
   KeyboardAvoidingView,
-  Linking,
   Modal,
   Platform,
   ScrollView,
@@ -44,31 +43,6 @@ type Profile = {
 
 const FREE_LIMIT = 3;
 const SUPPORT_EMAIL = "info@mesurechassis.com";
-
-async function openSupportMail() {
-  const subject = encodeURIComponent("MesureChâssis — Retour beta / support");
-  const body = encodeURIComponent(
-    "Bonjour l'équipe MesureChâssis,\n\nVoici mon retour / suggestion / question :\n\n"
-  );
-  const url = `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`;
-  try {
-    if (Platform.OS === "web" && typeof window !== "undefined") {
-      window.location.href = url;
-      return;
-    }
-    const supported = await Linking.canOpenURL(url);
-    if (supported) {
-      await Linking.openURL(url);
-    } else {
-      Alert.alert(
-        "Aucune app Mail détectée",
-        `Veuillez écrire à ${SUPPORT_EMAIL} depuis votre client mail habituel.`
-      );
-    }
-  } catch {
-    /* noop */
-  }
-}
 
 function formatDate(iso?: string | null): string {
   if (!iso) return "—";
@@ -113,6 +87,77 @@ export default function CompanyProfile() {
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [deleteOptin, setDeleteOptin] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  // C5 — Bascule Artisan ↔ Entreprise
+  const [switchOpen, setSwitchOpen] = useState(false);
+  const [switching, setSwitching] = useState(false);
+
+  // M1 — Modale de contact support (remplace mailto)
+  const [supportOpen, setSupportOpen] = useState(false);
+  const [supportSubject, setSupportSubject] = useState("");
+  const [supportMessage, setSupportMessage] = useState("");
+  const [supportSending, setSupportSending] = useState(false);
+
+  /** Envoie une demande de support au backend (Resend → info@). */
+  const sendSupport = useCallback(async () => {
+    const msg = supportMessage.trim();
+    if (msg.length < 5) {
+      Alert.alert("Message trop court", "Détaillez un peu plus votre demande.");
+      return;
+    }
+    setSupportSending(true);
+    try {
+      await api.post("/support/contact", {
+        subject: supportSubject.trim() || "Demande de support",
+        message: msg,
+      });
+      setSupportOpen(false);
+      setSupportSubject("");
+      setSupportMessage("");
+      Alert.alert(
+        "✅ Demande envoyée",
+        "Merci ! Nous vous répondrons sous 24h à votre adresse email."
+      );
+    } catch (e: any) {
+      Alert.alert(
+        "Envoi impossible",
+        e?.response?.data?.detail || "Réessayez plus tard."
+      );
+    } finally {
+      setSupportSending(false);
+    }
+  }, [supportSubject, supportMessage]);
+
+  /** C5 — Bascule Artisan ↔ Entreprise via /api/company/switch-account-type. */
+  const doSwitchAccountType = useCallback(async () => {
+    const current = (profile?.account_type || "entreprise").toLowerCase();
+    const target = current === "artisan" ? "entreprise" : "artisan";
+    setSwitching(true);
+    try {
+      const res = await api.post<Profile>("/company/switch-account-type", {
+        account_type: target,
+      });
+      setProfile(res.data);
+      setSwitchOpen(false);
+      await refreshCompany();
+      Alert.alert(
+        "✅ Formule modifiée",
+        target === "artisan"
+          ? "Vous êtes désormais en formule Artisan (24,99 €/mois)."
+          : "Vous êtes désormais en formule Entreprise (54,99 €/mois). La gestion d'équipe est débloquée."
+      );
+    } catch (e: any) {
+      const detail = e?.response?.data?.detail;
+      Alert.alert(
+        "Bascule impossible",
+        typeof detail === "string"
+          ? detail
+          : "Une erreur est survenue. Réessayez."
+      );
+    } finally {
+      setSwitching(false);
+    }
+  }, [profile?.account_type, refreshCompany]);
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -419,7 +464,7 @@ export default function CompanyProfile() {
                 {isAdmin && (
                   <TouchableOpacity
                     testID="contact-support-button"
-                    onPress={openSupportMail}
+                    onPress={() => setSupportOpen(true)}
                     activeOpacity={0.85}
                     style={[styles.btn, styles.btnPrimary, { marginTop: 14 }]}
                   >
@@ -641,15 +686,14 @@ export default function CompanyProfile() {
             )}
           </View>
 
-          {/* === TYPE DE COMPTE (lecture seule — défini à l'inscription) === */}
+          {/* === TYPE DE COMPTE (C5 — Bascule Artisan/Entreprise) === */}
           <View style={styles.card}>
             <Text style={styles.section}>TYPE DE COMPTE</Text>
             <Text style={styles.help}>
-              Le type de compte est défini lors de l'inscription et ne peut
-              pas être modifié ici. Pour changer de formule, contactez le
-              support à{" "}
-              <Text style={styles.bold}>info@mesurechassis.com</Text>.
+              Choisissez la formule adaptée à votre activité. Vous pouvez
+              changer à tout moment.
             </Text>
+
             <View style={styles.accountTypeBox}>
               <View
                 style={[
@@ -687,6 +731,31 @@ export default function CompanyProfile() {
                 </Text>
               </View>
             </View>
+
+            {isAdmin && (
+              <TouchableOpacity
+                testID="switch-account-type-button"
+                onPress={() => setSwitchOpen(true)}
+                activeOpacity={0.85}
+                style={[styles.btn, styles.btnGhost, { marginTop: 14 }]}
+              >
+                <Ionicons
+                  name="swap-horizontal"
+                  size={18}
+                  color={colors.textPrimary}
+                />
+                <Text style={styles.btnGhostText}>
+                  {profile?.account_type === "artisan"
+                    ? "PASSER EN COMPTE ENTREPRISE (54,99 €/mois)"
+                    : "PASSER EN COMPTE ARTISAN (24,99 €/mois)"}
+                </Text>
+              </TouchableOpacity>
+            )}
+            {!isAdmin && (
+              <Text style={styles.warnNote}>
+                ⓘ Seul l'administrateur peut modifier la formule.
+              </Text>
+            )}
           </View>
 
           {isAdmin && (
@@ -888,6 +957,183 @@ export default function CompanyProfile() {
               </View>
             </View>
           </View>
+        </Modal>
+
+        {/* === C5 — Modal Bascule Artisan ↔ Entreprise === */}
+        <Modal
+          visible={switchOpen}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setSwitchOpen(false)}
+        >
+          <View style={styles.modalBackdrop}>
+            <View style={styles.modalCard}>
+              <View style={styles.modalIconWrap}>
+                <Ionicons
+                  name="swap-horizontal"
+                  size={36}
+                  color={colors.primary}
+                />
+              </View>
+              <Text style={styles.modalTitle}>
+                {profile?.account_type === "artisan"
+                  ? "PASSER EN COMPTE ENTREPRISE"
+                  : "PASSER EN COMPTE ARTISAN"}
+              </Text>
+
+              {profile?.account_type === "artisan" ? (
+                <Text style={styles.modalBody}>
+                  Vous allez passer en formule{" "}
+                  <Text style={styles.bold}>Entreprise — 54,99 €/mois</Text>.
+                  {"\n\n"}
+                  ✅ Vous débloquez la gestion d'équipe (Commercial + Technicien
+                  inclus, +4,99 €/utilisateur supplémentaire).
+                  {"\n\n"}
+                  ✅ Vous conservez tous vos chantiers et vos données.
+                </Text>
+              ) : (
+                <Text style={styles.modalBody}>
+                  Vous allez passer en formule{" "}
+                  <Text style={styles.bold}>Artisan — 24,99 €/mois</Text>.
+                  {"\n\n"}
+                  ✅ Vous{" "}
+                  <Text style={styles.bold}>conservez tous vos chantiers</Text>{" "}
+                  ainsi que les noms des personnes ayant pris les mesures.
+                  {"\n\n"}
+                  ⚠ Vous{" "}
+                  <Text style={styles.bold}>
+                    perdez toutes les fonctionnalités dédiées aux équipes
+                  </Text>{" "}
+                  (gestion des collaborateurs, transmission commerciale,
+                  validation technicien…).
+                  {"\n\n"}
+                  ✅ Vous obtenez{" "}
+                  <Text style={styles.bold}>
+                    toutes les fonctionnalités de l'Artisan
+                  </Text>{" "}
+                  (relevé, exports techniques, PDF, etc.).
+                  {"\n\n"}
+                  ℹ Si des collaborateurs sont actifs dans votre équipe,
+                  supprimez-les d'abord depuis la page Équipe.
+                </Text>
+              )}
+
+              <View style={styles.modalActions}>
+                <TouchableOpacity
+                  testID="cancel-switch-account"
+                  onPress={() => setSwitchOpen(false)}
+                  disabled={switching}
+                  activeOpacity={0.85}
+                  style={[styles.btn, styles.btnGhost, { flex: 1 }]}
+                >
+                  <Text style={styles.btnGhostText}>ANNULER</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  testID="confirm-switch-account"
+                  onPress={doSwitchAccountType}
+                  disabled={switching}
+                  activeOpacity={0.85}
+                  style={[styles.btn, styles.btnPrimary, { flex: 1.3 }]}
+                >
+                  {switching ? (
+                    <ActivityIndicator color="#000" />
+                  ) : (
+                    <Text style={styles.btnPrimaryText}>CONFIRMER</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        {/* === M1 — Modal Contact Support === */}
+        <Modal
+          visible={supportOpen}
+          transparent
+          animationType="slide"
+          onRequestClose={() => setSupportOpen(false)}
+        >
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            style={styles.modalBackdrop}
+          >
+            <View style={styles.modalCard}>
+              <View style={styles.modalIconWrap}>
+                <Ionicons name="mail" size={32} color={colors.primary} />
+              </View>
+              <Text style={styles.modalTitle}>CONTACTER LE SUPPORT</Text>
+              <Text style={styles.modalBody}>
+                Décrivez votre demande, nous vous répondrons à votre adresse
+                email sous 24h.
+              </Text>
+
+              <Text style={[styles.labelSmall, { textAlign: "left" }]}>
+                Sujet (facultatif)
+              </Text>
+              <TextInput
+                testID="support-subject-input"
+                value={supportSubject}
+                onChangeText={setSupportSubject}
+                placeholder="Ex : Question facturation, bug constaté…"
+                placeholderTextColor={colors.placeholder}
+                maxLength={200}
+                style={styles.input}
+              />
+
+              <Text style={[styles.labelSmall, { textAlign: "left" }]}>
+                Votre message
+              </Text>
+              <TextInput
+                testID="support-message-input"
+                value={supportMessage}
+                onChangeText={setSupportMessage}
+                placeholder="Détaillez ici votre demande, votre retour ou votre suggestion…"
+                placeholderTextColor={colors.placeholder}
+                multiline
+                numberOfLines={6}
+                maxLength={5000}
+                style={[
+                  styles.input,
+                  {
+                    minHeight: 120,
+                    textAlignVertical: "top",
+                    paddingTop: 12,
+                  },
+                ]}
+              />
+              <Text style={styles.optinHint}>
+                {supportMessage.length}/5000 caractères
+              </Text>
+
+              <View style={styles.modalActions}>
+                <TouchableOpacity
+                  testID="cancel-support"
+                  onPress={() => setSupportOpen(false)}
+                  disabled={supportSending}
+                  activeOpacity={0.85}
+                  style={[styles.btn, styles.btnGhost, { flex: 1 }]}
+                >
+                  <Text style={styles.btnGhostText}>ANNULER</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  testID="send-support"
+                  onPress={sendSupport}
+                  disabled={supportSending}
+                  activeOpacity={0.85}
+                  style={[styles.btn, styles.btnPrimary, { flex: 1.3 }]}
+                >
+                  {supportSending ? (
+                    <ActivityIndicator color="#000" />
+                  ) : (
+                    <>
+                      <Ionicons name="send" size={16} color="#000" />
+                      <Text style={styles.btnPrimaryText}>ENVOYER</Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+              </View>
+            </View>
+          </KeyboardAvoidingView>
         </Modal>
       </KeyboardAvoidingView>
     </SafeAreaView>

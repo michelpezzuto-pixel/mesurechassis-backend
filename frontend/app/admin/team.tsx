@@ -469,7 +469,7 @@ export default function TeamAdmin() {
               <TouchableOpacity
                 testID="extra-seat-cancel"
                 onPress={() => setExtraSeatInfo(null)}
-                style={[stylestyles.extraBtn, s.extraBtnGhost]}
+                style={[styles.extraBtn, styles.extraBtnGhost]}
                 activeOpacity={0.85}
               >
                 <Text style={styles.extraBtnGhostText}>ANNULER</Text>
@@ -480,7 +480,7 @@ export default function TeamAdmin() {
                 disabled={submitting}
                 style={[
                   styles.extraBtn,
-                  s.extraBtnPrimary,
+                  styles.extraBtnPrimary,
                   submitting && { opacity: 0.6 },
                 ]}
                 activeOpacity={0.85}

@@ -102,10 +102,14 @@ export default function ChantierDetail() {
   const isSoloArtisan = usersLoaded && teamSize === 1;
   // 📐 Qui peut PRENDRE / MODIFIER des mesures ?
   //  - Commercial & Technicien : toujours (sur chantiers non-fab)
-  //  - Admin : TOUJOURS — il gère et configure, doit pouvoir mesurer pour
-  //    démo, formation, ajustement. Le RBAC reste strict sur la VALIDATION
-  //    de la fabrication (seul technicien en mode équipe).
-  const canMeasure = roleIsCommercial || roleIsTechnician || roleIsAdmin;
+  //  - Admin : seulement en mode Artisan (compte solo) ou Mode Artisan activé.
+  //    En mode Entreprise classique, l'Admin n'effectue PAS de relevé
+  //    technique : il créé le chantier et le transmet au Commercial.
+  const isArtisanAccount =
+    (company?.account_type || "").toLowerCase() === "artisan";
+  const adminCanMeasure =
+    roleIsAdmin && (isArtisanAccount || artisanMode || isSoloArtisan);
+  const canMeasure = roleIsCommercial || roleIsTechnician || adminCanMeasure;
   // 🔒 Qui peut valider le passage en fabrication ?
   // - Mode Solo (teamSize=1) : admin ou technicien
   // - Mode Équipe : SEUL le technicien (jamais commercial, jamais admin)
