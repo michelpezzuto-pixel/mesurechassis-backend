@@ -106,12 +106,30 @@ export const NEXT_STATUS: Record<string, string> = {
 
 // Libellé du bouton "clôture" selon le STATUT actuel (plus précis que par stage)
 export const CLOSURE_BUTTON_LABEL_BY_STATUS: Record<string, string> = {
-  devis_a_faire: "🚩 Transmettre au commercial",
+  devis_a_faire: "🚩 Transmettre au commercial pour mesurage",
   a_mesurer: "🚩 Clôturer la prise de cotes",
   technique_a_valider: "🚩 Valider et envoyer en fabrication",
   a_verifier: "🚩 Valider et envoyer en fabrication",
   en_commande: "🚩 Marquer comme terminé / livré",
   en_fabrication: "🚩 Marquer comme terminé / livré",
+};
+
+// Description sous le bouton — explique CONCRÈTEMENT ce qui se passe
+// après le clic. Permet à l'utilisateur de bien comprendre la transition
+// (qui reçoit le chantier ensuite et quelle est l'étape suivante).
+export const CLOSURE_DESCRIPTION_BY_STATUS: Record<string, string> = {
+  devis_a_faire:
+    "Les coordonnées du client sont prêtes. Le chantier passera en « À mesurer » et sera transmis au commercial pour le relevé.",
+  a_mesurer:
+    "Toutes les ouvertures ont été mesurées. Le chantier passera en « À vérifier par le technicien » pour validation avant fabrication.",
+  technique_a_valider:
+    "Les mesures sont validées. Le chantier passera en « En fabrication ».",
+  a_verifier:
+    "Les mesures sont validées. Le chantier passera en « En fabrication ».",
+  en_commande:
+    "Le chantier est terminé/livré au client. Il sera archivé.",
+  en_fabrication:
+    "Le chantier est terminé/livré au client. Il sera archivé.",
 };
 
 // Compat ancienne API (par stage)

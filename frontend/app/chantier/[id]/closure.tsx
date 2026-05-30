@@ -15,7 +15,7 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { api, buildAuthHeaders, PDF_URL } from "@/src/services/api";
-import { colors, blockMeta, statusMeta, NEXT_STATUS, CLOSURE_BUTTON_LABEL_BY_STATUS, CLOSURE_BUTTON_LABEL } from "@/src/theme";
+import { colors, blockMeta, statusMeta, NEXT_STATUS, CLOSURE_BUTTON_LABEL_BY_STATUS, CLOSURE_BUTTON_LABEL, CLOSURE_DESCRIPTION_BY_STATUS } from "@/src/theme";
 
 type Chantier = {
   id: string;
@@ -285,15 +285,29 @@ export default function Closure() {
           {/* SIGNATURE BLOCK REMOVED — application gère uniquement des mesures brutes. */}
 
           {nextStatus && nextLabel && (
-            <TouchableOpacity
-              testID="confirm-closure-button"
-              onPress={cloturer}
-              style={[styles.btn, styles.btnDanger]}
-              activeOpacity={0.85}
-            >
-              <Ionicons name="flag" size={20} color="#fff" />
-              <Text style={styles.btnDangerText}>{nextLabel}</Text>
-            </TouchableOpacity>
+            <>
+              {chantier && CLOSURE_DESCRIPTION_BY_STATUS[chantier.status] && (
+                <View style={styles.transitionInfoBox}>
+                  <Ionicons
+                    name="information-circle"
+                    size={20}
+                    color={colors.primary}
+                  />
+                  <Text style={styles.transitionInfoText}>
+                    {CLOSURE_DESCRIPTION_BY_STATUS[chantier.status]}
+                  </Text>
+                </View>
+              )}
+              <TouchableOpacity
+                testID="confirm-closure-button"
+                onPress={cloturer}
+                style={[styles.btn, styles.btnDanger]}
+                activeOpacity={0.85}
+              >
+                <Ionicons name="flag" size={20} color="#fff" />
+                <Text style={styles.btnDangerText}>{nextLabel}</Text>
+              </TouchableOpacity>
+            </>
           )}
         </View>
       </ScrollView>
@@ -437,6 +451,23 @@ const styles = StyleSheet.create({
   btnSecondaryText: { color: colors.textPrimary, fontWeight: "800", letterSpacing: 1 },
   btnDanger: { backgroundColor: "#7a1d1d" },
   btnDangerText: { color: "#fff", fontWeight: "900", letterSpacing: 1 },
+  transitionInfoBox: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+    padding: 14,
+    marginBottom: 12,
+    backgroundColor: "rgba(255, 107, 26, 0.08)",
+    borderLeftWidth: 3,
+    borderLeftColor: colors.primary,
+    borderRadius: 8,
+  },
+  transitionInfoText: {
+    flex: 1,
+    color: colors.textPrimary,
+    fontSize: 13,
+    lineHeight: 19,
+  },
   sigCard: {
     marginTop: 14,
     padding: 16,
