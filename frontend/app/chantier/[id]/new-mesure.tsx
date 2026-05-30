@@ -540,11 +540,14 @@ export default function NewMesureWizard() {
         if (s3.diag_1_state === "auto") err.diag_1 = true;
         if (s3.diag_2_state === "auto") err.diag_2 = true;
       }
-      // Portes & coulissant levant : réserve sol obligatoire (sauf si trait 1m calcule)
+      // Portes & coulissant levant : réserve sol obligatoire (sauf si trait 1m calcule).
+      // ⚠️ On utilise `parseNum(...) === null` au lieu de `!parseNum(...)`
+      // car `!0` vaut `true` et empêchait la valeur ZÉRO (= rénovation où
+      // le sol fini est confondu avec la baie). Désormais 0 est accepté.
       if (
         (shape === "porte_entree" || shape === "coulissant_levant") &&
         !s3.has_1m_level_mark &&
-        !parseNum(s3.floor_reserve)
+        parseNum(s3.floor_reserve) === null
       ) {
         err.floor_reserve = true;
       }
@@ -552,13 +555,13 @@ export default function NewMesureWizard() {
       if (
         (shape === "porte_entree" || shape === "coulissant_levant") &&
         s3.has_1m_level_mark &&
-        !parseNum(s3.trait_1m_brut_mm)
+        parseNum(s3.trait_1m_brut_mm) === null
       ) {
         err.trait_1m_brut_mm = true;
       }
     }
-    // Porte garage : réserve sol obligatoire
-    if (shape === "porte_garage" && !parseNum(s3.floor_reserve)) {
+    // Porte garage : réserve sol obligatoire (mais 0 reste valide).
+    if (shape === "porte_garage" && parseNum(s3.floor_reserve) === null) {
       err.floor_reserve = true;
     }
     // Allège : si cochée, la hauteur est obligatoire (uniquement pour

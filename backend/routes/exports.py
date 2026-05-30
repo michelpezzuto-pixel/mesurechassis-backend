@@ -232,6 +232,7 @@ async def export_pdf(
             )
         )
         rows = [["Mesure", "Valeur (mm)"]]
+        opts = m.get("options") or {}
         fields = [
             ("Hauteur baie", m.get("bay_height")),
             ("Largeur baie", m.get("bay_width")),
@@ -243,6 +244,24 @@ async def export_pdf(
             ("Finition extérieure", m.get("finish_outer")),
             ("Finition intérieure", m.get("finish_inner")),
             ("Type paroi", m.get("wall_type")),
+            # === Champs options (Étape 3 — wizard V2) ===
+            ("Allège — présence", "OUI" if opts.get("has_breastwork") else None),
+            ("Allège — hauteur", opts.get("breastwork_height_mm")),
+            ("Feuillure gauche", opts.get("feuillure_left_mm")),
+            ("Feuillure droite", opts.get("feuillure_right_mm")),
+            ("Feuillure haute", opts.get("feuillure_top_mm")),
+            ("Seuil — déjà posé", "OUI" if opts.get("sill_already_installed") is True else ("NON" if opts.get("sill_already_installed") is False else None)),
+            ("Seuil — épaisseur future", opts.get("sill_thickness_mm")),
+            ("Coupe horizontale", "OUI" if opts.get("has_horizontal_cut") else None),
+            ("Trait 1m — actif", "OUI" if opts.get("has_1m_level_mark") else None),
+            ("Trait 1m — mesure brute", opts.get("trait_1m_brut_mm")),
+            # Spécifiques formes
+            ("Triangle — base", opts.get("triangle_base_mm")),
+            ("Triangle — hauteur", opts.get("triangle_height_mm")),
+            ("Œil-de-bœuf — diamètre", opts.get("oeil_diameter_mm")),
+            ("Porte garage — linteau", opts.get("garage_lintel_mm")),
+            ("Porte garage — écoinçon gauche", opts.get("garage_ecoincon_left_mm")),
+            ("Porte garage — écoinçon droit", opts.get("garage_ecoincon_right_mm")),
             # Legacy
             ("Largeur haut", m.get("width_top")),
             ("Largeur milieu", m.get("width_middle")),
