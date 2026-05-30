@@ -1144,17 +1144,45 @@ export default function ChantierDetail() {
       />
 
       <View style={styles.footer}>
-        {chantier.status !== "cloture" && canManage && (
-          <TouchableOpacity
-            testID="close-project-button"
-            onPress={() => router.push(`/chantier/${id}/closure`)}
-            style={[styles.btn, styles.btnSecondary]}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="flag-outline" size={20} color={colors.textPrimary} />
-            <Text style={styles.btnSecondaryText}>CLÔTURER</Text>
-          </TouchableOpacity>
-        )}
+        {chantier.status !== "cloture" && (() => {
+          // Qui peut faire avancer le pipeline selon le statut courant ?
+          //  devis_a_faire  → Admin (transmet au Commercial)
+          //  a_mesurer      → Commercial (ou Admin Artisan)
+          //  technique_a_valider / en_fabrication → Technicien
+          // En mode solo/artisan, l'Admin a tous les droits.
+          const status = chantier.status;
+          let canCloseStep = false;
+          if (isSoloArtisan || isArtisanAccount || artisanMode) {
+            canCloseStep = roleIsAdmin || roleIsCommercial || roleIsTechnician;
+          } else if (status === "devis_a_faire") {
+            canCloseStep = roleIsAdmin;
+          } else if (status === "a_mesurer") {
+            canCloseStep = roleIsCommercial || roleIsAdmin;
+          } else if (
+            status === "technique_a_valider" ||
+            status === "a_verifier" ||
+            status === "en_fabrication" ||
+            status === "en_commande"
+          ) {
+            canCloseStep = roleIsTechnician;
+          }
+          if (!canCloseStep) return null;
+          return (
+            <TouchableOpacity
+              testID="close-project-button"
+              onPress={() => router.push(`/chantier/${id}/closure`)}
+              style={[styles.btn, styles.btnSecondary]}
+              activeOpacity={0.7}
+            >
+              <Ionicons
+                name="flag-outline"
+                size={20}
+                color={colors.textPrimary}
+              />
+              <Text style={styles.btnSecondaryText}>CLÔTURER</Text>
+            </TouchableOpacity>
+          );
+        })()}
         {canEditMesures && (
           <TouchableOpacity
             testID="add-mesure-button"

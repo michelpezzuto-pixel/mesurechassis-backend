@@ -1254,11 +1254,17 @@ function Step1Config({
       {s1.sill_already_installed === false && (
         <CotField
           testID="input-sill-thickness"
-          label="ÉPAISSEUR FUTURE DU SEUIL (mm) *"
+          label="ÉPAISSEUR FUTURE DU SEUIL (mm)"
           value={s1.sill_thickness_mm}
           onChange={(v) => setField("sill_thickness_mm", v.replace(",", "."))}
           error={!!err.sill_thickness_mm}
         />
+      )}
+      {s1.sill_already_installed === false && (
+        <Text style={styles.helpHint}>
+          💡 Laissez vide ou indiquez 0 si aucun seuil ne sera posé
+          (porte de garage, certains coulissants, rénovation sans seuil).
+        </Text>
       )}
 
       <Text style={[styles.sectionLabel, { marginTop: 22 }]}>OPTIONS GLOBALES</Text>

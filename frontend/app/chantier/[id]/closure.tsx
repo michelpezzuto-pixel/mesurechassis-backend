@@ -15,7 +15,7 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { api, buildAuthHeaders, PDF_URL } from "@/src/services/api";
-import { colors, blockMeta, statusMeta, NEXT_STATUS, CLOSURE_BUTTON_LABEL } from "@/src/theme";
+import { colors, blockMeta, statusMeta, NEXT_STATUS, CLOSURE_BUTTON_LABEL_BY_STATUS, CLOSURE_BUTTON_LABEL } from "@/src/theme";
 
 type Chantier = {
   id: string;
@@ -148,7 +148,9 @@ export default function Closure() {
   // l'étape actuelle. Le label du bouton change en conséquence.
   const currentStage = chantier ? statusMeta[chantier.status]?.stage : null;
   const nextStatus = chantier ? NEXT_STATUS[chantier.status] : null;
-  const nextLabel = currentStage ? CLOSURE_BUTTON_LABEL[currentStage] : null;
+  const nextLabel =
+    (chantier && CLOSURE_BUTTON_LABEL_BY_STATUS[chantier.status]) ||
+    (currentStage ? CLOSURE_BUTTON_LABEL[currentStage] : null);
 
   const performClosure = useCallback(async () => {
     if (!nextStatus) return;

@@ -18,6 +18,7 @@
     "android": {
       "package": "com.mesurechassis.escalier",
       "versionCode": 1,
+      "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#0C0C0E"

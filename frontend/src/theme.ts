@@ -40,10 +40,11 @@ export const statusMeta: Record<
     bg: "#27272A",
     stage: "measure",
   },
+  // Étape 1bis — DEVIS À FAIRE (créé par Admin, à transmettre au Commercial)
   devis_a_faire: {
-    label: "À mesurer",
-    color: "#A1A1AA",
-    bg: "#27272A",
+    label: "Devis à faire",
+    color: "#F59E0B",
+    bg: "#3a2400",
     stage: "measure",
   },
   // Étape 2 — À VÉRIFIER PAR LE TECHNICIEN (orange)
@@ -88,11 +89,14 @@ export const statusMeta: Record<
 };
 
 // Transitions du pipeline : statut actuel → statut suivant après "Clôturer"
-// Workflow Admin : a_mesurer → devis_a_faire → technique_a_valider → en_fabrication
-// (l'Admin transmet d'abord au commercial avant la validation technique)
+// Workflow Admin/Commercial/Technicien :
+//   devis_a_faire (Admin a saisi coordonnées) → a_mesurer (transmis au Commercial)
+//   a_mesurer (Commercial a pris les mesures) → technique_a_valider (transmis au Technicien)
+//   technique_a_valider (Technicien valide) → en_fabrication
+//   en_fabrication (Technicien finalise) → cloture
 export const NEXT_STATUS: Record<string, string> = {
-  a_mesurer: "devis_a_faire",
-  devis_a_faire: "technique_a_valider",
+  devis_a_faire: "a_mesurer",
+  a_mesurer: "technique_a_valider",
   technique_a_valider: "en_fabrication",
   a_verifier: "en_fabrication",
   en_commande: "cloture",
@@ -100,11 +104,32 @@ export const NEXT_STATUS: Record<string, string> = {
   // "cloture" / "termine" → pas de transition (déjà final)
 };
 
-// Libellé du bouton "clôture" selon l'étape suivante
+// Libellé du bouton "clôture" selon le STATUT actuel (plus précis que par stage)
+export const CLOSURE_BUTTON_LABEL_BY_STATUS: Record<string, string> = {
+  devis_a_faire: "🚩 Transmettre au commercial",
+  a_mesurer: "🚩 Clôturer la prise de cotes",
+  technique_a_valider: "🚩 Valider et envoyer en fabrication",
+  a_verifier: "🚩 Valider et envoyer en fabrication",
+  en_commande: "🚩 Marquer comme terminé / livré",
+  en_fabrication: "🚩 Marquer comme terminé / livré",
+};
+
+// Compat ancienne API (par stage)
 export const CLOSURE_BUTTON_LABEL: Record<string, string> = {
   measure: "🚩 Clôturer la prise de cotes",
   verify: "🚩 Valider et envoyer en fabrication",
   fab: "🚩 Marquer comme terminé / livré",
+};
+
+// Qui peut faire la clôture/transition selon le statut courant ?
+// Renvoie la liste des rôles autorisés pour faire avancer le pipeline.
+export const ROLES_ALLOWED_TO_CLOSE: Record<string, string[]> = {
+  devis_a_faire: ["admin"],
+  a_mesurer: ["commercial", "admin"],
+  technique_a_valider: ["technician"],
+  a_verifier: ["technician"],
+  en_commande: ["technician"],
+  en_fabrication: ["technician"],
 };
 
 export const READY_FOR_EXPORT_BADGE = {

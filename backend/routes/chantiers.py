@@ -159,8 +159,26 @@ async def get_chantier(
 async def update_chantier(
     chantier_id: str,
     payload: ChantierUpdate,
-    user=Depends(require_roles(["admin", "commercial"])),
+    user=Depends(require_roles(["admin", "commercial", "technician"])),
 ):
+    # NB : Le technicien peut PATCH ce endpoint pour faire avancer le
+    # pipeline (status: technique_a_valider → en_fabrication → cloture),
+    # ce qui est sa responsabilité métier. Les champs sensibles (client,
+    # assignations) sont protégés ci-dessous pour les techniciens.
+    if user.get("role") == "technician":
+        # Filtre les champs autorisés pour le technician : uniquement le
+        # statut peut être modifié (clôture / validation fabrication).
+        allowed = {"status"}
+        payload_dict = {
+            k: v for k, v in payload.model_dump().items() if v is not None
+        }
+        forbidden = set(payload_dict.keys()) - allowed
+        if forbidden:
+            raise HTTPException(
+                403,
+                f"Technicien : modification limitée au statut "
+                f"(refusé : {', '.join(sorted(forbidden))}).",
+            )
     company = user.get("company_id", "default")
     existing = await db.chantiers.find_one(
         {"id": chantier_id, "company_id": company}
