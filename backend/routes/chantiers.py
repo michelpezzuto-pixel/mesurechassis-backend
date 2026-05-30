@@ -205,8 +205,8 @@ async def update_chantier(
         )
         if not is_artisan_mode and old_status != new_status:
             allowed_transitions: dict[tuple[str, str], set[str]] = {
-                ("devis_a_faire", "a_mesurer"): {"admin", "commercial"},
-                ("a_mesurer", "technique_a_valider"): {"commercial", "admin"},
+                ("devis_a_faire", "a_mesurer"): {"admin"},
+                ("a_mesurer", "technique_a_valider"): {"commercial"},
                 ("technique_a_valider", "en_fabrication"): {"technician"},
                 ("a_verifier", "en_fabrication"): {"technician"},
                 ("en_fabrication", "cloture"): {"technician"},

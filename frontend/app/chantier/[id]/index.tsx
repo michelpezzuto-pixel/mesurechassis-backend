@@ -1150,10 +1150,15 @@ export default function ChantierDetail() {
       <View style={styles.footer}>
         {chantier.status !== "cloture" && (() => {
           // Qui peut faire avancer le pipeline selon le statut courant ?
-          //  devis_a_faire  → Admin (transmet au Commercial)
-          //  a_mesurer      → Commercial (ou Admin Artisan)
-          //  technique_a_valider / en_fabrication → Technicien
-          // En mode solo/artisan, l'Admin a tous les droits.
+          //  devis_a_faire        → Admin SEUL (transmet au Commercial)
+          //  a_mesurer            → Commercial SEUL (transmet au Technicien)
+          //  technique_a_valider  → Technicien SEUL (valide la fab)
+          //  en_fabrication       → Technicien SEUL (marque terminé)
+          // ⚠️ L'Admin ne peut PAS clôturer un chantier déjà transmis
+          // (a_mesurer/etc.). Idem pour le Commercial sur les étapes
+          // post-transmission.
+          // En mode solo/artisan : l'Admin a tous les droits car il
+          // joue tous les rôles à lui seul.
           const status = chantier.status;
           let canCloseStep = false;
           if (isSoloArtisan || isArtisanAccount || artisanMode) {
@@ -1161,7 +1166,7 @@ export default function ChantierDetail() {
           } else if (status === "devis_a_faire") {
             canCloseStep = roleIsAdmin;
           } else if (status === "a_mesurer") {
-            canCloseStep = roleIsCommercial || roleIsAdmin;
+            canCloseStep = roleIsCommercial;
           } else if (
             status === "technique_a_valider" ||
             status === "a_verifier" ||

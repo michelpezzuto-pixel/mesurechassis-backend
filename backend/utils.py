@@ -23,7 +23,9 @@ def block_label(b: str, options: dict | None = None) -> str:
 
     Priorité 1 : la forme exacte stockée dans `options.shape` (porte_garage,
     triangle, oeil_de_boeuf…). C'est la valeur précise saisie dans le wizard.
-    Priorité 2 : le `block_type` générique stocké en DB (porte, trapeze…).
+    Priorité 2 : détection par champs `options` spécifiques d'une forme
+    (mesures anciennes avant l'ajout d'`options.shape`).
+    Priorité 3 : le `block_type` générique stocké en DB (porte, trapeze…).
     """
     SHAPE_LABELS = {
         "rect": "Rectangle / Carré",
@@ -39,13 +41,28 @@ def block_label(b: str, options: dict | None = None) -> str:
         shape = options.get("shape")
         if shape and shape in SHAPE_LABELS:
             return SHAPE_LABELS[shape]
-    # Priorité 2 : block_type générique
-    return {
-        "standard": "Standard",
-        "coulissant": "Coulissant",
-        "porte": "Porte",
-        "trapeze": "Trapèze",
-    }.get(b, b)
+        # Priorité 2 : détection par autres champs options spécifiques
+        # (mesures créées avant que `options.shape` ne soit envoyé).
+        if (
+            options.get("garage_lintel_mm")
+            or options.get("garage_ecoincon_left_mm")
+            or options.get("garage_ecoincon_right_mm")
+        ):
+            return SHAPE_LABELS["porte_garage"]
+        if options.get("triangle_base_mm") or options.get("triangle_height_mm"):
+            return SHAPE_LABELS["triangle"]
+        if options.get("oeil_diameter_mm"):
+            return SHAPE_LABELS["oeil_de_boeuf"]
+    # Priorité 3 : block_type générique
+    if b == "porte":
+        return SHAPE_LABELS["porte_entree"]
+    if b == "coulissant":
+        return SHAPE_LABELS["coulissant_levant"]
+    if b == "trapeze":
+        return SHAPE_LABELS["trapeze"]
+    if b == "standard" or b == "rect":
+        return SHAPE_LABELS["rect"]
+    return b or "Ouverture"
 
 
 WALL_TYPE_LABELS = {

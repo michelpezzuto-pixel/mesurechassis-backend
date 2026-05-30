@@ -117,6 +117,7 @@ export default function TeamAdmin() {
           email: email.trim(),
           password: memberPassword,
           role,
+          confirm_extra_seat: confirmExtraSeat,
         });
         setExtraSeatInfo(null);
         Alert.alert(

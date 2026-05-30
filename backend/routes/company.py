@@ -139,6 +139,40 @@ async def create_team_member(payload: dict, user=Depends(require_admin)):
     if existing:
         raise HTTPException(409, "Un compte avec cet email existe déjà")
 
+    # === Vérification de siège supplémentaire payant ============================
+    # En compte Entreprise : 2 sièges gratuits inclus (1 Commercial + 1 Technicien).
+    # Chaque utilisateur supplémentaire coûte 4,99 €/mois.
+    # Si on dépasse, on renvoie HTTP 402 avec le détail. Le frontend affiche
+    # alors une pop-up de confirmation et rejoue la requête avec
+    # `confirm_extra_seat=true` pour valider l'ajout payant.
+    FREE_SEATS = 2
+    SEAT_PRICE_EUR = 4.99
+    current_count = await db.users.count_documents(
+        {"company_id": company_id, "role": {"$in": ["commercial", "technician"]}}
+    )
+    next_seat_index = current_count + 1
+    extra_seat_billed = next_seat_index > FREE_SEATS
+    extra_seats_total = max(0, next_seat_index - FREE_SEATS)
+    extra_amount_eur = round(extra_seats_total * SEAT_PRICE_EUR, 2)
+    confirm_extra = bool(payload.get("confirm_extra_seat") or False)
+    if extra_seat_billed and not confirm_extra:
+        raise HTTPException(
+            status_code=402,
+            detail={
+                "code": "EXTRA_SEAT_REQUIRED",
+                "message": (
+                    "Votre forfait Entreprise inclut 2 sièges gratuits ; "
+                    f"chaque utilisateur supplémentaire coûte {SEAT_PRICE_EUR:.2f} €/mois."
+                ),
+                "free_seats": FREE_SEATS,
+                "next_seat_index": next_seat_index,
+                "current_team_size": current_count,
+                "extra_seats_total": extra_seats_total,
+                "seat_price_eur": SEAT_PRICE_EUR,
+                "extra_amount_eur": extra_amount_eur,
+            },
+        )
+
     now_iso = datetime.now(timezone.utc).isoformat()
     user_doc = {
         "id": str(uuid.uuid4()),
