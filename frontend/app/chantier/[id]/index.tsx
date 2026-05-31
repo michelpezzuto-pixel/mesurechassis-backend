@@ -1130,15 +1130,35 @@ export default function ChantierDetail() {
                         text: "Oui, reprendre",
                         style: "default",
                         onPress: async () => {
+                          // ✅ Résilience : on tente le PATCH. Même si axios
+                          // lève (timeout, réseau capricieux), on refetch
+                          // l'état du chantier — si le statut a bougé côté
+                          // serveur on considère que c'est un succès, et on
+                          // ne montre une erreur qu'en cas de vraie panne.
+                          let patchOk = false;
                           try {
                             await api.patch(`/chantiers/${id}`, {
                               status: "a_mesurer",
                             });
-                            await fetchAll();
+                            patchOk = true;
                           } catch {
+                            /* on vérifiera l'état après refetch */
+                          }
+                          try {
+                            const res = await api.get<Chantier>(
+                              `/chantiers/${id}`,
+                            );
+                            setChantier(res.data);
+                            if (res.data.status === "a_mesurer") {
+                              return; // succès — pas d'alerte
+                            }
+                          } catch {
+                            /* refetch impossible, on tombe sur l'erreur */
+                          }
+                          if (!patchOk) {
                             Alert.alert(
                               "Erreur",
-                              "Impossible de repasser au statut « À mesurer ».",
+                              "Impossible de repasser au statut « À mesurer ». Réessayez dans un instant.",
                             );
                           }
                         },
