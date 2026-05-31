@@ -36,9 +36,10 @@ export default function RootLayout() {
             <Stack.Screen name="chantier/[id]/pdf-preview" options={{ headerShown: false }} />
             <Stack.Screen name="chantier/[id]/xlsx-preview" options={{ headerShown: false }} />
             <Stack.Screen name="chantier/[id]/json-preview" options={{ headerShown: false }} />
-            <Stack.Screen name="admin/feedbacks" options={{ title: "FEEDBACKS" }} />
-            <Stack.Screen name="admin/stats" options={{ title: "STATISTIQUES" }} />
-            <Stack.Screen name="admin/team" options={{ title: "ÉQUIPE" }} />
+            <Stack.Screen name="admin/feedbacks" options={{ headerShown: false }} />
+            <Stack.Screen name="admin/stats" options={{ headerShown: false }} />
+            <Stack.Screen name="admin/team" options={{ headerShown: false }} />
+            <Stack.Screen name="feedback" options={{ headerShown: false }} />
             <Stack.Screen name="company-profile" options={{ headerShown: false }} />
           </Stack>
         </AuthProvider>

@@ -118,7 +118,14 @@ export default function AdminStats() {
   }
 
   return (
-    <SafeAreaView style={styles.flex} edges={["bottom"]}>
+    <SafeAreaView style={styles.flex} edges={["top", "bottom"]}>
+      <View style={styles.topBar}>
+        <TouchableOpacity onPress={() => router.back()} hitSlop={10}>
+          <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
+        </TouchableOpacity>
+        <Text style={styles.topTitle}>STATISTIQUES</Text>
+        <View style={{ width: 22 }} />
+      </View>
       <ScrollView
         contentContainerStyle={{
           padding: 16,
@@ -166,27 +173,64 @@ export default function AdminStats() {
         </View>
 
         <Text style={styles.section}>RÉPARTITION PAR STATUT</Text>
-        {Object.entries(data.by_status).map(([key, count]) => {
-          const meta = statusMeta[key] ?? { label: key, color: "#fff", bg: "#333" };
-          const pct = data.total_chantiers > 0 ? (count / data.total_chantiers) * 100 : 0;
-          return (
-            <View key={key} style={styles.statusRow} testID={`status-row-${key}`}>
-              <View style={styles.statusHeader}>
-                <View style={[styles.dot, { backgroundColor: meta.color }]} />
-                <Text style={styles.statusLabel}>{meta.label}</Text>
-                <Text style={styles.statusValue}>{count}</Text>
+        {/* Fusion des statuts internes redondants (rétrocompat).
+            "technique_a_valider"+"a_verifier" → "À vérifier"
+            "en_commande"+"en_fabrication"   → "En fabrication"
+            "devis_a_faire"+"a_mesurer"      → "À mesurer"
+            "cloture"+"termine"              → "Terminé / Livré"
+            Évite d'afficher 2 lignes pour le même libellé. */}
+        {(() => {
+          const groupedByLabel = new Map<
+            string,
+            { label: string; color: string; count: number; firstKey: string }
+          >();
+          for (const [key, count] of Object.entries(data.by_status)) {
+            const meta = statusMeta[key] ?? {
+              label: key,
+              color: "#fff",
+              bg: "#333",
+              stage: "measure" as const,
+            };
+            const existing = groupedByLabel.get(meta.label);
+            if (existing) {
+              existing.count += count as number;
+            } else {
+              groupedByLabel.set(meta.label, {
+                label: meta.label,
+                color: meta.color,
+                count: count as number,
+                firstKey: key,
+              });
+            }
+          }
+          return Array.from(groupedByLabel.values()).map((row) => {
+            const pct =
+              data.total_chantiers > 0
+                ? (row.count / data.total_chantiers) * 100
+                : 0;
+            return (
+              <View
+                key={row.firstKey}
+                style={styles.statusRow}
+                testID={`status-row-${row.firstKey}`}
+              >
+                <View style={styles.statusHeader}>
+                  <View style={[styles.dot, { backgroundColor: row.color }]} />
+                  <Text style={styles.statusLabel}>{row.label}</Text>
+                  <Text style={styles.statusValue}>{row.count}</Text>
+                </View>
+                <View style={styles.progressBg}>
+                  <View
+                    style={[
+                      styles.progressFill,
+                      { width: `${pct}%`, backgroundColor: row.color },
+                    ]}
+                  />
+                </View>
               </View>
-              <View style={styles.progressBg}>
-                <View
-                  style={[
-                    styles.progressFill,
-                    { width: `${pct}%`, backgroundColor: meta.color },
-                  ]}
-                />
-              </View>
-            </View>
-          );
-        })}
+            );
+          });
+        })()}
 
         <Text style={styles.section}>PERFORMANCE PAR TECHNICIEN</Text>
         {data.by_technician.length === 0 && (
@@ -298,6 +342,23 @@ export default function AdminStats() {
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: colors.bg },
   center: { alignItems: "center", justifyContent: "center" },
+  topBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderSubtle,
+  },
+  topTitle: {
+    flex: 1,
+    color: colors.textPrimary,
+    fontWeight: "900",
+    fontSize: 16,
+    letterSpacing: 1.2,
+    textTransform: "uppercase",
+    textAlign: "center",
+  },
   section: {
     color: colors.textSecondary,
     fontSize: 12,

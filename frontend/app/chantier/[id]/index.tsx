@@ -124,6 +124,14 @@ export default function ChantierDetail() {
   // Message d'attente : tout le monde sauf le technicien en mode équipe.
   const isWaitingForTech =
     usersLoaded && isAwaitingValidation && !isSoloArtisan && !roleIsTechnician;
+  // 🔒 Verrou spécifique COMMERCIAL au statut "À vérifier par le technicien"
+  //    Une fois validé, le Commercial n'a plus que la possibilité de
+  //    revenir en arrière (downgrade à "a_mesurer") pour corriger.
+  //    Il ne peut PLUS modifier/ajouter/supprimer une ouverture ni la
+  //    structure du mur. Le Technicien prend la main.
+  const isCommercialInVerify =
+    !isSoloArtisan && roleIsCommercial && isAwaitingValidation;
+
   // Verrou fabrication : commercial = read-only strict
   // Tech peut déverrouiller via override exceptionnel
   // Admin (sauf solo) = également read-only
@@ -131,6 +139,7 @@ export default function ChantierDetail() {
   //    (sauf consultation PDF/CSV/XLSX/JSON qui restent ouverts).
   const canEditMesures = (() => {
     if (isArchived) return false; // Terminé/Clôturé = verrou total
+    if (isCommercialInVerify) return false; // Commercial verrouillé après validation
     if (isInFabrication) {
       if (isSoloArtisan && roleIsAdmin) return true;
       return roleIsTechnician && techOverride;
@@ -980,6 +989,47 @@ export default function ChantierDetail() {
                   </Text>
                 </View>
               </View>
+            )}
+            {/* ↩️ Bouton de RETOUR ARRIÈRE pour le Commercial après validation.
+                 Permet de corriger les ouvertures avant que le Technicien ne
+                 prenne la main. Repasse le statut en "À mesurer". */}
+            {isCommercialInVerify && (
+              <TouchableOpacity
+                testID="commercial-back-to-measure-button"
+                onPress={() => {
+                  Alert.alert(
+                    "Revenir au statut « À mesurer » ?",
+                    "Vous récupérerez l'accès complet pour modifier, ajouter ou supprimer une ouverture. Le Technicien sera notifié que vous reprenez la main sur ce chantier.",
+                    [
+                      { text: "Annuler", style: "cancel" },
+                      {
+                        text: "Oui, reprendre",
+                        style: "default",
+                        onPress: async () => {
+                          try {
+                            await api.patch(`/chantiers/${id}`, {
+                              status: "a_mesurer",
+                            });
+                            await fetchAll();
+                          } catch {
+                            Alert.alert(
+                              "Erreur",
+                              "Impossible de repasser au statut « À mesurer ».",
+                            );
+                          }
+                        },
+                      },
+                    ],
+                  );
+                }}
+                activeOpacity={0.85}
+                style={validateStyles.btnOverride}
+              >
+                <Ionicons name="arrow-undo" size={20} color={colors.warning} />
+                <Text style={validateStyles.btnOverrideText}>
+                  ↩️ REVENIR AU STATUT « À MESURER »
+                </Text>
+              </TouchableOpacity>
             )}
             {isInFabrication && user?.role === "technician" && !techOverride && (
               <TouchableOpacity
