@@ -188,10 +188,10 @@ export function getStatusLabel(
   const isArtisan = (accountType || "").toLowerCase() === "artisan";
   if (isArtisan) {
     const ARTISAN_LABELS: Record<string, string> = {
-      devis_a_faire: "Coordonnées validées",
+      devis_a_faire: "À mesurer",
       a_mesurer: "À mesurer",
-      technique_a_valider: "Encodage bureau",
-      a_verifier: "Encodage bureau",
+      technique_a_valider: "À vérifier au bureau",
+      a_verifier: "À vérifier au bureau",
       en_fabrication: "En fabrication",
       en_commande: "En fabrication",
       cloture: "Terminé / Livré",

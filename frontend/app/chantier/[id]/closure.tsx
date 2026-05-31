@@ -16,7 +16,7 @@ import * as Sharing from "expo-sharing";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { api, buildAuthHeaders, PDF_URL } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
-import { colors, blockMeta, statusMeta, NEXT_STATUS, CLOSURE_BUTTON_LABEL_BY_STATUS, CLOSURE_BUTTON_LABEL, CLOSURE_DESCRIPTION_BY_STATUS } from "@/src/theme";
+import { colors, blockMeta, statusMeta, getStatusLabel, NEXT_STATUS, CLOSURE_BUTTON_LABEL_BY_STATUS, CLOSURE_BUTTON_LABEL, CLOSURE_DESCRIPTION_BY_STATUS } from "@/src/theme";
 
 type Chantier = {
   id: string;
@@ -158,7 +158,11 @@ export default function Closure() {
     (company?.account_type || "").toLowerCase() === "artisan";
   const isArtisanFlow = artisanMode || isArtisanAccount;
 
-  // NEXT_STATUS spécifique au mode Artisan (4 étapes : ne saute aucun statut)
+  // NEXT_STATUS spécifique au mode Artisan (3 étapes effectives : le devis est
+  // hors-app, le chantier est créé directement en "a_mesurer").
+  //  Note : on conserve l'entrée devis_a_faire en sécurité pour les anciens
+  //  chantiers déjà en base (rétrocompat), mais les nouveaux iront direct en
+  //  a_mesurer (forcé côté backend pour les comptes artisan_mode).
   const ARTISAN_NEXT_STATUS: Record<string, string> = {
     devis_a_faire: "a_mesurer",
     a_mesurer: "technique_a_valider",
@@ -169,17 +173,17 @@ export default function Closure() {
   // tous les rôles, terminologie adaptée à son contexte solo).
   const ARTISAN_LABELS: Record<string, string> = {
     devis_a_faire: "✅ Coordonnées validées, démarrer le mesurage",
-    a_mesurer: "📐 Mesures terminées, passer à l'encodage bureau",
-    technique_a_valider: "💻 Encodage bureau validé, envoyer en fabrication",
+    a_mesurer: "📐 Mesures terminées, passer à la vérification au bureau",
+    technique_a_valider: "💻 Vérification bureau validée, envoyer en fabrication",
     en_fabrication: "🏁 Marquer comme terminé / livré",
   };
   const ARTISAN_DESCRIPTIONS: Record<string, string> = {
     devis_a_faire:
       "Les coordonnées du client sont prêtes. Le chantier passera en « À mesurer ».",
     a_mesurer:
-      "Toutes les ouvertures sont mesurées. Le chantier passera en « Encodage bureau » pour saisir la commande au calme au bureau.",
+      "Toutes les ouvertures sont mesurées. Le chantier passera en « À vérifier au bureau » pour saisir la commande au calme avant fabrication.",
     technique_a_valider:
-      "L'encodage de la commande est terminé. Le chantier passera en « En fabrication ».",
+      "La vérification au bureau est terminée. Le chantier passera en « En fabrication ».",
     en_fabrication:
       "Le chantier est terminé et livré au client. Il sera archivé.",
   };
@@ -228,9 +232,12 @@ export default function Closure() {
 
   const cloturer = () => {
     if (!nextStatus || !chantier) return;
+    const nextLabelForMsg = getStatusLabel(nextStatus, company?.account_type);
     const description =
-      CLOSURE_DESCRIPTION_BY_STATUS[chantier.status] ||
-      `Le chantier passera en « ${statusMeta[nextStatus]?.label ?? nextStatus} ».`;
+      (isArtisanFlow
+        ? ARTISAN_DESCRIPTIONS[chantier.status]
+        : CLOSURE_DESCRIPTION_BY_STATUS[chantier.status]) ||
+      `Le chantier passera en « ${nextLabelForMsg} ».`;
     const confirmText =
       nextStatus === "cloture"
         ? "Marquer ce chantier comme « Terminé / Livré » ?\n\nIl sera archivé en lecture seule. Vous pourrez toujours consulter les mesures et les exports."
@@ -279,7 +286,9 @@ export default function Closure() {
           <Text style={styles.addr}>{chantier.address}</Text>
           {meta && (
             <View style={[styles.badge, { backgroundColor: meta.bg }]}>
-              <Text style={[styles.badgeText, { color: meta.color }]}>{meta.label}</Text>
+              <Text style={[styles.badgeText, { color: meta.color }]}>
+                {getStatusLabel(chantier.status, company?.account_type)}
+              </Text>
             </View>
           )}
         </View>

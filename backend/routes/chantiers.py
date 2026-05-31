@@ -57,6 +57,12 @@ async def create_chantier(
     if not client_name:
         parts = [p for p in [payload.last_name, payload.first_name] if p]
         client_name = " ".join(parts).strip() or "Sans nom"
+    # ⚙️ Mode Artisan / Solo : le devis a été établi AVANT la prise de mesures
+    # (étape commerciale hors-app). Le chantier est donc créé directement en
+    # "À mesurer", sans étape intermédiaire "Devis à faire".
+    initial_status = payload.status
+    if user.get("artisan_mode", False) and initial_status == "devis_a_faire":
+        initial_status = "a_mesurer"
     doc = {
         "id": str(uuid.uuid4()),
         "client_name": client_name,
@@ -65,7 +71,7 @@ async def create_chantier(
         "address": payload.address,
         "postal_code": payload.postal_code,
         "city": payload.city,
-        "status": payload.status,
+        "status": initial_status,
         "created_by": user["id"],
         "assigned_to": payload.assigned_to,
         "appointment_at": payload.appointment_at,

@@ -20,7 +20,7 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { api } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { subscribeQueueSize, syncQueue, enqueueChantier, isNetworkError } from "@/src/services/offlineQueue";
-import { colors, statusMeta, READY_FOR_EXPORT_BADGE } from "@/src/theme";
+import { colors, statusMeta, getStatusLabel, READY_FOR_EXPORT_BADGE } from "@/src/theme";
 import { useResponsive } from "@/src/utils/responsive";
 import TrialCountdownBanner from "@/src/components/TrialCountdownBanner";
 import ChatHelp from "@/src/components/ChatHelp";
@@ -185,6 +185,8 @@ export default function Dashboard() {
       bg: "#333",
       stage: "verify" as const,
     };
+    // Libellé contextuel selon le type de compte (Artisan = terminologie solo)
+    const statusLabel = getStatusLabel(item.status, company?.account_type);
     const isDone = meta.stage === "done";
     return (
       <TouchableOpacity
@@ -208,7 +210,7 @@ export default function Dashboard() {
         <View style={styles.badgeRow}>
           <View style={[styles.badge, { backgroundColor: meta.bg }]}>
             <View style={[styles.badgeDot, { backgroundColor: meta.color }]} />
-            <Text style={[styles.badgeText, { color: meta.color }]}>{meta.label}</Text>
+            <Text style={[styles.badgeText, { color: meta.color }]}>{statusLabel}</Text>
           </View>
           {isDone && (
             <View style={[styles.badge, styles.exportReadyBadge]}>

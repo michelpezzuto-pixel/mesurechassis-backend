@@ -21,7 +21,7 @@ import * as ImagePicker from "expo-image-picker";
 import { api, buildAuthHeaders, PDF_URL, JSON_URL, XLSX_URL, CSV_URL } from "@/src/services/api";
 import { ShapeIcon, blockTypeToShape } from "@/src/components/ShapeIcon";
 import { useAuth } from "@/src/context/AuthContext";
-import { colors, statusMeta, blockMeta, shapeMeta } from "@/src/theme";
+import { colors, statusMeta, getStatusLabel, blockMeta, shapeMeta } from "@/src/theme";
 
 type SitePhoto = { uri: string; caption: string };
 
@@ -698,7 +698,9 @@ export default function ChantierDetail() {
               {meta && (
                 <View style={[styles.badge, { backgroundColor: meta.bg }]}>
                   <View style={[styles.badgeDot, { backgroundColor: meta.color }]} />
-                  <Text style={[styles.badgeText, { color: meta.color }]}>{meta.label}</Text>
+                  <Text style={[styles.badgeText, { color: meta.color }]}>
+                    {getStatusLabel(chantier.status, company?.account_type)}
+                  </Text>
                 </View>
               )}
 
