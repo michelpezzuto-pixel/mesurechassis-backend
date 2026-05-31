@@ -147,23 +147,60 @@ export default function Closure() {
 
   // ---- Closure handler ----
   // Workflow différencié :
-  //  • Mode Artisan / Solo : pas de pipeline équipe — un seul clic
-  //    "Marquer comme terminé" qui passe directement en `cloture`.
+  //  • Mode Artisan / Solo : pipeline simplifié en 3 étapes (sans
+  //    intervention équipe). L'artisan effectue lui-même mesures puis
+  //    encodage bureau puis fabrication.
+  //       devis_a_faire        → a_mesurer            (mesures validées)
+  //       a_mesurer            → en_fabrication       (encodage validé → fab, skip technicien)
+  //       en_fabrication       → cloture              (chantier livré)
   //  • Mode Entreprise : pipeline 4-étapes (devis_a_faire → a_mesurer
   //    → technique_a_valider → en_fabrication → cloture).
   const currentStage = chantier ? statusMeta[chantier.status]?.stage : null;
   const isArtisanAccount =
     (company?.account_type || "").toLowerCase() === "artisan";
   const isArtisanFlow = artisanMode || isArtisanAccount;
+
+  // NEXT_STATUS spécifique au mode Artisan (skip technique_a_valider)
+  const ARTISAN_NEXT_STATUS: Record<string, string> = {
+    devis_a_faire: "a_mesurer",
+    a_mesurer: "en_fabrication",
+    technique_a_valider: "en_fabrication",
+    en_fabrication: "cloture",
+  };
+  // Labels & descriptions clairs en mode Artisan
+  const ARTISAN_LABELS: Record<string, string> = {
+    devis_a_faire: "✅ Mesures terminées, passer à l'encodage bureau",
+    a_mesurer: "💻 Encodage bureau validé, envoyer en fabrication",
+    technique_a_valider: "🏭 Envoyer en fabrication",
+    en_fabrication: "🏁 Marquer comme terminé / livré",
+  };
+  const ARTISAN_DESCRIPTIONS: Record<string, string> = {
+    devis_a_faire:
+      "Toutes les ouvertures sont mesurées. Le chantier passera en « Encodage bureau » pour saisir la commande au bureau.",
+    a_mesurer:
+      "L'encodage de la commande est terminé. Le chantier passera directement en « En fabrication ».",
+    technique_a_valider:
+      "Le chantier passera en « En fabrication ».",
+    en_fabrication:
+      "Le chantier est terminé et livré au client. Il sera archivé.",
+  };
+
   const nextStatus = chantier
     ? isArtisanFlow
-      ? "cloture"
+      ? ARTISAN_NEXT_STATUS[chantier.status] || null
       : NEXT_STATUS[chantier.status]
     : null;
-  const nextLabel = isArtisanFlow
-    ? "🚩 Marquer le chantier comme terminé"
-    : (chantier && CLOSURE_BUTTON_LABEL_BY_STATUS[chantier.status]) ||
-      (currentStage ? CLOSURE_BUTTON_LABEL[currentStage] : null);
+  const nextLabel = chantier
+    ? isArtisanFlow
+      ? ARTISAN_LABELS[chantier.status] || "🚩 Étape suivante"
+      : CLOSURE_BUTTON_LABEL_BY_STATUS[chantier.status] ||
+        (currentStage ? CLOSURE_BUTTON_LABEL[currentStage] : null)
+    : null;
+  const nextDescription = chantier
+    ? isArtisanFlow
+      ? ARTISAN_DESCRIPTIONS[chantier.status]
+      : CLOSURE_DESCRIPTION_BY_STATUS[chantier.status]
+    : null;
 
   const performClosure = useCallback(async () => {
     if (!nextStatus) return;
@@ -305,7 +342,7 @@ export default function Closure() {
 
           {nextStatus && nextLabel && (
             <>
-              {chantier && CLOSURE_DESCRIPTION_BY_STATUS[chantier.status] && (
+              {nextDescription && (
                 <View style={styles.transitionInfoBox}>
                   <Ionicons
                     name="information-circle"
@@ -313,7 +350,7 @@ export default function Closure() {
                     color={colors.primary}
                   />
                   <Text style={styles.transitionInfoText}>
-                    {CLOSURE_DESCRIPTION_BY_STATUS[chantier.status]}
+                    {nextDescription}
                   </Text>
                 </View>
               )}
