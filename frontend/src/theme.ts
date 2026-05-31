@@ -40,11 +40,14 @@ export const statusMeta: Record<
     bg: "#27272A",
     stage: "measure",
   },
-  // Étape 1bis — DEVIS À FAIRE (créé par Admin, à transmettre au Commercial)
+  // Étape 1bis — Statut interne "devis_a_faire" (créé par Admin, transmis au
+  // Commercial). Affiché aussi comme "À mesurer" car le devis a été fait
+  // hors-app : du point de vue de l'utilisateur, le chantier est juste à
+  // mesurer. Couleur identique à `a_mesurer` pour la cohérence visuelle.
   devis_a_faire: {
-    label: "Devis à faire",
-    color: "#F59E0B",
-    bg: "#3a2400",
+    label: "À mesurer",
+    color: "#A1A1AA",
+    bg: "#27272A",
     stage: "measure",
   },
   // Étape 2 — À VÉRIFIER PAR LE TECHNICIEN (orange)

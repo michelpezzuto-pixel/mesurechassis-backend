@@ -277,6 +277,9 @@ export default function Dashboard() {
       </View>
 
       {/* ────── Rangée 2 : actions ────── */}
+      {/* Boutons en flex:1 pour occuper toute la largeur (pas de zone vide à
+          gauche). Sur les comptes Artisan, le bouton "Équipe" est masqué et
+          les 3 restants se redistribuent automatiquement. */}
       <View style={styles.actionsBar}>
         {/* L'Équipe n'est dispo que pour les comptes Entreprise. Un Artisan
             solo n'a pas de sous-comptes à gérer. */}
@@ -287,8 +290,8 @@ export default function Dashboard() {
             style={styles.actionBtn}
             activeOpacity={0.7}
           >
-            <Ionicons name="people-outline" size={20} color={colors.primary} />
-            <Text style={styles.actionBtnText}>Équipe</Text>
+            <Ionicons name="people-outline" size={18} color={colors.primary} />
+            <Text style={styles.actionBtnText} numberOfLines={1}>Équipe</Text>
           </TouchableOpacity>
         )}
         {user?.role === "admin" && (
@@ -298,8 +301,8 @@ export default function Dashboard() {
             style={styles.actionBtn}
             activeOpacity={0.7}
           >
-            <Ionicons name="stats-chart" size={20} color={colors.primary} />
-            <Text style={styles.actionBtnText}>Stats</Text>
+            <Ionicons name="stats-chart" size={18} color={colors.primary} />
+            <Text style={styles.actionBtnText} numberOfLines={1}>Stats</Text>
           </TouchableOpacity>
         )}
         {/* Feedback — bouton unique pour tous les rôles (admin/commercial/technicien).
@@ -314,10 +317,10 @@ export default function Dashboard() {
         >
           <Ionicons
             name="chatbubble-ellipses-outline"
-            size={20}
+            size={18}
             color={colors.primary}
           />
-          <Text style={styles.actionBtnText}>Feedback</Text>
+          <Text style={styles.actionBtnText} numberOfLines={1}>Feedback</Text>
         </TouchableOpacity>
         {user?.role === "admin" && (
           <TouchableOpacity
@@ -326,8 +329,8 @@ export default function Dashboard() {
             style={styles.actionBtn}
             activeOpacity={0.7}
           >
-            <Ionicons name="settings-outline" size={20} color={colors.primary} />
-            <Text style={styles.actionBtnText}>Profil</Text>
+            <Ionicons name="settings-outline" size={18} color={colors.primary} />
+            <Text style={styles.actionBtnText} numberOfLines={1}>Profil</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -705,8 +708,7 @@ const styles = StyleSheet.create({
   },
   actionsBar: {
     flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "flex-end",
+    alignItems: "stretch",
     gap: 6,
     paddingHorizontal: 16,
     paddingBottom: 10,
@@ -714,22 +716,25 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.borderSubtle,
   },
   actionBtn: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 8,
     borderRadius: 8,
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.borderSubtle,
-    minHeight: 36,
+    minHeight: 40,
   },
   actionBtnText: {
     color: colors.textPrimary,
     fontSize: 11,
     fontWeight: "700",
     letterSpacing: 0.3,
+    flexShrink: 1,
   },
   searchWrap: {
     marginHorizontal: 16,
