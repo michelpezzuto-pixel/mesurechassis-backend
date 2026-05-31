@@ -25,8 +25,9 @@ export default function RootLayout() {
               headerStyle: { backgroundColor: "#0C0C0E" },
               headerTintColor: "#fff",
               headerTitleStyle: { fontWeight: "900", letterSpacing: 0.5 },
-              headerBackTitle: "",
+              headerBackTitle: " ",
               headerBackTitleVisible: false,
+              headerBackButtonDisplayMode: "minimal",
               contentStyle: { backgroundColor: "#0C0C0E" },
             }}
           >

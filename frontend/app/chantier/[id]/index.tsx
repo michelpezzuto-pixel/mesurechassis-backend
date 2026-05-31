@@ -1544,7 +1544,9 @@ export default function ChantierDetail() {
       <Modal
         visible={editOpen}
         transparent
-        animationType="slide"
+        animationType="fade"
+        presentationStyle="overFullScreen"
+        statusBarTranslucent
         onRequestClose={() => setEditOpen(false)}
       >
         <KeyboardAvoidingView
@@ -2039,6 +2041,58 @@ const styles = StyleSheet.create({
   btnPrimaryText: { color: "#000", fontWeight: "900", fontSize: 15, letterSpacing: 1 },
   btnSecondary: { borderWidth: 2, borderColor: colors.borderStrong },
   btnSecondaryText: { color: colors.textPrimary, fontWeight: "800", letterSpacing: 1 },
+  // Modales (overlay sombre + carte centrée) — utilisés par AFFECTER,
+  // ENVOYER À UN COMMERCIAL et MODIFIER LE CHANTIER.
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.78)",
+    justifyContent: "center",
+    paddingHorizontal: 16,
+  },
+  modalCard: {
+    backgroundColor: colors.surface,
+    borderRadius: 14,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+  },
+  modalTitle: {
+    color: colors.textPrimary,
+    fontSize: 16,
+    fontWeight: "900",
+    letterSpacing: 1.2,
+    textAlign: "center",
+    marginBottom: 4,
+  },
+  modalSub: {
+    color: colors.textSecondary,
+    fontSize: 13,
+    textAlign: "center",
+    marginBottom: 12,
+    lineHeight: 18,
+  },
+  assignItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    marginBottom: 8,
+    backgroundColor: "#141417",
+  },
+  assignItemActive: {
+    borderColor: colors.primary,
+    backgroundColor: "#1F1A14",
+  },
+  assignItemText: { color: colors.textPrimary, fontSize: 14, fontWeight: "700" },
+  assignItemRole: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    textTransform: "lowercase",
+  },
 });
 
 
