@@ -4,10 +4,12 @@ import {
   Alert,
   FlatList,
   Image,
+  KeyboardAvoidingView,
   Linking,
   Modal,
   Platform,
   RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -20,6 +22,7 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { api, buildAuthHeaders, PDF_URL, JSON_URL, XLSX_URL, CSV_URL } from "@/src/services/api";
 import { ShapeIcon, blockTypeToShape } from "@/src/components/ShapeIcon";
+import AppointmentPicker from "@/src/components/AppointmentPicker";
 import { useAuth } from "@/src/context/AuthContext";
 import { colors, statusMeta, getStatusLabel, blockMeta, shapeMeta } from "@/src/theme";
 
@@ -28,12 +31,18 @@ type SitePhoto = { uri: string; caption: string };
 type Chantier = {
   id: string;
   client_name: string;
+  first_name?: string | null;
+  last_name?: string | null;
   address: string;
+  postal_code?: string | null;
+  city?: string | null;
+  appointment_at?: string | null;
   status: string;
   assigned_to?: string | null;
   created_by?: string | null;
   created_at: string;
   site_photos?: SitePhoto[];
+  wall_config?: { masonry_type?: string };
 };
 
 type Mesure = {
@@ -85,6 +94,16 @@ export default function ChantierDetail() {
   const [refreshing, setRefreshing] = useState(false);
   const [assignOpen, setAssignOpen] = useState(false);
   const [exporting, setExporting] = useState<string | null>(null);
+  // ✏️ Édition des infos du chantier (Admin/Commercial avant fabrication)
+  const [editOpen, setEditOpen] = useState(false);
+  const [editFirstName, setEditFirstName] = useState("");
+  const [editLastName, setEditLastName] = useState("");
+  const [editAddress, setEditAddress] = useState("");
+  const [editPostal, setEditPostal] = useState("");
+  const [editCity, setEditCity] = useState("");
+  const [editAppointment, setEditAppointment] = useState<Date | null>(null);
+  const [editApptPickerOpen, setEditApptPickerOpen] = useState(false);
+  const [savingEdit, setSavingEdit] = useState(false);
   // Override technicien en mode fabrication (déverrouille temporairement)
   const [techOverride, setTechOverride] = useState(false);
   const [validating, setValidating] = useState(false);
@@ -257,6 +276,103 @@ export default function ChantierDetail() {
       setAssignOpen(false);
     } catch {
       Alert.alert("Erreur", "Affectation impossible.");
+    }
+  };
+
+  // 📤 Bouton ADMIN "Envoyer à un commercial" (statut devis_a_faire) :
+  // affecte le chantier au commercial choisi ET passe le statut à "a_mesurer"
+  // en une seule action. Si plusieurs commerciaux dans l'équipe → modale
+  // picker (sendToCommercialOpen). Si un seul → confirmation rapide.
+  const [sendToCommercialOpen, setSendToCommercialOpen] = useState(false);
+  const sendToCommercial = async (commercialUserId: string) => {
+    try {
+      const res = await api.patch<Chantier>(`/chantiers/${id}`, {
+        assigned_to: commercialUserId,
+        status: "a_mesurer",
+      });
+      setChantier(res.data);
+      setSendToCommercialOpen(false);
+      Alert.alert(
+        "✅ Chantier envoyé",
+        "Le commercial sélectionné a été notifié. Le chantier est maintenant en « À mesurer ».",
+        [{ text: "OK", onPress: () => router.replace("/dashboard") }],
+      );
+    } catch {
+      Alert.alert("Erreur", "Envoi impossible. Réessayez.");
+    }
+  };
+  const handleSendToCommercialClick = () => {
+    const commercials = users.filter((u) => u.role === "commercial");
+    if (commercials.length === 0) {
+      Alert.alert(
+        "Aucun commercial dans l'équipe",
+        "Invitez d'abord un commercial via la page « Équipe » pour pouvoir lui envoyer un chantier à mesurer.",
+      );
+      return;
+    }
+    if (commercials.length === 1) {
+      const c = commercials[0];
+      Alert.alert(
+        "Envoyer à un commercial ?",
+        `Le chantier sera affecté à ${c.name} et passera en « À mesurer ».`,
+        [
+          { text: "Annuler", style: "cancel" },
+          {
+            text: "Envoyer",
+            style: "default",
+            onPress: () => sendToCommercial(c.id),
+          },
+        ],
+      );
+      return;
+    }
+    // Plusieurs commerciaux : ouvrir le picker
+    setSendToCommercialOpen(true);
+  };
+
+  // ✏️ Édition des infos chantier (adresse, code postal, ville, RDV, client)
+  // — pré-remplit les inputs depuis l'état actuel et ouvre la modale.
+  const openEdit = () => {
+    if (!chantier) return;
+    setEditFirstName(chantier.first_name || "");
+    setEditLastName(chantier.last_name || "");
+    setEditAddress(chantier.address || "");
+    setEditPostal(chantier.postal_code || "");
+    setEditCity(chantier.city || "");
+    setEditAppointment(
+      chantier.appointment_at ? new Date(chantier.appointment_at) : null,
+    );
+    setEditOpen(true);
+  };
+  const saveEdit = async () => {
+    if (!chantier) return;
+    if (savingEdit) return;
+    setSavingEdit(true);
+    try {
+      const payload: any = {
+        first_name: editFirstName.trim() || null,
+        last_name: editLastName.trim() || null,
+        address: editAddress.trim(),
+        postal_code: editPostal.trim() || null,
+        city: editCity.trim() || null,
+        appointment_at: editAppointment
+          ? editAppointment.toISOString()
+          : null,
+      };
+      // Reconstruction de client_name à partir du prénom + nom si modifiés
+      const parts = [editLastName, editFirstName].filter(Boolean).map((p) => p.trim());
+      if (parts.length) payload.client_name = parts.join(" ");
+      const res = await api.patch<Chantier>(`/chantiers/${id}`, payload);
+      setChantier(res.data);
+      setEditOpen(false);
+    } catch (e: any) {
+      const reason =
+        e?.response?.status === 403
+          ? "Vous n'avez pas les droits pour modifier ce chantier."
+          : "Modification impossible.";
+      Alert.alert("Erreur", reason);
+    } finally {
+      setSavingEdit(false);
     }
   };
 
@@ -692,6 +808,21 @@ export default function ChantierDetail() {
                     <Text style={styles.address}>{chantier.address}</Text>
                   </View>
                 </View>
+                {/* ✏️ Édition des infos chantier (Admin/Commercial sauf
+                    archivé/fabrication). Le Commercial verrouillé en
+                    technique_a_valider doit d'abord revenir à "À mesurer"
+                    pour éditer (passe par isCommercialInVerify). */}
+                {canManage && !isArchived && !isInFabrication && !isCommercialInVerify && (
+                  <TouchableOpacity
+                    testID="edit-chantier-button"
+                    onPress={openEdit}
+                    style={styles.deleteIconBtn}
+                    activeOpacity={0.7}
+                    hitSlop={{ top: 8, left: 8, right: 8, bottom: 8 }}
+                  >
+                    <Ionicons name="create-outline" size={20} color={colors.primary} />
+                  </TouchableOpacity>
+                )}
                 {canDeleteChantier && (
                   <TouchableOpacity
                     testID="delete-chantier-button"
@@ -1228,6 +1359,30 @@ export default function ChantierDetail() {
             canCloseStep = roleIsTechnician;
           }
           if (!canCloseStep) return null;
+          // 📤 Cas spécial Admin Entreprise en statut "devis_a_faire" :
+          // au lieu d'un simple bouton "CLÔTURER", on propose un bouton CTA
+          // dédié "ENVOYER À UN COMMERCIAL" qui combine l'affectation
+          // au commercial choisi + la transition de statut vers a_mesurer.
+          const isAdminEntreprise =
+            roleIsAdmin &&
+            !isSoloArtisan &&
+            !isArtisanAccount &&
+            !artisanMode;
+          if (isAdminEntreprise && status === "devis_a_faire") {
+            return (
+              <TouchableOpacity
+                testID="send-to-commercial-button"
+                onPress={handleSendToCommercialClick}
+                style={[styles.btn, styles.btnPrimary]}
+                activeOpacity={0.85}
+              >
+                <Ionicons name="paper-plane" size={20} color="#000" />
+                <Text style={styles.btnPrimaryText}>
+                  📤 ENVOYER À UN COMMERCIAL
+                </Text>
+              </TouchableOpacity>
+            );
+          }
           return (
             <TouchableOpacity
               testID="close-project-button"
@@ -1329,6 +1484,220 @@ export default function ChantierDetail() {
             </TouchableOpacity>
           </View>
         </View>
+      </Modal>
+
+      {/* 📤 Modale picker : choix du commercial (plusieurs commerciaux dispos) */}
+      <Modal
+        visible={sendToCommercialOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSendToCommercialOpen(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>ENVOYER À UN COMMERCIAL</Text>
+            <Text style={styles.modalSub}>
+              Choisissez le commercial qui prendra les mesures. Il sera notifié
+              immédiatement.
+            </Text>
+            <FlatList
+              data={users.filter((u) => u.role === "commercial")}
+              keyExtractor={(u) => u.id}
+              style={{ maxHeight: 320 }}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  testID={`send-commercial-${item.id}`}
+                  onPress={() => sendToCommercial(item.id)}
+                  style={styles.assignItem}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons
+                    name="briefcase"
+                    size={20}
+                    color={colors.primary}
+                  />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.assignItemText}>{item.name}</Text>
+                    <Text style={styles.assignItemRole}>{item.email}</Text>
+                  </View>
+                  <Ionicons
+                    name="paper-plane-outline"
+                    size={18}
+                    color={colors.primary}
+                  />
+                </TouchableOpacity>
+              )}
+            />
+            <TouchableOpacity
+              testID="send-commercial-cancel"
+              onPress={() => setSendToCommercialOpen(false)}
+              style={[styles.btn, styles.btnSecondary, { marginTop: 12 }]}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.btnSecondaryText}>ANNULER</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ✏️ Modale d'édition des infos chantier (client + adresse + RDV) */}
+      <Modal
+        visible={editOpen}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setEditOpen(false)}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={[styles.modalCard, { maxHeight: "92%" }]}>
+              <Text style={styles.modalTitle}>MODIFIER LE CHANTIER</Text>
+              <Text style={styles.modalSub}>
+                Mettez à jour les coordonnées du client et la date de rendez-vous.
+              </Text>
+              <ScrollView
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={{ paddingBottom: 8 }}
+              >
+                <Text style={editStyles.label}>Prénom</Text>
+                <TextInput
+                  testID="edit-firstname-input"
+                  value={editFirstName}
+                  onChangeText={setEditFirstName}
+                  placeholder="Prénom"
+                  placeholderTextColor={colors.placeholder}
+                  style={editStyles.input}
+                />
+                <Text style={editStyles.label}>Nom</Text>
+                <TextInput
+                  testID="edit-lastname-input"
+                  value={editLastName}
+                  onChangeText={setEditLastName}
+                  placeholder="Nom de famille"
+                  placeholderTextColor={colors.placeholder}
+                  style={editStyles.input}
+                />
+                <Text style={editStyles.label}>Adresse</Text>
+                <TextInput
+                  testID="edit-address-input"
+                  value={editAddress}
+                  onChangeText={setEditAddress}
+                  placeholder="Rue et numéro"
+                  placeholderTextColor={colors.placeholder}
+                  style={editStyles.input}
+                />
+                <View style={{ flexDirection: "row", gap: 10 }}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={editStyles.label}>Code postal</Text>
+                    <TextInput
+                      testID="edit-postal-input"
+                      value={editPostal}
+                      onChangeText={setEditPostal}
+                      placeholder="1000"
+                      placeholderTextColor={colors.placeholder}
+                      keyboardType="number-pad"
+                      style={editStyles.input}
+                    />
+                  </View>
+                  <View style={{ flex: 2 }}>
+                    <Text style={editStyles.label}>Ville</Text>
+                    <TextInput
+                      testID="edit-city-input"
+                      value={editCity}
+                      onChangeText={setEditCity}
+                      placeholder="Bruxelles"
+                      placeholderTextColor={colors.placeholder}
+                      style={editStyles.input}
+                    />
+                  </View>
+                </View>
+                <Text style={editStyles.label}>Date du rendez-vous</Text>
+                <TouchableOpacity
+                  testID="edit-appointment-button"
+                  onPress={() => setEditApptPickerOpen(true)}
+                  style={[editStyles.input, editStyles.dateBtn]}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons
+                    name="calendar-outline"
+                    size={18}
+                    color={colors.textSecondary}
+                  />
+                  <Text
+                    style={[
+                      editStyles.dateBtnText,
+                      !editAppointment && { color: colors.placeholder },
+                    ]}
+                  >
+                    {editAppointment
+                      ? editAppointment.toLocaleString("fr-FR", {
+                          weekday: "short",
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "Aucune date — toucher pour choisir"}
+                  </Text>
+                  {editAppointment && (
+                    <TouchableOpacity
+                      onPress={() => setEditAppointment(null)}
+                      hitSlop={10}
+                    >
+                      <Ionicons
+                        name="close-circle"
+                        size={18}
+                        color={colors.textSecondary}
+                      />
+                    </TouchableOpacity>
+                  )}
+                </TouchableOpacity>
+              </ScrollView>
+              <AppointmentPicker
+                visible={editApptPickerOpen}
+                value={editAppointment ? editAppointment.toISOString() : null}
+                onClose={() => setEditApptPickerOpen(false)}
+                onConfirm={(iso) => setEditAppointment(new Date(iso))}
+                title="Date du rendez-vous"
+              />
+              <View
+                style={{
+                  flexDirection: "row",
+                  gap: 10,
+                  marginTop: 12,
+                }}
+              >
+                <TouchableOpacity
+                  testID="edit-cancel"
+                  onPress={() => setEditOpen(false)}
+                  style={[styles.btn, styles.btnSecondary, { flex: 1 }]}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.btnSecondaryText}>ANNULER</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  testID="edit-save"
+                  onPress={saveEdit}
+                  disabled={savingEdit}
+                  style={[
+                    styles.btn,
+                    styles.btnPrimary,
+                    { flex: 1, opacity: savingEdit ? 0.6 : 1 },
+                  ]}
+                  activeOpacity={0.85}
+                >
+                  <Ionicons name="save" size={18} color="#000" />
+                  <Text style={styles.btnPrimaryText}>
+                    {savingEdit ? "..." : "ENREGISTRER"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
   );
@@ -1815,3 +2184,38 @@ const validateStyles = StyleSheet.create({
     marginTop: 4,
   },
 });
+
+// Styles spécifiques à la modale d'édition du chantier (✏️)
+const editStyles = StyleSheet.create({
+  label: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+    marginTop: 10,
+    marginBottom: 4,
+  },
+  input: {
+    backgroundColor: "#1a1a1d",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    paddingHorizontal: 12,
+    paddingVertical: Platform.OS === "ios" ? 12 : 10,
+    color: colors.textPrimary,
+    fontSize: 15,
+    minHeight: 44,
+  },
+  dateBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  dateBtnText: {
+    color: colors.textPrimary,
+    fontSize: 14,
+    flex: 1,
+  },
+});
+
