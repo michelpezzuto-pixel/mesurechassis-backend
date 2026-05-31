@@ -849,20 +849,55 @@ export default function ChantierDetail() {
                 </View>
               )}
 
-              <TouchableOpacity
-                testID="assign-button"
-                onPress={() => canManage && setAssignOpen(true)}
-                disabled={!canManage}
-                style={[styles.assignRow, !canManage && { opacity: 0.6 }]}
-                activeOpacity={0.7}
-              >
-                <Ionicons name="person-circle-outline" size={18} color={colors.primary} />
-                <Text style={styles.assignLabel}>Affecté à :</Text>
-                <Text style={styles.assignValue}>
-                  {assignedUser ? assignedUser.name : "Personne — affecter"}
-                </Text>
-                <Ionicons name="chevron-down" size={16} color={colors.textSecondary} style={{ marginLeft: "auto" }} />
-              </TouchableOpacity>
+              {canManage && !assignedUser ? (
+                // 🚨 Pas encore d'affectation : CTA bien visible pour l'admin
+                <TouchableOpacity
+                  testID="assign-button"
+                  onPress={() => setAssignOpen(true)}
+                  style={styles.assignCta}
+                  activeOpacity={0.85}
+                >
+                  <Ionicons name="person-add" size={18} color={colors.primary} />
+                  <Text style={styles.assignCtaText}>
+                    AFFECTER À UN COMMERCIAL
+                  </Text>
+                  <Ionicons
+                    name="chevron-forward"
+                    size={18}
+                    color={colors.primary}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  testID="assign-button"
+                  onPress={() => canManage && setAssignOpen(true)}
+                  disabled={!canManage}
+                  style={[styles.assignRow, !canManage && { opacity: 0.6 }]}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons
+                    name="person-circle"
+                    size={20}
+                    color={colors.primary}
+                  />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.assignLabel}>Affecté à</Text>
+                    <Text style={styles.assignValue}>
+                      {assignedUser ? assignedUser.name : "Personne"}
+                    </Text>
+                  </View>
+                  {canManage && (
+                    <View style={styles.assignChangePill}>
+                      <Ionicons
+                        name="swap-horizontal"
+                        size={14}
+                        color={colors.primary}
+                      />
+                      <Text style={styles.assignChangeText}>RÉAFFECTER</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+              )}
             </View>
 
             <View style={styles.statsRow}>
@@ -1441,12 +1476,22 @@ export default function ChantierDetail() {
       <Modal visible={assignOpen} transparent animationType="fade" onRequestClose={() => setAssignOpen(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>AFFECTER LE CHANTIER</Text>
-            <Text style={styles.modalSub}>Sélectionnez un membre de l'équipe</Text>
+            <Text style={styles.modalTitle}>AFFECTER À UN COMMERCIAL</Text>
+            <Text style={styles.modalSub}>
+              Choisissez le commercial qui prendra en charge la prise de
+              mesures du chantier.
+            </Text>
             <FlatList
-              data={users}
+              data={users.filter((u) => u.role === "commercial")}
               keyExtractor={(u) => u.id}
               style={{ maxHeight: 320 }}
+              ListEmptyComponent={
+                <View style={{ padding: 16, alignItems: "center" }}>
+                  <Text style={[styles.modalSub, { marginBottom: 0 }]}>
+                    Aucun commercial dans votre équipe.{"\n"}Invitez-en un via la page « Équipe ».
+                  </Text>
+                </View>
+              }
               ListHeaderComponent={
                 <TouchableOpacity
                   testID="assign-none"
@@ -1468,19 +1513,13 @@ export default function ChantierDetail() {
                     activeOpacity={0.7}
                   >
                     <Ionicons
-                      name={
-                        item.role === "admin"
-                          ? "shield-checkmark"
-                          : item.role === "commercial"
-                          ? "briefcase"
-                          : "construct"
-                      }
+                      name="briefcase"
                       size={20}
                       color={active ? colors.primary : colors.textSecondary}
                     />
                     <View style={{ flex: 1 }}>
                       <Text style={styles.assignItemText}>{item.name}</Text>
-                      <Text style={styles.assignItemRole}>{item.role}</Text>
+                      <Text style={styles.assignItemRole}>commercial</Text>
                     </View>
                     {active && <Ionicons name="checkmark-circle" size={20} color={colors.primary} />}
                   </TouchableOpacity>
@@ -2095,6 +2134,70 @@ const styles = StyleSheet.create({
     borderColor: colors.borderSubtle,
     marginBottom: 8,
     backgroundColor: "#141417",
+  },
+  // Ligne d'affichage de l'affectation (chantier déjà affecté)
+  assignRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    backgroundColor: "#141417",
+    marginTop: 8,
+  },
+  assignLabel: {
+    color: colors.textSecondary,
+    fontSize: 10,
+    fontWeight: "700",
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+  },
+  assignValue: {
+    color: colors.textPrimary,
+    fontSize: 14,
+    fontWeight: "700",
+    marginTop: 2,
+  },
+  // Pill "RÉAFFECTER" à droite de la ligne (visible si admin)
+  assignChangePill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    backgroundColor: "rgba(245, 158, 11, 0.12)",
+  },
+  assignChangeText: {
+    color: colors.primary,
+    fontSize: 10,
+    fontWeight: "900",
+    letterSpacing: 0.6,
+  },
+  // CTA bien visible quand aucun commercial n'est encore affecté (admin)
+  assignCta: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: colors.primary,
+    backgroundColor: "rgba(245, 158, 11, 0.10)",
+    marginTop: 10,
+  },
+  assignCtaText: {
+    flex: 1,
+    color: colors.primary,
+    fontSize: 13,
+    fontWeight: "900",
+    letterSpacing: 1,
   },
   assignItemActive: {
     borderColor: colors.primary,
