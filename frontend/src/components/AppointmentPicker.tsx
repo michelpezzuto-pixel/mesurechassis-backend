@@ -21,6 +21,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Calendar, LocaleConfig } from "react-native-calendars";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "@/src/theme";
 
 // Locale FR pour react-native-calendars
@@ -92,6 +93,7 @@ export default function AppointmentPicker({
   onConfirm,
   title,
 }: AppointmentPickerProps) {
+  const insets = useSafeAreaInsets();
   // Initial date : value si fournie, sinon aujourd'hui à 09:00
   const initial = useMemo(() => {
     if (value) {
@@ -247,7 +249,8 @@ export default function AppointmentPicker({
               <View style={styles.timeCol}>
                 <Text style={styles.timeSubLabel}>Heure</Text>
                 <ScrollView
-                  showsVerticalScrollIndicator={false}
+                  showsVerticalScrollIndicator={true}
+                  nestedScrollEnabled={true}
                   style={styles.scrollPicker}
                   contentContainerStyle={{ paddingVertical: 8 }}
                 >
@@ -305,8 +308,17 @@ export default function AppointmentPicker({
           </View>
         </ScrollView>
 
-        {/* CTA confirmer */}
-        <View style={styles.footer}>
+        {/* CTA confirmer — paddingBottom dynamique pour éviter le chevauchement
+            avec la barre de navigation système Android (gestures / boutons). */}
+        <View
+          style={[
+            styles.footer,
+            {
+              paddingBottom:
+                Math.max(insets.bottom, Platform.OS === "ios" ? 28 : 16) + 12,
+            },
+          ]}
+        >
           <TouchableOpacity
             testID="appointment-confirm"
             onPress={handleConfirm}
