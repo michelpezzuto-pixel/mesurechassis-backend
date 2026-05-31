@@ -849,25 +849,29 @@ export default function ChantierDetail() {
                 </View>
               )}
 
-              {canManage && !assignedUser ? (
-                // 🚨 Pas encore d'affectation : CTA bien visible pour l'admin
-                <TouchableOpacity
-                  testID="assign-button"
-                  onPress={() => setAssignOpen(true)}
-                  style={styles.assignCta}
-                  activeOpacity={0.85}
-                >
-                  <Ionicons name="person-add" size={18} color={colors.primary} />
-                  <Text style={styles.assignCtaText}>
-                    AFFECTER À UN COMMERCIAL
-                  </Text>
-                  <Ionicons
-                    name="chevron-forward"
-                    size={18}
-                    color={colors.primary}
-                  />
-                </TouchableOpacity>
-              ) : (
+              {/* 🚫 En mode Artisan (solo) il n'y a personne à qui affecter
+                  le chantier (l'artisan joue tous les rôles). On masque
+                  entièrement la zone d'affectation pour éviter la confusion. */}
+              {!isSoloArtisan && !isArtisanAccount && !artisanMode && (
+                canManage && !assignedUser ? (
+                  // 🚨 Pas encore d'affectation : CTA bien visible pour l'admin
+                  <TouchableOpacity
+                    testID="assign-button"
+                    onPress={() => setAssignOpen(true)}
+                    style={styles.assignCta}
+                    activeOpacity={0.85}
+                  >
+                    <Ionicons name="person-add" size={18} color={colors.primary} />
+                    <Text style={styles.assignCtaText}>
+                      AFFECTER À UN COMMERCIAL
+                    </Text>
+                    <Ionicons
+                      name="chevron-forward"
+                      size={18}
+                      color={colors.primary}
+                    />
+                  </TouchableOpacity>
+                ) : (
                 <TouchableOpacity
                   testID="assign-button"
                   onPress={() => canManage && setAssignOpen(true)}
@@ -897,6 +901,7 @@ export default function ChantierDetail() {
                     </View>
                   )}
                 </TouchableOpacity>
+                )
               )}
             </View>
 
