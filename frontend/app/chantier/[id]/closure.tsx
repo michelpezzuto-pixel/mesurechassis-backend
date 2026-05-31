@@ -15,6 +15,7 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { api, buildAuthHeaders, PDF_URL } from "@/src/services/api";
+import { useAuth } from "@/src/context/AuthContext";
 import { colors, blockMeta, statusMeta, NEXT_STATUS, CLOSURE_BUTTON_LABEL_BY_STATUS, CLOSURE_BUTTON_LABEL, CLOSURE_DESCRIPTION_BY_STATUS } from "@/src/theme";
 
 type Chantier = {
@@ -41,6 +42,7 @@ export default function Closure() {
   const [mesures, setMesures] = useState<Mesure[]>([]);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
+  const { artisanMode, company } = useAuth();
 
   const fetchAll = useCallback(async () => {
     try {
@@ -144,13 +146,24 @@ export default function Closure() {
   };
 
   // ---- Closure handler ----
-  // Pipeline 4-étapes : on calcule dynamiquement le prochain statut selon
-  // l'étape actuelle. Le label du bouton change en conséquence.
+  // Workflow différencié :
+  //  • Mode Artisan / Solo : pas de pipeline équipe — un seul clic
+  //    "Marquer comme terminé" qui passe directement en `cloture`.
+  //  • Mode Entreprise : pipeline 4-étapes (devis_a_faire → a_mesurer
+  //    → technique_a_valider → en_fabrication → cloture).
   const currentStage = chantier ? statusMeta[chantier.status]?.stage : null;
-  const nextStatus = chantier ? NEXT_STATUS[chantier.status] : null;
-  const nextLabel =
-    (chantier && CLOSURE_BUTTON_LABEL_BY_STATUS[chantier.status]) ||
-    (currentStage ? CLOSURE_BUTTON_LABEL[currentStage] : null);
+  const isArtisanAccount =
+    (company?.account_type || "").toLowerCase() === "artisan";
+  const isArtisanFlow = artisanMode || isArtisanAccount;
+  const nextStatus = chantier
+    ? isArtisanFlow
+      ? "cloture"
+      : NEXT_STATUS[chantier.status]
+    : null;
+  const nextLabel = isArtisanFlow
+    ? "🚩 Marquer le chantier comme terminé"
+    : (chantier && CLOSURE_BUTTON_LABEL_BY_STATUS[chantier.status]) ||
+      (currentStage ? CLOSURE_BUTTON_LABEL[currentStage] : null);
 
   const performClosure = useCallback(async () => {
     if (!nextStatus) return;
