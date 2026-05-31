@@ -10,9 +10,14 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.mesurechassis.escalier",
+      "buildNumber": "1",
       "infoPlist": {
         "NSCameraUsageDescription": "Photographier les ouvertures à mesurer",
-        "NSPhotoLibraryUsageDescription": "Joindre une photo à une mesure"
+        "NSPhotoLibraryUsageDescription": "Joindre une photo à une mesure",
+        "NSPhotoLibraryAddUsageDescription": "Enregistrer un PDF de mesures dans votre photothèque",
+        "NSMicrophoneUsageDescription": "Dicter vos notes de chantier à voix haute",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
