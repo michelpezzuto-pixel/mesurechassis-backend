@@ -147,40 +147,39 @@ export default function Closure() {
 
   // ---- Closure handler ----
   // Workflow différencié :
-  //  • Mode Artisan / Solo : pipeline simplifié en 3 étapes (sans
-  //    intervention équipe). L'artisan effectue lui-même mesures puis
-  //    encodage bureau puis fabrication.
-  //       devis_a_faire        → a_mesurer            (mesures validées)
-  //       a_mesurer            → en_fabrication       (encodage validé → fab, skip technicien)
+  //  • Mode Artisan / Solo : pipeline 4-étapes adapté au flux solo :
+  //       devis_a_faire        → a_mesurer            (commande validée, mesurage en cours)
+  //       a_mesurer            → technique_a_valider  (mesures finies, encodage bureau)
+  //       technique_a_valider  → en_fabrication       (encodage validé, envoi en fab)
   //       en_fabrication       → cloture              (chantier livré)
-  //  • Mode Entreprise : pipeline 4-étapes (devis_a_faire → a_mesurer
-  //    → technique_a_valider → en_fabrication → cloture).
+  //  • Mode Entreprise : pipeline équipe (Admin → Commercial → Technicien).
   const currentStage = chantier ? statusMeta[chantier.status]?.stage : null;
   const isArtisanAccount =
     (company?.account_type || "").toLowerCase() === "artisan";
   const isArtisanFlow = artisanMode || isArtisanAccount;
 
-  // NEXT_STATUS spécifique au mode Artisan (skip technique_a_valider)
+  // NEXT_STATUS spécifique au mode Artisan (4 étapes : ne saute aucun statut)
   const ARTISAN_NEXT_STATUS: Record<string, string> = {
     devis_a_faire: "a_mesurer",
-    a_mesurer: "en_fabrication",
+    a_mesurer: "technique_a_valider",
     technique_a_valider: "en_fabrication",
     en_fabrication: "cloture",
   };
-  // Labels & descriptions clairs en mode Artisan
+  // Labels & descriptions clairs en mode Artisan (un seul utilisateur joue
+  // tous les rôles, terminologie adaptée à son contexte solo).
   const ARTISAN_LABELS: Record<string, string> = {
-    devis_a_faire: "✅ Mesures terminées, passer à l'encodage bureau",
-    a_mesurer: "💻 Encodage bureau validé, envoyer en fabrication",
-    technique_a_valider: "🏭 Envoyer en fabrication",
+    devis_a_faire: "✅ Coordonnées validées, démarrer le mesurage",
+    a_mesurer: "📐 Mesures terminées, passer à l'encodage bureau",
+    technique_a_valider: "💻 Encodage bureau validé, envoyer en fabrication",
     en_fabrication: "🏁 Marquer comme terminé / livré",
   };
   const ARTISAN_DESCRIPTIONS: Record<string, string> = {
     devis_a_faire:
-      "Toutes les ouvertures sont mesurées. Le chantier passera en « Encodage bureau » pour saisir la commande au bureau.",
+      "Les coordonnées du client sont prêtes. Le chantier passera en « À mesurer ».",
     a_mesurer:
-      "L'encodage de la commande est terminé. Le chantier passera directement en « En fabrication ».",
+      "Toutes les ouvertures sont mesurées. Le chantier passera en « Encodage bureau » pour saisir la commande au calme au bureau.",
     technique_a_valider:
-      "Le chantier passera en « En fabrication ».",
+      "L'encodage de la commande est terminé. Le chantier passera en « En fabrication ».",
     en_fabrication:
       "Le chantier est terminé et livré au client. Il sera archivé.",
   };

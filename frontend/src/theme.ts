@@ -175,3 +175,29 @@ export const shapeMeta: Record<string, { label: string }> = {
   oeil_de_boeuf: { label: "Œil-de-bœuf" },
   coulissant_levant: { label: "Coulissant levant" },
 };
+
+/**
+ * Retourne le libellé contextuel d'un statut selon le type de compte.
+ * En mode Artisan, "technique_a_valider" est renommé en "Encodage bureau"
+ * (pas de technicien dédié, l'artisan saisit lui-même la commande).
+ */
+export function getStatusLabel(
+  status: string,
+  accountType?: string | null,
+): string {
+  const isArtisan = (accountType || "").toLowerCase() === "artisan";
+  if (isArtisan) {
+    const ARTISAN_LABELS: Record<string, string> = {
+      devis_a_faire: "Coordonnées validées",
+      a_mesurer: "À mesurer",
+      technique_a_valider: "Encodage bureau",
+      a_verifier: "Encodage bureau",
+      en_fabrication: "En fabrication",
+      en_commande: "En fabrication",
+      cloture: "Terminé / Livré",
+      termine: "Terminé / Livré",
+    };
+    if (ARTISAN_LABELS[status]) return ARTISAN_LABELS[status];
+  }
+  return statusMeta[status]?.label ?? status;
+}
