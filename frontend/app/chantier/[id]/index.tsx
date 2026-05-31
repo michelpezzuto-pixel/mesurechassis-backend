@@ -66,7 +66,12 @@ export default function ChantierDetail() {
   const roleIsAdmin = user?.role === "admin";
   const roleIsCommercial = user?.role === "commercial";
   const roleIsTechnician = user?.role === "technician";
-  const canManage = roleIsAdmin || roleIsCommercial;
+  // 🔒 Seul l'admin (le patron) peut affecter un chantier à un commercial /
+  //    technicien. Le Commercial NE peut pas réassigner. (Règle métier
+  //    explicite : "Il n'y a que le patron qui peut affecter les chantiers
+  //    aux commerciaux. C'est tout.")
+  //    Exception : en mode Artisan/Solo, l'admin = tous les rôles, donc OK.
+  const canManage = roleIsAdmin;
   // `canMeasure` est défini plus bas après `isSoloArtisan` car en Mode
   // Artisan Solo (1 seul user) ou Mode Artisan activé, l'admin doit pouvoir
   // mesurer comme un technicien.
@@ -991,24 +996,12 @@ export default function ChantierDetail() {
             <Ionicons name="grid-outline" size={48} color={colors.borderStrong} />
             <Text style={styles.emptyText}>Aucune ouverture mesurée</Text>
             {canEditMesures ? (
-              <>
-                <Text style={styles.emptyHint}>
-                  Commencez par ajouter votre première ouverture (Carré /
-                  Rectangle, Porte, Trapèze, Triangle, Œil-de-bœuf, Coulissant
-                  levant, Porte de garage…)
-                </Text>
-                <TouchableOpacity
-                  testID="empty-add-ouverture-button"
-                  onPress={() => router.push(`/chantier/${id}/new-mesure`)}
-                  activeOpacity={0.85}
-                  style={styles.emptyCta}
-                >
-                  <Ionicons name="add-circle" size={22} color="#000" />
-                  <Text style={styles.emptyCtaText}>
-                    AJOUTER UN CHÂSSIS / UNE OUVERTURE
-                  </Text>
-                </TouchableOpacity>
-              </>
+              <Text style={styles.emptyHint}>
+                Commencez par ajouter votre première ouverture via le bouton
+                « Ajouter une ouverture » ci-dessous (Carré / Rectangle, Porte,
+                Trapèze, Triangle, Œil-de-bœuf, Coulissant levant, Porte de
+                garage…).
+              </Text>
             ) : showArchivedLockIntercept ? (
               <Text style={styles.emptyHint}>
                 🔒 Chantier verrouillé. Les mesures ne sont plus modifiables.

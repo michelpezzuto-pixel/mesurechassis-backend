@@ -79,10 +79,22 @@ export default function Dashboard() {
       if (q.trim()) params.q = q.trim();
       const res = await api.get<Chantier[]>("/chantiers", { params });
       const all = res.data;
+      // 🔒 RBAC dashboard : le Technicien NE VOIT PAS les chantiers encore
+      // en phase commerciale (devis_a_faire, a_mesurer). Seuls les
+      // commerciaux peuvent y accéder. Le tech ne reprend la main qu'à
+      // partir de "technique_a_valider".
+      const isTech = user?.role === "technician";
+      const visibleAll = isTech
+        ? all.filter(
+            (c) => c.status !== "devis_a_faire" && c.status !== "a_mesurer",
+          )
+        : all;
       const filtered =
         filter === "all"
-          ? all
-          : all.filter((c) => (statusMeta[c.status]?.stage ?? "verify") === filter);
+          ? visibleAll
+          : visibleAll.filter(
+              (c) => (statusMeta[c.status]?.stage ?? "verify") === filter,
+            );
       setItems(filtered);
     } catch (e) {
       Alert.alert("Erreur", "Chargement impossible.");
@@ -90,7 +102,7 @@ export default function Dashboard() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [filter, q]);
+  }, [filter, q, user?.role]);
 
   useEffect(() => {
     fetchData();
