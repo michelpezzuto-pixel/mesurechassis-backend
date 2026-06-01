@@ -797,6 +797,27 @@ export default function CompanyProfile() {
             </TouchableOpacity>
           </View>
 
+          {/* === MON ABONNEMENT === */}
+          <View style={styles.card}>
+            <View style={styles.row}>
+              <Ionicons name="card-outline" size={18} color={colors.primary} />
+              <Text style={styles.dangerTitle}>MON ABONNEMENT</Text>
+            </View>
+            <Text style={styles.help}>
+              Consulter votre plan, gérer votre moyen de paiement, télécharger
+              vos factures ou changer de formule.
+            </Text>
+            <TouchableOpacity
+              testID="open-subscription"
+              onPress={() => router.push("/subscription")}
+              activeOpacity={0.85}
+              style={[styles.logoBtnPrimary, { marginTop: 12 }]}
+            >
+              <Ionicons name="diamond-outline" size={16} color="#000" />
+              <Text style={styles.logoBtnPrimaryText}>VOIR MES PLANS</Text>
+            </TouchableOpacity>
+          </View>
+
           {/* === LOT E — ZONE DANGER : Suppression du compte (RGPD) === */}
           <View style={[styles.card, styles.dangerCard]}>
             <View style={styles.dangerHeader}>

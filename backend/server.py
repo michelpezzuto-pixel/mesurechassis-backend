@@ -23,6 +23,7 @@ from routes import feedbacks as feedbacks_routes
 from routes import invitations as invitations_routes
 from routes import mesures as mesures_routes
 from routes import stats as stats_routes
+from routes import stripe_routes
 from seed import seed_data
 
 
@@ -40,6 +41,7 @@ api = APIRouter(prefix="/api")
 
 api.include_router(auth_routes.router)
 api.include_router(invitations_routes.router)
+api.include_router(stripe_routes.router)
 api.include_router(chantiers_routes.router)
 api.include_router(mesures_routes.router)
 api.include_router(feedbacks_routes.router)
@@ -108,6 +110,19 @@ async def download_feature_graphic():
         path,
         media_type="image/png",
         filename="feature-graphic-1024x500.png",
+    )
+
+
+@api.get("/_downloads/railway-update")
+async def download_railway_update():
+    """Package de mise à jour des fichiers backend pour Railway (auth.py + stripe_routes.py + server.py + requirements.txt)."""
+    path = "/app/backend/public_downloads/railway-update-2026-06-01.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="railway-update-2026-06-01.zip",
     )
 
 
