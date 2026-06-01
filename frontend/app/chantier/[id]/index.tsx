@@ -138,13 +138,18 @@ export default function ChantierDetail() {
   // 🔒 Qui peut valider le passage en fabrication ?
   // - Mode Solo (teamSize=1) : admin ou technicien
   // - Mode Équipe : SEUL le technicien (jamais commercial, jamais admin)
+  // - Mode Artisan/Solo : le bouton vert est MASQUÉ. L'artisan utilise
+  //   uniquement le bouton CLÔTURER en bas (qui passe par closure.tsx et
+  //   redirige automatiquement vers le dashboard). On évite ainsi le doublon
+  //   trompeur "bouton vert" + "bouton CLÔTURER".
   // - Tant que `users` n'est pas chargé : pas de bouton (sécurité)
   const canValidateForFab =
     usersLoaded &&
     isAwaitingValidation &&
-    (isSoloArtisan
-      ? roleIsAdmin || roleIsTechnician
-      : roleIsTechnician);
+    !isSoloArtisan &&
+    !isArtisanAccount &&
+    !artisanMode &&
+    roleIsTechnician;
   // Message d'attente : tout le monde sauf le technicien en mode équipe.
   const isWaitingForTech =
     usersLoaded && isAwaitingValidation && !isSoloArtisan && !roleIsTechnician;
@@ -743,7 +748,13 @@ export default function ChantierDetail() {
       setChantier(r.data);
       Alert.alert(
         "✅ Chantier validé",
-        "Le chantier est désormais en fabrication. Les exports techniques (CSV / Excel) sont disponibles."
+        "Le chantier est désormais en fabrication. Les exports techniques (CSV / Excel) sont disponibles.",
+        [
+          {
+            text: "OK",
+            onPress: () => router.replace("/dashboard"),
+          },
+        ],
       );
     } catch (e: any) {
       const detail = e?.response?.data?.detail;
