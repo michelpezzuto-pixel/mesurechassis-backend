@@ -98,6 +98,19 @@ async def download_play_store_zip():
     )
 
 
+@api.get("/_downloads/backend-railway")
+async def download_backend_zip():
+    """Pack du backend prêt à pousser sur GitHub puis déployer sur Railway."""
+    path = "/app/backend/mesurechassis-backend.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="mesurechassis-backend.zip",
+    )
+
+
 @api.get("/_gallery/{filename}")
 async def gallery_file(filename: str):
     """Galerie temporaire pour visualiser les images extraites du PDF utilisateur."""
