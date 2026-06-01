@@ -98,6 +98,19 @@ async def download_play_store_zip():
     )
 
 
+@api.get("/_downloads/feature-graphic")
+async def download_feature_graphic():
+    """Image de présentation 1024x500 pour Google Play Console (générée v2)."""
+    path = "/app/play-store-assets/feature-graphic-1024x500-v2.png"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Image introuvable")
+    return FileResponse(
+        path,
+        media_type="image/png",
+        filename="feature-graphic-1024x500.png",
+    )
+
+
 @api.get("/_downloads/backend-railway")
 async def download_backend_zip():
     """Pack du backend prêt à pousser sur GitHub puis déployer sur Railway."""
