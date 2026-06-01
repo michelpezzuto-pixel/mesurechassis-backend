@@ -1243,7 +1243,14 @@ export default function ChantierDetail() {
                 </TouchableOpacity>
               </View>
             )}
-            {isInFabrication && user?.role !== "technician" && (
+            {/* 🚫 En mode Artisan/Solo, l'admin EST le technicien — pas de
+                 message "seul le technicien peut" car il fait tout lui-même.
+                 En mode Entreprise, le verrou reste affiché pour Commercial/Admin. */}
+            {isInFabrication &&
+              user?.role !== "technician" &&
+              !isSoloArtisan &&
+              !isArtisanAccount &&
+              !artisanMode && (
               <View style={validateStyles.fabLockCard}>
                 <Ionicons name="cog" size={20} color={colors.primary} />
                 <View style={{ flex: 1 }}>

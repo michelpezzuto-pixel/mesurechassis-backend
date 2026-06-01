@@ -158,14 +158,17 @@ export default function Closure() {
     (company?.account_type || "").toLowerCase() === "artisan";
   const isArtisanFlow = artisanMode || isArtisanAccount;
 
-  // NEXT_STATUS spécifique au mode Artisan (3 étapes effectives : le devis est
-  // hors-app, le chantier est créé directement en "a_mesurer").
-  //  Note : on conserve l'entrée devis_a_faire en sécurité pour les anciens
-  //  chantiers déjà en base (rétrocompat), mais les nouveaux iront direct en
-  //  a_mesurer (forcé côté backend pour les comptes artisan_mode).
+  // NEXT_STATUS spécifique au mode Artisan (workflow simplifié 2 étapes).
+  //  L'artisan est seul : pas d'étape "vérification au bureau" car il n'y a
+  //  ni commercial à transmettre ni technicien à informer.
+  //  Workflow effectif :
+  //    a_mesurer       → en_fabrication  (mesures finies → on lance la fab)
+  //    en_fabrication  → cloture         (livré → on archive)
+  //  Le statut devis_a_faire est conservé en sécurité (rétrocompat anciens
+  //  chantiers), mais les nouveaux iront direct en a_mesurer (forcé backend).
   const ARTISAN_NEXT_STATUS: Record<string, string> = {
     devis_a_faire: "a_mesurer",
-    a_mesurer: "technique_a_valider",
+    a_mesurer: "en_fabrication",
     technique_a_valider: "en_fabrication",
     en_fabrication: "cloture",
   };
@@ -173,17 +176,17 @@ export default function Closure() {
   // tous les rôles, terminologie adaptée à son contexte solo).
   const ARTISAN_LABELS: Record<string, string> = {
     devis_a_faire: "✅ Coordonnées validées, démarrer le mesurage",
-    a_mesurer: "📐 Mesures terminées, passer à la vérification au bureau",
-    technique_a_valider: "💻 Vérification bureau validée, envoyer en fabrication",
+    a_mesurer: "🏭 Mesures terminées, lancer la fabrication",
+    technique_a_valider: "🏭 Lancer la fabrication",
     en_fabrication: "🏁 Marquer comme terminé / livré",
   };
   const ARTISAN_DESCRIPTIONS: Record<string, string> = {
     devis_a_faire:
       "Les coordonnées du client sont prêtes. Le chantier passera en « À mesurer ».",
     a_mesurer:
-      "Toutes les ouvertures sont mesurées. Le chantier passera en « À vérifier au bureau » pour saisir la commande au calme avant fabrication.",
+      "Toutes les ouvertures sont mesurées. Le chantier passera en « En fabrication » et reviendra au tableau de bord.",
     technique_a_valider:
-      "La vérification au bureau est terminée. Le chantier passera en « En fabrication ».",
+      "Le chantier passera en « En fabrication ».",
     en_fabrication:
       "Le chantier est terminé et livré au client. Il sera archivé.",
   };
