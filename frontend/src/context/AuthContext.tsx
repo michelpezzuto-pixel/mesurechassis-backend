@@ -57,6 +57,7 @@ type AuthCtx = {
   ) => Promise<void>;
   signOut: () => Promise<void>;
   refreshCompany: () => Promise<void>;
+  refreshUser: () => Promise<void>;
   /**
    * Returns true if the current user can access functionality reserved to a role list.
    * Artisan-mode bypasses all role checks.
@@ -205,6 +206,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         acceptInvitation,
         signOut,
         refreshCompany: fetchCompany,
+        refreshUser: async () => {
+          try {
+            const res = await api.get<User>("/auth/me");
+            setUser(res.data);
+          } catch {
+            /* silent — token might be expired, caller handles */
+          }
+        },
         hasRole,
       }}
     >

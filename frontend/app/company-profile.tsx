@@ -777,6 +777,26 @@ export default function CompanyProfile() {
             </TouchableOpacity>
           )}
 
+          {/* === MES INFOS PERSONNELLES === */}
+          <View style={styles.card}>
+            <View style={styles.row}>
+              <Ionicons name="person-circle-outline" size={18} color={colors.primary} />
+              <Text style={styles.dangerTitle}>MES INFORMATIONS</Text>
+            </View>
+            <Text style={styles.help}>
+              Modifier votre nom, email, téléphone ou mot de passe de connexion.
+            </Text>
+            <TouchableOpacity
+              testID="open-my-info"
+              onPress={() => router.push("/me")}
+              activeOpacity={0.85}
+              style={[styles.logoBtnPrimary, { marginTop: 12 }]}
+            >
+              <Ionicons name="create-outline" size={16} color="#000" />
+              <Text style={styles.logoBtnPrimaryText}>MODIFIER MES INFOS</Text>
+            </TouchableOpacity>
+          </View>
+
           {/* === LOT E — ZONE DANGER : Suppression du compte (RGPD) === */}
           <View style={[styles.card, styles.dangerCard]}>
             <View style={styles.dangerHeader}>

@@ -1,36 +1,26 @@
-# Tarification MesureChâssis (pour intégration Stripe future)
+# 📊 Stratégie tarifaire MesureChâssis (validée 01/06/2026)
 
-> Communiqué par l'utilisateur le 24/05/2026. Ces tarifs s'appliqueront
-> quand la BETA Gratuite sera levée et que Stripe sera intégré.
+## Essai gratuit
+- **Durée** : 3 mois (au lieu du modèle classique 14 jours)
+- **Comportement** : Tout débloqué pendant 3 mois
+- **Après expiration** : Blocage total tant qu'aucun paiement n'est effectué
 
-## Plans
+## Plan Artisan Solo
+- **Prix** : 24,99€/mois
+- **Inclus** : 1 utilisateur (l'artisan lui-même)
+- **Pas d'évolution** : Pour ajouter quelqu'un, bascule sur Entreprise
 
-### 🧑‍🔧 Artisan (compte solo)
-- 1 utilisateur unique (PAS d'équipe — pas d'écran Équipe visible)
-- Tous les accès activés (mesures + chantiers + exports)
-- Pas de gestion d'équipe
-- **Prix : 24,99 €/mois TTC**
+## Plan Entreprise Starter
+- **Prix de base** : 54,99€/mois
+- **Inclus** : 3 utilisateurs (commerciaux/techniciens en combinaisons libres)
+- **Utilisateur supplémentaire** : +4,99€/mois/utilisateur
 
-### 🏢 Entreprise
-- Compte Admin + équipe
-- **Forfait de base : 54,99 €/mois** — inclut :
-  - 1 Admin
-  - 1 Technicien
-  - 1 Commercial
-- **Utilisateurs supplémentaires : +4,99 €/utilisateur/mois**
-  (technicien OU commercial OU admin additionnel)
+## Plan Entreprise Pro
+- **Prix de base** : 84,99€/mois
+- **Inclus** : 6 utilisateurs + fonctionnalités avancées (Bluetooth, etc.)
+- **Utilisateur supplémentaire** : +9,99€/mois/utilisateur
+- **Message UI** : « Cette option aura des fonctionnalités comme le Bluetooth et bien d'autres pour encore plus faciliter les prises de mesures »
 
-## Calcul exemple
-| Configuration | Tarif mensuel |
-|---|---|
-| Artisan solo | à confirmer |
-| Entreprise base (3 users) | 54,99 € |
-| Entreprise + 2 techs supp. (5 users) | 54,99 + 2 × 4,99 = **64,97 €** |
-| Entreprise + 5 users supp. (8 users) | 54,99 + 5 × 4,99 = **79,94 €** |
-
-## Notes implémentation Stripe
-- Créer 2 produits Stripe : `mc_artisan` et `mc_entreprise_base`
-- Pour les sièges additionnels, utiliser un produit `mc_entreprise_seat` avec
-  `metered billing` ou `quantity` updates côté Subscription Item.
-- Backend doit recalculer `quantity` à chaque ajout/suppression d'utilisateur
-  via webhook ou call direct à Stripe Subscriptions API.
+## Implémentation Stripe (à venir Sprint 3)
+- Trial period : 90 jours (`trial_period_days: 90`)
+- Plans avec abonnement métré (per-user) sur Stripe Billing

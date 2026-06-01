@@ -44,6 +44,7 @@ export default function RootLayout() {
             <Stack.Screen name="admin/team" options={{ headerShown: false }} />
             <Stack.Screen name="feedback" options={{ headerShown: false }} />
             <Stack.Screen name="company-profile" options={{ headerShown: false }} />
+            <Stack.Screen name="me" options={{ headerShown: false }} />
           </Stack>
         </AuthProvider>
       </SafeAreaProvider>
