@@ -158,17 +158,20 @@ export default function Closure() {
     (company?.account_type || "").toLowerCase() === "artisan";
   const isArtisanFlow = artisanMode || isArtisanAccount;
 
-  // NEXT_STATUS spécifique au mode Artisan (workflow simplifié 2 étapes).
-  //  L'artisan est seul : pas d'étape "vérification au bureau" car il n'y a
-  //  ni commercial à transmettre ni technicien à informer.
+  // NEXT_STATUS spécifique au mode Artisan (workflow 3 étapes avec
+  // vérification au bureau, identique au mode Entreprise sur ce point).
+  //  L'artisan crée le chantier, prend les mesures sur le terrain, puis
+  //  revient au bureau pour relire/corriger les cotes avant de lancer
+  //  réellement la fabrication. Cette étape « À vérifier » évite les
+  //  erreurs irréversibles avant la commande à l'atelier.
   //  Workflow effectif :
-  //    a_mesurer       → en_fabrication  (mesures finies → on lance la fab)
-  //    en_fabrication  → cloture         (livré → on archive)
-  //  Le statut devis_a_faire est conservé en sécurité (rétrocompat anciens
-  //  chantiers), mais les nouveaux iront direct en a_mesurer (forcé backend).
+  //    devis_a_faire        → a_mesurer            (coordonnées validées, mesurage en cours)
+  //    a_mesurer            → technique_a_valider  (mesures terrain finies, vérification bureau)
+  //    technique_a_valider  → en_fabrication       (cotes validées au bureau, lancement fab)
+  //    en_fabrication       → cloture              (chantier livré)
   const ARTISAN_NEXT_STATUS: Record<string, string> = {
     devis_a_faire: "a_mesurer",
-    a_mesurer: "en_fabrication",
+    a_mesurer: "technique_a_valider",
     technique_a_valider: "en_fabrication",
     en_fabrication: "cloture",
   };
@@ -176,17 +179,17 @@ export default function Closure() {
   // tous les rôles, terminologie adaptée à son contexte solo).
   const ARTISAN_LABELS: Record<string, string> = {
     devis_a_faire: "✅ Coordonnées validées, démarrer le mesurage",
-    a_mesurer: "🏭 Mesures terminées, lancer la fabrication",
-    technique_a_valider: "🏭 Lancer la fabrication",
+    a_mesurer: "🔍 Mesures terminées, vérifier au bureau",
+    technique_a_valider: "🏭 Cotes validées, lancer la fabrication",
     en_fabrication: "🏁 Marquer comme terminé / livré",
   };
   const ARTISAN_DESCRIPTIONS: Record<string, string> = {
     devis_a_faire:
       "Les coordonnées du client sont prêtes. Le chantier passera en « À mesurer ».",
     a_mesurer:
-      "Toutes les ouvertures sont mesurées. Le chantier passera en « En fabrication » et reviendra au tableau de bord.",
+      "Toutes les ouvertures sont mesurées sur le terrain. Le chantier passera en « À vérifier » : vous pourrez relire et corriger les cotes au bureau avant de lancer la fabrication.",
     technique_a_valider:
-      "Le chantier passera en « En fabrication ».",
+      "Les cotes sont vérifiées au bureau. Le chantier passera en « En fabrication » et sera envoyé à l'atelier.",
     en_fabrication:
       "Le chantier est terminé et livré au client. Il sera archivé.",
   };
