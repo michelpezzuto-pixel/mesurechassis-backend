@@ -111,6 +111,22 @@ async def download_feature_graphic():
     )
 
 
+@api.get("/_downloads/feature-graphic/{variant}")
+async def download_feature_graphic_variant(variant: str):
+    """Variantes redimensionnées de l'image utilisateur (stretch / fit / cover)."""
+    allowed = {"stretch", "fit", "cover"}
+    if variant not in allowed:
+        raise HTTPException(status_code=404, detail="Variant inconnu")
+    path = f"/app/play-store-assets/feature-graphic-user-{variant}.png"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Image introuvable")
+    return FileResponse(
+        path,
+        media_type="image/png",
+        filename=f"feature-graphic-{variant}-1024x500.png",
+    )
+
+
 @api.get("/_downloads/backend-railway")
 async def download_backend_zip():
     """Pack du backend prêt à pousser sur GitHub puis déployer sur Railway."""
