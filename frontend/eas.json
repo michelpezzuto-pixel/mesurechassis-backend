@@ -25,6 +25,9 @@
     },
     "production": {
       "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_BACKEND_URL": "https://capable-gratitude-production-db51.up.railway.app"
+      },
       "android": {
         "buildType": "app-bundle"
       },
