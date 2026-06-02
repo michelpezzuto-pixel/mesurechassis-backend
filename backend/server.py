@@ -139,6 +139,26 @@ async def download_railway_fix_stripe():
     )
 
 
+@api.get("/_downloads/file/{which}")
+async def download_raw_file(which: str):
+    """Sert le contenu BRUT (texte) des fichiers backend pour copier-coller manuel."""
+    allowed = {
+        "company": "/app/backend/routes/company.py",
+        "stripe": "/app/backend/routes/stripe_routes.py",
+        "server": "/app/backend/server.py",
+    }
+    if which not in allowed:
+        raise HTTPException(status_code=404, detail="Fichier inconnu")
+    path = allowed[which]
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Fichier manquant")
+    return FileResponse(
+        path,
+        media_type="text/plain; charset=utf-8",
+        filename=f"{which}.py",
+    )
+
+
 # ─────────────────────────────────────────────────────────────────────
 # Mini-UI cleanup DB (un seul écran, pas besoin d'outil externe)
 # Sert une page HTML qui poste vers /api/platform/db/cleanup
