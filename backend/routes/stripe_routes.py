@@ -27,6 +27,7 @@ Variables d'environnement requises (à ajouter sur Railway) :
 """
 from __future__ import annotations
 
+import json
 import logging
 import os
 from datetime import datetime, timezone
@@ -318,6 +319,10 @@ async def stripe_webhook(
 
     ⚠️ Signature vérifiée via STRIPE_WEBHOOK_SECRET — toute requête non
     signée est rejetée pour éviter les manipulations de statut.
+
+    NB : on vérifie la signature puis on parse le payload en `json.loads`
+    (vrai dict Python). Cela évite les quirks de StripeObject (KeyError
+    sur `.get(...)` dans certaines versions du SDK Stripe).
     """
     if not STRIPE_WEBHOOK_SECRET:
         logger.error("Webhook reçu mais STRIPE_WEBHOOK_SECRET non configuré")
@@ -325,20 +330,28 @@ async def stripe_webhook(
 
     payload = await request.body()
     try:
-        event = stripe.Webhook.construct_event(
+        # Vérification de la signature uniquement (sans parsing en StripeObject)
+        stripe.WebhookSignature.verify_header(
             payload=payload,
-            sig_header=stripe_signature,
+            header=stripe_signature,
             secret=STRIPE_WEBHOOK_SECRET,
         )
     except stripe.SignatureVerificationError:
         logger.warning("Webhook : signature Stripe invalide")
         raise HTTPException(400, "Signature invalide")
     except Exception as e:
-        logger.exception("Erreur parsing webhook Stripe")
+        logger.exception("Erreur vérification signature webhook Stripe")
+        raise HTTPException(400, f"Signature invalide : {e}")
+
+    # Parse en vrai dict Python — pas de StripeObject ici, donc .get() OK
+    try:
+        event = json.loads(payload.decode("utf-8"))
+    except Exception as e:
+        logger.exception("Payload webhook non-JSON")
         raise HTTPException(400, f"Payload invalide : {e}")
 
     event_type = event.get("type")
-    obj = event.get("data", {}).get("object", {})
+    obj = (event.get("data") or {}).get("object") or {}
     logger.info("Stripe webhook reçu : %s", event_type)
 
     try:
@@ -372,7 +385,13 @@ async def _on_checkout_completed(session: dict):
         logger.warning("Webhook checkout.completed sans company_id ou subscription")
         return
 
-    sub = stripe.Subscription.retrieve(subscription_id)
+    sub_obj = stripe.Subscription.retrieve(subscription_id)
+    # Convertir en vrai dict (anti StripeObject quirks)
+    sub = (
+        sub_obj.to_dict_recursive()
+        if hasattr(sub_obj, "to_dict_recursive")
+        else dict(sub_obj)
+    )
     await _persist_subscription(company_id, plan, sub, customer_id)
 
 
@@ -381,7 +400,12 @@ async def _on_subscription_changed(sub: dict):
     plan = (sub.get("metadata") or {}).get("plan")
     if not company_id:
         # Fallback : remonter au customer pour retrouver la company
-        customer = stripe.Customer.retrieve(sub.get("customer"))
+        cust_obj = stripe.Customer.retrieve(sub.get("customer"))
+        customer = (
+            cust_obj.to_dict_recursive()
+            if hasattr(cust_obj, "to_dict_recursive")
+            else dict(cust_obj)
+        )
         company_id = (customer.get("metadata") or {}).get("company_id")
     if not company_id:
         return
@@ -391,7 +415,12 @@ async def _on_subscription_changed(sub: dict):
 async def _on_subscription_deleted(sub: dict):
     company_id = (sub.get("metadata") or {}).get("company_id")
     if not company_id:
-        customer = stripe.Customer.retrieve(sub.get("customer"))
+        cust_obj = stripe.Customer.retrieve(sub.get("customer"))
+        customer = (
+            cust_obj.to_dict_recursive()
+            if hasattr(cust_obj, "to_dict_recursive")
+            else dict(cust_obj)
+        )
         company_id = (customer.get("metadata") or {}).get("company_id")
     if not company_id:
         return
@@ -406,7 +435,12 @@ async def _on_invoice_paid(invoice: dict):
     sub_id = invoice.get("subscription")
     if not sub_id:
         return
-    sub = stripe.Subscription.retrieve(sub_id)
+    sub_obj = stripe.Subscription.retrieve(sub_id)
+    sub = (
+        sub_obj.to_dict_recursive()
+        if hasattr(sub_obj, "to_dict_recursive")
+        else dict(sub_obj)
+    )
     await _on_subscription_changed(sub)
 
 
@@ -414,7 +448,12 @@ async def _on_invoice_payment_failed(invoice: dict):
     sub_id = invoice.get("subscription")
     if not sub_id:
         return
-    sub = stripe.Subscription.retrieve(sub_id)
+    sub_obj = stripe.Subscription.retrieve(sub_id)
+    sub = (
+        sub_obj.to_dict_recursive()
+        if hasattr(sub_obj, "to_dict_recursive")
+        else dict(sub_obj)
+    )
     await _on_subscription_changed(sub)
 
 
