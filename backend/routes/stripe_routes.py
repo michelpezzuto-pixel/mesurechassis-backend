@@ -93,7 +93,7 @@ async def _get_or_create_stripe_customer(user: dict, company: Optional[dict]) ->
     if not company_id:
         raise HTTPException(400, "Utilisateur sans entreprise — abonnement impossible.")
 
-    company = company or await db.companies.find_one({"id": company_id})
+    company = company or await db.companies.find_one({"company_id": company_id})
     if not company:
         raise HTTPException(404, "Entreprise introuvable.")
 
@@ -109,7 +109,7 @@ async def _get_or_create_stripe_customer(user: dict, company: Optional[dict]) ->
         },
     )
     await db.companies.update_one(
-        {"id": company_id},
+        {"company_id": company_id},
         {"$set": {"stripe_customer_id": customer.id}},
     )
     logger.info("Stripe customer créé pour company=%s → %s", company_id, customer.id)
@@ -154,7 +154,7 @@ async def create_checkout_session(
             "Contactez l'administrateur.",
         )
 
-    company = await db.companies.find_one({"id": user.get("company_id") or ""})
+    company = await db.companies.find_one({"company_id": user.get("company_id") or ""})
     customer_id = await _get_or_create_stripe_customer(user, company)
 
     # Items du checkout : base + (si applicable) prix par utilisateur supplémentaire
@@ -212,7 +212,7 @@ class PortalResponse(BaseModel):
 async def create_customer_portal(user=Depends(auth_user)):
     """Ouvre le portail Stripe (change méthode paiement, factures, annulation)."""
     _require_stripe()
-    company = await db.companies.find_one({"id": user.get("company_id") or ""})
+    company = await db.companies.find_one({"company_id": user.get("company_id") or ""})
     if not company or not company.get("stripe_customer_id"):
         raise HTTPException(
             400,
@@ -256,7 +256,7 @@ async def get_subscription_status(user=Depends(auth_user)):
       * past_due                              → UNLOCKED (grace period)
       * unpaid / canceled / pas d'abonnement  → LOCKED
     """
-    company = await db.companies.find_one({"id": user.get("company_id") or ""})
+    company = await db.companies.find_one({"company_id": user.get("company_id") or ""})
     if not company:
         return SubscriptionStatus(has_subscription=False, is_locked=True)
 
@@ -396,7 +396,7 @@ async def _on_subscription_deleted(sub: dict):
     if not company_id:
         return
     await db.companies.update_one(
-        {"id": company_id},
+        {"company_id": company_id},
         {"$set": {"subscription.status": "canceled"}},
     )
     logger.info("Subscription annulée pour company=%s", company_id)
@@ -438,7 +438,7 @@ async def _persist_subscription(
     if customer_id:
         update["stripe_customer_id"] = customer_id
     await db.companies.update_one(
-        {"id": company_id},
+        {"company_id": company_id},
         {"$set": update},
     )
     logger.info(

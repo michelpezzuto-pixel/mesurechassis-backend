@@ -388,3 +388,127 @@ async def platform_set_subscription(
     )
     doc = await ensure_company(company_id)
     return _to_profile(doc, company_id)
+
+
+
+# ─────────────────────────────────────────────────────────────────────
+# Platform admin: NETTOYAGE COMPLET DE LA BASE (sauf email à conserver)
+# ⚠️ Endpoint DESTRUCTIF — protégé par X-Platform-Token
+# ─────────────────────────────────────────────────────────────────────
+@router.post("/platform/db/cleanup")
+async def platform_db_cleanup(
+    payload: dict,
+    x_platform_token: Optional[str] = Header(None),
+):
+    """Efface tous les comptes utilisateur, entreprises et données associées,
+    sauf l'utilisateur (et son entreprise) dont l'email est passé dans
+    `keep_email`.
+
+    Body : { "keep_email": "info@mesurechassis.com", "confirm": "DELETE_ALL" }
+
+    Collections nettoyées :
+      - users (sauf keep_email)
+      - companies (sauf celle de keep_email)
+      - chantiers, mesures, feedbacks (sauf company_id de keep_email)
+      - invitations, email_verifications (sauf liées à keep_email)
+
+    Réponse : { ok: true, kept_user, kept_company, deleted_counts: {...} }
+    """
+    if x_platform_token != PLATFORM_ADMIN_TOKEN:
+        raise HTTPException(status_code=403, detail="Invalid platform token")
+
+    confirm = str(payload.get("confirm") or "").strip()
+    if confirm != "DELETE_ALL":
+        raise HTTPException(
+            status_code=400,
+            detail="Pour confirmer, envoyez {\"confirm\": \"DELETE_ALL\"}",
+        )
+
+    keep_email = str(payload.get("keep_email") or "").strip().lower()
+    if not keep_email:
+        raise HTTPException(
+            status_code=400,
+            detail="Le champ keep_email est requis.",
+        )
+
+    # 1) Trouver l'utilisateur à conserver et sa company_id
+    kept_user = await db.users.find_one({"email": keep_email}, {"_id": 0})
+    if not kept_user:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Utilisateur {keep_email} introuvable dans la base.",
+        )
+    kept_company_id = kept_user.get("company_id")
+
+    # 2) Compteurs AVANT suppression (pour le rapport)
+    counts = {
+        "users_before": await db.users.count_documents({}),
+        "companies_before": await db.companies.count_documents({}),
+        "chantiers_before": await db.chantiers.count_documents({}),
+        "mesures_before": await db.mesures.count_documents({}),
+        "feedbacks_before": await db.feedbacks.count_documents({}),
+        "invitations_before": await db.invitations.count_documents({})
+        if "invitations" in await db.list_collection_names()
+        else 0,
+        "email_verifications_before": await db.email_verifications.count_documents({})
+        if "email_verifications" in await db.list_collection_names()
+        else 0,
+    }
+
+    # 3) Suppression sélective
+    del_users = await db.users.delete_many({"email": {"$ne": keep_email}})
+    del_companies = await db.companies.delete_many(
+        {"company_id": {"$ne": kept_company_id}}
+    )
+    del_chantiers = await db.chantiers.delete_many(
+        {"company_id": {"$ne": kept_company_id}}
+    )
+    del_mesures = await db.mesures.delete_many(
+        {"company_id": {"$ne": kept_company_id}}
+    )
+    del_feedbacks = await db.feedbacks.delete_many(
+        {"company_id": {"$ne": kept_company_id}}
+    )
+
+    # Invitations & email_verifications : garder uniquement celles liées à kept_user
+    try:
+        del_invitations = await db.invitations.delete_many(
+            {"company_id": {"$ne": kept_company_id}}
+        )
+        invitations_deleted = del_invitations.deleted_count
+    except Exception:
+        invitations_deleted = 0
+
+    try:
+        del_verifs = await db.email_verifications.delete_many(
+            {"email": {"$ne": keep_email}}
+        )
+        verifs_deleted = del_verifs.deleted_count
+    except Exception:
+        verifs_deleted = 0
+
+    # Aussi : tuer tous les push_tokens orphelins éventuels (collection si elle existe)
+    try:
+        await db.push_tokens.delete_many({"user_id": {"$ne": kept_user.get("id")}})
+    except Exception:
+        pass
+
+    return {
+        "ok": True,
+        "kept_user": {
+            "email": keep_email,
+            "id": kept_user.get("id"),
+            "name": kept_user.get("name"),
+            "company_id": kept_company_id,
+        },
+        "deleted": {
+            "users": del_users.deleted_count,
+            "companies": del_companies.deleted_count,
+            "chantiers": del_chantiers.deleted_count,
+            "mesures": del_mesures.deleted_count,
+            "feedbacks": del_feedbacks.deleted_count,
+            "invitations": invitations_deleted,
+            "email_verifications": verifs_deleted,
+        },
+        "before": counts,
+    }
