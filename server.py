@@ -23,6 +23,7 @@ from routes import feedbacks as feedbacks_routes
 from routes import invitations as invitations_routes
 from routes import mesures as mesures_routes
 from routes import stats as stats_routes
+from routes import stripe_routes
 from seed import seed_data
 
 
@@ -40,6 +41,7 @@ api = APIRouter(prefix="/api")
 
 api.include_router(auth_routes.router)
 api.include_router(invitations_routes.router)
+api.include_router(stripe_routes.router)
 api.include_router(chantiers_routes.router)
 api.include_router(mesures_routes.router)
 api.include_router(feedbacks_routes.router)
@@ -95,6 +97,48 @@ async def download_play_store_zip():
         path,
         media_type="application/zip",
         filename="play-store-mesurechassis.zip",
+    )
+
+
+@api.get("/_downloads/feature-graphic")
+async def download_feature_graphic():
+    """Image de présentation 1024x500 pour Google Play Console (générée v2)."""
+    path = "/app/play-store-assets/feature-graphic-1024x500-v2.png"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Image introuvable")
+    return FileResponse(
+        path,
+        media_type="image/png",
+        filename="feature-graphic-1024x500.png",
+    )
+
+
+@api.get("/_downloads/feature-graphic/{variant}")
+async def download_feature_graphic_variant(variant: str):
+    """Variantes redimensionnées de l'image utilisateur (stretch / fit / cover)."""
+    allowed = {"stretch", "fit", "cover"}
+    if variant not in allowed:
+        raise HTTPException(status_code=404, detail="Variant inconnu")
+    path = f"/app/play-store-assets/feature-graphic-user-{variant}.png"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Image introuvable")
+    return FileResponse(
+        path,
+        media_type="image/png",
+        filename=f"feature-graphic-{variant}-1024x500.png",
+    )
+
+
+@api.get("/_downloads/backend-railway")
+async def download_backend_zip():
+    """Pack du backend prêt à pousser sur GitHub puis déployer sur Railway."""
+    path = "/app/backend/mesurechassis-backend.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="mesurechassis-backend.zip",
     )
 
 
