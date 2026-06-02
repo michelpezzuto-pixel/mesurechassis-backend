@@ -46,8 +46,10 @@ router = APIRouter()
 # ─────────────────────────────────────────────────────────────────────────
 # Configuration Stripe (lecture des env vars au démarrage)
 # ─────────────────────────────────────────────────────────────────────────
-STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "")
-STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET", "")
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "").strip()
+# .strip() : protection contre les espaces / sauts de ligne invisibles
+# qui auraient pu être copiés par erreur dans la variable d'environnement.
+STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET", "").strip()
 APP_DEEP_LINK_SCHEME = os.getenv("APP_DEEP_LINK_SCHEME", "mesurechassis")
 APP_WEB_RETURN_URL = os.getenv("APP_WEB_RETURN_URL", "https://mesurechassis.com")
 TRIAL_PERIOD_DAYS = 90  # 3 mois d'essai gratuit
@@ -328,7 +330,17 @@ async def stripe_webhook(
         logger.error("Webhook reçu mais STRIPE_WEBHOOK_SECRET non configuré")
         raise HTTPException(503, "Webhook non configuré")
 
+    # 🩺 DIAGNOSTIC : log la signature reçue + le secret utilisé (extraits)
+    secret_for_log = STRIPE_WEBHOOK_SECRET
+    if len(secret_for_log) > 14:
+        secret_preview = f"{secret_for_log[:10]}...{secret_for_log[-4:]} ({len(secret_for_log)} chars)"
+    else:
+        secret_preview = f"INVALID_SHORT ({len(secret_for_log)} chars)"
+    sig_preview = (stripe_signature or "")[:40] + "..." if stripe_signature else "MISSING"
+    logger.info("🩺 Webhook diag — secret=%s | sig-header=%s", secret_preview, sig_preview)
+
     payload = await request.body()
+    logger.info("🩺 Webhook diag — payload bytes=%d", len(payload))
     try:
         # Vérification de la signature uniquement (sans parsing en StripeObject)
         stripe.WebhookSignature.verify_header(
