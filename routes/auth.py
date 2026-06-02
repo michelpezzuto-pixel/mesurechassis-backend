@@ -404,6 +404,80 @@ async def set_push_token(
 
 
 # ─────────────────────────────────────────────────────────────────────
+# Modifier ses propres infos (nom, email, téléphone, mot de passe)
+# ─────────────────────────────────────────────────────────────────────
+@router.patch("/auth/me", response_model=UserPublic)
+async def update_me(payload: dict, user=Depends(auth_user)):
+    """Permet à l'utilisateur connecté de modifier ses informations.
+
+    Champs modifiables :
+    - name (str) : nom affiché
+    - phone (str) : numéro de téléphone (optionnel)
+    - email (str) : changement d'email (vérification requise via current_password)
+    - new_password (str) : changement de mot de passe (vérification via current_password)
+
+    ⚠️ Le changement d'email ou de mot de passe exige `current_password` pour
+    confirmer l'identité (protection contre vol de session).
+    """
+    update: dict = {}
+    sensitive_change = (
+        payload.get("email") and payload.get("email").lower() != user.get("email", "").lower()
+    ) or bool(payload.get("new_password"))
+
+    # Vérification du mot de passe actuel pour toute modification sensible
+    if sensitive_change:
+        current_password = payload.get("current_password")
+        if not current_password:
+            raise HTTPException(
+                400,
+                "Le mot de passe actuel est requis pour modifier l'email ou le mot de passe.",
+            )
+        from deps import verify_password
+        if not verify_password(current_password, user.get("hashed_password", "")):
+            raise HTTPException(403, "Mot de passe actuel incorrect.")
+
+    # 1. Nom
+    if "name" in payload:
+        name = str(payload["name"]).strip()
+        if not (2 <= len(name) <= 80):
+            raise HTTPException(400, "Le nom doit faire entre 2 et 80 caractères.")
+        update["name"] = name
+
+    # 2. Téléphone (optionnel, format libre)
+    if "phone" in payload:
+        phone = str(payload.get("phone") or "").strip()
+        if phone and not (5 <= len(phone) <= 30):
+            raise HTTPException(400, "Numéro de téléphone invalide.")
+        update["phone"] = phone
+
+    # 3. Email (vérification d'unicité)
+    if payload.get("email"):
+        new_email = str(payload["email"]).strip().lower()
+        if "@" not in new_email or "." not in new_email:
+            raise HTTPException(400, "Email invalide.")
+        if new_email != user.get("email", "").lower():
+            existing = await db.users.find_one({"email": new_email})
+            if existing:
+                raise HTTPException(400, "Cet email est déjà utilisé.")
+            update["email"] = new_email
+
+    # 4. Mot de passe
+    if payload.get("new_password"):
+        new_pw = str(payload["new_password"])
+        if len(new_pw) < 8:
+            raise HTTPException(400, "Le mot de passe doit faire au moins 8 caractères.")
+        update["hashed_password"] = hash_password(new_pw)
+
+    if not update:
+        raise HTTPException(400, "Aucun changement à enregistrer.")
+
+    update["updated_at"] = datetime.now(timezone.utc).isoformat()
+    await db.users.update_one({"id": user["id"]}, {"$set": update})
+    fresh = await db.users.find_one({"id": user["id"]}, {"_id": 0})
+    return user_to_public(fresh)
+
+
+# ─────────────────────────────────────────────────────────────────────
 # Mot de passe oublié (forgot / reset password)
 # ─────────────────────────────────────────────────────────────────────
 PASSWORD_RESET_TTL_MINUTES = 30
