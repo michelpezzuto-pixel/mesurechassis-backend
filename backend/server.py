@@ -126,6 +126,84 @@ async def download_railway_update():
     )
 
 
+@api.get("/_downloads/railway-fix-stripe")
+async def download_railway_fix_stripe():
+    """Hotfix Railway : corrige bug 'Entreprise introuvable' Stripe + ajoute endpoint /platform/db/cleanup."""
+    path = "/app/backend/public_downloads/railway-fix-stripe-cleanup.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="railway-fix-stripe-cleanup.zip",
+    )
+
+
+# ─────────────────────────────────────────────────────────────────────
+# Mini-UI cleanup DB (un seul écran, pas besoin d'outil externe)
+# Sert une page HTML qui poste vers /api/platform/db/cleanup
+# ─────────────────────────────────────────────────────────────────────
+from fastapi.responses import HTMLResponse
+
+
+@api.get("/_admin/cleanup-ui", response_class=HTMLResponse)
+async def cleanup_ui():
+    html = """<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MesureChâssis · Nettoyage base</title>
+<style>
+  *{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+  body{background:#0f172a;color:#f1f5f9;padding:24px;max-width:560px;margin:0 auto}
+  h1{font-size:22px;margin-bottom:8px}
+  p{color:#94a3b8;line-height:1.5;font-size:14px}
+  label{display:block;margin:18px 0 6px;font-weight:600;font-size:14px}
+  input{width:100%;padding:14px;background:#1e293b;border:1px solid #334155;border-radius:10px;color:#f1f5f9;font-size:15px}
+  button{margin-top:24px;width:100%;padding:16px;background:#dc2626;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer}
+  button:disabled{opacity:.5}
+  .warn{background:#7f1d1d;padding:14px;border-radius:10px;margin-top:16px;font-size:13px}
+  pre{background:#020617;padding:14px;border-radius:10px;font-size:12px;overflow-x:auto;white-space:pre-wrap;word-break:break-all}
+  .ok{color:#22c55e}.ko{color:#ef4444}
+</style></head><body>
+<h1>🗑️ Nettoyage base MesureChâssis</h1>
+<p>Cette action supprime <b>tous les comptes utilisateurs, entreprises, chantiers, mesures, feedbacks et invitations</b> de la base, <b>sauf</b> ceux liés à l'email indiqué ci-dessous.</p>
+<div class="warn">⚠️ Action IRRÉVERSIBLE. Vérifiez bien l'email à conserver avant de cliquer.</div>
+<label>Email à conserver</label>
+<input id="keep" type="email" placeholder="info@mesurechassis.com" autocomplete="off"/>
+<label>Token plateforme (X-Platform-Token)</label>
+<input id="token" type="password" placeholder="mc-platform-2026"/>
+<button id="btn">SUPPRIMER TOUT LE RESTE</button>
+<pre id="out"></pre>
+<script>
+document.getElementById('btn').onclick=async()=>{
+  const keep=document.getElementById('keep').value.trim();
+  const token=document.getElementById('token').value.trim();
+  const out=document.getElementById('out');
+  if(!keep||!token){out.innerHTML='<span class="ko">Email et token requis.</span>';return}
+  if(!confirm('Confirmer la suppression de TOUS les comptes sauf '+keep+' ?'))return;
+  document.getElementById('btn').disabled=true;
+  out.textContent='⏳ Nettoyage en cours...';
+  try{
+    const r=await fetch('/api/platform/db/cleanup',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Platform-Token':token},
+      body:JSON.stringify({keep_email:keep,confirm:'DELETE_ALL'})
+    });
+    const j=await r.json();
+    if(r.ok){
+      out.innerHTML='<span class="ok">✅ Nettoyage terminé !</span>\\n\\n'+JSON.stringify(j,null,2);
+    }else{
+      out.innerHTML='<span class="ko">❌ Erreur '+r.status+'</span>\\n\\n'+JSON.stringify(j,null,2);
+    }
+  }catch(e){
+    out.innerHTML='<span class="ko">❌ '+e.message+'</span>';
+  }
+  document.getElementById('btn').disabled=false;
+};
+</script></body></html>"""
+    return HTMLResponse(content=html)
+
+
 @api.get("/_downloads/feature-graphic/{variant}")
 async def download_feature_graphic_variant(variant: str):
     """Variantes redimensionnées de l'image utilisateur (stretch / fit / cover)."""
