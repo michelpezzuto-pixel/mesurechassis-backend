@@ -1,390 +1,263 @@
-"""Routes Company Profile + endpoints plateforme (subscription)."""
+"""MesureChâssis backend — point d'entrée FastAPI.
+
+Tous les modèles, dépendances, et routes vivent dans des modules
+dédiés (db.py, models.py, deps.py, utils.py, routes/, seed.py).
+Le cycle de vie applicatif utilise le moderne `lifespan` context
+manager (les hooks `@app.on_event` sont deprecated depuis FastAPI 0.93).
+"""
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
-from typing import Optional
+from contextlib import asynccontextmanager
 
-from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi import APIRouter, FastAPI, HTTPException
+from fastapi.responses import FileResponse
+from starlette.middleware.cors import CORSMiddleware
+import os
 
-from db import BETA_MODE, PLATFORM_ADMIN_TOKEN, VALID_PLANS, db
-from deps import auth_user, ensure_company, require_admin
-from models import CompanyProfile, CompanyProfileUpdate
+from db import client as mongo_client
+from routes import auth as auth_routes
+from routes import chantiers as chantiers_routes
+from routes import company as company_routes
+from routes import exports as exports_routes
+from routes import feedbacks as feedbacks_routes
+from routes import invitations as invitations_routes
+from routes import mesures as mesures_routes
+from routes import stats as stats_routes
+from routes import stripe_routes
+from seed import seed_data
 
-router = APIRouter()
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    # --- Startup ---------------------------------------------------------
+    await seed_data()
+    yield
+    # --- Shutdown --------------------------------------------------------
+    mongo_client.close()
 
 
-def _to_profile(doc: dict, company_id: str) -> CompanyProfile:
-    return CompanyProfile(
-        company_id=doc.get("company_id", company_id),
-        name=doc.get("name") or company_id,
-        artisan_mode=bool(doc.get("artisan_mode", False)),
-        account_type=str(doc.get("account_type") or "entreprise"),
-        logo_base64=doc.get("logo_base64"),
-        subscription_status=doc.get("subscription_status", "trial"),
-        subscription_expires_at=doc.get("subscription_expires_at"),
-        plan=doc.get("plan", "trial"),
-        chantiers_lifetime_count=int(doc.get("chantiers_lifetime_count", 0)),
-        cancel_at_period_end=bool(doc.get("cancel_at_period_end", False)),
-        cancelled_at=doc.get("cancelled_at"),
-        beta_mode=BETA_MODE,
+app = FastAPI(title="MesureChâssis API", lifespan=lifespan)
+api = APIRouter(prefix="/api")
+
+api.include_router(auth_routes.router)
+api.include_router(invitations_routes.router)
+api.include_router(stripe_routes.router)
+api.include_router(chantiers_routes.router)
+api.include_router(mesures_routes.router)
+api.include_router(feedbacks_routes.router)
+api.include_router(company_routes.router)
+api.include_router(stats_routes.router)
+api.include_router(exports_routes.router)
+
+# ─────────────────────────────────────────────────────────────────────
+# Route publique TEMPORAIRE pour télécharger les screenshots tablette
+# destinés à Google Play Console. À retirer après la mise en ligne.
+# ─────────────────────────────────────────────────────────────────────
+_TABLET_SHOTS_DIR = "/app/playstore_tablet_screenshots"
+_TABLET_ALLOWED = {
+    "01_dashboard.jpeg",
+    "02_statistiques.jpeg",
+    "03_selection_menuiserie.jpeg",
+    "04_prise_cotes_rectangle.jpeg",
+    "05_prise_cotes_trapeze.jpeg",
+    "06_dashboard_nouveau_layout.jpeg",
+}
+
+
+@api.get("/_assets/playstore-tablet/{filename}")
+async def get_playstore_tablet_asset(filename: str):
+    if filename not in _TABLET_ALLOWED:
+        raise HTTPException(status_code=404, detail="Not found")
+    path = os.path.join(_TABLET_SHOTS_DIR, filename)
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="File missing on disk")
+    return FileResponse(path, media_type="image/jpeg", filename=filename)
+
+
+@api.get("/_downloads/site-mesurechassis")
+async def download_site_zip():
+    """Endpoint temporaire pour télécharger l'archive du site vitrine."""
+    path = "/app/site_mesurechassis_final.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="site_mesurechassis_final.zip",
     )
 
 
-@router.get("/company/profile", response_model=CompanyProfile)
-async def get_company_profile(user=Depends(auth_user)):
-    company_id = user.get("company_id", "default")
-    doc = await ensure_company(company_id)
-    return _to_profile(doc, company_id)
-
-
-@router.patch("/company/profile", response_model=CompanyProfile)
-async def update_company_profile(
-    payload: CompanyProfileUpdate, user=Depends(require_admin)
-):
-    company_id = user.get("company_id", "default")
-    update = {k: v for k, v in payload.model_dump().items() if v is not None}
-    if update:
-        update["company_id"] = company_id
-        await db.companies.update_one(
-            {"company_id": company_id},
-            {"$set": update},
-            upsert=True,
-        )
-    doc = await ensure_company(company_id)
-    return _to_profile(doc, company_id)
-
-
-# --- C5 : Toggle Artisan ↔ Entreprise ----------------------------------
-@router.post("/company/switch-account-type", response_model=CompanyProfile)
-async def switch_account_type(
-    payload: dict, user=Depends(require_admin)
-):
-    """Bascule entre Artisan (24.99€) et Entreprise (54.99€).
-
-    - Artisan → Entreprise : passe le tarif et débloque la gestion d'équipe.
-    - Entreprise → Artisan : retombe à 24.99€, bloque les équipes.
-      Refuse le passage si des collaborateurs (commerciaux/techniciens)
-      existent encore — l'Admin doit d'abord les supprimer.
-    """
-    target = (payload or {}).get("account_type", "").strip().lower()
-    if target not in ("artisan", "entreprise"):
-        raise HTTPException(400, "account_type doit valoir 'artisan' ou 'entreprise'")
-
-    company_id = user.get("company_id", "default")
-    doc = await ensure_company(company_id)
-    current = (doc.get("account_type") or "entreprise").lower()
-    if current == target:
-        return _to_profile(doc, company_id)
-
-    # Entreprise → Artisan : vérifier qu'il n'y a pas de membres
-    if target == "artisan":
-        members_count = await db.users.count_documents({
-            "company_id": company_id,
-            "role": {"$in": ["commercial", "technician"]},
-        })
-        if members_count > 0:
-            raise HTTPException(
-                409,
-                f"Impossible de basculer en Artisan : {members_count} collaborateur(s) "
-                "encore actif(s). Supprimez-les d'abord depuis la page Équipe.",
-            )
-
-    new_plan = "artisan" if target == "artisan" else "entreprise"
-    await db.companies.update_one(
-        {"company_id": company_id},
-        {"$set": {
-            "account_type": target,
-            "artisan_mode": (target == "artisan"),
-            "plan": new_plan,
-        }},
-        upsert=True,
+@api.get("/_downloads/play-store-assets")
+async def download_play_store_zip():
+    """Pack d'assets et textes prêts à coller dans Google Play Console."""
+    path = "/app/play-store-mesurechassis.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="play-store-mesurechassis.zip",
     )
-    doc = await ensure_company(company_id)
-    return _to_profile(doc, company_id)
 
 
-# --- A3 : Créer un membre d'équipe avec mot de passe direct -----------
-@router.post("/team/members")
-async def create_team_member(payload: dict, user=Depends(require_admin)):
-    """L'Admin crée directement un membre (Commercial ou Technicien) en
-    fournissant nom + email + mot de passe. Pas d'invitation par email :
-    l'Admin communique manuellement les identifiants au collaborateur.
-
-    Réservé aux comptes Entreprise.
-    """
-    from datetime import datetime, timezone
-    import uuid
-    from deps import hash_password
-
-    company_id = user.get("company_id", "default")
-    doc = await ensure_company(company_id)
-    if (doc.get("account_type") or "entreprise").lower() == "artisan":
-        raise HTTPException(403, "Gestion d'équipe non disponible en mode Artisan. Passez en Entreprise.")
-
-    name = (payload.get("name") or "").strip()
-    email = (payload.get("email") or "").strip().lower()
-    password = payload.get("password") or ""
-    role = (payload.get("role") or "").strip().lower()
-
-    if not name:
-        raise HTTPException(400, "Nom requis")
-    if not email or "@" not in email:
-        raise HTTPException(400, "Email valide requis")
-    if not password or len(password) < 6:
-        raise HTTPException(400, "Mot de passe : 6 caractères minimum")
-    if role not in ("commercial", "technician"):
-        raise HTTPException(400, "Rôle doit être 'commercial' ou 'technician'")
-
-    existing = await db.users.find_one({"email": email})
-    if existing:
-        raise HTTPException(409, "Un compte avec cet email existe déjà")
-
-    # === Vérification de siège supplémentaire payant ============================
-    # En compte Entreprise : 2 sièges gratuits inclus (1 Commercial + 1 Technicien).
-    # Chaque utilisateur supplémentaire coûte 4,99 €/mois.
-    # Si on dépasse, on renvoie HTTP 402 avec le détail. Le frontend affiche
-    # alors une pop-up de confirmation et rejoue la requête avec
-    # `confirm_extra_seat=true` pour valider l'ajout payant.
-    FREE_SEATS = 2
-    SEAT_PRICE_EUR = 4.99
-    current_count = await db.users.count_documents(
-        {"company_id": company_id, "role": {"$in": ["commercial", "technician"]}}
+@api.get("/_downloads/feature-graphic")
+async def download_feature_graphic():
+    """Image de présentation 1024x500 pour Google Play Console (générée v2)."""
+    path = "/app/play-store-assets/feature-graphic-1024x500-v2.png"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Image introuvable")
+    return FileResponse(
+        path,
+        media_type="image/png",
+        filename="feature-graphic-1024x500.png",
     )
-    next_seat_index = current_count + 1
-    extra_seat_billed = next_seat_index > FREE_SEATS
-    extra_seats_total = max(0, next_seat_index - FREE_SEATS)
-    extra_amount_eur = round(extra_seats_total * SEAT_PRICE_EUR, 2)
-    confirm_extra = bool(payload.get("confirm_extra_seat") or False)
-    if extra_seat_billed and not confirm_extra:
-        raise HTTPException(
-            status_code=402,
-            detail={
-                "code": "EXTRA_SEAT_REQUIRED",
-                "message": (
-                    "Votre forfait Entreprise inclut 2 sièges gratuits ; "
-                    f"chaque utilisateur supplémentaire coûte {SEAT_PRICE_EUR:.2f} €/mois."
-                ),
-                "free_seats": FREE_SEATS,
-                "next_seat_index": next_seat_index,
-                "current_team_size": current_count,
-                "extra_seats_total": extra_seats_total,
-                "seat_price_eur": SEAT_PRICE_EUR,
-                "extra_amount_eur": extra_amount_eur,
-            },
-        )
 
-    now_iso = datetime.now(timezone.utc).isoformat()
-    user_doc = {
-        "id": str(uuid.uuid4()),
-        "name": name,
-        "email": email,
-        "role": role,
-        "company_id": company_id,
-        "hashed_password": hash_password(password),
-        "status": "active",
-        "email_verified_at": now_iso,
-        "created_by_admin": user["id"],
-        "created_at": now_iso,
+
+@api.get("/_downloads/railway-update")
+async def download_railway_update():
+    """Package de mise à jour des fichiers backend pour Railway (auth.py + stripe_routes.py + server.py + requirements.txt)."""
+    path = "/app/backend/public_downloads/railway-update-2026-06-01.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="railway-update-2026-06-01.zip",
+    )
+
+
+@api.get("/_downloads/railway-fix-stripe")
+async def download_railway_fix_stripe():
+    """Hotfix Railway : corrige bug 'Entreprise introuvable' Stripe + ajoute endpoint /platform/db/cleanup."""
+    path = "/app/backend/public_downloads/railway-fix-stripe-cleanup.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="railway-fix-stripe-cleanup.zip",
+    )
+
+
+# ─────────────────────────────────────────────────────────────────────
+# Mini-UI cleanup DB (un seul écran, pas besoin d'outil externe)
+# Sert une page HTML qui poste vers /api/platform/db/cleanup
+# ─────────────────────────────────────────────────────────────────────
+from fastapi.responses import HTMLResponse
+
+
+@api.get("/_admin/cleanup-ui", response_class=HTMLResponse)
+async def cleanup_ui():
+    html = """<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MesureChâssis · Nettoyage base</title>
+<style>
+  *{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+  body{background:#0f172a;color:#f1f5f9;padding:24px;max-width:560px;margin:0 auto}
+  h1{font-size:22px;margin-bottom:8px}
+  p{color:#94a3b8;line-height:1.5;font-size:14px}
+  label{display:block;margin:18px 0 6px;font-weight:600;font-size:14px}
+  input{width:100%;padding:14px;background:#1e293b;border:1px solid #334155;border-radius:10px;color:#f1f5f9;font-size:15px}
+  button{margin-top:24px;width:100%;padding:16px;background:#dc2626;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer}
+  button:disabled{opacity:.5}
+  .warn{background:#7f1d1d;padding:14px;border-radius:10px;margin-top:16px;font-size:13px}
+  pre{background:#020617;padding:14px;border-radius:10px;font-size:12px;overflow-x:auto;white-space:pre-wrap;word-break:break-all}
+  .ok{color:#22c55e}.ko{color:#ef4444}
+</style></head><body>
+<h1>🗑️ Nettoyage base MesureChâssis</h1>
+<p>Cette action supprime <b>tous les comptes utilisateurs, entreprises, chantiers, mesures, feedbacks et invitations</b> de la base, <b>sauf</b> ceux liés à l'email indiqué ci-dessous.</p>
+<div class="warn">⚠️ Action IRRÉVERSIBLE. Vérifiez bien l'email à conserver avant de cliquer.</div>
+<label>Email à conserver</label>
+<input id="keep" type="email" placeholder="info@mesurechassis.com" autocomplete="off"/>
+<label>Token plateforme (X-Platform-Token)</label>
+<input id="token" type="password" placeholder="mc-platform-2026"/>
+<button id="btn">SUPPRIMER TOUT LE RESTE</button>
+<pre id="out"></pre>
+<script>
+document.getElementById('btn').onclick=async()=>{
+  const keep=document.getElementById('keep').value.trim();
+  const token=document.getElementById('token').value.trim();
+  const out=document.getElementById('out');
+  if(!keep||!token){out.innerHTML='<span class="ko">Email et token requis.</span>';return}
+  if(!confirm('Confirmer la suppression de TOUS les comptes sauf '+keep+' ?'))return;
+  document.getElementById('btn').disabled=true;
+  out.textContent='⏳ Nettoyage en cours...';
+  try{
+    const r=await fetch('/api/platform/db/cleanup',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Platform-Token':token},
+      body:JSON.stringify({keep_email:keep,confirm:'DELETE_ALL'})
+    });
+    const j=await r.json();
+    if(r.ok){
+      out.innerHTML='<span class="ok">✅ Nettoyage terminé !</span>\\n\\n'+JSON.stringify(j,null,2);
+    }else{
+      out.innerHTML='<span class="ko">❌ Erreur '+r.status+'</span>\\n\\n'+JSON.stringify(j,null,2);
     }
-    await db.users.insert_one(user_doc)
-    return {
-        "ok": True,
-        "user": {
-            "id": user_doc["id"],
-            "name": name,
-            "email": email,
-            "role": role,
-        },
-        "message": "Collaborateur créé. Transmettez-lui ses identifiants.",
-    }
+  }catch(e){
+    out.innerHTML='<span class="ko">❌ '+e.message+'</span>';
+  }
+  document.getElementById('btn').disabled=false;
+};
+</script></body></html>"""
+    return HTMLResponse(content=html)
 
 
-@router.patch("/team/members/{member_id}/password")
-async def reset_member_password(member_id: str, payload: dict, user=Depends(require_admin)):
-    """L'Admin réinitialise le mot de passe d'un membre. Le membre sera
-    automatiquement déconnecté (token invalidé via mise à jour password).
-    """
-    from deps import hash_password
-    new_pw = payload.get("password") or ""
-    if len(new_pw) < 6:
-        raise HTTPException(400, "Mot de passe : 6 caractères minimum")
-    company_id = user.get("company_id", "default")
-    member = await db.users.find_one({"id": member_id, "company_id": company_id})
-    if not member:
-        raise HTTPException(404, "Membre introuvable")
-    if member.get("role") == "admin":
-        raise HTTPException(403, "Impossible de modifier le mot de passe d'un Admin")
-    await db.users.update_one(
-        {"id": member_id},
-        {"$set": {"hashed_password": hash_password(new_pw)}},
+@api.get("/_downloads/feature-graphic/{variant}")
+async def download_feature_graphic_variant(variant: str):
+    """Variantes redimensionnées de l'image utilisateur (stretch / fit / cover)."""
+    allowed = {"stretch", "fit", "cover"}
+    if variant not in allowed:
+        raise HTTPException(status_code=404, detail="Variant inconnu")
+    path = f"/app/play-store-assets/feature-graphic-user-{variant}.png"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Image introuvable")
+    return FileResponse(
+        path,
+        media_type="image/png",
+        filename=f"feature-graphic-{variant}-1024x500.png",
     )
-    return {"ok": True, "message": "Mot de passe mis à jour"}
 
 
-@router.delete("/team/members/{member_id}")
-async def delete_team_member(member_id: str, user=Depends(require_admin)):
-    """L'Admin supprime un membre de l'équipe."""
-    company_id = user.get("company_id", "default")
-    member = await db.users.find_one({"id": member_id, "company_id": company_id})
-    if not member:
-        raise HTTPException(404, "Membre introuvable")
-    if member.get("role") == "admin":
-        raise HTTPException(403, "Impossible de supprimer un Admin")
-    await db.users.delete_one({"id": member_id})
-    return {"ok": True}
-
-
-# --- M1 : Support contact endpoint ------------------------------------
-def _send_support_email(*, to: str, subject: str, html: str) -> dict:
-    from email_service import send_email
-    return send_email(to=to, subject=subject, body="", html=html)
-
-
-@router.post("/support/contact")
-async def contact_support(payload: dict, user=Depends(auth_user)):
-    """Reçoit un message de support et l'envoie via Resend à info@."""
-    from datetime import datetime, timezone
-    import uuid
-
-    subject = (payload.get("subject") or "Demande de support").strip()[:200]
-    message = (payload.get("message") or "").strip()
-    if not message:
-        raise HTTPException(400, "Message vide")
-
-    ticket = {
-        "id": str(uuid.uuid4()),
-        "user_id": user["id"],
-        "user_email": user.get("email"),
-        "user_name": user.get("name"),
-        "subject": subject,
-        "message": message[:5000],
-        "created_at": datetime.now(timezone.utc).isoformat(),
-        "status": "open",
-    }
-    await db.support_tickets.insert_one(ticket)
-
-    # Email vers info@mesurechassis.com
-    try:
-        _send_support_email(
-            to="info@mesurechassis.com",
-            subject=f"[Support MC] {subject}",
-            html=(
-                f"<h3>Nouvelle demande de support</h3>"
-                f"<p><b>De :</b> {user.get('name')} &lt;{user.get('email')}&gt;</p>"
-                f"<p><b>Sujet :</b> {subject}</p>"
-                f"<hr/><pre style='white-space:pre-wrap'>{message[:5000]}</pre>"
-            ),
-        )
-    except Exception:
-        pass  # le ticket reste en DB même si l'email échoue
-
-    return {"ok": True, "message": "Votre demande a bien été envoyée. Nous vous répondrons sous 24h."}
-
-
-# --- Subscription cancellation (Master Admin) ---------------------------
-@router.post("/company/subscription/cancel", response_model=CompanyProfile)
-async def cancel_subscription(user=Depends(require_admin)):
-    """Désabonnement gracieux : l'accès Pro est conservé jusqu'à
-    `subscription_expires_at`, puis le verrou paywall s'active automatiquement.
-
-    Réservé au Master Admin (role == "admin"). Le Mode Artisan ne bypass pas
-    cette action — uniquement les administrateurs déclarés peuvent annuler.
-    """
-    if user["role"] != "admin":
-        raise HTTPException(
-            status_code=403,
-            detail="Seul l'administrateur peut annuler l'abonnement.",
-        )
-    company_id = user.get("company_id", "default")
-    doc = await ensure_company(company_id)
-    if doc.get("cancel_at_period_end"):
-        raise HTTPException(
-            status_code=400,
-            detail="L'annulation est déjà programmée.",
-        )
-    now_iso = datetime.now(timezone.utc).isoformat()
-    await db.companies.update_one(
-        {"company_id": company_id},
-        {
-            "$set": {
-                "cancel_at_period_end": True,
-                "cancelled_at": now_iso,
-            }
-        },
-        upsert=True,
+@api.get("/_downloads/backend-railway")
+async def download_backend_zip():
+    """Pack du backend prêt à pousser sur GitHub puis déployer sur Railway."""
+    path = "/app/backend/mesurechassis-backend.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="mesurechassis-backend.zip",
     )
-    doc = await ensure_company(company_id)
-    return _to_profile(doc, company_id)
 
 
-@router.post("/company/subscription/reactivate", response_model=CompanyProfile)
-async def reactivate_subscription(user=Depends(require_admin)):
-    """Réactive l'abonnement avant la fin de la période payée."""
-    if user["role"] != "admin":
-        raise HTTPException(
-            status_code=403,
-            detail="Seul l'administrateur peut réactiver l'abonnement.",
-        )
-    company_id = user.get("company_id", "default")
-    await db.companies.update_one(
-        {"company_id": company_id},
-        {
-            "$set": {
-                "cancel_at_period_end": False,
-                "cancelled_at": None,
-            }
-        },
-        upsert=True,
-    )
-    doc = await ensure_company(company_id)
-    return _to_profile(doc, company_id)
+@api.get("/_gallery/{filename}")
+async def gallery_file(filename: str):
+    """Galerie temporaire pour visualiser les images extraites du PDF utilisateur."""
+    # Sécurité : pas de path traversal
+    if "/" in filename or ".." in filename:
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    path = os.path.join("/app/frontend/assets/marketing_screenshots/pdf_images", filename)
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Not found")
+    if filename.endswith(".html"):
+        return FileResponse(path, media_type="text/html")
+    if filename.endswith(".jpg") or filename.endswith(".jpeg"):
+        return FileResponse(path, media_type="image/jpeg")
+    if filename.endswith(".png"):
+        return FileResponse(path, media_type="image/png")
+    return FileResponse(path)
 
 
-# --- Platform admin: régulariser un abonnement (out-of-band) ------------
-@router.post("/platform/companies/{company_id}/subscription")
-async def platform_set_subscription(
-    company_id: str,
-    payload: dict,
-    x_platform_token: Optional[str] = Header(None),
-):
-    if x_platform_token != PLATFORM_ADMIN_TOKEN:
-        raise HTTPException(status_code=403, detail="Invalid platform token")
-    update: dict = {}
-    if "subscription_status" in payload:
-        if payload["subscription_status"] not in (
-            "trial", "active", "suspended",
-        ):
-            raise HTTPException(400, "Invalid subscription_status")
-        update["subscription_status"] = payload["subscription_status"]
-    if "plan" in payload:
-        if payload["plan"] not in VALID_PLANS:
-            raise HTTPException(
-                400, f"plan must be one of {sorted(VALID_PLANS)}"
-            )
-        update["plan"] = payload["plan"]
-        # Lorsqu'on passe en Pro : on remet à zéro l'annulation programmée.
-        if payload["plan"] == "pro":
-            update["cancel_at_period_end"] = False
-            update["cancelled_at"] = None
-    if "extend_days" in payload:
-        try:
-            days = int(payload["extend_days"])
-        except (TypeError, ValueError):
-            raise HTTPException(400, "extend_days must be int")
-        new_dt = datetime.now(timezone.utc) + timedelta(days=days)
-        update["subscription_expires_at"] = new_dt.isoformat()
-    if (
-        "subscription_expires_at" in payload
-        and "extend_days" not in payload
-    ):
-        update["subscription_expires_at"] = payload["subscription_expires_at"]
-    if "cancel_at_period_end" in payload:
-        update["cancel_at_period_end"] = bool(payload["cancel_at_period_end"])
-    if not update:
-        raise HTTPException(400, "Nothing to update")
-    update["company_id"] = company_id
-    await db.companies.update_one(
-        {"company_id": company_id}, {"$set": update}, upsert=True
-    )
-    doc = await ensure_company(company_id)
-    return _to_profile(doc, company_id)
+
+app.include_router(api)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
