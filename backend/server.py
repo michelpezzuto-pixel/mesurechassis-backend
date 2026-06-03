@@ -152,6 +152,19 @@ async def download_frontend_source():
     )
 
 
+@api.get("/_downloads/screenshots")
+async def download_screenshots():
+    """Captures d'ecran iPhone redimensionnees au format App Store (6.7 et 6.9 pouces)."""
+    path = "/app/backend/public_downloads/mesurechassis-screenshots.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="mesurechassis-screenshots.zip",
+    )
+
+
 @api.get("/_downloads/file/{which}")
 async def download_raw_file(which: str):
     """Sert le contenu BRUT (texte) des fichiers backend pour copier-coller manuel."""
