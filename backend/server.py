@@ -139,6 +139,19 @@ async def download_railway_fix_stripe():
     )
 
 
+@api.get("/_downloads/frontend-source")
+async def download_frontend_source():
+    """Archive du code source de l'app Expo (sans node_modules) pour build EAS local."""
+    path = "/app/backend/public_downloads/mesurechassis-frontend.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="mesurechassis-frontend.zip",
+    )
+
+
 @api.get("/_downloads/file/{which}")
 async def download_raw_file(which: str):
     """Sert le contenu BRUT (texte) des fichiers backend pour copier-coller manuel."""
