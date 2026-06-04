@@ -139,6 +139,11 @@ class Chantier(BaseModel):
     site_photos: List[dict] = Field(default_factory=list)
     # 🏗️ Configuration du mur — voir ChantierUpdate.
     wall_config: Optional[dict] = None
+    # 🔁 Demande de modification (Commercial → Technicien). Voir routes
+    # /chantiers/{id}/mod-request et /respond. Champs typiques :
+    # { status: "pending"|"approved"|"refused", requested_at, requested_by,
+    #   requested_by_name, reason, responded_at?, response_comment? }
+    mod_request: Optional[dict] = None
 
 
 class SignatureIn(BaseModel):
