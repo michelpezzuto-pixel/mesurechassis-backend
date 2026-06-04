@@ -176,16 +176,22 @@ def _mock_log(
 def send_verification_email(*, to: str, name: str, link: str) -> dict:
     body = (
         f"Bonjour {name},\n\n"
-        "Bienvenue sur MesureChâssis !\n\n"
-        "Pour activer votre compte, cliquez sur le lien ci-dessous "
-        "(valide 7 jours) :\n\n"
+        "✅ Votre inscription sur MesureChâssis a bien été enregistrée.\n\n"
+        "Bienvenue ! Avant de pouvoir vous connecter, nous devons "
+        "vérifier votre adresse email.\n\n"
+        "Pour activer définitivement votre compte, cliquez sur le lien "
+        "ci-dessous (valide 7 jours) :\n\n"
         f"   {link}\n\n"
+        "─────────────────────────────────\n"
+        "Une fois cette étape effectuée, vous pourrez vous connecter avec "
+        "l'email et le mot de passe que vous venez de choisir.\n\n"
         "Si vous n'êtes pas à l'origine de cette inscription, ignorez ce message.\n\n"
+        "À très bientôt,\n"
         "L'équipe MesureChâssis"
     )
     return send_email(
         to=to,
-        subject="Vérifiez votre adresse email — MesureChâssis",
+        subject="✅ Inscription enregistrée — Vérifiez votre email",
         body=body,
         link=link,
     )

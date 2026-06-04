@@ -1220,10 +1220,232 @@ export default function ChantierDetail() {
                 </Text>
               </TouchableOpacity>
             )}
-            {/* ↩️ Bouton de RETOUR ARRIÈRE pour le Commercial après validation.
-                 Permet de corriger les ouvertures avant que le Technicien ne
-                 prenne la main. Repasse le statut en "À mesurer". */}
-            {isCommercialInVerify && (
+            {/* ↩️ DEMANDE DE MODIFICATION pour le Commercial.
+                 Une fois en "à vérifier", le Commercial NE PEUT PLUS revenir
+                 directement en "à mesurer". Il doit demander l'autorisation
+                 au Technicien (workflow d'approbation). */}
+            {isCommercialInVerify && (() => {
+              const modReq = (chantier as any)?.mod_request;
+              const isPending = modReq?.status === "pending";
+              const isRefused = modReq?.status === "refused";
+              if (isPending) {
+                return (
+                  <View style={validateStyles.waitCard}>
+                    <Ionicons
+                      name="hourglass-outline"
+                      size={20}
+                      color={colors.warning}
+                    />
+                    <View style={{ flex: 1 }}>
+                      <Text style={validateStyles.waitTitle}>
+                        DEMANDE DE MODIFICATION ENVOYÉE
+                      </Text>
+                      <Text style={validateStyles.waitBody}>
+                        Votre demande est en attente. Vous serez notifié
+                        dès que le technicien aura répondu.
+                      </Text>
+                    </View>
+                  </View>
+                );
+              }
+              return (
+                <TouchableOpacity
+                  testID="commercial-request-modification-button"
+                  onPress={() => {
+                    Alert.prompt(
+                      "Demander une modification ?",
+                      "Indiquez brièvement la raison (optionnel). Le technicien sera notifié et pourra accepter ou refuser.",
+                      [
+                        { text: "Annuler", style: "cancel" },
+                        {
+                          text: "Envoyer",
+                          style: "default",
+                          onPress: async (reasonInput?: string) => {
+                            try {
+                              await api.post(
+                                `/chantiers/${id}/mod-request`,
+                                { reason: reasonInput || "" },
+                              );
+                              const res = await api.get<Chantier>(
+                                `/chantiers/${id}`,
+                              );
+                              setChantier(res.data);
+                              Alert.alert(
+                                "✅ Demande envoyée",
+                                "Le technicien sera notifié.",
+                              );
+                            } catch (e: any) {
+                              Alert.alert(
+                                "Erreur",
+                                e?.response?.data?.detail ||
+                                  "Impossible d'envoyer la demande.",
+                              );
+                            }
+                          },
+                        },
+                      ],
+                      "plain-text",
+                      "",
+                    );
+                  }}
+                  activeOpacity={0.85}
+                  style={validateStyles.btnOverride}
+                >
+                  <Ionicons name="paper-plane-outline" size={20} color={colors.warning} />
+                  <Text style={validateStyles.btnOverrideText}>
+                    {isRefused
+                      ? "↩️ RENOUVELER LA DEMANDE AU TECHNICIEN"
+                      : "↩️ DEMANDER AU TECHNICIEN DE MODIFIER"}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })()}
+            {/* 🔔 BANNIÈRE TECHNICIEN — Demande de modification en attente */}
+            {roleIsTechnician &&
+              (chantier as any)?.mod_request?.status === "pending" && (
+              <View
+                style={[
+                  validateStyles.waitCard,
+                  { borderColor: colors.primary, borderWidth: 1 },
+                ]}
+              >
+                <Ionicons
+                  name="alert-circle"
+                  size={22}
+                  color={colors.primary}
+                />
+                <View style={{ flex: 1 }}>
+                  <Text style={validateStyles.waitTitle}>
+                    📢 DEMANDE DE MODIFICATION
+                  </Text>
+                  <Text style={validateStyles.waitBody}>
+                    {(chantier as any).mod_request.requested_by_name ||
+                      "Le commercial"}{" "}
+                    souhaite reprendre la main pour modifier les mesures.
+                    {(chantier as any).mod_request.reason
+                      ? `\n\nRaison : « ${(chantier as any).mod_request.reason} »`
+                      : ""}
+                  </Text>
+                  <View style={{ flexDirection: "row", gap: 8, marginTop: 10 }}>
+                    <TouchableOpacity
+                      testID="tech-approve-mod-request"
+                      onPress={async () => {
+                        Alert.alert(
+                          "Approuver ?",
+                          "Le chantier repassera en « À mesurer » et le commercial pourra modifier les ouvertures.",
+                          [
+                            { text: "Annuler", style: "cancel" },
+                            {
+                              text: "Approuver",
+                              style: "default",
+                              onPress: async () => {
+                                try {
+                                  await api.post(
+                                    `/chantiers/${id}/mod-request/respond`,
+                                    { approve: true },
+                                  );
+                                  const res = await api.get<Chantier>(
+                                    `/chantiers/${id}`,
+                                  );
+                                  setChantier(res.data);
+                                } catch {
+                                  Alert.alert(
+                                    "Erreur",
+                                    "Impossible de répondre.",
+                                  );
+                                }
+                              },
+                            },
+                          ],
+                        );
+                      }}
+                      style={[
+                        validateStyles.btnOverride,
+                        {
+                          flex: 1,
+                          borderColor: colors.success,
+                          backgroundColor: colors.success + "1A",
+                        },
+                      ]}
+                      activeOpacity={0.85}
+                    >
+                      <Ionicons
+                        name="checkmark-circle"
+                        size={18}
+                        color={colors.success}
+                      />
+                      <Text
+                        style={[
+                          validateStyles.btnOverrideText,
+                          { color: colors.success },
+                        ]}
+                      >
+                        APPROUVER
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      testID="tech-refuse-mod-request"
+                      onPress={async () => {
+                        Alert.alert(
+                          "Refuser ?",
+                          "La demande sera marquée comme refusée. Le commercial pourra en faire une nouvelle.",
+                          [
+                            { text: "Annuler", style: "cancel" },
+                            {
+                              text: "Refuser",
+                              style: "destructive",
+                              onPress: async () => {
+                                try {
+                                  await api.post(
+                                    `/chantiers/${id}/mod-request/respond`,
+                                    { approve: false },
+                                  );
+                                  const res = await api.get<Chantier>(
+                                    `/chantiers/${id}`,
+                                  );
+                                  setChantier(res.data);
+                                } catch {
+                                  Alert.alert(
+                                    "Erreur",
+                                    "Impossible de répondre.",
+                                  );
+                                }
+                              },
+                            },
+                          ],
+                        );
+                      }}
+                      style={[
+                        validateStyles.btnOverride,
+                        {
+                          flex: 1,
+                          borderColor: colors.warning,
+                          backgroundColor: colors.warning + "1A",
+                        },
+                      ]}
+                      activeOpacity={0.85}
+                    >
+                      <Ionicons
+                        name="close-circle"
+                        size={18}
+                        color={colors.warning}
+                      />
+                      <Text
+                        style={[
+                          validateStyles.btnOverrideText,
+                          { color: colors.warning },
+                        ]}
+                      >
+                        REFUSER
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            )}
+            {/* ↩️ Bouton de RETOUR ARRIÈRE (legacy) — Désactivé pour Commercial.
+                 Garde la logique uniquement pour les workflows existants. */}
+            {false && isCommercialInVerify && (
               <TouchableOpacity
                 testID="commercial-back-to-measure-button"
                 onPress={() => {

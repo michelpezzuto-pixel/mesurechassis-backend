@@ -411,3 +411,133 @@ async def delete_signature(
     if not doc:
         raise HTTPException(404, "Chantier introuvable")
     return Chantier(**doc)
+
+
+
+# ═════════════════════════════════════════════════════════════════════
+# WORKFLOW DEMANDE DE MODIFICATION (Commercial → Technicien)
+# ═════════════════════════════════════════════════════════════════════
+# Le Commercial, une fois le chantier passé en "À vérifier", ne peut PLUS
+# modifier les mesures directement. Pour récupérer la main, il doit
+# demander l'autorisation au Technicien. Ce dernier peut approuver
+# (statut → "à mesurer") ou refuser. Le flag est stocké directement
+# dans le document chantier sous `mod_request`.
+
+@router.post("/chantiers/{chantier_id}/mod-request")
+async def request_modification(
+    chantier_id: str,
+    payload: dict,
+    user=Depends(require_roles(["commercial"])),
+):
+    """Le Commercial demande au Technicien d'autoriser la modification."""
+    company = user.get("company_id", "default")
+    doc = await db.chantiers.find_one(
+        {"id": chantier_id, "company_id": company}, {"_id": 0}
+    )
+    if not doc:
+        raise HTTPException(404, "Chantier introuvable")
+    # Une demande n'est possible que pour les chantiers verrouillés au commercial
+    if doc.get("status") not in {"a_verifier", "technique_a_valider"}:
+        raise HTTPException(
+            400,
+            "La demande de modification n'est possible que pour les chantiers"
+            " en attente de vérification.",
+        )
+    reason = (payload or {}).get("reason", "").strip()[:500]
+    now = datetime.now(timezone.utc).isoformat()
+    mod_req = {
+        "requested_at": now,
+        "requested_by": user.get("id"),
+        "requested_by_name": user.get("name"),
+        "reason": reason,
+        "status": "pending",
+    }
+    await db.chantiers.update_one(
+        {"id": chantier_id, "company_id": company},
+        {"$set": {"mod_request": mod_req}},
+    )
+    # 🔔 Notifier les techniciens de la même entreprise
+    tech_users = await db.users.find(
+        {"company_id": company, "role": "technician"},
+        {"_id": 0, "id": 1, "push_token": 1, "name": 1},
+    ).to_list(50)
+    for tech in tech_users:
+        try:
+            await send_push_to_user(
+                tech.get("id"),
+                "🔔 Demande de modification",
+                f"{user.get('name')} demande à modifier le chantier "
+                f"{doc.get('client_name', '')}",
+                data={"chantier_id": chantier_id, "type": "mod_request"},
+            )
+        except Exception:
+            pass
+    return {"ok": True, "mod_request": mod_req}
+
+
+@router.post("/chantiers/{chantier_id}/mod-request/respond")
+async def respond_modification(
+    chantier_id: str,
+    payload: dict,
+    user=Depends(require_roles(["technician", "admin"])),
+):
+    """Le Technicien approuve ou refuse la demande du Commercial.
+
+    payload: { "approve": bool, "comment": str (optional) }
+    """
+    company = user.get("company_id", "default")
+    doc = await db.chantiers.find_one(
+        {"id": chantier_id, "company_id": company}, {"_id": 0}
+    )
+    if not doc:
+        raise HTTPException(404, "Chantier introuvable")
+    mod_req = doc.get("mod_request") or {}
+    if mod_req.get("status") != "pending":
+        raise HTTPException(
+            400, "Aucune demande de modification en attente."
+        )
+    approve = bool((payload or {}).get("approve", False))
+    comment = (payload or {}).get("comment", "").strip()[:500]
+    now = datetime.now(timezone.utc).isoformat()
+    updates: dict = {
+        "mod_request.status": "approved" if approve else "refused",
+        "mod_request.responded_at": now,
+        "mod_request.responded_by": user.get("id"),
+        "mod_request.responded_by_name": user.get("name"),
+        "mod_request.response_comment": comment,
+    }
+    if approve:
+        # Repasse le chantier en "à mesurer" pour que le commercial corrige
+        updates["status"] = "a_mesurer"
+    await db.chantiers.update_one(
+        {"id": chantier_id, "company_id": company},
+        {"$set": updates},
+    )
+    # 🔔 Notifier le commercial qui a fait la demande
+    requester_id = mod_req.get("requested_by")
+    if requester_id:
+        try:
+            title = (
+                "✅ Demande acceptée"
+                if approve
+                else "❌ Demande refusée"
+            )
+            body = (
+                f"Vous pouvez reprendre les mesures du chantier "
+                f"{doc.get('client_name', '')}"
+                if approve
+                else "Le technicien a refusé votre demande de modification."
+            )
+            await send_push_to_user(
+                requester_id,
+                title,
+                body,
+                data={
+                    "chantier_id": chantier_id,
+                    "type": "mod_request_response",
+                    "approved": approve,
+                },
+            )
+        except Exception:
+            pass
+    return {"ok": True, "approved": approve}

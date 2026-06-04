@@ -196,6 +196,14 @@ export default function Dashboard() {
     try {
       const res = await api.post<Chantier>("/chantiers", payload);
       resetForm();
+      // 🔒 RBAC : l'Admin Entreprise = observateur. On revient au dashboard
+      //    (avec liste rafraîchie) plutôt que d'ouvrir directement le chantier
+      //    (qu'il ne peut de toute façon pas modifier). Le Commercial assigné
+      //    prendra la main lui-même.
+      if (mustAssignToCommercial) {
+        fetchData(); // rafraîchit la liste pour voir le nouveau chantier
+        return;
+      }
       router.push(`/chantier/${res.data.id}`);
     } catch (e: any) {
       // Limite Freemium atteinte (anti-fraud lifetime)
