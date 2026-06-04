@@ -165,6 +165,19 @@ async def download_screenshots():
     )
 
 
+@api.get("/_downloads/screenshots-ipad")
+async def download_screenshots_ipad():
+    """Captures d'ecran iPad 13 pouces (2048x2732)."""
+    path = "/app/backend/public_downloads/mesurechassis-screenshots-ipad.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="mesurechassis-screenshots-ipad.zip",
+    )
+
+
 @api.get("/_downloads/file/{which}")
 async def download_raw_file(which: str):
     """Sert le contenu BRUT (texte) des fichiers backend pour copier-coller manuel."""
