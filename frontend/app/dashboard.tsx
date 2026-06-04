@@ -120,22 +120,30 @@ export default function Dashboard() {
   }, [fetchData]);
 
   // 👥 Charge l'équipe (commerciaux disponibles) pour le sélecteur Admin
-  useEffect(() => {
+  const fetchTeam = useCallback(async () => {
     if (!mustAssignToCommercial) return;
-    (async () => {
-      try {
-        const res = await api.get<
-          { id: string; name: string; email: string; role: string }[]
-        >("/users");
-        // On garde tous les membres (Commercial + Technician + Admin)
-        // au cas où l'Admin voudrait s'auto-assigner ou tester. Le filtrage
-        // strict "commercial uniquement" peut être fait visuellement.
-        setTeamMembers(res.data || []);
-      } catch {
-        // silencieux : on tolère pas de liste, la modale affichera "Aucun membre"
-      }
-    })();
+    try {
+      const res = await api.get<
+        { id: string; name: string; email: string; role: string }[]
+      >("/users");
+      setTeamMembers(res.data || []);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn("[Dashboard] fetchTeam failed:", e);
+    }
   }, [mustAssignToCommercial]);
+
+  useEffect(() => {
+    fetchTeam();
+  }, [fetchTeam]);
+
+  // Refetch à chaque ouverture du modal — couvre le cas où un commercial
+  // est créé après l'ouverture initiale du dashboard.
+  useEffect(() => {
+    if (newModal && mustAssignToCommercial) {
+      fetchTeam();
+    }
+  }, [newModal, mustAssignToCommercial, fetchTeam]);
 
   useFocusEffect(
     useCallback(() => {
@@ -738,87 +746,96 @@ export default function Dashboard() {
               Choisir un commercial
             </Text>
             <ScrollView style={{ maxHeight: 360 }}>
-              {teamMembers.filter((m) => m.role === "commercial").length ===
-              0 ? (
-                <View style={{ padding: 18, alignItems: "center" }}>
-                  <Ionicons
-                    name="people-outline"
-                    size={36}
-                    color={colors.textSecondary}
-                  />
-                  <Text
-                    style={{
-                      color: colors.textSecondary,
-                      textAlign: "center",
-                      marginTop: 10,
-                    }}
-                  >
-                    Aucun commercial dans votre équipe.{"\n"}Créez-en un dans la
-                    section Équipe d'abord.
-                  </Text>
-                </View>
-              ) : (
-                teamMembers
-                  .filter((m) => m.role === "commercial")
-                  .map((m) => {
-                    const selected = newAssignedTo === m.id;
-                    return (
-                      <TouchableOpacity
-                        key={m.id}
-                        onPress={() => {
-                          setNewAssignedTo(m.id);
-                          setShowAssigneePicker(false);
-                        }}
+              {(() => {
+                const commercials = teamMembers.filter(
+                  (m) => (m.role || "").toLowerCase() === "commercial",
+                );
+                if (__DEV__) {
+                  // eslint-disable-next-line no-console
+                  console.log("[Picker] teamMembers:", teamMembers.length, "commercials:", commercials.length, teamMembers.map(m => ({n: m.name, r: m.role})));
+                }
+                if (commercials.length === 0) {
+                  return (
+                    <View style={{ padding: 18, alignItems: "center" }}>
+                      <Ionicons
+                        name="people-outline"
+                        size={36}
+                        color={colors.textSecondary}
+                      />
+                      <Text
                         style={{
-                          padding: 14,
-                          borderRadius: 10,
-                          borderWidth: 1,
-                          borderColor: selected
-                            ? colors.primary
-                            : colors.border,
-                          backgroundColor: selected
-                            ? colors.primary + "1A"
-                            : "transparent",
-                          marginBottom: 8,
-                          flexDirection: "row",
-                          alignItems: "center",
-                          gap: 12,
+                          color: colors.textSecondary,
+                          textAlign: "center",
+                          marginTop: 10,
                         }}
-                        activeOpacity={0.7}
                       >
-                        <Ionicons
-                          name={
-                            selected
-                              ? "radio-button-on"
-                              : "radio-button-off"
-                          }
-                          size={20}
-                          color={selected ? colors.primary : colors.textSecondary}
-                        />
-                        <View style={{ flex: 1 }}>
-                          <Text
-                            style={{
-                              color: colors.textPrimary,
-                              fontWeight: "700",
-                              fontSize: 14,
-                            }}
-                          >
-                            {m.name}
-                          </Text>
-                          <Text
-                            style={{
-                              color: colors.textSecondary,
-                              fontSize: 12,
-                              marginTop: 2,
-                            }}
-                          >
-                            {m.email}
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
-                    );
-                  })
-              )}
+                        Aucun commercial dans votre équipe.{"\n"}Créez-en un dans la
+                        section Équipe d'abord.
+                      </Text>
+                    </View>
+                  );
+                }
+                return commercials.map((m) => {
+                  const selected = newAssignedTo === m.id;
+                  return (
+                    <TouchableOpacity
+                      key={m.id}
+                      onPress={() => {
+                        setNewAssignedTo(m.id);
+                        setShowAssigneePicker(false);
+                      }}
+                      style={{
+                        padding: 14,
+                        borderRadius: 10,
+                        borderWidth: 1,
+                        borderColor: selected
+                          ? colors.primary
+                          : colors.border,
+                        backgroundColor: selected
+                          ? colors.primary + "1A"
+                          : "transparent",
+                        marginBottom: 8,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: 12,
+                      }}
+                      activeOpacity={0.7}
+                    >
+                      <Ionicons
+                        name={
+                          selected
+                            ? "radio-button-on"
+                            : "radio-button-off"
+                        }
+                        size={20}
+                        color={
+                          selected ? colors.primary : colors.textSecondary
+                        }
+                      />
+                      <View style={{ flex: 1 }}>
+                        <Text
+                          style={{
+                            color: colors.textPrimary,
+                            fontWeight: "700",
+                            fontSize: 14,
+                          }}
+                        >
+                          {m.name}
+                        </Text>
+                        <Text
+                          style={{
+                            color: colors.textSecondary,
+                            fontSize: 12,
+                            marginTop: 2,
+                          }}
+                        >
+                          {m.email}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                });
+              })()}
             </ScrollView>
             <TouchableOpacity
               onPress={() => setShowAssigneePicker(false)}
