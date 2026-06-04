@@ -1066,7 +1066,7 @@ export default function ChantierDetail() {
                   <Text style={styles.archiveText}>LECTURE SEULE — Chantier archivé</Text>
                 </View>
               )}
-            </View>
+            </TouchableOpacity>
           );
         }}
         contentContainerStyle={{ padding: 16, paddingBottom: 200 }}
