@@ -938,8 +938,36 @@ export default function ChantierDetail() {
           // depuis options.shape pour afficher le bon label + icône.
           const trueShape = blockTypeToShape(item.block_type, item.options);
           const trueLabel = shapeMeta[trueShape]?.label ?? block.label;
+          // 👁️ La carte est cliquable PARTOUT (Admin en consultation, Commercial
+          // en édition, Tech en vérification). Le mode dépend du rôle / statut.
+          //   - canEditMesures = true  → on ouvre en édition
+          //   - sinon              → on ouvre en lecture seule (mode ?view=1)
+          const handleCardPress = () => {
+            if (showArchivedLockIntercept) {
+              interceptArchivedLock();
+              return;
+            }
+            if (showCommercialFabIntercept) {
+              interceptCommercialFab();
+              return;
+            }
+            if (canEditMesures) {
+              // Édition : on ouvre le wizard avec mesure_id pour pré-remplir
+              router.push(
+                `/chantier/${id}/new-mesure?mesure_id=${item.id}`,
+              );
+            } else {
+              // Lecture seule : page de consultation dédiée
+              router.push(`/chantier/${id}/mesure/${item.id}`);
+            }
+          };
           return (
-            <View testID={`mesure-card-${item.id}`} style={styles.mesureCard}>
+            <TouchableOpacity
+              testID={`mesure-card-${item.id}`}
+              style={styles.mesureCard}
+              onPress={handleCardPress}
+              activeOpacity={0.75}
+            >
               <View style={styles.mesureRow}>
                 {item.photo_url ? (
                   <Image source={{ uri: item.photo_url }} style={styles.mesureThumb} />
