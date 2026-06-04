@@ -1,52 +1,127 @@
 [
   {
     "id": "1",
-    "question": "Comment créer mon premier projet ?",
-    "answer": "Cliquez sur le bouton '+' vert sur l'écran d'accueil, donnez un nom à votre chantier, puis validez."
+    "question": "Comment créer mon premier chantier ?",
+    "answer": "Cliquez sur le bouton ➕ vert sur l'écran d'accueil, renseignez le nom du client et l'adresse, puis validez. Si vous êtes Admin en mode Entreprise, vous devrez aussi assigner un Commercial."
   },
   {
     "id": "2",
     "question": "Pourquoi mon application ne calcule rien ?",
-    "answer": "Vérifiez que tous les champs de mesures (largeur/hauteur) sont remplis et que le type de châssis est bien sélectionné."
+    "answer": "Vérifiez que tous les champs de mesures (largeur/hauteur) sont remplis et que la forme du châssis est bien sélectionnée."
   },
   {
     "id": "3",
     "question": "Pose en tableau ou feuillure : que choisir ?",
-    "answer": "Tableau : mesurez l'ouverture entre les murs. Feuillure : mesurez la largeur totale incluant les feuillures. Consultez le guide de pose."
+    "answer": "Tableau : mesurez l'ouverture entre les murs. Feuillure : mesurez la largeur totale incluant les feuillures. Consultez le guide de pose intégré au wizard."
   },
   {
     "id": "4",
-    "question": "Comment inviter un ami sur l'app ?",
-    "answer": "Votre ami doit télécharger l'application et créer son propre compte via le bouton 'S'inscrire'. Ne partagez pas vos identifiants personnels."
+    "question": "Comment inviter un membre à mon équipe ?",
+    "answer": "Allez dans Équipe (icône en haut à droite du Dashboard) → bouton ➕ INVITER UN MEMBRE. Choisissez son rôle (Commercial ou Technicien), définissez un mot de passe et transmettez-le-lui."
   },
   {
     "id": "5",
-    "question": "Puis-je modifier un projet après export ?",
-    "answer": "Oui, allez dans l'onglet 'Mes Projets', sélectionnez le chantier concerné, et modifiez vos valeurs."
+    "question": "Puis-je modifier un chantier après export ?",
+    "answer": "Oui, allez dans la liste des chantiers, sélectionnez le chantier concerné, et modifiez vos valeurs. Note : si le chantier est en 'À vérifier', seul le Commercial qui l'a saisi peut demander la réouverture au Technicien."
   },
   {
     "id": "6",
-    "question": "Comment exporter un devis/mesure ?",
-    "answer": "Dans la vue projet, cliquez sur le bouton 'EXPORTER' en bas de page pour générer votre PDF récapitulatif."
+    "question": "Comment exporter un PDF ou CSV ?",
+    "answer": "Dans la vue chantier, cliquez sur le bouton 'EXPORTER' en bas de page pour générer un PDF ou un CSV récapitulatif. Tous les rôles (Admin compris) peuvent exporter."
   },
   {
     "id": "7",
     "question": "Le bouton 'Connexion' tourne à l'infini.",
-    "answer": "Vérifiez votre connexion internet. Si elle est active, fermez et relancez l'application."
+    "answer": "Vérifiez votre connexion internet. Si elle est active, fermez et relancez l'application. Sur iPhone : touchez l'icône œil 👁️ avant de taper le mot de passe pour éviter le remplissage automatique."
   },
   {
     "id": "8",
-    "question": "Puis-je ajouter une note sur une mesure ?",
-    "answer": "Oui, dans l'éditeur de châssis, utilisez le champ 'Notes' en bas de chaque ligne de mesure."
+    "question": "Puis-je ajouter une note vocale sur une mesure ?",
+    "answer": "Oui, dans l'éditeur de mesure, utilisez le champ Notes en bas. Pour dicter, touchez l'icône 🎤 de votre clavier iPhone/Android."
   },
   {
     "id": "9",
     "question": "Que signifie le badge 'Suggéré' ★ ?",
-    "answer": "C'est notre aide au calcul. Le système détecte une configuration cohérente avec vos mesures précédentes."
+    "answer": "C'est notre aide au calcul. Le système détecte une configuration cohérente avec vos mesures précédentes (matériaux, dimensions, etc.)."
   },
   {
     "id": "10",
     "question": "Comment signaler un bug ou une idée ?",
-    "answer": "Utilisez le bouton 'Aide' > 'Support' dans l'app, remplissez le formulaire, et nous recevrons votre retour directement."
+    "answer": "Utilisez le bouton 'Aide' (icône ?) dans l'app, puis 'Envoyer un message au support'. Nous recevrons votre retour directement à info@mesurechassis.com."
+  },
+  {
+    "id": "11",
+    "question": "Quelle est la différence entre Admin, Commercial et Technicien ?",
+    "answer": "Admin : crée les chantiers, assigne un Commercial, supervise tout (lecture seule sur les mesures). Commercial : prend les mesures sur chantier, clôture la prise de cotes. Technicien : vérifie les mesures, valide pour la fabrication, ou renvoie au Commercial si correction nécessaire."
+  },
+  {
+    "id": "12",
+    "question": "Je suis Admin — comment assigner un chantier à un Commercial ?",
+    "answer": "Lors de la création du chantier, un champ 'Assigner à un Commercial *' apparaît (obligatoire). Sélectionnez le Commercial dans la liste. Le chantier sera automatiquement transmis avec une notification email."
+  },
+  {
+    "id": "13",
+    "question": "Je suis Commercial — comment clôturer la prise de cotes ?",
+    "answer": "Une fois toutes les ouvertures saisies et photographiées, ouvrez le chantier puis touchez le bouton 'CLÔTURER LA PRISE DE CÔTES'. Le chantier passe en 'À vérifier' et le Technicien + l'Admin reçoivent un email automatique."
+  },
+  {
+    "id": "14",
+    "question": "Je suis Technicien — comment valider un chantier pour la fabrication ?",
+    "answer": "Ouvrez un chantier en statut 'À vérifier'. Vérifiez les mesures (touchez une carte pour voir les détails). Si tout est OK, touchez 'VALIDER POUR FABRICATION'. Le chantier passe en 'En fabrication'."
+  },
+  {
+    "id": "15",
+    "question": "Je suis Technicien — comment renvoyer un chantier au Commercial pour corrections ?",
+    "answer": "Sur un chantier en 'À vérifier', touchez le bouton orange '↩️ RENVOYER AU COMMERCIAL POUR CORRECTION'. Le statut repasse à 'À mesurer' et le Commercial pourra corriger ses ouvertures."
+  },
+  {
+    "id": "16",
+    "question": "Je suis Commercial — j'ai oublié une mesure après la clôture, comment faire ?",
+    "answer": "Le chantier en 'À vérifier' est verrouillé pour vous. Touchez '↩️ DEMANDER AU TECHNICIEN DE MODIFIER'. Le Technicien recevra votre demande (avec votre raison) et pourra l'approuver (le chantier repasse à 'À mesurer') ou la refuser."
+  },
+  {
+    "id": "17",
+    "question": "Quand est-ce que je reçois des notifications email ?",
+    "answer": "1) À l'inscription pour activer votre compte. 2) Quand un chantier vous est assigné (Commercial). 3) Quand une prise de cotes est terminée et attend votre vérification (Tech + Admin). 4) Quand un Commercial demande une modification (Tech). 5) Quand votre demande de modification est approuvée/refusée (Commercial)."
+  },
+  {
+    "id": "18",
+    "question": "Je suis Artisan en solo — dois-je créer des Commerciaux et Techniciens ?",
+    "answer": "Non. En mode Artisan, vous faites tout vous-même : créer le chantier, prendre les mesures, clôturer. La hiérarchie Commercial/Technicien n'est pas activée pour vous. Tout est plus rapide."
+  },
+  {
+    "id": "19",
+    "question": "Quelles formes de châssis sont disponibles ?",
+    "answer": "14 formes sont disponibles : Rectangle / Carré, Porte d'entrée, Porte de garage, Trapèze, Triangle, Œil-de-bœuf, Coulissant levant, Plein cintre, Arc surbaissé, Angle 90°, Bow-Window, Pentagone (toit pointu), Hexagone, Ovale."
+  },
+  {
+    "id": "20",
+    "question": "Comment mesurer un Plein cintre ou un Arc surbaissé ?",
+    "answer": "Saisissez la largeur (à la base) et la hauteur totale (du sol au sommet de l'arc). Pour le plein cintre, la flèche de l'arc = la moitié de la largeur. Pour l'arc surbaissé, la flèche est plus petite — notez-la dans les notes si besoin précis."
+  },
+  {
+    "id": "21",
+    "question": "Comment mesurer un Angle 90° (deux baies à angle de mur) ?",
+    "answer": "Saisissez la largeur de la baie principale. Précisez dans les notes la largeur de la 2ème baie (sur l'autre mur perpendiculaire) et la hauteur commune. Une photo grand-angle facilite la fabrication."
+  },
+  {
+    "id": "22",
+    "question": "Comment mesurer un Bow-Window ?",
+    "answer": "Mesurez la largeur totale (corde de l'arc) et la profondeur (flèche maximale vers l'extérieur). Indiquez dans les notes le nombre de panneaux (3, 5, 7 typiquement) et la hauteur commune."
+  },
+  {
+    "id": "23",
+    "question": "Pourquoi l'Administrateur ne peut-il pas modifier les mesures ?",
+    "answer": "Pour garantir la qualité du process : l'Admin supervise (consultation, statistiques, exports) mais n'intervient pas dans la prise de mesures. Seuls le Commercial (saisie) et le Technicien (vérification) peuvent agir sur les ouvertures. L'Admin reste libre de clôturer définitivement le chantier."
+  },
+  {
+    "id": "24",
+    "question": "Que se passe-t-il quand un chantier passe en 'À vérifier' ?",
+    "answer": "1) Le Commercial est verrouillé (lecture seule, PDF accessible). 2) Le Technicien + l'Admin reçoivent un email automatique. 3) Le Technicien peut valider pour fabrication OU renvoyer au Commercial. 4) Si le Commercial veut modifier, il doit demander l'autorisation au Technicien."
+  },
+  {
+    "id": "25",
+    "question": "Mes données sont-elles sécurisées ?",
+    "answer": "Oui. Vos données sont hébergées dans des serveurs européens (Railway, Belgique). Aucune donnée n'est partagée avec des tiers à des fins publicitaires. Consultez notre politique de confidentialité : https://www.mesurechassis.com/confidentialite.html"
   }
 ]
