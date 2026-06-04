@@ -66,6 +66,16 @@ async def create_chantier(
     initial_status = payload.status
     if user.get("artisan_mode", False) and initial_status == "devis_a_faire":
         initial_status = "a_mesurer"
+    # ⚙️ Mode Entreprise + Admin avec assigned_to : la phase commerciale
+    # est faite hors-app. On démarre directement en "À mesurer" pour que
+    # le commercial assigné voie immédiatement le bouton "Clôturer la prise
+    # de cotes". Pas d'étape "Devis à faire" intermédiaire qui bloque.
+    if (
+        initial_status == "devis_a_faire"
+        and user.get("role") == "admin"
+        and payload.assigned_to
+    ):
+        initial_status = "a_mesurer"
     # 🔒 RBAC Entreprise : l'Admin DOIT assigner le chantier à un Commercial
     # (ou Technicien) au moment de la création. Le mode Artisan est exempté.
     company_for_check = await db.companies.find_one(
@@ -288,8 +298,9 @@ async def update_chantier(
     # 🔔 EMAIL CRITIQUE : prévenir Tech + Admin que la prise de cotes est
     #    terminée et qu'il faut maintenant vérifier les mesures.
     if (
-        new_status == "a_verifier"
-        and old_status != "a_verifier"
+        "status" in update
+        and update.get("status") == "a_verifier"
+        and existing.get("status") != "a_verifier"
         and user.get("role") == "commercial"
     ):
         # On compte les mesures pour info dans l'email
