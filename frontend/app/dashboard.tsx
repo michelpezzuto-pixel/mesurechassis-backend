@@ -64,6 +64,17 @@ export default function Dashboard() {
   const [newNotes, setNewNotes] = useState("");
   const [creating, setCreating] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
+  // 👥 RBAC Entreprise : sélecteur de Commercial à l'assignation
+  const [teamMembers, setTeamMembers] = useState<
+    { id: string; name: string; email: string; role: string }[]
+  >([]);
+  const [newAssignedTo, setNewAssignedTo] = useState<string>("");
+  const [showAssigneePicker, setShowAssigneePicker] = useState(false);
+  // En mode Entreprise (compte non-artisan), l'Admin DOIT choisir un
+  // Commercial à la création. En mode Artisan / Solo : skip.
+  const isArtisanAccount =
+    (company?.account_type || "").toLowerCase() === "artisan";
+  const mustAssignToCommercial = user?.role === "admin" && !isArtisanAccount;
 
   useEffect(() => {
     return subscribeQueueSize(setPendingCount);
@@ -108,6 +119,24 @@ export default function Dashboard() {
     fetchData();
   }, [fetchData]);
 
+  // 👥 Charge l'équipe (commerciaux disponibles) pour le sélecteur Admin
+  useEffect(() => {
+    if (!mustAssignToCommercial) return;
+    (async () => {
+      try {
+        const res = await api.get<
+          { id: string; name: string; email: string; role: string }[]
+        >("/users");
+        // On garde tous les membres (Commercial + Technician + Admin)
+        // au cas où l'Admin voudrait s'auto-assigner ou tester. Le filtrage
+        // strict "commercial uniquement" peut être fait visuellement.
+        setTeamMembers(res.data || []);
+      } catch {
+        // silencieux : on tolère pas de liste, la modale affichera "Aucun membre"
+      }
+    })();
+  }, [mustAssignToCommercial]);
+
   useFocusEffect(
     useCallback(() => {
       fetchData();
@@ -124,8 +153,16 @@ export default function Dashboard() {
       Alert.alert("Champs requis", "Nom du client et adresse sont obligatoires.");
       return;
     }
+    // 🔒 RBAC : Admin Entreprise DOIT assigner à un Commercial
+    if (mustAssignToCommercial && !newAssignedTo) {
+      Alert.alert(
+        "Assignation requise",
+        "Veuillez sélectionner un Commercial avant de créer le chantier.",
+      );
+      return;
+    }
     setCreating(true);
-    const payload = {
+    const payload: Record<string, any> = {
       first_name: newFirstName.trim() || undefined,
       last_name: newLastName.trim(),
       address: newAddr.trim(),
@@ -134,6 +171,9 @@ export default function Dashboard() {
       appointment_at: newAppt ? new Date(newAppt).toISOString() : undefined,
       notes: newNotes.trim() || undefined,
     };
+    if (newAssignedTo) {
+      payload.assigned_to = newAssignedTo;
+    }
     const resetForm = () => {
       setNewModal(false);
       setNewFirstName("");
@@ -143,6 +183,7 @@ export default function Dashboard() {
       setNewCity("");
       setNewAppt("");
       setNewNotes("");
+      setNewAssignedTo("");
     };
     try {
       const res = await api.post<Chantier>("/chantiers", payload);
@@ -584,6 +625,55 @@ export default function Dashboard() {
                   Astuce : touchez l'icône 🎤 de votre clavier pour dicter vos notes à voix haute.
                 </Text>
               </View>
+              {mustAssignToCommercial && (
+                <View style={{ marginTop: 16 }}>
+                  <Text style={styles.label}>
+                    Assigner à un Commercial *
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => setShowAssigneePicker(true)}
+                    style={[
+                      styles.input,
+                      {
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      },
+                    ]}
+                    activeOpacity={0.75}
+                  >
+                    <Text
+                      style={{
+                        color: newAssignedTo
+                          ? colors.textPrimary
+                          : colors.placeholder,
+                        flex: 1,
+                      }}
+                      numberOfLines={1}
+                    >
+                      {newAssignedTo
+                        ? teamMembers.find((m) => m.id === newAssignedTo)?.name ||
+                          "Membre sélectionné"
+                        : "Choisir un commercial..."}
+                    </Text>
+                    <Ionicons
+                      name="chevron-down"
+                      size={18}
+                      color={colors.textSecondary}
+                    />
+                  </TouchableOpacity>
+                  <Text
+                    style={{
+                      color: colors.textSecondary,
+                      fontSize: 11,
+                      marginTop: 6,
+                    }}
+                  >
+                    Le chantier sera transmis à ce collaborateur pour la prise
+                    de mesures.
+                  </Text>
+                </View>
+              )}
             </ScrollView>
             <View style={styles.modalActions}>
               <TouchableOpacity
@@ -609,6 +699,143 @@ export default function Dashboard() {
             </View>
           </View>
         </KeyboardAvoidingView>
+      </Modal>
+
+      {/* ────── Picker Commercial (assignation à la création) ────── */}
+      <Modal
+        visible={showAssigneePicker}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowAssigneePicker(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.6)",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 20,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: colors.card,
+              borderRadius: 14,
+              padding: 18,
+              width: "100%",
+              maxWidth: 420,
+              maxHeight: "70%",
+            }}
+          >
+            <Text
+              style={{
+                color: colors.textPrimary,
+                fontSize: 17,
+                fontWeight: "800",
+                marginBottom: 14,
+              }}
+            >
+              Choisir un commercial
+            </Text>
+            <ScrollView style={{ maxHeight: 360 }}>
+              {teamMembers.filter((m) => m.role === "commercial").length ===
+              0 ? (
+                <View style={{ padding: 18, alignItems: "center" }}>
+                  <Ionicons
+                    name="people-outline"
+                    size={36}
+                    color={colors.textSecondary}
+                  />
+                  <Text
+                    style={{
+                      color: colors.textSecondary,
+                      textAlign: "center",
+                      marginTop: 10,
+                    }}
+                  >
+                    Aucun commercial dans votre équipe.{"\n"}Créez-en un dans la
+                    section Équipe d'abord.
+                  </Text>
+                </View>
+              ) : (
+                teamMembers
+                  .filter((m) => m.role === "commercial")
+                  .map((m) => {
+                    const selected = newAssignedTo === m.id;
+                    return (
+                      <TouchableOpacity
+                        key={m.id}
+                        onPress={() => {
+                          setNewAssignedTo(m.id);
+                          setShowAssigneePicker(false);
+                        }}
+                        style={{
+                          padding: 14,
+                          borderRadius: 10,
+                          borderWidth: 1,
+                          borderColor: selected
+                            ? colors.primary
+                            : colors.border,
+                          backgroundColor: selected
+                            ? colors.primary + "1A"
+                            : "transparent",
+                          marginBottom: 8,
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: 12,
+                        }}
+                        activeOpacity={0.7}
+                      >
+                        <Ionicons
+                          name={
+                            selected
+                              ? "radio-button-on"
+                              : "radio-button-off"
+                          }
+                          size={20}
+                          color={selected ? colors.primary : colors.textSecondary}
+                        />
+                        <View style={{ flex: 1 }}>
+                          <Text
+                            style={{
+                              color: colors.textPrimary,
+                              fontWeight: "700",
+                              fontSize: 14,
+                            }}
+                          >
+                            {m.name}
+                          </Text>
+                          <Text
+                            style={{
+                              color: colors.textSecondary,
+                              fontSize: 12,
+                              marginTop: 2,
+                            }}
+                          >
+                            {m.email}
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    );
+                  })
+              )}
+            </ScrollView>
+            <TouchableOpacity
+              onPress={() => setShowAssigneePicker(false)}
+              style={{
+                marginTop: 10,
+                padding: 12,
+                borderRadius: 8,
+                backgroundColor: colors.border,
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ color: colors.textPrimary, fontWeight: "700" }}>
+                Fermer
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </Modal>
 
       {/* ────── FAB Aide (flottant en bas, couleur flashy bleue) ────── */}

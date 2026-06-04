@@ -63,6 +63,39 @@ async def create_chantier(
     initial_status = payload.status
     if user.get("artisan_mode", False) and initial_status == "devis_a_faire":
         initial_status = "a_mesurer"
+    # 🔒 RBAC Entreprise : l'Admin DOIT assigner le chantier à un Commercial
+    # (ou Technicien) au moment de la création. Le mode Artisan est exempté.
+    company_for_check = await db.companies.find_one(
+        {"company_id": user.get("company_id", "default")}
+    ) or {}
+    is_artisan_mode_check = bool(
+        company_for_check.get("artisan_mode")
+        or company_for_check.get("account_type") == "artisan"
+        or user.get("artisan_mode", False)
+    )
+    if (
+        not is_artisan_mode_check
+        and user.get("role") == "admin"
+        and not payload.assigned_to
+    ):
+        raise HTTPException(
+            400,
+            "En mode Entreprise, l'Admin doit assigner le chantier à un "
+            "Commercial lors de la création (assigned_to obligatoire).",
+        )
+    # Vérifie que le destinataire de l'assignation existe dans la même company
+    if payload.assigned_to and not is_artisan_mode_check:
+        assignee_check = await db.users.find_one(
+            {
+                "id": payload.assigned_to,
+                "company_id": user.get("company_id", "default"),
+            },
+            {"_id": 0, "role": 1},
+        )
+        if not assignee_check:
+            raise HTTPException(
+                400, "Collaborateur introuvable dans votre entreprise."
+            )
     doc = {
         "id": str(uuid.uuid4()),
         "client_name": client_name,
@@ -213,10 +246,18 @@ async def update_chantier(
             allowed_transitions: dict[tuple[str, str], set[str]] = {
                 ("devis_a_faire", "a_mesurer"): {"admin"},
                 ("a_mesurer", "technique_a_valider"): {"commercial"},
+                ("a_mesurer", "a_verifier"): {"commercial"},
                 ("technique_a_valider", "en_fabrication"): {"technician"},
                 ("a_verifier", "en_fabrication"): {"technician"},
-                ("en_fabrication", "cloture"): {"technician"},
-                ("en_commande", "cloture"): {"technician"},
+                # 🔄 RENVOI vers le commercial pour corrections
+                ("a_verifier", "a_mesurer"): {"technician"},
+                ("technique_a_valider", "a_mesurer"): {"technician"},
+                ("en_fabrication", "a_verifier"): {"technician"},
+                # 🏁 CLÔTURE DÉFINITIVE : réservée à l'Admin (et technicien
+                #    en mode legacy pour ne pas casser les workflows existants)
+                ("en_fabrication", "cloture"): {"admin", "technician"},
+                ("en_commande", "cloture"): {"admin", "technician"},
+                ("a_verifier", "cloture"): {"admin"},
             }
             key = (old_status, new_status)
             if key in allowed_transitions and role not in allowed_transitions[key]:

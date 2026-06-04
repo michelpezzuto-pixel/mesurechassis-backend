@@ -1165,6 +1165,61 @@ export default function ChantierDetail() {
                 </View>
               </View>
             )}
+            {/* ↩️ Bouton "Renvoyer au commercial" pour le Technicien.
+                 Permet de signaler une erreur ou un manque sur les mesures.
+                 Repasse le chantier en "À mesurer" pour que le Commercial
+                 puisse corriger. */}
+            {isAwaitingValidation && roleIsTechnician && !isSoloArtisan && (
+              <TouchableOpacity
+                testID="tech-send-back-to-commercial"
+                onPress={() => {
+                  Alert.alert(
+                    "↩️ Renvoyer au commercial ?",
+                    "Le chantier repassera en « À mesurer ». Le commercial assigné pourra modifier, ajouter ou supprimer des ouvertures. Vous serez notifié quand il aura corrigé.",
+                    [
+                      { text: "Annuler", style: "cancel" },
+                      {
+                        text: "Renvoyer",
+                        style: "default",
+                        onPress: async () => {
+                          let patchOk = false;
+                          try {
+                            await api.patch(`/chantiers/${id}`, {
+                              status: "a_mesurer",
+                            });
+                            patchOk = true;
+                          } catch {
+                            /* on vérifiera après refetch */
+                          }
+                          try {
+                            const res = await api.get<Chantier>(
+                              `/chantiers/${id}`,
+                            );
+                            setChantier(res.data);
+                            if (res.data.status === "a_mesurer") return;
+                          } catch {
+                            /* refetch ko */
+                          }
+                          if (!patchOk) {
+                            Alert.alert(
+                              "Erreur",
+                              "Impossible de renvoyer au commercial. Réessayez dans un instant.",
+                            );
+                          }
+                        },
+                      },
+                    ],
+                  );
+                }}
+                activeOpacity={0.85}
+                style={validateStyles.btnOverride}
+              >
+                <Ionicons name="arrow-undo" size={20} color={colors.warning} />
+                <Text style={validateStyles.btnOverrideText}>
+                  ↩️ RENVOYER AU COMMERCIAL POUR CORRECTION
+                </Text>
+              </TouchableOpacity>
+            )}
             {/* ↩️ Bouton de RETOUR ARRIÈRE pour le Commercial après validation.
                  Permet de corriger les ouvertures avant que le Technicien ne
                  prenne la main. Repasse le statut en "À mesurer". */}
