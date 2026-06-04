@@ -333,6 +333,19 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
+backend_email_a_verifier:
+  - task: "Email automatique Tech+Admin sur transition Commercial → a_verifier"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/chantiers.py + /app/backend/email_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "testing"
+        -comment: "PASS sur preview https://window-field-app.preview.emergentagent.com/api. Préparation: PATCH /company/profile {account_type:'entreprise', artisan_mode:false} → 200. Scénario E2E exécuté (/app/test_review_email.py): (1) Admin login admin@mesurechassis.fr/admin123 + commercial + tech → tous 200. (2) Admin POST /chantiers {first_name:'Émile', last_name:'Verif-Email-Test', address, postal_code:'75011', city:'Paris', assigned_to:<commercial_id>, appointment_at, notes} → 200, status='devis_a_faire', assigned_to=commercial_id ✓. (3) Admin PATCH devis_a_faire→a_mesurer → 200 (pré-requis car en mode Entreprise le chantier admin-créé démarre devis_a_faire). (4) Commercial PATCH a_mesurer→a_verifier → 200 ✓. (5) LOGS BACKEND vérifiés via /var/log/supervisor/backend.err.log : juste après le PATCH, on observe 3+ lignes 'Resend OK' AVEC subject='📥 Prise de cotes à vérifier : Verif-Email-Test Émile', dont SPÉCIFIQUEMENT : '📧 Resend OK → admin@mesurechassis.fr (subject=📥 Prise de cotes à vérifier : Verif-Email-Test Émile, id=5eb8ec10-3e4b-4460-bcc9-0398e755f89c)' ✓ ET '📧 Resend OK → tech@mesurechassis.fr (subject=📥 Prise de cotes à vérifier : Verif-Email-Test Émile, id=3900221e-cb52-4c1d-96f6-3ed86471ed6a)' ✓. Bonus : 7 autres admins/techs de la company 'default' (cleanup_test_a_*, pytest_user_*, pytest_dup_*, pytest_mw_*) reçoivent également l'email — c'est le comportement attendu (la query `role IN [admin, technician] AND company_id=default` ramène tous les comptes éligibles). 1 envoi a échoué en Resend 429 rate-limit (pytest_user_99ad56cc) → fallback MOCK loggé, transition non bloquée (best-effort try/except). (6) Cleanup: DELETE /chantiers/<id> → 200, chantier supprimé. NOTE TECHNIQUE: POST /chantiers/{id}/mesures retourne 405 Method Not Allowed sur le backend actuel (la route mesure est POST /api/mesures sans le préfixe chantier). Pas un blocant pour la review : l'email s'envoie correctement même avec nb_mesures=0 (le compteur est best-effort dans un try/except). ÉTAT FINAL: company default restée sur account_type='entreprise', artisan_mode=false (conformément à la demande). admin/commercial/tech credentials intacts."
+
 backend_rbac_review:
   - task: "RBAC review — POST /chantiers assigned_to obligatoire + transitions status + mod-request workflow"
     implemented: true

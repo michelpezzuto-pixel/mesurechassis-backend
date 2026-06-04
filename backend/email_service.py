@@ -294,6 +294,50 @@ def send_assignment_email(
     )
 
 
+def send_ready_for_verification_email(
+    *,
+    to: str,
+    recipient_name: str,
+    chantier_name: str,
+    address: Optional[str],
+    commercial_name: Optional[str] = None,
+    nb_mesures: int = 0,
+) -> dict:
+    """🔔 Notification quand le Commercial clôture la prise de cotes.
+
+    Envoyée à TOUS les techniciens + admins de l'entreprise pour les avertir
+    que le chantier est prêt à être vérifié.
+    """
+    addr_line = address if address else "Adresse non précisée"
+    by_line = (
+        f" par {commercial_name}" if commercial_name else " par le commercial"
+    )
+    nb_line = (
+        f"   📐 {nb_mesures} ouverture(s) mesurée(s)\n"
+        if nb_mesures > 0
+        else ""
+    )
+    body = (
+        f"Bonjour {recipient_name},\n\n"
+        "📥 Une prise de cotes vient d'être terminée"
+        f"{by_line} et attend votre vérification :\n\n"
+        f"   📋 {chantier_name}\n"
+        f"   📍 {addr_line}\n"
+        f"{nb_line}\n"
+        "Connectez-vous à MesureChâssis pour :\n"
+        "  ✓ Vérifier les mesures saisies\n"
+        "  ✓ Valider pour la mise en fabrication\n"
+        "  ✓ OU renvoyer au commercial pour corrections\n\n"
+        "L'équipe MesureChâssis"
+    )
+    return send_email(
+        to=to,
+        subject=f"📥 Prise de cotes à vérifier : {chantier_name}",
+        body=body,
+    )
+
+
+
 def send_feedback_email(
     *,
     to: str,

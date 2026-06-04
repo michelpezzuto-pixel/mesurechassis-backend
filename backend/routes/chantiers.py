@@ -13,7 +13,10 @@ from deps import (
     require_roles,
     send_push_to_user,
 )
-from email_service import send_assignment_email
+from email_service import (
+    send_assignment_email,
+    send_ready_for_verification_email,
+)
 from models import (
     Chantier,
     ChantierCreate,
@@ -282,6 +285,48 @@ async def update_chantier(
             f"{doc['client_name']} — {doc['address']}",
             {"type": "chantier_assigned", "chantier_id": chantier_id},
         )
+    # 🔔 EMAIL CRITIQUE : prévenir Tech + Admin que la prise de cotes est
+    #    terminée et qu'il faut maintenant vérifier les mesures.
+    if (
+        new_status == "a_verifier"
+        and old_status != "a_verifier"
+        and user.get("role") == "commercial"
+    ):
+        # On compte les mesures pour info dans l'email
+        try:
+            nb_mesures = await db.mesures.count_documents(
+                {"chantier_id": chantier_id, "company_id": company}
+            )
+        except Exception:
+            nb_mesures = 0
+        # Récupère tous les techniciens + admins de la même entreprise
+        try:
+            recipients = await db.users.find(
+                {
+                    "company_id": company,
+                    "role": {"$in": ["technician", "admin"]},
+                    "email": {"$exists": True, "$ne": None},
+                },
+                {"_id": 0, "email": 1, "name": 1, "role": 1},
+            ).to_list(50)
+            for r in recipients:
+                try:
+                    send_ready_for_verification_email(
+                        to=r.get("email"),
+                        recipient_name=r.get("name") or "",
+                        chantier_name=doc.get("client_name", ""),
+                        address=doc.get("address"),
+                        commercial_name=user.get("name"),
+                        nb_mesures=nb_mesures,
+                    )
+                except Exception as e:
+                    import logging as _lg
+                    _lg.getLogger("mesurechassis").warning(
+                        "Email a_verifier ko pour %s: %s", r.get("email"), e
+                    )
+        except Exception:
+            # Best effort — on ne bloque jamais la transition de statut
+            pass
     return Chantier(**doc)
 
 
