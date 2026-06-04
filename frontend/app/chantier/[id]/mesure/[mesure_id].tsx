@@ -51,15 +51,18 @@ const blockLabels: Record<string, string> = {
 };
 
 const shapeLabels: Record<string, string> = {
+  rect: "Rectangle / Carré",
   rectangle: "Rectangle",
   trapeze: "Trapèze",
+  triangle: "Triangle",
+  oeil_de_boeuf: "Œil-de-bœuf",
+  coulissant_levant: "Coulissant levant",
   arc: "Arc",
   arc_surbaisse: "Arc surbaissé",
   plein_cintre: "Plein cintre",
   angle_90: "Angle 90°",
   bow_window: "Bow-Window",
-  triangle: "Triangle",
-  pentagone: "Pentagone",
+  pentagone: "Pentagone (toit pointu)",
   hexagone: "Hexagone",
   rond: "Rond",
   ovale: "Ovale",

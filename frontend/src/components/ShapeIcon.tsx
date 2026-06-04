@@ -25,7 +25,15 @@ export type ShapeKey =
   | "trapeze"
   | "triangle"
   | "oeil_de_boeuf"
-  | "coulissant_levant";
+  | "coulissant_levant"
+  // 🆕 V2 — Formes complexes
+  | "plein_cintre"
+  | "arc_surbaisse"
+  | "angle_90"
+  | "bow_window"
+  | "pentagone"
+  | "hexagone"
+  | "ovale";
 
 /**
  * Récupère la VRAIE forme d'une mesure depuis ses options ou par fallback
@@ -207,6 +215,109 @@ export const ShapeIcon: React.FC<Props> = ({
           {/* Flèche droite indiquant le coulissement (←) sur le vantail droit */}
           <Polyline points="46,32 40,32" {...common} />
           <Polyline points="42,29 40,32 42,35" {...common} />
+        </Svg>
+      );
+
+    /* ────────── PLEIN CINTRE — Rectangle surmonté d'un demi-cercle parfait ────────── */
+    case "plein_cintre":
+      return (
+        <Svg width={size} height={size} viewBox="0 0 64 64">
+          {/* Base rectangulaire */}
+          <Line x1="12" y1="54" x2="12" y2="32" {...common} />
+          <Line x1="52" y1="54" x2="52" y2="32" {...common} />
+          <Line x1="12" y1="54" x2="52" y2="54" {...common} />
+          {/* Arc parfait (demi-cercle) */}
+          <Path d="M 12 32 A 20 20 0 0 1 52 32" {...common} />
+          {/* Ligne d'imposte horizontale */}
+          <Line x1="12" y1="32" x2="52" y2="32" {...common} strokeDasharray="2 2" opacity={0.5} />
+          {/* Meneau central */}
+          <Line x1="32" y1="32" x2="32" y2="54" {...common} opacity={0.6} />
+        </Svg>
+      );
+
+    /* ────────── ARC SURBAISSÉ — Rectangle surmonté d'un arc applati ────────── */
+    case "arc_surbaisse":
+      return (
+        <Svg width={size} height={size} viewBox="0 0 64 64">
+          {/* Base rectangulaire */}
+          <Line x1="10" y1="52" x2="10" y2="32" {...common} />
+          <Line x1="54" y1="52" x2="54" y2="32" {...common} />
+          <Line x1="10" y1="52" x2="54" y2="52" {...common} />
+          {/* Arc applati (flèche < 1/4 largeur) */}
+          <Path d="M 10 32 Q 32 18 54 32" {...common} />
+          {/* Ligne d'imposte */}
+          <Line x1="10" y1="32" x2="54" y2="32" {...common} strokeDasharray="2 2" opacity={0.5} />
+          {/* Meneau central */}
+          <Line x1="32" y1="32" x2="32" y2="52" {...common} opacity={0.6} />
+        </Svg>
+      );
+
+    /* ────────── ANGLE 90° — Deux baies formant un angle de mur ────────── */
+    case "angle_90":
+      return (
+        <Svg width={size} height={size} viewBox="0 0 64 64">
+          {/* Baie gauche (vue de face) */}
+          <Rect x="6" y="14" width="22" height="36" rx="0.5" {...common} />
+          {/* Baie droite (perspective angle) */}
+          <Polygon points="32,14 56,18 56,46 32,50" {...common} />
+          {/* Meneau angle vertical (marquant le coin) */}
+          <Line x1="30" y1="14" x2="30" y2="50" {...common} strokeWidth={strokeWidth + 0.4} />
+          {/* Petits traits de meneaux */}
+          <Line x1="17" y1="14" x2="17" y2="50" {...common} opacity={0.5} />
+          <Line x1="44" y1="16" x2="44" y2="48" {...common} opacity={0.5} />
+        </Svg>
+      );
+
+    /* ────────── BOW-WINDOW — Baie courbe arrondie avec plusieurs panneaux ────────── */
+    case "bow_window":
+      return (
+        <Svg width={size} height={size} viewBox="0 0 64 64">
+          {/* Courbe principale (arc large, plusieurs panneaux) */}
+          <Path d="M 8 20 L 12 14 L 24 12 L 40 12 L 52 14 L 56 20 L 56 50 L 8 50 Z" {...common} />
+          {/* Meneaux verticaux séparant les panneaux */}
+          <Line x1="12" y1="14" x2="12" y2="50" {...common} opacity={0.6} />
+          <Line x1="24" y1="12" x2="24" y2="50" {...common} opacity={0.6} />
+          <Line x1="40" y1="12" x2="40" y2="50" {...common} opacity={0.6} />
+          <Line x1="52" y1="14" x2="52" y2="50" {...common} opacity={0.6} />
+        </Svg>
+      );
+
+    /* ────────── PENTAGONE — Rectangle surmonté d'un triangle (toit pointu) ────────── */
+    case "pentagone":
+      return (
+        <Svg width={size} height={size} viewBox="0 0 64 64">
+          {/* Forme pentagonale (toit pointu) */}
+          <Polygon points="12,52 12,28 32,10 52,28 52,52" {...common} />
+          {/* Ligne d'imposte horizontale (où le triangle se sépare) */}
+          <Line x1="12" y1="28" x2="52" y2="28" {...common} strokeDasharray="2 2" opacity={0.5} />
+          {/* Meneau central vertical */}
+          <Line x1="32" y1="28" x2="32" y2="52" {...common} opacity={0.6} />
+        </Svg>
+      );
+
+    /* ────────── HEXAGONE — Forme à 6 côtés (vue de face) ────────── */
+    case "hexagone":
+      return (
+        <Svg width={size} height={size} viewBox="0 0 64 64">
+          {/* Hexagone régulier */}
+          <Polygon points="32,8 54,20 54,44 32,56 10,44 10,20" {...common} />
+          {/* Croisillon horizontal */}
+          <Line x1="10" y1="32" x2="54" y2="32" {...common} opacity={0.5} />
+          {/* Croisillon vertical */}
+          <Line x1="32" y1="8" x2="32" y2="56" {...common} opacity={0.5} />
+        </Svg>
+      );
+
+    /* ────────── OVALE — Ellipse horizontale (rare, hublot allongé) ────────── */
+    case "ovale":
+      return (
+        <Svg width={size} height={size} viewBox="0 0 64 64">
+          {/* Ellipse extérieure */}
+          <Ellipse cx="32" cy="32" rx="24" ry="16" {...common} />
+          {/* Croisillon vertical (axe vertical) */}
+          <Line x1="32" y1="16" x2="32" y2="48" {...common} opacity={0.6} />
+          {/* Croisillon horizontal (axe horizontal) */}
+          <Line x1="8" y1="32" x2="56" y2="32" {...common} opacity={0.6} />
         </Svg>
       );
 

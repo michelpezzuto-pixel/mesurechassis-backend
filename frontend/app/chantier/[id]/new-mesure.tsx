@@ -62,7 +62,7 @@ type InsulationMode = "none" | "iti" | "ite";
 /** Type de parement (uniquement si ITE). */
 type ParementType = "crepi" | "brique_parement" | "pierre_parement" | "bardage";
 
-/** 7 formes V1. */
+/** 14 formes V2 (7 V1 + 7 nouvelles formes complexes). */
 type Shape =
   | "rect"
   | "porte_entree"
@@ -70,7 +70,15 @@ type Shape =
   | "trapeze"
   | "triangle"
   | "oeil_de_boeuf"
-  | "coulissant_levant";
+  | "coulissant_levant"
+  // 🆕 V2 — Formes complémentaires (juin 2026)
+  | "plein_cintre"
+  | "arc_surbaisse"
+  | "angle_90"
+  | "bow_window"
+  | "pentagone"
+  | "hexagone"
+  | "ovale";
 
 type DiagState = "auto" | "validated" | "manual";
 
@@ -102,6 +110,14 @@ const SHAPES: {
   { key: "triangle", letter: "E", label: "TRIANGLE", icon: "trail-sign-outline", desc: "Base + hauteur" },
   { key: "oeil_de_boeuf", letter: "H", label: "ŒIL-DE-BŒUF", icon: "ellipse-outline", desc: "Ouverture circulaire (diamètre)" },
   { key: "coulissant_levant", letter: "K", label: "COULISSANT LEVANT", icon: "swap-horizontal-outline", desc: "Levant-coulissant avec réserve sol" },
+  // 🆕 V2 — Formes complexes
+  { key: "plein_cintre", letter: "L", label: "PLEIN CINTRE", icon: "radio-button-on-outline", desc: "Arc parfait en demi-cercle au sommet" },
+  { key: "arc_surbaisse", letter: "M", label: "ARC SURBAISSÉ", icon: "remove-outline", desc: "Arc applati (flèche < demi-largeur)" },
+  { key: "angle_90", letter: "N", label: "ANGLE 90°", icon: "git-branch-outline", desc: "Deux baies à angle droit (coin de mur)" },
+  { key: "bow_window", letter: "O", label: "BOW-WINDOW", icon: "infinite-outline", desc: "Baie courbe — plusieurs panneaux" },
+  { key: "pentagone", letter: "P", label: "PENTAGONE", icon: "home-outline", desc: "Toit pointu (rectangle + triangle)" },
+  { key: "hexagone", letter: "Q", label: "HEXAGONE", icon: "shapes-outline", desc: "6 côtés (rare, abri / véranda)" },
+  { key: "ovale", letter: "R", label: "OVALE", icon: "ellipse-outline", desc: "Ellipse (axe horizontal + vertical)" },
 ];
 
 // ════════════════════════════════════════════════════════════════════════
@@ -225,6 +241,15 @@ const shapeToBlockType = (s: Shape): "standard" | "coulissant" | "porte" | "trap
   switch (s) {
     case "rect":
     case "oeil_de_boeuf":
+    // 🆕 V2 — Toutes les nouvelles formes complexes utilisent "standard"
+    //    comme block_type de base (avec options.shape pour préciser).
+    case "plein_cintre":
+    case "arc_surbaisse":
+    case "angle_90":
+    case "bow_window":
+    case "pentagone":
+    case "hexagone":
+    case "ovale":
       return "standard";
     case "porte_entree":
     case "porte_garage":
