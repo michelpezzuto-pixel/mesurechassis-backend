@@ -80,3 +80,9 @@ memory/test_credentials.md
 
 # Mobile development
 android-sdk/backend/public_downloads/mesurechassis-frontend.zip
+.env
+.env.*
+*.env
+credentials.json
+*.key
+.credentials
