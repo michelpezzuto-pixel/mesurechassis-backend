@@ -1,152 +1,124 @@
-# 💰 Programme de Parrainage MesureChâssis (Backlog Build 9)
+# 💎 Programme de Parrainage MesureChâssis — Build 9
 
-**Date d'ajout** : 4 juin 2026
+**Date** : 4 juin 2026
 **Demandé par** : Michel Pezzuto
-**Priorité** : 🟢 P1 (à coder après Build 8 et publication App Store)
-**Référence** : Modèle Revolut (récompense cash 20-80€)
+**Modèle retenu** : **Option B — Mois Pro gratuits** (mise à jour 4 juin soir)
+**Inspiration** : Revolut (insistance UI), Notion/Slack (modèle mois gratuits)
 
 ---
 
-## 🎯 Concept retenu (selon Michel)
+## 🎯 PRINCIPE FINAL
 
-- 👤 L'utilisateur invite des amis via un lien personnel
-- 💰 Si l'invité s'inscrit et utilise l'app : **20€ à 80€ cash** au parrain
-- 🔁 Insistant, mis en avant dans l'UI (comme Revolut)
+```
+👤 Michel parraine son ami menuisier (lien personnel ou code)
+     ↓
+👨‍🔧 L'ami s'inscrit + utilise l'app
+     ↓
+🎁 Michel reçoit X mois Pro gratuits
+🎁 L'ami reçoit Y mois Pro gratuits (bienvenue)
+```
 
----
-
-## 🛠️ Spécifications techniques à finaliser AVEC Michel
-
-### Q1 — Montant exact
-- [ ] 20€ ? 50€ ? 80€ ?
-- [ ] Variable selon le plan (Free / Pro / Premium) ?
-- [ ] Progressif (premier filleul = 20€, top parrain = 80€) ?
-
-### Q2 — Conditions de déclenchement
-- [ ] Filleul s'inscrit simplement
-- [ ] Filleul abonné payant pendant X mois (recommandé : 3 mois)
-- [ ] Filleul actif (X chantiers créés)
-
-### Q3 — Mode de paiement
-- [ ] **Virement bancaire** (Stripe Connect Transfers — TVA à gérer)
-- [ ] **PayPal** (plus simple, frais 2%)
-- [ ] **Crédit sur abonnement** (déduit de la prochaine facture)
-- [ ] **Mix** : cash si dispo, sinon crédit
-
-### Q4 — Cap / Limite
-- [ ] Illimité
-- [ ] Max X par mois (ex: 5)
-- [ ] Plafond annuel (ex: 1000€)
-
-### Q5 — Récompense filleul
-- [ ] Rien
-- [ ] Réduction sur 1er abonnement (-20%)
-- [ ] 1 mois Pro gratuit
-- [ ] 10€ crédit
+**Avantages du modèle "mois gratuits"** :
+- 🟢 Aucune complexité de paiement (pas de Stripe Connect, pas de TVA, pas de KYC)
+- 🟢 Augmente la rétention (les utilisateurs restent plus longtemps)
+- 🟢 Modèle "tested & proven" : Notion, Slack, Dropbox
+- 🟢 Dev rapide : 2-3 jours
+- 🟢 Pas de risque légal/comptable
 
 ---
 
-## 🏗️ Architecture proposée (côté tech)
+## 🛠️ Spécs à finaliser AVEC Michel (avant code)
+
+### Q1 — Récompenses
+- **Suggestion** : 
+  - Parrain reçoit **1 mois Pro gratuit** par filleul actif
+  - Filleul reçoit **1 mois Pro gratuit** à l'inscription (bienvenue)
+- À confirmer
+
+### Q2 — Condition pour débloquer la récompense parrain
+- **A)** À l'inscription du filleul (risqué, fraude possible)
+- **B)** Après 1ère semaine d'utilisation active (recommandé)
+- **C)** Après 1er abonnement payant du filleul (le plus sûr)
+
+### Q3 — Plafond
+- Illimité ? Max X/mois ?
+- **Suggestion** : illimité avec antifraude (1 compte par IP/email)
+
+### Q4 — Top parrains
+- Afficher leaderboard ? Récompenses bonus pour le top 3 ?
+
+---
+
+## 🏗️ Architecture technique (MVP simple)
 
 ### Backend
 ```python
-# Nouveau collection MongoDB : referrals
+# Champs ajoutés à la collection users
 {
-  "_id": ObjectId,
-  "code": "MICHEL2026",  # généré unique par user
-  "referrer_id": "user-uuid-michel",
-  "created_at": datetime,
-  "uses": [
+  "referral_code": "MICHEL2026",      # unique, généré à l'inscription
+  "referred_by": "JEAN2026",          # code du parrain (si applicable)
+  "referral_credits_months": 3,        # mois gratuits accumulés
+  "referral_uses": [                   # filleuls amenés
     {
-      "referred_user_id": "user-uuid-jean",
+      "user_id": "uuid-filleul",
       "registered_at": datetime,
-      "paid_at": datetime,
-      "reward_amount": 50.00,
-      "reward_status": "pending|paid|cancelled",
-      "reward_method": "transfer|paypal|credit"
+      "activated_at": datetime,        # 1ère semaine d'usage
+      "reward_granted": true,
+      "reward_amount_months": 1
     }
   ]
 }
 
 # Endpoints
-POST   /api/referrals/generate-code      # crée le code si pas existant
-GET    /api/referrals/me                  # stats + uses
-POST   /api/referrals/track/{code}       # appelé à l'inscription
-GET    /api/referrals/leaderboard        # top parrains (mensuel)
-POST   /api/admin/referrals/{id}/payout  # marquer payé (admin)
+GET    /api/referrals/me            # mon code + mes stats
+POST   /api/auth/register           # accepte ?referral_code= en body
+POST   /api/referrals/redeem-credits # appliquer les crédits à l'abonnement
 ```
 
 ### Frontend
-1. **Page "Mes parrainages"** dans le menu profil
-   - Stats : 5 invités, 3 inscrits, 2 payants, 100€ gagnés
-   - Liste détaillée avec dates et statuts
-   - Bouton **"PARTAGER MON LIEN"** (WhatsApp/SMS/Email/Copier)
-2. **Bannière promotionnelle** sur le dashboard (1ère semaine)
-3. **Modal d'onboarding** : "Vous venez d'arriver ? Vous avez été parrainé ?" → champ code
-4. **Notifications push/email**
-   - Quand filleul s'inscrit
-   - Quand récompense versée
+1. **Section "Parrainage" dans Profil** :
+   - Affichage code unique + bouton COPIER
+   - Bouton PARTAGER (WhatsApp, SMS, Email)
+   - Stats : X invités, Y actifs, Z mois gratuits gagnés
+2. **Champ "Code parrain (optionnel)" à l'inscription**
+3. **Bannière dashboard** : "🎁 1 mois Pro offert pour chaque ami parrainé !"
+4. **Notification email** au parrain quand récompense créditée
+
+### Stripe (extension simple)
+- Quand le parrain a X mois de crédit accumulé → on retarde la prochaine facturation de X mois
+- Pas de transfert d'argent réel, juste modification de la `subscription.trial_end` ou skip facturations
 
 ---
 
-## 📊 Métriques à suivre (côté analytics)
+## 🎨 UX inspirée de Revolut (insistance)
 
-- Taux de partage du lien
-- Taux de conversion filleul (clic → inscription)
-- Taux de monétisation filleul (inscription → abonné payant)
-- ROI marketing global : (revenus filleuls - récompenses) / récompenses
-- CAC parrainage vs CAC publicité classique
+### Touchpoints (où mettre en avant)
+1. **Bannière dashboard** après 3ème chantier créé
+2. **Card dédiée** dans la page profil
+3. **Modal popup** : 1 fois après 7 jours d'utilisation
+4. **Footer PDF** : "📄 Mesuré avec MesureChâssis — Invitez vos collègues, 1 mois Pro offert"
+5. **Email** à J+14 d'inscription : "Vous aimez l'app ? Faites-en profiter vos collègues"
 
----
-
-## ⚖️ Aspects légaux à vérifier (BELGIQUE)
-
-1. **TVA sur récompense cash** :
-   - Si versée comme "remise commerciale" → pas de TVA (recommandé)
-   - Si versée comme "rémunération" → TVA 21% + fiche fiscale
-2. **RGPD** : 
-   - Code parrainage = donnée personnelle indirecte ✅ OK
-   - Email/téléphone du filleul invité = nécessite consentement
-3. **Conditions générales** :
-   - Ajouter clause "Programme de parrainage"
-   - Limite anti-fraude (pas d'auto-parrainage, vérif IP/email)
-4. **Lutte anti-blanchiment** :
-   - Au-dessus de 100€/transaction → KYC requis
-   - Bon de garder sous 100€
-
----
-
-## 🎨 Design / UX inspiré de Revolut
-
-### Page parrainage type :
+### Design pattern
 ```
-┌────────────────────────────────────┐
-│  💰 Gagnez jusqu'à 80€            │
-│  en parrainant vos amis menuisiers │
-│                                     │
-│  ╔═══════════════════════════╗     │
-│  ║  Votre code: MICHEL2026  ║     │
-│  ║  [📋 COPIER LE LIEN]      ║     │
-│  ╚═══════════════════════════╝     │
-│                                     │
-│  ⚡ Comment ça marche :             │
-│  1. Partagez votre lien            │
-│  2. Votre ami s'inscrit et paie    │
-│  3. Vous recevez 50€ cash          │
-│                                     │
-│  📊 Vos stats :                    │
-│  • 3 amis inscrits                 │
-│  • 1 abonné payant                  │
-│  • 50€ déjà gagnés ✅              │
-│                                     │
-│  [🚀 PARTAGER MAINTENANT]          │
-└────────────────────────────────────┘
+┌────────────────────────────────────────┐
+│  🎁 PARRAINAGE MESURECHÂSSIS          │
+│                                          │
+│  Offrez 1 mois Pro à vos collègues     │
+│  et gagnez 1 mois Pro pour vous !       │
+│                                          │
+│  ╔═══════════════════════════════╗     │
+│  ║  Votre code : MICHEL2026     ║     │
+│  ║  [📋 COPIER]  [🚀 PARTAGER] ║     │
+│  ╚═══════════════════════════════╝     │
+│                                          │
+│  📊 Vos résultats                       │
+│  • 3 collègues invités                  │
+│  • 2 actifs sur l'app                   │
+│  • 2 mois Pro gagnés ✅                 │
+│                                          │
+└────────────────────────────────────────┘
 ```
-
-### Touchpoints stratégiques :
-- ✅ Banner après 3ème chantier créé : "Vous adorez ? Faites-en profiter vos collègues !"
-- ✅ Notification email à J+7 d'inscription
-- ✅ Mention dans le footer du PDF généré : "Mesuré avec MesureChâssis — Invitez vos collègues : 80€ offerts"
 
 ---
 
@@ -154,35 +126,25 @@ POST   /api/admin/referrals/{id}/payout  # marquer payé (admin)
 
 | Tâche | Temps |
 |---|---|
-| Backend (collection + 5 endpoints) | 3h |
-| Frontend (page parrainage + bannières) | 4h |
-| Intégration Stripe Connect / PayPal | 4h |
-| Tests E2E + sécurité anti-fraude | 2h |
-| Aspects légaux (CGU + clauses) | 1h |
-| **TOTAL** | **~14h** |
+| Backend (champs + 3 endpoints) | 2h |
+| Frontend (page profil + bannières + share) | 3h |
+| Intégration Stripe (crédit subscription) | 2h |
+| Tests E2E + antifraude basique | 1h |
+| **TOTAL** | **~8h** |
 
 ---
 
-## 🚦 Pré-requis avant de coder
+## 🚦 Pré-requis avant code
 
-1. ✅ Apple a accepté Build 7 et il est publié
-2. ✅ Build 8 livré avec workflow RBAC complet
-3. ✅ Décisions Michel sur Q1-Q5 ci-dessus
-4. ✅ Choix du fournisseur de paiement (Stripe Connect Transfers recommandé — déjà intégré pour les abonnements)
+1. ✅ Apple a accepté Build 7
+2. ✅ Build 8 livré (workflow RBAC + 14 formes + FAQ)
+3. ✅ Décisions Michel sur Q1-Q4
+4. ✅ Stripe webhook réparé OU validation manuelle des crédits
 
 ---
 
 ## 💬 Notes Michel
 
-- Insistance forte : "**Insister auprès des utilisateurs**" pour qu'ils parrainent (comme Revolut)
-- Modèle de récompense : **20-80€ cash** (pas mois gratuits)
-- Inspiration : Revolut, Wise
-
----
-
-## 🔮 Évolutions futures (V2 du parrainage)
-
-- 🏆 Système de niveaux : Bronze (1-5) / Argent (6-20) / Or (21+) avec récompenses progressives
-- 🎁 Bonus exceptionnels (mois spécifiques : "Septembre menuisiers : 100€/parrainage")
-- 🤝 Programme corporate : parrainage entreprise complète (montants plus élevés, ex. 200€ pour entreprise 5+ salariés)
-- 📣 Top parrains affichés publiquement (gamification)
+- **4 juin matin** : Initialement parlait de cash 20-80€
+- **4 juin soir** : Confirme préférer **Option B (mois gratuits Pro)** — plus simple, plus malin
+- Style **Revolut** : insistant, mis en avant dans l'UI
