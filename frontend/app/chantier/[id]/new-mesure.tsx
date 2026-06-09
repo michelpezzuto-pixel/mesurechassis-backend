@@ -200,6 +200,23 @@ type Step3Data = {
   // 🆕 Allège — par-mesure (uniquement formes : rect, trapeze, triangle, oeil)
   has_breastwork: boolean;
   breastwork_height_mm: string;
+  // 🆕 V2 — Champs spécifiques aux 7 nouvelles formes
+  // 1. Plein cintre & Arc surbaissé
+  arch_h1_appui: string; // Hauteur d'appui (côtés droits)
+  arch_h2_total: string; // Hauteur totale (au sommet)
+  // 3. Angle 90° (coupe d'angle)
+  angle90_cut_width: string; // Largeur du pan coupé
+  angle90_cut_height: string; // Hauteur du pan coupé
+  // 4. Bow-Window
+  bow_panel_count: "3" | "5" | ""; // Nombre de pans
+  bow_depth_projection: string; // Profondeur de projection
+  // 5. Pentagone (haut pan coupé / toit pointu)
+  pent_side_height: string; // Hauteur des côtés verticaux (H1)
+  pent_top_height: string; // Hauteur totale au sommet (H2)
+  // 6. Hexagone (haut + bas pan coupé)
+  hex_top_width: string; // Largeur sommet
+  hex_side_height: string; // Hauteur des parties verticales
+  // 7. Ovale — utilise bay_width (L) et bay_height (H) déjà existants
 };
 
 const initStep3 = (): Step3Data => ({
@@ -230,6 +247,17 @@ const initStep3 = (): Step3Data => ({
   feuillure_top_mm: "",
   has_breastwork: false,
   breastwork_height_mm: "",
+  // 🆕 V2 — Init des champs spécifiques aux 7 nouvelles formes
+  arch_h1_appui: "",
+  arch_h2_total: "",
+  angle90_cut_width: "",
+  angle90_cut_height: "",
+  bow_panel_count: "",
+  bow_depth_projection: "",
+  pent_side_height: "",
+  pent_top_height: "",
+  hex_top_width: "",
+  hex_side_height: "",
 });
 
 const parseNum = (s: string) => {
@@ -415,6 +443,17 @@ export default function NewMesureWizard() {
               garage_lintel: toStr(opts.garage_lintel_mm),
               garage_ecoincon_left: toStr(opts.garage_ecoincon_left_mm),
               garage_ecoincon_right: toStr(opts.garage_ecoincon_right_mm),
+              // 🆕 V2 — Rechargement des 7 nouvelles formes
+              arch_h1_appui: toStr(opts.arch_h1_appui_mm),
+              arch_h2_total: toStr(opts.arch_h2_total_mm),
+              angle90_cut_width: toStr(opts.angle90_cut_width_mm),
+              angle90_cut_height: toStr(opts.angle90_cut_height_mm),
+              bow_panel_count: opts.bow_panel_count === 5 ? "5" : (opts.bow_panel_count === 3 ? "3" : ""),
+              bow_depth_projection: toStr(opts.bow_depth_projection_mm),
+              pent_side_height: toStr(opts.pent_side_height_mm),
+              pent_top_height: toStr(opts.pent_top_height_mm),
+              hex_top_width: toStr(opts.hex_top_width_mm),
+              hex_side_height: toStr(opts.hex_side_height_mm),
               floor_reserve: toStr(m.floor_reserve),
               has_1m_level_mark: !!opts.has_1m_level_mark,
               trait_1m_brut_mm: toStr(opts.trait_1m_brut_mm),
@@ -551,6 +590,144 @@ export default function NewMesureWizard() {
       if (!parseNum(s3.garage_lintel)) err.garage_lintel = true;
       if (!parseNum(s3.garage_ecoincon_left)) err.garage_ecoincon_left = true;
       if (!parseNum(s3.garage_ecoincon_right)) err.garage_ecoincon_right = true;
+    } else if (shape === "plein_cintre") {
+      // 🆕 V2 — Plein cintre : L, H1 (appui), H2 (sommet). R = L/2, H2 ≥ H1 + R
+      const L = parseNum(s3.bay_width);
+      const H1 = parseNum(s3.arch_h1_appui);
+      const H2 = parseNum(s3.arch_h2_total);
+      if (!L) err.bay_width = true;
+      if (!H1) err.arch_h1_appui = true;
+      if (!H2) err.arch_h2_total = true;
+      // Validation métier : H2 ≥ H1 + R où R = L/2
+      if (L && H1 && H2) {
+        const R = L / 2;
+        if (H2 < H1 + R) {
+          err.arch_h2_total = true;
+          Alert.alert(
+            "Cotes incohérentes — Plein cintre",
+            `La hauteur totale (H2 = ${H2}mm) doit être ≥ Hauteur d'appui (H1 = ${H1}mm) + Rayon (L/2 = ${R}mm).\n\nMinimum attendu : H2 ≥ ${H1 + R}mm`
+          );
+        }
+      }
+    } else if (shape === "arc_surbaisse") {
+      // 🆕 V2 — Arc surbaissé : L, H1, H2. Flèche f = H2 - H1, f < L/2
+      const L = parseNum(s3.bay_width);
+      const H1 = parseNum(s3.arch_h1_appui);
+      const H2 = parseNum(s3.arch_h2_total);
+      if (!L) err.bay_width = true;
+      if (!H1) err.arch_h1_appui = true;
+      if (!H2) err.arch_h2_total = true;
+      // Validation métier : flèche f < L/2 (sinon c'est un plein cintre ou plus haut)
+      if (L && H1 && H2) {
+        const fleche = H2 - H1;
+        const demiL = L / 2;
+        if (fleche <= 0) {
+          err.arch_h2_total = true;
+          Alert.alert(
+            "Cotes incohérentes — Arc surbaissé",
+            `La hauteur totale (H2 = ${H2}mm) doit être > Hauteur d'appui (H1 = ${H1}mm).`
+          );
+        } else if (fleche >= demiL) {
+          err.arch_h2_total = true;
+          Alert.alert(
+            "Cotes incohérentes — Arc surbaissé",
+            `La flèche (f = H2 - H1 = ${fleche}mm) doit être strictement inférieure à L/2 (= ${demiL}mm).\n\nSi la flèche est ≥ L/2, utilisez plutôt la forme « Plein cintre ».`
+          );
+        }
+      }
+    } else if (shape === "angle_90") {
+      // 🆕 V2 — Angle 90° : Largeur, Hauteur, Pan coupé (largeur + hauteur)
+      const W = parseNum(s3.bay_width);
+      const H = parseNum(s3.bay_height);
+      const cutW = parseNum(s3.angle90_cut_width);
+      const cutH = parseNum(s3.angle90_cut_height);
+      if (!W) err.bay_width = true;
+      if (!H) err.bay_height = true;
+      if (!cutW) err.angle90_cut_width = true;
+      if (!cutH) err.angle90_cut_height = true;
+      // Validation métier : le pan coupé ne peut pas dépasser le cadre
+      if (W && cutW && cutW >= W) {
+        err.angle90_cut_width = true;
+        Alert.alert(
+          "Cotes incohérentes — Angle 90°",
+          `La largeur du pan coupé (${cutW}mm) doit être strictement inférieure à la largeur totale (${W}mm).`
+        );
+      }
+      if (H && cutH && cutH >= H) {
+        err.angle90_cut_height = true;
+        Alert.alert(
+          "Cotes incohérentes — Angle 90°",
+          `La hauteur du pan coupé (${cutH}mm) doit être strictement inférieure à la hauteur totale (${H}mm).`
+        );
+      }
+    } else if (shape === "bow_window") {
+      // 🆕 V2 — Bow-Window : Largeur totale, Profondeur, Nb pans (3 ou 5)
+      const W = parseNum(s3.bay_width);
+      const H = parseNum(s3.bay_height);
+      const P = parseNum(s3.bow_depth_projection);
+      if (!W) err.bay_width = true;
+      if (!H) err.bay_height = true;
+      if (!P) err.bow_depth_projection = true;
+      if (!s3.bow_panel_count) {
+        err.bow_panel_count = true;
+        Alert.alert(
+          "Choix requis — Bow-Window",
+          "Sélectionnez le nombre de pans (3 ou 5)."
+        );
+      }
+      // Validation métier : profondeur doit être cohérente (P < W/2 généralement)
+      if (W && P && P >= W / 2) {
+        err.bow_depth_projection = true;
+        Alert.alert(
+          "Cotes incohérentes — Bow-Window",
+          `La profondeur de projection (${P}mm) doit être inférieure à la moitié de la largeur (${W / 2}mm) pour un Bow-Window réaliste.`
+        );
+      }
+    } else if (shape === "pentagone") {
+      // 🆕 V2 — Pentagone : Largeur base, H côtés (H1), H totale au sommet (H2). H2 > H1
+      const L = parseNum(s3.bay_width);
+      const H1 = parseNum(s3.pent_side_height);
+      const H2 = parseNum(s3.pent_top_height);
+      if (!L) err.bay_width = true;
+      if (!H1) err.pent_side_height = true;
+      if (!H2) err.pent_top_height = true;
+      if (H1 && H2 && H2 <= H1) {
+        err.pent_top_height = true;
+        Alert.alert(
+          "Cotes incohérentes — Pentagone",
+          `La hauteur totale au sommet (H2 = ${H2}mm) doit être strictement supérieure à la hauteur des côtés (H1 = ${H1}mm).`
+        );
+      }
+    } else if (shape === "hexagone") {
+      // 🆕 V2 — Hexagone : Largeur base, Largeur sommet, Hauteur totale, H verticales
+      const Wbase = parseNum(s3.bay_width);
+      const Wtop = parseNum(s3.hex_top_width);
+      const H = parseNum(s3.bay_height);
+      const Hside = parseNum(s3.hex_side_height);
+      if (!Wbase) err.bay_width = true;
+      if (!Wtop) err.hex_top_width = true;
+      if (!H) err.bay_height = true;
+      if (!Hside) err.hex_side_height = true;
+      // Validation métier : la hauteur des côtés verticaux ne peut pas dépasser
+      // la hauteur totale, et la largeur sommet doit être < largeur base
+      if (Hside && H && Hside >= H) {
+        err.hex_side_height = true;
+        Alert.alert(
+          "Cotes incohérentes — Hexagone",
+          `La hauteur des parties verticales (${Hside}mm) doit être strictement inférieure à la hauteur totale (${H}mm).`
+        );
+      }
+      if (Wbase && Wtop && Wtop >= Wbase) {
+        err.hex_top_width = true;
+        Alert.alert(
+          "Cotes incohérentes — Hexagone",
+          `La largeur du sommet (${Wtop}mm) doit être strictement inférieure à la largeur de la base (${Wbase}mm).`
+        );
+      }
+    } else if (shape === "ovale") {
+      // 🆕 V2 — Ovale : Largeur totale (L) et Hauteur totale (H). Pas d'autre contrainte.
+      if (!parseNum(s3.bay_width)) err.bay_width = true;
+      if (!parseNum(s3.bay_height)) err.bay_height = true;
     } else {
       if (s3.renovation_mode && shape === "rect") {
         if (!parseNum(s3.width_top)) err.width_top = true;
@@ -706,6 +883,40 @@ export default function NewMesureWizard() {
       opts.garage_lintel_mm = parseNum(s3.garage_lintel);
       opts.garage_ecoincon_left_mm = parseNum(s3.garage_ecoincon_left);
       opts.garage_ecoincon_right_mm = parseNum(s3.garage_ecoincon_right);
+    }
+    // 🆕 V2 — Sauvegarde des cotes spécifiques aux 7 nouvelles formes
+    if (shape === "plein_cintre" || shape === "arc_surbaisse") {
+      opts.arch_h1_appui_mm = parseNum(s3.arch_h1_appui);
+      opts.arch_h2_total_mm = parseNum(s3.arch_h2_total);
+      if (shape === "plein_cintre") {
+        opts.arch_radius_mm = (parseNum(s3.bay_width) ?? 0) / 2;
+      } else if (shape === "arc_surbaisse") {
+        const H1 = parseNum(s3.arch_h1_appui) ?? 0;
+        const H2 = parseNum(s3.arch_h2_total) ?? 0;
+        opts.arch_fleche_mm = H2 - H1;
+      }
+    }
+    if (shape === "angle_90") {
+      opts.angle90_cut_width_mm = parseNum(s3.angle90_cut_width);
+      opts.angle90_cut_height_mm = parseNum(s3.angle90_cut_height);
+    }
+    if (shape === "bow_window") {
+      opts.bow_panel_count = parseInt(s3.bow_panel_count || "3", 10);
+      opts.bow_depth_projection_mm = parseNum(s3.bow_depth_projection);
+    }
+    if (shape === "pentagone") {
+      opts.pent_side_height_mm = parseNum(s3.pent_side_height);
+      opts.pent_top_height_mm = parseNum(s3.pent_top_height);
+    }
+    if (shape === "hexagone") {
+      opts.hex_top_width_mm = parseNum(s3.hex_top_width);
+      opts.hex_side_height_mm = parseNum(s3.hex_side_height);
+    }
+    if (shape === "ovale") {
+      const L = parseNum(s3.bay_width) ?? 0;
+      const H = parseNum(s3.bay_height) ?? 0;
+      opts.ovale_radius_x_mm = L / 2;
+      opts.ovale_radius_y_mm = H / 2;
     }
 
     const payload: Record<string, unknown> = {
@@ -1590,6 +1801,177 @@ function Step3Cotes({
       {shape === "oeil_de_boeuf" && (
         <CotField testID="input-oeil-diameter" label="DIAMÈTRE (mm) *" value={s3.oeil_diameter}
           onChange={(v) => setField("oeil_diameter", v.replace(",", "."))} error={!!err.oeil_diameter} />
+      )}
+
+      {/* 🆕 V2 — Plein cintre */}
+      {shape === "plein_cintre" && (
+        <>
+          <Text style={styles.helperText}>
+            ⭕ Plein cintre — Arc en demi-cercle au sommet (R = L/2).
+            Hauteur d'appui = côté droit ; Hauteur totale = au sommet.
+          </Text>
+          <CotField testID="input-bay-width" label="LARGEUR L (mm) *" value={s3.bay_width}
+            onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
+          <CotField testID="input-arch-h1" label="HAUTEUR D'APPUI H1 (mm) *" value={s3.arch_h1_appui}
+            onChange={(v) => setField("arch_h1_appui", v.replace(",", "."))} error={!!err.arch_h1_appui} />
+          <CotField testID="input-arch-h2" label="HAUTEUR TOTALE H2 (mm) *" value={s3.arch_h2_total}
+            onChange={(v) => setField("arch_h2_total", v.replace(",", "."))} error={!!err.arch_h2_total} />
+          <Text style={styles.helperText}>
+            ✓ Règle : H2 doit être ≥ H1 + L/2 (sinon ce n'est pas un plein cintre).
+          </Text>
+        </>
+      )}
+
+      {/* 🆕 V2 — Arc surbaissé */}
+      {shape === "arc_surbaisse" && (
+        <>
+          <Text style={styles.helperText}>
+            🌗 Arc surbaissé — Arc applati (flèche {"<"} L/2).
+            Flèche f = H2 - H1.
+          </Text>
+          <CotField testID="input-bay-width" label="LARGEUR L (mm) *" value={s3.bay_width}
+            onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
+          <CotField testID="input-arch-h1" label="HAUTEUR D'APPUI H1 (mm) *" value={s3.arch_h1_appui}
+            onChange={(v) => setField("arch_h1_appui", v.replace(",", "."))} error={!!err.arch_h1_appui} />
+          <CotField testID="input-arch-h2" label="HAUTEUR TOTALE H2 (mm) *" value={s3.arch_h2_total}
+            onChange={(v) => setField("arch_h2_total", v.replace(",", "."))} error={!!err.arch_h2_total} />
+          <Text style={styles.helperText}>
+            ✓ Règle : Flèche (H2 - H1) doit être {"<"} L/2.
+          </Text>
+        </>
+      )}
+
+      {/* 🆕 V2 — Angle 90° */}
+      {shape === "angle_90" && (
+        <>
+          <Text style={styles.helperText}>
+            ◣ Angle 90° — Châssis avec un coin coupé.
+            Indiquez les dimensions du cadre + dimensions du pan coupé.
+          </Text>
+          <CotField testID="input-bay-width" label="LARGEUR TOTALE (mm) *" value={s3.bay_width}
+            onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
+          <CotField testID="input-bay-height" label="HAUTEUR TOTALE (mm) *" value={s3.bay_height}
+            onChange={(v) => setField("bay_height", v.replace(",", "."))} error={!!err.bay_height} />
+          <Text style={[styles.sectionLabel, { marginTop: 12 }]}>PAN COUPÉ</Text>
+          <View style={styles.row2}>
+            <View style={{ flex: 1 }}>
+              <CotField testID="input-angle90-cut-w" label="LARGEUR DU PAN (mm) *" value={s3.angle90_cut_width}
+                onChange={(v) => setField("angle90_cut_width", v.replace(",", "."))} error={!!err.angle90_cut_width} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <CotField testID="input-angle90-cut-h" label="HAUTEUR DU PAN (mm) *" value={s3.angle90_cut_height}
+                onChange={(v) => setField("angle90_cut_height", v.replace(",", "."))} error={!!err.angle90_cut_height} />
+            </View>
+          </View>
+          <Text style={styles.helperText}>
+            ✓ Règle : Le pan coupé doit être {"<"} dimensions du cadre.
+          </Text>
+        </>
+      )}
+
+      {/* 🆕 V2 — Bow-Window */}
+      {shape === "bow_window" && (
+        <>
+          <Text style={styles.helperText}>
+            🌐 Bow-Window — Baie courbe en saillie composée de plusieurs pans.
+            Choisissez le nombre de pans (3 ou 5).
+          </Text>
+          <Text style={[styles.sectionLabel, { marginTop: 8 }]}>NOMBRE DE PANS *</Text>
+          <View style={[styles.row2, { marginBottom: 12 }]}>
+            <TouchableOpacity
+              testID="bow-panel-3"
+              onPress={() => setField("bow_panel_count", "3")}
+              activeOpacity={0.8}
+              style={[
+                styles.modeTab,
+                { flex: 1 },
+                s3.bow_panel_count === "3" && styles.modeTabActive,
+                !!err.bow_panel_count && { borderColor: "#ef4444", borderWidth: 2 },
+              ]}
+            >
+              <Text style={[styles.modeTabText, s3.bow_panel_count === "3" && styles.modeTabTextActive]}>
+                3 PANS
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              testID="bow-panel-5"
+              onPress={() => setField("bow_panel_count", "5")}
+              activeOpacity={0.8}
+              style={[
+                styles.modeTab,
+                { flex: 1 },
+                s3.bow_panel_count === "5" && styles.modeTabActive,
+                !!err.bow_panel_count && { borderColor: "#ef4444", borderWidth: 2 },
+              ]}
+            >
+              <Text style={[styles.modeTabText, s3.bow_panel_count === "5" && styles.modeTabTextActive]}>
+                5 PANS
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <CotField testID="input-bay-width" label="LARGEUR TOTALE (mm) *" value={s3.bay_width}
+            onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
+          <CotField testID="input-bay-height" label="HAUTEUR TOTALE (mm) *" value={s3.bay_height}
+            onChange={(v) => setField("bay_height", v.replace(",", "."))} error={!!err.bay_height} />
+          <CotField testID="input-bow-depth" label="PROFONDEUR DE PROJECTION P (mm) *" value={s3.bow_depth_projection}
+            onChange={(v) => setField("bow_depth_projection", v.replace(",", "."))} error={!!err.bow_depth_projection} />
+          <Text style={styles.helperText}>
+            ✓ Règle : Profondeur P {"<"} Largeur / 2 pour une saillie réaliste.
+          </Text>
+        </>
+      )}
+
+      {/* 🆕 V2 — Pentagone */}
+      {shape === "pentagone" && (
+        <>
+          <Text style={styles.helperText}>
+            ⬠ Pentagone — Forme à toit pointu (rectangle + triangle au sommet).
+            H1 = hauteur des côtés verticaux ; H2 = hauteur totale au sommet.
+          </Text>
+          <CotField testID="input-bay-width" label="LARGEUR BASE (mm) *" value={s3.bay_width}
+            onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
+          <CotField testID="input-pent-h1" label="HAUTEUR CÔTÉS H1 (mm) *" value={s3.pent_side_height}
+            onChange={(v) => setField("pent_side_height", v.replace(",", "."))} error={!!err.pent_side_height} />
+          <CotField testID="input-pent-h2" label="HAUTEUR SOMMET H2 (mm) *" value={s3.pent_top_height}
+            onChange={(v) => setField("pent_top_height", v.replace(",", "."))} error={!!err.pent_top_height} />
+          <Text style={styles.helperText}>
+            ✓ Règle : H2 (sommet) doit être {">"} H1 (côtés).
+          </Text>
+        </>
+      )}
+
+      {/* 🆕 V2 — Hexagone */}
+      {shape === "hexagone" && (
+        <>
+          <Text style={styles.helperText}>
+            ⬡ Hexagone — Forme avec haut ET bas pan coupé (6 côtés).
+          </Text>
+          <CotField testID="input-bay-width" label="LARGEUR BASE (mm) *" value={s3.bay_width}
+            onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
+          <CotField testID="input-hex-top-width" label="LARGEUR SOMMET (mm) *" value={s3.hex_top_width}
+            onChange={(v) => setField("hex_top_width", v.replace(",", "."))} error={!!err.hex_top_width} />
+          <CotField testID="input-bay-height" label="HAUTEUR TOTALE (mm) *" value={s3.bay_height}
+            onChange={(v) => setField("bay_height", v.replace(",", "."))} error={!!err.bay_height} />
+          <CotField testID="input-hex-side-h" label="HAUTEUR CÔTÉS VERTICAUX (mm) *" value={s3.hex_side_height}
+            onChange={(v) => setField("hex_side_height", v.replace(",", "."))} error={!!err.hex_side_height} />
+          <Text style={styles.helperText}>
+            ✓ Règles : Largeur sommet {"<"} Largeur base ; Hauteur côtés {"<"} Hauteur totale.
+          </Text>
+        </>
+      )}
+
+      {/* 🆕 V2 — Ovale */}
+      {shape === "ovale" && (
+        <>
+          <Text style={styles.helperText}>
+            ⬭ Ovale — Forme ellipsoïdale.
+            Rayon horizontal = L/2 ; Rayon vertical = H/2.
+          </Text>
+          <CotField testID="input-bay-width" label="LARGEUR L (mm) *" value={s3.bay_width}
+            onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
+          <CotField testID="input-bay-height" label="HAUTEUR H (mm) *" value={s3.bay_height}
+            onChange={(v) => setField("bay_height", v.replace(",", "."))} error={!!err.bay_height} />
+        </>
       )}
 
       {/* Porte de garage */}
