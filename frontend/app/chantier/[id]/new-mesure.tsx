@@ -44,6 +44,12 @@ import { colors } from "@/src/theme";
 import { ShapeIcon } from "@/src/components/ShapeIcon";
 import { MeasureGuide } from "@/src/components/MeasureGuide";
 import ShapeSchemaV2 from "@/src/components/ShapeSchemaV2";
+import PerimeterVerification from "@/src/components/PerimeterVerification";
+import {
+  perimeterPleinCintre,
+  perimeterArcSurbaisse,
+  perimeterAngle90,
+} from "@/src/utils/perimeter";
 import { useResponsive } from "@/src/utils/responsive";
 
 // ════════════════════════════════════════════════════════════════════════
@@ -208,6 +214,12 @@ type Step3Data = {
   // 3. Angle 90° (coupe d'angle)
   angle90_cut_width: string; // Largeur du pan coupé
   angle90_cut_height: string; // Hauteur du pan coupé
+  angle90_side: "left" | "right" | "both"; // Côté(s) coupé(s)
+  angle90_angle_deg: string; // Angle du pan (135° par défaut, éditable)
+  angle90_h_left: string; // Hauteur gauche (asymétrique)
+  angle90_h_right: string; // Hauteur droite (asymétrique)
+  // 🆕 Vérification PÉRIMÈTRE (formes arc + angle)
+  perimeter_measured: string; // Mesure ruban faite par le mesureur (mm)
   // 4. Bow-Window
   bow_panel_count: "3" | "5" | ""; // Nombre de pans
   bow_depth_projection: string; // Profondeur de projection
@@ -253,6 +265,11 @@ const initStep3 = (): Step3Data => ({
   arch_h2_total: "",
   angle90_cut_width: "",
   angle90_cut_height: "",
+  angle90_side: "right",
+  angle90_angle_deg: "135",
+  angle90_h_left: "",
+  angle90_h_right: "",
+  perimeter_measured: "",
   bow_panel_count: "",
   bow_depth_projection: "",
   pent_side_height: "",
@@ -449,6 +466,16 @@ export default function NewMesureWizard() {
               arch_h2_total: toStr(opts.arch_h2_total_mm),
               angle90_cut_width: toStr(opts.angle90_cut_width_mm),
               angle90_cut_height: toStr(opts.angle90_cut_height_mm),
+              angle90_side:
+                opts.angle90_side === "left" || opts.angle90_side === "both"
+                  ? opts.angle90_side
+                  : "right",
+              angle90_angle_deg: toStr(opts.angle90_angle_deg) || "135",
+              angle90_h_left: toStr(opts.angle90_h_left_mm || m.height_left),
+              angle90_h_right: toStr(
+                opts.angle90_h_right_mm || m.height_right || m.bay_height,
+              ),
+              perimeter_measured: toStr(opts.perimeter_measured_mm),
               bow_panel_count: opts.bow_panel_count === 5 ? "5" : (opts.bow_panel_count === 3 ? "3" : ""),
               bow_depth_projection: toStr(opts.bow_depth_projection_mm),
               pent_side_height: toStr(opts.pent_side_height_mm),
@@ -517,6 +544,49 @@ export default function NewMesureWizard() {
     if (!brut) return null;
     return brut - 1000;
   }, [s3.has_1m_level_mark, s3.trait_1m_brut_mm]);
+
+  // 🆕 V2 — Périmètre calculé pour les formes complexes. Réagit en
+  //    temps réel aux changements de cotes, permet au mesureur de
+  //    vérifier sa mesure ruban contre la valeur géométrique.
+  const computedPerimeter = useMemo(() => {
+    if (shape === "plein_cintre") {
+      return perimeterPleinCintre(
+        parseNum(s3.bay_width),
+        parseNum(s3.arch_h1_appui),
+      );
+    }
+    if (shape === "arc_surbaisse") {
+      return perimeterArcSurbaisse(
+        parseNum(s3.bay_width),
+        parseNum(s3.arch_h1_appui),
+        parseNum(s3.arch_h2_total),
+      );
+    }
+    if (shape === "angle_90") {
+      const Hleft = parseNum(s3.angle90_h_left) || parseNum(s3.bay_height);
+      const Hright = parseNum(s3.angle90_h_right) || parseNum(s3.bay_height);
+      return perimeterAngle90(
+        parseNum(s3.bay_width),
+        Hleft,
+        Hright,
+        parseNum(s3.angle90_cut_width),
+        parseNum(s3.angle90_cut_height),
+        s3.angle90_side,
+      );
+    }
+    return null;
+  }, [
+    shape,
+    s3.bay_width,
+    s3.bay_height,
+    s3.arch_h1_appui,
+    s3.arch_h2_total,
+    s3.angle90_cut_width,
+    s3.angle90_cut_height,
+    s3.angle90_h_left,
+    s3.angle90_h_right,
+    s3.angle90_side,
+  ]);
 
   // ────── Validations ────────────────────────────────────────────────
   const validateStep1 = (): boolean => {
@@ -637,28 +707,31 @@ export default function NewMesureWizard() {
         }
       }
     } else if (shape === "angle_90") {
-      // 🆕 V2 — Angle 90° : Largeur, Hauteur, Pan coupé (largeur + hauteur)
+      // 🆕 V2 — Angle 90° : Largeur, Hauteurs gauche/droite (asymétriques), Pan coupé, Côté, Angle
       const W = parseNum(s3.bay_width);
-      const H = parseNum(s3.bay_height);
+      const Hleft = parseNum(s3.angle90_h_left);
+      const Hright = parseNum(s3.angle90_h_right);
       const cutW = parseNum(s3.angle90_cut_width);
       const cutH = parseNum(s3.angle90_cut_height);
       if (!W) err.bay_width = true;
-      if (!H) err.bay_height = true;
+      if (!Hleft) err.angle90_h_left = true;
+      if (!Hright) err.angle90_h_right = true;
       if (!cutW) err.angle90_cut_width = true;
       if (!cutH) err.angle90_cut_height = true;
       // Validation métier : le pan coupé ne peut pas dépasser le cadre
       if (W && cutW && cutW >= W) {
         err.angle90_cut_width = true;
         Alert.alert(
-          "Cotes incohérentes — Angle 90°",
+          "Cotes incohérentes — Pan coupé",
           `La largeur du pan coupé (${cutW}mm) doit être strictement inférieure à la largeur totale (${W}mm).`
         );
       }
-      if (H && cutH && cutH >= H) {
+      const minH = Math.min(Hleft || 0, Hright || 0);
+      if (minH && cutH && cutH >= minH) {
         err.angle90_cut_height = true;
         Alert.alert(
-          "Cotes incohérentes — Angle 90°",
-          `La hauteur du pan coupé (${cutH}mm) doit être strictement inférieure à la hauteur totale (${H}mm).`
+          "Cotes incohérentes — Pan coupé",
+          `La hauteur du pan coupé (${cutH}mm) doit être strictement inférieure à la plus petite hauteur (${minH}mm).`
         );
       }
     } else if (shape === "bow_window") {
@@ -900,6 +973,25 @@ export default function NewMesureWizard() {
     if (shape === "angle_90") {
       opts.angle90_cut_width_mm = parseNum(s3.angle90_cut_width);
       opts.angle90_cut_height_mm = parseNum(s3.angle90_cut_height);
+      opts.angle90_side = s3.angle90_side;
+      opts.angle90_angle_deg = parseNum(s3.angle90_angle_deg) || 135;
+      opts.angle90_h_left_mm = parseNum(s3.angle90_h_left);
+      opts.angle90_h_right_mm = parseNum(s3.angle90_h_right);
+    }
+    // 🆕 V2 — Périmètre (calculé + mesuré au ruban) pour vérification technique.
+    //    Le `computedPerimeter` est issu du même useMemo qui alimente le
+    //    composant <PerimeterVerification> ; on persiste les deux valeurs
+    //    pour l'audit côté exports / vérification technicien.
+    if (
+      shape === "plein_cintre" ||
+      shape === "arc_surbaisse" ||
+      shape === "angle_90"
+    ) {
+      const measured = parseNum(s3.perimeter_measured);
+      if (measured !== null) opts.perimeter_measured_mm = measured;
+      if (computedPerimeter !== null) {
+        opts.perimeter_computed_mm = computedPerimeter;
+      }
     }
     if (shape === "bow_window") {
       opts.bow_panel_count = parseInt(s3.bow_panel_count || "3", 10);
@@ -975,6 +1067,14 @@ export default function NewMesureWizard() {
       const hr = parseNum(s3.height_right) || 0;
       payload.bay_width = Math.round((wt + wb) / 2) || null;
       payload.bay_height = Math.round((hl + hr) / 2) || null;
+    } else if (shape === "angle_90") {
+      // Pour la rétro-compatibilité avec l'API et les exports historiques,
+      // on calcule bay_height comme le max des deux hauteurs (cadre englobant).
+      const Hleft = parseNum(s3.angle90_h_left) || 0;
+      const Hright = parseNum(s3.angle90_h_right) || 0;
+      payload.bay_height = Math.max(Hleft, Hright) || null;
+      payload.height_left = Hleft || null;
+      payload.height_right = Hright || null;
     } else {
       payload.bay_height = parseNum(s3.bay_height);
       payload.bay_diagonal_1 = parseNum(s3.diag_1);
@@ -1214,6 +1314,7 @@ export default function NewMesureWizard() {
               onComputeDiagonals={() => computeDiagonals(true)}
               canComputeDiag={canComputeDiag}
               computedFloorReserve={computedFloorReserve}
+              computedPerimeter={computedPerimeter}
             />
           )}
         </ScrollView>
@@ -1663,6 +1764,7 @@ function Step3Cotes({
   onComputeDiagonals,
   canComputeDiag,
   computedFloorReserve,
+  computedPerimeter,
 }: {
   shape: Shape;
   label: string;
@@ -1681,6 +1783,7 @@ function Step3Cotes({
   onComputeDiagonals: () => void;
   canComputeDiag: boolean;
   computedFloorReserve: number | null;
+  computedPerimeter: number | null;
 }) {
   const isRectFamily =
     shape === "rect" ||
@@ -1816,8 +1919,8 @@ function Step3Cotes({
             }}
           />
           <Text style={styles.helperText}>
-            ⭕ Plein cintre — Arc en demi-cercle au sommet (R = L/2).
-            Hauteur d'appui = côté droit ; Hauteur totale = au sommet.
+            ⭕ Plein cintre — Arc en demi-cercle au sommet.
+            La hauteur de gauche est identique à la hauteur de droite.
           </Text>
           <CotField testID="input-bay-width" label="LARGEUR L (mm) *" value={s3.bay_width}
             onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
@@ -1826,8 +1929,14 @@ function Step3Cotes({
           <CotField testID="input-arch-h2" label="HAUTEUR TOTALE H2 (mm) *" value={s3.arch_h2_total}
             onChange={(v) => setField("arch_h2_total", v.replace(",", "."))} error={!!err.arch_h2_total} />
           <Text style={styles.helperText}>
-            ✓ Règle : H2 doit être ≥ H1 + L/2 (sinon ce n'est pas un plein cintre).
+            ✓ Règle : H2 = H1 + L/2 (le sommet du demi-cercle dépasse l&apos;appui de L/2).
           </Text>
+          <PerimeterVerification
+            testID="input-perimeter-plein-cintre"
+            computed={computedPerimeter}
+            measuredValue={s3.perimeter_measured}
+            onChangeMeasured={(v) => setField("perimeter_measured", v.replace(",", "."))}
+          />
         </>
       )}
 
@@ -1843,8 +1952,8 @@ function Step3Cotes({
             }}
           />
           <Text style={styles.helperText}>
-            🌗 Arc surbaissé — Arc applati (flèche {"<"} L/2).
-            Flèche f = H2 - H1.
+            🌗 Arc surbaissé — Arc applati (moins haut qu&apos;un demi-cercle).
+            La hauteur de gauche est identique à la hauteur de droite.
           </Text>
           <CotField testID="input-bay-width" label="LARGEUR L (mm) *" value={s3.bay_width}
             onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
@@ -1853,31 +1962,78 @@ function Step3Cotes({
           <CotField testID="input-arch-h2" label="HAUTEUR TOTALE H2 (mm) *" value={s3.arch_h2_total}
             onChange={(v) => setField("arch_h2_total", v.replace(",", "."))} error={!!err.arch_h2_total} />
           <Text style={styles.helperText}>
-            ✓ Règle : Flèche (H2 - H1) doit être {"<"} L/2.
+            ✓ Règle : H2 doit être {">"} H1 et la montée (H2 − H1) doit être {"<"} L/2.
           </Text>
+          <PerimeterVerification
+            testID="input-perimeter-arc-surbaisse"
+            computed={computedPerimeter}
+            measuredValue={s3.perimeter_measured}
+            onChangeMeasured={(v) => setField("perimeter_measured", v.replace(",", "."))}
+          />
         </>
       )}
 
-      {/* 🆕 V2 — Angle 90° */}
+      {/* 🆕 V2 — Angle 90° (pan coupé gauche / droite / les deux) */}
       {shape === "angle_90" && (
         <>
           <ShapeSchemaV2
             shape="angle_90"
             values={{
               L: parseNum(s3.bay_width) || undefined,
-              H: parseNum(s3.bay_height) || undefined,
+              Hleft: parseNum(s3.angle90_h_left) || undefined,
+              Hright: parseNum(s3.angle90_h_right) || undefined,
               cutW: parseNum(s3.angle90_cut_width) || undefined,
               cutH: parseNum(s3.angle90_cut_height) || undefined,
+              cutSide: s3.angle90_side,
+              cutAngleDeg: parseNum(s3.angle90_angle_deg) || 135,
             }}
           />
           <Text style={styles.helperText}>
-            ◣ Angle 90° — Châssis avec un coin coupé.
-            Indiquez les dimensions du cadre + dimensions du pan coupé.
+            ◣ Pan coupé — Châssis avec un (ou deux) coin(s) coupé(s) en oblique.
+            La zone hachurée orange sur le schéma indique le pan coupé.
           </Text>
-          <CotField testID="input-bay-width" label="LARGEUR TOTALE (mm) *" value={s3.bay_width}
+
+          {/* Sélecteur du côté coupé */}
+          <Text style={[styles.sectionLabel, { marginTop: 12 }]}>CÔTÉ(S) COUPÉ(S) *</Text>
+          <View style={[styles.row2, { marginBottom: 10 }]}>
+            {(["left", "right", "both"] as const).map((sd) => {
+              const active = s3.angle90_side === sd;
+              const label =
+                sd === "left" ? "GAUCHE" : sd === "right" ? "DROITE" : "LES DEUX";
+              return (
+                <TouchableOpacity
+                  key={sd}
+                  testID={`angle90-side-${sd}`}
+                  onPress={() => setField("angle90_side", sd)}
+                  activeOpacity={0.85}
+                  style={[
+                    styles.modeTab,
+                    { flex: 1 },
+                    active && styles.modeTabActive,
+                  ]}
+                >
+                  <Text style={[styles.modeTabText, active && styles.modeTabTextActive]}>
+                    {label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          <CotField testID="input-bay-width" label="LARGEUR TOTALE L (mm) *" value={s3.bay_width}
             onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
-          <CotField testID="input-bay-height" label="HAUTEUR TOTALE (mm) *" value={s3.bay_height}
-            onChange={(v) => setField("bay_height", v.replace(",", "."))} error={!!err.bay_height} />
+
+          <View style={styles.row2}>
+            <View style={{ flex: 1 }}>
+              <CotField testID="input-angle90-h-left" label="HAUTEUR GAUCHE Hg (mm) *" value={s3.angle90_h_left}
+                onChange={(v) => setField("angle90_h_left", v.replace(",", "."))} error={!!err.angle90_h_left} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <CotField testID="input-angle90-h-right" label="HAUTEUR DROITE Hd (mm) *" value={s3.angle90_h_right}
+                onChange={(v) => setField("angle90_h_right", v.replace(",", "."))} error={!!err.angle90_h_right} />
+            </View>
+          </View>
+
           <Text style={[styles.sectionLabel, { marginTop: 12 }]}>PAN COUPÉ</Text>
           <View style={styles.row2}>
             <View style={{ flex: 1 }}>
@@ -1889,9 +2045,19 @@ function Step3Cotes({
                 onChange={(v) => setField("angle90_cut_height", v.replace(",", "."))} error={!!err.angle90_cut_height} />
             </View>
           </View>
+          <CotField testID="input-angle90-angle" label="ANGLE DU PAN (°) — 135° par défaut" value={s3.angle90_angle_deg}
+            onChange={(v) => setField("angle90_angle_deg", v.replace(",", "."))} />
           <Text style={styles.helperText}>
             ✓ Règle : Le pan coupé doit être {"<"} dimensions du cadre.
+            L&apos;angle est généralement de 135° (oblique à 45°), mais ajustable selon votre mesure.
           </Text>
+
+          <PerimeterVerification
+            testID="input-perimeter-angle-90"
+            computed={computedPerimeter}
+            measuredValue={s3.perimeter_measured}
+            onChangeMeasured={(v) => setField("perimeter_measured", v.replace(",", "."))}
+          />
         </>
       )}
 

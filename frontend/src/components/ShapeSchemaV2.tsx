@@ -33,11 +33,15 @@ type ShapeKey =
 
 type Values = {
   L?: number; // Largeur principale (bay_width)
-  H?: number; // Hauteur principale (bay_height)
+  H?: number; // Hauteur principale (bay_height) — utilisée si pas de Hleft/Hright
+  Hleft?: number; // Hauteur gauche (angle_90 asymétrique)
+  Hright?: number; // Hauteur droite (angle_90 asymétrique)
   H1?: number; // Hauteur d'appui / côtés
   H2?: number; // Hauteur totale / sommet
   cutW?: number; // Pan coupé largeur (angle 90)
   cutH?: number; // Pan coupé hauteur (angle 90)
+  cutSide?: "left" | "right" | "both"; // Côté(s) coupé(s)
+  cutAngleDeg?: number; // Angle du pan coupé (par défaut 135°)
   P?: number; // Profondeur projection (bow)
   panels?: number; // Nb pans (3 ou 5)
   Wtop?: number; // Largeur sommet (hexagone)
@@ -161,9 +165,6 @@ function renderPleinCintre(v: Values, W: number, H: number) {
       <Line x1={x0 - 14} y1={y0} x2={x0 - 14} y2={y0 + sR + sH} stroke={PALETTE.cote} strokeWidth={1.5} />
       <SvgText x={x0 - 60} y={y0 + (sR + sH) / 2 + 4} fill={PALETTE.cote_text} fontSize={COTE_FONT} fontWeight="bold">H2 = {Math.round(v.H2 || 0)}</SvgText>
 
-      {/* R (rayon dans l'arc) */}
-      <Line x1={x0 + sW / 2} y1={y0 + sR} x2={x0 + sW} y2={y0 + sR} stroke={PALETTE.helper} strokeWidth={1} strokeDasharray="3,3" />
-      <SvgText x={x0 + sW * 0.7} y={y0 + sR - 5} fill={PALETTE.helper} fontSize={COTE_FONT - 1}>R=L/2</SvgText>
     </G>
   );
 }
@@ -208,49 +209,125 @@ function renderArcSurbaisse(v: Values, W: number, H: number) {
   );
 }
 
-// 3. ANGLE 90° — Rectangle avec un coin coupé (haut droit par défaut)
+// 3. ANGLE 90° — Rectangle avec UN ou DEUX pans coupés (haut gauche / haut droit / les deux).
+//    Supporte des hauteurs gauche/droite indépendantes.
+//    Affiche les libellés DANS la zone du pan coupé pour une compréhension immédiate.
 function renderAngle90(v: Values, W: number, H: number) {
   const Wtot = sn(v.L, 1500);
-  const Htot = sn(v.H, 1500);
+  // Hauteurs asymétriques possibles. Si non fournies, on retombe sur v.H.
+  const Hleft = sn(v.Hleft, sn(v.H, 1500));
+  const Hright = sn(v.Hright, sn(v.H, 1500));
   const cW = Math.min(sn(v.cutW, 400), Wtot - 1);
-  const cH = Math.min(sn(v.cutH, 400), Htot - 1);
+  const Hmin = Math.min(Hleft, Hright);
+  const cH = Math.min(sn(v.cutH, 400), Hmin - 1);
+  const side = v.cutSide || "right";
+  const angleDeg = sn(v.cutAngleDeg, 135);
 
-  const fit = fitToBox(Wtot, Htot, W, H, 45);
+  const HtotDraw = Math.max(Hleft, Hright);
+  const fit = fitToBox(Wtot, HtotDraw, W, H, 55);
   const x0 = fit.offsetX;
   const y0 = fit.offsetY;
   const sW = Wtot * fit.scale;
-  const sH = Htot * fit.scale;
+  const sHleft = Hleft * fit.scale;
+  const sHright = Hright * fit.scale;
   const scW = cW * fit.scale;
   const scH = cH * fit.scale;
 
-  // Polygone avec coin haut droit coupé (forme en L)
-  const points = `${x0},${y0 + scH} ${x0 + sW - scW},${y0 + scH} ${x0 + sW - scW},${y0} ${x0 + sW - scW},${y0 + scH} ${x0 + sW},${y0 + scH} ${x0 + sW},${y0 + sH} ${x0},${y0 + sH}`;
+  // On dessine en partant du haut-gauche, en parcourant le contour dans le sens
+  // horaire. Le sommet est éventuellement coupé à gauche et/ou à droite.
+  // Coordonnées y : 0 = haut du SVG. Plus y est grand, plus on est bas.
+  const baseY = y0 + Math.max(sHleft, sHright); // ligne du sol
+  const topLeftY = baseY - sHleft;
+  const topRightY = baseY - sHright;
 
-  // Plus simple : polygone direct sans coin
-  const pts2 = `${x0},${y0 + scH} ${x0 + sW - scW},${y0 + scH} ${x0 + sW - scW},${y0} ${x0 + sW},${y0} ${x0 + sW},${y0 + sH} ${x0},${y0 + sH}`;
+  const cutLeft = side === "left" || side === "both";
+  const cutRight = side === "right" || side === "both";
 
-  // En fait : forme avec un PAN COUPÉ veut dire un coin entaillé (oblique)
-  // Donc : rectangle - coin coupé en haut droite
-  const ptsAngle = `${x0},${y0} ${x0 + sW - scW},${y0} ${x0 + sW},${y0 + scH} ${x0 + sW},${y0 + sH} ${x0},${y0 + sH}`;
+  // Points du polygone (sens horaire à partir du coin haut-gauche)
+  const pts: string[] = [];
+  if (cutLeft) {
+    pts.push(`${x0},${topLeftY + scH}`);
+    pts.push(`${x0 + scW},${topLeftY}`);
+  } else {
+    pts.push(`${x0},${topLeftY}`);
+  }
+  if (cutRight) {
+    pts.push(`${x0 + sW - scW},${topRightY}`);
+    pts.push(`${x0 + sW},${topRightY + scH}`);
+  } else {
+    pts.push(`${x0 + sW},${topRightY}`);
+  }
+  pts.push(`${x0 + sW},${baseY}`);
+  pts.push(`${x0},${baseY}`);
 
   return (
     <G>
-      <Polygon points={ptsAngle} fill={PALETTE.fill} stroke={PALETTE.outline} strokeWidth={STROKE} />
+      <Polygon
+        points={pts.join(" ")}
+        fill={PALETTE.fill}
+        stroke={PALETTE.outline}
+        strokeWidth={STROKE}
+      />
 
-      {/* Largeur totale */}
-      <Line x1={x0} y1={y0 + sH + 18} x2={x0 + sW} y2={y0 + sH + 18} stroke={PALETTE.cote} strokeWidth={1.5} />
-      <SvgText x={x0 + sW / 2} y={y0 + sH + 33} fill={PALETTE.cote_text} fontSize={COTE_FONT} textAnchor="middle" fontWeight="bold">L = {Math.round(v.L || 0)} mm</SvgText>
+      {/* Largeur totale L (en bas) */}
+      <Line x1={x0} y1={baseY + 18} x2={x0 + sW} y2={baseY + 18} stroke={PALETTE.cote} strokeWidth={1.5} />
+      <SvgText x={x0 + sW / 2} y={baseY + 33} fill={PALETTE.cote_text} fontSize={COTE_FONT} textAnchor="middle" fontWeight="bold">L = {Math.round(v.L || 0)} mm</SvgText>
 
-      {/* Hauteur totale */}
-      <Line x1={x0 + sW + 14} y1={y0 + scH} x2={x0 + sW + 14} y2={y0 + sH} stroke={PALETTE.cote} strokeWidth={1.5} />
-      <SvgText x={x0 + sW + 20} y={y0 + (sH + scH) / 2 + 4} fill={PALETTE.cote_text} fontSize={COTE_FONT} fontWeight="bold">H = {Math.round(v.H || 0)}</SvgText>
+      {/* Hauteur GAUCHE */}
+      <Line x1={x0 - 14} y1={topLeftY + (cutLeft ? scH : 0)} x2={x0 - 14} y2={baseY} stroke={PALETTE.cote} strokeWidth={1.5} />
+      <SvgText x={x0 - 60} y={(topLeftY + baseY) / 2 + 4} fill={PALETTE.cote_text} fontSize={COTE_FONT} fontWeight="bold">Hg = {Math.round(Hleft)}</SvgText>
 
-      {/* Pan coupé largeur */}
-      <Line x1={x0 + sW - scW} y1={y0 - 14} x2={x0 + sW} y2={y0 - 14} stroke={PALETTE.helper} strokeWidth={1.5} />
-      <SvgText x={x0 + sW - scW / 2} y={y0 - 18} fill={PALETTE.helper} fontSize={COTE_FONT - 1} textAnchor="middle">cutW={Math.round(cW)}</SvgText>
+      {/* Hauteur DROITE */}
+      <Line x1={x0 + sW + 14} y1={topRightY + (cutRight ? scH : 0)} x2={x0 + sW + 14} y2={baseY} stroke={PALETTE.cote} strokeWidth={1.5} />
+      <SvgText x={x0 + sW + 18} y={(topRightY + baseY) / 2 + 4} fill={PALETTE.cote_text} fontSize={COTE_FONT} fontWeight="bold">Hd = {Math.round(Hright)}</SvgText>
 
-      {/* Pan coupé hauteur */}
-      <SvgText x={x0 + sW + 5} y={y0 + scH / 2 + 4} fill={PALETTE.helper} fontSize={COTE_FONT - 1}>cutH={Math.round(cH)}</SvgText>
+      {/* Annotations DANS la zone du pan coupé — pan GAUCHE */}
+      {cutLeft && (
+        <G>
+          {/* triangle d'aide pour bien visualiser la zone coupée */}
+          <Polygon
+            points={`${x0},${topLeftY + scH} ${x0 + scW},${topLeftY} ${x0},${topLeftY}`}
+            fill="rgba(255,107,26,0.18)"
+            stroke="rgba(255,107,26,0.5)"
+            strokeWidth={1}
+            strokeDasharray="3,2"
+          />
+          {/* Largeur du pan (en haut) */}
+          <SvgText x={x0 + scW / 2} y={topLeftY - 6} fill={PALETTE.cote_text} fontSize={COTE_FONT - 1} textAnchor="middle" fontWeight="bold">
+            Pan L = {Math.round(cW)}
+          </SvgText>
+          {/* Hauteur du pan (sur le côté) */}
+          <SvgText x={x0 - 4} y={topLeftY + scH / 2 + 3} fill={PALETTE.cote_text} fontSize={COTE_FONT - 1} textAnchor="end" fontWeight="bold">
+            Pan H = {Math.round(cH)}
+          </SvgText>
+          {/* Angle */}
+          <SvgText x={x0 + scW * 0.6} y={topLeftY + scH * 0.6} fill={PALETTE.outline} fontSize={COTE_FONT - 1} fontWeight="bold">
+            {Math.round(angleDeg)}°
+          </SvgText>
+        </G>
+      )}
+
+      {/* Annotations DANS la zone du pan coupé — pan DROIT */}
+      {cutRight && (
+        <G>
+          <Polygon
+            points={`${x0 + sW - scW},${topRightY} ${x0 + sW},${topRightY + scH} ${x0 + sW},${topRightY}`}
+            fill="rgba(255,107,26,0.18)"
+            stroke="rgba(255,107,26,0.5)"
+            strokeWidth={1}
+            strokeDasharray="3,2"
+          />
+          <SvgText x={x0 + sW - scW / 2} y={topRightY - 6} fill={PALETTE.cote_text} fontSize={COTE_FONT - 1} textAnchor="middle" fontWeight="bold">
+            Pan L = {Math.round(cW)}
+          </SvgText>
+          <SvgText x={x0 + sW + 4} y={topRightY + scH / 2 + 3} fill={PALETTE.cote_text} fontSize={COTE_FONT - 1} fontWeight="bold">
+            Pan H = {Math.round(cH)}
+          </SvgText>
+          <SvgText x={x0 + sW - scW * 0.6 - 18} y={topRightY + scH * 0.6} fill={PALETTE.outline} fontSize={COTE_FONT - 1} fontWeight="bold">
+            {Math.round(angleDeg)}°
+          </SvgText>
+        </G>
+      )}
     </G>
   );
 }
