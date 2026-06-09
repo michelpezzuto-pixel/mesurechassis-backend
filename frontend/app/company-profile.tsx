@@ -70,7 +70,7 @@ function planMeta(plan: Plan | undefined): { label: string; bg: string; fg: stri
 
 export default function CompanyProfile() {
   const router = useRouter();
-  const { user, company, refreshCompany, logout } = useAuth();
+  const { user, company, refreshCompany, signOut } = useAuth();
   const [name, setName] = useState("");
   const [artisanMode, setArtisanMode] = useState(false);
   /** Logo entreprise data URL (PNG/JPG base64) — affiché en PDF. */
@@ -293,7 +293,7 @@ export default function CompanyProfile() {
           text: "OK",
           onPress: async () => {
             try {
-              await logout();
+              await signOut();
             } catch {
               /* ignore */
             }
@@ -312,7 +312,7 @@ export default function CompanyProfile() {
     deletePassword,
     deleteConfirmText,
     deleteOptin,
-    logout,
+    signOut,
   ]);
 
   const save = async () => {

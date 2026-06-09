@@ -43,6 +43,7 @@ import { enqueueMesure, isOnline } from "@/src/services/offlineQueue";
 import { colors } from "@/src/theme";
 import { ShapeIcon } from "@/src/components/ShapeIcon";
 import { MeasureGuide } from "@/src/components/MeasureGuide";
+import ShapeSchemaV2 from "@/src/components/ShapeSchemaV2";
 import { useResponsive } from "@/src/utils/responsive";
 
 // ════════════════════════════════════════════════════════════════════════
@@ -1806,6 +1807,14 @@ function Step3Cotes({
       {/* 🆕 V2 — Plein cintre */}
       {shape === "plein_cintre" && (
         <>
+          <ShapeSchemaV2
+            shape="plein_cintre"
+            values={{
+              L: parseNum(s3.bay_width) || undefined,
+              H1: parseNum(s3.arch_h1_appui) || undefined,
+              H2: parseNum(s3.arch_h2_total) || undefined,
+            }}
+          />
           <Text style={styles.helperText}>
             ⭕ Plein cintre — Arc en demi-cercle au sommet (R = L/2).
             Hauteur d'appui = côté droit ; Hauteur totale = au sommet.
@@ -1825,6 +1834,14 @@ function Step3Cotes({
       {/* 🆕 V2 — Arc surbaissé */}
       {shape === "arc_surbaisse" && (
         <>
+          <ShapeSchemaV2
+            shape="arc_surbaisse"
+            values={{
+              L: parseNum(s3.bay_width) || undefined,
+              H1: parseNum(s3.arch_h1_appui) || undefined,
+              H2: parseNum(s3.arch_h2_total) || undefined,
+            }}
+          />
           <Text style={styles.helperText}>
             🌗 Arc surbaissé — Arc applati (flèche {"<"} L/2).
             Flèche f = H2 - H1.
@@ -1844,6 +1861,15 @@ function Step3Cotes({
       {/* 🆕 V2 — Angle 90° */}
       {shape === "angle_90" && (
         <>
+          <ShapeSchemaV2
+            shape="angle_90"
+            values={{
+              L: parseNum(s3.bay_width) || undefined,
+              H: parseNum(s3.bay_height) || undefined,
+              cutW: parseNum(s3.angle90_cut_width) || undefined,
+              cutH: parseNum(s3.angle90_cut_height) || undefined,
+            }}
+          />
           <Text style={styles.helperText}>
             ◣ Angle 90° — Châssis avec un coin coupé.
             Indiquez les dimensions du cadre + dimensions du pan coupé.

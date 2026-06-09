@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
+import { useRouter } from "expo-router";
 import { api, clearToken, getToken, onSubscriptionState, saveToken } from "@/src/services/api";
 import { registerPushTokenWithBackend } from "@/src/services/notifications";
 import PaywallScreen from "@/src/components/PaywallScreen";
@@ -68,6 +69,7 @@ type AuthCtx = {
 const Ctx = createContext<AuthCtx | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [company, setCompany] = useState<CompanyProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -179,9 +181,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    await clearToken();
+    // 1) On purge le token AVANT de reset les states pour qu'aucune
+    //    requête en vol ne réussisse avec l'ancienne identité.
+    try {
+      await clearToken();
+    } catch {
+      /* ignore — secureRemove peut échouer en mode privé navigateur */
+    }
+    // 2) Reset complet de l'état d'auth (user, company, paywall lock)
     setUser(null);
     setCompany(null);
+    setLock({ expired: false });
+    // 3) On revient FORCÉMENT à l'écran de connexion. `replace` détruit
+    //    la pile de navigation : ainsi les écrans protégés (dashboard,
+    //    chantier/[id]…) qui étaient encore montés sont démontés et ne
+    //    relanceront plus aucun fetch authentifié.
+    try {
+      router.replace("/");
+    } catch {
+      /* router peut ne pas être prêt en SSR — sans danger */
+    }
   };
 
   const artisanMode = !!company?.artisan_mode;
