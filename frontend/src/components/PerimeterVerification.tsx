@@ -1,16 +1,12 @@
 /**
- * PerimeterVerification — Champ de vérification du périmètre.
+ * ArcLengthVerification — Champ de vérification de la longueur de l'arc.
  *
- * Le mesureur fait le tour complet de la baie avec son mètre ruban et
- * saisit la valeur mesurée. Le composant compare avec la valeur calculée
- * et affiche un état visuel :
+ * Le mesureur suit la courbe de l'arc avec son mètre ruban et saisit la
+ * valeur mesurée. Le composant compare avec la valeur calculée et affiche
+ * un état visuel :
  *   - ⏳ "À VÉRIFIER" tant que rien n'est saisi
  *   - ✓ "VÉRIFIÉ" (vert) si la valeur est dans la tolérance
  *   - ✗ "ÉCART" (rouge) si la valeur est hors tolérance
- *
- * S'utilise comme un champ de saisie : c'est l'écran parent qui détient
- * la valeur saisie ainsi que la valeur calculée (recalculée à chaque
- * frappe via `useMemo`).
  */
 
 import React from "react";
@@ -26,7 +22,7 @@ import { colors } from "@/src/theme";
 import { formatPerimeter, withinTolerance } from "@/src/utils/perimeter";
 
 type Props = {
-  /** Périmètre calculé par l'app (mm). `null` si les cotes sont incomplètes. */
+  /** Longueur de l'arc calculée par l'app (mm). `null` si cotes incomplètes. */
   computed: number | null;
   /** Valeur mesurée saisie par le mesureur (texte brut, peut être vide). */
   measuredValue: string;
@@ -36,7 +32,7 @@ type Props = {
   testID?: string;
 };
 
-export default function PerimeterVerification({
+export default function ArcLengthVerification({
   computed,
   measuredValue,
   onChangeMeasured,
@@ -62,14 +58,15 @@ export default function PerimeterVerification({
   return (
     <View style={styles.wrap}>
       <View style={styles.header}>
-        <Ionicons name="resize-outline" size={16} color={colors.primary} />
-        <Text style={styles.title}>VÉRIFICATION PÉRIMÈTRE</Text>
+        <Ionicons name="analytics-outline" size={16} color={colors.primary} />
+        <Text style={styles.title}>VÉRIFICATION DE L&apos;ARC</Text>
       </View>
 
       <Text style={styles.hint}>
-        Avec votre mètre ruban, faites le tour complet de la baie (jambages +
-        base + sommet/arc) puis saisissez votre mesure ci-dessous. L&apos;application
-        compare avec la valeur géométrique calculée.
+        Suivez la courbe de l&apos;arc avec votre mètre ruban (uniquement la
+        partie courbe, pas les jambages ni la base) puis saisissez votre
+        mesure ci-dessous. L&apos;application compare avec la valeur
+        géométrique calculée.
       </Text>
 
       <View style={styles.row}>
@@ -137,7 +134,7 @@ export default function PerimeterVerification({
       )}
       {!hasComputed && (
         <Text style={styles.notReady}>
-          ⓘ Renseignez d&apos;abord les cotes ci-dessus pour calculer le périmètre.
+          ⓘ Renseignez d&apos;abord les cotes ci-dessus pour calculer la longueur de l&apos;arc.
         </Text>
       )}
     </View>

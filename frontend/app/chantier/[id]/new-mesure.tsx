@@ -44,11 +44,10 @@ import { colors } from "@/src/theme";
 import { ShapeIcon } from "@/src/components/ShapeIcon";
 import { MeasureGuide } from "@/src/components/MeasureGuide";
 import ShapeSchemaV2 from "@/src/components/ShapeSchemaV2";
-import PerimeterVerification from "@/src/components/PerimeterVerification";
+import ArcLengthVerification from "@/src/components/PerimeterVerification";
 import {
-  perimeterPleinCintre,
-  perimeterArcSurbaisse,
-  perimeterAngle90,
+  arcLengthPleinCintre,
+  arcLengthArcSurbaisse,
 } from "@/src/utils/perimeter";
 import { useResponsive } from "@/src/utils/responsive";
 
@@ -475,7 +474,7 @@ export default function NewMesureWizard() {
               angle90_h_right: toStr(
                 opts.angle90_h_right_mm || m.height_right || m.bay_height,
               ),
-              perimeter_measured: toStr(opts.perimeter_measured_mm),
+              perimeter_measured: toStr(opts.arc_measured_mm || opts.perimeter_measured_mm),
               bow_panel_count: opts.bow_panel_count === 5 ? "5" : (opts.bow_panel_count === 3 ? "3" : ""),
               bow_depth_projection: toStr(opts.bow_depth_projection_mm),
               pent_side_height: toStr(opts.pent_side_height_mm),
@@ -545,47 +544,28 @@ export default function NewMesureWizard() {
     return brut - 1000;
   }, [s3.has_1m_level_mark, s3.trait_1m_brut_mm]);
 
-  // 🆕 V2 — Périmètre calculé pour les formes complexes. Réagit en
+  // 🆕 V3 — Longueur de l'arc calculée pour les formes arc. Réagit en
   //    temps réel aux changements de cotes, permet au mesureur de
   //    vérifier sa mesure ruban contre la valeur géométrique.
+  //    NOTE : on ne calcule PLUS de périmètre total pour angle_90
+  //    (cahier des charges 09/06/2026).
   const computedPerimeter = useMemo(() => {
     if (shape === "plein_cintre") {
-      return perimeterPleinCintre(
-        parseNum(s3.bay_width),
-        parseNum(s3.arch_h1_appui),
-      );
+      return arcLengthPleinCintre(parseNum(s3.bay_width));
     }
     if (shape === "arc_surbaisse") {
-      return perimeterArcSurbaisse(
+      return arcLengthArcSurbaisse(
         parseNum(s3.bay_width),
         parseNum(s3.arch_h1_appui),
         parseNum(s3.arch_h2_total),
-      );
-    }
-    if (shape === "angle_90") {
-      const Hleft = parseNum(s3.angle90_h_left) || parseNum(s3.bay_height);
-      const Hright = parseNum(s3.angle90_h_right) || parseNum(s3.bay_height);
-      return perimeterAngle90(
-        parseNum(s3.bay_width),
-        Hleft,
-        Hright,
-        parseNum(s3.angle90_cut_width),
-        parseNum(s3.angle90_cut_height),
-        s3.angle90_side,
       );
     }
     return null;
   }, [
     shape,
     s3.bay_width,
-    s3.bay_height,
     s3.arch_h1_appui,
     s3.arch_h2_total,
-    s3.angle90_cut_width,
-    s3.angle90_cut_height,
-    s3.angle90_h_left,
-    s3.angle90_h_right,
-    s3.angle90_side,
   ]);
 
   // ────── Validations ────────────────────────────────────────────────
@@ -978,19 +958,15 @@ export default function NewMesureWizard() {
       opts.angle90_h_left_mm = parseNum(s3.angle90_h_left);
       opts.angle90_h_right_mm = parseNum(s3.angle90_h_right);
     }
-    // 🆕 V2 — Périmètre (calculé + mesuré au ruban) pour vérification technique.
-    //    Le `computedPerimeter` est issu du même useMemo qui alimente le
-    //    composant <PerimeterVerification> ; on persiste les deux valeurs
-    //    pour l'audit côté exports / vérification technicien.
-    if (
-      shape === "plein_cintre" ||
-      shape === "arc_surbaisse" ||
-      shape === "angle_90"
-    ) {
+    // 🆕 V3 — Longueur de l'arc (calculée + mesurée au ruban) pour
+    //    vérification technique sur les formes arc UNIQUEMENT.
+    //    L'angle_90 n'a plus de vérification périmètre (cahier des
+    //    charges 09/06/2026).
+    if (shape === "plein_cintre" || shape === "arc_surbaisse") {
       const measured = parseNum(s3.perimeter_measured);
-      if (measured !== null) opts.perimeter_measured_mm = measured;
+      if (measured !== null) opts.arc_measured_mm = measured;
       if (computedPerimeter !== null) {
-        opts.perimeter_computed_mm = computedPerimeter;
+        opts.arc_computed_mm = computedPerimeter;
       }
     }
     if (shape === "bow_window") {
@@ -1931,7 +1907,7 @@ function Step3Cotes({
           <Text style={styles.helperText}>
             ✓ Règle : H2 = H1 + L/2 (le sommet du demi-cercle dépasse l&apos;appui de L/2).
           </Text>
-          <PerimeterVerification
+          <ArcLengthVerification
             testID="input-perimeter-plein-cintre"
             computed={computedPerimeter}
             measuredValue={s3.perimeter_measured}
@@ -1964,7 +1940,7 @@ function Step3Cotes({
           <Text style={styles.helperText}>
             ✓ Règle : H2 doit être {">"} H1 et la montée (H2 − H1) doit être {"<"} L/2.
           </Text>
-          <PerimeterVerification
+          <ArcLengthVerification
             testID="input-perimeter-arc-surbaisse"
             computed={computedPerimeter}
             measuredValue={s3.perimeter_measured}
@@ -2051,13 +2027,6 @@ function Step3Cotes({
             ✓ Règle : Le pan coupé doit être {"<"} dimensions du cadre.
             L&apos;angle est généralement de 135° (oblique à 45°), mais ajustable selon votre mesure.
           </Text>
-
-          <PerimeterVerification
-            testID="input-perimeter-angle-90"
-            computed={computedPerimeter}
-            measuredValue={s3.perimeter_measured}
-            onChangeMeasured={(v) => setField("perimeter_measured", v.replace(",", "."))}
-          />
         </>
       )}
 

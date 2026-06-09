@@ -1,21 +1,59 @@
 /**
- * perimeter.ts — Calcul du périmètre total des formes complexes.
+ * perimeter.ts — Calculs géométriques pour la vérification au ruban.
  *
- * Le but : permettre au mesureur de vérifier sur le terrain avec son mètre
- * ruban en faisant le tour COMPLET de la baie. La valeur calculée par
- * l'application sert de point de comparaison.
+ * SPEC v3 (cahier des charges 09/06/2026) :
+ *   - Pour les ARCS (plein cintre + arc surbaissé) : on calcule UNIQUEMENT
+ *     la **longueur de l'arc** (partie courbe), pas le périmètre total.
+ *     Le mesureur fait suivre son ruban sur la courbe pour comparer.
+ *   - Pour les autres formes : pas de vérification périmètre dans cette
+ *     phase (à voir plus tard).
  *
- * Toutes les fonctions renvoient un périmètre en millimètres (mm), arrondi
- * à l'entier le plus proche. Renvoient `null` si les données sont
- * incomplètes ou incohérentes.
+ * Toutes les fonctions renvoient un résultat en mm, arrondi à l'entier le
+ * plus proche. Renvoient `null` si les données sont incomplètes ou
+ * incohérentes.
  */
 
 /**
+ * Longueur de l'arc d'un plein cintre — demi-cercle parfait de diamètre L.
+ *   arc = π × L / 2
+ */
+export function arcLengthPleinCintre(
+  L: number | null | undefined,
+): number | null {
+  if (!L || L <= 0) return null;
+  return Math.round(Math.PI * (L / 2));
+}
+
+/**
+ * Longueur de l'arc d'un arc surbaissé — segment de cercle.
+ *   - corde = L
+ *   - flèche f = H2 - H1
+ *   - rayon R = (L² + 4f²) / (8f)
+ *   - angle au centre θ = 2 × asin(L / (2R))
+ *   - longueur de l'arc = R × θ
+ */
+export function arcLengthArcSurbaisse(
+  L: number | null | undefined,
+  H1: number | null | undefined,
+  H2: number | null | undefined,
+): number | null {
+  if (!L || !H1 || !H2 || L <= 0 || H1 <= 0 || H2 <= 0) return null;
+  const fleche = H2 - H1;
+  if (fleche <= 0 || fleche >= L / 2) return null;
+  const R = (L * L + 4 * fleche * fleche) / (8 * fleche);
+  const theta = 2 * Math.asin(L / (2 * R));
+  return Math.round(R * theta);
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Anciennes fonctions périmètre — conservées pour compatibilité au cas où
+// d'autres écrans les utiliseraient, mais NE SONT PLUS UTILISÉES dans le
+// wizard de saisie. À supprimer si confirmation absence d'usage.
+// ─────────────────────────────────────────────────────────────────────────
+
+/**
  * Plein cintre — Demi-cercle parfait au sommet (R = L/2).
- *
- * Contour total = 2 × H1 (les deux jambages verticaux)
- *               + L (la base horizontale)
- *               + π × L / 2 (le demi-cercle au sommet)
+ * Contour total = 2 × H1 + L + π × L / 2
  */
 export function perimeterPleinCintre(
   L: number | null | undefined,
@@ -28,16 +66,7 @@ export function perimeterPleinCintre(
 
 /**
  * Arc surbaissé — Arc applati (flèche f < L/2).
- *
- * Géométrie : segment de cercle de corde L et flèche f.
- *   - Rayon R = (L² + 4f²) / (8f)
- *   - Angle au centre θ = 2 × asin(L / (2R))
- *   - Longueur de l'arc = R × θ
- *
  * Contour total = 2 × H1 + L + longueur de l'arc.
- *
- * H2 = hauteur totale (au sommet de l'arc).
- * f = H2 - H1.
  */
 export function perimeterArcSurbaisse(
   L: number | null | undefined,
