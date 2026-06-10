@@ -22,8 +22,8 @@ export function Step2Shape({
       <Text style={styles.h1}>SÉLECTION DE LA MENUISERIE</Text>
       <Text style={styles.h2}>Étape 2/3 · Choisissez la forme exacte du châssis</Text>
       <Text style={styles.helperText}>
-        Le type d'ouvrant (Fixe, Ouvrant, Oscillo-battant, Coulissant) sera défini en atelier via
-        le libellé / référence saisi à l'étape suivante.
+        Le type d&apos;ouvrant (Fixe, Ouvrant, Oscillo-battant, Coulissant) sera défini en atelier via
+        le libellé / référence saisi à l&apos;étape suivante.
       </Text>
       <View style={{ gap: 10, marginTop: 16 }}>
         {SHAPES.map((s) => {

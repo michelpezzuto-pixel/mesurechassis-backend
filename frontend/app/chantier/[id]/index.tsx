@@ -962,6 +962,13 @@ export default function ChantierDetail() {
           // depuis options.shape pour afficher le bon label + icône.
           const trueShape = blockTypeToShape(item.block_type, item.options);
           const trueLabel = shapeMeta[trueShape]?.label ?? block.label;
+          // 🆕 V3 — Miniature dans la liste compacte (cahier juin 2026) :
+          //   Priorité 1 : photo prise au moment de la mesure (item.photo_url)
+          //   Priorité 2 : 1ère photo "site anti-litige" du chantier (fallback)
+          //   Priorité 3 : schéma SVG par forme (fallback final)
+          const sitePhotoUri =
+            (chantier?.site_photos ?? []).find((p) => p?.uri)?.uri ?? null;
+          const thumbUri = item.photo_url || sitePhotoUri;
           // 👁️ La carte est cliquable PARTOUT (Admin en consultation, Commercial
           // en édition, Tech en vérification). Le mode dépend du rôle / statut.
           //   - canEditMesures = true  → on ouvre en édition
@@ -998,8 +1005,8 @@ export default function ChantierDetail() {
               activeOpacity={0.75}
             >
               <View style={styles.mesureRow}>
-                {item.photo_url ? (
-                  <Image source={{ uri: item.photo_url }} style={styles.mesureThumb} />
+                {thumbUri ? (
+                  <Image source={{ uri: thumbUri }} style={styles.mesureThumb} />
                 ) : (
                   <View style={styles.mesureThumbPlaceholder}>
                     <ShapeIcon

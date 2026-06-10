@@ -27,7 +27,6 @@ Variables d'environnement requises (à ajouter sur Railway) :
 """
 from __future__ import annotations
 
-import json
 import logging
 import os
 from datetime import datetime, timezone
@@ -50,6 +49,13 @@ STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "").strip()
 # .strip() : protection contre les espaces / sauts de ligne invisibles
 # qui auraient pu être copiés par erreur dans la variable d'environnement.
 STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET", "").strip()
+# 🆕 V3 — Support multi-secrets (séparés par virgule).
+#   Pratique quand on a 2 endpoints (ex. dev / prod) ou pendant une rotation
+#   de secret côté Stripe (on a temporairement l'ancien + le nouveau actifs).
+# Chaque secret est trim() puis filtré (vides ignorés).
+STRIPE_WEBHOOK_SECRETS = [
+    s.strip() for s in (STRIPE_WEBHOOK_SECRET or "").split(",") if s.strip()
+]
 APP_DEEP_LINK_SCHEME = os.getenv("APP_DEEP_LINK_SCHEME", "mesurechassis")
 APP_WEB_RETURN_URL = os.getenv("APP_WEB_RETURN_URL", "https://mesurechassis.com")
 TRIAL_PERIOD_DAYS = 90  # 3 mois d'essai gratuit
@@ -322,48 +328,80 @@ async def stripe_webhook(
     ⚠️ Signature vérifiée via STRIPE_WEBHOOK_SECRET — toute requête non
     signée est rejetée pour éviter les manipulations de statut.
 
-    NB : on vérifie la signature puis on parse le payload en `json.loads`
-    (vrai dict Python). Cela évite les quirks de StripeObject (KeyError
-    sur `.get(...)` dans certaines versions du SDK Stripe).
+    🆕 V3 — Support multi-secrets (STRIPE_WEBHOOK_SECRETS via virgule).
+    Utilise `stripe.Webhook.construct_event()` (API recommandée Stripe)
+    qui combine vérification + parsing en un seul appel atomique.
     """
-    if not STRIPE_WEBHOOK_SECRET:
+    if not STRIPE_WEBHOOK_SECRETS:
         logger.error("Webhook reçu mais STRIPE_WEBHOOK_SECRET non configuré")
         raise HTTPException(503, "Webhook non configuré")
 
-    # 🩺 DIAGNOSTIC : log la signature reçue + le secret utilisé (extraits)
-    secret_for_log = STRIPE_WEBHOOK_SECRET
-    if len(secret_for_log) > 14:
-        secret_preview = f"{secret_for_log[:10]}...{secret_for_log[-4:]} ({len(secret_for_log)} chars)"
-    else:
-        secret_preview = f"INVALID_SHORT ({len(secret_for_log)} chars)"
+    # 🩺 DIAGNOSTIC : log les secrets disponibles (preview) + signature reçue
+    secrets_preview = ", ".join(
+        f"{s[:10]}...{s[-4:]} ({len(s)}ch)" if len(s) > 14 else f"INVALID({len(s)}ch)"
+        for s in STRIPE_WEBHOOK_SECRETS
+    )
     sig_preview = (stripe_signature or "")[:40] + "..." if stripe_signature else "MISSING"
-    logger.info("🩺 Webhook diag — secret=%s | sig-header=%s", secret_preview, sig_preview)
+    logger.info(
+        "🩺 Webhook diag — %d secret(s)=[%s] | sig-header=%s",
+        len(STRIPE_WEBHOOK_SECRETS),
+        secrets_preview,
+        sig_preview,
+    )
+
+    if not stripe_signature:
+        raise HTTPException(400, "Header Stripe-Signature manquant")
 
     payload = await request.body()
     logger.info("🩺 Webhook diag — payload bytes=%d", len(payload))
-    try:
-        # Vérification de la signature uniquement (sans parsing en StripeObject)
-        stripe.WebhookSignature.verify_header(
-            payload=payload,
-            header=stripe_signature,
-            secret=STRIPE_WEBHOOK_SECRET,
+
+    # 🆕 Boucle sur tous les secrets configurés — Stripe permet d'avoir
+    # plusieurs endpoints avec des secrets différents (dev / prod / rotation).
+    # On accepte si AU MOINS UN secret valide.
+    event = None
+    last_err: Optional[Exception] = None
+    for secret in STRIPE_WEBHOOK_SECRETS:
+        try:
+            event = stripe.Webhook.construct_event(
+                payload=payload,
+                sig_header=stripe_signature,
+                secret=secret,
+            )
+            logger.info(
+                "🩺 Webhook signature OK avec secret %s...%s",
+                secret[:10],
+                secret[-4:],
+            )
+            break
+        except stripe.SignatureVerificationError as e:
+            last_err = e
+            continue
+        except ValueError as e:
+            # Payload non-JSON ou malformé
+            logger.exception("Payload webhook invalide")
+            raise HTTPException(400, f"Payload invalide : {e}")
+        except Exception as e:
+            last_err = e
+            continue
+
+    if event is None:
+        logger.warning(
+            "Webhook : aucune signature valide trouvée (testé %d secret(s)) — dernier erreur=%s",
+            len(STRIPE_WEBHOOK_SECRETS),
+            type(last_err).__name__ if last_err else "?",
         )
-    except stripe.SignatureVerificationError:
-        logger.warning("Webhook : signature Stripe invalide")
         raise HTTPException(400, "Signature invalide")
-    except Exception as e:
-        logger.exception("Erreur vérification signature webhook Stripe")
-        raise HTTPException(400, f"Signature invalide : {e}")
 
-    # Parse en vrai dict Python — pas de StripeObject ici, donc .get() OK
-    try:
-        event = json.loads(payload.decode("utf-8"))
-    except Exception as e:
-        logger.exception("Payload webhook non-JSON")
-        raise HTTPException(400, f"Payload invalide : {e}")
+    # `event` est un StripeObject — on le convertit en dict pur pour
+    # éviter les quirks (.get(...) fait des appels API sur certains champs).
+    event_dict = (
+        event.to_dict_recursive()
+        if hasattr(event, "to_dict_recursive")
+        else dict(event)
+    )
 
-    event_type = event.get("type")
-    obj = (event.get("data") or {}).get("object") or {}
+    event_type = event_dict.get("type")
+    obj = (event_dict.get("data") or {}).get("object") or {}
     logger.info("Stripe webhook reçu : %s", event_type)
 
     try:

@@ -234,8 +234,8 @@ export function Step1Config({
         onChange={(v) => setField("has_horizontal_cut", v)}
       />
       <Text style={styles.helpHint}>
-        💡 L'option « Allège » est désormais saisie par ouverture
-        (étape « Cotes »), car elle peut varier d'une baie à l'autre.
+        💡 L&apos;option « Allège » est désormais saisie par ouverture
+        (étape « Cotes »), car elle peut varier d&apos;une baie à l&apos;autre.
       </Text>
     </View>
   );
