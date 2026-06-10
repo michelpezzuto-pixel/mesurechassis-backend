@@ -185,34 +185,34 @@ export default function AdminStats() {
           />
         }
       >
-        <Text style={styles.section}>VUE D&apos;ENSEMBLE</Text>
+        <Text style={styles.section}>{t("screens.stats.overview")}</Text>
         <View style={styles.row}>
           <View style={[styles.card, styles.heroCard]}>
             <Text style={styles.heroValue} testID="stat-total-chantiers">
               {data.total_chantiers}
             </Text>
-            <Text style={styles.heroLabel}>Chantiers totaux</Text>
+            <Text style={styles.heroLabel}>{t("screens.stats.totalProjects")}</Text>
           </View>
           <View style={[styles.card, styles.heroCard]}>
             <Text style={[styles.heroValue, { color: colors.success }]} testID="stat-closure-rate">
               {data.closure_rate}%
             </Text>
-            <Text style={styles.heroLabel}>Taux de clôture</Text>
+            <Text style={styles.heroLabel}>{t("screens.stats.closureRate")}</Text>
           </View>
         </View>
 
         <View style={styles.row}>
           <View style={[styles.card, styles.heroCard]}>
             <Text style={styles.heroValue}>{data.total_mesures}</Text>
-            <Text style={styles.heroLabel}>Ouvertures mesurées</Text>
+            <Text style={styles.heroLabel}>{t("screens.stats.totalOpenings")}</Text>
           </View>
           <View style={[styles.card, styles.heroCard]}>
             <Text style={[styles.heroValue, { color: colors.alert }]}>{data.total_alerts}</Text>
-            <Text style={styles.heroLabel}>Alertes détectées</Text>
+            <Text style={styles.heroLabel}>{t("screens.stats.totalAlerts")}</Text>
           </View>
         </View>
 
-        <Text style={styles.section}>RÉPARTITION PAR STATUT</Text>
+        <Text style={styles.section}>{t("screens.stats.byStatusSection")}</Text>
         {/* Fusion des statuts internes redondants (rétrocompat).
             "technique_a_valider"+"a_verifier" → "À vérifier"
             "en_commande"+"en_fabrication"   → "En fabrication"
@@ -231,12 +231,17 @@ export default function AdminStats() {
               bg: "#333",
               stage: "measure" as const,
             };
-            const existing = groupedByLabel.get(meta.label);
+            // 🌍 i18n — On utilise la version traduite du statut comme clé
+            // de groupement pour fusionner correctement les statuts
+            // dont la traduction est identique (devis_a_faire + a_mesurer,
+            // technique_a_valider + a_verifier, etc.).
+            const translatedLabel = t(`status.${key}`, { defaultValue: meta.label });
+            const existing = groupedByLabel.get(translatedLabel);
             if (existing) {
               existing.count += count as number;
             } else {
-              groupedByLabel.set(meta.label, {
-                label: meta.label,
+              groupedByLabel.set(translatedLabel, {
+                label: translatedLabel,
                 color: meta.color,
                 count: count as number,
                 firstKey: key,
@@ -272,18 +277,18 @@ export default function AdminStats() {
           });
         })()}
 
-        <Text style={styles.section}>PERFORMANCE PAR TECHNICIEN</Text>
+        <Text style={styles.section}>{t("screens.stats.byTechSection")}</Text>
         {data.by_technician.length === 0 && (
-          <Text style={styles.empty}>Aucune mesure encore enregistrée.</Text>
+          <Text style={styles.empty}>{t("screens.stats.noMeasureYet")}</Text>
         )}
-        {data.by_technician.map((t) => (
-          <View key={t.user_id} style={styles.techCard} testID={`tech-row-${t.user_id}`}>
+        {data.by_technician.map((tech) => (
+          <View key={tech.user_id} style={styles.techCard} testID={`tech-row-${tech.user_id}`}>
             <View style={styles.techHeader}>
               <Ionicons
                 name={
-                  t.role === "admin"
+                  tech.role === "admin"
                     ? "shield-checkmark"
-                    : t.role === "commercial"
+                    : tech.role === "commercial"
                     ? "briefcase"
                     : "construct"
                 }
@@ -291,20 +296,20 @@ export default function AdminStats() {
                 color={colors.primary}
               />
               <View style={{ flex: 1 }}>
-                <Text style={styles.techName}>{t.name}</Text>
-                <Text style={styles.techRole}>{t.role}</Text>
+                <Text style={styles.techName}>{tech.name}</Text>
+                <Text style={styles.techRole}>{tech.role}</Text>
               </View>
             </View>
             <View style={styles.techStats}>
               <View style={styles.techPill}>
-                <Text style={styles.techPillValue}>{t.mesures}</Text>
-                <Text style={styles.techPillLabel}>mesures</Text>
+                <Text style={styles.techPillValue}>{tech.mesures}</Text>
+                <Text style={styles.techPillLabel}>{t("screens.stats.measuresUnit")}</Text>
               </View>
-              <View style={[styles.techPill, t.alerts > 0 && { borderColor: colors.alert }]}>
-                <Text style={[styles.techPillValue, t.alerts > 0 && { color: colors.alert }]}>
-                  {t.alerts}
+              <View style={[styles.techPill, tech.alerts > 0 && { borderColor: colors.alert }]}>
+                <Text style={[styles.techPillValue, tech.alerts > 0 && { color: colors.alert }]}>
+                  {tech.alerts}
                 </Text>
-                <Text style={styles.techPillLabel}>alertes</Text>
+                <Text style={styles.techPillLabel}>{t("screens.stats.alertsUnit")}</Text>
               </View>
             </View>
           </View>
@@ -313,7 +318,7 @@ export default function AdminStats() {
         {perf && (
           <>
             <View style={{ flexDirection: "row", alignItems: "center", marginTop: 24 }}>
-              <Text style={[styles.section, { flex: 1, marginTop: 0 }]}>PERFORMANCE COMMERCIAUX</Text>
+              <Text style={[styles.section, { flex: 1, marginTop: 0 }]}>{t("screens.stats.byCommercialSection")}</Text>
               <TouchableOpacity
                 testID="export-perf-pdf"
                 onPress={exportPerfPDF}

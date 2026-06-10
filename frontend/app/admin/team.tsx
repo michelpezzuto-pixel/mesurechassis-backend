@@ -287,7 +287,7 @@ export default function TeamAdmin() {
         >
           <View style={styles.modalCard}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>INVITER UN MEMBRE</Text>
+              <Text style={styles.modalTitle}>{t("screens.team.inviteTitle").toUpperCase()}</Text>
               <TouchableOpacity
                 onPress={() => {
                   setModalOpen(false);
@@ -314,7 +314,7 @@ export default function TeamAdmin() {
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator
             >
-              <Text style={styles.label}>Nom complet</Text>
+              <Text style={styles.label}>{t("screens.team.fullName")}</Text>
               <TextInput
                 testID="invite-form-name"
                 value={name}
@@ -325,7 +325,7 @@ export default function TeamAdmin() {
                 style={styles.input}
               />
 
-              <Text style={styles.label}>Email professionnel</Text>
+              <Text style={styles.label}>{t("screens.team.emailField")}</Text>
               <TextInput
                 testID="invite-form-email"
                 value={email}
@@ -376,7 +376,7 @@ export default function TeamAdmin() {
                 par SMS ou WhatsApp.
               </Text>
 
-              <Text style={styles.label}>Rôle</Text>
+              <Text style={styles.label}>{t("screens.team.role")}</Text>
               <View style={styles.roleRow}>
                 {(["commercial", "technician"] as const).map((r) => (
                   <TouchableOpacity
