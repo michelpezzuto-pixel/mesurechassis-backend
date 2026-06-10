@@ -29,6 +29,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import * as Clipboard from "expo-clipboard";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { api } from "@/src/services/api";
 import { colors } from "@/src/theme";
 
@@ -45,6 +46,7 @@ type ReferralStatus = {
 
 export default function ReferralScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [status, setStatus] = useState<ReferralStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
@@ -57,11 +59,11 @@ export default function ReferralScreen() {
       setStatus(data);
       setDraftCode(data.code);
     } catch (e: any) {
-      Alert.alert("Erreur", e?.response?.data?.detail || "Impossible de charger");
+      Alert.alert(t("common.error"), e?.response?.data?.detail || t("screens.referral.errors.loadFail"));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     void load();
@@ -79,12 +81,11 @@ export default function ReferralScreen() {
       });
       setStatus(data);
       setEditing(false);
-      Alert.alert("✅ Code mis à jour", "Votre code de parrainage personnalisé est désormais actif.");
+      Alert.alert("✅", t("screens.referral.copied"));
     } catch (e: any) {
       Alert.alert(
-        "Erreur",
-        e?.response?.data?.detail ||
-          "Impossible de mettre à jour ce code. Essayez-en un autre.",
+        t("common.error"),
+        e?.response?.data?.detail || t("screens.referral.errors.codeTaken"),
       );
     } finally {
       setSubmitting(false);
@@ -94,7 +95,7 @@ export default function ReferralScreen() {
   const handleCopy = async () => {
     if (!status?.code) return;
     await Clipboard.setStringAsync(status.code);
-    Alert.alert("📋 Copié", `Le code « ${status.code} » a été copié dans le presse-papiers.`);
+    Alert.alert("📋", t("screens.referral.copied") + ` (${status.code})`);
   };
 
   const handleShare = async () => {
@@ -131,14 +132,14 @@ export default function ReferralScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Ionicons name="chevron-back" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Mon parrainage</Text>
+        <Text style={styles.headerTitle}>{t("screens.me.referralCard")}</Text>
         <View style={{ width: 40 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         {/* ===== CARTE CODE ===== */}
         <View style={styles.codeCard}>
-          <Text style={styles.codeLabel}>VOTRE CODE PARRAINAGE</Text>
+          <Text style={styles.codeLabel}>{t("screens.referral.myCodeSection")}</Text>
           {editing ? (
             <View style={styles.editBox}>
               <TextInput
@@ -198,7 +199,7 @@ export default function ReferralScreen() {
               testID="copy-code-btn"
             >
               <Ionicons name="copy-outline" size={16} color={colors.textPrimary} />
-              <Text style={styles.actionBtnText}>Copier</Text>
+              <Text style={styles.actionBtnText}>{t("screens.referral.copyBtn")}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleShare}
@@ -206,7 +207,7 @@ export default function ReferralScreen() {
               testID="share-code-btn"
             >
               <Ionicons name="share-social-outline" size={16} color="#000" />
-              <Text style={[styles.actionBtnText, { color: "#000" }]}>Partager</Text>
+              <Text style={[styles.actionBtnText, { color: "#000" }]}>{t("screens.referral.shareBtn")}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -216,7 +217,7 @@ export default function ReferralScreen() {
           <View style={styles.statRow}>
             <View style={styles.statBox}>
               <Text style={styles.statValue}>{status.referrals_used}</Text>
-              <Text style={styles.statLabel}>Filleuls actifs</Text>
+              <Text style={styles.statLabel}>{t("screens.referral.statsActive")}</Text>
             </View>
             <View style={styles.statBox}>
               <Text style={styles.statValue}>{status.referrals_pending}</Text>
@@ -262,7 +263,7 @@ export default function ReferralScreen() {
         <View style={styles.infoCard}>
           <View style={styles.infoHeader}>
             <Ionicons name="gift-outline" size={20} color={colors.primary} />
-            <Text style={styles.infoTitle}>COMMENT ÇA MARCHE ?</Text>
+            <Text style={styles.infoTitle}>{t("screens.referral.howItWorks")}</Text>
           </View>
           <Text style={styles.infoText}>
             • Partagez votre code à un menuisier{"\n"}

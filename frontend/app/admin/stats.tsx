@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { api, buildAuthHeaders } from "@/src/services/api";
 import { useResponsive } from "@/src/utils/responsive";
 import { useAuth } from "@/src/context/AuthContext";
@@ -38,6 +39,7 @@ type Commercials = {
 export default function AdminStats() {
   const { user } = useAuth();
   const router = useRouter();
+  const { t } = useTranslation();
   const { isTablet } = useResponsive();
   const [data, setData] = useState<Stats | null>(null);
   const [perf, setPerf] = useState<Commercials | null>(null);
@@ -161,7 +163,7 @@ export default function AdminStats() {
         <TouchableOpacity onPress={() => router.back()} hitSlop={10}>
           <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={styles.topTitle}>STATISTIQUES</Text>
+        <Text style={styles.topTitle}>{t("screens.stats.title").toUpperCase()}</Text>
         <View style={{ width: 22 }} />
       </View>
       <ScrollView

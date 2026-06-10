@@ -43,6 +43,7 @@ const ROLE_COLOR: Record<string, string> = {
 export default function TeamAdmin() {
   const { user, company } = useAuth();
   const router = useRouter();
+  const { t } = useTranslation();
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -176,7 +177,7 @@ export default function TeamAdmin() {
         <TouchableOpacity onPress={() => router.back()} hitSlop={10}>
           <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={styles.topTitle}>ÉQUIPE</Text>
+        <Text style={styles.topTitle}>{t("screens.team.title").toUpperCase()}</Text>
         <View style={{ width: 22 }} />
       </View>
 
@@ -188,10 +189,10 @@ export default function TeamAdmin() {
           style={styles.btnPrimary}
         >
           <Ionicons name="person-add" size={20} color="#000" />
-          <Text style={styles.btnPrimaryText}>INVITER UN MEMBRE</Text>
+          <Text style={styles.btnPrimaryText}>{t("screens.team.inviteBtn").toUpperCase()}</Text>
         </TouchableOpacity>
 
-        <Text style={styles.sectionTitle}>MEMBRES ({members.length})</Text>
+        <Text style={styles.sectionTitle}>{`${t("screens.team.title").toUpperCase()} (${members.length})`}</Text>
 
         {members.map((m) => {
           const isPending = (m.status || "active") === "pending_verification";

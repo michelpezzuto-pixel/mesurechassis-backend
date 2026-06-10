@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useFocusEffect } from "expo-router";
+import { useTranslation } from "react-i18next";
 import * as WebBrowser from "expo-web-browser";
 import { api } from "@/src/services/api";
 import { colors } from "@/src/theme";
@@ -98,6 +99,7 @@ const PLANS: {
 
 export default function SubscriptionScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [status, setStatus] = useState<SubscriptionStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [subscribing, setSubscribing] = useState<PlanKey | null>(null);
@@ -235,7 +237,7 @@ export default function SubscriptionScreen() {
         >
           <Ionicons name="chevron-back" size={26} color={colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Mon abonnement</Text>
+        <Text style={styles.headerTitle}>{t("screens.subscription.title")}</Text>
         <View style={{ width: 26 }} />
       </View>
 

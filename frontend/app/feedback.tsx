@@ -28,6 +28,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, usePathname, useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { api } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { colors } from "@/src/theme";
@@ -67,6 +68,7 @@ function formatDate(iso: string): string {
 export default function FeedbackPage() {
   const router = useRouter();
   const pathname = usePathname();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const isAdmin = user?.role === "admin";
 
@@ -205,11 +207,11 @@ export default function FeedbackPage() {
           <Ionicons name="chevron-back" size={22} color={colors.textPrimary} />
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
-          <Text style={styles.title}>Feedback</Text>
+          <Text style={styles.title}>{t("dashboardExtended.feedback")}</Text>
           <Text style={styles.subtitle}>
             {isAdmin
               ? "Tous les retours de votre société"
-              : "Vos retours envoyés à l'équipe MesureChâssis"}
+              : t("screens.feedback.subtitle")}
           </Text>
         </View>
       </View>

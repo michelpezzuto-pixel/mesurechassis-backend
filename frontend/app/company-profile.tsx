@@ -18,6 +18,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useFocusEffect, useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { api } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { colors } from "@/src/theme";
@@ -70,6 +71,7 @@ function planMeta(plan: Plan | undefined): { label: string; bg: string; fg: stri
 
 export default function CompanyProfile() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { user, company, refreshCompany, signOut } = useAuth();
   const [name, setName] = useState("");
   const [artisanMode, setArtisanMode] = useState(false);
@@ -422,7 +424,7 @@ export default function CompanyProfile() {
           <TouchableOpacity onPress={() => router.back()} hitSlop={10}>
             <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
           </TouchableOpacity>
-          <Text style={styles.topTitle}>PROFIL SOCIÉTÉ</Text>
+          <Text style={styles.topTitle}>{t("screens.companyProfile.title").toUpperCase()}</Text>
           <View style={{ width: 22 }} />
         </View>
 

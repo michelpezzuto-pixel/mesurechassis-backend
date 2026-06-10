@@ -15,6 +15,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { api } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { colors } from "@/src/theme";
@@ -30,6 +31,7 @@ import { colors } from "@/src/theme";
  */
 export default function MyInfoScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { user, refreshUser } = useAuth();
 
   const [name, setName] = useState(user?.name || "");
@@ -54,34 +56,25 @@ export default function MyInfoScreen() {
   const handleSave = async () => {
     // Validations UI
     if (name.trim().length < 2) {
-      Alert.alert("Nom invalide", "Le nom doit faire au moins 2 caractères.");
+      Alert.alert(t("screens.me.alerts.nameInvalid"), t("screens.me.alerts.nameInvalidMsg"));
       return;
     }
     if (email.trim() && (!email.includes("@") || !email.includes("."))) {
-      Alert.alert("Email invalide", "Vérifiez le format de votre email.");
+      Alert.alert(t("screens.me.alerts.emailInvalid"), t("screens.me.alerts.emailInvalidMsg"));
       return;
     }
     if (wantsPasswordChange) {
       if (newPassword.length < 8) {
-        Alert.alert(
-          "Mot de passe trop court",
-          "Le nouveau mot de passe doit faire au moins 8 caractères.",
-        );
+        Alert.alert(t("screens.me.alerts.passwordShort"), t("screens.me.alerts.passwordShortMsg"));
         return;
       }
       if (newPassword !== confirmPassword) {
-        Alert.alert(
-          "Confirmation incorrecte",
-          "Le mot de passe et sa confirmation ne correspondent pas.",
-        );
+        Alert.alert(t("screens.me.alerts.confirmKO"), t("screens.me.alerts.confirmKOMsg"));
         return;
       }
     }
     if (sensitiveChange && !currentPassword) {
-      Alert.alert(
-        "Mot de passe actuel requis",
-        "Pour changer votre email ou mot de passe, vous devez saisir votre mot de passe actuel.",
-      );
+      Alert.alert(t("screens.me.alerts.currentRequired"), t("screens.me.alerts.currentRequiredMsg"));
       return;
     }
 
@@ -102,11 +95,11 @@ export default function MyInfoScreen() {
         // best effort
       }
       Alert.alert(
-        "✅ Informations mises à jour",
+        t("screens.me.alerts.saved"),
         emailChanged
-          ? "Vos informations ont été enregistrées. Pensez à utiliser votre nouvel email pour vos prochaines connexions."
-          : "Vos informations ont été enregistrées avec succès.",
-        [{ text: "OK", onPress: () => router.back() }],
+          ? t("screens.me.alerts.savedEmailChange")
+          : t("screens.me.alerts.savedDefault"),
+        [{ text: t("common.ok"), onPress: () => router.back() }],
       );
       setCurrentPassword("");
       setNewPassword("");
@@ -114,10 +107,8 @@ export default function MyInfoScreen() {
     } catch (e: any) {
       const detail = e?.response?.data?.detail;
       Alert.alert(
-        "Erreur",
-        typeof detail === "string"
-          ? detail
-          : "Impossible de mettre à jour vos informations.",
+        t("common.error"),
+        typeof detail === "string" ? detail : t("screens.me.alerts.errorDefault"),
       );
     } finally {
       setSaving(false);
@@ -138,7 +129,7 @@ export default function MyInfoScreen() {
           >
             <Ionicons name="chevron-back" size={26} color={colors.textPrimary} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Mes informations</Text>
+          <Text style={styles.headerTitle}>{t("screens.me.title")}</Text>
           <View style={{ width: 26 }} />
         </View>
 
@@ -161,9 +152,9 @@ export default function MyInfoScreen() {
               <Ionicons name="gift" size={22} color={colors.primary} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.referralTitle}>Mon parrainage</Text>
+              <Text style={styles.referralTitle}>{t("screens.me.referralCard")}</Text>
               <Text style={styles.referralDesc}>
-                Invitez un menuisier — gagnez 2 mois offerts par filleul actif
+                {t("screens.me.referralDesc")}
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={22} color={colors.textSecondary} />
@@ -171,25 +162,25 @@ export default function MyInfoScreen() {
 
           {/* ===== IDENTITÉ ===== */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Identité</Text>
+            <Text style={styles.sectionTitle}>{t("screens.me.identity")}</Text>
 
-            <Text style={styles.label}>Nom affiché</Text>
+            <Text style={styles.label}>{t("screens.me.displayName")}</Text>
             <TextInput
               style={styles.input}
               value={name}
               onChangeText={setName}
-              placeholder="Votre nom"
+              placeholder={t("screens.me.namePlaceholder")}
               placeholderTextColor={colors.textSecondary}
               autoCapitalize="words"
               maxLength={80}
             />
 
-            <Text style={styles.label}>Téléphone</Text>
+            <Text style={styles.label}>{t("screens.me.phone")}</Text>
             <TextInput
               style={styles.input}
               value={phone}
               onChangeText={setPhone}
-              placeholder="+32 4XX XX XX XX"
+              placeholder={t("screens.me.phonePlaceholder")}
               placeholderTextColor={colors.textSecondary}
               keyboardType="phone-pad"
               maxLength={30}
@@ -198,12 +189,12 @@ export default function MyInfoScreen() {
 
           {/* ===== EMAIL ===== */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Email de connexion</Text>
+            <Text style={styles.sectionTitle}>{t("screens.me.loginEmail")}</Text>
             <TextInput
               style={styles.input}
               value={email}
               onChangeText={setEmail}
-              placeholder="votre@email.com"
+              placeholder={t("screens.me.emailPlaceholder")}
               placeholderTextColor={colors.textSecondary}
               autoCapitalize="none"
               keyboardType="email-address"
@@ -211,25 +202,22 @@ export default function MyInfoScreen() {
             />
             {emailChanged && (
               <Text style={styles.warnText}>
-                ⚠️ Changement d&apos;email — confirmation du mot de passe requise
-                ci-dessous.
+                {t("screens.me.emailChangedWarn")}
               </Text>
             )}
           </View>
 
           {/* ===== MOT DE PASSE ===== */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Mot de passe</Text>
-            <Text style={styles.hint}>
-              Laissez vide pour ne pas changer votre mot de passe actuel.
-            </Text>
+            <Text style={styles.sectionTitle}>{t("screens.me.password")}</Text>
+            <Text style={styles.hint}>{t("screens.me.passwordHint")}</Text>
 
-            <Text style={styles.label}>Nouveau mot de passe</Text>
+            <Text style={styles.label}>{t("screens.me.newPassword")}</Text>
             <TextInput
               style={styles.input}
               value={newPassword}
               onChangeText={setNewPassword}
-              placeholder="Min. 8 caractères"
+              placeholder={t("screens.me.newPasswordPlaceholder")}
               placeholderTextColor={colors.textSecondary}
               secureTextEntry
               autoCapitalize="none"
@@ -238,12 +226,12 @@ export default function MyInfoScreen() {
 
             {newPassword.length > 0 && (
               <>
-                <Text style={styles.label}>Confirmer le mot de passe</Text>
+                <Text style={styles.label}>{t("screens.me.confirmPassword")}</Text>
                 <TextInput
                   style={styles.input}
                   value={confirmPassword}
                   onChangeText={setConfirmPassword}
-                  placeholder="Saisissez à nouveau"
+                  placeholder={t("screens.me.confirmPlaceholder")}
                   placeholderTextColor={colors.textSecondary}
                   secureTextEntry
                   autoCapitalize="none"
@@ -257,18 +245,15 @@ export default function MyInfoScreen() {
           {sensitiveChange && (
             <View style={[styles.section, styles.sectionSensitive]}>
               <Text style={styles.sectionTitle}>
-                🔒 Confirmation d&apos;identité
+                {t("screens.me.confirmIdentity")}
               </Text>
-              <Text style={styles.hint}>
-                Pour modifier votre email ou mot de passe, saisissez votre
-                mot de passe actuel.
-              </Text>
-              <Text style={styles.label}>Mot de passe actuel</Text>
+              <Text style={styles.hint}>{t("screens.me.confirmIdentityHint")}</Text>
+              <Text style={styles.label}>{t("screens.me.currentPassword")}</Text>
               <TextInput
                 style={styles.input}
                 value={currentPassword}
                 onChangeText={setCurrentPassword}
-                placeholder="Votre mot de passe actuel"
+                placeholder={t("screens.me.currentPasswordPlaceholder")}
                 placeholderTextColor={colors.textSecondary}
                 secureTextEntry
                 autoCapitalize="none"
@@ -293,9 +278,7 @@ export default function MyInfoScreen() {
                   size={20}
                   color="#000"
                 />
-                <Text style={styles.saveBtnText}>
-                  Enregistrer mes modifications
-                </Text>
+                <Text style={styles.saveBtnText}>{t("screens.me.saveBtn")}</Text>
               </>
             )}
           </TouchableOpacity>
