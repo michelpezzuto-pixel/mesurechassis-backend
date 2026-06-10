@@ -179,8 +179,12 @@ export default function Dashboard() {
 
   useFocusEffect(
     useCallback(() => {
+      // Refetch les chantiers + l'équipe à chaque retour sur le dashboard
+      // (couvre le cas où l'utilisateur vient de créer un commercial ou un
+      // technicien depuis l'écran /admin/team).
       fetchData();
-    }, [fetchData])
+      fetchTeam();
+    }, [fetchData, fetchTeam])
   );
 
   const onRefresh = () => {
@@ -491,15 +495,14 @@ export default function Dashboard() {
         </View>
       ) : (
         <>
-          {/* 🚀 Carte "Premiers pas" — placée hors FlatList pour s'afficher
-             même quand la liste est vide. */}
+          {/* 🚀 Carte "Premiers pas" — disparaît dès que commercial + technicien
+             sont créés (la 3e étape "créer un chantier" est cosmétique). */}
           {user?.role === "admin" &&
             !isArtisanAccount &&
             !onboardingHidden &&
             !(
               teamMembers.some((m) => m.role === "commercial") &&
-              teamMembers.some((m) => m.role === "technician") &&
-              items.length > 0
+              teamMembers.some((m) => m.role === "technician")
             ) && (
               <View
                 style={{
@@ -562,7 +565,20 @@ export default function Dashboard() {
       <TouchableOpacity
         testID="new-chantier-button"
         onPress={() => setNewModal(true)}
-        style={[styles.fab, !canCreate && { display: "none" }]}
+        style={[
+          styles.fab,
+          (!canCreate ||
+            // 🚀 Masque le FAB tant que l'onboarding (Admin Entreprise) n'est
+            // pas finalisé : on force l'utilisateur à passer par la carte
+            // « Premiers pas » pour bien comprendre les étapes.
+            (user?.role === "admin" &&
+              !isArtisanAccount &&
+              !onboardingHidden &&
+              !(
+                teamMembers.some((m) => m.role === "commercial") &&
+                teamMembers.some((m) => m.role === "technician")
+              ))) && { display: "none" },
+        ]}
         activeOpacity={0.85}
       >
         <Ionicons name="add" size={26} color="#000" />

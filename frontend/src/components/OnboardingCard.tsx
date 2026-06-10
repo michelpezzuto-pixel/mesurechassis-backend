@@ -77,17 +77,22 @@ export default function OnboardingCard({
         testID="onboarding-step2-btn"
       />
 
-      {/* Étape 3 — Premier chantier */}
-      <Step
-        done={hasChantier}
-        num="3"
-        title={t("onboarding.step3Title")}
-        desc={t("onboarding.step3Desc")}
-        ctaLabel={t("onboarding.step3Btn")}
-        ctaIcon="add-circle"
-        onPress={onNewChantier}
-        testID="onboarding-step3-btn"
-      />
+      {/* Étape 3 — Premier chantier (optionnel : on retire l'étape 3 du
+           visuel quand commercial+technicien sont déjà créés, car le FAB
+           « + Nouveau chantier » devient alors disponible et la carte se
+           masque automatiquement). */}
+      {!(hasCommercial && hasTech) ? null : (
+        <Step
+          done={hasChantier}
+          num="3"
+          title={t("onboarding.step3Title")}
+          desc={t("onboarding.step3Desc")}
+          ctaLabel={t("onboarding.step3Btn")}
+          ctaIcon="add-circle"
+          onPress={onNewChantier}
+          testID="onboarding-step3-btn"
+        />
+      )}
 
       <TouchableOpacity
         testID="onboarding-hide-link"
