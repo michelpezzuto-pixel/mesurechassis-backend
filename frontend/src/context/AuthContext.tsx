@@ -49,6 +49,7 @@ type AuthCtx = {
     password: string,
     companyName?: string,
     accountType?: "artisan" | "entreprise" | "pro",
+    referralCode?: string,
   ) => Promise<{ verification_link?: string; message?: string }>;
   verifyEmail: (token: string) => Promise<void>;
   acceptInvitation: (
@@ -138,6 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     password: string,
     companyName?: string,
     accountType?: "artisan" | "entreprise" | "pro",
+    referralCode?: string,
   ): Promise<{ verification_link?: string; message?: string }> => {
     const body: Record<string, unknown> = {
       name,
@@ -147,6 +149,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         companyName && companyName.length > 0 ? companyName : name,
     };
     if (accountType) body.account_type = accountType;
+    // 🆕 Build 9 — Code parrainage optionnel
+    if (referralCode && referralCode.trim()) {
+      body.referral_code = referralCode.trim();
+    }
     const res = await api.post("/auth/register", body);
     // Pas de token : compte en pending_verification.
     return {

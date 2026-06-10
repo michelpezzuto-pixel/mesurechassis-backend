@@ -39,6 +39,13 @@ export default function SignIn() {
   const [showResetPassword, setShowResetPassword] = useState(false);
   const [name, setName] = useState("");
   const [companyName, setCompanyName] = useState("");
+  // 🆕 Build 9 — Code parrainage optionnel saisi à l'inscription
+  const [referralCode, setReferralCode] = useState("");
+  const [referralStatus, setReferralStatus] = useState<{
+    valid: boolean;
+    parrain_name?: string;
+    error?: string;
+  } | null>(null);
   // Lot D — type de compte choisi à l'inscription :
   //   "artisan"   : auto-entrepreneur seul, artisan_mode=true automatique
   //   "entreprise": société avec équipe (Admin + commerciaux + techniciens)
@@ -184,6 +191,8 @@ export default function SignIn() {
             ? companyName.trim() || undefined
             : companyName.trim() || undefined,
           accountType,
+          // 🆕 Build 9 — Code parrainage optionnel
+          referralCode.trim() || undefined,
         );
         setPendingVerification({
           email: email.trim(),
@@ -452,6 +461,79 @@ export default function SignIn() {
                     style={styles.input}
                   />
                 </>
+              )}
+
+              {/* 🆕 Build 9 — Code parrainage (optionnel) */}
+              <Text style={styles.label}>Code parrainage (optionnel)</Text>
+              <View style={styles.referralRow}>
+                <TextInput
+                  testID="register-referral-input"
+                  value={referralCode}
+                  onChangeText={(v) => {
+                    const upper = v.toUpperCase().replace(/\s/g, "-");
+                    setReferralCode(upper);
+                    setReferralStatus(null);
+                  }}
+                  placeholder="ex. JEAN-MENUISERIE"
+                  placeholderTextColor={colors.placeholder}
+                  autoCapitalize="characters"
+                  autoCorrect={false}
+                  maxLength={24}
+                  style={[
+                    styles.input,
+                    { flex: 1 },
+                    referralStatus?.valid && {
+                      borderColor: colors.success,
+                      backgroundColor: "#0b2a14",
+                    },
+                    referralStatus && !referralStatus.valid && {
+                      borderColor: colors.anomaly,
+                    },
+                  ]}
+                />
+                <TouchableOpacity
+                  testID="validate-referral-btn"
+                  disabled={!referralCode.trim()}
+                  onPress={async () => {
+                    try {
+                      const { data } = await api.post<{
+                        valid: boolean;
+                        parrain_name?: string;
+                        error?: string;
+                      }>("/referral/validate", { code: referralCode.trim() });
+                      setReferralStatus(data);
+                    } catch {
+                      setReferralStatus({ valid: false, error: "Réseau" });
+                    }
+                  }}
+                  style={[
+                    styles.validateBtn,
+                    !referralCode.trim() && { opacity: 0.4 },
+                  ]}
+                >
+                  <Ionicons
+                    name={
+                      referralStatus?.valid
+                        ? "checkmark-circle"
+                        : "search"
+                    }
+                    size={20}
+                    color={referralStatus?.valid ? colors.success : colors.primary}
+                  />
+                </TouchableOpacity>
+              </View>
+              {referralStatus?.valid && (
+                <Text style={[styles.helpHint, { color: colors.success }]}>
+                  ✓ Code valide — vous serez parrainé par{" "}
+                  <Text style={{ fontWeight: "900" }}>
+                    {referralStatus.parrain_name}
+                  </Text>
+                </Text>
+              )}
+              {referralStatus && !referralStatus.valid && referralCode.trim() && (
+                <Text style={[styles.helpHint, { color: colors.anomaly }]}>
+                  ✗ Code introuvable — vérifiez l&apos;orthographe avec votre parrain
+                </Text>
               )}
 
               <View style={styles.infoBox}>
@@ -1158,5 +1240,27 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "700",
     marginTop: 4,
+  },
+  // 🆕 Build 9 — Styles du champ "Code parrainage" à l'inscription
+  referralRow: {
+    flexDirection: "row",
+    gap: 8,
+    alignItems: "center",
+  },
+  validateBtn: {
+    width: 48,
+    height: 48,
+    borderRadius: 10,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  helpHint: {
+    fontSize: 12,
+    marginTop: 6,
+    fontWeight: "600",
+    lineHeight: 16,
   },
 });

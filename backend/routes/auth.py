@@ -262,6 +262,13 @@ async def register(payload: dict, request: Request):
             "created_at": datetime.now(timezone.utc).isoformat(),
         }
     await db.companies.insert_one(company_doc)
+    # 🆕 Build 9 — Lier au parrain si un code valide est fourni à l'inscription
+    try:
+        from routes.referral import link_referral_at_signup
+        await link_referral_at_signup(company_id, payload.get("referral_code"))
+    except Exception:
+        # Le parrainage ne doit JAMAIS bloquer l'inscription
+        logger.exception("Erreur lien parrainage à l'inscription")
 
     token = await _create_verification(
         user_id=user_doc["id"], email=email_lower, kind="verify"

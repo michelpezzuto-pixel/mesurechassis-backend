@@ -150,6 +150,25 @@ export default function MyInfoScreen() {
           {/* 🆕 V3 — Sélecteur de langue (FR/NL/EN) */}
           <LanguagePicker />
 
+          {/* 🆕 Build 9 — Accès au système de parrainage */}
+          <TouchableOpacity
+            testID="open-referral-btn"
+            onPress={() => router.push("/referral")}
+            activeOpacity={0.85}
+            style={styles.referralCard}
+          >
+            <View style={styles.referralIcon}>
+              <Ionicons name="gift" size={22} color={colors.primary} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.referralTitle}>Mon parrainage</Text>
+              <Text style={styles.referralDesc}>
+                Invitez un menuisier — gagnez 2 mois offerts par filleul actif
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={22} color={colors.textSecondary} />
+          </TouchableOpacity>
+
           {/* ===== IDENTITÉ ===== */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Identité</Text>
@@ -289,6 +308,37 @@ export default function MyInfoScreen() {
 }
 
 const styles = StyleSheet.create({
+  // 🆕 Build 9 — Carte d'accès au parrainage
+  referralCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    padding: 14,
+    marginBottom: 12,
+  },
+  referralIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(255, 107, 26, 0.08)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  referralTitle: {
+    color: colors.textPrimary,
+    fontSize: 14,
+    fontWeight: "800",
+  },
+  referralDesc: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    marginTop: 2,
+    lineHeight: 16,
+  },
   safe: { flex: 1, backgroundColor: colors.bg },
   header: {
     flexDirection: "row",

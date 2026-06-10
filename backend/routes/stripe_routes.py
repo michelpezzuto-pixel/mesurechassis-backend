@@ -505,6 +505,21 @@ async def _on_invoice_paid(invoice: dict):
     )
     await _on_subscription_changed(sub)
 
+    # 🆕 Build 9 — Parrainage : si c'est la 1ère facture payée du filleul,
+    # créditer son parrain de 2 mois offerts. L'opération est idempotente
+    # (la fonction vérifie `referral_paid` avant de créditer).
+    try:
+        customer_id = sub.get("customer")
+        if customer_id:
+            company = await db.companies.find_one(
+                {"stripe_customer_id": customer_id}, {"company_id": 1}
+            )
+            if company:
+                from routes.referral import credit_parrain_on_first_payment
+                await credit_parrain_on_first_payment(company["company_id"])
+    except Exception:
+        logger.exception("Erreur crédit parrain à invoice.paid")
+
 
 async def _on_invoice_payment_failed(invoice: dict):
     sub_id = invoice.get("subscription")
