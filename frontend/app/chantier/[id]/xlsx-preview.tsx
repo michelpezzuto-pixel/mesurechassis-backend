@@ -182,7 +182,7 @@ export default function XlsxPreview() {
               <Ionicons name="information-circle" size={18} color={colors.alert} />
               <Text style={styles.tipText}>
                 Touchez « PARTAGER » pour ouvrir le fichier dans Excel, Numbers,
-                Google Sheets ou l'envoyer par e-mail.
+                Google Sheets ou l&apos;envoyer par e-mail.
               </Text>
             </View>
           </View>

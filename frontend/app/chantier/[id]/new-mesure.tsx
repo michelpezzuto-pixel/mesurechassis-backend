@@ -1,16 +1,23 @@
 /**
  * ╔══════════════════════════════════════════════════════════════════════╗
- * ║  MesureChâssis — Wizard "Nouvelle Ouverture" — V1.1 PRODUCTION       ║
+ * ║  MesureChâssis — Wizard "Nouvelle Ouverture" — V3 PRODUCTION         ║
  * ╠══════════════════════════════════════════════════════════════════════╣
  * ║  Architecture en 3 étapes :                                          ║
  * ║   1. Configuration mur (Maçonnerie + Isolation/Finition dynamique)   ║
- * ║   2. Sélection de la forme (7 formes — sans sous-type ouvrant)       ║
+ * ║   2. Sélection de la forme (14 formes — sans sous-type ouvrant)      ║
  * ║   3. Cotes adaptatives + feuillures conditionnelles + trait 1m calc  ║
  * ║                                                                      ║
  * ║  Tous les nouveaux champs (masonry_type, gros_oeuvre_mm, insul_mode, ║
  * ║  parement_*, feuillure_*, shape…) sont stockés dans payload.options{}║
  * ║  → rétro-compatibilité 100% du backend. `block_type` mappé proprement║
  * ║  vers les 4 valeurs historiques pour les exports PDF/CSV/XLSX/JSON.  ║
+ * ║                                                                      ║
+ * ║  🆕 V3 (juin 2026) — Refactorisation modulaire :                      ║
+ * ║   • Types/constantes/helpers → /src/components/wizard/types.ts        ║
+ * ║   • Styles partagés          → /src/components/wizard/wizardStyles.ts ║
+ * ║   • Primitives UI            → /src/components/wizard/primitives.tsx  ║
+ * ║   • Étape 1/3                → /src/components/wizard/Step1Config.tsx ║
+ * ║   • Étape 2/3                → /src/components/wizard/Step2Shape.tsx  ║
  * ╚══════════════════════════════════════════════════════════════════════╝
  */
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -22,8 +29,6 @@ import {
   Modal,
   Platform,
   ScrollView,
-  StyleSheet,
-  Switch,
   Text,
   TextInput,
   TouchableOpacity,
@@ -36,12 +41,10 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   RawBaySchemaRect,
   RawBaySchemaTrapeze,
-  WallSection,
 } from "@/src/components/WindowSchema";
 import { api } from "@/src/services/api";
 import { enqueueMesure, isOnline } from "@/src/services/offlineQueue";
 import { colors } from "@/src/theme";
-import { ShapeIcon } from "@/src/components/ShapeIcon";
 import { MeasureGuide } from "@/src/components/MeasureGuide";
 import ShapeSchemaV2 from "@/src/components/ShapeSchemaV2";
 import ArcLengthVerification from "@/src/components/PerimeterVerification";
@@ -50,288 +53,29 @@ import {
   arcLengthArcSurbaisse,
 } from "@/src/utils/perimeter";
 import { useResponsive } from "@/src/utils/responsive";
+// 🆕 V3 — Composants refactorisés (séparés du fichier monolithique)
+import { wizardStyles as styles } from "@/src/components/wizard/wizardStyles";
+import {
+  CheckboxRow,
+  CotField,
+  DiagonalField,
+} from "@/src/components/wizard/primitives";
+import { Step1Config } from "@/src/components/wizard/Step1Config";
+import { Step2Shape } from "@/src/components/wizard/Step2Shape";
+import {
+  initStep1,
+  initStep3,
+  inferShape,
+  masonryHasFeuillures,
+  parseNum,
+  shapeToBlockType,
+  SHAPES,
+  Shape,
+  Step1Data,
+  Step3Data,
+  MasonryType,
+} from "@/src/components/wizard/types";
 
-// ════════════════════════════════════════════════════════════════════════
-// Types & constantes
-// ════════════════════════════════════════════════════════════════════════
-
-type Step = 0 | 1 | 2;
-
-type ProjectType = "construction" | "renovation";
-
-/** Type de gros œuvre (maçonnerie). */
-type MasonryType = "bloc_beton" | "bloc_terre_cuite" | "brique" | "pierre";
-
-/** Mode d'isolation/finition. */
-type InsulationMode = "none" | "iti" | "ite";
-
-/** Type de parement (uniquement si ITE). */
-type ParementType = "crepi" | "brique_parement" | "pierre_parement" | "bardage";
-
-/** 14 formes V2 (7 V1 + 7 nouvelles formes complexes). */
-type Shape =
-  | "rect"
-  | "porte_entree"
-  | "porte_garage"
-  | "trapeze"
-  | "triangle"
-  | "oeil_de_boeuf"
-  | "coulissant_levant"
-  // 🆕 V2 — Formes complémentaires (juin 2026)
-  | "plein_cintre"
-  | "arc_surbaisse"
-  | "angle_90"
-  | "bow_window"
-  | "pentagone"
-  | "hexagone"
-  | "ovale"
-  // 🆕 V3 — Polygone unifié (cahier 09/06/2026)
-  | "polygone";
-
-type DiagState = "auto" | "validated" | "manual";
-
-const MASONRIES: { key: MasonryType; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
-  { key: "bloc_beton", label: "Bloc béton", icon: "cube-outline" },
-  { key: "bloc_terre_cuite", label: "Bloc Terre cuite", icon: "albums-outline" },
-  { key: "brique", label: "Brique", icon: "grid-outline" },
-  { key: "pierre", label: "Pierre", icon: "diamond-outline" },
-];
-
-const PAREMENTS: { key: ParementType; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
-  { key: "crepi", label: "Crépi", icon: "color-fill-outline" },
-  { key: "brique_parement", label: "Brique parement", icon: "grid-outline" },
-  { key: "pierre_parement", label: "Pierre", icon: "diamond-outline" },
-  { key: "bardage", label: "Bardage", icon: "leaf-outline" },
-];
-
-const SHAPES: {
-  key: Shape;
-  letter: string;
-  label: string;
-  icon: keyof typeof Ionicons.glyphMap;
-  desc: string;
-}[] = [
-  { key: "rect", letter: "A", label: "CARRÉ / RECTANGLE", icon: "square-outline", desc: "Baie standard rectangulaire" },
-  { key: "porte_entree", letter: "B", label: "PORTE D'ENTRÉE", icon: "exit-outline", desc: "Avec réserve sol & trait niveau 1m" },
-  { key: "porte_garage", letter: "C", label: "PORTE DE GARAGE", icon: "car-outline", desc: "Avec linteau et écoinçons" },
-  { key: "trapeze", letter: "D", label: "TRAPÈZE", icon: "triangle-outline", desc: "Hauteur gauche ≠ Hauteur droite" },
-  { key: "oeil_de_boeuf", letter: "H", label: "ŒIL-DE-BŒUF", icon: "ellipse-outline", desc: "Ouverture circulaire (diamètre)" },
-  { key: "coulissant_levant", letter: "K", label: "COULISSANT LEVANT", icon: "swap-horizontal-outline", desc: "Levant-coulissant avec réserve sol" },
-  // 🆕 V2 — Formes complexes
-  { key: "plein_cintre", letter: "L", label: "PLEIN CINTRE", icon: "radio-button-on-outline", desc: "Arc parfait en demi-cercle au sommet" },
-  { key: "arc_surbaisse", letter: "M", label: "ARC SURBAISSÉ", icon: "remove-outline", desc: "Arc applati (flèche < demi-largeur)" },
-  { key: "angle_90", letter: "N", label: "PAN COUPÉ", icon: "git-branch-outline", desc: "Châssis avec coin coupé en oblique" },
-  { key: "bow_window", letter: "O", label: "BOW-WINDOW", icon: "infinite-outline", desc: "Baie courbe — plusieurs panneaux" },
-  // 🆕 V3 — Polygone unifié (remplace Triangle / Pentagone / Hexagone / Octogone)
-  { key: "polygone", letter: "P", label: "POLYGONE", icon: "shapes-outline", desc: "Forme polygonale (3 à 8 arêtes — sommets éditables)" },
-  { key: "ovale", letter: "R", label: "OVALE", icon: "ellipse-outline", desc: "Ellipse (axe horizontal + vertical)" },
-];
-
-// ════════════════════════════════════════════════════════════════════════
-// State shapes
-// ════════════════════════════════════════════════════════════════════════
-type Step1Data = {
-  project_type: ProjectType;
-  // Maçonnerie
-  masonry_type: MasonryType | null;
-  gros_oeuvre_mm: string;
-  // Isolation
-  insulation_mode: InsulationMode | null;
-  iti_thickness_mm: string;
-  // ITE
-  ite_insul_thickness_mm: string;
-  parement_type: ParementType | null;
-  // ITE-Crépi
-  crepi_thickness_mm: string;
-  // ITE-Brique/Pierre
-  coulisse_thickness_mm: string;
-  brique_pierre_thickness_mm: string;
-  // ITE-Bardage
-  structure_lame_air_mm: string;
-  // Statut Seuils
-  sill_already_installed: boolean | null;
-  sill_thickness_mm: string;
-  // Options
-  has_breastwork: boolean;
-  has_horizontal_cut: boolean;
-};
-
-const initStep1 = (): Step1Data => ({
-  project_type: "renovation",
-  masonry_type: null,
-  gros_oeuvre_mm: "",
-  insulation_mode: null,
-  iti_thickness_mm: "",
-  ite_insul_thickness_mm: "",
-  parement_type: null,
-  crepi_thickness_mm: "",
-  coulisse_thickness_mm: "",
-  brique_pierre_thickness_mm: "",
-  structure_lame_air_mm: "",
-  sill_already_installed: null,
-  sill_thickness_mm: "",
-  has_breastwork: false,
-  has_horizontal_cut: false,
-});
-
-type Step3Data = {
-  bay_width: string;
-  bay_height: string;
-  diag_1: string;
-  diag_1_state: DiagState;
-  diag_2: string;
-  diag_2_state: DiagState;
-  renovation_mode: boolean;
-  width_top: string;
-  width_bottom: string;
-  height_left: string;
-  height_right: string;
-  trap_height_left: string;
-  trap_height_right: string;
-  triangle_base: string;
-  triangle_height: string;
-  oeil_diameter: string;
-  garage_lintel: string;
-  garage_ecoincon_left: string;
-  garage_ecoincon_right: string;
-  // Réserve sol — uniquement porte_entree, porte_garage, coulissant_levant
-  floor_reserve: string;
-  // 🆕 Trait niveau 1m — quand activé, on saisit la mesure brute et on
-  // calcule auto la réserve sol via : reserve = brut - 1000
-  has_1m_level_mark: boolean;
-  trait_1m_brut_mm: string;
-  // 🆕 Feuillures — conditionnelles selon masonry_type (Brique / Pierre / Bloc béton)
-  feuillure_left_mm: string;
-  feuillure_right_mm: string;
-  feuillure_top_mm: string;
-  // 🆕 Allège — par-mesure (uniquement formes : rect, trapeze, triangle, oeil)
-  has_breastwork: boolean;
-  breastwork_height_mm: string;
-  // 🆕 V2 — Champs spécifiques aux 7 nouvelles formes
-  // 1. Plein cintre & Arc surbaissé
-  arch_h1_appui: string; // Hauteur d'appui (côtés droits)
-  arch_h2_total: string; // Hauteur totale (au sommet)
-  // 3. Angle 90° (coupe d'angle)
-  angle90_cut_width: string; // Largeur du pan coupé
-  angle90_cut_height: string; // Hauteur du pan coupé
-  angle90_side: "left" | "right" | "both"; // Côté(s) coupé(s)
-  angle90_angle_deg: string; // Angle du pan (135° par défaut, éditable)
-  angle90_h_left: string; // Hauteur gauche (asymétrique)
-  angle90_h_right: string; // Hauteur droite (asymétrique)
-  // 🆕 V3 — Polygone unifié (3/5/6/8 arêtes)
-  polygon_edge_count: "3" | "5" | "6" | "8";
-  polygon_edge_length: string; // Longueur uniforme de chaque arête (mm)
-  polygon_angle_deg: string;   // Angle de chaque sommet (°) — éditable
-  polygon_bbox_width: string;  // Largeur hors-tout (mm)
-  polygon_bbox_height: string; // Hauteur hors-tout (mm)
-  // 🆕 Vérification PÉRIMÈTRE (formes arc + angle)
-  perimeter_measured: string; // Mesure ruban faite par le mesureur (mm)
-  // 4. Bow-Window
-  bow_panel_count: "3" | "5" | ""; // Nombre de pans
-  bow_depth_projection: string; // Profondeur de projection
-  // 5. Pentagone (haut pan coupé / toit pointu)
-  pent_side_height: string; // Hauteur des côtés verticaux (H1)
-  pent_top_height: string; // Hauteur totale au sommet (H2)
-  // 6. Hexagone (haut + bas pan coupé)
-  hex_top_width: string; // Largeur sommet
-  hex_side_height: string; // Hauteur des parties verticales
-  // 7. Ovale — utilise bay_width (L) et bay_height (H) déjà existants
-};
-
-const initStep3 = (): Step3Data => ({
-  bay_width: "",
-  bay_height: "",
-  diag_1: "",
-  diag_1_state: "manual",
-  diag_2: "",
-  diag_2_state: "manual",
-  renovation_mode: false,
-  width_top: "",
-  width_bottom: "",
-  height_left: "",
-  height_right: "",
-  trap_height_left: "",
-  trap_height_right: "",
-  triangle_base: "",
-  triangle_height: "",
-  oeil_diameter: "",
-  garage_lintel: "",
-  garage_ecoincon_left: "",
-  garage_ecoincon_right: "",
-  floor_reserve: "",
-  has_1m_level_mark: false,
-  trait_1m_brut_mm: "",
-  feuillure_left_mm: "",
-  feuillure_right_mm: "",
-  feuillure_top_mm: "",
-  has_breastwork: false,
-  breastwork_height_mm: "",
-  // 🆕 V2 — Init des champs spécifiques aux 7 nouvelles formes
-  arch_h1_appui: "",
-  arch_h2_total: "",
-  angle90_cut_width: "",
-  angle90_cut_height: "",
-  angle90_side: "right",
-  angle90_angle_deg: "135",
-  angle90_h_left: "",
-  angle90_h_right: "",
-  polygon_edge_count: "6",
-  polygon_edge_length: "",
-  polygon_angle_deg: "120",
-  polygon_bbox_width: "",
-  polygon_bbox_height: "",
-  perimeter_measured: "",
-  bow_panel_count: "",
-  bow_depth_projection: "",
-  pent_side_height: "",
-  pent_top_height: "",
-  hex_top_width: "",
-  hex_side_height: "",
-});
-
-const parseNum = (s: string) => {
-  const n = parseFloat(s.replace(",", "."));
-  return Number.isFinite(n) ? n : null;
-};
-
-const shapeToBlockType = (s: Shape): "standard" | "coulissant" | "porte" | "trapeze" => {
-  switch (s) {
-    case "rect":
-    case "oeil_de_boeuf":
-    // 🆕 V2 — Toutes les nouvelles formes complexes utilisent "standard"
-    //    comme block_type de base (avec options.shape pour préciser).
-    case "plein_cintre":
-    case "arc_surbaisse":
-    case "angle_90":
-    case "bow_window":
-    case "pentagone":
-    case "hexagone":
-    case "ovale":
-      return "standard";
-    case "porte_entree":
-    case "porte_garage":
-      return "porte";
-    case "trapeze":
-    case "triangle":
-      return "trapeze";
-    case "coulissant_levant":
-      return "coulissant";
-  }
-};
-
-const inferShape = (m: any): Shape => {
-  const fromOpts = (m?.options?.shape as Shape) || null;
-  if (fromOpts) return fromOpts;
-  const bt = m?.block_type;
-  if (bt === "trapeze") return "trapeze";
-  if (bt === "porte") return "porte_entree";
-  if (bt === "coulissant") return "rect";
-  return "rect";
-};
-
-// Feuillures requises pour ces maçonneries
-const masonryHasFeuillures = (m: MasonryType | null): boolean =>
-  m === "brique" || m === "pierre" || m === "bloc_beton";
 
 // ════════════════════════════════════════════════════════════════════════
 // Composant principal
@@ -1394,7 +1138,7 @@ export default function NewMesureWizard() {
               <Text style={styles.modalTitle}>Signaler un problème</Text>
             </View>
             <Text style={styles.modalSub}>
-              Décrivez ce qui ne va pas — envoyé à l'admin avec le contexte.
+              Décrivez ce qui ne va pas — envoyé à l&apos;admin avec le contexte.
             </Text>
             <TextInput
               testID="report-text-input"
@@ -1432,337 +1176,6 @@ export default function NewMesureWizard() {
         </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
-  );
-}
-
-// ════════════════════════════════════════════════════════════════════════
-// Étape 1 — Configurateur de Mur Dynamique
-// ════════════════════════════════════════════════════════════════════════
-function Step1Config({
-  s1,
-  setField,
-  err,
-}: {
-  s1: Step1Data;
-  setField: <K extends keyof Step1Data>(k: K, v: Step1Data[K]) => void;
-  err: Record<string, boolean>;
-}) {
-  return (
-    <View>
-      <Text style={styles.h1}>CONFIGURATION DU MUR</Text>
-      <Text style={styles.h2}>Étape 1/3 · Structure de la maison (fait 1 seule fois)</Text>
-
-      {/* Type de projet */}
-      <Text style={[styles.sectionLabel, { marginTop: 22 }]}>TYPE DE PROJET *</Text>
-      <View style={styles.row2}>
-        <SegBtn
-          testID="project-construction"
-          icon="home-outline"
-          label="Nouvelle Construction"
-          active={s1.project_type === "construction"}
-          onPress={() => setField("project_type", "construction")}
-        />
-        <SegBtn
-          testID="project-renovation"
-          icon="construct-outline"
-          label="Rénovation"
-          active={s1.project_type === "renovation"}
-          onPress={() => setField("project_type", "renovation")}
-        />
-      </View>
-
-      {/* Maçonnerie */}
-      <Text style={[styles.sectionLabel, { marginTop: 22 }]}>
-        TYPE DE MAÇONNERIE * {err.masonry_type && <Text style={styles.errInline}> ⚠</Text>}
-      </Text>
-      <View style={styles.facadeGrid}>
-        {MASONRIES.map((m) => {
-          const active = s1.masonry_type === m.key;
-          return (
-            <TouchableOpacity
-              key={m.key}
-              testID={`masonry-${m.key}`}
-              onPress={() => setField("masonry_type", m.key)}
-              activeOpacity={0.85}
-              style={[
-                styles.facadeCard,
-                active && styles.facadeCardActive,
-                err.masonry_type && !active && { borderColor: colors.anomaly },
-              ]}
-            >
-              <Ionicons name={m.icon} size={22} color={active ? colors.primary : colors.textSecondary} />
-              <Text style={[styles.facadeLabel, active && { color: colors.primary }]}>
-                {m.label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-
-      {/* Épaisseur Gros Œuvre */}
-      {s1.masonry_type && (
-        <CotField
-          testID="input-gros-oeuvre"
-          label="ÉPAISSEUR DU GROS ŒUVRE (mm) *"
-          value={s1.gros_oeuvre_mm}
-          onChange={(v) => setField("gros_oeuvre_mm", v.replace(",", "."))}
-          error={!!err.gros_oeuvre_mm}
-        />
-      )}
-
-      {/* Isolation & Finition */}
-      <Text style={[styles.sectionLabel, { marginTop: 22 }]}>
-        ISOLATION & FINITION * {err.insulation_mode && <Text style={styles.errInline}> ⚠</Text>}
-      </Text>
-      <View style={{ gap: 8 }}>
-        <InsulationOption
-          testID="insul-none"
-          active={s1.insulation_mode === "none"}
-          icon="reader-outline"
-          label="Mur plein sans isolation"
-          onPress={() => setField("insulation_mode", "none")}
-        />
-        <InsulationOption
-          testID="insul-iti"
-          active={s1.insulation_mode === "iti"}
-          icon="layers-outline"
-          label="Isolation Intérieure (ITI)"
-          onPress={() => setField("insulation_mode", "iti")}
-        />
-        {s1.insulation_mode === "iti" && (
-          <CotField
-            testID="input-iti-thickness"
-            label="ÉPAISSEUR ISOLANT INT. (mm) *"
-            value={s1.iti_thickness_mm}
-            onChange={(v) => setField("iti_thickness_mm", v.replace(",", "."))}
-            error={!!err.iti_thickness_mm}
-          />
-        )}
-        <InsulationOption
-          testID="insul-ite"
-          active={s1.insulation_mode === "ite"}
-          icon="albums-outline"
-          label="Isolation Extérieure (ITE)"
-          onPress={() => setField("insulation_mode", "ite")}
-        />
-        {s1.insulation_mode === "ite" && (
-          <>
-            <Text style={[styles.sectionLabel, { marginTop: 10 }]}>
-              TYPE DE PAREMENT * {err.parement_type && <Text style={styles.errInline}> ⚠</Text>}
-            </Text>
-            <View style={styles.facadeGrid}>
-              {PAREMENTS.map((p) => {
-                const active = s1.parement_type === p.key;
-                return (
-                  <TouchableOpacity
-                    key={p.key}
-                    testID={`parement-${p.key}`}
-                    onPress={() => setField("parement_type", p.key)}
-                    activeOpacity={0.85}
-                    style={[
-                      styles.facadeCard,
-                      active && styles.facadeCardActive,
-                      err.parement_type && !active && { borderColor: colors.anomaly },
-                    ]}
-                  >
-                    <Ionicons name={p.icon} size={22} color={active ? colors.primary : colors.textSecondary} />
-                    <Text style={[styles.facadeLabel, active && { color: colors.primary }]}>
-                      {p.label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-            <CotField
-              testID="input-ite-insul-thickness"
-              label="ÉPAISSEUR ISOLANT (mm) *"
-              value={s1.ite_insul_thickness_mm}
-              onChange={(v) => setField("ite_insul_thickness_mm", v.replace(",", "."))}
-              error={!!err.ite_insul_thickness_mm}
-            />
-            {s1.parement_type === "crepi" && (
-              <CotField
-                testID="input-crepi-thickness"
-                label="ÉPAISSEUR CRÉPI (mm) *"
-                value={s1.crepi_thickness_mm}
-                onChange={(v) => setField("crepi_thickness_mm", v.replace(",", "."))}
-                error={!!err.crepi_thickness_mm}
-              />
-            )}
-            {(s1.parement_type === "brique_parement" || s1.parement_type === "pierre_parement") && (
-              <>
-                <CotField
-                  testID="input-coulisse-thickness"
-                  label="ÉPAISSEUR COULISSE / VIDE (mm) *"
-                  value={s1.coulisse_thickness_mm}
-                  onChange={(v) => setField("coulisse_thickness_mm", v.replace(",", "."))}
-                  error={!!err.coulisse_thickness_mm}
-                />
-                <CotField
-                  testID="input-brique-pierre-thickness"
-                  label={`ÉPAISSEUR ${s1.parement_type === "brique_parement" ? "BRIQUE" : "PIERRE"} (mm) *`}
-                  value={s1.brique_pierre_thickness_mm}
-                  onChange={(v) => setField("brique_pierre_thickness_mm", v.replace(",", "."))}
-                  error={!!err.brique_pierre_thickness_mm}
-                />
-              </>
-            )}
-            {s1.parement_type === "bardage" && (
-              <CotField
-                testID="input-structure-lame-air"
-                label="ÉPAISSEUR STRUCTURE / LAME D'AIR (mm) *"
-                value={s1.structure_lame_air_mm}
-                onChange={(v) => setField("structure_lame_air_mm", v.replace(",", "."))}
-                error={!!err.structure_lame_air_mm}
-              />
-            )}
-          </>
-        )}
-      </View>
-
-      {/* Statut Seuils */}
-      <Text style={[styles.sectionLabel, { marginTop: 22 }]}>
-        STATUT DES SEUILS *
-        {err.sill_already_installed && <Text style={styles.errInline}> ⚠</Text>}
-      </Text>
-      <View style={styles.row2}>
-        <SegBtn
-          testID="sill-yes"
-          icon="checkmark-circle-outline"
-          label="Oui, déjà posés"
-          active={s1.sill_already_installed === true}
-          onPress={() => setField("sill_already_installed", true)}
-        />
-        <SegBtn
-          testID="sill-no"
-          icon="close-circle-outline"
-          label="Non, à venir"
-          active={s1.sill_already_installed === false}
-          onPress={() => setField("sill_already_installed", false)}
-        />
-      </View>
-      {s1.sill_already_installed === false && (
-        <CotField
-          testID="input-sill-thickness"
-          label="ÉPAISSEUR FUTURE DU SEUIL (mm)"
-          value={s1.sill_thickness_mm}
-          onChange={(v) => setField("sill_thickness_mm", v.replace(",", "."))}
-          error={!!err.sill_thickness_mm}
-        />
-      )}
-      {s1.sill_already_installed === false && (
-        <Text style={styles.helpHint}>
-          💡 Laissez vide ou indiquez 0 si aucun seuil ne sera posé
-          (porte de garage, certains coulissants, rénovation sans seuil).
-        </Text>
-      )}
-
-      <Text style={[styles.sectionLabel, { marginTop: 22 }]}>OPTIONS GLOBALES</Text>
-      <CheckboxRow
-        testID="opt-horizontal-cut"
-        label="Coupe horizontale (Retour de butée)"
-        sub="Présence d'un retour de butée horizontal"
-        value={s1.has_horizontal_cut}
-        onChange={(v) => setField("has_horizontal_cut", v)}
-      />
-      <Text style={styles.helpHint}>
-        💡 L'option « Allège » est désormais saisie par ouverture
-        (étape « Cotes »), car elle peut varier d'une baie à l'autre.
-      </Text>
-    </View>
-  );
-}
-
-function InsulationOption({
-  testID,
-  icon,
-  label,
-  active,
-  onPress,
-}: {
-  testID: string;
-  icon: keyof typeof Ionicons.glyphMap;
-  label: string;
-  active: boolean;
-  onPress: () => void;
-}) {
-  return (
-    <TouchableOpacity
-      testID={testID}
-      onPress={onPress}
-      activeOpacity={0.85}
-      style={[styles.insulOption, active && styles.insulOptionActive]}
-    >
-      <Ionicons name={icon} size={20} color={active ? colors.primary : colors.textSecondary} />
-      <Text style={[styles.insulOptionLabel, active && { color: colors.primary }]}>{label}</Text>
-      <View style={{ flex: 1 }} />
-      <Ionicons
-        name={active ? "checkmark-circle" : "ellipse-outline"}
-        size={20}
-        color={active ? colors.primary : colors.borderStrong}
-      />
-    </TouchableOpacity>
-  );
-}
-
-// ════════════════════════════════════════════════════════════════════════
-// Étape 2 — Sélection de la forme (épurée)
-// ════════════════════════════════════════════════════════════════════════
-function Step2Shape({
-  onPick,
-  current,
-}: {
-  onPick: (s: Shape) => void;
-  current: Shape | null;
-}) {
-  return (
-    <View>
-      <Text style={styles.h1}>SÉLECTION DE LA MENUISERIE</Text>
-      <Text style={styles.h2}>Étape 2/3 · Choisissez la forme exacte du châssis</Text>
-      <Text style={styles.helperText}>
-        Le type d'ouvrant (Fixe, Ouvrant, Oscillo-battant, Coulissant) sera défini en atelier via
-        le libellé / référence saisi à l'étape suivante.
-      </Text>
-      <View style={{ gap: 10, marginTop: 16 }}>
-        {SHAPES.map((s) => {
-          const active = current === s.key;
-          return (
-            <TouchableOpacity
-              key={s.key}
-              testID={`shape-${s.key}`}
-              onPress={() => onPick(s.key)}
-              activeOpacity={0.85}
-              style={[styles.shapeCard, active && styles.shapeCardActive]}
-            >
-              <View style={styles.shapeLetterBadge}>
-                <Text style={styles.shapeLetter}>{s.letter}</Text>
-              </View>
-              <View style={styles.shapeIconBox}>
-                <ShapeIcon
-                  shape={s.key}
-                  size={48}
-                  color={active ? colors.primary : colors.textPrimary}
-                  strokeWidth={1.8}
-                />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={[styles.shapeTitle, active && { color: colors.primary }]}>{s.label}</Text>
-                <Text style={styles.shapeDesc}>{s.desc}</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color={active ? colors.primary : colors.borderStrong} />
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-      <View style={[styles.inlineHintBox, { marginTop: 18 }]}>
-        <Ionicons name="information-circle" size={14} color={colors.textSecondary} />
-        <Text style={styles.inlineHintText}>
-          Sélectionnez la forme correspondant le mieux à votre châssis. Pour
-          un polygone (triangle, pentagone, hexagone, octogone), choisissez
-          « POLYGONE » puis indiquez le nombre d&apos;arêtes.
-        </Text>
-      </View>
-    </View>
   );
 }
 
@@ -2291,10 +1704,10 @@ function Step3Cotes({
             onChange={(v) => setField("bay_height", v.replace(",", "."))} onBlur={onBlurDimension} error={!!err.bay_height} />
           <Text style={[styles.sectionLabel, { marginTop: 18 }]}>SPÉCIFIQUES PORTE DE GARAGE</Text>
           <Text style={styles.helperText}>
-            📏 Mesures spécifiques à la pose d'une porte sectionnelle :
+            📏 Mesures spécifiques à la pose d&apos;une porte sectionnelle :
             le linteau est la hauteur sous-plafond disponible au-dessus de
             la baie ; les écoinçons sont la largeur de mur plein disponible
-            de part et d'autre de la baie pour fixer les rails verticaux
+            de part et d&apos;autre de la baie pour fixer les rails verticaux
             (minimum 100 mm recommandé).
           </Text>
           <CotField testID="input-garage-lintel" label="LINTEAU (mm) *" value={s3.garage_lintel}
@@ -2399,7 +1812,7 @@ function Step3Cotes({
         <>
           <Text style={[styles.sectionLabel, { marginTop: 22 }]}>FEUILLURE (optionnel)</Text>
           <Text style={styles.helperText}>
-            La feuillure d'un œil-de-bœuf est circulaire et identique sur
+            La feuillure d&apos;un œil-de-bœuf est circulaire et identique sur
             toute la périphérie. Une seule mesure suffit.
           </Text>
           <CotField
@@ -2526,275 +1939,3 @@ function Step3Cotes({
   );
 }
 
-// ════════════════════════════════════════════════════════════════════════
-// Sub-components
-// ════════════════════════════════════════════════════════════════════════
-function SegBtn({ testID, icon, label, active, onPress }: any) {
-  return (
-    <TouchableOpacity testID={testID} onPress={onPress} activeOpacity={0.85}
-      style={[styles.segBtn, active && styles.segBtnActive, { flex: 1 }]}>
-      <Ionicons name={icon} size={18} color={active ? "#000" : colors.textSecondary} />
-      <Text style={[styles.segBtnText, active && { color: "#000" }]}>{label}</Text>
-    </TouchableOpacity>
-  );
-}
-
-function CheckboxRow({ testID, label, sub, value, onChange }: any) {
-  return (
-    <View style={styles.checkboxRow}>
-      <View style={{ flex: 1 }}>
-        <Text style={styles.checkboxLabel}>{label}</Text>
-        {sub && <Text style={styles.checkboxSub}>{sub}</Text>}
-      </View>
-      <Switch testID={testID} value={value} onValueChange={onChange}
-        trackColor={{ false: colors.borderSubtle, true: colors.primary }} thumbColor="#fff" />
-    </View>
-  );
-}
-
-function CotField({ testID, label, value, onChange, onBlur, error }: any) {
-  // 🛡️ Anti-corruption (bug iOS autocomplete) : on plafonne strict toute
-  // saisie >9999mm (10m mur = impossible en menuiserie). Tronque les chiffres
-  // surnuméraires sans crash.
-  const handleChange = (v: string) => {
-    let cleaned = (v || "").replace(",", ".");
-    // Garde uniquement chiffres + un point décimal
-    cleaned = cleaned.replace(/[^0-9.]/g, "");
-    const dotIdx = cleaned.indexOf(".");
-    if (dotIdx !== -1) {
-      cleaned =
-        cleaned.slice(0, dotIdx + 1) +
-        cleaned.slice(dotIdx + 1).replace(/\./g, "");
-    }
-    // Plafond à 4 chiffres entiers (≤ 9999mm)
-    const [int, dec] = cleaned.split(".");
-    const safeInt = (int || "").slice(0, 4);
-    const safeDec = dec !== undefined ? `.${dec.slice(0, 2)}` : "";
-    onChange(safeInt + safeDec);
-  };
-  return (
-    <View style={{ marginTop: 14 }}>
-      <Text style={styles.label}>{label}</Text>
-      <TextInput testID={testID} value={value} onChangeText={handleChange} onBlur={onBlur}
-        keyboardType="decimal-pad" placeholder="0" placeholderTextColor={colors.placeholder}
-        maxLength={7}
-        autoCorrect={false}
-        autoComplete="off"
-        textContentType="none"
-        style={[styles.input, error && styles.inputError]} />
-      {error && (
-        <Text style={styles.errorMsg} testID={testID ? `${testID}-error` : undefined}>
-          ⚠ Cote obligatoire manquante
-        </Text>
-      )}
-    </View>
-  );
-}
-
-function DiagonalField({ testID, label, value, state, onChange, onValidate, onModify, error }: any) {
-  const isAuto = state === "auto";
-  const isValidated = state === "validated";
-  return (
-    <View style={{ marginTop: 14 }}>
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-        <Text style={styles.label}>{label}</Text>
-        {isAuto && (
-          <View style={styles.autoBadge}>
-            <Ionicons name="calculator-outline" size={11} color="#000" />
-            <Text style={styles.autoBadgeText}>AUTO PYTHAGORE</Text>
-          </View>
-        )}
-        {isValidated && (
-          <View style={styles.validBadge}>
-            <Ionicons name="checkmark" size={12} color="#000" />
-            <Text style={styles.autoBadgeText}>VALIDÉ</Text>
-          </View>
-        )}
-      </View>
-      <View style={{ flexDirection: "row", gap: 8 }}>
-        <TextInput testID={testID} value={value} onChangeText={onChange}
-          keyboardType="decimal-pad" placeholder="0" placeholderTextColor={colors.placeholder}
-          editable={!isAuto}
-          style={[styles.input, { flex: 1 }, error && styles.inputError,
-            isAuto && { borderColor: colors.primary, color: colors.primary },
-            isValidated && { borderColor: colors.success, color: colors.success }]} />
-        {isAuto && (
-          <>
-            <TouchableOpacity testID={`${testID}-validate`} onPress={onValidate} activeOpacity={0.8}
-              style={[styles.diagBtn, { backgroundColor: colors.success }]}>
-              <Ionicons name="checkmark" size={18} color="#000" />
-            </TouchableOpacity>
-            <TouchableOpacity testID={`${testID}-modify`} onPress={onModify} activeOpacity={0.8}
-              style={[styles.diagBtn, { backgroundColor: colors.warning }]}>
-              <Ionicons name="create-outline" size={18} color="#000" />
-            </TouchableOpacity>
-          </>
-        )}
-      </View>
-    </View>
-  );
-}
-
-// ════════════════════════════════════════════════════════════════════════
-// Styles
-// ════════════════════════════════════════════════════════════════════════
-const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.bg },
-  topBar: {
-    flexDirection: "row", alignItems: "center", justifyContent: "space-between",
-    paddingHorizontal: 16, paddingTop: 12, paddingBottom: 10,
-    borderBottomWidth: 1, borderBottomColor: colors.borderSubtle,
-  },
-  stepRow: { flexDirection: "row", gap: 8 },
-  stepPill: {
-    width: 28, height: 28, borderRadius: 14,
-    backgroundColor: colors.surfaceElevated,
-    alignItems: "center", justifyContent: "center",
-    borderWidth: 1, borderColor: colors.borderSubtle,
-  },
-  stepPillActive: { backgroundColor: colors.primary, borderColor: colors.primary },
-  stepPillText: { color: colors.textSecondary, fontWeight: "800", fontSize: 12 },
-  reportBtn: {
-    flexDirection: "row", alignItems: "center", gap: 4,
-    paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8,
-    backgroundColor: "#2a1010", borderWidth: 1, borderColor: colors.anomaly,
-  },
-  reportBtnText: { color: colors.anomaly, fontSize: 11, fontWeight: "700" },
-  h1: { color: colors.textPrimary, fontSize: 18, fontWeight: "800", letterSpacing: 0.5 },
-  h2: { color: colors.textSecondary, fontSize: 12, marginTop: 2 },
-  sectionLabel: { color: colors.textSecondary, fontSize: 11, fontWeight: "900", letterSpacing: 0.8, marginBottom: 8 },
-  errInline: { color: colors.anomaly, fontWeight: "900" },
-  helperText: { color: colors.placeholder, fontSize: 12, marginBottom: 8, marginTop: 4, lineHeight: 16 },
-  guideHint: {
-    color: colors.textSecondary,
-    fontSize: 11,
-    fontStyle: "italic",
-    textAlign: "center",
-    marginTop: -2,
-    marginBottom: 4,
-    paddingHorizontal: 8,
-  },
-  label: { color: colors.textSecondary, fontSize: 11, fontWeight: "700", letterSpacing: 0.6, marginBottom: 6 },
-  input: {
-    backgroundColor: colors.inputBg, color: colors.textPrimary, borderRadius: 10,
-    borderWidth: 1, borderColor: colors.borderStrong,
-    paddingHorizontal: 12, paddingVertical: Platform.OS === "ios" ? 14 : 10,
-    fontSize: 16, minHeight: 48,
-  },
-  inputError: { borderColor: colors.anomaly, backgroundColor: "#1a0808" },
-  errorMsg: { color: colors.anomaly, fontSize: 11, fontWeight: "800", marginTop: 4, letterSpacing: 0.4 },
-  row2: { flexDirection: "row", gap: 10 },
-  segBtn: {
-    flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6,
-    backgroundColor: colors.surface, borderRadius: 10, borderWidth: 1, borderColor: colors.borderSubtle,
-    paddingVertical: 12, paddingHorizontal: 8, minHeight: 48,
-  },
-  segBtnActive: { backgroundColor: colors.primary, borderColor: colors.primary },
-  segBtnText: { color: colors.textSecondary, fontWeight: "800", fontSize: 12, letterSpacing: 0.4, textAlign: "center", flexShrink: 1 },
-  facadeGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  facadeCard: {
-    width: "47%", backgroundColor: colors.surface, borderRadius: 10,
-    borderWidth: 1, borderColor: colors.borderSubtle,
-    paddingVertical: 14, paddingHorizontal: 10, alignItems: "center", gap: 6,
-  },
-  facadeCardActive: { borderColor: colors.primary, backgroundColor: "#1a0e05" },
-  facadeLabel: { color: colors.textPrimary, fontWeight: "800", fontSize: 12, textAlign: "center", letterSpacing: 0.3 },
-  insulOption: {
-    flexDirection: "row", alignItems: "center", gap: 10,
-    backgroundColor: colors.surface, borderRadius: 10,
-    borderWidth: 1, borderColor: colors.borderSubtle,
-    paddingVertical: 14, paddingHorizontal: 14, minHeight: 50,
-  },
-  insulOptionActive: { borderColor: colors.primary, backgroundColor: "#1a0e05" },
-  insulOptionLabel: { color: colors.textPrimary, fontWeight: "800", fontSize: 13 },
-  inlineHintBox: {
-    flexDirection: "row", alignItems: "center", gap: 6, marginTop: 8,
-    padding: 10, borderRadius: 8, backgroundColor: "#2a1c08",
-    borderWidth: 1, borderColor: colors.warning,
-  },
-  inlineHintText: { color: colors.textSecondary, fontSize: 11, flex: 1, lineHeight: 15 },
-  checkboxRow: {
-    flexDirection: "row", alignItems: "center", gap: 12,
-    paddingVertical: 12, paddingHorizontal: 14, borderRadius: 10,
-    backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSubtle, marginTop: 8,
-  },
-  checkboxLabel: { color: colors.textPrimary, fontSize: 14, fontWeight: "700" },
-  checkboxSub: { color: colors.textSecondary, fontSize: 11, marginTop: 2 },
-  shapeCard: {
-    flexDirection: "row", alignItems: "center", gap: 10,
-    backgroundColor: colors.surface, borderRadius: 12,
-    borderWidth: 1, borderColor: colors.borderSubtle, padding: 14, minHeight: 84,
-  },
-  shapeCardActive: { borderColor: colors.primary, backgroundColor: "#1a0e05" },
-  shapeLetterBadge: { width: 28, height: 28, borderRadius: 14, backgroundColor: colors.primary, alignItems: "center", justifyContent: "center" },
-  shapeLetter: { color: "#000", fontWeight: "900", fontSize: 12 },
-  shapeIconBox: { width: 56, height: 56, alignItems: "center", justifyContent: "center" },
-  shapeTitle: { color: colors.textPrimary, fontWeight: "900", fontSize: 14, letterSpacing: 0.4 },
-  shapeDesc: { color: colors.textSecondary, fontSize: 11, marginTop: 2, lineHeight: 15 },
-  modeToggle: {
-    flexDirection: "row", gap: 6, marginTop: 14, padding: 4,
-    backgroundColor: colors.surface, borderRadius: 10,
-    borderWidth: 1, borderColor: colors.borderSubtle,
-  },
-  modeTab: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingVertical: 10, borderRadius: 8 },
-  modeTabActive: { backgroundColor: colors.primary },
-  modeTabText: { color: colors.textSecondary, fontSize: 11, fontWeight: "900", letterSpacing: 0.6 },
-  modeTabTextActive: { color: "#000" },
-  sketchBox: { marginTop: 16, alignItems: "center", backgroundColor: colors.surface, borderRadius: 12, borderWidth: 1, borderColor: colors.borderSubtle, paddingVertical: 12 },
-  autoBadge: { flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: colors.primary, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
-  validBadge: { flexDirection: "row", alignItems: "center", gap: 4, backgroundColor: colors.success, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
-  autoBadgeText: { color: "#000", fontSize: 10, fontWeight: "900", letterSpacing: 0.5 },
-  diagBtn: { width: 48, height: 48, borderRadius: 10, alignItems: "center", justifyContent: "center" },
-  computeBtn: {
-    marginTop: 12, flexDirection: "row", alignItems: "center", justifyContent: "center",
-    gap: 8, paddingVertical: 12, paddingHorizontal: 14, borderRadius: 10,
-    borderWidth: 1, borderColor: colors.primary, backgroundColor: "#1a0e05",
-  },
-  computeBtnText: { color: colors.primary, fontWeight: "900", fontSize: 13, letterSpacing: 0.8 },
-  computedBox: {
-    flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: 6,
-    marginTop: 12, padding: 12, borderRadius: 10,
-    backgroundColor: "#0b3b1c", borderWidth: 1, borderColor: colors.success,
-  },
-  computedLabel: { color: colors.success, fontWeight: "900", fontSize: 11, letterSpacing: 0.5 },
-  computedValue: { color: colors.success, fontWeight: "900", fontSize: 18 },
-  computedFormula: { color: colors.textSecondary, fontSize: 11, fontStyle: "italic" },
-  photo: { width: "100%", height: 180, borderRadius: 12, marginTop: 8 },
-  removePhoto: { position: "absolute", top: 16, right: 8, backgroundColor: "rgba(0,0,0,0.7)", padding: 6, borderRadius: 14 },
-  photoRow: { flexDirection: "row", gap: 8, marginTop: 8 },
-  photoBtn: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingVertical: 14, borderRadius: 10, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSubtle },
-  photoBtnText: { color: colors.primary, fontWeight: "700", fontSize: 13 },
-  footer: { flexDirection: "row", gap: 10, padding: 16, borderTopWidth: 1, borderTopColor: colors.borderSubtle, backgroundColor: colors.bg },
-  btn: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, minHeight: 52, borderRadius: 12, paddingHorizontal: 16 },
-  btnPrimary: { backgroundColor: colors.primary },
-  btnPrimaryText: { color: "#000", fontWeight: "900", fontSize: 14, letterSpacing: 0.8 },
-  btnSecondary: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSubtle },
-  // 🆕 V3 — Bouton secondaire utilisé pour les actions "feedback / remarque"
-  //    sur les modules en cours de fabrication (Bow-window).
-  btnSecondaryAlt: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    minHeight: 48,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.borderStrong,
-    backgroundColor: colors.surface,
-  },
-  btnSecondaryAltText: {
-    color: colors.textPrimary,
-    fontWeight: "800",
-    fontSize: 11,
-    letterSpacing: 0.5,
-    textAlign: "center",
-    flexShrink: 1,
-  },
-  btnSecondaryText: { color: colors.textPrimary, fontWeight: "800", fontSize: 13, letterSpacing: 0.5 },
-  modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.7)", justifyContent: "center", padding: 20 },
-  modalCard: { backgroundColor: colors.surface, borderRadius: 16, padding: 18, borderWidth: 1, borderColor: colors.borderSubtle },
-  modalTitle: { color: colors.textPrimary, fontWeight: "800", fontSize: 16 },
-  modalSub: { color: colors.textSecondary, fontSize: 12, marginTop: 4, marginBottom: 12 },
-  reportInput: { backgroundColor: colors.inputBg, color: colors.textPrimary, borderRadius: 10, borderWidth: 1, borderColor: colors.borderStrong, padding: 12, minHeight: 100, textAlignVertical: "top", fontSize: 14 },
-});

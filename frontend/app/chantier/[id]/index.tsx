@@ -823,9 +823,10 @@ export default function ChantierDetail() {
         columnWrapperStyle={
           numColumns > 1 ? { gap: 8, paddingHorizontal: 8 } : undefined
         }
-        contentContainerStyle={
-          isTablet ? { maxWidth: 1200, alignSelf: "center", width: "100%" } : undefined
-        }
+        contentContainerStyle={[
+          { padding: 16, paddingBottom: 200 },
+          isTablet ? { maxWidth: 1200, alignSelf: "center", width: "100%" } : null,
+        ]}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -1080,7 +1081,6 @@ export default function ChantierDetail() {
             </TouchableOpacity>
           );
         }}
-        contentContainerStyle={{ padding: 16, paddingBottom: 200 }}
         ListEmptyComponent={
           <View style={styles.empty}>
             <Ionicons name="grid-outline" size={48} color={colors.borderStrong} />
@@ -1095,7 +1095,7 @@ export default function ChantierDetail() {
             ) : showArchivedLockIntercept ? (
               <Text style={styles.emptyHint}>
                 🔒 Chantier verrouillé. Les mesures ne sont plus modifiables.
-                Référez-vous au PDF d'export.
+                Référez-vous au PDF d&apos;export.
               </Text>
             ) : showCommercialFabIntercept ? (
               <Text style={styles.emptyHint}>
@@ -1114,7 +1114,7 @@ export default function ChantierDetail() {
                 <Text style={styles.exportTitle}>PHOTOS SITE (ANTI-LITIGE)</Text>
               </View>
               <Text style={styles.exportSub}>
-                Jusqu'à 6 photos avec légende — preuves de l'état existant.
+                Jusqu&apos;à 6 photos avec légende — preuves de l&apos;état existant.
                 ({(chantier.site_photos?.length ?? 0)}/6)
               </Text>
               {(chantier.site_photos ?? []).map((p, idx) => (
@@ -1198,7 +1198,7 @@ export default function ChantierDetail() {
                   </Text>
                   <Text style={validateStyles.waitBody}>
                     Seul un technicien peut valider ce chantier pour la
-                    fabrication. L'administrateur ne peut pas bypasser cette
+                    fabrication. L&apos;administrateur ne peut pas bypasser cette
                     étape de sécurité.
                   </Text>
                 </View>
@@ -1576,7 +1576,7 @@ export default function ChantierDetail() {
                   </Text>
                   <Text style={validateStyles.archivedLockBody}>
                     Les mesures ne sont plus modifiables. Référez-vous au PDF
-                    d'export. Les téléchargements (PDF, CSV, Excel, JSON)
+                    d&apos;export. Les téléchargements (PDF, CSV, Excel, JSON)
                     restent disponibles ci-dessous.
                   </Text>
                 </View>
