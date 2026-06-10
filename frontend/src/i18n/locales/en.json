@@ -792,5 +792,23 @@
       "save": "SAVE",
       "saving": "..."
     }
+  },
+  "onboarding": {
+    "title": "🚀 Getting started",
+    "subtitle": "Set up your team to start measuring projects.",
+    "step1Title": "Invite your 1st salesperson",
+    "step1Desc": "The salesperson takes on-site measurements. You'll be able to assign projects to them.",
+    "step1Btn": "Go to Team",
+    "step2Title": "Invite a technician (recommended)",
+    "step2Desc": "The technician validates measurements before launching production. Without a technician, you'll validate them yourself.",
+    "step2Btn": "Invite a technician",
+    "step3Title": "Create your 1st project",
+    "step3Desc": "Once your team is in place, create a project and assign it to the salesperson.",
+    "step3Btn": "New project",
+    "done": "Done",
+    "skip": "Hide this guide",
+    "soloHint": "You're in Solo Artisan mode: create your first project directly via the « + New project » button.",
+    "commercialHint": "No project has been assigned to you yet. Ask your Admin to assign one, or create one yourself.",
+    "techHint": "No project waiting for technical validation. Projects will appear here once the salesperson has finished measuring."
   }
 }

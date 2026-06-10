@@ -17,6 +17,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { api } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { useTranslation } from "react-i18next";
@@ -26,6 +27,7 @@ import { useResponsive } from "@/src/utils/responsive";
 import TrialCountdownBanner from "@/src/components/TrialCountdownBanner";
 import ChatHelp from "@/src/components/ChatHelp";
 import AppointmentPicker from "@/src/components/AppointmentPicker";
+import OnboardingCard from "@/src/components/OnboardingCard";
 
 type Chantier = {
   id: string;
@@ -80,6 +82,31 @@ export default function Dashboard() {
   const isArtisanAccount =
     (company?.account_type || "").toLowerCase() === "artisan";
   const mustAssignToCommercial = user?.role === "admin" && !isArtisanAccount;
+
+  // 🚀 Onboarding "Premiers pas" — pour les nouveaux Admin Entreprise.
+  // Affiche une carte avec 3 étapes : inviter commercial / technicien /
+  // créer chantier. Masqué dès que l'utilisateur clique sur "Masquer".
+  // Persistance via AsyncStorage clé `mc.onboarding.dismissed`.
+  const ONBOARDING_KEY = "mc.onboarding.dismissed";
+  const [onboardingHidden, setOnboardingHidden] = useState(true);
+  useEffect(() => {
+    void (async () => {
+      try {
+        const v = await AsyncStorage.getItem(ONBOARDING_KEY);
+        setOnboardingHidden(v === "1");
+      } catch {
+        setOnboardingHidden(false);
+      }
+    })();
+  }, []);
+  const dismissOnboarding = async () => {
+    setOnboardingHidden(true);
+    try {
+      await AsyncStorage.setItem(ONBOARDING_KEY, "1");
+    } catch {
+      /* noop */
+    }
+  };
 
   useEffect(() => {
     return subscribeQueueSize(setPendingCount);
@@ -463,6 +490,36 @@ export default function Dashboard() {
           <ActivityIndicator color={colors.primary} size="large" />
         </View>
       ) : (
+        <>
+          {/* 🚀 Carte "Premiers pas" — placée hors FlatList pour s'afficher
+             même quand la liste est vide. */}
+          {user?.role === "admin" &&
+            !isArtisanAccount &&
+            !onboardingHidden &&
+            !(
+              teamMembers.some((m) => m.role === "commercial") &&
+              teamMembers.some((m) => m.role === "technician") &&
+              items.length > 0
+            ) && (
+              <View
+                style={{
+                  paddingHorizontal: 16,
+                  paddingTop: 16,
+                  maxWidth: isTablet ? 900 : "100%",
+                  width: "100%",
+                  alignSelf: "center",
+                }}
+              >
+                <OnboardingCard
+                  teamMembers={teamMembers}
+                  hasChantier={items.length > 0}
+                  onGoTeam={() => router.push("/admin/team")}
+                  onNewChantier={() => setNewModal(true)}
+                  onDismiss={dismissOnboarding}
+                  t={t}
+                />
+              </View>
+            )}
         <FlatList
           data={items}
           keyExtractor={(i) => i.id}
@@ -481,14 +538,25 @@ export default function Dashboard() {
               tintColor={colors.primary}
             />
           }
+          ListHeaderComponent={null}
           ListEmptyComponent={
             <View style={styles.empty}>
               <Ionicons name="folder-open-outline" size={48} color={colors.borderStrong} />
               <Text style={styles.emptyText}>{t("dashboard.empty")}</Text>
-              <Text style={styles.emptySub}>{t("dashboard.createFirst")} ↓</Text>
+              <Text style={styles.emptySub}>
+                {isArtisanAccount
+                  ? t("onboarding.soloHint")
+                  : user?.role === "commercial"
+                    ? t("onboarding.commercialHint")
+                    : user?.role === "technician"
+                      ? t("onboarding.techHint")
+                      : t("dashboard.createFirst") + " ↓"}
+              </Text>
             </View>
           }
         />
+        </>
+      )}
       )}
 
       <TouchableOpacity
@@ -1096,7 +1164,7 @@ const styles = StyleSheet.create({
   },
   empty: { alignItems: "center", padding: 60, gap: 8 },
   emptyText: { color: colors.textPrimary, fontWeight: "800", fontSize: 16 },
-  emptySub: { color: colors.textSecondary, fontSize: 13 },
+  emptySub: { color: colors.textSecondary, fontSize: 13, textAlign: "center", paddingHorizontal: 20 },
   fab: {
     position: "absolute",
     bottom: 24,

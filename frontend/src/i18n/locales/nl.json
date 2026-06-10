@@ -792,5 +792,23 @@
       "save": "OPSLAAN",
       "saving": "..."
     }
+  },
+  "onboarding": {
+    "title": "🚀 Eerste stappen",
+    "subtitle": "Stel uw team in om werven te kunnen meten.",
+    "step1Title": "Nodig uw 1ste verkoper uit",
+    "step1Desc": "De verkoper neemt de metingen op de werf. U kunt hem werven toewijzen.",
+    "step1Btn": "Naar Team",
+    "step2Title": "Een technieker uitnodigen (aanbevolen)",
+    "step2Desc": "De technieker valideert de metingen voor de productie. Zonder technieker valideert u zelf.",
+    "step2Btn": "Een technieker uitnodigen",
+    "step3Title": "Maak uw 1ste werf aan",
+    "step3Desc": "Wanneer uw team klaar is, maakt u een werf aan en wijst u hem toe aan de verkoper.",
+    "step3Btn": "Nieuwe werf",
+    "done": "Klaar",
+    "skip": "Deze hulp verbergen",
+    "soloHint": "U bent in Solo-modus: maak uw eerste werf direct via de knop « + Nieuwe werf ».",
+    "commercialHint": "Er is u nog geen werf toegewezen. Vraag uw Admin om er u een toe te wijzen, of maak er zelf een aan.",
+    "techHint": "Geen werf wacht op technische validatie. Werven verschijnen hier zodra de verkoper klaar is met meten."
   }
 }
