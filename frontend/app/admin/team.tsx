@@ -344,20 +344,6 @@ export default function TeamAdmin() {
                 style={styles.input}
               />
 
-              <Text style={styles.label}>{t("screens.team.emailField")}</Text>
-              <TextInput
-                testID="invite-form-email"
-                value={email}
-                onChangeText={setEmail}
-                placeholder="prenom.nom@entreprise.fr"
-                placeholderTextColor={colors.placeholder}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                returnKeyType="next"
-                style={styles.input}
-              />
-
               <Text style={styles.label}>
                 Mot de passe (vous le transmettrez)
               </Text>
@@ -375,7 +361,7 @@ export default function TeamAdmin() {
                   autoComplete="new-password"
                   textContentType="newPassword"
                   passwordRules="minlength: 6;"
-                  returnKeyType="done"
+                  returnKeyType="next"
                   style={styles.passwordInput}
                 />
                 <TouchableOpacity
@@ -396,6 +382,20 @@ export default function TeamAdmin() {
                 💡 Vous transmettrez ces identifiants à votre collaborateur
                 par SMS ou WhatsApp.
               </Text>
+
+              <Text style={styles.label}>{t("screens.team.emailField")}</Text>
+              <TextInput
+                testID="invite-form-email"
+                value={email}
+                onChangeText={setEmail}
+                placeholder="prenom.nom@entreprise.fr"
+                placeholderTextColor={colors.placeholder}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                returnKeyType="done"
+                style={styles.input}
+              />
 
               <Text style={styles.label}>{t("screens.team.role")}</Text>
               <View style={styles.roleRow}>
