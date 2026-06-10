@@ -33,6 +33,22 @@ async def create_chantier(
 ):
     if payload.status not in VALID_STATUSES:
         raise HTTPException(400, "Invalid status")
+    # 🆕 V3 — Validation stricte du nom client (cahier 10/06/2026).
+    #    Empêche la création de chantiers "Sans nom" qui corrompaient
+    #    l'affichage des listes côté frontend.
+    last_clean = (payload.last_name or "").strip()
+    client_name_clean = (payload.client_name or "").strip()
+    if not last_clean and not client_name_clean:
+        raise HTTPException(
+            status_code=422,
+            detail="Le nom du client (last_name) est obligatoire.",
+        )
+    addr_clean = (payload.address or "").strip()
+    if not addr_clean:
+        raise HTTPException(
+            status_code=422,
+            detail="L'adresse du chantier (address) est obligatoire.",
+        )
     # --- Anti-fraud Freemium lifetime limit -------------------------------
     # 🚧 BETA GRATUITE : limite désactivée (BETA_MODE=True). Le bloc reste
     # en place pour réactivation simple une fois Stripe en ligne.

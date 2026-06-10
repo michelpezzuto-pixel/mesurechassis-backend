@@ -524,8 +524,17 @@ export default function Dashboard() {
                     onChangeText={setNewLastName}
                     placeholder="Dupont"
                     placeholderTextColor={colors.placeholder}
-                    style={styles.input}
+                    style={[
+                      styles.input,
+                      // 🆕 V3 — validation visuelle stricte (cahier 10/06/2026)
+                      !newLastName.trim() && { borderColor: "#ef4444", borderWidth: 1.5 },
+                    ]}
                   />
+                  {!newLastName.trim() && (
+                    <Text style={{ color: "#ef4444", fontSize: 11, marginTop: 2 }}>
+                      Le nom du client est obligatoire.
+                    </Text>
+                  )}
                 </View>
                 <View style={styles.col2}>
                   <Text style={styles.label}>Prénom</Text>
@@ -547,8 +556,16 @@ export default function Dashboard() {
                 onChangeText={setNewAddr}
                 placeholder="15 Rue de la République"
                 placeholderTextColor={colors.placeholder}
-                style={styles.input}
+                style={[
+                  styles.input,
+                  !newAddr.trim() && { borderColor: "#ef4444", borderWidth: 1.5 },
+                ]}
               />
+              {!newAddr.trim() && (
+                <Text style={{ color: "#ef4444", fontSize: 11, marginTop: 2 }}>
+                  L&apos;adresse est obligatoire.
+                </Text>
+              )}
 
               <View style={styles.row2}>
                 <View style={styles.col3}>

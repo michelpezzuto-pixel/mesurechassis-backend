@@ -63,37 +63,79 @@ export default function Closure() {
     }, [fetchAll])
   );
 
+  // 🆕 V3 — Helper universel : déclenche un download blob (web) ou
+  //    écrit le fichier sur disque + sharing (mobile). Évite le crash
+  //    `writeAsStringAsync is not a function` sur web.
+  const shareBlob = async (
+    blob: Blob,
+    fileName: string,
+    mimeType: string,
+  ) => {
+    if (Platform.OS === "web") {
+      const navAny: any = navigator;
+      const file = new File([blob], fileName, { type: mimeType });
+      if (
+        navAny.share &&
+        (!navAny.canShare || navAny.canShare({ files: [file] }))
+      ) {
+        await navAny.share({ title: fileName, files: [file] });
+        return;
+      }
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      try {
+        URL.revokeObjectURL(blobUrl);
+      } catch {
+        /* noop */
+      }
+      return;
+    }
+    // Mobile : Base64 -> file URI -> shareAsync
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const b64 = (reader.result as string).split(",")[1];
+        const FS: any = await import("expo-file-system/legacy");
+        const fileUri = `${FS.cacheDirectory}${fileName}`;
+        await FS.writeAsStringAsync(fileUri, b64, {
+          encoding: FS.EncodingType.Base64,
+        });
+        if (await Sharing.isAvailableAsync()) {
+          await Sharing.shareAsync(fileUri, { mimeType });
+        }
+      } catch (e: any) {
+        Alert.alert("Erreur", e?.message || "Partage impossible.");
+      }
+    };
+    reader.readAsDataURL(blob);
+  };
+
   const exportPDF = async () => {
     setExporting(true);
     try {
       const headers = await buildAuthHeaders();
       const r = await fetch(PDF_URL(String(id)), { headers });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const blob = await r.blob();
-      // Convert blob -> base64 -> file URI usable by Sharing
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64data = (reader.result as string).split(",")[1];
-        const FS = await import("expo-file-system/legacy");
-        const fileUri = `${FS.cacheDirectory}chantier-${id}.pdf`;
-        await FS.writeAsStringAsync(fileUri, base64data, {
-          encoding: FS.EncodingType.Base64,
-        });
-        if (await Sharing.isAvailableAsync()) {
-          await Sharing.shareAsync(fileUri, { mimeType: "application/pdf" });
-        } else {
-          Alert.alert("PDF prêt", `Fichier : ${fileUri}`);
-        }
-      };
-      reader.readAsDataURL(blob);
+      await shareBlob(blob, `chantier-${id}.pdf`, "application/pdf");
     } catch (e) {
-      // Fallback to expo-print with simple HTML
-      try {
-        const html = buildHtml(chantier!, mesures);
-        const { uri } = await Print.printToFileAsync({ html });
-        if (await Sharing.isAvailableAsync()) await Sharing.shareAsync(uri);
-      } catch {
-        Alert.alert("Erreur", "Export PDF indisponible.");
+      // Fallback to expo-print with simple HTML (mobile only)
+      if (Platform.OS !== "web") {
+        try {
+          const html = buildHtml(chantier!, mesures);
+          const { uri } = await Print.printToFileAsync({ html });
+          if (await Sharing.isAvailableAsync()) await Sharing.shareAsync(uri);
+          return;
+        } catch {
+          /* fallthrough */
+        }
       }
+      Alert.alert("Erreur", "Export PDF indisponible.");
     } finally {
       setExporting(false);
     }
@@ -102,14 +144,9 @@ export default function Closure() {
   const exportJSON = async () => {
     try {
       const res = await api.get(`/chantiers/${id}/export.json`);
-      const FS = await import("expo-file-system/legacy");
-      const fileUri = `${FS.cacheDirectory}chantier-${id}.json`;
-      await FS.writeAsStringAsync(fileUri, JSON.stringify(res.data, null, 2));
-      if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(fileUri, { mimeType: "application/json" });
-      } else {
-        Alert.alert("JSON prêt", `Fichier : ${fileUri}`);
-      }
+      const json = JSON.stringify(res.data, null, 2);
+      const blob = new Blob([json], { type: "application/json" });
+      await shareBlob(blob, `chantier-${id}.json`, "application/json");
     } catch {
       Alert.alert("Erreur", "Export JSON impossible.");
     }
@@ -124,22 +161,11 @@ export default function Closure() {
       );
       if (!r.ok) throw new Error("xlsx failed");
       const blob = await r.blob();
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const b64 = (reader.result as string).split(",")[1];
-        const FS = await import("expo-file-system/legacy");
-        const fileUri = `${FS.cacheDirectory}chantier-${id}.xlsx`;
-        await FS.writeAsStringAsync(fileUri, b64, { encoding: FS.EncodingType.Base64 });
-        if (await Sharing.isAvailableAsync()) {
-          await Sharing.shareAsync(fileUri, {
-            mimeType:
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          });
-        } else {
-          Alert.alert("Excel prêt", `Fichier : ${fileUri}`);
-        }
-      };
-      reader.readAsDataURL(blob);
+      await shareBlob(
+        blob,
+        `chantier-${id}.xlsx`,
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      );
     } catch {
       Alert.alert("Erreur", "Export Excel impossible.");
     }

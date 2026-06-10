@@ -21,6 +21,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import { api, buildAuthHeaders, PDF_URL, JSON_URL, XLSX_URL, CSV_URL } from "@/src/services/api";
+import { useResponsive } from "@/src/utils/responsive";
 import { ShapeIcon, blockTypeToShape } from "@/src/components/ShapeIcon";
 import AppointmentPicker from "@/src/components/AppointmentPicker";
 import { useAuth } from "@/src/context/AuthContext";
@@ -60,6 +61,11 @@ export default function ChantierDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { user, hasRole, artisanMode, company } = useAuth();
+  // 🆕 V3 — Responsive (cahier 10/06/2026 Phase 5). DOIT être appelé
+  //    EN TÊTE du composant car les hooks doivent toujours être appelés
+  //    dans le même ordre, indépendamment des early-returns.
+  const { width: screenWidth, isTablet } = useResponsive();
+  const numColumns = screenWidth >= 1100 ? 3 : screenWidth >= 768 ? 2 : 1;
   // 🔒 HARDCODED ROLE GATES (NE PAS passer par `hasRole` qui peut être
   // bypassé par `artisan_mode=true` dans la DB).
   // Ces booléens reflètent STRICTEMENT le rôle réel de l'utilisateur connecté.
@@ -803,11 +809,23 @@ export default function ChantierDetail() {
     );
   }
 
+  // 🆕 V3 — `numColumns` est calculé en haut du composant (cf. useResponsive).
+
   return (
     <SafeAreaView style={styles.flex} edges={["bottom"]}>
       <FlatList
+        // `key` force le remount quand on change de breakpoint (RN
+        // n'autorise pas de changer numColumns à chaud sans key).
+        key={`mesures-grid-${numColumns}`}
         data={mesures}
         keyExtractor={(i) => i.id}
+        numColumns={numColumns}
+        columnWrapperStyle={
+          numColumns > 1 ? { gap: 8, paddingHorizontal: 8 } : undefined
+        }
+        contentContainerStyle={
+          isTablet ? { maxWidth: 1200, alignSelf: "center", width: "100%" } : undefined
+        }
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -969,7 +987,12 @@ export default function ChantierDetail() {
           return (
             <TouchableOpacity
               testID={`mesure-card-${item.id}`}
-              style={styles.mesureCard}
+              style={[
+                styles.mesureCard,
+                // 🆕 V3 — En mode grille (tablette), chaque carte prend
+                // une part égale de la rangée pour un alignement propre.
+                numColumns > 1 && { flex: 1 / numColumns },
+              ]}
               onPress={handleCardPress}
               activeOpacity={0.75}
             >
