@@ -413,7 +413,7 @@ export default function TeamAdmin() {
               {lastInviteLink && (
                 <View style={styles.devLinkBox}>
                   <Text style={styles.devLinkLabel}>
-                    🔧 DÉMO — Lien d'invitation (mode dev) :
+                    🔧 DÉMO — Lien d&apos;invitation (mode dev) :
                   </Text>
                   <Text
                     testID="last-invitation-link"
@@ -477,7 +477,7 @@ export default function TeamAdmin() {
             <Text style={styles.extraTitle}>SUPPLÉMENT UTILISATEUR</Text>
             <Text style={styles.extraDesc}>
               Votre forfait{" "}
-              <Text style={styles.extraBold}>Entreprise (54,99 €/mois)</Text>{" "}
+              <Text style={styles.extraBold}>Entreprise (59,99 €/mois)</Text>{" "}
               comprend{" "}
               <Text style={styles.extraBold}>
                 {extraSeatInfo?.free_seats ?? 2} sièges gratuits
@@ -504,8 +504,8 @@ export default function TeamAdmin() {
                 )}
             </View>
             <Text style={styles.extraFine}>
-              La facturation prendra effet lors de l'activation par
-              l'utilisateur invité. Vous pouvez retirer un utilisateur à
+              La facturation prendra effet lors de l&apos;activation par
+              l&apos;utilisateur invité. Vous pouvez retirer un utilisateur à
               tout moment pour ajuster votre facture.
             </Text>
             <View style={styles.extraActions}>

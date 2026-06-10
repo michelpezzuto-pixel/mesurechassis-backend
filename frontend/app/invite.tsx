@@ -103,7 +103,7 @@ export default function InviteScreen() {
       <SafeAreaView style={styles.flex} edges={["top", "bottom"]}>
         <View style={styles.center}>
           <ActivityIndicator color={colors.primary} size="large" />
-          <Text style={styles.subTitle}>Chargement de l'invitation…</Text>
+          <Text style={styles.subTitle}>Chargement de l&apos;invitation…</Text>
         </View>
       </SafeAreaView>
     );

@@ -210,16 +210,26 @@ export default function Dashboard() {
       if (e?.response?.status === 402) {
         const detail = e?.response?.data?.detail;
         if (detail?.code === "free_plan_limit") {
+          // 🍎 iOS App Store 3.1.1 — pas de CTA "Voir l'abonnement"
+          // (ce qui mènerait à un écran de paiement). On donne juste
+          // l'info — l'utilisateur peut souscrire depuis mesurechassis.com.
+          const buttons: any[] =
+            Platform.OS === "ios"
+              ? [{ text: "OK", style: "cancel" }]
+              : [
+                  { text: "Plus tard", style: "cancel" },
+                  {
+                    text: "Voir l'abonnement",
+                    onPress: () => router.push("/company-profile"),
+                  },
+                ];
           Alert.alert(
             "🔒 Limite Freemium atteinte",
-            `${detail.message}\n\n(${detail.used}/${detail.limit} chantiers — la suppression ne réinitialise pas le compteur).`,
-            [
-              { text: "Plus tard", style: "cancel" },
-              {
-                text: "Voir l'abonnement",
-                onPress: () => router.push("/company-profile"),
-              },
-            ]
+            `${detail.message}\n\n(${detail.used}/${detail.limit} chantiers — la suppression ne réinitialise pas le compteur).` +
+              (Platform.OS === "ios"
+                ? "\n\nPour passer à un plan supérieur, rendez-vous sur mesurechassis.com."
+                : ""),
+            buttons,
           );
           setCreating(false);
           return;
@@ -655,7 +665,7 @@ export default function Dashboard() {
               <View style={styles.dictationHint}>
                 <Ionicons name="mic-outline" size={14} color={colors.textSecondary} />
                 <Text style={styles.dictationHintText}>
-                  Astuce : touchez l'icône 🎤 de votre clavier pour dicter vos notes à voix haute.
+                  Astuce : touchez l&apos;icône 🎤 de votre clavier pour dicter vos notes à voix haute.
                 </Text>
               </View>
               {mustAssignToCommercial && (
@@ -795,7 +805,7 @@ export default function Dashboard() {
                         }}
                       >
                         Aucun commercial dans votre équipe.{"\n"}Créez-en un dans la
-                        section Équipe d'abord.
+                        section Équipe d&apos;abord.
                       </Text>
                     </View>
                   );

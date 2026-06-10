@@ -28,8 +28,8 @@ export default function PrivacyPolicy() {
         <Text style={styles.updated}>Dernière mise à jour : {LAST_UPDATED}</Text>
 
         <Section title="1. Responsable du traitement">
-          MesureChâssis (« l'Éditeur ») est responsable du traitement des
-          données personnelles collectées via l'application. Le délégué à la
+          MesureChâssis (« l&apos;Éditeur ») est responsable du traitement des
+          données personnelles collectées via l&apos;application. Le délégué à la
           protection des données est joignable à dpo@mesurechassis.fr.
         </Section>
 
@@ -46,20 +46,20 @@ export default function PrivacyPolicy() {
         <Section title="3. Finalités">
           • Fourniture du service (gestion des chantiers et mesures){"\n"}
           • Authentification et sécurité (double opt-in, RBAC){"\n"}
-          • Facturation et gestion d'abonnement{"\n"}
+          • Facturation et gestion d&apos;abonnement{"\n"}
           • Notifications push (assignation, alertes){"\n"}
           • Amélioration produit (feedbacks utilisateurs)
         </Section>
 
         <Section title="4. Base légale">
-          Le traitement est fondé sur l'exécution du contrat (CGV) et,
+          Le traitement est fondé sur l&apos;exécution du contrat (CGV) et,
           pour certaines données (push tokens), sur le consentement
-          explicite recueilli au moment de l'autorisation du système
-          d'exploitation.
+          explicite recueilli au moment de l&apos;autorisation du système
+          d&apos;exploitation.
         </Section>
 
         <Section title="5. Durée de conservation">
-          • Données de compte : pendant toute la durée de l'abonnement
+          • Données de compte : pendant toute la durée de l&apos;abonnement
           + 12 mois après résiliation{"\n"}
           • Photos chantier : 3 ans (durée de garantie décennale){"\n"}
           • Logs techniques : 12 mois{"\n"}
@@ -69,14 +69,14 @@ export default function PrivacyPolicy() {
         <Section title="6. Destinataires">
           Les données sont accessibles aux utilisateurs autorisés de votre
           société selon la matrice RBAC (Admin, Commercial, Technicien).
-          Aucune donnée n'est vendue ni transmise à des tiers, sauf
+          Aucune donnée n&apos;est vendue ni transmise à des tiers, sauf
           obligations légales ou prestataires techniques sous contrat
           (hébergeur certifié ISO 27001, prestataire de paiement PCI-DSS).
         </Section>
 
         <Section title="7. Hébergement et transferts">
           Les données sont hébergées en Union européenne (France). Aucun
-          transfert hors UE n'est effectué sans garanties appropriées
+          transfert hors UE n&apos;est effectué sans garanties appropriées
           (clauses contractuelles types).
         </Section>
 
@@ -84,7 +84,7 @@ export default function PrivacyPolicy() {
           • Chiffrement TLS 1.3 en transit{"\n"}
           • Mots de passe hachés (bcrypt){"\n"}
           • Authentification multi-rôle (RBAC strict){"\n"}
-          • Double opt-in email à l'inscription{"\n"}
+          • Double opt-in email à l&apos;inscription{"\n"}
           • Sauvegardes quotidiennes chiffrées
         </Section>
 
@@ -92,17 +92,17 @@ export default function PrivacyPolicy() {
           Conformément au Règlement Général sur la Protection des Données,
           vous disposez des droits suivants :{"\n"}
           • Accès, rectification, effacement de vos données{"\n"}
-          • Portabilité (export JSON/CSV via l'application){"\n"}
+          • Portabilité (export JSON/CSV via l&apos;application){"\n"}
           • Opposition au traitement{"\n"}
           • Limitation du traitement{"\n"}
-          • Introduction d'une réclamation auprès de la CNIL{"\n\n"}
+          • Introduction d&apos;une réclamation auprès de la CNIL{"\n\n"}
           Pour exercer vos droits : dpo@mesurechassis.fr
         </Section>
 
         <Section title="10. Cookies">
-          L'application web utilise uniquement des cookies techniques
+          L&apos;application web utilise uniquement des cookies techniques
           (session JWT) strictement nécessaires au fonctionnement. Aucun
-          cookie de traçage publicitaire n'est déposé.
+          cookie de traçage publicitaire n&apos;est déposé.
         </Section>
 
         <Text style={styles.contact}>

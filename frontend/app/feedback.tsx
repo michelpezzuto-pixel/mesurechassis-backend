@@ -241,7 +241,7 @@ export default function FeedbackPage() {
               <View>
                 <Text style={styles.composerTitle}>NOUVEAU RETOUR</Text>
                 <Text style={styles.composerHint}>
-                  Suggestion, bug, idée d'amélioration…
+                  Suggestion, bug, idée d&apos;amélioration…
                 </Text>
               </View>
             </View>
@@ -307,12 +307,12 @@ export default function FeedbackPage() {
               color={colors.textSecondary}
             />
             <Text style={styles.emptyTitle}>
-              Aucun retour pour l'instant
+              Aucun retour pour l&apos;instant
             </Text>
             <Text style={styles.emptyText}>
               Utilisez le bloc « NOUVEAU RETOUR » ci-dessus pour suggérer
               une amélioration ou signaler un problème. Une copie sera
-              envoyée à l'équipe MesureChâssis et conservée ici.
+              envoyée à l&apos;équipe MesureChâssis et conservée ici.
             </Text>
           </View>
         ) : (

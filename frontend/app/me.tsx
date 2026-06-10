@@ -188,7 +188,7 @@ export default function MyInfoScreen() {
             />
             {emailChanged && (
               <Text style={styles.warnText}>
-                ⚠️ Changement d'email — confirmation du mot de passe requise
+                ⚠️ Changement d&apos;email — confirmation du mot de passe requise
                 ci-dessous.
               </Text>
             )}
@@ -234,7 +234,7 @@ export default function MyInfoScreen() {
           {sensitiveChange && (
             <View style={[styles.section, styles.sectionSensitive]}>
               <Text style={styles.sectionTitle}>
-                🔒 Confirmation d'identité
+                🔒 Confirmation d&apos;identité
               </Text>
               <Text style={styles.hint}>
                 Pour modifier votre email ou mot de passe, saisissez votre

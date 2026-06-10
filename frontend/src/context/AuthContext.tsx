@@ -48,7 +48,7 @@ type AuthCtx = {
     email: string,
     password: string,
     companyName?: string,
-    accountType?: "artisan" | "entreprise",
+    accountType?: "artisan" | "entreprise" | "pro",
   ) => Promise<{ verification_link?: string; message?: string }>;
   verifyEmail: (token: string) => Promise<void>;
   acceptInvitation: (
@@ -137,7 +137,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     email: string,
     password: string,
     companyName?: string,
-    accountType?: "artisan" | "entreprise",
+    accountType?: "artisan" | "entreprise" | "pro",
   ): Promise<{ verification_link?: string; message?: string }> => {
     const body: Record<string, unknown> = {
       name,

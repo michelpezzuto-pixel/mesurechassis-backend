@@ -85,17 +85,25 @@ export default function ChantierDetail() {
   // 🚧 BETA GRATUITE : pas de plan Free tant que beta_mode est actif.
   const isFreePlan = !company?.beta_mode && (company?.plan ?? "trial") === "free";
   const showUpgradeLock = () => {
+    // 🍎 iOS App Store 3.1.1 — pas de CTA "Voir l'abonnement" (écran de paiement).
+    const buttons: any[] =
+      Platform.OS === "ios"
+        ? [{ text: "OK", style: "cancel" }]
+        : [
+            { text: "Plus tard", style: "cancel" },
+            {
+              text: "Voir l'abonnement",
+              onPress: () => router.push("/company-profile"),
+            },
+          ];
     Alert.alert(
       "🔒 Exports verrouillés",
       "Les exports (PDF, Excel, CSV, JSON) sont réservés aux abonnés Pro. " +
-        "Passez en Pro pour débloquer toutes les exportations techniques.",
-      [
-        { text: "Plus tard", style: "cancel" },
-        {
-          text: "Voir l'abonnement",
-          onPress: () => router.push("/company-profile"),
-        },
-      ]
+        "Passez en Pro pour débloquer toutes les exportations techniques." +
+        (Platform.OS === "ios"
+          ? "\n\nPour souscrire, rendez-vous sur mesurechassis.com."
+          : ""),
+      buttons,
     );
   };
   const [chantier, setChantier] = useState<Chantier | null>(null);

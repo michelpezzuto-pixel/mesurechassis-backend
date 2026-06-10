@@ -40,7 +40,12 @@ export default function SignIn() {
   // Lot D — type de compte choisi à l'inscription :
   //   "artisan"   : auto-entrepreneur seul, artisan_mode=true automatique
   //   "entreprise": société avec équipe (Admin + commerciaux + techniciens)
-  const [accountType, setAccountType] = useState<"artisan" | "entreprise">(
+  //   "pro"       : Entreprise Pro (équipe étendue, fonctions avancées)
+  //
+  // 🆕 V3 (juin 2026) — Séparation explicite des 3 profils à l'inscription
+  // pour matcher les 3 plans Stripe (Artisan Solo / Entreprise / Entreprise Pro).
+  // Sur iOS, les prix sont masqués pour respecter App Store Guideline 3.1.1.
+  const [accountType, setAccountType] = useState<"artisan" | "entreprise" | "pro">(
     "artisan",
   );
   const [submitting, setSubmitting] = useState(false);
@@ -153,7 +158,7 @@ export default function SignIn() {
     }
     if (
       mode === "register" &&
-      accountType === "entreprise" &&
+      (accountType === "entreprise" || accountType === "pro") &&
       !companyName.trim()
     ) {
       Alert.alert(
@@ -173,7 +178,7 @@ export default function SignIn() {
           name.trim(),
           email.trim(),
           password,
-          accountType === "entreprise"
+          (accountType === "entreprise" || accountType === "pro")
             ? companyName.trim() || undefined
             : companyName.trim() || undefined,
           accountType,
@@ -309,85 +314,94 @@ export default function SignIn() {
             <>
           {mode === "register" && (
             <>
-              {/* Lot D — Sélecteur Artisan vs Entreprise */}
-              <Text style={styles.label}>Type de compte</Text>
-              <View style={styles.typeRow}>
-                <TouchableOpacity
-                  testID="account-type-artisan"
-                  onPress={() => setAccountType("artisan")}
-                  activeOpacity={0.85}
-                  style={[
-                    styles.typeCard,
-                    accountType === "artisan" && styles.typeCardActive,
-                  ]}
-                >
-                  <View
+              {/* 🆕 V3 — Sélection du profil avec 3 plans (Artisan / Entreprise / Pro).
+               * Les prix sont affichés sur Web/Android mais MASQUÉS sur iOS
+               * (App Store 3.1.1 — pas de mention de paiement externe). */}
+              <Text style={styles.label}>Choisissez votre profil</Text>
+              {([
+                {
+                  key: "artisan" as const,
+                  icon: "person" as const,
+                  title: "Artisan Solo",
+                  desc: "Compte solo — auto-entrepreneur, ultra-simple",
+                  price: "24,99 €/mois",
+                },
+                {
+                  key: "entreprise" as const,
+                  icon: "business" as const,
+                  title: "Entreprise",
+                  desc: "Équipe 3 utilisateurs — Admin, commerciaux & techniciens",
+                  price: "59,99 €/mois",
+                  badge: "POPULAIRE",
+                },
+                {
+                  key: "pro" as const,
+                  icon: "rocket" as const,
+                  title: "Entreprise Pro",
+                  desc: "Équipe 6 utilisateurs + Bluetooth & fonctions avancées",
+                  price: "89,99 €/mois",
+                },
+              ]).map((opt) => {
+                const active = accountType === opt.key;
+                return (
+                  <TouchableOpacity
+                    key={opt.key}
+                    testID={`account-type-${opt.key}`}
+                    onPress={() => setAccountType(opt.key)}
+                    activeOpacity={0.85}
                     style={[
-                      styles.typeIconWrap,
-                      accountType === "artisan" && styles.typeIconWrapActive,
+                      styles.profileCard,
+                      active && styles.profileCardActive,
                     ]}
                   >
+                    <View
+                      style={[
+                        styles.typeIconWrap,
+                        active && styles.typeIconWrapActive,
+                      ]}
+                    >
+                      <Ionicons
+                        name={opt.icon}
+                        size={22}
+                        color={active ? "#000" : colors.textSecondary}
+                      />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <View style={styles.profileTitleRow}>
+                        <Text
+                          style={[
+                            styles.typeTitle,
+                            active && styles.typeTitleActive,
+                          ]}
+                        >
+                          {opt.title}
+                        </Text>
+                        {opt.badge && (
+                          <View style={styles.profileBadge}>
+                            <Text style={styles.profileBadgeText}>{opt.badge}</Text>
+                          </View>
+                        )}
+                      </View>
+                      <Text style={styles.typeDesc}>{opt.desc}</Text>
+                      {Platform.OS !== "ios" && (
+                        <Text
+                          style={[
+                            styles.profilePrice,
+                            active && { color: colors.primary },
+                          ]}
+                        >
+                          ✨ 90 jours gratuits puis {opt.price}
+                        </Text>
+                      )}
+                    </View>
                     <Ionicons
-                      name="person"
+                      name={active ? "checkmark-circle" : "ellipse-outline"}
                       size={22}
-                      color={
-                        accountType === "artisan"
-                          ? "#000"
-                          : colors.textSecondary
-                      }
+                      color={active ? colors.primary : colors.borderStrong}
                     />
-                  </View>
-                  <Text
-                    style={[
-                      styles.typeTitle,
-                      accountType === "artisan" && styles.typeTitleActive,
-                    ]}
-                  >
-                    Artisan
-                  </Text>
-                  <Text style={styles.typeDesc}>
-                    Compte solo, simple et rapide
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  testID="account-type-entreprise"
-                  onPress={() => setAccountType("entreprise")}
-                  activeOpacity={0.85}
-                  style={[
-                    styles.typeCard,
-                    accountType === "entreprise" && styles.typeCardActive,
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.typeIconWrap,
-                      accountType === "entreprise" && styles.typeIconWrapActive,
-                    ]}
-                  >
-                    <Ionicons
-                      name="business"
-                      size={22}
-                      color={
-                        accountType === "entreprise"
-                          ? "#000"
-                          : colors.textSecondary
-                      }
-                    />
-                  </View>
-                  <Text
-                    style={[
-                      styles.typeTitle,
-                      accountType === "entreprise" && styles.typeTitleActive,
-                    ]}
-                  >
-                    Entreprise
-                  </Text>
-                  <Text style={styles.typeDesc}>
-                    Équipe : Admin, commerciaux & techniciens
-                  </Text>
-                </TouchableOpacity>
-              </View>
+                  </TouchableOpacity>
+                );
+              })}
 
               <Text style={styles.label}>
                 {accountType === "artisan"
@@ -407,22 +421,7 @@ export default function SignIn() {
                 style={styles.input}
               />
 
-              {accountType === "entreprise" ? (
-                <>
-                  <Text style={styles.label}>
-                    Nom de l'entreprise{" "}
-                    <Text style={{ color: colors.alert }}>*</Text>
-                  </Text>
-                  <TextInput
-                    testID="register-company-input"
-                    value={companyName}
-                    onChangeText={setCompanyName}
-                    placeholder="ex. Menuiseries Dubois SARL"
-                    placeholderTextColor={colors.placeholder}
-                    style={styles.input}
-                  />
-                </>
-              ) : (
+              {accountType === "artisan" ? (
                 <>
                   <Text style={styles.label}>
                     Nom commercial (optionnel)
@@ -432,6 +431,21 @@ export default function SignIn() {
                     value={companyName}
                     onChangeText={setCompanyName}
                     placeholder="ex. JD Menuiserie"
+                    placeholderTextColor={colors.placeholder}
+                    style={styles.input}
+                  />
+                </>
+              ) : (
+                <>
+                  <Text style={styles.label}>
+                    Nom de l&apos;entreprise{" "}
+                    <Text style={{ color: colors.alert }}>*</Text>
+                  </Text>
+                  <TextInput
+                    testID="register-company-input"
+                    value={companyName}
+                    onChangeText={setCompanyName}
+                    placeholder="ex. Menuiseries Dubois SARL"
                     placeholderTextColor={colors.placeholder}
                     style={styles.input}
                   />
@@ -447,15 +461,21 @@ export default function SignIn() {
                 <Text style={styles.infoBoxText}>
                   {accountType === "artisan" ? (
                     <>
-                      <Text style={styles.bold}>Mode Artisan</Text> : un
+                      <Text style={styles.bold}>Mode Artisan Solo</Text> : un
                       compte unique, ultra-simple. Tous les accès sont
                       activés (mesures + chantiers + exports).
+                    </>
+                  ) : accountType === "pro" ? (
+                    <>
+                      <Text style={styles.bold}>Mode Entreprise Pro</Text> :
+                      vous serez Admin. Équipe étendue (6 utilisateurs inclus)
+                      et fonctions avancées (Bluetooth laser, à venir).
                     </>
                   ) : (
                     <>
                       <Text style={styles.bold}>Mode Entreprise</Text> :
                       vous serez Admin. Les Commerciaux et Techniciens
-                      sont invités par email depuis l'écran « Équipe ».
+                      sont invités par email depuis l&apos;écran « Équipe ».
                     </>
                   )}
                 </Text>
@@ -611,7 +631,7 @@ export default function SignIn() {
                       </Text>
                       <Text style={styles.betaCodeValue}>{forgotBetaCode}</Text>
                       <Text style={styles.betaCodeHint}>
-                        L'envoi d'email a échoué. Utilisez ce code de secours.
+                        L&apos;envoi d&apos;email a échoué. Utilisez ce code de secours.
                       </Text>
                     </View>
                   )}
@@ -1094,8 +1114,47 @@ const styles = StyleSheet.create({
   typeDesc: {
     color: colors.textSecondary,
     fontSize: 11,
-    textAlign: "center",
     marginTop: 4,
     lineHeight: 14,
+  },
+  // 🆕 V3 — Cartes verticales pour les 3 profils (Artisan/Entreprise/Pro)
+  profileCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    backgroundColor: colors.surface,
+    borderWidth: 1.5,
+    borderColor: colors.borderSubtle,
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    marginBottom: 10,
+  },
+  profileCardActive: {
+    borderColor: colors.primary,
+    backgroundColor: "rgba(255, 107, 26, 0.08)",
+  },
+  profileTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  profileBadge: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  profileBadgeText: {
+    color: "#000",
+    fontSize: 9,
+    fontWeight: "900",
+    letterSpacing: 0.5,
+  },
+  profilePrice: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    fontWeight: "700",
+    marginTop: 4,
   },
 });

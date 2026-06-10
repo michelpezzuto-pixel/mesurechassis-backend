@@ -67,7 +67,7 @@ const PLANS: {
   {
     key: "entreprise",
     name: "Entreprise",
-    price: "54,99 €",
+    price: "59,99 €",
     unit: "/mois",
     badge: "POPULAIRE",
     highlight: true,
@@ -82,7 +82,7 @@ const PLANS: {
   {
     key: "pro",
     name: "Entreprise Pro",
-    price: "84,99 €",
+    price: "89,99 €",
     unit: "/mois",
     features: [
       "6 utilisateurs inclus",
@@ -275,8 +275,12 @@ export default function SubscriptionScreen() {
           </View>
         )}
 
-        {/* ===== BOUTON MANAGE SI ABONNEMENT EXISTANT ===== */}
-        {status?.has_subscription && (
+        {/* ===== BOUTON MANAGE SI ABONNEMENT EXISTANT =====
+         * 🍎 Masqué sur iOS — Apple App Store Guideline 3.1.1 :
+         * une app B2B SaaS ne peut PAS proposer la gestion d'un abonnement
+         * payé hors IAP depuis l'app iOS. Sur iOS, l'utilisateur est invité
+         * à se rendre sur mesurechassis.com. */}
+        {status?.has_subscription && Platform.OS !== "ios" && (
           <TouchableOpacity
             style={[styles.manageBtn, openingPortal && { opacity: 0.6 }]}
             onPress={handleManageSubscription}
@@ -299,77 +303,105 @@ export default function SubscriptionScreen() {
           </TouchableOpacity>
         )}
 
-        {/* ===== LISTE DES PLANS ===== */}
-        <Text style={styles.sectionTitle}>
-          {status?.has_subscription ? "Changer de plan" : "Choisir un plan"}
-        </Text>
-        <Text style={styles.sectionHint}>
-          ✨ 3 mois gratuits pour démarrer, sans engagement. Annulez à tout
-          moment depuis le portail.
-        </Text>
-
-        {PLANS.map((plan) => {
-          const isCurrent = currentPlanKey === plan.key;
-          const isLoading = subscribing === plan.key;
-          return (
-            <View
-              key={plan.key}
-              style={[
-                styles.planCard,
-                plan.highlight && styles.planCardHighlight,
-                isCurrent && styles.planCardCurrent,
-              ]}
-            >
-              {plan.badge && !isCurrent && (
-                <View style={styles.badge}>
-                  <Text style={styles.badgeText}>{plan.badge}</Text>
-                </View>
-              )}
-              {isCurrent && (
-                <View style={[styles.badge, styles.badgeCurrent]}>
-                  <Text style={styles.badgeText}>VOTRE PLAN</Text>
-                </View>
-              )}
-              <Text style={styles.planName}>{plan.name}</Text>
-              <View style={styles.priceRow}>
-                <Text style={styles.priceValue}>{plan.price}</Text>
-                <Text style={styles.priceUnit}>{plan.unit}</Text>
-              </View>
-              {plan.features.map((f, i) => (
-                <View key={i} style={styles.featureRow}>
-                  <Ionicons name="checkmark" size={16} color={colors.primary} />
-                  <Text style={styles.featureText}>{f}</Text>
-                </View>
-              ))}
-              {!isCurrent && (
-                <TouchableOpacity
-                  style={[
-                    styles.subscribeBtn,
-                    plan.highlight && styles.subscribeBtnHighlight,
-                    isLoading && { opacity: 0.6 },
-                  ]}
-                  onPress={() => handleSubscribe(plan.key)}
-                  disabled={isLoading || subscribing !== null}
-                >
-                  {isLoading ? (
-                    <ActivityIndicator color="#000" />
-                  ) : (
-                    <Text style={styles.subscribeBtnText}>
-                      {status?.has_subscription
-                        ? "Passer à ce plan"
-                        : "Démarrer l'essai gratuit"}
-                    </Text>
-                  )}
-                </TouchableOpacity>
-              )}
+        {/* 🍎 iOS — Bandeau d'information remplaçant les CTA Stripe.
+         * Conforme à la règle App Store : aucune mention de paiement
+         * externe, juste un rappel que la gestion se fait sur le site web. */}
+        {Platform.OS === "ios" && (
+          <View style={styles.iosNoticeBox}>
+            <Ionicons
+              name="information-circle-outline"
+              size={20}
+              color={colors.primary}
+            />
+            <View style={{ flex: 1, marginLeft: 10 }}>
+              <Text style={styles.iosNoticeTitle}>Gestion sur le web</Text>
+              <Text style={styles.iosNoticeBody}>
+                Pour souscrire, changer ou annuler votre formule, rendez-vous
+                sur <Text style={{ fontWeight: "800" }}>mesurechassis.com</Text>{" "}
+                depuis un navigateur. Votre compte est synchronisé
+                automatiquement.
+              </Text>
             </View>
-          );
-        })}
+          </View>
+        )}
 
-        <Text style={styles.smallNote}>
-          🔒 Paiement sécurisé via Stripe. Cartes bancaires et SEPA acceptés.
-          {"\n"}TVA collectée selon votre pays de résidence.
-        </Text>
+        {/* ===== LISTE DES PLANS =====
+         * 🍎 Masquée sur iOS (App Store 3.1.1) — voir bandeau d'info ci-dessus.
+         */}
+        {Platform.OS !== "ios" && (
+          <>
+            <Text style={styles.sectionTitle}>
+              {status?.has_subscription ? "Changer de plan" : "Choisir un plan"}
+            </Text>
+            <Text style={styles.sectionHint}>
+              ✨ 3 mois gratuits pour démarrer, sans engagement. Annulez à tout
+              moment depuis le portail.
+            </Text>
+
+            {PLANS.map((plan) => {
+              const isCurrent = currentPlanKey === plan.key;
+              const isLoading = subscribing === plan.key;
+              return (
+                <View
+                  key={plan.key}
+                  style={[
+                    styles.planCard,
+                    plan.highlight && styles.planCardHighlight,
+                    isCurrent && styles.planCardCurrent,
+                  ]}
+                >
+                  {plan.badge && !isCurrent && (
+                    <View style={styles.badge}>
+                      <Text style={styles.badgeText}>{plan.badge}</Text>
+                    </View>
+                  )}
+                  {isCurrent && (
+                    <View style={[styles.badge, styles.badgeCurrent]}>
+                      <Text style={styles.badgeText}>VOTRE PLAN</Text>
+                    </View>
+                  )}
+                  <Text style={styles.planName}>{plan.name}</Text>
+                  <View style={styles.priceRow}>
+                    <Text style={styles.priceValue}>{plan.price}</Text>
+                    <Text style={styles.priceUnit}>{plan.unit}</Text>
+                  </View>
+                  {plan.features.map((f, i) => (
+                    <View key={i} style={styles.featureRow}>
+                      <Ionicons name="checkmark" size={16} color={colors.primary} />
+                      <Text style={styles.featureText}>{f}</Text>
+                    </View>
+                  ))}
+                  {!isCurrent && (
+                    <TouchableOpacity
+                      style={[
+                        styles.subscribeBtn,
+                        plan.highlight && styles.subscribeBtnHighlight,
+                        isLoading && { opacity: 0.6 },
+                      ]}
+                      onPress={() => handleSubscribe(plan.key)}
+                      disabled={isLoading || subscribing !== null}
+                    >
+                      {isLoading ? (
+                        <ActivityIndicator color="#000" />
+                      ) : (
+                        <Text style={styles.subscribeBtnText}>
+                          {status?.has_subscription
+                            ? "Passer à ce plan"
+                            : "Démarrer l'essai gratuit"}
+                        </Text>
+                      )}
+                    </TouchableOpacity>
+                  )}
+                </View>
+              );
+            })}
+
+            <Text style={styles.smallNote}>
+              🔒 Paiement sécurisé via Stripe. Cartes bancaires et SEPA acceptés.
+              {"\n"}TVA collectée selon votre pays de résidence.
+            </Text>
+          </>
+        )}
 
         <View style={{ height: 32 }} />
       </ScrollView>
@@ -498,6 +530,28 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     fontWeight: "700",
     fontSize: 13,
+  },
+  // 🍎 Bandeau iOS (App Store 3.1.1) — remplace les CTA Stripe
+  iosNoticeBox: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    backgroundColor: "#1a0e05",
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 24,
+  },
+  iosNoticeTitle: {
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: "800",
+    marginBottom: 4,
+  },
+  iosNoticeBody: {
+    color: colors.textSecondary,
+    fontSize: 13,
+    lineHeight: 18,
   },
   sectionTitle: {
     color: colors.textPrimary,

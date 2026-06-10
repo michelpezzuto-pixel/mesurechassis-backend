@@ -144,7 +144,7 @@ export default function CompanyProfile() {
         "✅ Formule modifiée",
         target === "artisan"
           ? "Vous êtes désormais en formule Artisan (24,99 €/mois)."
-          : "Vous êtes désormais en formule Entreprise (54,99 €/mois). La gestion d'équipe est débloquée."
+          : "Vous êtes désormais en formule Entreprise (59,99 €/mois). La gestion d'équipe est débloquée."
       );
     } catch (e: any) {
       const detail = e?.response?.data?.detail;
@@ -453,8 +453,8 @@ export default function CompanyProfile() {
             {betaMode ? (
               <>
                 <Text style={styles.betaIntro}>
-                  🎉 Profitez de l'accès complet à MesureChâssis pendant la
-                  phase de test. Aucun paiement n'est requis.
+                  🎉 Profitez de l&apos;accès complet à MesureChâssis pendant la
+                  phase de test. Aucun paiement n&apos;est requis.
                 </Text>
                 <Text style={styles.betaFeedback}>
                   Vos retours nous aident à grandir ! Signalez-nous la moindre
@@ -524,11 +524,11 @@ export default function CompanyProfile() {
                   </Text>
                 </View>
                 <Text style={styles.cancelBoxBody}>
-                  Votre accès Pro reste actif jusqu'au{" "}
+                  Votre accès Pro reste actif jusqu&apos;au{" "}
                   <Text style={styles.bold}>{expiresLabel}</Text>. À cette date,
-                  l'écran de verrouillage plein-écran sera activé automatiquement.
+                  l&apos;écran de verrouillage plein-écran sera activé automatiquement.
                 </Text>
-                {isAdmin && (
+                {isAdmin && Platform.OS !== "ios" && (
                   <TouchableOpacity
                     testID="reactivate-subscription-button"
                     onPress={doReactivate}
@@ -546,7 +546,7 @@ export default function CompanyProfile() {
                           color={colors.textPrimary}
                         />
                         <Text style={styles.btnGhostText}>
-                          RÉACTIVER L'ABONNEMENT
+                          RÉACTIVER L&apos;ABONNEMENT
                         </Text>
                       </>
                     )}
@@ -570,7 +570,7 @@ export default function CompanyProfile() {
 
             {!isAdmin && (
               <Text style={styles.warnNote}>
-                ⚠ Seul l'administrateur principal peut gérer la facturation.
+                ⚠ Seul l&apos;administrateur principal peut gérer la facturation.
               </Text>
             )}
           </View>
@@ -681,7 +681,7 @@ export default function CompanyProfile() {
 
             {!isAdmin && (
               <Text style={styles.warnNote}>
-                ⓘ Seul l'administrateur peut modifier le logo.
+                ⓘ Seul l&apos;administrateur peut modifier le logo.
               </Text>
             )}
           </View>
@@ -727,7 +727,7 @@ export default function CompanyProfile() {
                 <Text style={styles.accountTypeDesc}>
                   {profile?.account_type === "artisan"
                     ? "Compte solo, 1 utilisateur unique — 24,99 €/mois"
-                    : "Admin + Commercial + Technicien inclus — 54,99 €/mois (+4,99 €/utilisateur supplémentaire)"}
+                    : "Admin + Commercial + Technicien inclus — 59,99 €/mois (+4,99 €/utilisateur supplémentaire)"}
                 </Text>
               </View>
             </View>
@@ -746,14 +746,14 @@ export default function CompanyProfile() {
                 />
                 <Text style={styles.btnGhostText}>
                   {profile?.account_type === "artisan"
-                    ? "PASSER EN COMPTE ENTREPRISE (54,99 €/mois)"
+                    ? "PASSER EN COMPTE ENTREPRISE (59,99 €/mois)"
                     : "PASSER EN COMPTE ARTISAN (24,99 €/mois)"}
                 </Text>
               </TouchableOpacity>
             )}
             {!isAdmin && (
               <Text style={styles.warnNote}>
-                ⓘ Seul l'administrateur peut modifier la formule.
+                ⓘ Seul l&apos;administrateur peut modifier la formule.
               </Text>
             )}
           </View>
@@ -797,15 +797,19 @@ export default function CompanyProfile() {
             </TouchableOpacity>
           </View>
 
-          {/* === MON ABONNEMENT === */}
+          {/* === MON ABONNEMENT ===
+           * 🍎 Sur iOS, l'écran subscription est en lecture seule mais reste
+           * accessible — il contient le statut + un bandeau vers mesurechassis.com.
+           * Le label du bouton est adapté (consultation vs gestion). */}
           <View style={styles.card}>
             <View style={styles.row}>
               <Ionicons name="card-outline" size={18} color={colors.primary} />
               <Text style={styles.dangerTitle}>MON ABONNEMENT</Text>
             </View>
             <Text style={styles.help}>
-              Consulter votre plan, gérer votre moyen de paiement, télécharger
-              vos factures ou changer de formule.
+              {Platform.OS === "ios"
+                ? "Consultez votre statut d'abonnement. La gestion (paiement, changement de formule) se fait sur mesurechassis.com."
+                : "Consulter votre plan, gérer votre moyen de paiement, télécharger vos factures ou changer de formule."}
             </Text>
             <TouchableOpacity
               testID="open-subscription"
@@ -814,7 +818,9 @@ export default function CompanyProfile() {
               style={[styles.logoBtnPrimary, { marginTop: 12 }]}
             >
               <Ionicons name="diamond-outline" size={16} color="#000" />
-              <Text style={styles.logoBtnPrimaryText}>VOIR MES PLANS</Text>
+              <Text style={styles.logoBtnPrimaryText}>
+                {Platform.OS === "ios" ? "VOIR MON STATUT" : "VOIR MES PLANS"}
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -863,12 +869,12 @@ export default function CompanyProfile() {
               </View>
               <Text style={styles.modalTitle}>CONFIRMER LE DÉSABONNEMENT</Text>
               <Text style={styles.modalBody}>
-                Votre accès Pro restera actif jusqu'au{" "}
+                Votre accès Pro restera actif jusqu&apos;au{" "}
                 <Text style={styles.bold}>{expiresLabel}</Text>.
                 {"\n\n"}
-                Après cette date, l'écran de verrouillage plein-écran sera
-                activé automatiquement. Vous pourrez réactiver l'abonnement à
-                tout moment avant l'expiration.
+                Après cette date, l&apos;écran de verrouillage plein-écran sera
+                activé automatiquement. Vous pourrez réactiver l&apos;abonnement à
+                tout moment avant l&apos;expiration.
               </Text>
               <View style={styles.modalActions}>
                 <TouchableOpacity
@@ -1025,9 +1031,9 @@ export default function CompanyProfile() {
               {profile?.account_type === "artisan" ? (
                 <Text style={styles.modalBody}>
                   Vous allez passer en formule{" "}
-                  <Text style={styles.bold}>Entreprise — 54,99 €/mois</Text>.
+                  <Text style={styles.bold}>Entreprise — 59,99 €/mois</Text>.
                   {"\n\n"}
-                  ✅ Vous débloquez la gestion d'équipe (Commercial + Technicien
+                  ✅ Vous débloquez la gestion d&apos;équipe (Commercial + Technicien
                   inclus, +4,99 €/utilisateur supplémentaire).
                   {"\n\n"}
                   ✅ Vous conservez tous vos chantiers et vos données.
@@ -1050,12 +1056,12 @@ export default function CompanyProfile() {
                   {"\n\n"}
                   ✅ Vous obtenez{" "}
                   <Text style={styles.bold}>
-                    toutes les fonctionnalités de l'Artisan
+                    toutes les fonctionnalités de l&apos;Artisan
                   </Text>{" "}
                   (relevé, exports techniques, PDF, etc.).
                   {"\n\n"}
                   ℹ Si des collaborateurs sont actifs dans votre équipe,
-                  supprimez-les d'abord depuis la page Équipe.
+                  supprimez-les d&apos;abord depuis la page Équipe.
                 </Text>
               )}
 

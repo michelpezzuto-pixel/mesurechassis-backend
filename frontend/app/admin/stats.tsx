@@ -183,7 +183,7 @@ export default function AdminStats() {
           />
         }
       >
-        <Text style={styles.section}>VUE D'ENSEMBLE</Text>
+        <Text style={styles.section}>VUE D&apos;ENSEMBLE</Text>
         <View style={styles.row}>
           <View style={[styles.card, styles.heroCard]}>
             <Text style={styles.heroValue} testID="stat-total-chantiers">

@@ -161,13 +161,25 @@ async def register(payload: dict, request: Request):
     # ---- Master Admin mode (nouveau flux, double opt-in) ----------------
     # Lot D : account_type "artisan" (compte solo, artisan_mode=true)
     # vs "entreprise" (compte avec équipe). Défaut = entreprise (legacy).
+    # 🆕 V3 (juin 2026) : ajout du tier "pro" (Entreprise Pro — équipe
+    # étendue + fonctions avancées). Stocké tel quel dans `account_type`.
+    # Le plan de souscription préféré est dérivé : artisan→solo,
+    # entreprise→entreprise, pro→pro (utilisé pour pré-sélectionner sur
+    # l'écran subscription Stripe).
     account_type_raw = str(payload.get("account_type") or "entreprise").lower()
-    if account_type_raw not in {"artisan", "entreprise"}:
+    if account_type_raw not in {"artisan", "entreprise", "pro"}:
         account_type_raw = "entreprise"
     is_artisan = account_type_raw == "artisan"
+    # Plan Stripe préféré pour cet utilisateur (pour pré-sélection)
+    preferred_plan_map = {
+        "artisan": "solo",
+        "entreprise": "entreprise",
+        "pro": "pro",
+    }
+    preferred_plan = preferred_plan_map.get(account_type_raw, "entreprise")
 
     # Pour un Artisan, le nom de société par défaut = nom de l'utilisateur
-    # (auto-entrepreneur), pour une Entreprise on impose company_name explicite.
+    # (auto-entrepreneur), pour Entreprise/Pro on impose company_name explicite.
     company_name = payload.get("company_name")
     if is_artisan:
         company_name = (company_name or name).strip() or name
@@ -217,6 +229,8 @@ async def register(payload: dict, request: Request):
             "company_id": company_id,
             "name": company_name,
             "account_type": account_type_raw,
+            # 🆕 V3 — Plan Stripe préféré (artisan→solo, entreprise→entreprise, pro→pro)
+            "preferred_plan": preferred_plan,
             # Artisan → artisan_mode automatique (bypass RBAC complet)
             "artisan_mode": is_artisan,
             "subscription_status": "active",
@@ -236,6 +250,8 @@ async def register(payload: dict, request: Request):
             "company_id": company_id,
             "name": company_name,
             "account_type": account_type_raw,
+            # 🆕 V3 — Plan Stripe préféré
+            "preferred_plan": preferred_plan,
             "artisan_mode": is_artisan,
             "subscription_status": "trial",
             "subscription_expires_at": trial_expires,
