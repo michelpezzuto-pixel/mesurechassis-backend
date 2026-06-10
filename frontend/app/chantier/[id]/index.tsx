@@ -60,7 +60,7 @@ type UserOpt = { id: string; name: string; email: string; role: string };
 
 export default function ChantierDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const { user, hasRole, artisanMode, company } = useAuth();
   // 🆕 V3 — Responsive (cahier 10/06/2026 Phase 5). DOIT être appelé
@@ -90,20 +90,19 @@ export default function ChantierDetail() {
     // 🍎 iOS App Store 3.1.1 — pas de CTA "Voir l'abonnement" (écran de paiement).
     const buttons: any[] =
       Platform.OS === "ios"
-        ? [{ text: "OK", style: "cancel" }]
+        ? [{ text: t("common.ok"), style: "cancel" }]
         : [
-            { text: "Plus tard", style: "cancel" },
+            { text: t("chantierDetail.upgradeLock.later"), style: "cancel" },
             {
-              text: "Voir l'abonnement",
+              text: t("chantierDetail.upgradeLock.viewSubscription"),
               onPress: () => router.push("/company-profile"),
             },
           ];
     Alert.alert(
-      "🔒 Exports verrouillés",
-      "Les exports (PDF, Excel, CSV, JSON) sont réservés aux abonnés Pro. " +
-        "Passez en Pro pour débloquer toutes les exportations techniques." +
+      t("chantierDetail.upgradeLock.title"),
+      t("chantierDetail.upgradeLock.msgBase") +
         (Platform.OS === "ios"
-          ? "\n\nPour souscrire, rendez-vous sur mesurechassis.com."
+          ? t("chantierDetail.upgradeLock.msgIosSuffix")
           : ""),
       buttons,
     );
@@ -204,9 +203,9 @@ export default function ChantierDetail() {
   const showArchivedLockIntercept = isArchived;
   const interceptArchivedLock = () => {
     Alert.alert(
-      "🔒 Chantier verrouillé",
-      "Les mesures ne sont plus modifiables. Veuillez vous référer au PDF d'export.",
-      [{ text: "J'ai compris", style: "default" }]
+      t("chantierDetail.archivedLock.alertTitle"),
+      t("chantierDetail.archivedLock.alertMsg"),
+      [{ text: t("chantierDetail.archivedLock.got"), style: "default" }]
     );
   };
 
@@ -252,9 +251,9 @@ export default function ChantierDetail() {
    */
   const interceptCommercialFab = () => {
     Alert.alert(
-      "🛑 Action non autorisée",
-      "Ce chantier est verrouillé en fabrication. Seul le technicien peut modifier ces données ou exporter les formats d'atelier.",
-      [{ text: "J'ai compris", style: "default" }]
+      t("chantierDetail.commercialFabBlock.title"),
+      t("chantierDetail.commercialFabBlock.msg"),
+      [{ text: t("chantierDetail.archivedLock.got"), style: "default" }]
     );
   };
 
@@ -273,7 +272,7 @@ export default function ChantierDetail() {
   const creatorName = (() => {
     if (!chantier) return "";
     const u = users.find((x) => x.id === chantier.created_by);
-    return u?.name || "Opérateur inconnu";
+    return u?.name || t("common.unknownUser", { defaultValue: "Opérateur inconnu" });
   })();
 
   const fetchAll = useCallback(async () => {
@@ -287,7 +286,7 @@ export default function ChantierDetail() {
       setMesures(m.data);
       setUsers(u.data);
     } catch {
-      Alert.alert("Erreur", "Impossible de charger le chantier.");
+      Alert.alert(t("chantierDetail.errors.title"), t("chantierDetail.errors.loadFail"));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -306,7 +305,7 @@ export default function ChantierDetail() {
       setChantier(res.data);
       setAssignOpen(false);
     } catch {
-      Alert.alert("Erreur", "Affectation impossible.");
+      Alert.alert(t("chantierDetail.errors.title"), t("chantierDetail.errors.assignFail"));
     }
   };
 
@@ -324,32 +323,32 @@ export default function ChantierDetail() {
       setChantier(res.data);
       setSendToCommercialOpen(false);
       Alert.alert(
-        "✅ Chantier envoyé",
-        "Le commercial sélectionné a été notifié. Le chantier est maintenant en « À mesurer ».",
-        [{ text: "OK", onPress: () => router.replace("/dashboard") }],
+        t("chantierDetail.sendToCommercial.successTitle"),
+        t("chantierDetail.sendToCommercial.successMsg"),
+        [{ text: t("common.ok"), onPress: () => router.replace("/dashboard") }],
       );
     } catch {
-      Alert.alert("Erreur", "Envoi impossible. Réessayez.");
+      Alert.alert(t("chantierDetail.errors.title"), t("chantierDetail.errors.sendFail"));
     }
   };
   const handleSendToCommercialClick = () => {
     const commercials = users.filter((u) => u.role === "commercial");
     if (commercials.length === 0) {
       Alert.alert(
-        "Aucun commercial dans l'équipe",
-        "Invitez d'abord un commercial via la page « Équipe » pour pouvoir lui envoyer un chantier à mesurer.",
+        t("chantierDetail.sendToCommercial.noneTitle"),
+        t("chantierDetail.sendToCommercial.noneMsg"),
       );
       return;
     }
     if (commercials.length === 1) {
       const c = commercials[0];
       Alert.alert(
-        "Envoyer à un commercial ?",
-        `Le chantier sera affecté à ${c.name} et passera en « À mesurer ».`,
+        t("chantierDetail.sendToCommercial.confirmTitle"),
+        t("chantierDetail.sendToCommercial.confirmMsg", { name: c.name }),
         [
-          { text: "Annuler", style: "cancel" },
+          { text: t("common.cancel"), style: "cancel" },
           {
-            text: "Envoyer",
+            text: t("chantierDetail.sendToCommercial.send"),
             style: "default",
             onPress: () => sendToCommercial(c.id),
           },
@@ -399,9 +398,9 @@ export default function ChantierDetail() {
     } catch (e: any) {
       const reason =
         e?.response?.status === 403
-          ? "Vous n'avez pas les droits pour modifier ce chantier."
-          : "Modification impossible.";
-      Alert.alert("Erreur", reason);
+          ? t("chantierDetail.errors.editForbidden")
+          : t("chantierDetail.errors.editFail");
+      Alert.alert(t("chantierDetail.errors.title"), reason);
     } finally {
       setSavingEdit(false);
     }
@@ -418,13 +417,13 @@ export default function ChantierDetail() {
       user?.role !== "admin"
     ) {
       Alert.alert(
-        "🔒 Suppression bloquée",
-        "Les chantiers terminés/livrés ne peuvent être supprimés que par l'administrateur principal (Responsable).",
-        [{ text: "J'ai compris", style: "default" }]
+        t("chantierDetail.deleteBlocked.title"),
+        t("chantierDetail.deleteBlocked.msg"),
+        [{ text: t("chantierDetail.archivedLock.got"), style: "default" }]
       );
       return;
     }
-    const msg = `« ${chantier.client_name} » et toutes ses mesures seront supprimés définitivement. Cette action est irréversible.`;
+    const msg = t("chantierDetail.deleteConfirm.msg", { name: chantier.client_name });
     const doDelete = async () => {
       try {
         await api.delete(`/chantiers/${id}`);
@@ -432,24 +431,24 @@ export default function ChantierDetail() {
       } catch (e: any) {
         const reason =
           e?.response?.status === 403
-            ? "Vous n'avez pas les droits pour supprimer ce chantier."
-            : "Suppression impossible.";
-        Alert.alert("Erreur", reason);
+            ? t("chantierDetail.errors.deleteForbidden")
+            : t("chantierDetail.errors.deleteFail");
+        Alert.alert(t("chantierDetail.errors.title"), reason);
       }
     };
     if (Platform.OS === "web") {
       const ok =
         typeof window !== "undefined" &&
-        window.confirm(`Supprimer le chantier ?\n\n${msg}`);
+        window.confirm(`${t("chantierDetail.deleteConfirm.title")}\n\n${msg}`);
       if (ok) doDelete();
       return;
     }
     Alert.alert(
-      "Supprimer le chantier ?",
+      t("chantierDetail.deleteConfirm.title"),
       msg,
       [
-        { text: "Annuler", style: "cancel" },
-        { text: "Supprimer", style: "destructive", onPress: doDelete },
+        { text: t("common.cancel"), style: "cancel" },
+        { text: t("chantierDetail.deleteConfirm.delete"), style: "destructive", onPress: doDelete },
       ]
     );
   };
@@ -459,7 +458,7 @@ export default function ChantierDetail() {
     if (!chantier) return;
     const current = chantier.site_photos ?? [];
     if (current.length >= 6) {
-      Alert.alert("Limite atteinte", "Maximum 6 photos site (anti-litige).");
+      Alert.alert(t("chantierDetail.photoLimit.title"), t("chantierDetail.photoLimit.msg"));
       return;
     }
     try {
@@ -468,7 +467,7 @@ export default function ChantierDetail() {
         : ImagePicker.requestMediaLibraryPermissionsAsync;
       const perm = await fn();
       if (!perm.granted) {
-        Alert.alert("Permission refusée", "Activez l'accès dans les réglages.");
+        Alert.alert(t("chantierDetail.permission.denied"), t("chantierDetail.permission.deniedMsg"));
         return;
       }
       const launcher = source === "camera"
@@ -486,7 +485,7 @@ export default function ChantierDetail() {
       const r = await api.patch<Chantier>(`/chantiers/${chantier.id}`, { site_photos: next });
       setChantier(r.data);
     } catch {
-      Alert.alert("Erreur", "Ajout photo impossible.");
+      Alert.alert(t("chantierDetail.errors.title"), t("chantierDetail.errors.photoAddFail"));
     }
   };
 
@@ -505,10 +504,10 @@ export default function ChantierDetail() {
 
   const removeSitePhoto = (idx: number) => {
     if (!chantier) return;
-    Alert.alert("Supprimer la photo ?", "Cette action est définitive.", [
-      { text: "Annuler", style: "cancel" },
+    Alert.alert(t("chantierDetail.deletePhoto.title"), t("chantierDetail.deletePhoto.msg"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Supprimer",
+        text: t("chantierDetail.sitePhotos.delete"),
         style: "destructive",
         onPress: async () => {
           const next = (chantier.site_photos ?? []).filter((_, i) => i !== idx);
@@ -516,7 +515,7 @@ export default function ChantierDetail() {
             const r = await api.patch<Chantier>(`/chantiers/${chantier.id}`, { site_photos: next });
             setChantier(r.data);
           } catch {
-            Alert.alert("Erreur", "Suppression impossible.");
+            Alert.alert(t("chantierDetail.errors.title"), t("chantierDetail.errors.deleteFail"));
           }
         },
       },
@@ -548,19 +547,18 @@ export default function ChantierDetail() {
     const MAX_BODY = 1500; // marge de sécurité sous la limite mailto: iOS
     const truncated =
       content.length > MAX_BODY
-        ? content.slice(0, MAX_BODY) +
-          "\n\n[...]\n— Contenu tronqué. Connectez-vous à MesureChâssis sur le web pour récupérer le fichier complet."
+        ? content.slice(0, MAX_BODY) + t("chantierDetail.emailFallback.truncated")
         : content;
-    const subject = `MesureChâssis — Export ${kind.toUpperCase()} — ${clientName}`;
+    const subject = `${t("chantierDetail.emailFallback.subjectPrefix")} ${kind.toUpperCase()} — ${clientName}`;
     const adminEmail = user?.email || ""; // pré-remplit avec l'email du master admin connecté
 
     Alert.alert(
-      `Export ${kind.toUpperCase()} prêt`,
-      `Envoyer le fichier ${kind.toUpperCase()} par email à votre bureau ou à un collaborateur ?\n\nAstuce : pour télécharger le fichier brut, utilisez MesureChâssis depuis Safari/Chrome.`,
+      t("chantierDetail.emailFallback.title", { kind: kind.toUpperCase() }),
+      t("chantierDetail.emailFallback.msg", { kind: kind.toUpperCase() }),
       [
-        { text: "Annuler", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Envoyer par email",
+          text: t("chantierDetail.emailFallback.send"),
           onPress: async () => {
             const mailtoUrl = `mailto:${adminEmail}?subject=${encodeURIComponent(
               subject
@@ -569,14 +567,14 @@ export default function ChantierDetail() {
               const supported = await Linking.canOpenURL(mailtoUrl);
               if (!supported) {
                 Alert.alert(
-                  "Aucune app Mail détectée",
-                  "Veuillez configurer un client mail sur cet appareil (Mail, Gmail, Outlook…) pour utiliser cette option."
+                  t("chantierDetail.emailFallback.noMailTitle"),
+                  t("chantierDetail.emailFallback.noMailMsg")
                 );
                 return;
               }
               await Linking.openURL(mailtoUrl);
             } catch (e: any) {
-              Alert.alert("Erreur", e?.message || "Impossible d'ouvrir le client mail.");
+              Alert.alert(t("chantierDetail.errors.title"), e?.message || t("chantierDetail.errors.mailFail"));
             }
           },
         },
@@ -729,7 +727,7 @@ export default function ChantierDetail() {
             if (textContent != null) {
               offerEmailFallback(kind as "csv" | "json", textContent, safe);
             } else {
-              Alert.alert("Téléchargement OK", `Fichier enregistré : ${finalUri}`);
+              Alert.alert(t("chantierDetail.exports.downloadOK"), t("chantierDetail.exports.fileSaved", { uri: finalUri }));
             }
             return;
           }
@@ -747,9 +745,9 @@ export default function ChantierDetail() {
             // PDF / XLSX : on ne peut pas embarquer un binaire dans un mailto.
             // On propose à l'utilisateur d'utiliser la version web.
             Alert.alert(
-              "Export indisponible sur Expo Go",
-              `Le téléchargement direct du fichier ${kind.toUpperCase()} n'est pas supporté sur cet appareil. Veuillez utiliser la version web de MesureChâssis (depuis Safari/Chrome) pour télécharger ce format.`,
-              [{ text: "OK" }]
+              t("chantierDetail.exports.expoGoUnavailableTitle"),
+              t("chantierDetail.exports.expoGoUnavailableMsg", { kind: kind.toUpperCase() }),
+              [{ text: t("common.ok") }]
             );
           }
         }
@@ -758,7 +756,7 @@ export default function ChantierDetail() {
       if (e?.message === "FREE_PLAN_LOCK") {
         showUpgradeLock();
       } else {
-        Alert.alert("Erreur export", e?.message || "Téléchargement impossible.");
+        Alert.alert(t("chantierDetail.exports.errorTitle"), e?.message || t("chantierDetail.errors.exportFail"));
       }
     } finally {
       setExporting(null);
@@ -783,11 +781,11 @@ export default function ChantierDetail() {
       });
       setChantier(r.data);
       Alert.alert(
-        "✅ Chantier validé",
-        "Le chantier est désormais en fabrication. Les exports techniques (CSV / Excel) sont disponibles.",
+        t("chantierDetail.validation.validatedTitle"),
+        t("chantierDetail.validation.validatedMsg"),
         [
           {
-            text: "OK",
+            text: t("common.ok"),
             onPress: () => router.replace("/dashboard"),
           },
         ],
@@ -795,10 +793,10 @@ export default function ChantierDetail() {
     } catch (e: any) {
       const detail = e?.response?.data?.detail;
       Alert.alert(
-        "Erreur",
+        t("chantierDetail.errors.title"),
         typeof detail === "string"
           ? detail
-          : "Validation impossible. Vérifiez vos droits."
+          : t("chantierDetail.errors.validateFail")
       );
     } finally {
       setValidating(false);
@@ -811,12 +809,12 @@ export default function ChantierDetail() {
    */
   const requestTechOverride = () => {
     Alert.alert(
-      "Modification exceptionnelle",
-      "Voulez-vous temporairement déverrouiller ce chantier ?\n\nCette action accorde un accès édition/suppression temporaire au technicien pour coordination atelier urgente.",
+      t("chantierDetail.techOverride.alertTitle"),
+      t("chantierDetail.techOverride.alertMsg"),
       [
-        { text: "Annuler", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Déverrouiller",
+          text: t("chantierDetail.techOverride.unlock"),
           style: "destructive",
           onPress: () => setTechOverride(true),
         },
@@ -923,7 +921,7 @@ export default function ChantierDetail() {
                   >
                     <Ionicons name="person-add" size={18} color={colors.primary} />
                     <Text style={styles.assignCtaText}>
-                      AFFECTER À UN COMMERCIAL
+                      {t("chantierDetail.assign.cta")}
                     </Text>
                     <Ionicons
                       name="chevron-forward"
@@ -945,9 +943,9 @@ export default function ChantierDetail() {
                     color={colors.primary}
                   />
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.assignLabel}>Affecté à</Text>
+                    <Text style={styles.assignLabel}>{t("chantierDetail.assign.to")}</Text>
                     <Text style={styles.assignValue}>
-                      {assignedUser ? assignedUser.name : "Personne"}
+                      {assignedUser ? assignedUser.name : t("chantierDetail.assign.none")}
                     </Text>
                   </View>
                   {canManage && (
@@ -957,7 +955,7 @@ export default function ChantierDetail() {
                         size={14}
                         color={colors.primary}
                       />
-                      <Text style={styles.assignChangeText}>RÉAFFECTER</Text>
+                      <Text style={styles.assignChangeText}>{t("chantierDetail.assign.reassign")}</Text>
                     </View>
                   )}
                 </TouchableOpacity>
@@ -968,17 +966,17 @@ export default function ChantierDetail() {
             <View style={styles.statsRow}>
               <View style={styles.statCard}>
                 <Text style={styles.statValue}>{mesures.length}</Text>
-                <Text style={styles.statLabel}>Ouvertures</Text>
+                <Text style={styles.statLabel}>{t("chantierDetail.kpi.openings")}</Text>
               </View>
               <View style={styles.statCard}>
                 <Text style={styles.statValue}>
                   {mesures.reduce((acc, m) => acc + (m.alerts?.length ?? 0), 0)}
                 </Text>
-                <Text style={styles.statLabel}>Alertes</Text>
+                <Text style={styles.statLabel}>{t("chantierDetail.kpi.alerts")}</Text>
               </View>
             </View>
 
-            <Text style={styles.sectionTitle}>OUVERTURES</Text>
+            <Text style={styles.sectionTitle}>{t("chantierDetail.kpi.openingsSection")}</Text>
           </View>
         }
         renderItem={({ item, index }) => {
@@ -1068,19 +1066,19 @@ export default function ChantierDetail() {
                         return;
                       }
                       Alert.alert(
-                        "Supprimer cette mesure ?",
-                        `« ${item.label} » sera définitivement supprimée.`,
+                        t("chantierDetail.deleteMesure.title"),
+                        t("chantierDetail.deleteMesure.msg", { label: item.label }),
                         [
-                          { text: "Annuler", style: "cancel" },
+                          { text: t("common.cancel"), style: "cancel" },
                           {
-                            text: "Supprimer",
+                            text: t("chantierDetail.deleteConfirm.delete"),
                             style: "destructive",
                             onPress: async () => {
                               try {
                                 await api.delete(`/mesures/${item.id}`);
                                 fetchAll();
                               } catch {
-                                Alert.alert("Erreur", "Suppression impossible.");
+                                Alert.alert(t("chantierDetail.errors.title"), t("chantierDetail.errors.deleteFail"));
                               }
                             },
                           },
@@ -1107,7 +1105,7 @@ export default function ChantierDetail() {
               {isArchived && (
                 <View style={styles.archiveRow}>
                   <Ionicons name="lock-closed" size={12} color={colors.textSecondary} />
-                  <Text style={styles.archiveText}>LECTURE SEULE — Chantier archivé</Text>
+                  <Text style={styles.archiveText}>{t("chantierDetail.archivedLock.cardReadonly")}</Text>
                 </View>
               )}
             </TouchableOpacity>
@@ -1116,23 +1114,18 @@ export default function ChantierDetail() {
         ListEmptyComponent={
           <View style={styles.empty}>
             <Ionicons name="grid-outline" size={48} color={colors.borderStrong} />
-            <Text style={styles.emptyText}>Aucune ouverture mesurée</Text>
+            <Text style={styles.emptyText}>{t("chantierDetail.empty.title")}</Text>
             {canEditMesures ? (
               <Text style={styles.emptyHint}>
-                Commencez par ajouter votre première ouverture via le bouton
-                « Ajouter une ouverture » ci-dessous (Carré / Rectangle, Porte,
-                Trapèze, Triangle, Œil-de-bœuf, Coulissant levant, Porte de
-                garage…).
+                {t("chantierDetail.empty.hint")}
               </Text>
             ) : showArchivedLockIntercept ? (
               <Text style={styles.emptyHint}>
-                🔒 Chantier verrouillé. Les mesures ne sont plus modifiables.
-                Référez-vous au PDF d&apos;export.
+                {t("chantierDetail.empty.hintArchived")}
               </Text>
             ) : showCommercialFabIntercept ? (
               <Text style={styles.emptyHint}>
-                Ce chantier est verrouillé en fabrication. Seul le technicien
-                peut ajouter ou modifier les mesures.
+                {t("chantierDetail.empty.hintFab")}
               </Text>
             ) : null}
           </View>
@@ -1143,11 +1136,10 @@ export default function ChantierDetail() {
             <View style={styles.exportCard}>
               <View style={styles.exportHeader}>
                 <Ionicons name="camera" size={18} color={colors.warning} />
-                <Text style={styles.exportTitle}>PHOTOS SITE (ANTI-LITIGE)</Text>
+                <Text style={styles.exportTitle}>{t("chantierDetail.sitePhotos.title")}</Text>
               </View>
               <Text style={styles.exportSub}>
-                Jusqu&apos;à 6 photos avec légende — preuves de l&apos;état existant.
-                ({(chantier.site_photos?.length ?? 0)}/6)
+                {t("chantierDetail.sitePhotos.sub", { count: chantier.site_photos?.length ?? 0 })}
               </Text>
               {(chantier.site_photos ?? []).map((p, idx) => (
                 <View key={idx} style={photoStyles.row}>
@@ -1158,7 +1150,7 @@ export default function ChantierDetail() {
                       value={p.caption}
                       onChangeText={(v) => updateSitePhotoCaption(idx, v)}
                       onBlur={persistSitePhotoCaption}
-                      placeholder="Note / Légende de la photo"
+                      placeholder={t("chantierDetail.sitePhotos.captionPlaceholder")}
                       placeholderTextColor={colors.placeholder}
                       style={photoStyles.captionInput}
                     />
@@ -1169,7 +1161,7 @@ export default function ChantierDetail() {
                       style={photoStyles.delBtn}
                     >
                       <Ionicons name="trash-outline" size={14} color={colors.anomaly} />
-                      <Text style={photoStyles.delBtnText}>Supprimer</Text>
+                      <Text style={photoStyles.delBtnText}>{t("chantierDetail.sitePhotos.delete")}</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -1183,7 +1175,7 @@ export default function ChantierDetail() {
                     style={photoStyles.addBtn}
                   >
                     <Ionicons name="camera" size={18} color={colors.primary} />
-                    <Text style={photoStyles.addBtnText}>Caméra</Text>
+                    <Text style={photoStyles.addBtnText}>{t("chantierDetail.sitePhotos.camera")}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     testID="add-site-photo-library"
@@ -1192,7 +1184,7 @@ export default function ChantierDetail() {
                     style={photoStyles.addBtn}
                   >
                     <Ionicons name="images" size={18} color={colors.primary} />
-                    <Text style={photoStyles.addBtnText}>Galerie</Text>
+                    <Text style={photoStyles.addBtnText}>{t("chantierDetail.sitePhotos.gallery")}</Text>
                   </TouchableOpacity>
                 </View>
               )}
@@ -1214,8 +1206,8 @@ export default function ChantierDetail() {
                     <Ionicons name="checkmark-done-circle" size={22} color="#000" />
                     <Text style={validateStyles.btnGoText}>
                       {isSoloArtisan
-                        ? "✅ VALIDER ET PUBLIER POUR FABRICATION"
-                        : "✅ CLÔTURER ET LANCER LA FABRICATION"}
+                        ? t("chantierDetail.validation.validatePublish")
+                        : t("chantierDetail.validation.validateClose")}
                     </Text>
                   </>
                 )}
@@ -1226,12 +1218,10 @@ export default function ChantierDetail() {
                 <Ionicons name="hourglass-outline" size={20} color={colors.warning} />
                 <View style={{ flex: 1 }}>
                   <Text style={validateStyles.waitTitle}>
-                    EN ATTENTE DE VALIDATION PAR LE TECHNICIEN
+                    {t("chantierDetail.validation.waitingTitle")}
                   </Text>
                   <Text style={validateStyles.waitBody}>
-                    Seul un technicien peut valider ce chantier pour la
-                    fabrication. L&apos;administrateur ne peut pas bypasser cette
-                    étape de sécurité.
+                    {t("chantierDetail.validation.waitingBody")}
                   </Text>
                 </View>
               </View>
@@ -1245,12 +1235,12 @@ export default function ChantierDetail() {
                 testID="tech-send-back-to-commercial"
                 onPress={() => {
                   Alert.alert(
-                    "↩️ Renvoyer au commercial ?",
-                    "Le chantier repassera en « À mesurer ». Le commercial assigné pourra modifier, ajouter ou supprimer des ouvertures. Vous serez notifié quand il aura corrigé.",
+                    t("chantierDetail.validation.sendBackTitle"),
+                    t("chantierDetail.validation.sendBackMsg"),
                     [
-                      { text: "Annuler", style: "cancel" },
+                      { text: t("common.cancel"), style: "cancel" },
                       {
-                        text: "Renvoyer",
+                        text: t("chantierDetail.validation.sendBackConfirm"),
                         style: "default",
                         onPress: async () => {
                           let patchOk = false;
@@ -1273,8 +1263,8 @@ export default function ChantierDetail() {
                           }
                           if (!patchOk) {
                             Alert.alert(
-                              "Erreur",
-                              "Impossible de renvoyer au commercial. Réessayez dans un instant.",
+                              t("chantierDetail.errors.title"),
+                              t("chantierDetail.errors.sendBackFail"),
                             );
                           }
                         },
@@ -1287,7 +1277,7 @@ export default function ChantierDetail() {
               >
                 <Ionicons name="arrow-undo" size={20} color={colors.warning} />
                 <Text style={validateStyles.btnOverrideText}>
-                  ↩️ RENVOYER AU COMMERCIAL POUR CORRECTION
+                  {t("chantierDetail.validation.sendBackBtn")}
                 </Text>
               </TouchableOpacity>
             )}
@@ -1309,11 +1299,10 @@ export default function ChantierDetail() {
                     />
                     <View style={{ flex: 1 }}>
                       <Text style={validateStyles.waitTitle}>
-                        DEMANDE DE MODIFICATION ENVOYÉE
+                        {t("chantierDetail.modRequest.pendingTitle")}
                       </Text>
                       <Text style={validateStyles.waitBody}>
-                        Votre demande est en attente. Vous serez notifié
-                        dès que le technicien aura répondu.
+                        {t("chantierDetail.modRequest.pendingBody")}
                       </Text>
                     </View>
                   </View>
@@ -1334,8 +1323,8 @@ export default function ChantierDetail() {
                   <Ionicons name="paper-plane-outline" size={20} color={colors.warning} />
                   <Text style={validateStyles.btnOverrideText}>
                     {isRefused
-                      ? "↩️ RENOUVELER LA DEMANDE AU TECHNICIEN"
-                      : "↩️ DEMANDER AU TECHNICIEN DE MODIFIER"}
+                      ? t("chantierDetail.modRequest.btnRenew")
+                      : t("chantierDetail.modRequest.btnNew")}
                   </Text>
                 </TouchableOpacity>
               );
@@ -1356,14 +1345,14 @@ export default function ChantierDetail() {
                 />
                 <View style={{ flex: 1 }}>
                   <Text style={validateStyles.waitTitle}>
-                    📢 DEMANDE DE MODIFICATION
+                    {t("chantierDetail.modRequest.techTitle")}
                   </Text>
                   <Text style={validateStyles.waitBody}>
-                    {(chantier as any).mod_request.requested_by_name ||
-                      "Le commercial"}{" "}
-                    souhaite reprendre la main pour modifier les mesures.
+                    {(chantier as any).mod_request.requested_by_name
+                      ? t("chantierDetail.modRequest.techBodyName", { name: (chantier as any).mod_request.requested_by_name })
+                      : t("chantierDetail.modRequest.techBodyDefault")}
                     {(chantier as any).mod_request.reason
-                      ? `\n\nRaison : « ${(chantier as any).mod_request.reason} »`
+                      ? t("chantierDetail.modRequest.techBodyReason", { reason: (chantier as any).mod_request.reason })
                       : ""}
                   </Text>
                   <View style={{ flexDirection: "row", gap: 8, marginTop: 10 }}>
@@ -1371,12 +1360,12 @@ export default function ChantierDetail() {
                       testID="tech-approve-mod-request"
                       onPress={async () => {
                         Alert.alert(
-                          "Approuver ?",
-                          "Le chantier repassera en « À mesurer » et le commercial pourra modifier les ouvertures.",
+                          t("chantierDetail.modRequest.approveTitle"),
+                          t("chantierDetail.modRequest.approveMsg"),
                           [
-                            { text: "Annuler", style: "cancel" },
+                            { text: t("common.cancel"), style: "cancel" },
                             {
-                              text: "Approuver",
+                              text: t("chantierDetail.modRequest.approveConfirm"),
                               style: "default",
                               onPress: async () => {
                                 try {
@@ -1390,8 +1379,8 @@ export default function ChantierDetail() {
                                   setChantier(res.data);
                                 } catch {
                                   Alert.alert(
-                                    "Erreur",
-                                    "Impossible de répondre.",
+                                    t("chantierDetail.errors.title"),
+                                    t("chantierDetail.errors.respondFail"),
                                   );
                                 }
                               },
@@ -1420,19 +1409,19 @@ export default function ChantierDetail() {
                           { color: colors.success },
                         ]}
                       >
-                        APPROUVER
+                        {t("chantierDetail.modRequest.approveBtn")}
                       </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       testID="tech-refuse-mod-request"
                       onPress={async () => {
                         Alert.alert(
-                          "Refuser ?",
-                          "La demande sera marquée comme refusée. Le commercial pourra en faire une nouvelle.",
+                          t("chantierDetail.modRequest.refuseTitle"),
+                          t("chantierDetail.modRequest.refuseMsg"),
                           [
-                            { text: "Annuler", style: "cancel" },
+                            { text: t("common.cancel"), style: "cancel" },
                             {
-                              text: "Refuser",
+                              text: t("chantierDetail.modRequest.refuseConfirm"),
                               style: "destructive",
                               onPress: async () => {
                                 try {
@@ -1446,8 +1435,8 @@ export default function ChantierDetail() {
                                   setChantier(res.data);
                                 } catch {
                                   Alert.alert(
-                                    "Erreur",
-                                    "Impossible de répondre.",
+                                    t("chantierDetail.errors.title"),
+                                    t("chantierDetail.errors.respondFail"),
                                   );
                                 }
                               },
@@ -1476,7 +1465,7 @@ export default function ChantierDetail() {
                           { color: colors.warning },
                         ]}
                       >
-                        REFUSER
+                        {t("chantierDetail.modRequest.refuseBtn")}
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -1490,12 +1479,12 @@ export default function ChantierDetail() {
                 testID="commercial-back-to-measure-button"
                 onPress={() => {
                   Alert.alert(
-                    "Revenir au statut « À mesurer » ?",
-                    "Vous récupérerez l'accès complet pour modifier, ajouter ou supprimer une ouverture. Le Technicien sera notifié que vous reprenez la main sur ce chantier.",
+                    t("chantierDetail.backToMeasure.title"),
+                    t("chantierDetail.backToMeasure.msg"),
                     [
-                      { text: "Annuler", style: "cancel" },
+                      { text: t("common.cancel"), style: "cancel" },
                       {
-                        text: "Oui, reprendre",
+                        text: t("chantierDetail.backToMeasure.confirm"),
                         style: "default",
                         onPress: async () => {
                           // ✅ Résilience : on tente le PATCH. Même si axios
@@ -1525,8 +1514,8 @@ export default function ChantierDetail() {
                           }
                           if (!patchOk) {
                             Alert.alert(
-                              "Erreur",
-                              "Impossible de repasser au statut « À mesurer ». Réessayez dans un instant.",
+                              t("chantierDetail.errors.title"),
+                              t("chantierDetail.errors.backToMeasureFail"),
                             );
                           }
                         },
@@ -1539,7 +1528,7 @@ export default function ChantierDetail() {
               >
                 <Ionicons name="arrow-undo" size={20} color={colors.warning} />
                 <Text style={validateStyles.btnOverrideText}>
-                  ↩️ REVENIR AU STATUT « À MESURER »
+                  {t("chantierDetail.backToMeasure.btn")}
                 </Text>
               </TouchableOpacity>
             )}
@@ -1552,7 +1541,7 @@ export default function ChantierDetail() {
               >
                 <Ionicons name="warning" size={20} color={colors.warning} />
                 <Text style={validateStyles.btnOverrideText}>
-                  ⚠️ AUTORISER UNE MODIFICATION EXCEPTIONNELLE
+                  {t("chantierDetail.techOverride.btn")}
                 </Text>
               </TouchableOpacity>
             )}
@@ -1560,14 +1549,14 @@ export default function ChantierDetail() {
               <View style={validateStyles.overrideActive}>
                 <Ionicons name="lock-open" size={18} color={colors.anomaly} />
                 <Text style={validateStyles.overrideActiveText}>
-                  Édition déverrouillée temporairement (override technicien).
+                  {t("chantierDetail.techOverride.active")}
                 </Text>
                 <TouchableOpacity
                   onPress={() => setTechOverride(false)}
                   activeOpacity={0.7}
                   style={validateStyles.lockBackBtn}
                 >
-                  <Text style={validateStyles.lockBackText}>VERROUILLER</Text>
+                  <Text style={validateStyles.lockBackText}>{t("chantierDetail.techOverride.lock")}</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -1583,12 +1572,12 @@ export default function ChantierDetail() {
                 <Ionicons name="cog" size={20} color={colors.primary} />
                 <View style={{ flex: 1 }}>
                   <Text style={validateStyles.fabLockTitle}>
-                    EN FABRICATION — LECTURE SEULE
+                    {t("chantierDetail.fabLock.title")}
                   </Text>
                   <Text style={validateStyles.fabLockBody}>
                     {user?.role === "commercial"
-                      ? "Les mesures sont figées pour garantir la cohérence avec l'atelier. Contactez le technicien en cas d'urgence."
-                      : "Seul le technicien peut modifier exceptionnellement les mesures à ce stade."}
+                      ? t("chantierDetail.fabLock.msgCommercial")
+                      : t("chantierDetail.fabLock.msgOther")}
                   </Text>
                 </View>
               </View>
@@ -1604,12 +1593,10 @@ export default function ChantierDetail() {
                 <Ionicons name="lock-closed" size={20} color={colors.success} />
                 <View style={{ flex: 1 }}>
                   <Text style={validateStyles.archivedLockTitle}>
-                    🔒 CHANTIER VERROUILLÉ
+                    {t("chantierDetail.archivedLock.bannerTitle")}
                   </Text>
                   <Text style={validateStyles.archivedLockBody}>
-                    Les mesures ne sont plus modifiables. Référez-vous au PDF
-                    d&apos;export. Les téléchargements (PDF, CSV, Excel, JSON)
-                    restent disponibles ci-dessous.
+                    {t("chantierDetail.archivedLock.bannerBody")}
                   </Text>
                 </View>
               </View>
@@ -1620,18 +1607,18 @@ export default function ChantierDetail() {
               <View style={styles.exportCard}>
                 <View style={styles.exportHeader}>
                   <Ionicons name="download" size={18} color={colors.primary} />
-                  <Text style={styles.exportTitle}>EXPORTS</Text>
+                  <Text style={styles.exportTitle}>{t("chantierDetail.exports.title")}</Text>
                   {isFreePlan && (
                     <View style={styles.freeLockBadge}>
                       <Ionicons name="lock-closed" size={11} color={colors.anomaly} />
-                      <Text style={styles.freeLockBadgeText}>VERROU FREE</Text>
+                      <Text style={styles.freeLockBadgeText}>{t("chantierDetail.exports.freeLockBadge")}</Text>
                     </View>
                   )}
                 </View>
                 <Text style={styles.exportSub}>
                   {isFreePlan
-                    ? "Exports réservés au plan Pro — passez en Pro pour débloquer."
-                    : "Document client, fichier fabrication ou intégration logiciel."}
+                    ? t("chantierDetail.exports.subFree")
+                    : t("chantierDetail.exports.sub")}
                 </Text>
                 <View style={styles.exportGrid}>
                 <ExportTile
@@ -1643,8 +1630,8 @@ export default function ChantierDetail() {
                       : router.push(`/chantier/${id}/pdf-preview`)
                   }
                   icon="document-text"
-                  label="RÉCAPITULATIF PDF"
-                  sub="Fiche technique"
+                  label={t("chantierDetail.exports.pdfLabel")}
+                  sub={t("chantierDetail.exports.pdfSub")}
                   color="#EF4444"
                   locked={isFreePlan}
                 />
@@ -1658,8 +1645,8 @@ export default function ChantierDetail() {
                         router.push(`/chantier/${id}/xlsx-preview`);
                       }}
                       icon="grid"
-                      label="EXCEL .xlsx"
-                      sub="Tableau atelier"
+                      label={t("chantierDetail.exports.xlsxLabel")}
+                      sub={t("chantierDetail.exports.xlsxSub")}
                       color="#22C55E"
                       locked={isFreePlan || showCommercialFabIntercept}
                     />
@@ -1676,9 +1663,9 @@ export default function ChantierDetail() {
                         // Commercial hors fab : alert pédagogique RBAC standard
                         if (user?.role === "commercial") {
                           Alert.alert(
-                            "🛑 Export CSV réservé",
-                            "L'export CSV est réservé aux Techniciens et Administrateurs. Demandez l'export technique à votre équipe atelier.",
-                            [{ text: "OK", style: "default" }]
+                            t("chantierDetail.exports.csvReservedTitle"),
+                            t("chantierDetail.exports.csvReservedMsg"),
+                            [{ text: t("common.ok"), style: "default" }]
                           );
                           return;
                         }
@@ -1686,8 +1673,8 @@ export default function ChantierDetail() {
                       downloadExport("csv");
                     }}
                     icon="list"
-                    label="CSV"
-                    sub="Tabulaire brut"
+                    label={t("chantierDetail.exports.csvLabel")}
+                    sub={t("chantierDetail.exports.csvSub")}
                     color="#3B82F6"
                     locked={
                       isFreePlan ||
@@ -1705,8 +1692,8 @@ export default function ChantierDetail() {
                         router.push(`/chantier/${id}/json-preview`);
                       }}
                       icon="code-slash"
-                      label="JSON"
-                      sub="Intégration CNC"
+                      label={t("chantierDetail.exports.jsonLabel")}
+                      sub={t("chantierDetail.exports.jsonSub")}
                       color="#A855F7"
                       locked={isFreePlan || showCommercialFabIntercept}
                     />
@@ -1724,8 +1711,8 @@ export default function ChantierDetail() {
                         downloadExport("erp-csv");
                       }}
                       icon="business"
-                      label="ERP (CSV)"
-                      sub="Elcia / Ramasoft"
+                      label={t("chantierDetail.exports.erpCsvLabel")}
+                      sub={t("chantierDetail.exports.erpCsvSub")}
                       color="#F59E0B"
                       locked={isFreePlan || showCommercialFabIntercept}
                     />
@@ -1740,8 +1727,8 @@ export default function ChantierDetail() {
                         downloadExport("erp-xml");
                       }}
                       icon="document-attach"
-                      label="ERP (XML)"
-                      sub="Format structuré"
+                      label={t("chantierDetail.exports.erpXmlLabel")}
+                      sub={t("chantierDetail.exports.erpXmlSub")}
                       color="#0EA5E9"
                       locked={isFreePlan || showCommercialFabIntercept}
                     />
@@ -1790,7 +1777,7 @@ export default function ChantierDetail() {
               >
                 <Ionicons name="paper-plane" size={20} color="#000" />
                 <Text style={styles.btnPrimaryText}>
-                  📤 ENVOYER À UN COMMERCIAL
+                  {t("chantierDetail.sendToCommercial.footerBtn")}
                 </Text>
               </TouchableOpacity>
             );
@@ -1817,7 +1804,7 @@ export default function ChantierDetail() {
                     size={20}
                     color={colors.textPrimary}
                   />
-                  <Text style={styles.gridBtnTextSecondary}>CLÔTURER</Text>
+                  <Text style={styles.gridBtnTextSecondary}>{t("chantierDetail.footer.close")}</Text>
                 </TouchableOpacity>
               )}
               {showAdd && (
@@ -1828,7 +1815,7 @@ export default function ChantierDetail() {
                   activeOpacity={0.85}
                 >
                   <Ionicons name="add" size={22} color="#000" />
-                  <Text style={styles.gridBtnTextPrimary}>AJOUTER</Text>
+                  <Text style={styles.gridBtnTextPrimary}>{t("chantierDetail.footer.add")}</Text>
                 </TouchableOpacity>
               )}
               {showEditWall && (
@@ -1840,7 +1827,7 @@ export default function ChantierDetail() {
                 >
                   <Ionicons name="construct-outline" size={20} color={colors.primary} />
                   <Text style={[styles.gridBtnTextSecondary, { color: colors.primary }]}>
-                    MUR
+                    {t("chantierDetail.footer.wall")}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -1852,10 +1839,9 @@ export default function ChantierDetail() {
       <Modal visible={assignOpen} transparent animationType="fade" onRequestClose={() => setAssignOpen(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>AFFECTER À UN COMMERCIAL</Text>
+            <Text style={styles.modalTitle}>{t("chantierDetail.assign.modalTitle")}</Text>
             <Text style={styles.modalSub}>
-              Choisissez le commercial qui prendra en charge la prise de
-              mesures du chantier.
+              {t("chantierDetail.assign.modalSub")}
             </Text>
             <FlatList
               data={users.filter((u) => u.role === "commercial")}
@@ -1864,7 +1850,7 @@ export default function ChantierDetail() {
               ListEmptyComponent={
                 <View style={{ padding: 16, alignItems: "center" }}>
                   <Text style={[styles.modalSub, { marginBottom: 0 }]}>
-                    Aucun commercial dans votre équipe.{"\n"}Invitez-en un via la page « Équipe ».
+                    {t("chantierDetail.assign.noCommercial")}
                   </Text>
                 </View>
               }
@@ -1876,7 +1862,7 @@ export default function ChantierDetail() {
                   activeOpacity={0.7}
                 >
                   <Ionicons name="close-circle-outline" size={20} color={colors.textSecondary} />
-                  <Text style={styles.assignItemText}>Aucune affectation</Text>
+                  <Text style={styles.assignItemText}>{t("chantierDetail.assign.noAssignment")}</Text>
                 </TouchableOpacity>
               }
               renderItem={({ item }) => {
@@ -1895,7 +1881,7 @@ export default function ChantierDetail() {
                     />
                     <View style={{ flex: 1 }}>
                       <Text style={styles.assignItemText}>{item.name}</Text>
-                      <Text style={styles.assignItemRole}>commercial</Text>
+                      <Text style={styles.assignItemRole}>{t("chantierDetail.assign.roleCommercial")}</Text>
                     </View>
                     {active && <Ionicons name="checkmark-circle" size={20} color={colors.primary} />}
                   </TouchableOpacity>
@@ -1908,7 +1894,7 @@ export default function ChantierDetail() {
               style={[styles.btn, styles.btnSecondary, { marginTop: 12 }]}
               activeOpacity={0.7}
             >
-              <Text style={styles.btnSecondaryText}>FERMER</Text>
+              <Text style={styles.btnSecondaryText}>{t("chantierDetail.assign.close")}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -1924,16 +1910,15 @@ export default function ChantierDetail() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>DEMANDER UNE MODIFICATION ?</Text>
+            <Text style={styles.modalTitle}>{t("chantierDetail.modRequest.modalTitle")}</Text>
             <Text style={styles.modalSub}>
-              Indiquez brièvement la raison (optionnel). Le technicien sera
-              notifié par email et pourra accepter ou refuser la demande.
+              {t("chantierDetail.modRequest.modalSub")}
             </Text>
             <TextInput
               testID="mod-request-reason-input"
               value={modRequestReason}
               onChangeText={setModRequestReason}
-              placeholder="Ex. : cote diagonale à revoir, photo à confirmer…"
+              placeholder={t("chantierDetail.modRequest.reasonPlaceholder")}
               placeholderTextColor={colors.placeholder}
               multiline
               numberOfLines={4}
@@ -1964,7 +1949,7 @@ export default function ChantierDetail() {
                 style={[styles.btn, styles.btnSecondary, { flex: 1 }]}
                 activeOpacity={0.7}
               >
-                <Text style={styles.btnSecondaryText}>ANNULER</Text>
+                <Text style={styles.btnSecondaryText}>{t("chantierDetail.edit.cancel")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 testID="mod-request-confirm"
@@ -1980,14 +1965,14 @@ export default function ChantierDetail() {
                     setModRequestOpen(false);
                     setModRequestReason("");
                     Alert.alert(
-                      "✅ Demande envoyée",
-                      "Merci d'attendre la validation du technicien.",
+                      t("chantierDetail.modRequest.sentTitle"),
+                      t("chantierDetail.modRequest.sentMsg"),
                     );
                   } catch (e: any) {
                     Alert.alert(
-                      "Erreur",
+                      t("chantierDetail.errors.title"),
                       e?.response?.data?.detail ||
-                        "Impossible d'envoyer la demande.",
+                        t("chantierDetail.errors.modRequestFail"),
                     );
                   } finally {
                     setModRequestSubmitting(false);
@@ -2004,7 +1989,9 @@ export default function ChantierDetail() {
               >
                 <Ionicons name="paper-plane" size={16} color="#000" />
                 <Text style={styles.btnPrimaryText}>
-                  {modRequestSubmitting ? "ENVOI…" : "CONFIRMER L'ENVOI"}
+                  {modRequestSubmitting
+                    ? t("chantierDetail.modRequest.sendingBtn")
+                    : t("chantierDetail.modRequest.confirmBtn")}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -2021,10 +2008,9 @@ export default function ChantierDetail() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>ENVOYER À UN COMMERCIAL</Text>
+            <Text style={styles.modalTitle}>{t("chantierDetail.sendToCommercial.modalTitle")}</Text>
             <Text style={styles.modalSub}>
-              Choisissez le commercial qui prendra les mesures. Il sera notifié
-              immédiatement.
+              {t("chantierDetail.sendToCommercial.modalSub")}
             </Text>
             <FlatList
               data={users.filter((u) => u.role === "commercial")}
@@ -2060,7 +2046,7 @@ export default function ChantierDetail() {
               style={[styles.btn, styles.btnSecondary, { marginTop: 12 }]}
               activeOpacity={0.7}
             >
-              <Text style={styles.btnSecondaryText}>ANNULER</Text>
+              <Text style={styles.btnSecondaryText}>{t("chantierDetail.edit.cancel")}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -2081,67 +2067,67 @@ export default function ChantierDetail() {
         >
           <View style={styles.modalOverlay}>
             <View style={[styles.modalCard, { maxHeight: "92%" }]}>
-              <Text style={styles.modalTitle}>MODIFIER LE CHANTIER</Text>
+              <Text style={styles.modalTitle}>{t("chantierDetail.edit.modalTitle")}</Text>
               <Text style={styles.modalSub}>
-                Mettez à jour les coordonnées du client et la date de rendez-vous.
+                {t("chantierDetail.edit.modalSub")}
               </Text>
               <ScrollView
                 keyboardShouldPersistTaps="handled"
                 contentContainerStyle={{ paddingBottom: 8 }}
               >
-                <Text style={editStyles.label}>Prénom</Text>
+                <Text style={editStyles.label}>{t("chantierDetail.edit.firstName")}</Text>
                 <TextInput
                   testID="edit-firstname-input"
                   value={editFirstName}
                   onChangeText={setEditFirstName}
-                  placeholder="Prénom"
+                  placeholder={t("chantierDetail.edit.firstNamePlaceholder")}
                   placeholderTextColor={colors.placeholder}
                   style={editStyles.input}
                 />
-                <Text style={editStyles.label}>Nom</Text>
+                <Text style={editStyles.label}>{t("chantierDetail.edit.lastName")}</Text>
                 <TextInput
                   testID="edit-lastname-input"
                   value={editLastName}
                   onChangeText={setEditLastName}
-                  placeholder="Nom de famille"
+                  placeholder={t("chantierDetail.edit.lastNamePlaceholder")}
                   placeholderTextColor={colors.placeholder}
                   style={editStyles.input}
                 />
-                <Text style={editStyles.label}>Adresse</Text>
+                <Text style={editStyles.label}>{t("chantierDetail.edit.address")}</Text>
                 <TextInput
                   testID="edit-address-input"
                   value={editAddress}
                   onChangeText={setEditAddress}
-                  placeholder="Rue et numéro"
+                  placeholder={t("chantierDetail.edit.addressPlaceholder")}
                   placeholderTextColor={colors.placeholder}
                   style={editStyles.input}
                 />
                 <View style={{ flexDirection: "row", gap: 10 }}>
                   <View style={{ flex: 1 }}>
-                    <Text style={editStyles.label}>Code postal</Text>
+                    <Text style={editStyles.label}>{t("chantierDetail.edit.postal")}</Text>
                     <TextInput
                       testID="edit-postal-input"
                       value={editPostal}
                       onChangeText={setEditPostal}
-                      placeholder="1000"
+                      placeholder={t("chantierDetail.edit.postalPlaceholder")}
                       placeholderTextColor={colors.placeholder}
                       keyboardType="number-pad"
                       style={editStyles.input}
                     />
                   </View>
                   <View style={{ flex: 2 }}>
-                    <Text style={editStyles.label}>Ville</Text>
+                    <Text style={editStyles.label}>{t("chantierDetail.edit.city")}</Text>
                     <TextInput
                       testID="edit-city-input"
                       value={editCity}
                       onChangeText={setEditCity}
-                      placeholder="Bruxelles"
+                      placeholder={t("chantierDetail.edit.cityPlaceholder")}
                       placeholderTextColor={colors.placeholder}
                       style={editStyles.input}
                     />
                   </View>
                 </View>
-                <Text style={editStyles.label}>Date du rendez-vous</Text>
+                <Text style={editStyles.label}>{t("chantierDetail.edit.appointment")}</Text>
                 <TouchableOpacity
                   testID="edit-appointment-button"
                   onPress={() => setEditApptPickerOpen(true)}
@@ -2160,15 +2146,22 @@ export default function ChantierDetail() {
                     ]}
                   >
                     {editAppointment
-                      ? editAppointment.toLocaleString("fr-FR", {
-                          weekday: "short",
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })
-                      : "Aucune date — toucher pour choisir"}
+                      ? editAppointment.toLocaleString(
+                          i18n.language === "en"
+                            ? "en-US"
+                            : i18n.language === "nl"
+                              ? "nl-BE"
+                              : "fr-FR",
+                          {
+                            weekday: "short",
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          },
+                        )
+                      : t("chantierDetail.edit.appointmentEmpty")}
                   </Text>
                   {editAppointment && (
                     <TouchableOpacity
@@ -2189,7 +2182,7 @@ export default function ChantierDetail() {
                 value={editAppointment ? editAppointment.toISOString() : null}
                 onClose={() => setEditApptPickerOpen(false)}
                 onConfirm={(iso) => setEditAppointment(new Date(iso))}
-                title="Date du rendez-vous"
+                title={t("chantierDetail.edit.appointment")}
               />
               <View
                 style={{
@@ -2204,7 +2197,7 @@ export default function ChantierDetail() {
                   style={[styles.btn, styles.btnSecondary, { flex: 1 }]}
                   activeOpacity={0.7}
                 >
-                  <Text style={styles.btnSecondaryText}>ANNULER</Text>
+                  <Text style={styles.btnSecondaryText}>{t("chantierDetail.edit.cancel")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   testID="edit-save"
@@ -2219,7 +2212,7 @@ export default function ChantierDetail() {
                 >
                   <Ionicons name="save" size={18} color="#000" />
                   <Text style={styles.btnPrimaryText}>
-                    {savingEdit ? "..." : "ENREGISTRER"}
+                    {savingEdit ? t("chantierDetail.edit.saving") : t("chantierDetail.edit.save")}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -2713,40 +2706,7 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     letterSpacing: 0.6,
   },
-  // CTA bien visible quand aucun commercial n'est encore affecté (admin)
-  assignCta: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: colors.primary,
-    backgroundColor: "rgba(245, 158, 11, 0.10)",
-    marginTop: 10,
-  },
-  assignCtaText: {
-    flex: 1,
-    color: colors.primary,
-    fontSize: 13,
-    fontWeight: "900",
-    letterSpacing: 1,
-  },
-  assignItemActive: {
-    borderColor: colors.primary,
-    backgroundColor: "#1F1A14",
-  },
-  assignItemText: { color: colors.textPrimary, fontSize: 14, fontWeight: "700" },
-  assignItemRole: {
-    color: colors.textSecondary,
-    fontSize: 11,
-    textTransform: "lowercase",
-  },
-});
-
-
-const validateStyles = StyleSheet.create({
+});const validateStyles = StyleSheet.create({
   btnGo: {
     marginTop: 14,
     minHeight: 58,

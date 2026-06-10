@@ -513,9 +513,26 @@
     "feedback": {
       "title": "Your feedback",
       "subtitle": "Help us improve the app",
+      "subtitleAdmin": "All feedback from your company",
+      "subtitleUser": "Your feedback sent to MesureChâssis team",
+      "newFeedback": "NEW FEEDBACK",
+      "newFeedbackHint": "Suggestion, bug, improvement idea…",
       "newMessage": "New message",
-      "messagePlaceholder": "Describe your need, suggestion or a bug encountered…",
-      "send": "Send",
+      "messagePlaceholder": "Describe your suggestion or the issue encountered here. Be as specific as possible.",
+      "send": "SEND",
+      "submit": "Send",
+      "sent": "SENT",
+      "from": "From",
+      "user": "User",
+      "replyMail": "REPLY BY EMAIL",
+      "delete": "DELETE",
+      "cancel": "Cancel",
+      "deleteConfirmTitle": "Delete this feedback?",
+      "deleteConfirmMsg": "This action is permanent and frees up space for new feedback.",
+      "deleteFail": "Unable to delete.",
+      "emptyTitle": "No feedback yet",
+      "emptyText": "Use the « NEW FEEDBACK » block above to suggest an improvement or report an issue. A copy will be sent to the MesureChâssis team and kept here.",
+      "sendFail": "Unable to send your feedback.",
       "category": "Category",
       "cat": {
         "bug": "Bug",
@@ -525,8 +542,8 @@
       },
       "historyTitle": "My feedback history",
       "historyEmpty": "You haven't sent any message yet.",
-      "sent": "✅ Thank you!",
-      "sentMsg": "Your message has been sent to the MesureChâssis team.",
+      "sentSuccess": "✅ Thank you!",
+      "sentSuccessMsg": "Your message has been sent to the MesureChâssis team.",
       "errSend": "Unable to send your message. Try again later."
     },
     "companyProfile": {
@@ -559,6 +576,221 @@
       "invoices": "My invoices",
       "noInvoices": "No invoice yet.",
       "manageStripe": "Manage in Stripe portal"
+    }
+  },
+  "chantierDetail": {
+    "errors": {
+      "title": "Error",
+      "loadFail": "Unable to load the project.",
+      "assignFail": "Assignment failed.",
+      "sendFail": "Sending failed. Please retry.",
+      "editForbidden": "You don't have permission to edit this project.",
+      "editFail": "Update failed.",
+      "deleteForbidden": "You don't have permission to delete this project.",
+      "deleteFail": "Deletion failed.",
+      "photoAddFail": "Unable to add photo.",
+      "mailFail": "Unable to open the mail client.",
+      "exportFail": "Download failed.",
+      "validateFail": "Validation failed. Check your permissions.",
+      "respondFail": "Unable to respond.",
+      "modRequestFail": "Unable to send the request.",
+      "sendBackFail": "Unable to send back to the salesperson. Please retry shortly.",
+      "backToMeasureFail": "Unable to revert to «To measure» status. Please retry shortly."
+    },
+    "upgradeLock": {
+      "title": "🔒 Exports locked",
+      "msgBase": "Exports (PDF, Excel, CSV, JSON) are reserved for Pro subscribers. Upgrade to Pro to unlock all technical exports.",
+      "msgIosSuffix": "\n\nTo subscribe, visit mesurechassis.com.",
+      "later": "Later",
+      "viewSubscription": "View subscription"
+    },
+    "archivedLock": {
+      "alertTitle": "🔒 Project locked",
+      "alertMsg": "Measurements can no longer be changed. Please refer to the exported PDF.",
+      "got": "Got it",
+      "bannerTitle": "🔒 PROJECT LOCKED",
+      "bannerBody": "Measurements can no longer be changed. Refer to the exported PDF. Downloads (PDF, CSV, Excel, JSON) remain available below.",
+      "cardReadonly": "READ-ONLY — Archived project"
+    },
+    "commercialFabBlock": {
+      "title": "🛑 Action not allowed",
+      "msg": "This project is locked in production. Only the technician can edit this data or export workshop formats."
+    },
+    "deleteBlocked": {
+      "title": "🔒 Deletion blocked",
+      "msg": "Completed/delivered projects can only be deleted by the main administrator (Manager)."
+    },
+    "deleteConfirm": {
+      "title": "Delete project?",
+      "msg": "«{{name}}» and all its measurements will be permanently deleted. This action is irreversible.",
+      "delete": "Delete"
+    },
+    "deleteMesure": {
+      "title": "Delete this measurement?",
+      "msg": "«{{label}}» will be permanently deleted."
+    },
+    "photoLimit": {
+      "title": "Limit reached",
+      "msg": "Maximum 6 site photos (anti-dispute)."
+    },
+    "permission": {
+      "denied": "Permission denied",
+      "deniedMsg": "Enable access in your device settings."
+    },
+    "deletePhoto": {
+      "title": "Delete photo?",
+      "msg": "This action is permanent."
+    },
+    "sendToCommercial": {
+      "modalTitle": "SEND TO A SALESPERSON",
+      "modalSub": "Choose the salesperson who will take measurements. They will be notified immediately.",
+      "footerBtn": "📤 SEND TO A SALESPERSON",
+      "noneTitle": "No salesperson on the team",
+      "noneMsg": "Invite a salesperson via the «Team» page first to be able to send them a project to measure.",
+      "confirmTitle": "Send to a salesperson?",
+      "confirmMsg": "The project will be assigned to {{name}} and move to «To measure».",
+      "send": "Send",
+      "successTitle": "✅ Project sent",
+      "successMsg": "The selected salesperson has been notified. The project is now «To measure»."
+    },
+    "assign": {
+      "to": "Assigned to",
+      "none": "Nobody",
+      "reassign": "REASSIGN",
+      "cta": "ASSIGN TO A SALESPERSON",
+      "modalTitle": "ASSIGN TO A SALESPERSON",
+      "modalSub": "Choose the salesperson who will handle measurements for this project.",
+      "noCommercial": "No salesperson on your team.\nInvite one via the «Team» page.",
+      "noAssignment": "No assignment",
+      "roleCommercial": "salesperson",
+      "close": "CLOSE"
+    },
+    "kpi": {
+      "openings": "Openings",
+      "alerts": "Alerts",
+      "openingsSection": "OPENINGS"
+    },
+    "empty": {
+      "title": "No opening measured",
+      "hint": "Start by adding your first opening via the «Add an opening» button below (Square / Rectangle, Door, Trapezoid, Triangle, Bull's-eye, Lift-and-slide, Garage door…).",
+      "hintArchived": "🔒 Project locked. Measurements can no longer be changed. Refer to the exported PDF.",
+      "hintFab": "This project is locked in production. Only the technician can add or edit measurements."
+    },
+    "sitePhotos": {
+      "title": "SITE PHOTOS (ANTI-DISPUTE)",
+      "sub": "Up to 6 captioned photos — proof of existing condition. ({{count}}/6)",
+      "captionPlaceholder": "Note / Photo caption",
+      "delete": "Delete",
+      "camera": "Camera",
+      "gallery": "Gallery"
+    },
+    "validation": {
+      "validatePublish": "✅ VALIDATE AND PUBLISH FOR PRODUCTION",
+      "validateClose": "✅ CLOSE AND START PRODUCTION",
+      "validatedTitle": "✅ Project validated",
+      "validatedMsg": "The project is now in production. Technical exports (CSV / Excel) are available.",
+      "waitingTitle": "AWAITING TECHNICIAN VALIDATION",
+      "waitingBody": "Only a technician can validate this project for production. The administrator cannot bypass this security step.",
+      "sendBackBtn": "↩️ SEND BACK TO SALESPERSON FOR CORRECTION",
+      "sendBackTitle": "↩️ Send back to salesperson?",
+      "sendBackMsg": "The project will return to «To measure». The assigned salesperson will be able to edit, add or remove openings. You will be notified once it's corrected.",
+      "sendBackConfirm": "Send back"
+    },
+    "modRequest": {
+      "pendingTitle": "MODIFICATION REQUEST SENT",
+      "pendingBody": "Your request is pending. You will be notified as soon as the technician responds.",
+      "btnNew": "↩️ ASK THE TECHNICIAN TO EDIT",
+      "btnRenew": "↩️ RENEW REQUEST TO TECHNICIAN",
+      "techTitle": "📢 MODIFICATION REQUEST",
+      "techBodyName": "{{name}} wants to take back control to edit the measurements.",
+      "techBodyDefault": "The salesperson wants to take back control to edit the measurements.",
+      "techBodyReason": "\n\nReason: «{{reason}}»",
+      "approveBtn": "APPROVE",
+      "refuseBtn": "REFUSE",
+      "approveTitle": "Approve?",
+      "approveMsg": "The project will return to «To measure» and the salesperson will be able to edit openings.",
+      "approveConfirm": "Approve",
+      "refuseTitle": "Refuse?",
+      "refuseMsg": "The request will be marked as refused. The salesperson can submit a new one.",
+      "refuseConfirm": "Refuse",
+      "modalTitle": "REQUEST A MODIFICATION?",
+      "modalSub": "Briefly indicate the reason (optional). The technician will be notified by email and can accept or refuse the request.",
+      "reasonPlaceholder": "E.g.: diagonal measurement to review, photo to confirm…",
+      "sendingBtn": "SENDING…",
+      "confirmBtn": "CONFIRM",
+      "sentTitle": "✅ Request sent",
+      "sentMsg": "Please wait for the technician's validation."
+    },
+    "techOverride": {
+      "btn": "⚠️ ALLOW AN EXCEPTIONAL MODIFICATION",
+      "alertTitle": "Exceptional modification",
+      "alertMsg": "Do you want to temporarily unlock this project?\n\nThis action grants the technician temporary edit/delete access for urgent workshop coordination.",
+      "unlock": "Unlock",
+      "active": "Editing temporarily unlocked (technician override).",
+      "lock": "LOCK"
+    },
+    "fabLock": {
+      "title": "IN PRODUCTION — READ ONLY",
+      "msgCommercial": "Measurements are frozen to ensure consistency with the workshop. Contact the technician in case of emergency.",
+      "msgOther": "Only the technician can exceptionally edit measurements at this stage."
+    },
+    "exports": {
+      "title": "EXPORTS",
+      "freeLockBadge": "FREE LOCK",
+      "subFree": "Exports reserved for the Pro plan — upgrade to Pro to unlock.",
+      "sub": "Client document, production file or software integration.",
+      "errorTitle": "Export error",
+      "pdfLabel": "PDF SUMMARY",
+      "pdfSub": "Technical sheet",
+      "xlsxLabel": "EXCEL .xlsx",
+      "xlsxSub": "Workshop table",
+      "csvLabel": "CSV",
+      "csvSub": "Raw tabular",
+      "csvReservedTitle": "🛑 CSV export restricted",
+      "csvReservedMsg": "CSV export is reserved for Technicians and Administrators. Ask the workshop team for the technical export.",
+      "jsonLabel": "JSON",
+      "jsonSub": "CNC integration",
+      "erpCsvLabel": "ERP (CSV)",
+      "erpCsvSub": "Elcia / Ramasoft",
+      "erpXmlLabel": "ERP (XML)",
+      "erpXmlSub": "Structured format",
+      "downloadOK": "Download OK",
+      "fileSaved": "File saved: {{uri}}",
+      "expoGoUnavailableTitle": "Export unavailable on Expo Go",
+      "expoGoUnavailableMsg": "Direct download of the {{kind}} file is not supported on this device. Please use the MesureChâssis web version (via Safari/Chrome) to download this format."
+    },
+    "emailFallback": {
+      "subjectPrefix": "MesureChâssis — Export",
+      "truncated": "\n\n[...]\n— Content truncated. Sign in to MesureChâssis on the web to retrieve the full file.",
+      "title": "{{kind}} export ready",
+      "msg": "Send the {{kind}} file by email to your office or a colleague?\n\nTip: to download the raw file, use MesureChâssis from Safari/Chrome.",
+      "send": "Send by email",
+      "noMailTitle": "No Mail app detected",
+      "noMailMsg": "Please set up a mail client on this device (Mail, Gmail, Outlook…) to use this option."
+    },
+    "footer": {
+      "close": "CLOSE",
+      "add": "ADD",
+      "wall": "WALL"
+    },
+    "edit": {
+      "modalTitle": "EDIT PROJECT",
+      "modalSub": "Update the client information and appointment date.",
+      "firstName": "First name",
+      "firstNamePlaceholder": "First name",
+      "lastName": "Last name",
+      "lastNamePlaceholder": "Last name",
+      "address": "Address",
+      "addressPlaceholder": "Street and number",
+      "postal": "Postal code",
+      "postalPlaceholder": "1000",
+      "city": "City",
+      "cityPlaceholder": "Brussels",
+      "appointment": "Appointment date",
+      "appointmentEmpty": "No date — tap to choose",
+      "cancel": "CANCEL",
+      "save": "SAVE",
+      "saving": "..."
     }
   }
 }

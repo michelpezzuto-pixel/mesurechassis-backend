@@ -513,9 +513,26 @@
     "feedback": {
       "title": "Uw feedback",
       "subtitle": "Help ons de app te verbeteren",
+      "subtitleAdmin": "Alle feedback van uw bedrijf",
+      "subtitleUser": "Uw feedback verzonden naar het MesureChâssis team",
+      "newFeedback": "NIEUWE FEEDBACK",
+      "newFeedbackHint": "Suggestie, bug, verbeteridee…",
       "newMessage": "Nieuw bericht",
-      "messagePlaceholder": "Beschrijf uw behoefte, suggestie of een gevonden bug…",
-      "send": "Verzenden",
+      "messagePlaceholder": "Beschrijf hier uw suggestie of het ondervonden probleem. Wees zo specifiek mogelijk.",
+      "send": "VERZENDEN",
+      "submit": "Verzenden",
+      "sent": "VERZONDEN",
+      "from": "Vanuit",
+      "user": "Gebruiker",
+      "replyMail": "ANTWOORDEN PER MAIL",
+      "delete": "VERWIJDEREN",
+      "cancel": "Annuleren",
+      "deleteConfirmTitle": "Deze feedback verwijderen?",
+      "deleteConfirmMsg": "Deze actie is definitief en maakt ook ruimte vrij voor nieuwe feedback.",
+      "deleteFail": "Verwijderen mislukt.",
+      "emptyTitle": "Nog geen feedback",
+      "emptyText": "Gebruik het « NIEUWE FEEDBACK » blok hierboven om een verbetering voor te stellen of een probleem te melden. Een kopie wordt verzonden naar het MesureChâssis team en hier bewaard.",
+      "sendFail": "Kan uw feedback niet verzenden.",
       "category": "Categorie",
       "cat": {
         "bug": "Bug",
@@ -525,8 +542,8 @@
       },
       "historyTitle": "Mijn feedback geschiedenis",
       "historyEmpty": "U heeft nog geen bericht verzonden.",
-      "sent": "✅ Bedankt!",
-      "sentMsg": "Uw bericht is verzonden naar het MesureChâssis team.",
+      "sentSuccess": "✅ Bedankt!",
+      "sentSuccessMsg": "Uw bericht is verzonden naar het MesureChâssis team.",
       "errSend": "Kan uw bericht niet verzenden. Probeer later opnieuw."
     },
     "companyProfile": {
@@ -559,6 +576,221 @@
       "invoices": "Mijn facturen",
       "noInvoices": "Nog geen factuur.",
       "manageStripe": "Beheren in Stripe portaal"
+    }
+  },
+  "chantierDetail": {
+    "errors": {
+      "title": "Fout",
+      "loadFail": "Kan de werf niet laden.",
+      "assignFail": "Toewijzing mislukt.",
+      "sendFail": "Verzenden mislukt. Probeer opnieuw.",
+      "editForbidden": "U heeft geen toestemming om deze werf te bewerken.",
+      "editFail": "Wijziging mislukt.",
+      "deleteForbidden": "U heeft geen toestemming om deze werf te verwijderen.",
+      "deleteFail": "Verwijdering mislukt.",
+      "photoAddFail": "Kan foto niet toevoegen.",
+      "mailFail": "Kan de e-mailclient niet openen.",
+      "exportFail": "Download mislukt.",
+      "validateFail": "Validatie mislukt. Controleer uw rechten.",
+      "respondFail": "Kan niet antwoorden.",
+      "modRequestFail": "Kan het verzoek niet verzenden.",
+      "sendBackFail": "Kan niet terugsturen naar de verkoper. Probeer zo dadelijk opnieuw.",
+      "backToMeasureFail": "Kan niet terugkeren naar status «Te meten». Probeer zo dadelijk opnieuw."
+    },
+    "upgradeLock": {
+      "title": "🔒 Exports vergrendeld",
+      "msgBase": "Exports (PDF, Excel, CSV, JSON) zijn voorbehouden aan Pro-abonnees. Schakel over naar Pro om alle technische exports te ontgrendelen.",
+      "msgIosSuffix": "\n\nOm te abonneren, ga naar mesurechassis.com.",
+      "later": "Later",
+      "viewSubscription": "Abonnement bekijken"
+    },
+    "archivedLock": {
+      "alertTitle": "🔒 Werf vergrendeld",
+      "alertMsg": "De metingen zijn niet meer te wijzigen. Raadpleeg de geëxporteerde PDF.",
+      "got": "Begrepen",
+      "bannerTitle": "🔒 WERF VERGRENDELD",
+      "bannerBody": "De metingen zijn niet meer te wijzigen. Raadpleeg de geëxporteerde PDF. De downloads (PDF, CSV, Excel, JSON) blijven hieronder beschikbaar.",
+      "cardReadonly": "ALLEEN-LEZEN — Gearchiveerde werf"
+    },
+    "commercialFabBlock": {
+      "title": "🛑 Actie niet toegestaan",
+      "msg": "Deze werf is vergrendeld in productie. Alleen de technieker kan deze gegevens wijzigen of werkplaatsformaten exporteren."
+    },
+    "deleteBlocked": {
+      "title": "🔒 Verwijdering geblokkeerd",
+      "msg": "Voltooide/geleverde werven kunnen alleen door de hoofdadministrator (Verantwoordelijke) worden verwijderd."
+    },
+    "deleteConfirm": {
+      "title": "Werf verwijderen?",
+      "msg": "«{{name}}» en al haar metingen worden definitief verwijderd. Deze actie is onomkeerbaar.",
+      "delete": "Verwijderen"
+    },
+    "deleteMesure": {
+      "title": "Deze meting verwijderen?",
+      "msg": "«{{label}}» wordt definitief verwijderd."
+    },
+    "photoLimit": {
+      "title": "Limiet bereikt",
+      "msg": "Maximaal 6 site-foto's (anti-geschil)."
+    },
+    "permission": {
+      "denied": "Toestemming geweigerd",
+      "deniedMsg": "Activeer de toegang in de instellingen."
+    },
+    "deletePhoto": {
+      "title": "Foto verwijderen?",
+      "msg": "Deze actie is definitief."
+    },
+    "sendToCommercial": {
+      "modalTitle": "VERZENDEN NAAR EEN VERKOPER",
+      "modalSub": "Kies de verkoper die de metingen zal uitvoeren. Hij wordt onmiddellijk verwittigd.",
+      "footerBtn": "📤 VERZENDEN NAAR EEN VERKOPER",
+      "noneTitle": "Geen verkoper in het team",
+      "noneMsg": "Nodig eerst een verkoper uit via de pagina «Team» om hem een werf te kunnen sturen om te meten.",
+      "confirmTitle": "Verzenden naar een verkoper?",
+      "confirmMsg": "De werf wordt toegewezen aan {{name}} en gaat over naar «Te meten».",
+      "send": "Verzenden",
+      "successTitle": "✅ Werf verzonden",
+      "successMsg": "De geselecteerde verkoper is verwittigd. De werf staat nu op «Te meten»."
+    },
+    "assign": {
+      "to": "Toegewezen aan",
+      "none": "Niemand",
+      "reassign": "OPNIEUW TOEWIJZEN",
+      "cta": "TOEWIJZEN AAN EEN VERKOPER",
+      "modalTitle": "TOEWIJZEN AAN EEN VERKOPER",
+      "modalSub": "Kies de verkoper die de metingen voor deze werf zal uitvoeren.",
+      "noCommercial": "Geen verkoper in uw team.\nNodig er een uit via de pagina «Team».",
+      "noAssignment": "Geen toewijzing",
+      "roleCommercial": "verkoper",
+      "close": "SLUITEN"
+    },
+    "kpi": {
+      "openings": "Openingen",
+      "alerts": "Waarschuwingen",
+      "openingsSection": "OPENINGEN"
+    },
+    "empty": {
+      "title": "Geen opening gemeten",
+      "hint": "Begin door uw eerste opening toe te voegen via de knop «Een opening toevoegen» hieronder (Vierkant / Rechthoek, Deur, Trapezium, Driehoek, Rondraam, Schuif-hef, Garagepoort…).",
+      "hintArchived": "🔒 Werf vergrendeld. De metingen zijn niet meer te wijzigen. Raadpleeg de geëxporteerde PDF.",
+      "hintFab": "Deze werf is vergrendeld in productie. Alleen de technieker kan metingen toevoegen of bewerken."
+    },
+    "sitePhotos": {
+      "title": "SITE-FOTO'S (ANTI-GESCHIL)",
+      "sub": "Tot 6 foto's met bijschrift — bewijs van de bestaande toestand. ({{count}}/6)",
+      "captionPlaceholder": "Notitie / Bijschrift van de foto",
+      "delete": "Verwijderen",
+      "camera": "Camera",
+      "gallery": "Galerij"
+    },
+    "validation": {
+      "validatePublish": "✅ VALIDEREN EN PUBLICEREN VOOR PRODUCTIE",
+      "validateClose": "✅ AFSLUITEN EN PRODUCTIE STARTEN",
+      "validatedTitle": "✅ Werf gevalideerd",
+      "validatedMsg": "De werf staat nu in productie. De technische exports (CSV / Excel) zijn beschikbaar.",
+      "waitingTitle": "WACHT OP VALIDATIE DOOR DE TECHNIEKER",
+      "waitingBody": "Alleen een technieker kan deze werf valideren voor productie. De administrator kan deze veiligheidsstap niet omzeilen.",
+      "sendBackBtn": "↩️ TERUGSTUREN NAAR VERKOPER VOOR CORRECTIE",
+      "sendBackTitle": "↩️ Terugsturen naar verkoper?",
+      "sendBackMsg": "De werf gaat terug naar «Te meten». De toegewezen verkoper kan openingen wijzigen, toevoegen of verwijderen. U wordt verwittigd wanneer hij heeft gecorrigeerd.",
+      "sendBackConfirm": "Terugsturen"
+    },
+    "modRequest": {
+      "pendingTitle": "WIJZIGINGSVERZOEK VERZONDEN",
+      "pendingBody": "Uw verzoek is in behandeling. U wordt verwittigd zodra de technieker heeft geantwoord.",
+      "btnNew": "↩️ DE TECHNIEKER VRAGEN OM TE WIJZIGEN",
+      "btnRenew": "↩️ VERZOEK AAN TECHNIEKER VERNIEUWEN",
+      "techTitle": "📢 WIJZIGINGSVERZOEK",
+      "techBodyName": "{{name}} wil het beheer terugnemen om de metingen te wijzigen.",
+      "techBodyDefault": "De verkoper wil het beheer terugnemen om de metingen te wijzigen.",
+      "techBodyReason": "\n\nReden: «{{reason}}»",
+      "approveBtn": "GOEDKEUREN",
+      "refuseBtn": "WEIGEREN",
+      "approveTitle": "Goedkeuren?",
+      "approveMsg": "De werf gaat terug naar «Te meten» en de verkoper kan de openingen wijzigen.",
+      "approveConfirm": "Goedkeuren",
+      "refuseTitle": "Weigeren?",
+      "refuseMsg": "Het verzoek wordt als geweigerd gemarkeerd. De verkoper kan een nieuw verzoek indienen.",
+      "refuseConfirm": "Weigeren",
+      "modalTitle": "EEN WIJZIGING AANVRAGEN?",
+      "modalSub": "Geef kort de reden aan (optioneel). De technieker wordt per e-mail verwittigd en kan het verzoek aanvaarden of weigeren.",
+      "reasonPlaceholder": "Bv.: diagonaalmaat te controleren, foto te bevestigen…",
+      "sendingBtn": "VERZENDEN…",
+      "confirmBtn": "BEVESTIGEN",
+      "sentTitle": "✅ Verzoek verzonden",
+      "sentMsg": "Wacht op de validatie van de technieker."
+    },
+    "techOverride": {
+      "btn": "⚠️ EEN UITZONDERLIJKE WIJZIGING TOESTAAN",
+      "alertTitle": "Uitzonderlijke wijziging",
+      "alertMsg": "Wilt u deze werf tijdelijk ontgrendelen?\n\nDeze actie geeft de technieker tijdelijke bewerk-/verwijdertoegang voor dringende werkplaatscoördinatie.",
+      "unlock": "Ontgrendelen",
+      "active": "Bewerken tijdelijk ontgrendeld (technieker-override).",
+      "lock": "VERGRENDELEN"
+    },
+    "fabLock": {
+      "title": "IN PRODUCTIE — ALLEEN-LEZEN",
+      "msgCommercial": "De metingen staan vast om de coherentie met de werkplaats te garanderen. Neem contact op met de technieker in geval van nood.",
+      "msgOther": "Alleen de technieker kan in dit stadium uitzonderlijk metingen wijzigen."
+    },
+    "exports": {
+      "title": "EXPORTS",
+      "freeLockBadge": "FREE-VERGRENDELING",
+      "subFree": "Exports voorbehouden aan het Pro-plan — schakel over naar Pro om te ontgrendelen.",
+      "sub": "Klantdocument, productiebestand of software-integratie.",
+      "errorTitle": "Exportfout",
+      "pdfLabel": "PDF-SAMENVATTING",
+      "pdfSub": "Technische fiche",
+      "xlsxLabel": "EXCEL .xlsx",
+      "xlsxSub": "Werkplaatstabel",
+      "csvLabel": "CSV",
+      "csvSub": "Onbewerkt tabelvormig",
+      "csvReservedTitle": "🛑 CSV-export voorbehouden",
+      "csvReservedMsg": "De CSV-export is voorbehouden aan Technici en Administrators. Vraag de technische export aan uw werkplaatsteam.",
+      "jsonLabel": "JSON",
+      "jsonSub": "CNC-integratie",
+      "erpCsvLabel": "ERP (CSV)",
+      "erpCsvSub": "Elcia / Ramasoft",
+      "erpXmlLabel": "ERP (XML)",
+      "erpXmlSub": "Gestructureerd formaat",
+      "downloadOK": "Download OK",
+      "fileSaved": "Bestand opgeslagen: {{uri}}",
+      "expoGoUnavailableTitle": "Export niet beschikbaar op Expo Go",
+      "expoGoUnavailableMsg": "Directe download van het {{kind}}-bestand wordt op dit toestel niet ondersteund. Gebruik de webversie van MesureChâssis (via Safari/Chrome) om dit formaat te downloaden."
+    },
+    "emailFallback": {
+      "subjectPrefix": "MesureChâssis — Export",
+      "truncated": "\n\n[...]\n— Inhoud afgekort. Log in op MesureChâssis op het web om het volledige bestand op te halen.",
+      "title": "Export {{kind}} klaar",
+      "msg": "Het {{kind}}-bestand per e-mail verzenden naar uw kantoor of een collega?\n\nTip: gebruik MesureChâssis via Safari/Chrome om het ruwe bestand te downloaden.",
+      "send": "Per e-mail verzenden",
+      "noMailTitle": "Geen Mail-app gedetecteerd",
+      "noMailMsg": "Configureer een e-mailclient op dit toestel (Mail, Gmail, Outlook…) om deze optie te gebruiken."
+    },
+    "footer": {
+      "close": "AFSLUITEN",
+      "add": "TOEVOEGEN",
+      "wall": "MUUR"
+    },
+    "edit": {
+      "modalTitle": "WERF BEWERKEN",
+      "modalSub": "Werk de klantgegevens en de afspraakdatum bij.",
+      "firstName": "Voornaam",
+      "firstNamePlaceholder": "Voornaam",
+      "lastName": "Naam",
+      "lastNamePlaceholder": "Familienaam",
+      "address": "Adres",
+      "addressPlaceholder": "Straat en nummer",
+      "postal": "Postcode",
+      "postalPlaceholder": "1000",
+      "city": "Stad",
+      "cityPlaceholder": "Brussel",
+      "appointment": "Afspraakdatum",
+      "appointmentEmpty": "Geen datum — tik om te kiezen",
+      "cancel": "ANNULEREN",
+      "save": "OPSLAAN",
+      "saving": "..."
     }
   }
 }

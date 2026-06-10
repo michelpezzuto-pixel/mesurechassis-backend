@@ -546,9 +546,26 @@
     "feedback": {
       "title": "Vos retours",
       "subtitle": "Aidez-nous à améliorer l'application",
+      "subtitleAdmin": "Tous les retours de votre société",
+      "subtitleUser": "Vos retours envoyés à l'équipe MesureChâssis",
+      "newFeedback": "NOUVEAU RETOUR",
+      "newFeedbackHint": "Suggestion, bug, idée d'amélioration…",
       "newMessage": "Nouveau message",
-      "messagePlaceholder": "Décrivez votre besoin, votre suggestion ou un bug rencontré…",
-      "send": "Envoyer",
+      "messagePlaceholder": "Décrivez ici votre suggestion ou le problème rencontré. Soyez aussi précis que possible.",
+      "send": "ENVOYER",
+      "submit": "Envoyer",
+      "sent": "ENVOYÉ",
+      "from": "Depuis",
+      "user": "Utilisateur",
+      "replyMail": "RÉPONDRE PAR MAIL",
+      "delete": "SUPPRIMER",
+      "cancel": "Annuler",
+      "deleteConfirmTitle": "Supprimer ce retour ?",
+      "deleteConfirmMsg": "Cette action est définitive et libère également la place pour de nouveaux retours.",
+      "deleteFail": "Suppression impossible.",
+      "emptyTitle": "Aucun retour pour l'instant",
+      "emptyText": "Utilisez le bloc « NOUVEAU RETOUR » ci-dessus pour suggérer une amélioration ou signaler un problème. Une copie sera envoyée à l'équipe MesureChâssis et conservée ici.",
+      "sendFail": "Impossible d'envoyer votre retour.",
       "category": "Catégorie",
       "cat": {
         "bug": "Bug",
@@ -558,8 +575,8 @@
       },
       "historyTitle": "Historique de mes retours",
       "historyEmpty": "Vous n'avez pas encore envoyé de message.",
-      "sent": "✅ Merci !",
-      "sentMsg": "Votre message a bien été envoyé à l'équipe MesureChâssis.",
+      "sentSuccess": "✅ Merci !",
+      "sentSuccessMsg": "Votre message a bien été envoyé à l'équipe MesureChâssis.",
       "errSend": "Impossible d'envoyer votre message. Réessayez plus tard."
     },
     "companyProfile": {
@@ -592,6 +609,221 @@
       "invoices": "Mes factures",
       "noInvoices": "Aucune facture pour le moment.",
       "manageStripe": "Gérer dans le portail Stripe"
+    }
+  },
+  "chantierDetail": {
+    "errors": {
+      "title": "Erreur",
+      "loadFail": "Impossible de charger le chantier.",
+      "assignFail": "Affectation impossible.",
+      "sendFail": "Envoi impossible. Réessayez.",
+      "editForbidden": "Vous n'avez pas les droits pour modifier ce chantier.",
+      "editFail": "Modification impossible.",
+      "deleteForbidden": "Vous n'avez pas les droits pour supprimer ce chantier.",
+      "deleteFail": "Suppression impossible.",
+      "photoAddFail": "Ajout photo impossible.",
+      "mailFail": "Impossible d'ouvrir le client mail.",
+      "exportFail": "Téléchargement impossible.",
+      "validateFail": "Validation impossible. Vérifiez vos droits.",
+      "respondFail": "Impossible de répondre.",
+      "modRequestFail": "Impossible d'envoyer la demande.",
+      "sendBackFail": "Impossible de renvoyer au commercial. Réessayez dans un instant.",
+      "backToMeasureFail": "Impossible de repasser au statut « À mesurer ». Réessayez dans un instant."
+    },
+    "upgradeLock": {
+      "title": "🔒 Exports verrouillés",
+      "msgBase": "Les exports (PDF, Excel, CSV, JSON) sont réservés aux abonnés Pro. Passez en Pro pour débloquer toutes les exportations techniques.",
+      "msgIosSuffix": "\n\nPour souscrire, rendez-vous sur mesurechassis.com.",
+      "later": "Plus tard",
+      "viewSubscription": "Voir l'abonnement"
+    },
+    "archivedLock": {
+      "alertTitle": "🔒 Chantier verrouillé",
+      "alertMsg": "Les mesures ne sont plus modifiables. Veuillez vous référer au PDF d'export.",
+      "got": "J'ai compris",
+      "bannerTitle": "🔒 CHANTIER VERROUILLÉ",
+      "bannerBody": "Les mesures ne sont plus modifiables. Référez-vous au PDF d'export. Les téléchargements (PDF, CSV, Excel, JSON) restent disponibles ci-dessous.",
+      "cardReadonly": "LECTURE SEULE — Chantier archivé"
+    },
+    "commercialFabBlock": {
+      "title": "🛑 Action non autorisée",
+      "msg": "Ce chantier est verrouillé en fabrication. Seul le technicien peut modifier ces données ou exporter les formats d'atelier."
+    },
+    "deleteBlocked": {
+      "title": "🔒 Suppression bloquée",
+      "msg": "Les chantiers terminés/livrés ne peuvent être supprimés que par l'administrateur principal (Responsable)."
+    },
+    "deleteConfirm": {
+      "title": "Supprimer le chantier ?",
+      "msg": "« {{name}} » et toutes ses mesures seront supprimés définitivement. Cette action est irréversible.",
+      "delete": "Supprimer"
+    },
+    "deleteMesure": {
+      "title": "Supprimer cette mesure ?",
+      "msg": "« {{label}} » sera définitivement supprimée."
+    },
+    "photoLimit": {
+      "title": "Limite atteinte",
+      "msg": "Maximum 6 photos site (anti-litige)."
+    },
+    "permission": {
+      "denied": "Permission refusée",
+      "deniedMsg": "Activez l'accès dans les réglages."
+    },
+    "deletePhoto": {
+      "title": "Supprimer la photo ?",
+      "msg": "Cette action est définitive."
+    },
+    "sendToCommercial": {
+      "modalTitle": "ENVOYER À UN COMMERCIAL",
+      "modalSub": "Choisissez le commercial qui prendra les mesures. Il sera notifié immédiatement.",
+      "footerBtn": "📤 ENVOYER À UN COMMERCIAL",
+      "noneTitle": "Aucun commercial dans l'équipe",
+      "noneMsg": "Invitez d'abord un commercial via la page « Équipe » pour pouvoir lui envoyer un chantier à mesurer.",
+      "confirmTitle": "Envoyer à un commercial ?",
+      "confirmMsg": "Le chantier sera affecté à {{name}} et passera en « À mesurer ».",
+      "send": "Envoyer",
+      "successTitle": "✅ Chantier envoyé",
+      "successMsg": "Le commercial sélectionné a été notifié. Le chantier est maintenant en « À mesurer »."
+    },
+    "assign": {
+      "to": "Affecté à",
+      "none": "Personne",
+      "reassign": "RÉAFFECTER",
+      "cta": "AFFECTER À UN COMMERCIAL",
+      "modalTitle": "AFFECTER À UN COMMERCIAL",
+      "modalSub": "Choisissez le commercial qui prendra en charge la prise de mesures du chantier.",
+      "noCommercial": "Aucun commercial dans votre équipe.\nInvitez-en un via la page « Équipe ».",
+      "noAssignment": "Aucune affectation",
+      "roleCommercial": "commercial",
+      "close": "FERMER"
+    },
+    "kpi": {
+      "openings": "Ouvertures",
+      "alerts": "Alertes",
+      "openingsSection": "OUVERTURES"
+    },
+    "empty": {
+      "title": "Aucune ouverture mesurée",
+      "hint": "Commencez par ajouter votre première ouverture via le bouton « Ajouter une ouverture » ci-dessous (Carré / Rectangle, Porte, Trapèze, Triangle, Œil-de-bœuf, Coulissant levant, Porte de garage…).",
+      "hintArchived": "🔒 Chantier verrouillé. Les mesures ne sont plus modifiables. Référez-vous au PDF d'export.",
+      "hintFab": "Ce chantier est verrouillé en fabrication. Seul le technicien peut ajouter ou modifier les mesures."
+    },
+    "sitePhotos": {
+      "title": "PHOTOS SITE (ANTI-LITIGE)",
+      "sub": "Jusqu'à 6 photos avec légende — preuves de l'état existant. ({{count}}/6)",
+      "captionPlaceholder": "Note / Légende de la photo",
+      "delete": "Supprimer",
+      "camera": "Caméra",
+      "gallery": "Galerie"
+    },
+    "validation": {
+      "validatePublish": "✅ VALIDER ET PUBLIER POUR FABRICATION",
+      "validateClose": "✅ CLÔTURER ET LANCER LA FABRICATION",
+      "validatedTitle": "✅ Chantier validé",
+      "validatedMsg": "Le chantier est désormais en fabrication. Les exports techniques (CSV / Excel) sont disponibles.",
+      "waitingTitle": "EN ATTENTE DE VALIDATION PAR LE TECHNICIEN",
+      "waitingBody": "Seul un technicien peut valider ce chantier pour la fabrication. L'administrateur ne peut pas bypasser cette étape de sécurité.",
+      "sendBackBtn": "↩️ RENVOYER AU COMMERCIAL POUR CORRECTION",
+      "sendBackTitle": "↩️ Renvoyer au commercial ?",
+      "sendBackMsg": "Le chantier repassera en « À mesurer ». Le commercial assigné pourra modifier, ajouter ou supprimer des ouvertures. Vous serez notifié quand il aura corrigé.",
+      "sendBackConfirm": "Renvoyer"
+    },
+    "modRequest": {
+      "pendingTitle": "DEMANDE DE MODIFICATION ENVOYÉE",
+      "pendingBody": "Votre demande est en attente. Vous serez notifié dès que le technicien aura répondu.",
+      "btnNew": "↩️ DEMANDER AU TECHNICIEN DE MODIFIER",
+      "btnRenew": "↩️ RENOUVELER LA DEMANDE AU TECHNICIEN",
+      "techTitle": "📢 DEMANDE DE MODIFICATION",
+      "techBodyName": "{{name}} souhaite reprendre la main pour modifier les mesures.",
+      "techBodyDefault": "Le commercial souhaite reprendre la main pour modifier les mesures.",
+      "techBodyReason": "\n\nRaison : « {{reason}} »",
+      "approveBtn": "APPROUVER",
+      "refuseBtn": "REFUSER",
+      "approveTitle": "Approuver ?",
+      "approveMsg": "Le chantier repassera en « À mesurer » et le commercial pourra modifier les ouvertures.",
+      "approveConfirm": "Approuver",
+      "refuseTitle": "Refuser ?",
+      "refuseMsg": "La demande sera marquée comme refusée. Le commercial pourra en faire une nouvelle.",
+      "refuseConfirm": "Refuser",
+      "modalTitle": "DEMANDER UNE MODIFICATION ?",
+      "modalSub": "Indiquez brièvement la raison (optionnel). Le technicien sera notifié par email et pourra accepter ou refuser la demande.",
+      "reasonPlaceholder": "Ex. : cote diagonale à revoir, photo à confirmer…",
+      "sendingBtn": "ENVOI…",
+      "confirmBtn": "CONFIRMER L'ENVOI",
+      "sentTitle": "✅ Demande envoyée",
+      "sentMsg": "Merci d'attendre la validation du technicien."
+    },
+    "techOverride": {
+      "btn": "⚠️ AUTORISER UNE MODIFICATION EXCEPTIONNELLE",
+      "alertTitle": "Modification exceptionnelle",
+      "alertMsg": "Voulez-vous temporairement déverrouiller ce chantier ?\n\nCette action accorde un accès édition/suppression temporaire au technicien pour coordination atelier urgente.",
+      "unlock": "Déverrouiller",
+      "active": "Édition déverrouillée temporairement (override technicien).",
+      "lock": "VERROUILLER"
+    },
+    "fabLock": {
+      "title": "EN FABRICATION — LECTURE SEULE",
+      "msgCommercial": "Les mesures sont figées pour garantir la cohérence avec l'atelier. Contactez le technicien en cas d'urgence.",
+      "msgOther": "Seul le technicien peut modifier exceptionnellement les mesures à ce stade."
+    },
+    "exports": {
+      "title": "EXPORTS",
+      "freeLockBadge": "VERROU FREE",
+      "subFree": "Exports réservés au plan Pro — passez en Pro pour débloquer.",
+      "sub": "Document client, fichier fabrication ou intégration logiciel.",
+      "errorTitle": "Erreur export",
+      "pdfLabel": "RÉCAPITULATIF PDF",
+      "pdfSub": "Fiche technique",
+      "xlsxLabel": "EXCEL .xlsx",
+      "xlsxSub": "Tableau atelier",
+      "csvLabel": "CSV",
+      "csvSub": "Tabulaire brut",
+      "csvReservedTitle": "🛑 Export CSV réservé",
+      "csvReservedMsg": "L'export CSV est réservé aux Techniciens et Administrateurs. Demandez l'export technique à votre équipe atelier.",
+      "jsonLabel": "JSON",
+      "jsonSub": "Intégration CNC",
+      "erpCsvLabel": "ERP (CSV)",
+      "erpCsvSub": "Elcia / Ramasoft",
+      "erpXmlLabel": "ERP (XML)",
+      "erpXmlSub": "Format structuré",
+      "downloadOK": "Téléchargement OK",
+      "fileSaved": "Fichier enregistré : {{uri}}",
+      "expoGoUnavailableTitle": "Export indisponible sur Expo Go",
+      "expoGoUnavailableMsg": "Le téléchargement direct du fichier {{kind}} n'est pas supporté sur cet appareil. Veuillez utiliser la version web de MesureChâssis (depuis Safari/Chrome) pour télécharger ce format."
+    },
+    "emailFallback": {
+      "subjectPrefix": "MesureChâssis — Export",
+      "truncated": "\n\n[...]\n— Contenu tronqué. Connectez-vous à MesureChâssis sur le web pour récupérer le fichier complet.",
+      "title": "Export {{kind}} prêt",
+      "msg": "Envoyer le fichier {{kind}} par email à votre bureau ou à un collaborateur ?\n\nAstuce : pour télécharger le fichier brut, utilisez MesureChâssis depuis Safari/Chrome.",
+      "send": "Envoyer par email",
+      "noMailTitle": "Aucune app Mail détectée",
+      "noMailMsg": "Veuillez configurer un client mail sur cet appareil (Mail, Gmail, Outlook…) pour utiliser cette option."
+    },
+    "footer": {
+      "close": "CLÔTURER",
+      "add": "AJOUTER",
+      "wall": "MUR"
+    },
+    "edit": {
+      "modalTitle": "MODIFIER LE CHANTIER",
+      "modalSub": "Mettez à jour les coordonnées du client et la date de rendez-vous.",
+      "firstName": "Prénom",
+      "firstNamePlaceholder": "Prénom",
+      "lastName": "Nom",
+      "lastNamePlaceholder": "Nom de famille",
+      "address": "Adresse",
+      "addressPlaceholder": "Rue et numéro",
+      "postal": "Code postal",
+      "postalPlaceholder": "1000",
+      "city": "Ville",
+      "cityPlaceholder": "Bruxelles",
+      "appointment": "Date du rendez-vous",
+      "appointmentEmpty": "Aucune date — toucher pour choisir",
+      "cancel": "ANNULER",
+      "save": "ENREGISTRER",
+      "saving": "..."
     }
   }
 }

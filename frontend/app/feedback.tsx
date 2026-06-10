@@ -241,9 +241,9 @@ export default function FeedbackPage() {
                 />
               </View>
               <View>
-                <Text style={styles.composerTitle}>NOUVEAU RETOUR</Text>
+                <Text style={styles.composerTitle}>{t("screens.feedback.newFeedback")}</Text>
                 <Text style={styles.composerHint}>
-                  Suggestion, bug, idée d&apos;amélioration…
+                  {t("screens.feedback.newFeedbackHint")}
                 </Text>
               </View>
             </View>
@@ -260,7 +260,7 @@ export default function FeedbackPage() {
                 testID="composer-textarea"
                 value={comment}
                 onChangeText={setComment}
-                placeholder="Décrivez ici votre suggestion ou le problème rencontré. Soyez aussi précis que possible."
+                placeholder={t("screens.feedback.messagePlaceholder")}
                 placeholderTextColor={colors.placeholder}
                 multiline
                 numberOfLines={6}
@@ -287,7 +287,7 @@ export default function FeedbackPage() {
                   ) : (
                     <>
                       <Ionicons name="send" size={16} color="#000" />
-                      <Text style={styles.submitText}>ENVOYER</Text>
+                      <Text style={styles.submitText}>{t("screens.feedback.send")}</Text>
                     </>
                   )}
                 </TouchableOpacity>
@@ -309,12 +309,10 @@ export default function FeedbackPage() {
               color={colors.textSecondary}
             />
             <Text style={styles.emptyTitle}>
-              Aucun retour pour l&apos;instant
+              {t("screens.feedback.emptyTitle")}
             </Text>
             <Text style={styles.emptyText}>
-              Utilisez le bloc « NOUVEAU RETOUR » ci-dessus pour suggérer
-              une amélioration ou signaler un problème. Une copie sera
-              envoyée à l&apos;équipe MesureChâssis et conservée ici.
+              {t("screens.feedback.emptyText")}
             </Text>
           </View>
         ) : (
@@ -336,7 +334,7 @@ export default function FeedbackPage() {
                   {isAdmin ? (
                     <View style={{ flex: 1 }}>
                       <Text style={styles.cardAuthor} numberOfLines={1}>
-                        {item.user_name || "Utilisateur"}
+                        {item.user_name || t("screens.feedback.user")}
                       </Text>
                       <Text style={styles.cardAuthorEmail} numberOfLines={1}>
                         {item.user_email || "—"}
@@ -349,7 +347,7 @@ export default function FeedbackPage() {
                         size={12}
                         color="#16A34A"
                       />
-                      <Text style={styles.statusText}>ENVOYÉ</Text>
+                      <Text style={styles.statusText}>{t("screens.feedback.sent")}</Text>
                     </View>
                   )}
                   <Text style={styles.cardDate}>
@@ -359,7 +357,7 @@ export default function FeedbackPage() {
                 <Text style={styles.cardComment}>{item.user_comment}</Text>
                 {item.page_context ? (
                   <Text style={styles.cardContext}>
-                    Depuis :{" "}
+                    {t("screens.feedback.from")} :{" "}
                     <Text style={styles.mono}>{item.page_context}</Text>
                   </Text>
                 ) : null}
@@ -371,7 +369,7 @@ export default function FeedbackPage() {
                       activeOpacity={0.85}
                     >
                       <Ionicons name="mail" size={14} color="#000" />
-                      <Text style={styles.replyBtnText}>RÉPONDRE PAR MAIL</Text>
+                      <Text style={styles.replyBtnText}>{t("screens.feedback.replyMail")}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       onPress={() => removeFb(item.id)}
