@@ -1,4 +1,4 @@
-"""Routes d'export d'un chantier : PDF (avec photos), CSV, XLSX, JSON."""
+"""Routes d'export d'un chantier : PDF (avec photos), CSV, XLSX, JSON, ERP générique."""
 from __future__ import annotations
 
 import base64
@@ -6,6 +6,7 @@ import csv
 import io
 from datetime import datetime, timezone
 from typing import Any
+from xml.sax.saxutils import escape as xml_escape
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import Response, StreamingResponse
@@ -196,7 +197,7 @@ async def export_pdf(
 
     story.append(
         Paragraph(
-            f"<b>Fiche Chantier</b>",
+            "<b>Fiche Chantier</b>",
             styles["Title"],
         )
     )
@@ -821,6 +822,236 @@ async def export_xlsx(
         headers={
             "Content-Disposition": (
                 f'attachment; filename="MesureChassis_{safe}.xlsx"'
+            )
+        },
+    )
+
+
+
+# ═════════════════════════════════════════════════════════════════════════════
+# 🆕 V3 — Export ERP universel (CSV + XML générique menuiserie)
+#
+# Format conçu pour être importé MANUELLEMENT dans n'importe quel ERP de
+# menuiserie (Elcia, Ramasoft, BatiPro, etc.) en attendant des specs API
+# précises de la part des éditeurs.
+#
+# Une ligne / un élément par MESURE. Champs prioritaires : référence,
+# largeur, hauteur, forme, options. Les cotes spécifiques aux formes
+# complexes (trapèze, arc, polygone…) sont sérialisées dans `details`.
+# ═════════════════════════════════════════════════════════════════════════════
+
+
+def _erp_row(chantier: dict, m: dict) -> dict:
+    """Construit la représentation ERP normalisée d'une mesure."""
+    opts = m.get("options") or {}
+    shape = opts.get("shape") or m.get("block_type") or ""
+    # Détails libres pour les ERPs qui acceptent un champ "notes" (clé=valeur)
+    detail_pairs: list[str] = []
+    for key in (
+        "width_top",
+        "width_bottom",
+        "height_left",
+        "height_right",
+        "trap_height_left",
+        "trap_height_right",
+        "oeil_diameter",
+        "arch_h1_appui",
+        "arch_h2_total",
+        "angle90_cut_width",
+        "angle90_cut_height",
+        "polygon_edge_count",
+        "polygon_edge_length",
+        "polygon_angle_deg",
+        "feuillure_left_mm",
+        "feuillure_right_mm",
+        "feuillure_top_mm",
+        "floor_reserve",
+    ):
+        val = opts.get(key)
+        if val not in (None, "", 0, "0"):
+            detail_pairs.append(f"{key}={val}")
+    return {
+        "project_ref": chantier.get("client_name") or "",
+        "project_id": chantier.get("id") or "",
+        "address": chantier.get("address") or "",
+        "postal_code": chantier.get("postal_code") or "",
+        "city": chantier.get("city") or "",
+        "country": chantier.get("country") or "",
+        "item_ref": m.get("label") or m.get("id") or "",
+        "item_id": m.get("id") or "",
+        "shape": shape,
+        "block_type": m.get("block_type") or "",
+        "width_mm": m.get("bay_width") or "",
+        "height_mm": m.get("bay_height") or "",
+        "diagonal_1_mm": m.get("bay_diagonal_1") or m.get("bay_diagonal") or "",
+        "diagonal_2_mm": m.get("bay_diagonal_2") or m.get("bay_diagonal") or "",
+        "renovation": "yes" if m.get("renovation_mode") else "no",
+        "masonry_type": opts.get("masonry_type") or "",
+        "wall_thickness_mm": opts.get("gros_oeuvre_mm") or "",
+        "insulation_mode": opts.get("insulation_mode") or "",
+        "iti_thickness_mm": opts.get("iti_thickness_mm") or "",
+        "ite_insul_thickness_mm": opts.get("ite_insul_thickness_mm") or "",
+        "details": ";".join(detail_pairs),
+        "measured_at": m.get("created_at") or "",
+        "measured_by": m.get("created_by_name") or "",
+    }
+
+
+_ERP_FIELDS = [
+    "project_ref", "project_id", "address", "postal_code", "city", "country",
+    "item_ref", "item_id", "shape", "block_type",
+    "width_mm", "height_mm", "diagonal_1_mm", "diagonal_2_mm",
+    "renovation", "masonry_type", "wall_thickness_mm",
+    "insulation_mode", "iti_thickness_mm", "ite_insul_thickness_mm",
+    "details", "measured_at", "measured_by",
+]
+
+
+@router.get("/chantiers/{chantier_id}/export-erp.csv")
+async def export_erp_csv(
+    chantier_id: str, user=Depends(restrict_advanced_exports)
+):
+    """Export ERP générique au format CSV (séparateur point-virgule, UTF-8 BOM).
+
+    Le BOM (Byte Order Mark) permet à Excel d'ouvrir le fichier directement
+    en UTF-8 sans corrompre les accents (problème historique sur Windows).
+    Compatible avec tous les ERPs menuiserie supportant les imports CSV.
+    """
+    chantier = await db.chantiers.find_one(
+        {"id": chantier_id, "company_id": user.get("company_id", "default")},
+        {"_id": 0},
+    )
+    if not chantier:
+        raise HTTPException(404, "Chantier introuvable")
+    mesures = (
+        await db.mesures.find({"chantier_id": chantier_id}, {"_id": 0})
+        .sort("created_at", 1)
+        .to_list(500)
+    )
+
+    buf = io.StringIO()
+    # BOM UTF-8 pour Excel
+    buf.write("\ufeff")
+    writer = csv.DictWriter(
+        buf,
+        fieldnames=_ERP_FIELDS,
+        delimiter=";",
+        quoting=csv.QUOTE_MINIMAL,
+        extrasaction="ignore",
+    )
+    writer.writeheader()
+    for m in mesures:
+        writer.writerow(_erp_row(chantier, m))
+
+    safe = _safe_filename(chantier.get("client_name") or chantier_id)
+    return Response(
+        content=buf.getvalue().encode("utf-8"),
+        media_type="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition": (
+                f'attachment; filename="ERP_{safe}.csv"'
+            )
+        },
+    )
+
+
+@router.get("/chantiers/{chantier_id}/export-erp.xml")
+async def export_erp_xml(
+    chantier_id: str, user=Depends(restrict_advanced_exports)
+):
+    """Export ERP générique au format XML.
+
+    Structure : <ERPExport version="1.0"><Project>…</Project></ERPExport>.
+    Pensé pour l'import dans Elcia / Ramasoft / autres ERPs supportant
+    XML générique. Aucun XSD propriétaire utilisé — l'utilisateur
+    pourra mapper les champs manuellement.
+    """
+    chantier = await db.chantiers.find_one(
+        {"id": chantier_id, "company_id": user.get("company_id", "default")},
+        {"_id": 0},
+    )
+    if not chantier:
+        raise HTTPException(404, "Chantier introuvable")
+    mesures = (
+        await db.mesures.find({"chantier_id": chantier_id}, {"_id": 0})
+        .sort("created_at", 1)
+        .to_list(500)
+    )
+
+    def x(v: Any) -> str:
+        return xml_escape(str(v)) if v not in (None, "") else ""
+
+    lines: list[str] = []
+    lines.append('<?xml version="1.0" encoding="UTF-8"?>')
+    lines.append(
+        '<ERPExport version="1.0" '
+        'generator="MesureChassis" '
+        f'generatedAt="{datetime.now(timezone.utc).isoformat()}">'
+    )
+    lines.append("  <Project>")
+    lines.append(f"    <Reference>{x(chantier.get('client_name'))}</Reference>")
+    lines.append(f"    <Id>{x(chantier.get('id'))}</Id>")
+    lines.append(f"    <Address>{x(chantier.get('address'))}</Address>")
+    lines.append(f"    <PostalCode>{x(chantier.get('postal_code'))}</PostalCode>")
+    lines.append(f"    <City>{x(chantier.get('city'))}</City>")
+    lines.append(f"    <Country>{x(chantier.get('country'))}</Country>")
+    lines.append(f"    <Status>{x(chantier.get('status'))}</Status>")
+    lines.append(f"    <ItemCount>{len(mesures)}</ItemCount>")
+    lines.append("    <Items>")
+    for m in mesures:
+        row = _erp_row(chantier, m)
+        lines.append("      <Item>")
+        lines.append(f"        <Reference>{x(row['item_ref'])}</Reference>")
+        lines.append(f"        <Id>{x(row['item_id'])}</Id>")
+        lines.append(f"        <Shape>{x(row['shape'])}</Shape>")
+        lines.append(f"        <BlockType>{x(row['block_type'])}</BlockType>")
+        lines.append("        <Dimensions>")
+        lines.append(f"          <Width unit=\"mm\">{x(row['width_mm'])}</Width>")
+        lines.append(f"          <Height unit=\"mm\">{x(row['height_mm'])}</Height>")
+        lines.append(
+            f"          <Diagonal1 unit=\"mm\">{x(row['diagonal_1_mm'])}"
+            "</Diagonal1>"
+        )
+        lines.append(
+            f"          <Diagonal2 unit=\"mm\">{x(row['diagonal_2_mm'])}"
+            "</Diagonal2>"
+        )
+        lines.append("        </Dimensions>")
+        lines.append("        <Wall>")
+        lines.append(f"          <Masonry>{x(row['masonry_type'])}</Masonry>")
+        lines.append(
+            f"          <Thickness unit=\"mm\">{x(row['wall_thickness_mm'])}"
+            "</Thickness>"
+        )
+        lines.append(
+            f"          <InsulationMode>{x(row['insulation_mode'])}"
+            "</InsulationMode>"
+        )
+        lines.append(
+            f"          <ItiThickness unit=\"mm\">{x(row['iti_thickness_mm'])}"
+            "</ItiThickness>"
+        )
+        lines.append(
+            f"          <IteInsulThickness unit=\"mm\">"
+            f"{x(row['ite_insul_thickness_mm'])}</IteInsulThickness>"
+        )
+        lines.append("        </Wall>")
+        lines.append(f"        <Renovation>{x(row['renovation'])}</Renovation>")
+        lines.append(f"        <Details>{x(row['details'])}</Details>")
+        lines.append(f"        <MeasuredAt>{x(row['measured_at'])}</MeasuredAt>")
+        lines.append(f"        <MeasuredBy>{x(row['measured_by'])}</MeasuredBy>")
+        lines.append("      </Item>")
+    lines.append("    </Items>")
+    lines.append("  </Project>")
+    lines.append("</ERPExport>")
+
+    safe = _safe_filename(chantier.get("client_name") or chantier_id)
+    return Response(
+        content="\n".join(lines).encode("utf-8"),
+        media_type="application/xml; charset=utf-8",
+        headers={
+            "Content-Disposition": (
+                f'attachment; filename="ERP_{safe}.xml"'
             )
         },
     )

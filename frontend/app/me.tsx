@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { LanguagePicker } from "@/src/components/LanguagePicker";
 import {
   ActivityIndicator,
   Alert,
@@ -146,6 +147,9 @@ export default function MyInfoScreen() {
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
+          {/* 🆕 V3 — Sélecteur de langue (FR/NL/EN) */}
+          <LanguagePicker />
+
           {/* ===== IDENTITÉ ===== */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Identité</Text>

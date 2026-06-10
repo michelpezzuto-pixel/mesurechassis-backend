@@ -1,0 +1,64 @@
+{
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "close": "Close",
+    "loading": "Loading…",
+    "error": "Error",
+    "required": "Required"
+  },
+  "auth": {
+    "appTagline": "On-site measurements · Pro window makers",
+    "login": "Sign in",
+    "register": "Sign up",
+    "chooseProfile": "Choose your profile",
+    "profile": {
+      "artisan": {
+        "title": "Solo Craftsman",
+        "desc": "Solo account — self-employed, ultra-simple"
+      },
+      "entreprise": {
+        "title": "Company",
+        "desc": "Team of 3 — Admin, sales & technicians",
+        "badge": "POPULAR"
+      },
+      "pro": {
+        "title": "Company Pro",
+        "desc": "Team of 6 + Bluetooth & advanced features"
+      },
+      "freeTrialPrefix": "✨ 90 days free then"
+    },
+    "fullName": "Your full name",
+    "fullNameAdmin": "Full name (Master Admin)",
+    "companyNameOptional": "Trading name (optional)",
+    "companyName": "Company name",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "signIn": "Sign in",
+    "signUp": "Create account",
+    "emailPlaceholder": "firstname.name@company.com",
+    "acceptCgv": "By creating an account, you accept the <0>Terms</0> and the <1>Privacy Policy</1>."
+  },
+  "dashboard": {
+    "title": "My projects",
+    "newProject": "New project",
+    "search": "Search…",
+    "empty": "No projects yet",
+    "createFirst": "Create my first project"
+  },
+  "settings": {
+    "language": "Language",
+    "languageHint": "Choose the interface language",
+    "french": "Français",
+    "dutch": "Nederlands",
+    "english": "English"
+  }
+}

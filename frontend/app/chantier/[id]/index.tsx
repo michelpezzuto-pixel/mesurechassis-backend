@@ -20,7 +20,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
-import { api, buildAuthHeaders, PDF_URL, JSON_URL, XLSX_URL, CSV_URL } from "@/src/services/api";
+import { api, buildAuthHeaders, PDF_URL, JSON_URL, XLSX_URL, CSV_URL, ERP_CSV_URL, ERP_XML_URL } from "@/src/services/api";
 import { useResponsive } from "@/src/utils/responsive";
 import { ShapeIcon, blockTypeToShape } from "@/src/components/ShapeIcon";
 import AppointmentPicker from "@/src/components/AppointmentPicker";
@@ -590,14 +590,22 @@ export default function ChantierDetail() {
     return /iPad|iPhone|iPod/.test(ua) && !/CriOS|FxiOS|EdgiOS/.test(ua);
   };
 
-  const downloadExport = async (kind: "pdf" | "xlsx" | "csv" | "json") => {
+  const downloadExport = async (
+    kind: "pdf" | "xlsx" | "csv" | "json" | "erp-csv" | "erp-xml",
+  ) => {
     if (!chantier) return;
     if (isFreePlan) {
       showUpgradeLock();
       return;
     }
     const urlMap: Record<string, (cid: string) => string> = {
-      pdf: PDF_URL, xlsx: XLSX_URL, csv: CSV_URL, json: JSON_URL,
+      pdf: PDF_URL,
+      xlsx: XLSX_URL,
+      csv: CSV_URL,
+      json: JSON_URL,
+      // 🆕 V3 — Exports ERP universels (CSV BOM UTF-8 + XML structuré)
+      "erp-csv": ERP_CSV_URL,
+      "erp-xml": ERP_XML_URL,
     };
     const url = urlMap[kind](chantier.id);
     setExporting(kind);
@@ -626,7 +634,14 @@ export default function ChantierDetail() {
         const blob = await r.blob();
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
-        a.download = `MesureChassis_${safe}.${kind}`;
+        // 🆕 V3 — Mapping extension pour les exports ERP (csv/xml)
+        const fileExt =
+          kind === "erp-csv" ? "csv" :
+          kind === "erp-xml" ? "xml" :
+          kind;
+        const filePrefix =
+          kind === "erp-csv" || kind === "erp-xml" ? "ERP" : "MesureChassis";
+        a.download = `${filePrefix}_${safe}.${fileExt}`;
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -1691,6 +1706,41 @@ export default function ChantierDetail() {
                       label="JSON"
                       sub="Intégration CNC"
                       color="#A855F7"
+                      locked={isFreePlan || showCommercialFabIntercept}
+                    />
+                  )}
+                  {/* 🆕 V3 — Export ERP universel (CSV + XML)
+                   * Format générique compatible Elcia, Ramasoft & autres
+                   * ERPs menuiserie (import manuel). */}
+                  {(canExportTech || showCommercialFabIntercept) && (
+                    <ExportTile
+                      testID="export-erp-csv-button"
+                      busy={exporting === "erp-csv"}
+                      onPress={() => {
+                        if (showCommercialFabIntercept) return interceptCommercialFab();
+                        if (isFreePlan) return showUpgradeLock();
+                        downloadExport("erp-csv");
+                      }}
+                      icon="business"
+                      label="ERP (CSV)"
+                      sub="Elcia / Ramasoft"
+                      color="#F59E0B"
+                      locked={isFreePlan || showCommercialFabIntercept}
+                    />
+                  )}
+                  {(canExportTech || showCommercialFabIntercept) && (
+                    <ExportTile
+                      testID="export-erp-xml-button"
+                      busy={exporting === "erp-xml"}
+                      onPress={() => {
+                        if (showCommercialFabIntercept) return interceptCommercialFab();
+                        if (isFreePlan) return showUpgradeLock();
+                        downloadExport("erp-xml");
+                      }}
+                      icon="document-attach"
+                      label="ERP (XML)"
+                      sub="Format structuré"
+                      color="#0EA5E9"
                       locked={isFreePlan || showCommercialFabIntercept}
                     />
                   )}

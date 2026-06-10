@@ -17,6 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useAuth, Role } from "@/src/context/AuthContext";
+import { useTranslation } from "react-i18next";
 import { api } from "@/src/services/api";
 import { colors } from "@/src/theme";
 
@@ -29,6 +30,7 @@ const ROLES: { value: Role; label: string; icon: keyof typeof Ionicons.glyphMap;
 export default function SignIn() {
   const { user, loading, signIn, signUp } = useAuth();
   const router = useRouter();
+  const { t } = useTranslation();
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -228,7 +230,7 @@ export default function SignIn() {
               resizeMode="contain"
             />
             <Text style={styles.brand}>MESURECHÂSSIS</Text>
-            <Text style={styles.tagline}>Mesures terrain · Menuiseries pro</Text>
+            <Text style={styles.tagline}>{t("auth.appTagline")}</Text>
           </View>
 
           <View style={styles.tabs}>
@@ -239,7 +241,7 @@ export default function SignIn() {
               activeOpacity={0.7}
             >
               <Text style={[styles.tabText, mode === "login" && styles.tabTextActive]}>
-                Connexion
+                {t("auth.login")}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -249,7 +251,7 @@ export default function SignIn() {
               activeOpacity={0.7}
             >
               <Text style={[styles.tabText, mode === "register" && styles.tabTextActive]}>
-                Inscription
+                {t("auth.register")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -317,28 +319,28 @@ export default function SignIn() {
               {/* 🆕 V3 — Sélection du profil avec 3 plans (Artisan / Entreprise / Pro).
                * Les prix sont affichés sur Web/Android mais MASQUÉS sur iOS
                * (App Store 3.1.1 — pas de mention de paiement externe). */}
-              <Text style={styles.label}>Choisissez votre profil</Text>
+              <Text style={styles.label}>{t("auth.chooseProfile")}</Text>
               {([
                 {
                   key: "artisan" as const,
                   icon: "person" as const,
-                  title: "Artisan Solo",
-                  desc: "Compte solo — auto-entrepreneur, ultra-simple",
+                  title: t("auth.profile.artisan.title"),
+                  desc: t("auth.profile.artisan.desc"),
                   price: "24,99 €/mois",
                 },
                 {
                   key: "entreprise" as const,
                   icon: "business" as const,
-                  title: "Entreprise",
-                  desc: "Équipe 3 utilisateurs — Admin, commerciaux & techniciens",
+                  title: t("auth.profile.entreprise.title"),
+                  desc: t("auth.profile.entreprise.desc"),
                   price: "59,99 €/mois",
-                  badge: "POPULAIRE",
+                  badge: t("auth.profile.entreprise.badge"),
                 },
                 {
                   key: "pro" as const,
                   icon: "rocket" as const,
-                  title: "Entreprise Pro",
-                  desc: "Équipe 6 utilisateurs + Bluetooth & fonctions avancées",
+                  title: t("auth.profile.pro.title"),
+                  desc: t("auth.profile.pro.desc"),
                   price: "89,99 €/mois",
                 },
               ]).map((opt) => {
@@ -390,7 +392,7 @@ export default function SignIn() {
                             active && { color: colors.primary },
                           ]}
                         >
-                          ✨ 90 jours gratuits puis {opt.price}
+                          {t("auth.profile.freeTrialPrefix")} {opt.price}
                         </Text>
                       )}
                     </View>
@@ -483,7 +485,7 @@ export default function SignIn() {
             </>
           )}
 
-          <Text style={styles.label}>Email</Text>
+          <Text style={styles.label}>{t("auth.email")}</Text>
           <TextInput
             testID="login-email-input"
             value={email}
@@ -494,7 +496,7 @@ export default function SignIn() {
             autoCapitalize="none"
             style={styles.input}
           />
-          <Text style={styles.label}>Mot de passe</Text>
+          <Text style={styles.label}>{t("auth.password")}</Text>
           <View style={styles.passwordWrap}>
             <TextInput
               testID="login-password-input"
@@ -532,7 +534,7 @@ export default function SignIn() {
               <ActivityIndicator color="#000" />
             ) : (
               <Text style={styles.primaryBtnText}>
-                {mode === "login" ? "SE CONNECTER" : "CRÉER LE COMPTE"}
+                {mode === "login" ? t("auth.signIn").toUpperCase() : t("auth.signUp").toUpperCase()}
               </Text>
             )}
           </TouchableOpacity>

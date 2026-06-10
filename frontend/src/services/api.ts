@@ -118,3 +118,8 @@ export const XLSX_URL = (chantierId: string) =>
   `${BASE_URL}/api/chantiers/${chantierId}/export.xlsx`;
 export const CSV_URL = (chantierId: string) =>
   `${BASE_URL}/api/chantiers/${chantierId}/export.csv`;
+// 🆕 V3 — Exports ERP universels (CSV + XML) pour import dans Elcia, Ramasoft, etc.
+export const ERP_CSV_URL = (chantierId: string) =>
+  `${BASE_URL}/api/chantiers/${chantierId}/export-erp.csv`;
+export const ERP_XML_URL = (chantierId: string) =>
+  `${BASE_URL}/api/chantiers/${chantierId}/export-erp.xml`;

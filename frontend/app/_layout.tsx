@@ -8,6 +8,8 @@ import { startQueueAutoSync } from "@/src/services/offlineQueue";
 // ⚠️ Side-effect import: patches `Alert.alert` on web (no-op in RNW) so the
 // pedagogical popups (RBAC, fabrication lock…) are visible on the web preview.
 import "@/src/utils/alertPolyfill";
+// 🆕 V3 — Initialisation i18n (FR/NL/EN) au démarrage de l'app
+import "@/src/i18n";
 
 export default function RootLayout() {
   useEffect(() => {

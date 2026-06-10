@@ -1,0 +1,64 @@
+{
+  "common": {
+    "yes": "Oui",
+    "no": "Non",
+    "ok": "OK",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "back": "Retour",
+    "next": "Suivant",
+    "close": "Fermer",
+    "loading": "Chargement…",
+    "error": "Erreur",
+    "required": "Obligatoire"
+  },
+  "auth": {
+    "appTagline": "Mesures terrain · Menuiseries pro",
+    "login": "Connexion",
+    "register": "Inscription",
+    "chooseProfile": "Choisissez votre profil",
+    "profile": {
+      "artisan": {
+        "title": "Artisan Solo",
+        "desc": "Compte solo — auto-entrepreneur, ultra-simple"
+      },
+      "entreprise": {
+        "title": "Entreprise",
+        "desc": "Équipe 3 utilisateurs — Admin, commerciaux & techniciens",
+        "badge": "POPULAIRE"
+      },
+      "pro": {
+        "title": "Entreprise Pro",
+        "desc": "Équipe 6 utilisateurs + Bluetooth & fonctions avancées"
+      },
+      "freeTrialPrefix": "✨ 90 jours gratuits puis"
+    },
+    "fullName": "Votre nom complet",
+    "fullNameAdmin": "Nom complet (Master Admin)",
+    "companyNameOptional": "Nom commercial (optionnel)",
+    "companyName": "Nom de l'entreprise",
+    "email": "Email",
+    "password": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié ?",
+    "signIn": "Se connecter",
+    "signUp": "Créer le compte",
+    "emailPlaceholder": "prenom.nom@entreprise.fr",
+    "acceptCgv": "En créant un compte, vous acceptez les <0>CGV</0> et la <1>Politique de confidentialité</1>."
+  },
+  "dashboard": {
+    "title": "Mes chantiers",
+    "newProject": "Nouveau chantier",
+    "search": "Rechercher…",
+    "empty": "Aucun chantier pour le moment",
+    "createFirst": "Créer mon premier chantier"
+  },
+  "settings": {
+    "language": "Langue",
+    "languageHint": "Choisissez la langue de l'interface",
+    "french": "Français",
+    "dutch": "Nederlands",
+    "english": "English"
+  }
+}

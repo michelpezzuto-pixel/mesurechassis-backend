@@ -1,0 +1,64 @@
+{
+  "common": {
+    "yes": "Ja",
+    "no": "Nee",
+    "ok": "OK",
+    "cancel": "Annuleren",
+    "save": "Opslaan",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "back": "Terug",
+    "next": "Volgende",
+    "close": "Sluiten",
+    "loading": "Laden…",
+    "error": "Fout",
+    "required": "Verplicht"
+  },
+  "auth": {
+    "appTagline": "Veldmetingen · Pro raamwerken",
+    "login": "Inloggen",
+    "register": "Registreren",
+    "chooseProfile": "Kies uw profiel",
+    "profile": {
+      "artisan": {
+        "title": "Solo Vakman",
+        "desc": "Solo-account — zelfstandige, ultra-eenvoudig"
+      },
+      "entreprise": {
+        "title": "Bedrijf",
+        "desc": "Team 3 gebruikers — Admin, verkopers & technici",
+        "badge": "POPULAIR"
+      },
+      "pro": {
+        "title": "Bedrijf Pro",
+        "desc": "Team 6 gebruikers + Bluetooth & geavanceerde functies"
+      },
+      "freeTrialPrefix": "✨ 90 dagen gratis dan"
+    },
+    "fullName": "Uw volledige naam",
+    "fullNameAdmin": "Volledige naam (Master Admin)",
+    "companyNameOptional": "Handelsnaam (optioneel)",
+    "companyName": "Bedrijfsnaam",
+    "email": "E-mail",
+    "password": "Wachtwoord",
+    "forgotPassword": "Wachtwoord vergeten?",
+    "signIn": "Inloggen",
+    "signUp": "Account aanmaken",
+    "emailPlaceholder": "voornaam.naam@bedrijf.be",
+    "acceptCgv": "Door een account aan te maken accepteert u de <0>AV</0> en het <1>Privacybeleid</1>."
+  },
+  "dashboard": {
+    "title": "Mijn projecten",
+    "newProject": "Nieuw project",
+    "search": "Zoeken…",
+    "empty": "Nog geen projecten",
+    "createFirst": "Mijn eerste project aanmaken"
+  },
+  "settings": {
+    "language": "Taal",
+    "languageHint": "Kies de taal van de interface",
+    "french": "Français",
+    "dutch": "Nederlands",
+    "english": "English"
+  }
+}
