@@ -98,6 +98,11 @@ export default function ChantierDetail() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [assignOpen, setAssignOpen] = useState(false);
+  // 🆕 V3 — Modale "Demande de modification au technicien" (remplace
+  //    Alert.prompt qui n'est pas universel — KO sur Android & web).
+  const [modRequestOpen, setModRequestOpen] = useState(false);
+  const [modRequestReason, setModRequestReason] = useState("");
+  const [modRequestSubmitting, setModRequestSubmitting] = useState(false);
   const [exporting, setExporting] = useState<string | null>(null);
   // ✏️ Édition des infos du chantier (Admin/Commercial avant fabrication)
   const [editOpen, setEditOpen] = useState(false);
@@ -1263,41 +1268,10 @@ export default function ChantierDetail() {
                 <TouchableOpacity
                   testID="commercial-request-modification-button"
                   onPress={() => {
-                    Alert.prompt(
-                      "Demander une modification ?",
-                      "Indiquez brièvement la raison (optionnel). Le technicien sera notifié et pourra accepter ou refuser.",
-                      [
-                        { text: "Annuler", style: "cancel" },
-                        {
-                          text: "Envoyer",
-                          style: "default",
-                          onPress: async (reasonInput?: string) => {
-                            try {
-                              await api.post(
-                                `/chantiers/${id}/mod-request`,
-                                { reason: reasonInput || "" },
-                              );
-                              const res = await api.get<Chantier>(
-                                `/chantiers/${id}`,
-                              );
-                              setChantier(res.data);
-                              Alert.alert(
-                                "✅ Demande envoyée",
-                                "Le technicien sera notifié.",
-                              );
-                            } catch (e: any) {
-                              Alert.alert(
-                                "Erreur",
-                                e?.response?.data?.detail ||
-                                  "Impossible d'envoyer la demande.",
-                              );
-                            }
-                          },
-                        },
-                      ],
-                      "plain-text",
-                      "",
-                    );
+                    // 🆕 V3 — On ouvre une modale propre (compatible iOS/
+                    // Android/web) au lieu de Alert.prompt (iOS-only).
+                    setModRequestReason("");
+                    setModRequestOpen(true);
                   }}
                   activeOpacity={0.85}
                   style={validateStyles.btnOverride}
@@ -1846,6 +1820,104 @@ export default function ChantierDetail() {
             >
               <Text style={styles.btnSecondaryText}>FERMER</Text>
             </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* 🆕 V3 — Modale "Demande de modification au technicien".
+          Remplace Alert.prompt (iOS-only) par un composant universel. */}
+      <Modal
+        visible={modRequestOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => !modRequestSubmitting && setModRequestOpen(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>DEMANDER UNE MODIFICATION ?</Text>
+            <Text style={styles.modalSub}>
+              Indiquez brièvement la raison (optionnel). Le technicien sera
+              notifié par email et pourra accepter ou refuser la demande.
+            </Text>
+            <TextInput
+              testID="mod-request-reason-input"
+              value={modRequestReason}
+              onChangeText={setModRequestReason}
+              placeholder="Ex. : cote diagonale à revoir, photo à confirmer…"
+              placeholderTextColor={colors.placeholder}
+              multiline
+              numberOfLines={4}
+              maxLength={500}
+              editable={!modRequestSubmitting}
+              style={{
+                backgroundColor: colors.inputBg,
+                color: colors.textPrimary,
+                borderRadius: 8,
+                borderWidth: 1,
+                borderColor: colors.borderStrong,
+                minHeight: 96,
+                padding: 12,
+                fontSize: 14,
+                textAlignVertical: "top",
+                marginBottom: 12,
+              }}
+            />
+            <View style={{ flexDirection: "row", gap: 8 }}>
+              <TouchableOpacity
+                testID="mod-request-cancel"
+                onPress={() => {
+                  if (modRequestSubmitting) return;
+                  setModRequestOpen(false);
+                  setModRequestReason("");
+                }}
+                disabled={modRequestSubmitting}
+                style={[styles.btn, styles.btnSecondary, { flex: 1 }]}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.btnSecondaryText}>ANNULER</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                testID="mod-request-confirm"
+                onPress={async () => {
+                  if (modRequestSubmitting) return;
+                  setModRequestSubmitting(true);
+                  try {
+                    await api.post(`/chantiers/${id}/mod-request`, {
+                      reason: modRequestReason.trim() || "",
+                    });
+                    const res = await api.get<Chantier>(`/chantiers/${id}`);
+                    setChantier(res.data);
+                    setModRequestOpen(false);
+                    setModRequestReason("");
+                    Alert.alert(
+                      "✅ Demande envoyée",
+                      "Merci d'attendre la validation du technicien.",
+                    );
+                  } catch (e: any) {
+                    Alert.alert(
+                      "Erreur",
+                      e?.response?.data?.detail ||
+                        "Impossible d'envoyer la demande.",
+                    );
+                  } finally {
+                    setModRequestSubmitting(false);
+                  }
+                }}
+                disabled={modRequestSubmitting}
+                style={[
+                  styles.btn,
+                  styles.btnPrimary,
+                  { flex: 1 },
+                  modRequestSubmitting && { opacity: 0.5 },
+                ]}
+                activeOpacity={0.85}
+              >
+                <Ionicons name="paper-plane" size={16} color="#000" />
+                <Text style={styles.btnPrimaryText}>
+                  {modRequestSubmitting ? "ENVOI…" : "CONFIRMER L'ENVOI"}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
