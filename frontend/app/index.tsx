@@ -18,8 +18,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useAuth, Role } from "@/src/context/AuthContext";
 import { useTranslation } from "react-i18next";
+import { setLanguage, SUPPORTED_LANGUAGES, SupportedLanguage } from "@/src/i18n";
 import { api } from "@/src/services/api";
 import { colors } from "@/src/theme";
+
+const FLAGS: Record<SupportedLanguage, string> = {
+  fr: "🇫🇷",
+  nl: "🇧🇪",
+  en: "🇬🇧",
+};
 
 const ROLES: { value: Role; label: string; icon: keyof typeof Ionicons.glyphMap; desc: string }[] = [
   { value: "admin", label: "Admin", icon: "shield-checkmark", desc: "Pilotage & feedbacks" },
@@ -30,7 +37,8 @@ const ROLES: { value: Role; label: string; icon: keyof typeof Ionicons.glyphMap;
 export default function SignIn() {
   const { user, loading, signIn, signUp } = useAuth();
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLang = (i18n.language?.split("-")[0] || "fr") as SupportedLanguage;
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -232,6 +240,28 @@ export default function SignIn() {
         style={styles.flex}
       >
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+          <View style={styles.langRow}>
+            {SUPPORTED_LANGUAGES.map((lng) => {
+              const active = currentLang === lng;
+              return (
+                <TouchableOpacity
+                  key={lng}
+                  testID={`auth-lang-${lng}`}
+                  onPress={() => void setLanguage(lng)}
+                  activeOpacity={0.85}
+                  style={[styles.langPill, active && styles.langPillActive]}
+                >
+                  <Text style={styles.langFlag}>{FLAGS[lng]}</Text>
+                  <Text
+                    style={[styles.langCode, active && styles.langCodeActive]}
+                  >
+                    {lng.toUpperCase()}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
           <View style={styles.brandWrap}>
             <Image
               source={require("../assets/images/icon.png")}
@@ -804,6 +834,37 @@ const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: colors.bg },
   center: { alignItems: "center", justifyContent: "center" },
   scroll: { padding: 24, paddingBottom: 60 },
+  langRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 8,
+    marginTop: 4,
+    marginBottom: 4,
+  },
+  langPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    backgroundColor: colors.surface,
+    minHeight: 40,
+  },
+  langPillActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  langFlag: { fontSize: 18 },
+  langCode: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    fontWeight: "900",
+    letterSpacing: 0.5,
+  },
+  langCodeActive: { color: "#000" },
   brandWrap: { alignItems: "center", marginTop: 16, marginBottom: 32 },
   brandLogo: {
     width: 84,
