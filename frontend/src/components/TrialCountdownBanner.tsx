@@ -1,6 +1,7 @@
 import React from "react";
 import { Linking, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/src/context/AuthContext";
 import { colors } from "@/src/theme";
 
@@ -22,6 +23,7 @@ const SUPPORT_EMAIL = "info@mesurechassis.com";
 
 export default function TrialCountdownBanner() {
   const { company } = useAuth();
+  const { t } = useTranslation();
 
   // Pas de bannière tant que le profil société n'est pas chargé
   if (!company) return null;
@@ -31,10 +33,8 @@ export default function TrialCountdownBanner() {
   if (!company.beta_mode) return null;
 
   const openSupportMail = async () => {
-    const subject = encodeURIComponent("MesureChâssis — Retour beta");
-    const body = encodeURIComponent(
-      "Bonjour l'équipe MesureChâssis,\n\nVoici mon retour / suggestion :\n\n"
-    );
+    const subject = encodeURIComponent(t("beta.mailSubject"));
+    const body = encodeURIComponent(t("beta.mailBody"));
     const url = `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`;
     try {
       if (Platform.OS === "web" && typeof window !== "undefined") {
@@ -58,9 +58,9 @@ export default function TrialCountdownBanner() {
       style={styles.wrap}
     >
       <View style={styles.dot} />
-      <Text style={styles.label}>BETA · gratuit</Text>
+      <Text style={styles.label}>{t("beta.label")}</Text>
       <Text style={styles.feedback} numberOfLines={1}>
-        Vos retours sont précieux
+        {t("beta.feedback")}
       </Text>
       <Ionicons name="chevron-forward" size={12} color="#34d399" />
     </TouchableOpacity>

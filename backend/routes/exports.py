@@ -22,7 +22,15 @@ from reportlab.platypus import (Image as RLImage, Paragraph,
 from db import db
 from deps import require_active_subscription
 from utils import WALL_TYPE_LABELS, block_label, status_label
-from i18n_labels import pdf_labels, status_label_i18n
+from i18n_labels import (
+    pdf_labels,
+    status_label_i18n,
+    csv_headers,
+    csv_yes,
+    csv_no,
+    csv_word,
+    xlsx_labels,
+)
 
 router = APIRouter()
 
@@ -550,9 +558,14 @@ def _construction(m: dict) -> dict:
 # ---------------------------- CSV --------------------------------------
 @router.get("/chantiers/{chantier_id}/export.csv")
 async def export_csv(
-    chantier_id: str, user=Depends(restrict_advanced_exports)
+    chantier_id: str,
+    lang: str = "fr",
+    user=Depends(restrict_advanced_exports),
 ):
-    """CSV tabulaire complet — atelier / machines de découpe."""
+    """CSV tabulaire complet — atelier / machines de découpe.
+
+    🌍 i18n : `?lang=fr|nl|en` traduit les en-têtes et libellés.
+    """
     chantier = await db.chantiers.find_one(
         {
             "id": chantier_id,
@@ -570,31 +583,10 @@ async def export_csv(
 
     buf = io.StringIO()
     writer = csv.writer(buf, delimiter=";", quoting=csv.QUOTE_MINIMAL)
+    YES = csv_yes(lang)
+    NO = csv_no(lang)
     # En-tête complet
-    writer.writerow(
-        [
-            "Chantier", "Adresse", "Code Postal", "Ville", "Statut",
-            "Label", "Type", "Forme", "Rénovation",
-            # Dimensions principales
-            "Largeur baie (mm)", "Hauteur baie (mm)",
-            "Diag 1 (mm)", "Diag 2 (mm)", "Diag1 OK", "Diag2 OK",
-            # Rénovation 4 cotes
-            "L. haut (mm)", "L. bas (mm)",
-            "H. gauche (mm)", "H. droite (mm)",
-            # Legacy multi-points
-            "L. milieu (mm)", "H. milieu (mm)",
-            # Trapèze
-            "L. petite (mm)", "L. inter (mm)",
-            "H. petite (mm)", "H. grande (mm)",
-            # Construction
-            "Réserve sol (mm)", "Épaisseur bloc (mm)",
-            "Paroi", "Épais. isolant (mm)",
-            "Finition ext (mm)", "Finition int (mm)",
-            "Angle pente (°)",
-            "Alertes",
-            "Date mesure",
-        ]
-    )
+    writer.writerow(csv_headers(lang))
     client_disp = chantier.get("client_name") or "—"
     for m in mesures:
         bt = m.get("block_type") or "—"
@@ -606,11 +598,11 @@ async def export_csv(
                 chantier.get("address") or "",
                 chantier.get("postal_code") or "",
                 chantier.get("city") or "",
-                status_label(chantier.get("status") or ""),
+                status_label_i18n(chantier.get("status") or "", lang),
                 m.get("label") or "",
                 block_label(bt, m.get("options")),
-                "trapezoidal" if is_trap else "rectangular",
-                "oui" if is_renov else "non",
+                csv_word("trapezoidal" if is_trap else "rectangular", lang),
+                YES if is_renov else NO,
                 m.get("bay_width") or "",
                 "" if is_trap else (m.get("bay_height") or ""),
                 "" if is_trap else (
@@ -619,12 +611,8 @@ async def export_csv(
                 "" if is_trap else (
                     m.get("bay_diagonal_2") or m.get("bay_diagonal") or ""
                 ),
-                "" if is_trap else (
-                    "oui" if m.get("diag_1_verified") else "non"
-                ),
-                "" if is_trap else (
-                    "oui" if m.get("diag_2_verified") else "non"
-                ),
+                "" if is_trap else (YES if m.get("diag_1_verified") else NO),
+                "" if is_trap else (YES if m.get("diag_2_verified") else NO),
                 m.get("width_top") or "",
                 m.get("width_bottom") or "",
                 m.get("height_left") or "",
@@ -650,10 +638,15 @@ async def export_csv(
     site_photos = chantier.get("site_photos") or []
     if site_photos:
         writer.writerow([])
-        writer.writerow(["[PHOTOS ANTI-LITIGE]"])
-        writer.writerow(["#", "Légende", "Format"])
+        writer.writerow([csv_word("photos_block", lang)])
+        writer.writerow([
+            csv_word("col_index", lang),
+            csv_word("col_caption", lang),
+            csv_word("col_format", lang),
+        ])
         for i, ph in enumerate(site_photos, 1):
-            cap = (ph.get("caption") or "").strip() or f"Photo {i}"
+            default_caption = csv_word("photo_default", lang).format(idx=i)
+            cap = (ph.get("caption") or "").strip() or default_caption
             uri = ph.get("uri") or ""
             fmt = "base64 data URI" if uri.startswith("data:") else "URL"
             writer.writerow([i, cap, fmt])
@@ -674,8 +667,14 @@ async def export_csv(
 # ---------------------------- XLSX -------------------------------------
 @router.get("/chantiers/{chantier_id}/export.xlsx")
 async def export_xlsx(
-    chantier_id: str, user=Depends(restrict_advanced_exports)
+    chantier_id: str,
+    lang: str = "fr",
+    user=Depends(restrict_advanced_exports),
 ):
+    """Export XLSX multilingue (`?lang=fr|nl|en`)."""
+    X = xlsx_labels(lang)
+    YES = csv_yes(lang)
+    NO = csv_no(lang)
     chantier = await db.chantiers.find_one(
         {
             "id": chantier_id,
@@ -693,24 +692,24 @@ async def export_xlsx(
 
     wb = Workbook()
     info = wb.active
-    info.title = "Chantier"
+    info.title = X["sheet_chantier"]
     head = Font(bold=True, color="FFFFFF")
     fill = PatternFill(
         start_color="FF5A00", end_color="FF5A00", fill_type="solid"
     )
-    info["A1"] = "MesureChâssis — Fiche Chantier"
+    info["A1"] = X["title"]
     info["A1"].font = Font(bold=True, size=14)
     pairs = [
-        ("Client", chantier["client_name"]),
-        ("Adresse", chantier["address"]),
-        ("Code postal", chantier.get("postal_code") or "—"),
-        ("Ville", chantier.get("city") or "—"),
-        ("Statut", status_label(chantier["status"])),
-        ("Date création", chantier["created_at"][:10]),
-        ("Rendez-vous", chantier.get("appointment_at") or "—"),
-        ("Notes", chantier.get("notes") or "—"),
-        ("Nb. ouvertures", len(mesures)),
-        ("Nb. photos site", len(chantier.get("site_photos") or [])),
+        (X["pair"]["client"], chantier["client_name"]),
+        (X["pair"]["address"], chantier["address"]),
+        (X["pair"]["postal"], chantier.get("postal_code") or "—"),
+        (X["pair"]["city"], chantier.get("city") or "—"),
+        (X["pair"]["status"], status_label_i18n(chantier["status"], lang)),
+        (X["pair"]["created_at"], chantier["created_at"][:10]),
+        (X["pair"]["appointment"], chantier.get("appointment_at") or "—"),
+        (X["pair"]["notes"], chantier.get("notes") or "—"),
+        (X["pair"]["nb_openings"], len(mesures)),
+        (X["pair"]["nb_photos"], len(chantier.get("site_photos") or [])),
     ]
     for i, (k, v) in enumerate(pairs, start=3):
         info.cell(row=i, column=1, value=k).font = Font(bold=True)
@@ -719,55 +718,35 @@ async def export_xlsx(
     info.column_dimensions["B"].width = 60
 
     # --- Feuille Mesures (toutes les cotes) ------------------------------
-    ws = wb.create_sheet("Mesures")
-    columns = [
-        ("Libellé", "label"),
-        ("Type bloc", "block_type"),
-        ("Forme", "_shape"),
-        ("Rénovation", "_renov"),
-        # Baie brute
-        ("L baie (mm)", "bay_width"),
-        ("H baie (mm)", "bay_height"),
-        ("Diag 1 (mm)", "bay_diagonal_1"),
-        ("Diag 2 (mm)", "bay_diagonal_2"),
-        ("Diag1 OK", "diag_1_verified"),
-        ("Diag2 OK", "diag_2_verified"),
-        # Rénovation 4 cotes
-        ("L. haut (mm)", "width_top"),
-        ("L. bas (mm)", "width_bottom"),
-        ("H. gauche (mm)", "height_left"),
-        ("H. droite (mm)", "height_right"),
-        # Multi-points (coulissant / legacy)
-        ("L. milieu (mm)", "width_middle"),
-        ("H. milieu (mm)", "height_middle"),
-        ("H. 1/4 G (mm)", "height_quarter_left"),
-        ("H. 1/4 D (mm)", "height_quarter_right"),
-        # Trapèze
-        ("L. petite (mm)", "width_small"),
-        ("L. inter (mm)", "width_intermediate"),
-        ("H. petite (mm)", "height_small"),
-        ("H. grande (mm)", "height_large"),
-        # Construction
-        ("Réserve sol (mm)", "floor_reserve"),
-        ("Épais. bloc béton (mm)", "bloc_thickness"),
-        ("Type paroi", "wall_type"),
-        ("Épais. isolant (mm)", "insulation_thickness"),
-        ("Finition ext (mm)", "finish_outer"),
-        ("Finition int (mm)", "finish_inner"),
-        ("Angle pente (°)", "slope_angle_deg"),
-        ("Alertes", "alerts"),
-        ("Date mesure", "created_at"),
+    ws = wb.create_sheet(X["sheet_mesures"])
+    # Mapping (clé technique) — l'ordre doit correspondre à X["cols"]
+    column_keys = [
+        "label", "block_type", "_shape", "_renov",
+        "bay_width", "bay_height", "bay_diagonal_1", "bay_diagonal_2",
+        "diag_1_verified", "diag_2_verified",
+        "width_top", "width_bottom", "height_left", "height_right",
+        "width_middle", "height_middle",
+        "height_quarter_left", "height_quarter_right",
+        "width_small", "width_intermediate",
+        "height_small", "height_large",
+        "floor_reserve", "bloc_thickness",
+        "wall_type", "insulation_thickness",
+        "finish_outer", "finish_inner",
+        "slope_angle_deg", "alerts", "created_at",
     ]
-    for col_idx, (label, _) in enumerate(columns, start=1):
+    for col_idx, label in enumerate(X["cols"], start=1):
         cell = ws.cell(row=1, column=col_idx, value=label)
         cell.font = head
         cell.fill = fill
     for row_idx, m in enumerate(mesures, start=2):
-        for col_idx, (_, key) in enumerate(columns, start=1):
+        for col_idx, key in enumerate(column_keys, start=1):
             if key == "_shape":
-                v: Any = "trapezoidal" if m.get("block_type") == "trapeze" else "rectangular"
+                v: Any = csv_word(
+                    "trapezoidal" if m.get("block_type") == "trapeze" else "rectangular",
+                    lang,
+                )
             elif key == "_renov":
-                v = "oui" if m.get("renovation_mode") else "non"
+                v = YES if m.get("renovation_mode") else NO
             else:
                 v = m.get(key)
             if key == "wall_type" and v:
@@ -777,7 +756,7 @@ async def export_xlsx(
             elif key == "alerts":
                 v = " ; ".join(v) if v else ""
             elif key in ("diag_1_verified", "diag_2_verified"):
-                v = "oui" if v else "non"
+                v = YES if v else NO
             elif key == "created_at" and v:
                 v = str(v)[:19].replace("T", " ")
             ws.cell(row=row_idx, column=col_idx, value=v)
@@ -791,20 +770,19 @@ async def export_xlsx(
     # --- Feuille Photos site (anti-litige) -------------------------------
     site_photos = chantier.get("site_photos") or []
     if site_photos:
-        ph_ws = wb.create_sheet("Photos site")
-        for col_idx, label in enumerate(
-            ["#", "Légende", "Format", "Taille (caractères)"], start=1
-        ):
+        ph_ws = wb.create_sheet(X["sheet_photos"])
+        for col_idx, label in enumerate(X["photo_cols"], start=1):
             cell = ph_ws.cell(row=1, column=col_idx, value=label)
             cell.font = head
             cell.fill = fill
         for row_idx, ph in enumerate(site_photos, start=2):
             uri = ph.get("uri") or ""
+            default_caption = csv_word("photo_default", lang).format(idx=row_idx - 1)
             ph_ws.cell(row=row_idx, column=1, value=row_idx - 1)
             ph_ws.cell(
                 row=row_idx,
                 column=2,
-                value=(ph.get("caption") or "").strip() or f"Photo {row_idx-1}",
+                value=(ph.get("caption") or "").strip() or default_caption,
             )
             ph_ws.cell(
                 row=row_idx,

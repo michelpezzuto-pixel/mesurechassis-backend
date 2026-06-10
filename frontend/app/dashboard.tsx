@@ -21,7 +21,7 @@ import { api } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { subscribeQueueSize, syncQueue, enqueueChantier, isNetworkError } from "@/src/services/offlineQueue";
-import { colors, statusMeta, getStatusLabel, READY_FOR_EXPORT_BADGE } from "@/src/theme";
+import { colors, statusMeta, getStatusLabelI18n, READY_FOR_EXPORT_BADGE } from "@/src/theme";
 import { useResponsive } from "@/src/utils/responsive";
 import TrialCountdownBanner from "@/src/components/TrialCountdownBanner";
 import ChatHelp from "@/src/components/ChatHelp";
@@ -270,7 +270,7 @@ export default function Dashboard() {
       stage: "verify" as const,
     };
     // Libellé contextuel selon le type de compte (Artisan = terminologie solo)
-    const statusLabel = getStatusLabel(item.status, company?.account_type);
+    const statusLabel = getStatusLabelI18n(item.status, company?.account_type, t);
     const isDone = meta.stage === "done";
     return (
       <TouchableOpacity
@@ -314,7 +314,7 @@ export default function Dashboard() {
       {/* ────── Rangée 1 : identité utilisateur ────── */}
       <View style={styles.topBar}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.welcome}>Bonjour</Text>
+          <Text style={styles.welcome}>{t("dashboardExtended.hello")}</Text>
           <Text style={styles.userName} numberOfLines={1}>
             {user?.name}
           </Text>
@@ -334,13 +334,7 @@ export default function Dashboard() {
                 color={colors.primary}
               />
               <Text style={styles.roleChipText}>
-                {user?.role === "admin"
-                  ? "Administrateur"
-                  : user?.role === "commercial"
-                    ? "Commercial"
-                    : user?.role === "technician"
-                      ? "Technicien"
-                      : "Artisan"}
+                {t(`roles.${user?.role || "artisan"}`, { defaultValue: t("roles.artisan") })}
               </Text>
             </View>
             {user?.company_id && user.company_id !== "default" && (
@@ -375,7 +369,7 @@ export default function Dashboard() {
             activeOpacity={0.7}
           >
             <Ionicons name="people-outline" size={18} color={colors.primary} />
-            <Text style={styles.actionBtnText} numberOfLines={1}>Équipe</Text>
+            <Text style={styles.actionBtnText} numberOfLines={1}>{t("dashboardExtended.team")}</Text>
           </TouchableOpacity>
         )}
         {user?.role === "admin" && (
@@ -386,7 +380,7 @@ export default function Dashboard() {
             activeOpacity={0.7}
           >
             <Ionicons name="stats-chart" size={18} color={colors.primary} />
-            <Text style={styles.actionBtnText} numberOfLines={1}>Stats</Text>
+            <Text style={styles.actionBtnText} numberOfLines={1}>{t("dashboardExtended.stats")}</Text>
           </TouchableOpacity>
         )}
         {/* Feedback — bouton unique pour tous les rôles (admin/commercial/technicien).
@@ -404,7 +398,7 @@ export default function Dashboard() {
             size={18}
             color={colors.primary}
           />
-          <Text style={styles.actionBtnText} numberOfLines={1}>Feedback</Text>
+          <Text style={styles.actionBtnText} numberOfLines={1}>{t("dashboardExtended.feedback")}</Text>
         </TouchableOpacity>
         {user?.role === "admin" && (
           <TouchableOpacity
@@ -414,7 +408,7 @@ export default function Dashboard() {
             activeOpacity={0.7}
           >
             <Ionicons name="settings-outline" size={18} color={colors.primary} />
-            <Text style={styles.actionBtnText} numberOfLines={1}>Profil</Text>
+            <Text style={styles.actionBtnText} numberOfLines={1}>{t("dashboardExtended.profileBtn")}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -504,7 +498,7 @@ export default function Dashboard() {
         activeOpacity={0.85}
       >
         <Ionicons name="add" size={26} color="#000" />
-        <Text style={styles.fabText}>NOUVEAU CHANTIER</Text>
+        <Text style={styles.fabText}>{t("dashboardExtended.newProjectFab")}</Text>
       </TouchableOpacity>
 
       {pendingCount > 0 && (
@@ -516,7 +510,9 @@ export default function Dashboard() {
         >
           <Ionicons name="cloud-upload" size={18} color="#000" />
           <Text style={styles.offlineText}>
-            {pendingCount} élément{pendingCount > 1 ? "s" : ""} en attente · Toucher pour synchroniser
+            {pendingCount > 1
+              ? t("dashboardExtended.pendingPlural", { count: pendingCount })
+              : t("dashboardExtended.pendingSingular", { count: pendingCount })}
           </Text>
         </TouchableOpacity>
       )}
@@ -527,17 +523,17 @@ export default function Dashboard() {
           style={styles.modalOverlay}
         >
           <View style={[styles.modalCard, { maxHeight: "92%" }]}>
-            <Text style={styles.modalTitle}>NOUVEAU CHANTIER</Text>
-            <Text style={styles.modalSub}>Identification du client</Text>
+            <Text style={styles.modalTitle}>{t("dashboardExtended.modal.title")}</Text>
+            <Text style={styles.modalSub}>{t("dashboardExtended.modal.subtitle")}</Text>
             <ScrollView keyboardShouldPersistTaps="handled" style={{ marginTop: 6 }}>
               <View style={styles.row2}>
                 <View style={styles.col2}>
-                  <Text style={styles.label}>Nom *</Text>
+                  <Text style={styles.label}>{t("dashboardExtended.modal.lastNameLabel")}</Text>
                   <TextInput
                     testID="new-lastname-input"
                     value={newLastName}
                     onChangeText={setNewLastName}
-                    placeholder="Dupont"
+                    placeholder={t("dashboardExtended.modal.lastNamePlaceholder")}
                     placeholderTextColor={colors.placeholder}
                     style={[
                       styles.input,
@@ -547,29 +543,29 @@ export default function Dashboard() {
                   />
                   {!newLastName.trim() && (
                     <Text style={{ color: "#ef4444", fontSize: 11, marginTop: 2 }}>
-                      Le nom du client est obligatoire.
+                      {t("dashboardExtended.modal.lastNameError")}
                     </Text>
                   )}
                 </View>
                 <View style={styles.col2}>
-                  <Text style={styles.label}>Prénom</Text>
+                  <Text style={styles.label}>{t("dashboardExtended.modal.firstNameLabel")}</Text>
                   <TextInput
                     testID="new-firstname-input"
                     value={newFirstName}
                     onChangeText={setNewFirstName}
-                    placeholder="Marie"
+                    placeholder={t("dashboardExtended.modal.firstNamePlaceholder")}
                     placeholderTextColor={colors.placeholder}
                     style={styles.input}
                   />
                 </View>
               </View>
 
-              <Text style={styles.label}>Adresse &amp; Numéro *</Text>
+              <Text style={styles.label}>{t("dashboardExtended.modal.addressLabel")}</Text>
               <TextInput
                 testID="new-address-input"
                 value={newAddr}
                 onChangeText={setNewAddr}
-                placeholder="15 Rue de la République"
+                placeholder={t("dashboardExtended.modal.addressPlaceholder")}
                 placeholderTextColor={colors.placeholder}
                 style={[
                   styles.input,
@@ -578,37 +574,37 @@ export default function Dashboard() {
               />
               {!newAddr.trim() && (
                 <Text style={{ color: "#ef4444", fontSize: 11, marginTop: 2 }}>
-                  L&apos;adresse est obligatoire.
+                  {t("dashboardExtended.modal.addressError")}
                 </Text>
               )}
 
               <View style={styles.row2}>
                 <View style={styles.col3}>
-                  <Text style={styles.label}>Code Postal</Text>
+                  <Text style={styles.label}>{t("dashboardExtended.modal.postalLabel")}</Text>
                   <TextInput
                     testID="new-postal-input"
                     value={newPostal}
                     onChangeText={(v) => setNewPostal(v.replace(/[^0-9]/g, "").slice(0, 5))}
                     keyboardType="number-pad"
-                    placeholder="75011"
+                    placeholder={t("dashboardExtended.modal.postalPlaceholder")}
                     placeholderTextColor={colors.placeholder}
                     style={styles.input}
                   />
                 </View>
                 <View style={styles.col7}>
-                  <Text style={styles.label}>Ville</Text>
+                  <Text style={styles.label}>{t("dashboardExtended.modal.cityLabel")}</Text>
                   <TextInput
                     testID="new-city-input"
                     value={newCity}
                     onChangeText={setNewCity}
-                    placeholder="Paris"
+                    placeholder={t("dashboardExtended.modal.cityPlaceholder")}
                     placeholderTextColor={colors.placeholder}
                     style={styles.input}
                   />
                 </View>
               </View>
 
-              <Text style={styles.label}>Date du rendez-vous</Text>
+              <Text style={styles.label}>{t("dashboardExtended.modal.apptLabel")}</Text>
               <TouchableOpacity
                 testID="new-appointment-picker"
                 onPress={() => setShowDatePicker(true)}
@@ -639,7 +635,7 @@ export default function Dashboard() {
                           hour: "2-digit",
                           minute: "2-digit",
                         })
-                      : "Choisir une date et une heure"}
+                      : t("dashboardExtended.modal.apptPlaceholder")}
                   </Text>
                   <Ionicons
                     name="chevron-forward"
@@ -653,15 +649,15 @@ export default function Dashboard() {
                 value={newAppt || null}
                 onClose={() => setShowDatePicker(false)}
                 onConfirm={(iso) => setNewAppt(iso)}
-                title="Date du rendez-vous"
+                title={t("dashboardExtended.modal.apptLabel")}
               />
 
-              <Text style={styles.label}>Notes &amp; Instructions</Text>
+              <Text style={styles.label}>{t("dashboardExtended.modal.notesLabel")}</Text>
               <TextInput
                 testID="new-notes-input"
                 value={newNotes}
                 onChangeText={setNewNotes}
-                placeholder="Clé sous le paillasson, accès portail latéral..."
+                placeholder={t("dashboardExtended.modal.notesPlaceholder")}
                 placeholderTextColor={colors.placeholder}
                 multiline
                 numberOfLines={3}
@@ -670,13 +666,13 @@ export default function Dashboard() {
               <View style={styles.dictationHint}>
                 <Ionicons name="mic-outline" size={14} color={colors.textSecondary} />
                 <Text style={styles.dictationHintText}>
-                  Astuce : touchez l&apos;icône 🎤 de votre clavier pour dicter vos notes à voix haute.
+                  {t("dashboardExtended.modal.dictationHint")}
                 </Text>
               </View>
               {mustAssignToCommercial && (
                 <View style={{ marginTop: 16 }}>
                   <Text style={styles.label}>
-                    Assigner à un Commercial *
+                    {t("dashboardExtended.modal.assignLabel")}
                   </Text>
                   <TouchableOpacity
                     onPress={() => setShowAssigneePicker(true)}
@@ -701,8 +697,8 @@ export default function Dashboard() {
                     >
                       {newAssignedTo
                         ? teamMembers.find((m) => m.id === newAssignedTo)?.name ||
-                          "Membre sélectionné"
-                        : "Choisir un commercial..."}
+                          t("dashboardExtended.modal.assignSelected")
+                        : t("dashboardExtended.modal.assignPlaceholder")}
                     </Text>
                     <Ionicons
                       name="chevron-down"
@@ -717,8 +713,7 @@ export default function Dashboard() {
                       marginTop: 6,
                     }}
                   >
-                    Le chantier sera transmis à ce collaborateur pour la prise
-                    de mesures.
+                    {t("dashboardExtended.modal.assignHelper")}
                   </Text>
                 </View>
               )}
@@ -729,7 +724,7 @@ export default function Dashboard() {
                 style={[styles.modalBtn, styles.modalBtnSecondary]}
                 activeOpacity={0.7}
               >
-                <Text style={styles.modalBtnSecondaryText}>Annuler</Text>
+                <Text style={styles.modalBtnSecondaryText}>{t("dashboardExtended.modal.cancel")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 testID="new-chantier-submit"
@@ -741,7 +736,7 @@ export default function Dashboard() {
                 {creating ? (
                   <ActivityIndicator color="#000" />
                 ) : (
-                  <Text style={styles.modalBtnPrimaryText}>Créer</Text>
+                  <Text style={styles.modalBtnPrimaryText}>{t("dashboardExtended.modal.create")}</Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -783,7 +778,7 @@ export default function Dashboard() {
                 marginBottom: 14,
               }}
             >
-              Choisir un commercial
+              {t("dashboardExtended.assignPicker.title")}
             </Text>
             <ScrollView style={{ maxHeight: 360 }}>
               {(() => {
@@ -809,8 +804,7 @@ export default function Dashboard() {
                           marginTop: 10,
                         }}
                       >
-                        Aucun commercial dans votre équipe.{"\n"}Créez-en un dans la
-                        section Équipe d&apos;abord.
+                        {t("dashboardExtended.assignPicker.empty")}
                       </Text>
                     </View>
                   );
@@ -904,7 +898,7 @@ export default function Dashboard() {
         hitSlop={8}
       >
         <Ionicons name="help-circle" size={26} color="#FFFFFF" />
-        <Text style={styles.helpFabText}>AIDE</Text>
+        <Text style={styles.helpFabText}>{t("dashboardExtended.help")}</Text>
       </TouchableOpacity>
 
       {/* Centre d'aide / FAQ */}

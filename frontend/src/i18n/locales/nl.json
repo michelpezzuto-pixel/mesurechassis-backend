@@ -284,5 +284,105 @@
     "french": "Français",
     "dutch": "Nederlands",
     "english": "English"
+  },
+  "status": {
+    "devis_a_faire": "Te meten",
+    "a_mesurer": "Te meten",
+    "technique_a_valider": "Technische controle",
+    "a_verifier": "Technische controle",
+    "en_commande": "In productie",
+    "en_fabrication": "In productie",
+    "cloture": "Afgerond / Geleverd",
+    "termine": "Afgerond / Geleverd"
+  },
+  "statusArtisan": {
+    "devis_a_faire": "Te meten",
+    "a_mesurer": "Te meten",
+    "technique_a_valider": "Kantoorcontrole",
+    "a_verifier": "Kantoorcontrole",
+    "en_fabrication": "In productie",
+    "en_commande": "In productie",
+    "cloture": "Afgerond / Geleverd",
+    "termine": "Afgerond / Geleverd"
+  },
+  "roles": {
+    "admin": "Beheerder",
+    "commercial": "Verkoper",
+    "technician": "Technicus",
+    "artisan": "Vakman"
+  },
+  "blockMeta": {
+    "standard": "Standaard",
+    "coulissant": "Schuifraam",
+    "porte": "Deur",
+    "trapeze": "Trapezium"
+  },
+  "beta": {
+    "label": "BETA · gratis",
+    "feedback": "Uw feedback is waardevol",
+    "mailSubject": "MesureChâssis — Beta feedback",
+    "mailBody": "Hallo MesureChâssis team,\n\nHier is mijn feedback / suggestie:\n\n"
+  },
+  "dashboardExtended": {
+    "hello": "Hallo",
+    "team": "Team",
+    "stats": "Statistieken",
+    "feedback": "Feedback",
+    "profileBtn": "Profiel",
+    "help": "HULP",
+    "newProjectFab": "NIEUW PROJECT",
+    "pendingSingular": "{{count}} item in wachtrij · Tik om te synchroniseren",
+    "pendingPlural": "{{count}} items in wachtrij · Tik om te synchroniseren",
+    "modal": {
+      "title": "NIEUW PROJECT",
+      "subtitle": "Identificatie van de klant",
+      "lastNameLabel": "Naam *",
+      "lastNamePlaceholder": "Janssen",
+      "lastNameError": "De naam van de klant is verplicht.",
+      "firstNameLabel": "Voornaam",
+      "firstNamePlaceholder": "Marie",
+      "addressLabel": "Adres & Nummer *",
+      "addressPlaceholder": "15 Republiekstraat",
+      "addressError": "Het adres is verplicht.",
+      "postalLabel": "Postcode",
+      "postalPlaceholder": "1000",
+      "cityLabel": "Plaats",
+      "cityPlaceholder": "Brussel",
+      "apptLabel": "Datum afspraak",
+      "apptPlaceholder": "Kies een datum en tijd",
+      "notesLabel": "Notities & Instructies",
+      "notesPlaceholder": "Sleutel onder de mat, toegang via zijpoort...",
+      "dictationHint": "Tip: tik op het 🎤 icoon van uw toetsenbord om uw notities hardop te dicteren.",
+      "assignLabel": "Toewijzen aan een Verkoper *",
+      "assignPlaceholder": "Kies een verkoper...",
+      "assignSelected": "Geselecteerd lid",
+      "assignHelper": "Het project wordt overgedragen aan deze medewerker voor het opmeten.",
+      "cancel": "Annuleren",
+      "create": "Aanmaken"
+    },
+    "assignPicker": {
+      "title": "Kies een verkoper",
+      "empty": "Geen verkoper in uw team.\nMaak er eerst een aan in de Team-sectie.",
+      "close": "Sluiten"
+    }
+  },
+  "transition": {
+    "passageTo": "Het project gaat naar « {{label}} ».",
+    "button": {
+      "devis_a_faire": "🚩 Doorgeven aan verkoper voor opmeting",
+      "a_mesurer": "🚩 Opmeting afsluiten",
+      "technique_a_valider": "🚩 Valideren en naar productie sturen",
+      "a_verifier": "🚩 Valideren en naar productie sturen",
+      "en_commande": "🚩 Markeren als afgerond / geleverd",
+      "en_fabrication": "🚩 Markeren als afgerond / geleverd"
+    },
+    "desc": {
+      "devis_a_faire": "De klantgegevens zijn klaar. Het project gaat naar « Te meten » en wordt overgedragen aan de verkoper voor de opmeting.",
+      "a_mesurer": "Alle openingen zijn gemeten. Het project gaat naar « Technische controle » voor validatie vóór productie.",
+      "technique_a_valider": "De metingen zijn gevalideerd. Het project gaat naar « In productie ».",
+      "a_verifier": "De metingen zijn gevalideerd. Het project gaat naar « In productie ».",
+      "en_commande": "Het project is afgerond/geleverd aan de klant. Het wordt gearchiveerd.",
+      "en_fabrication": "Het project is afgerond/geleverd aan de klant. Het wordt gearchiveerd."
+    }
   }
 }

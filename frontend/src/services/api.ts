@@ -116,10 +116,14 @@ export const PDF_URL = (chantierId: string, lang?: string) => {
 };
 export const JSON_URL = (chantierId: string) =>
   `${BASE_URL}/api/chantiers/${chantierId}/export.json`;
-export const XLSX_URL = (chantierId: string) =>
-  `${BASE_URL}/api/chantiers/${chantierId}/export.xlsx`;
-export const CSV_URL = (chantierId: string) =>
-  `${BASE_URL}/api/chantiers/${chantierId}/export.csv`;
+export const XLSX_URL = (chantierId: string, lang?: string) => {
+  const base = `${BASE_URL}/api/chantiers/${chantierId}/export.xlsx`;
+  return lang ? `${base}?lang=${encodeURIComponent(lang)}` : base;
+};
+export const CSV_URL = (chantierId: string, lang?: string) => {
+  const base = `${BASE_URL}/api/chantiers/${chantierId}/export.csv`;
+  return lang ? `${base}?lang=${encodeURIComponent(lang)}` : base;
+};
 // 🆕 V3 — Exports ERP universels (CSV + XML) pour import dans Elcia, Ramasoft, etc.
 export const ERP_CSV_URL = (chantierId: string) =>
   `${BASE_URL}/api/chantiers/${chantierId}/export-erp.csv`;

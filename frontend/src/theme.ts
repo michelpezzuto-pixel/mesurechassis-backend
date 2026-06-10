@@ -213,3 +213,34 @@ export function getStatusLabel(
   }
   return statusMeta[status]?.label ?? status;
 }
+
+/**
+ * 🌍 Variante i18n — accepte la fonction `t` de `useTranslation()` pour
+ * traduire le statut dans la langue courante de l'utilisateur. Fallback
+ * automatique sur la version FR codée en dur si la clé n'existe pas.
+ *
+ * Usage :
+ *   const { t } = useTranslation();
+ *   getStatusLabelI18n(status, accountType, t);
+ */
+export function getStatusLabelI18n(
+  status: string,
+  accountType: string | null | undefined,
+  t: (key: string, opts?: Record<string, unknown>) => string,
+): string {
+  const isArtisan = (accountType || "").toLowerCase() === "artisan";
+  const fallback = getStatusLabel(status, accountType);
+  // Pour les comptes Artisan, on tente d'abord la version "artisan" (label
+  // "Encodage bureau" au lieu de "Technicien"), puis on retombe sur la
+  // version standard.
+  const ns = isArtisan ? "statusArtisan" : "status";
+  const key = `${ns}.${status}`;
+  const translated = t(key, { defaultValue: "" });
+  if (translated && translated !== key) return translated;
+  // Tentative dans le namespace standard si la version artisan n'existe pas
+  if (isArtisan) {
+    const std = t(`status.${status}`, { defaultValue: "" });
+    if (std && std !== `status.${status}`) return std;
+  }
+  return fallback;
+}

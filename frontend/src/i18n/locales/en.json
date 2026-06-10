@@ -284,5 +284,105 @@
     "french": "Français",
     "dutch": "Nederlands",
     "english": "English"
+  },
+  "status": {
+    "devis_a_faire": "To measure",
+    "a_mesurer": "To measure",
+    "technique_a_valider": "Technician check",
+    "a_verifier": "Technician check",
+    "en_commande": "In production",
+    "en_fabrication": "In production",
+    "cloture": "Done / Delivered",
+    "termine": "Done / Delivered"
+  },
+  "statusArtisan": {
+    "devis_a_faire": "To measure",
+    "a_mesurer": "To measure",
+    "technique_a_valider": "Office check",
+    "a_verifier": "Office check",
+    "en_fabrication": "In production",
+    "en_commande": "In production",
+    "cloture": "Done / Delivered",
+    "termine": "Done / Delivered"
+  },
+  "roles": {
+    "admin": "Administrator",
+    "commercial": "Sales rep",
+    "technician": "Technician",
+    "artisan": "Craftsman"
+  },
+  "blockMeta": {
+    "standard": "Standard",
+    "coulissant": "Sliding",
+    "porte": "Door",
+    "trapeze": "Trapezoid"
+  },
+  "beta": {
+    "label": "BETA · free",
+    "feedback": "Your feedback matters",
+    "mailSubject": "MesureChâssis — Beta feedback",
+    "mailBody": "Hello MesureChâssis team,\n\nHere is my feedback / suggestion:\n\n"
+  },
+  "dashboardExtended": {
+    "hello": "Hello",
+    "team": "Team",
+    "stats": "Stats",
+    "feedback": "Feedback",
+    "profileBtn": "Profile",
+    "help": "HELP",
+    "newProjectFab": "NEW PROJECT",
+    "pendingSingular": "{{count}} item pending · Tap to sync",
+    "pendingPlural": "{{count}} items pending · Tap to sync",
+    "modal": {
+      "title": "NEW PROJECT",
+      "subtitle": "Client identification",
+      "lastNameLabel": "Last name *",
+      "lastNamePlaceholder": "Smith",
+      "lastNameError": "Client last name is required.",
+      "firstNameLabel": "First name",
+      "firstNamePlaceholder": "Mary",
+      "addressLabel": "Address & Number *",
+      "addressPlaceholder": "15 Republic Street",
+      "addressError": "Address is required.",
+      "postalLabel": "Postal code",
+      "postalPlaceholder": "75011",
+      "cityLabel": "City",
+      "cityPlaceholder": "Paris",
+      "apptLabel": "Appointment date",
+      "apptPlaceholder": "Choose a date and time",
+      "notesLabel": "Notes & Instructions",
+      "notesPlaceholder": "Key under the doormat, side gate access...",
+      "dictationHint": "Tip: tap the 🎤 icon on your keyboard to dictate your notes aloud.",
+      "assignLabel": "Assign to a Sales rep *",
+      "assignPlaceholder": "Choose a sales rep...",
+      "assignSelected": "Selected member",
+      "assignHelper": "The project will be transmitted to this team member for measurement.",
+      "cancel": "Cancel",
+      "create": "Create"
+    },
+    "assignPicker": {
+      "title": "Choose a sales rep",
+      "empty": "No sales rep in your team.\nCreate one in the Team section first.",
+      "close": "Close"
+    }
+  },
+  "transition": {
+    "passageTo": "The project will move to « {{label}} ».",
+    "button": {
+      "devis_a_faire": "🚩 Transmit to sales rep for measurement",
+      "a_mesurer": "🚩 Close measurement step",
+      "technique_a_valider": "🚩 Validate and send to production",
+      "a_verifier": "🚩 Validate and send to production",
+      "en_commande": "🚩 Mark as done / delivered",
+      "en_fabrication": "🚩 Mark as done / delivered"
+    },
+    "desc": {
+      "devis_a_faire": "Client details are ready. The project will move to « To measure » and be transmitted to the sales rep for the survey.",
+      "a_mesurer": "All openings have been measured. The project will move to « Technician check » for validation before production.",
+      "technique_a_valider": "Measurements are validated. The project will move to « In production ».",
+      "a_verifier": "Measurements are validated. The project will move to « In production ».",
+      "en_commande": "The project is done/delivered to the client. It will be archived.",
+      "en_fabrication": "The project is done/delivered to the client. It will be archived."
+    }
   }
 }

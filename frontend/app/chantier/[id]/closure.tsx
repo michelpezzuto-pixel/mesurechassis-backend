@@ -15,9 +15,9 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { api, buildAuthHeaders, PDF_URL } from "@/src/services/api";
+import { api, buildAuthHeaders, PDF_URL, XLSX_URL } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
-import { colors, blockMeta, statusMeta, getStatusLabel, NEXT_STATUS, CLOSURE_BUTTON_LABEL_BY_STATUS, CLOSURE_BUTTON_LABEL, CLOSURE_DESCRIPTION_BY_STATUS } from "@/src/theme";
+import { colors, blockMeta, statusMeta, getStatusLabel, getStatusLabelI18n, NEXT_STATUS, CLOSURE_BUTTON_LABEL_BY_STATUS, CLOSURE_BUTTON_LABEL, CLOSURE_DESCRIPTION_BY_STATUS } from "@/src/theme";
 
 type Chantier = {
   id: string;
@@ -159,10 +159,8 @@ export default function Closure() {
   const exportXLSX = async () => {
     try {
       const headers = await buildAuthHeaders();
-      const r = await fetch(
-        `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/chantiers/${id}/export.xlsx`,
-        { headers }
-      );
+      const { default: i18n } = await import("@/src/i18n");
+      const r = await fetch(XLSX_URL(String(id), i18n.language), { headers });
       if (!r.ok) throw new Error("xlsx failed");
       const blob = await r.blob();
       await shareBlob(
@@ -266,7 +264,7 @@ export default function Closure() {
 
   const cloturer = () => {
     if (!nextStatus || !chantier) return;
-    const nextLabelForMsg = getStatusLabel(nextStatus, company?.account_type);
+    const nextLabelForMsg = getStatusLabelI18n(nextStatus, company?.account_type, t);
     const description =
       (isArtisanFlow
         ? ARTISAN_DESCRIPTIONS[chantier.status]
@@ -321,7 +319,7 @@ export default function Closure() {
           {meta && (
             <View style={[styles.badge, { backgroundColor: meta.bg }]}>
               <Text style={[styles.badgeText, { color: meta.color }]}>
-                {getStatusLabel(chantier.status, company?.account_type)}
+                {getStatusLabelI18n(chantier.status, company?.account_type, t)}
               </Text>
             </View>
           )}

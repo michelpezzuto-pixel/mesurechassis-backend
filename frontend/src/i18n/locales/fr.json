@@ -317,5 +317,105 @@
     "french": "Français",
     "dutch": "Nederlands",
     "english": "English"
+  },
+  "status": {
+    "devis_a_faire": "À mesurer",
+    "a_mesurer": "À mesurer",
+    "technique_a_valider": "À vérifier par le technicien",
+    "a_verifier": "À vérifier par le technicien",
+    "en_commande": "En fabrication",
+    "en_fabrication": "En fabrication",
+    "cloture": "Terminé / Livré",
+    "termine": "Terminé / Livré"
+  },
+  "statusArtisan": {
+    "devis_a_faire": "À mesurer",
+    "a_mesurer": "À mesurer",
+    "technique_a_valider": "À vérifier au bureau",
+    "a_verifier": "À vérifier au bureau",
+    "en_fabrication": "En fabrication",
+    "en_commande": "En fabrication",
+    "cloture": "Terminé / Livré",
+    "termine": "Terminé / Livré"
+  },
+  "roles": {
+    "admin": "Administrateur",
+    "commercial": "Commercial",
+    "technician": "Technicien",
+    "artisan": "Artisan"
+  },
+  "blockMeta": {
+    "standard": "Standard",
+    "coulissant": "Coulissant",
+    "porte": "Porte",
+    "trapeze": "Trapèze"
+  },
+  "beta": {
+    "label": "BETA · gratuit",
+    "feedback": "Vos retours sont précieux",
+    "mailSubject": "MesureChâssis — Retour beta",
+    "mailBody": "Bonjour l'équipe MesureChâssis,\n\nVoici mon retour / suggestion :\n\n"
+  },
+  "dashboardExtended": {
+    "hello": "Bonjour",
+    "team": "Équipe",
+    "stats": "Stats",
+    "feedback": "Feedback",
+    "profileBtn": "Profil",
+    "help": "AIDE",
+    "newProjectFab": "NOUVEAU CHANTIER",
+    "pendingSingular": "{{count}} élément en attente · Toucher pour synchroniser",
+    "pendingPlural": "{{count}} éléments en attente · Toucher pour synchroniser",
+    "modal": {
+      "title": "NOUVEAU CHANTIER",
+      "subtitle": "Identification du client",
+      "lastNameLabel": "Nom *",
+      "lastNamePlaceholder": "Dupont",
+      "lastNameError": "Le nom du client est obligatoire.",
+      "firstNameLabel": "Prénom",
+      "firstNamePlaceholder": "Marie",
+      "addressLabel": "Adresse & Numéro *",
+      "addressPlaceholder": "15 Rue de la République",
+      "addressError": "L'adresse est obligatoire.",
+      "postalLabel": "Code Postal",
+      "postalPlaceholder": "75011",
+      "cityLabel": "Ville",
+      "cityPlaceholder": "Paris",
+      "apptLabel": "Date du rendez-vous",
+      "apptPlaceholder": "Choisir une date et une heure",
+      "notesLabel": "Notes & Instructions",
+      "notesPlaceholder": "Clé sous le paillasson, accès portail latéral...",
+      "dictationHint": "Astuce : touchez l'icône 🎤 de votre clavier pour dicter vos notes à voix haute.",
+      "assignLabel": "Assigner à un Commercial *",
+      "assignPlaceholder": "Choisir un commercial...",
+      "assignSelected": "Membre sélectionné",
+      "assignHelper": "Le chantier sera transmis à ce collaborateur pour la prise de mesures.",
+      "cancel": "Annuler",
+      "create": "Créer"
+    },
+    "assignPicker": {
+      "title": "Choisir un commercial",
+      "empty": "Aucun commercial dans votre équipe.\nCréez-en un dans la section Équipe d'abord.",
+      "close": "Fermer"
+    }
+  },
+  "transition": {
+    "passageTo": "Le chantier passera en « {{label}} ».",
+    "button": {
+      "devis_a_faire": "🚩 Transmettre au commercial pour mesurage",
+      "a_mesurer": "🚩 Clôturer la prise de cotes",
+      "technique_a_valider": "🚩 Valider et envoyer en fabrication",
+      "a_verifier": "🚩 Valider et envoyer en fabrication",
+      "en_commande": "🚩 Marquer comme terminé / livré",
+      "en_fabrication": "🚩 Marquer comme terminé / livré"
+    },
+    "desc": {
+      "devis_a_faire": "Les coordonnées du client sont prêtes. Le chantier passera en « À mesurer » et sera transmis au commercial pour le relevé.",
+      "a_mesurer": "Toutes les ouvertures ont été mesurées. Le chantier passera en « À vérifier par le technicien » pour validation avant fabrication.",
+      "technique_a_valider": "Les mesures sont validées. Le chantier passera en « En fabrication ».",
+      "a_verifier": "Les mesures sont validées. Le chantier passera en « En fabrication ».",
+      "en_commande": "Le chantier est terminé/livré au client. Il sera archivé.",
+      "en_fabrication": "Le chantier est terminé/livré au client. Il sera archivé."
+    }
   }
 }

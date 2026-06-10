@@ -271,3 +271,220 @@ def status_label_i18n(status: str, lang: str | None = None) -> str:
     """Retourne le libellé statut traduit (fallback : code brut)."""
     code = _normalize_lang(lang)
     return _STATUS_LABELS[code].get(status, _STATUS_LABELS["fr"].get(status, status))
+
+
+# 🗂️ En-têtes CSV / XLSX traduits (clés communes aux deux formats).
+_CSV_HEADERS: dict[str, list[str]] = {
+    "fr": [
+        "Chantier", "Adresse", "Code Postal", "Ville", "Statut",
+        "Label", "Type", "Forme", "Rénovation",
+        "Largeur baie (mm)", "Hauteur baie (mm)",
+        "Diag 1 (mm)", "Diag 2 (mm)", "Diag1 OK", "Diag2 OK",
+        "L. haut (mm)", "L. bas (mm)",
+        "H. gauche (mm)", "H. droite (mm)",
+        "L. milieu (mm)", "H. milieu (mm)",
+        "L. petite (mm)", "L. inter (mm)",
+        "H. petite (mm)", "H. grande (mm)",
+        "Réserve sol (mm)", "Épaisseur bloc (mm)",
+        "Paroi", "Épais. isolant (mm)",
+        "Finition ext (mm)", "Finition int (mm)",
+        "Angle pente (°)", "Alertes", "Date mesure",
+    ],
+    "en": [
+        "Project", "Address", "Postal code", "City", "Status",
+        "Label", "Type", "Shape", "Renovation",
+        "Bay width (mm)", "Bay height (mm)",
+        "Diag 1 (mm)", "Diag 2 (mm)", "Diag1 OK", "Diag2 OK",
+        "W. top (mm)", "W. bottom (mm)",
+        "H. left (mm)", "H. right (mm)",
+        "W. middle (mm)", "H. middle (mm)",
+        "W. small (mm)", "W. inter (mm)",
+        "H. small (mm)", "H. large (mm)",
+        "Floor reserve (mm)", "Block thickness (mm)",
+        "Wall", "Insulation thickness (mm)",
+        "Outer finish (mm)", "Inner finish (mm)",
+        "Slope angle (°)", "Alerts", "Measure date",
+    ],
+    "nl": [
+        "Project", "Adres", "Postcode", "Plaats", "Status",
+        "Label", "Type", "Vorm", "Renovatie",
+        "Breedte baai (mm)", "Hoogte baai (mm)",
+        "Diag 1 (mm)", "Diag 2 (mm)", "Diag1 OK", "Diag2 OK",
+        "B. boven (mm)", "B. onder (mm)",
+        "H. links (mm)", "H. rechts (mm)",
+        "B. midden (mm)", "H. midden (mm)",
+        "B. klein (mm)", "B. inter (mm)",
+        "H. klein (mm)", "H. groot (mm)",
+        "Vloerreserve (mm)", "Blok-dikte (mm)",
+        "Muurtype", "Isolatie-dikte (mm)",
+        "Afwerking buiten (mm)", "Afwerking binnen (mm)",
+        "Hellingshoek (°)", "Waarschuwingen", "Meetdatum",
+    ],
+}
+
+_CSV_YES_NO: dict[str, tuple[str, str]] = {
+    "fr": ("oui", "non"),
+    "en": ("yes", "no"),
+    "nl": ("ja", "nee"),
+}
+
+# Mots pour formes / blocs (utilisés dans la colonne CSV "Forme" + "Type").
+_CSV_WORDS: dict[str, dict[str, str]] = {
+    "fr": {
+        "trapezoidal": "trapézoïdal",
+        "rectangular": "rectangulaire",
+        "photos_block": "[PHOTOS ANTI-LITIGE]",
+        "photo_default": "Photo {idx}",
+        "col_index": "#",
+        "col_caption": "Légende",
+        "col_format": "Format",
+    },
+    "en": {
+        "trapezoidal": "trapezoidal",
+        "rectangular": "rectangular",
+        "photos_block": "[ANTI-DISPUTE PHOTOS]",
+        "photo_default": "Photo {idx}",
+        "col_index": "#",
+        "col_caption": "Caption",
+        "col_format": "Format",
+    },
+    "nl": {
+        "trapezoidal": "trapeziumvormig",
+        "rectangular": "rechthoekig",
+        "photos_block": "[FOTO'S ANTI-GESCHIL]",
+        "photo_default": "Foto {idx}",
+        "col_index": "#",
+        "col_caption": "Bijschrift",
+        "col_format": "Formaat",
+    },
+}
+
+
+def csv_headers(lang: str | None) -> list[str]:
+    return _CSV_HEADERS[_normalize_lang(lang)]
+
+
+def csv_yes(lang: str | None) -> str:
+    return _CSV_YES_NO[_normalize_lang(lang)][0]
+
+
+def csv_no(lang: str | None) -> str:
+    return _CSV_YES_NO[_normalize_lang(lang)][1]
+
+
+def csv_word(key: str, lang: str | None) -> str:
+    code = _normalize_lang(lang)
+    return _CSV_WORDS[code].get(key, _CSV_WORDS["fr"].get(key, key))
+
+
+# 📊 Libellés spécifiques XLSX (titres feuilles, en-têtes, "Client", etc.)
+_XLSX_LABELS: dict[str, dict[str, Any]] = {
+    "fr": {
+        "title": "MesureChâssis — Fiche Chantier",
+        "sheet_chantier": "Chantier",
+        "sheet_mesures": "Mesures",
+        "sheet_photos": "Photos site",
+        "pair": {
+            "client": "Client",
+            "address": "Adresse",
+            "postal": "Code postal",
+            "city": "Ville",
+            "status": "Statut",
+            "created_at": "Date création",
+            "appointment": "Rendez-vous",
+            "notes": "Notes",
+            "nb_openings": "Nb. ouvertures",
+            "nb_photos": "Nb. photos site",
+        },
+        "cols": [
+            "Libellé", "Type bloc", "Forme", "Rénovation",
+            "L baie (mm)", "H baie (mm)", "Diag 1 (mm)", "Diag 2 (mm)",
+            "Diag1 OK", "Diag2 OK",
+            "L. haut (mm)", "L. bas (mm)", "H. gauche (mm)", "H. droite (mm)",
+            "L. milieu (mm)", "H. milieu (mm)",
+            "H. 1/4 G (mm)", "H. 1/4 D (mm)",
+            "L. petite (mm)", "L. inter (mm)",
+            "H. petite (mm)", "H. grande (mm)",
+            "Réserve sol (mm)", "Épais. bloc béton (mm)",
+            "Type paroi", "Épais. isolant (mm)",
+            "Finition ext (mm)", "Finition int (mm)",
+            "Angle pente (°)", "Alertes", "Date mesure",
+        ],
+        "photo_cols": ["#", "Légende", "Format", "Taille (caractères)"],
+    },
+    "en": {
+        "title": "MesureChâssis — Project Sheet",
+        "sheet_chantier": "Project",
+        "sheet_mesures": "Measurements",
+        "sheet_photos": "Site photos",
+        "pair": {
+            "client": "Client",
+            "address": "Address",
+            "postal": "Postal code",
+            "city": "City",
+            "status": "Status",
+            "created_at": "Created on",
+            "appointment": "Appointment",
+            "notes": "Notes",
+            "nb_openings": "Nb. openings",
+            "nb_photos": "Nb. site photos",
+        },
+        "cols": [
+            "Label", "Block type", "Shape", "Renovation",
+            "Bay width (mm)", "Bay height (mm)", "Diag 1 (mm)", "Diag 2 (mm)",
+            "Diag1 OK", "Diag2 OK",
+            "W. top (mm)", "W. bottom (mm)", "H. left (mm)", "H. right (mm)",
+            "W. middle (mm)", "H. middle (mm)",
+            "H. 1/4 L (mm)", "H. 1/4 R (mm)",
+            "W. small (mm)", "W. inter (mm)",
+            "H. small (mm)", "H. large (mm)",
+            "Floor reserve (mm)", "Concrete block thickness (mm)",
+            "Wall type", "Insulation thickness (mm)",
+            "Outer finish (mm)", "Inner finish (mm)",
+            "Slope angle (°)", "Alerts", "Measure date",
+        ],
+        "photo_cols": ["#", "Caption", "Format", "Size (chars)"],
+    },
+    "nl": {
+        "title": "MesureChâssis — Projectfiche",
+        "sheet_chantier": "Project",
+        "sheet_mesures": "Metingen",
+        "sheet_photos": "Foto's site",
+        "pair": {
+            "client": "Klant",
+            "address": "Adres",
+            "postal": "Postcode",
+            "city": "Plaats",
+            "status": "Status",
+            "created_at": "Aanmaakdatum",
+            "appointment": "Afspraak",
+            "notes": "Notities",
+            "nb_openings": "Aantal openingen",
+            "nb_photos": "Aantal foto's",
+        },
+        "cols": [
+            "Label", "Bloktype", "Vorm", "Renovatie",
+            "B baai (mm)", "H baai (mm)", "Diag 1 (mm)", "Diag 2 (mm)",
+            "Diag1 OK", "Diag2 OK",
+            "B. boven (mm)", "B. onder (mm)", "H. links (mm)", "H. rechts (mm)",
+            "B. midden (mm)", "H. midden (mm)",
+            "H. 1/4 L (mm)", "H. 1/4 R (mm)",
+            "B. klein (mm)", "B. inter (mm)",
+            "H. klein (mm)", "H. groot (mm)",
+            "Vloerreserve (mm)", "Dikte betonblok (mm)",
+            "Muurtype", "Isolatie-dikte (mm)",
+            "Afwerking buiten (mm)", "Afwerking binnen (mm)",
+            "Hellingshoek (°)", "Waarschuwingen", "Meetdatum",
+        ],
+        "photo_cols": ["#", "Bijschrift", "Formaat", "Grootte (tekens)"],
+    },
+}
+
+
+def xlsx_labels(lang: str | None) -> dict[str, Any]:
+    code = _normalize_lang(lang)
+    base = _XLSX_LABELS["fr"]
+    target = _XLSX_LABELS[code]
+    merged: dict[str, Any] = {**base, **target}
+    merged["pair"] = {**base["pair"], **target.get("pair", {})}
+    return merged

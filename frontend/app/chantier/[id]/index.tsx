@@ -25,7 +25,8 @@ import { useResponsive } from "@/src/utils/responsive";
 import { ShapeIcon, blockTypeToShape } from "@/src/components/ShapeIcon";
 import AppointmentPicker from "@/src/components/AppointmentPicker";
 import { useAuth } from "@/src/context/AuthContext";
-import { colors, statusMeta, getStatusLabel, blockMeta, shapeMeta } from "@/src/theme";
+import { colors, statusMeta, getStatusLabel, getStatusLabelI18n, blockMeta, shapeMeta } from "@/src/theme";
+import { useTranslation } from "react-i18next";
 
 type SitePhoto = { uri: string; caption: string };
 
@@ -59,6 +60,7 @@ type UserOpt = { id: string; name: string; email: string; role: string };
 
 export default function ChantierDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { t } = useTranslation();
   const router = useRouter();
   const { user, hasRole, artisanMode, company } = useAuth();
   // 🆕 V3 — Responsive (cahier 10/06/2026 Phase 5). DOIT être appelé
@@ -902,7 +904,7 @@ export default function ChantierDetail() {
                 <View style={[styles.badge, { backgroundColor: meta.bg }]}>
                   <View style={[styles.badgeDot, { backgroundColor: meta.color }]} />
                   <Text style={[styles.badgeText, { color: meta.color }]}>
-                    {getStatusLabel(chantier.status, company?.account_type)}
+                    {getStatusLabelI18n(chantier.status, company?.account_type, t)}
                   </Text>
                 </View>
               )}
