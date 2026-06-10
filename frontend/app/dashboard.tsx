@@ -84,9 +84,11 @@ export default function Dashboard() {
   const mustAssignToCommercial = user?.role === "admin" && !isArtisanAccount;
 
   // 🚀 Onboarding "Premiers pas" — pour les nouveaux Admin Entreprise.
-  // Affiche une carte avec 3 étapes : inviter commercial / technicien /
-  // créer chantier. Masqué dès que l'utilisateur clique sur "Masquer".
+  // Affiche une carte avec 2 étapes : inviter commercial / technicien.
+  // Masqué dès que l'utilisateur clique sur "Masquer".
   // Persistance via AsyncStorage clé `mc.onboarding.dismissed`.
+  // ⚠️ Si l'admin a supprimé tous ses commerciaux/techniciens et que la
+  // carte avait été masquée, on la ré-affiche automatiquement.
   const ONBOARDING_KEY = "mc.onboarding.dismissed";
   const [onboardingHidden, setOnboardingHidden] = useState(true);
   useEffect(() => {
@@ -99,6 +101,19 @@ export default function Dashboard() {
       }
     })();
   }, []);
+  // Reset auto si l'admin perd ses commerciaux/techniciens
+  useEffect(() => {
+    if (user?.role !== "admin" || isArtisanAccount) return;
+    const hasCommercial = teamMembers.some((m) => m.role === "commercial");
+    const hasTech = teamMembers.some((m) => m.role === "technician");
+    if (!hasCommercial || !hasTech) {
+      // Force la réapparition de la carte d'onboarding
+      setOnboardingHidden(false);
+      AsyncStorage.removeItem(ONBOARDING_KEY).catch(() => {
+        /* noop */
+      });
+    }
+  }, [teamMembers, user?.role, isArtisanAccount]);
   const dismissOnboarding = async () => {
     setOnboardingHidden(true);
     try {

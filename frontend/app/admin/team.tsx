@@ -287,6 +287,54 @@ export default function TeamAdmin() {
                   )}
                 </View>
               </View>
+              {/* 🗑️ Bouton supprimer — masqué pour l'Admin (sécurité) */}
+              {m.role !== "admin" && (
+                <TouchableOpacity
+                  testID={`delete-member-${m.id}`}
+                  onPress={() => {
+                    const confirmDelete = async () => {
+                      try {
+                        await api.delete(`/team/members/${m.id}`);
+                        await fetchMembers();
+                      } catch (e: any) {
+                        const msg =
+                          e?.response?.data?.detail ||
+                          "Suppression impossible.";
+                        Alert.alert("Erreur", msg);
+                      }
+                    };
+                    const title = "Supprimer ce collaborateur ?";
+                    const msg =
+                      `« ${m.name} » sera définitivement supprimé.\n\n` +
+                      "ℹ️ Les chantiers qui lui étaient affectés ne seront pas supprimés. " +
+                      "Vous devrez les réaffecter à un autre commercial.";
+                    if (Platform.OS === "web") {
+                      const ok =
+                        typeof window !== "undefined" &&
+                        window.confirm(`${title}\n\n${msg}`);
+                      if (ok) void confirmDelete();
+                      return;
+                    }
+                    Alert.alert(title, msg, [
+                      { text: "Annuler", style: "cancel" },
+                      {
+                        text: "Supprimer",
+                        style: "destructive",
+                        onPress: confirmDelete,
+                      },
+                    ]);
+                  }}
+                  style={styles.deleteMemberBtn}
+                  activeOpacity={0.7}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <Ionicons
+                    name="trash-outline"
+                    size={20}
+                    color={colors.anomaly}
+                  />
+                </TouchableOpacity>
+              )}
             </View>
           );
         })}
@@ -627,6 +675,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 12,
     marginBottom: 8,
+  },
+  deleteMemberBtn: {
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: "#2a1010",
+    borderWidth: 1,
+    borderColor: colors.anomaly,
   },
   roleDot: {
     width: 8,
