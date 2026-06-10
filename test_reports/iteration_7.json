@@ -1,0 +1,53 @@
+{
+  "summary": "Build 9 referral backend hardened: 32/32 new referral tests passing covering /referral/me, /referral/code (regex, reserved words, MC- prefix, duplicates 409, persistence), /referral/validate (valid/invalid/empty/case-insensitive), /auth/register with referral_code linking, anti-self-referral helper, credit idempotence, and the 10-filleuls limit. Full regression: 175 passed + 16 failed + 8 errors — failures are PRE-EXISTING and unrelated to referral (chantier RBAC/assignment errors in Mode Entreprise + verification expectations vs auto_verify) — see action_items.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/referral/code", "issue": "Behaviour deviation vs spec: 'A B C' (spaces) is normalized to 'A-B-C' and accepted (200) instead of being rejected (400). _normalize_code() does .replace(' ', '-') after .upper(). Either accept the lenient normalization as intentional or remove the space→hyphen replacement to be strict. Reference: /app/backend/routes/referral.py:54"},
+      {"endpoint": "POST /api/referral/code (too short / too long)", "issue": "Returns 422 Unprocessable Entity (Pydantic min_length=4/max_length=24) instead of 400 as the spec requested. Acceptable but inconsistent with the rest of the endpoint (which raises HTTPException(400)). Reference: /app/backend/routes/referral.py:97"},
+      {"endpoint": "Reserved-word check", "issue": "Code uses startswith(p) for p in ('MC-',) — single-tuple loop is unnecessary; collapse to a simple startswith('MC-'). Cosmetic. Reference: /app/backend/routes/referral.py:173"},
+      {"endpoint": "credit_parrain_on_first_payment", "issue": "When the limit (10) is reached, the filleul is marked referral_paid=True even though the parrain is NOT credited. Intentional per spec (avoid retry) but a $set of an extra field like referral_paid_skipped_reason='cap_reached' would help observability. Reference: /app/backend/routes/referral.py:303-307"}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_referral.py",
+    "/app/test_reports/pytest/iter7_referral.xml",
+    "/app/test_reports/pytest/iter7_full.xml"
+  ],
+  "action_items": [
+    "Decide policy for spaces in referral codes: keep lenient (space→hyphen normalization) OR reject as the spec demands. Current behaviour: accepted as hyphenated.",
+    "(Optional) Replace Pydantic min_length/max_length on UpdateCodeRequest with manual validation that raises 400 instead of 422 for consistency with the other validation errors on the same endpoint.",
+    "Pre-existing regression vs iter6 (UNRELATED to referral, but should be triaged): test_chantiers/test_iter3_roles_stats_push/test_multitenant fail because POST /api/chantiers now demands assigned_to in Mode Entreprise. test_verification expects status=pending_verification but MC_AUTO_VERIFY_ON_REGISTER=1 makes accounts active. test_mesures expects admin POST /mesures forbidden but it succeeds. These were not introduced by referral changes but the suite no longer ends green (175/199). See /app/test_reports/pytest/iter7_full.xml.",
+    "(Cosmetic) Simplify `any(new_code.startswith(p) for p in ('MC-',))` → `new_code.startswith('MC-')`."
+  ],
+  "critical_code_review_comments": [
+    "Idempotence: credit_parrain_on_first_payment correctly short-circuits on `referral_paid` flag — verified by calling 2× on the same filleul → +2 mois only.",
+    "Limit 10: counting via `db.companies.count_documents({referred_by_company_id: parrain_id, referral_paid: True})` — verified with 11 chained filleuls → parrain gets exactly 20 mois, 11th filleul marked paid but not credited.",
+    "Anti-auto-parrainage: link_referral_at_signup checks `parrain.company_id == new_company_id` before linking — verified by helper call test.",
+    "Unicity: referral_code uniqueness enforced via find_one({referral_code, company_id:{$ne: me}}) → 409 on duplicate. CAVEAT: there is NO MongoDB unique index declared (only application-level check) — race condition theoretically possible under high concurrency. Consider db.companies.create_index('referral_code', unique=True, sparse=True).",
+    "Public /referral/validate exposes parrain `name` without auth. By design (the filleul needs to see who is parraining them), but worth confirming it is acceptable PII-wise. Code returns only name, not email/phone.",
+    "Case insensitivity: _normalize_code does .upper(); 'demo-admin' validates correctly. ✅",
+    "Empty code on /validate returns valid:false with error 'Code vide' — exactly per spec. ✅",
+    "Reserved set includes ADMIN/MESURECHASSIS/DEMO/TEST/NULL/UNDEFINED — all rejected with 400 (case-insensitive after normalize). ✅",
+    "MC- prefix rejection — covers MC-ABCDEF and any user attempt to mimic system codes. ✅",
+    "Auto-generated MC-XXXXXX has 36^6 = ~2.2 G combinations and a retry loop up to 10× on collisions; acceptable for current scale."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_referral.py (new — 32 tests)"
+  ],
+  "success_rate": {
+    "backend": "100% on referral feature (32/32). Full regression: 175/199 (16 fail + 8 error, all pre-existing and unrelated to referral)",
+    "frontend": "not tested (backend-only request)"
+  },
+  "seed_data_creation": "Each test creates throwaway companies via /api/auth/register with email prefix 'pytestref_' and TLD @pytest.example.com. An autouse function-scoped fixture deletes all users + companies tagged 'pytestref_' after every test. No mutation of admin@mesurechassis.fr beyond a +2/-2 credit roundtrip in test_idempotence_credit (cleaned up at end of test).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Referral system is fully covered by /app/backend/tests/test_referral.py (32 tests, all green). Key facts: (1) DEMO-ADMIN is admin's code → /validate returns parrain_name='default'. (2) Email TLD .local is rejected by pydantic EmailStr — use @pytest.example.com. (3) email_suffix must be lowercase before DB lookup since the server lowercases the email. (4) The 'disable_artisan_mode' autouse fixture in conftest patches default company artisan_mode→False for the session, which interacts with chantier-creation tests. (5) No MongoDB unique index on referral_code — only app-level check (mention if testing race-conditions). (6) Pre-existing failures in test_chantiers/test_mesures/test_verification/test_multitenant/test_iter3 are NOT introduced by referral; they look like state-of-the-suite drift after backend changes between iter6 and iter7 (Mode Entreprise assignment now required, auto-verify enabled by default).",
+  "rca_of_issue": "No referral bug found. One spec-vs-impl deviation noted: spaces in custom codes are silently converted to hyphens instead of being rejected with 400. Main agent should pick a policy and either accept the deviation (update spec) or remove the .replace(' ', '-') line in _normalize_code()."
+}
