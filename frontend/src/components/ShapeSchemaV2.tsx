@@ -29,7 +29,8 @@ type ShapeKey =
   | "bow_window"
   | "pentagone"
   | "hexagone"
-  | "ovale";
+  | "ovale"
+  | "polygone";
 
 type Values = {
   L?: number; // Largeur principale (bay_width)
@@ -125,9 +126,92 @@ function renderShape(
       return renderHexagone(values, W, H);
     case "ovale":
       return renderOvale(values, W, H);
+    case "polygone":
+      return renderPolygone(values, W, H);
     default:
       return null;
   }
+}
+
+// 🆕 V3 — POLYGONE régulier (3 / 5 / 6 / 8 arêtes). On centre le polygone
+//    dans la bbox L × H demandée. La 1ère arête est placée en bas pour que
+//    le repère soit familier (côté largeur = base).
+function renderPolygone(v: Values, W: number, H: number) {
+  const n = Math.max(3, Math.min(8, sn(v.panels, 6)));
+  const Wtot = sn(v.L, 1500);
+  const Htot = sn(v.H, 1500);
+  const fit = fitToBox(Wtot, Htot, W, H, 50);
+  const cx = fit.offsetX + (Wtot * fit.scale) / 2;
+  const cy = fit.offsetY + (Htot * fit.scale) / 2;
+  const radius = Math.min(Wtot * fit.scale, Htot * fit.scale) / 2;
+  // Rotation : on veut une arête plate en bas pour pair, ou un sommet en
+  // haut pour impair. Angle initial = -90° (sommet haut) ou ajustement.
+  const startAngle = n % 2 === 0 ? Math.PI / n - Math.PI / 2 : -Math.PI / 2;
+  const pts: string[] = [];
+  for (let i = 0; i < n; i++) {
+    const a = startAngle + (2 * Math.PI * i) / n;
+    const px = cx + radius * Math.cos(a);
+    const py = cy + radius * Math.sin(a);
+    pts.push(`${px.toFixed(1)},${py.toFixed(1)}`);
+  }
+  return (
+    <G>
+      <Polygon
+        points={pts.join(" ")}
+        fill={PALETTE.fill}
+        stroke={PALETTE.outline}
+        strokeWidth={STROKE}
+      />
+      {/* Cote largeur (sous le polygone) */}
+      <Line
+        x1={fit.offsetX}
+        y1={fit.offsetY + Htot * fit.scale + 18}
+        x2={fit.offsetX + Wtot * fit.scale}
+        y2={fit.offsetY + Htot * fit.scale + 18}
+        stroke={PALETTE.cote}
+        strokeWidth={1.5}
+      />
+      <SvgText
+        x={cx}
+        y={fit.offsetY + Htot * fit.scale + 33}
+        fill={PALETTE.cote_text}
+        fontSize={COTE_FONT}
+        textAnchor="middle"
+        fontWeight="bold"
+      >
+        L = {Math.round(Wtot)} mm
+      </SvgText>
+      {/* Cote hauteur (à droite) */}
+      <Line
+        x1={fit.offsetX + Wtot * fit.scale + 14}
+        y1={fit.offsetY}
+        x2={fit.offsetX + Wtot * fit.scale + 14}
+        y2={fit.offsetY + Htot * fit.scale}
+        stroke={PALETTE.cote}
+        strokeWidth={1.5}
+      />
+      <SvgText
+        x={fit.offsetX + Wtot * fit.scale + 18}
+        y={cy + 4}
+        fill={PALETTE.cote_text}
+        fontSize={COTE_FONT}
+        fontWeight="bold"
+      >
+        H = {Math.round(Htot)}
+      </SvgText>
+      {/* Label nombre d'arêtes au centre */}
+      <SvgText
+        x={cx}
+        y={cy + 5}
+        fill={PALETTE.outline}
+        fontSize={COTE_FONT}
+        textAnchor="middle"
+        fontWeight="bold"
+      >
+        {n} arêtes
+      </SvgText>
+    </G>
+  );
 }
 
 // 1. PLEIN CINTRE — Rectangle + demi-cercle au sommet (R = L/2)

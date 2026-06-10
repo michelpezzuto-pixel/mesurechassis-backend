@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Platform,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -76,24 +77,61 @@ export default function AdminStats() {
     setExporting(true);
     try {
       const headers = await buildAuthHeaders();
-      const r = await fetch(
-        `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/stats/commercials/export.pdf`,
-        { headers }
-      );
+      const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/api/stats/commercials/export.pdf`;
+      const r = await fetch(url, { headers });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const blob = await r.blob();
+      // 🆕 V3 — Branche WEB : on déclenche un download / Web Share API.
+      //    `expo-file-system.writeAsStringAsync` n'est PAS disponible sur web
+      //    et faisait crasher l'export (cahier 10/06/2026 #1).
+      if (Platform.OS === "web") {
+        const fileName = "rapport-performance.pdf";
+        const navAny: any = navigator;
+        const file = new File([blob], fileName, { type: "application/pdf" });
+        if (
+          navAny.share &&
+          (!navAny.canShare || navAny.canShare({ files: [file] }))
+        ) {
+          await navAny.share({
+            title: "Rapport performance commerciaux",
+            files: [file],
+          });
+        } else {
+          const blobUrl = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = blobUrl;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          try {
+            URL.revokeObjectURL(blobUrl);
+          } catch {
+            /* noop */
+          }
+        }
+        return;
+      }
+      // Branche MOBILE : on écrit le blob sur le filesystem puis on partage.
       const reader = new FileReader();
       reader.onload = async () => {
-        const b64 = (reader.result as string).split(",")[1];
-        const FS = await import("expo-file-system/legacy");
-        const fileUri = `${FS.cacheDirectory}rapport-performance.pdf`;
-        await FS.writeAsStringAsync(fileUri, b64, { encoding: FS.EncodingType.Base64 });
-        if (await Sharing.isAvailableAsync()) {
-          await Sharing.shareAsync(fileUri, { mimeType: "application/pdf" });
+        try {
+          const b64 = (reader.result as string).split(",")[1];
+          const FS: any = await import("expo-file-system/legacy");
+          const fileUri = `${FS.cacheDirectory}rapport-performance.pdf`;
+          await FS.writeAsStringAsync(fileUri, b64, {
+            encoding: FS.EncodingType.Base64,
+          });
+          if (await Sharing.isAvailableAsync()) {
+            await Sharing.shareAsync(fileUri, { mimeType: "application/pdf" });
+          }
+        } catch (e: any) {
+          Alert.alert("Erreur", e?.message || "Partage impossible.");
         }
       };
       reader.readAsDataURL(blob);
-    } catch {
-      Alert.alert("Erreur", "Export PDF impossible.");
+    } catch (e: any) {
+      Alert.alert("Erreur", e?.message || "Export PDF impossible.");
     } finally {
       setExporting(false);
     }

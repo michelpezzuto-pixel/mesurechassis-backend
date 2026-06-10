@@ -431,7 +431,7 @@ export default function NewMesureWizard() {
         if (wallEditOnly) {
           setWallConfigLocked(false);
           setStep(0);
-          setLoading(false);
+          setLoadingInit(false);
           return;
         }
 
@@ -734,7 +734,16 @@ export default function NewMesureWizard() {
         );
       }
     } else if (shape === "bow_window") {
-      // 🆕 V2 — Bow-Window : Largeur totale, Profondeur, Nb pans (3 ou 5)
+      // 🆕 V3 — Bow-Window : module en cours de fabrication.
+      //    On bloque la sauvegarde tant que le module n'est pas livré
+      //    (cahier des charges 10/06/2026).
+      err.bay_width = true;
+      Alert.alert(
+        "Bow-Window — Module en cours de fabrication",
+        "Cette forme n'est pas encore disponible. Merci d'envoyer un feedback via les boutons dédiés ou de choisir une autre forme.",
+      );
+    } else if (shape === "bow_window_OLD") {
+      // 🚧 Bloc de validation legacy (désactivé — voir bow_window ci-dessus).
       const W = parseNum(s3.bay_width);
       const H = parseNum(s3.bay_height);
       const P = parseNum(s3.bow_depth_projection);
@@ -1812,11 +1821,14 @@ function Step3Cotes({
   // 🚪 Sur une porte de garage / coulissant levant, les feuillures n'ont
   // PAS de sens (pose en applique ou sous linteau, pas en feuillure), donc
   // on masque la section même si la maçonnerie en a habituellement.
+  // 🚧 Bow-window : formulaire désactivé tant que le module n'est pas livré.
+  const router = useRouter();
   const showFeuillures =
     masonryHasFeuillures(s1MasonryType) &&
     !!s1HasHorizontalCut &&
     shape !== "porte_garage" &&
-    shape !== "coulissant_levant";
+    shape !== "coulissant_levant" &&
+    shape !== "bow_window";
   const Sketch = shape === "trapeze" || shape === "triangle" ? RawBaySchemaTrapeze : RawBaySchemaRect;
 
   const validateDiag = (which: 1 | 2) =>
@@ -2068,54 +2080,39 @@ function Step3Cotes({
         </>
       )}
 
-      {/* 🆕 V2 — Bow-Window */}
+      {/* 🆕 V3 — Bow-Window : module en cours de fabrication (cahier 10/06/2026) */}
       {shape === "bow_window" && (
         <>
-          <Text style={styles.helperText}>
-            🌐 Bow-Window — Baie courbe en saillie composée de plusieurs pans.
-            Choisissez le nombre de pans (3 ou 5).
-          </Text>
-          <Text style={[styles.sectionLabel, { marginTop: 8 }]}>NOMBRE DE PANS *</Text>
-          <View style={[styles.row2, { marginBottom: 12 }]}>
+          <View style={[styles.inlineHintBox, { marginTop: 8, backgroundColor: "rgba(255,165,0,0.10)", borderColor: "rgba(255,165,0,0.45)" }]}>
+            <Ionicons name="construct" size={18} color={colors.warning} />
+            <Text style={[styles.inlineHintText, { color: colors.warning, fontWeight: "800" }]}>
+              🚧 Ce module est en cours de fabrication.{"\n"}Merci de revenir plus tard ou de nous envoyer vos retours via les boutons ci-dessous pour prioriser son développement.
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row", gap: 8, marginTop: 12, marginBottom: 12 }}>
             <TouchableOpacity
-              testID="bow-panel-3"
-              onPress={() => setField("bow_panel_count", "3")}
-              activeOpacity={0.8}
-              style={[
-                styles.modeTab,
-                { flex: 1 },
-                s3.bow_panel_count === "3" && styles.modeTabActive,
-                !!err.bow_panel_count && { borderColor: "#ef4444", borderWidth: 2 },
-              ]}
+              testID="bow-feedback-button"
+              onPress={() => router.push("/feedback")}
+              activeOpacity={0.85}
+              style={[styles.btnSecondaryAlt, { flex: 1 }]}
             >
-              <Text style={[styles.modeTabText, s3.bow_panel_count === "3" && styles.modeTabTextActive]}>
-                3 PANS
-              </Text>
+              <Ionicons name="chatbubble-ellipses-outline" size={18} color={colors.textPrimary} />
+              <Text style={styles.btnSecondaryAltText}>ENVOYER UN FEEDBACK</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              testID="bow-panel-5"
-              onPress={() => setField("bow_panel_count", "5")}
-              activeOpacity={0.8}
-              style={[
-                styles.modeTab,
-                { flex: 1 },
-                s3.bow_panel_count === "5" && styles.modeTabActive,
-                !!err.bow_panel_count && { borderColor: "#ef4444", borderWidth: 2 },
-              ]}
+              testID="bow-remark-admin-button"
+              onPress={() => router.push("/feedback?to=admin&topic=bow_window")}
+              activeOpacity={0.85}
+              style={[styles.btnSecondaryAlt, { flex: 1 }]}
             >
-              <Text style={[styles.modeTabText, s3.bow_panel_count === "5" && styles.modeTabTextActive]}>
-                5 PANS
-              </Text>
+              <Ionicons name="paper-plane-outline" size={18} color={colors.primary} />
+              <Text style={[styles.btnSecondaryAltText, { color: colors.primary }]}>REMARQUE ADMIN</Text>
             </TouchableOpacity>
           </View>
-          <CotField testID="input-bay-width" label="LARGEUR TOTALE (mm) *" value={s3.bay_width}
-            onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
-          <CotField testID="input-bay-height" label="HAUTEUR TOTALE (mm) *" value={s3.bay_height}
-            onChange={(v) => setField("bay_height", v.replace(",", "."))} error={!!err.bay_height} />
-          <CotField testID="input-bow-depth" label="PROFONDEUR DE PROJECTION P (mm) *" value={s3.bow_depth_projection}
-            onChange={(v) => setField("bow_depth_projection", v.replace(",", "."))} error={!!err.bow_depth_projection} />
-          <Text style={styles.helperText}>
-            ✓ Règle : Profondeur P {"<"} Largeur / 2 pour une saillie réaliste.
+          {/* Formulaire historique masqué — conservé en mémoire pour migration future */}
+          <Text style={[styles.helperText, { fontSize: 11, opacity: 0.55 }]}>
+            ⓘ Le formulaire de saisie est temporairement désactivé. Choisissez
+            une autre forme dans l&apos;étape précédente, ou retournez en arrière.
           </Text>
         </>
       )}
@@ -2162,6 +2159,13 @@ function Step3Cotes({
       {/* 🆕 V2 — Ovale */}
       {shape === "ovale" && (
         <>
+          <ShapeSchemaV2
+            shape="ovale"
+            values={{
+              L: parseNum(s3.bay_width) || undefined,
+              H: parseNum(s3.bay_height) || undefined,
+            }}
+          />
           <Text style={styles.helperText}>
             ⬭ Ovale — Forme ellipsoïdale. Saisissez uniquement la largeur
             et la hauteur totales.
@@ -2176,6 +2180,14 @@ function Step3Cotes({
       {/* 🆕 V3 — Polygone unifié (3/5/6/8 arêtes) */}
       {shape === "polygone" && (
         <>
+          <ShapeSchemaV2
+            shape="polygone"
+            values={{
+              L: parseNum(s3.polygon_bbox_width) || undefined,
+              H: parseNum(s3.polygon_bbox_height) || undefined,
+              panels: parseInt(s3.polygon_edge_count, 10) || 6,
+            }}
+          />
           <Text style={styles.helperText}>
             ⬡ Polygone — Choisissez le nombre d&apos;arêtes, puis renseignez
             la longueur de chaque arête et l&apos;angle de chaque sommet.
@@ -2758,6 +2770,28 @@ const styles = StyleSheet.create({
   btnPrimary: { backgroundColor: colors.primary },
   btnPrimaryText: { color: "#000", fontWeight: "900", fontSize: 14, letterSpacing: 0.8 },
   btnSecondary: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSubtle },
+  // 🆕 V3 — Bouton secondaire utilisé pour les actions "feedback / remarque"
+  //    sur les modules en cours de fabrication (Bow-window).
+  btnSecondaryAlt: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    minHeight: 48,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.borderStrong,
+    backgroundColor: colors.surface,
+  },
+  btnSecondaryAltText: {
+    color: colors.textPrimary,
+    fontWeight: "800",
+    fontSize: 11,
+    letterSpacing: 0.5,
+    textAlign: "center",
+    flexShrink: 1,
+  },
   btnSecondaryText: { color: colors.textPrimary, fontWeight: "800", fontSize: 13, letterSpacing: 0.5 },
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.7)", justifyContent: "center", padding: 20 },
   modalCard: { backgroundColor: colors.surface, borderRadius: 16, padding: 18, borderWidth: 1, borderColor: colors.borderSubtle },
