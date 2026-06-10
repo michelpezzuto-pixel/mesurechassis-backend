@@ -292,7 +292,13 @@ async def register(payload: dict, request: Request):
 
     return {
         "user": user_to_public(user_doc).model_dump(),
-        "verification_link": link,
+        # 🔒 En production (MC_RETURN_VERIF_LINK=0), on NE renvoie PAS le lien
+        # dans la réponse API : l'utilisateur DOIT le récupérer via email.
+        # En preview/dev (MC_RETURN_VERIF_LINK=1), on l'expose pour faciliter
+        # les tests sans avoir à ouvrir sa boîte mail.
+        "verification_link": link
+            if os.getenv("MC_RETURN_VERIF_LINK", "0") == "1"
+            else None,
         "message": (
             "Compte créé. Un email de vérification a été envoyé. "
             "Cliquez sur le lien pour activer votre compte."
