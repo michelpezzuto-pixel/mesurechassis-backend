@@ -39,6 +39,8 @@ type SubscriptionStatus = {
   current_period_end: string | null;
   is_locked: boolean;
   days_left_in_trial: number | null;
+  // 🆕 V3 — Plan choisi à l'inscription (utilisé pour pré-sélection)
+  preferred_plan?: string | null;
 };
 
 type PlanKey = "solo" | "entreprise" | "pro";
@@ -340,6 +342,13 @@ export default function SubscriptionScreen() {
 
             {PLANS.map((plan) => {
               const isCurrent = currentPlanKey === plan.key;
+              // 🆕 V3 — Pré-sélection : si pas d'abonnement actif, on met
+              // en surbrillance le plan choisi à l'inscription. Le badge
+              // "VOTRE CHOIX" remplace le badge "POPULAIRE" et un cadre
+              // orange est appliqué (style `planCardCurrent`).
+              const isPreferred =
+                !status?.has_subscription &&
+                (status?.preferred_plan || "").toLowerCase() === plan.key;
               const isLoading = subscribing === plan.key;
               return (
                 <View
@@ -347,12 +356,17 @@ export default function SubscriptionScreen() {
                   style={[
                     styles.planCard,
                     plan.highlight && styles.planCardHighlight,
-                    isCurrent && styles.planCardCurrent,
+                    (isCurrent || isPreferred) && styles.planCardCurrent,
                   ]}
                 >
-                  {plan.badge && !isCurrent && (
+                  {plan.badge && !isCurrent && !isPreferred && (
                     <View style={styles.badge}>
                       <Text style={styles.badgeText}>{plan.badge}</Text>
+                    </View>
+                  )}
+                  {isPreferred && (
+                    <View style={[styles.badge, styles.badgePreferred]}>
+                      <Text style={styles.badgeText}>VOTRE CHOIX</Text>
                     </View>
                   )}
                   {isCurrent && (
@@ -375,7 +389,7 @@ export default function SubscriptionScreen() {
                     <TouchableOpacity
                       style={[
                         styles.subscribeBtn,
-                        plan.highlight && styles.subscribeBtnHighlight,
+                        (plan.highlight || isPreferred) && styles.subscribeBtnHighlight,
                         isLoading && { opacity: 0.6 },
                       ]}
                       onPress={() => handleSubscribe(plan.key)}
@@ -387,7 +401,9 @@ export default function SubscriptionScreen() {
                         <Text style={styles.subscribeBtnText}>
                           {status?.has_subscription
                             ? "Passer à ce plan"
-                            : "Démarrer l'essai gratuit"}
+                            : isPreferred
+                              ? "Démarrer l'essai gratuit (votre choix)"
+                              : "Démarrer l'essai gratuit"}
                         </Text>
                       )}
                     </TouchableOpacity>
@@ -593,6 +609,8 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   badgeCurrent: { backgroundColor: "#22c55e" },
+  // 🆕 V3 — Badge pour le plan préféré (choisi à l'inscription)
+  badgePreferred: { backgroundColor: colors.primary, top: -10 },
   badgeText: { color: "#000", fontSize: 11, fontWeight: "800" },
   planName: {
     color: colors.textPrimary,

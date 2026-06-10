@@ -253,6 +253,10 @@ class SubscriptionStatus(BaseModel):
     current_period_end: Optional[str] = None
     is_locked: bool  # True = bloquer accès aux fonctionnalités payantes
     days_left_in_trial: Optional[int] = None
+    # 🆕 V3 — Plan préféré choisi à l'inscription (solo/entreprise/pro).
+    # Utilisé par l'app mobile pour pré-sélectionner / surligner le plan
+    # correspondant sur l'écran de souscription.
+    preferred_plan: Optional[str] = None
 
 
 @router.get("/stripe/subscription-status", response_model=SubscriptionStatus)
@@ -269,9 +273,16 @@ async def get_subscription_status(user=Depends(auth_user)):
     if not company:
         return SubscriptionStatus(has_subscription=False, is_locked=True)
 
+    # 🆕 V3 — Récupère le plan préféré dès que possible (utilisé pour pré-sélection).
+    preferred_plan = company.get("preferred_plan")
+
     sub_doc = company.get("subscription") or {}
     if not sub_doc:
-        return SubscriptionStatus(has_subscription=False, is_locked=True)
+        return SubscriptionStatus(
+            has_subscription=False,
+            is_locked=True,
+            preferred_plan=preferred_plan,
+        )
 
     now = datetime.now(timezone.utc)
     status = sub_doc.get("status")
@@ -301,6 +312,7 @@ async def get_subscription_status(user=Depends(auth_user)):
         current_period_end=period_end_str,
         is_locked=is_locked,
         days_left_in_trial=days_left,
+        preferred_plan=preferred_plan,
     )
 
 
