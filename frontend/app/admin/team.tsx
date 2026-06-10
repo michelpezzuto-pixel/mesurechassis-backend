@@ -353,8 +353,8 @@ export default function TeamAdmin() {
                   secureTextEntry={!showMemberPassword}
                   autoCapitalize="none"
                   autoCorrect={false}
-                  autoComplete="off"
-                  textContentType="oneTimeCode"
+                  autoComplete="new-password"
+                  textContentType="newPassword"
                   returnKeyType="done"
                   style={styles.passwordInput}
                 />
