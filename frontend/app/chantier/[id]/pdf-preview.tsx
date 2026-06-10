@@ -31,10 +31,10 @@ import { colors, blockMeta, statusMeta } from "@/src/theme";
 export default function PdfPreview() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [chantier, setChantier] = useState<any | null>(null);
   const [mesures, setMesures] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sharing, setSharing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // ── Loaders ─────────────────────────────────────────────────────────
@@ -48,23 +48,7 @@ export default function PdfPreview() {
       setChantier(c.data);
       setMesures(Array.isArray(m.data) ? m.data : []);
     } catch (e: any) {
-      // Non bloquant — le PDF reste partageable
-      setChantier(null);
-      setMesures([]);
-    }
-  }, [id]);
-
-  const fetchPdfBlobForWeb = useCallback(async () => {
-    if (!id) return;
-    if (Platform.OS !== "web") return;
-    try {
-      const headers = await buildAuthHeaders();
-      const r = await fetch(PDF_URL(String(id)), { headers });
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      const blob = await r.blob();
-      setBlobUrl(URL.createObjectURL(blob));
-    } catch (e: any) {
-      setError(e?.message || "Impossible de charger le PDF web.");
+      setError(e?.message || "Impossible de charger le récapitulatif.");
     }
   }, [id]);
 
@@ -73,30 +57,25 @@ export default function PdfPreview() {
       setLoading(true);
       setError(null);
       await fetchSummary();
-      if (Platform.OS === "web") {
-        await fetchPdfBlobForWeb();
-      }
       setLoading(false);
     })();
-    return () => {
-      if (blobUrl && Platform.OS === "web") {
-        try {
-          URL.revokeObjectURL(blobUrl);
-        } catch {
-          /* noop */
-        }
-      }
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   // ── Share ───────────────────────────────────────────────────────────
+  // 🆕 V3 — Le PDF n'est généré QU'au clic sur "PARTAGER" (cahier des
+  // charges 10/06/2026). La page d'arrivée affiche le récapitulatif
+  // structuré, pas la prévisualisation PDF.
   const handleShare = async () => {
     const fileName = `Recapitulatif_MesureChassis_${id}.pdf`;
+    setSharing(true);
     try {
       if (Platform.OS === "web") {
-        if (!blobUrl) return;
-        const r = await fetch(blobUrl);
+        // Téléchargement à la demande : on récupère le blob et on déclenche
+        // soit le menu de partage natif (Web Share API), soit un download.
+        const headers = await buildAuthHeaders();
+        const r = await fetch(PDF_URL(String(id)), { headers });
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const blob = await r.blob();
         const navAny: any = navigator;
         const file = new File([blob], fileName, { type: "application/pdf" });
@@ -111,12 +90,18 @@ export default function PdfPreview() {
           });
           return;
         }
+        const blobUrl = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = blobUrl;
         a.download = fileName;
         document.body.appendChild(a);
         a.click();
         a.remove();
+        try {
+          URL.revokeObjectURL(blobUrl);
+        } catch {
+          /* noop */
+        }
       } else {
         const FS: any = await import("expo-file-system/legacy");
         const Sharing = await import("expo-sharing");
@@ -131,6 +116,8 @@ export default function PdfPreview() {
       }
     } catch (e: any) {
       Alert.alert("Erreur", e?.message || "Partage impossible.");
+    } finally {
+      setSharing(false);
     }
   };
 
@@ -183,16 +170,22 @@ export default function PdfPreview() {
         <TouchableOpacity
           testID="pdf-share-button"
           onPress={handleShare}
-          disabled={loading}
+          disabled={loading || sharing}
           activeOpacity={0.85}
           style={[
             styles.actionBtn,
             styles.actionPrimary,
-            loading && { opacity: 0.4 },
+            (loading || sharing) && { opacity: 0.4 },
           ]}
         >
-          <Ionicons name="share-social" size={18} color="#000" />
-          <Text style={styles.actionPrimaryText}>PARTAGER</Text>
+          {sharing ? (
+            <ActivityIndicator color="#000" size="small" />
+          ) : (
+            <Ionicons name="share-social" size={18} color="#000" />
+          )}
+          <Text style={styles.actionPrimaryText}>
+            {sharing ? "GÉNÉRATION…" : "PARTAGER"}
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -206,19 +199,6 @@ export default function PdfPreview() {
           <Ionicons name="alert-circle" size={48} color={colors.anomaly} />
           <Text style={styles.error}>{error}</Text>
         </View>
-      ) : Platform.OS === "web" && blobUrl ? (
-        // @ts-ignore — web iframe via createElement
-        React.createElement("iframe", {
-          src: blobUrl,
-          style: {
-            flex: 1,
-            width: "100%",
-            height: "100%",
-            border: "none",
-            backgroundColor: "#fff",
-          },
-          title: "Récapitulatif de Mesure PDF",
-        })
       ) : (
         <ScrollView
           contentContainerStyle={styles.scrollBody}

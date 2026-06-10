@@ -1691,16 +1691,7 @@ export default function ChantierDetail() {
 
       <View style={styles.footer}>
         {chantier.status !== "cloture" && (() => {
-          // Qui peut faire avancer le pipeline selon le statut courant ?
-          //  devis_a_faire        → Admin SEUL (transmet au Commercial)
-          //  a_mesurer            → Commercial SEUL (transmet au Technicien)
-          //  technique_a_valider  → Technicien SEUL (valide la fab)
-          //  en_fabrication       → Technicien SEUL (marque terminé)
-          // ⚠️ L'Admin ne peut PAS clôturer un chantier déjà transmis
-          // (a_mesurer/etc.). Idem pour le Commercial sur les étapes
-          // post-transmission.
-          // En mode solo/artisan : l'Admin a tous les droits car il
-          // joue tous les rôles à lui seul.
+          // ... (RBAC logic identical to before)
           const status = chantier.status;
           let canCloseStep = false;
           if (isSoloArtisan || isArtisanAccount || artisanMode) {
@@ -1717,17 +1708,15 @@ export default function ChantierDetail() {
           ) {
             canCloseStep = roleIsTechnician;
           }
-          if (!canCloseStep) return null;
-          // 📤 Cas spécial Admin Entreprise en statut "devis_a_faire" :
-          // au lieu d'un simple bouton "CLÔTURER", on propose un bouton CTA
-          // dédié "ENVOYER À UN COMMERCIAL" qui combine l'affectation
-          // au commercial choisi + la transition de statut vers a_mesurer.
           const isAdminEntreprise =
             roleIsAdmin &&
             !isSoloArtisan &&
             !isArtisanAccount &&
             !artisanMode;
-          if (isAdminEntreprise && status === "devis_a_faire") {
+          // 📤 Cas spécial : "ENVOYER À UN COMMERCIAL" reste full-width
+          //    car c'est le CTA principal pour faire avancer le chantier
+          //    depuis l'état initial.
+          if (canCloseStep && isAdminEntreprise && status === "devis_a_faire") {
             return (
               <TouchableOpacity
                 testID="send-to-commercial-button"
@@ -1742,46 +1731,58 @@ export default function ChantierDetail() {
               </TouchableOpacity>
             );
           }
+          // 🆕 V3 — Grille uniforme à 3 boutons IDENTIQUES (cahier 10/06/2026).
+          //    Chaque action principale prend la même largeur sur une seule
+          //    ligne pour libérer la liste d'ouvertures au-dessus.
+          const showClose = canCloseStep;
+          const showAdd = canEditMesures;
+          const showEditWall =
+            canEditMesures && !!chantier?.wall_config?.masonry_type;
+          if (!showClose && !showAdd && !showEditWall) return null;
           return (
-            <TouchableOpacity
-              testID="close-project-button"
-              onPress={() => router.push(`/chantier/${id}/closure`)}
-              style={[styles.btn, styles.btnSecondary]}
-              activeOpacity={0.7}
-            >
-              <Ionicons
-                name="flag-outline"
-                size={20}
-                color={colors.textPrimary}
-              />
-              <Text style={styles.btnSecondaryText}>CLÔTURER</Text>
-            </TouchableOpacity>
+            <View style={styles.actionGrid}>
+              {showClose && (
+                <TouchableOpacity
+                  testID="close-project-button"
+                  onPress={() => router.push(`/chantier/${id}/closure`)}
+                  style={[styles.gridBtn, styles.gridBtnSecondary]}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons
+                    name="flag-outline"
+                    size={20}
+                    color={colors.textPrimary}
+                  />
+                  <Text style={styles.gridBtnTextSecondary}>CLÔTURER</Text>
+                </TouchableOpacity>
+              )}
+              {showAdd && (
+                <TouchableOpacity
+                  testID="add-mesure-button"
+                  onPress={() => router.push(`/chantier/${id}/new-mesure`)}
+                  style={[styles.gridBtn, styles.gridBtnPrimary]}
+                  activeOpacity={0.85}
+                >
+                  <Ionicons name="add" size={22} color="#000" />
+                  <Text style={styles.gridBtnTextPrimary}>AJOUTER</Text>
+                </TouchableOpacity>
+              )}
+              {showEditWall && (
+                <TouchableOpacity
+                  testID="edit-wall-config-button"
+                  onPress={() => router.push(`/chantier/${id}/new-mesure?edit_wall_config=1`)}
+                  style={[styles.gridBtn, styles.gridBtnSecondary]}
+                  activeOpacity={0.85}
+                >
+                  <Ionicons name="construct-outline" size={20} color={colors.primary} />
+                  <Text style={[styles.gridBtnTextSecondary, { color: colors.primary }]}>
+                    MUR
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
           );
         })()}
-        {canEditMesures && (
-          <TouchableOpacity
-            testID="add-mesure-button"
-            onPress={() => router.push(`/chantier/${id}/new-mesure`)}
-            style={[styles.btn, styles.btnPrimaryCompact]}
-            activeOpacity={0.85}
-          >
-            <Ionicons name="add" size={22} color="#000" />
-            <Text style={styles.btnPrimaryTextCompact}>AJOUTER</Text>
-          </TouchableOpacity>
-        )}
-        {canEditMesures && chantier?.wall_config?.masonry_type && (
-          <TouchableOpacity
-            testID="edit-wall-config-button"
-            onPress={() => router.push(`/chantier/${id}/new-mesure?edit_wall_config=1`)}
-            style={[styles.btn, styles.btnSecondary]}
-            activeOpacity={0.85}
-          >
-            <Ionicons name="construct-outline" size={20} color={colors.primary} />
-            <Text style={[styles.btnSecondaryText, { color: colors.primary }]}>
-              MODIFIER LA STRUCTURE DU MUR
-            </Text>
-          </TouchableOpacity>
-        )}
       </View>
 
       <Modal visible={assignOpen} transparent animationType="fade" onRequestClose={() => setAssignOpen(false)}>
@@ -2428,6 +2429,42 @@ const styles = StyleSheet.create({
   btnPrimaryTextCompact: { color: "#000", fontWeight: "900", fontSize: 13, letterSpacing: 0.8 },
   btnSecondary: { borderWidth: 2, borderColor: colors.borderStrong },
   btnSecondaryText: { color: colors.textPrimary, fontWeight: "800", letterSpacing: 1 },
+  // 🆕 V3 — Barre d'actions UNIFORME (cahier 10/06/2026) :
+  //    3 boutons identiques (même taille) sur une seule ligne pour
+  //    libérer l'espace au profit de la liste d'ouvertures.
+  actionGrid: {
+    flexDirection: "row",
+    gap: 8,
+    alignItems: "stretch",
+  },
+  gridBtn: {
+    flex: 1,
+    minHeight: 56,
+    borderRadius: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 6,
+    gap: 6,
+  },
+  gridBtnPrimary: { backgroundColor: colors.primary },
+  gridBtnTextPrimary: {
+    color: "#000",
+    fontWeight: "900",
+    fontSize: 12,
+    letterSpacing: 0.6,
+  },
+  gridBtnSecondary: {
+    borderWidth: 2,
+    borderColor: colors.borderStrong,
+    backgroundColor: colors.surface,
+  },
+  gridBtnTextSecondary: {
+    color: colors.textPrimary,
+    fontWeight: "800",
+    fontSize: 12,
+    letterSpacing: 0.6,
+  },
   // Modales (overlay sombre + carte centrée) — utilisés par AFFECTER,
   // ENVOYER À UN COMMERCIAL et MODIFIER LE CHANTIER.
   modalOverlay: {
