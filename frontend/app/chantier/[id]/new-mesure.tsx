@@ -2080,37 +2080,36 @@ function Step3Cotes({
         </>
       )}
 
-      {/* 🆕 V3 — Bow-Window : module en cours de fabrication (cahier 10/06/2026) */}
+      {/* 🆕 V3 — Bow-Window : module en cours de fabrication (cahier 10/06/2026 v2) */}
       {shape === "bow_window" && (
         <>
-          <View style={[styles.inlineHintBox, { marginTop: 8, backgroundColor: "rgba(255,165,0,0.10)", borderColor: "rgba(255,165,0,0.45)" }]}>
-            <Ionicons name="construct" size={18} color={colors.warning} />
-            <Text style={[styles.inlineHintText, { color: colors.warning, fontWeight: "800" }]}>
-              🚧 Ce module est en cours de fabrication.{"\n"}Merci de revenir plus tard ou de nous envoyer vos retours via les boutons ci-dessous pour prioriser son développement.
+          <View style={[styles.inlineHintBox, { marginTop: 8, backgroundColor: "rgba(255,165,0,0.10)", borderColor: "rgba(255,165,0,0.45)", flexDirection: "column", alignItems: "flex-start" }]}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+              <Ionicons name="construct" size={18} color={colors.warning} />
+              <Text style={[styles.inlineHintText, { color: colors.warning, fontWeight: "800", flex: 1 }]}>
+                🚧 Ce module est en cours de fabrication.
+              </Text>
+            </View>
+            <Text style={[styles.inlineHintText, { color: colors.textPrimary, marginTop: 8, lineHeight: 18 }]}>
+              N&apos;hésitez pas à nous envoyer vos idées ou vos techniques de
+              mesure pour compléter ce module.{"\n\n"}
+              Comment améliorer la fonction Bow-Window ? Comment vous
+              faciliter la tâche en nous indiquant votre expertise dans le
+              choix des mesures ?
             </Text>
           </View>
-          <View style={{ flexDirection: "row", gap: 8, marginTop: 12, marginBottom: 12 }}>
-            <TouchableOpacity
-              testID="bow-feedback-button"
-              onPress={() => router.push("/feedback")}
-              activeOpacity={0.85}
-              style={[styles.btnSecondaryAlt, { flex: 1 }]}
-            >
-              <Ionicons name="chatbubble-ellipses-outline" size={18} color={colors.textPrimary} />
-              <Text style={styles.btnSecondaryAltText}>ENVOYER UN FEEDBACK</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              testID="bow-remark-admin-button"
-              onPress={() => router.push("/feedback?to=admin&topic=bow_window")}
-              activeOpacity={0.85}
-              style={[styles.btnSecondaryAlt, { flex: 1 }]}
-            >
-              <Ionicons name="paper-plane-outline" size={18} color={colors.primary} />
-              <Text style={[styles.btnSecondaryAltText, { color: colors.primary }]}>REMARQUE ADMIN</Text>
-            </TouchableOpacity>
-          </View>
-          {/* Formulaire historique masqué — conservé en mémoire pour migration future */}
-          <Text style={[styles.helperText, { fontSize: 11, opacity: 0.55 }]}>
+          <TouchableOpacity
+            testID="bow-expertise-admin-button"
+            onPress={() => router.push("/feedback?to=admin&topic=bow_window")}
+            activeOpacity={0.85}
+            style={[styles.btn, styles.btnPrimary, { marginTop: 14, marginBottom: 6 }]}
+          >
+            <Ionicons name="paper-plane" size={18} color="#000" />
+            <Text style={styles.btnPrimaryText}>
+              ENVOYER VOS REMARQUES / EXPERTISE À L&apos;ADMINISTRATEUR
+            </Text>
+          </TouchableOpacity>
+          <Text style={[styles.helperText, { fontSize: 11, opacity: 0.55, marginTop: 6 }]}>
             ⓘ Le formulaire de saisie est temporairement désactivé. Choisissez
             une autre forme dans l&apos;étape précédente, ou retournez en arrière.
           </Text>

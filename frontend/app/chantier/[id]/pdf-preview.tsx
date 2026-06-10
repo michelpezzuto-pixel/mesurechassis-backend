@@ -420,6 +420,74 @@ export default function PdfPreview() {
               Mail, Files, AirDrop ou une autre app.
             </Text>
           </View>
+
+          {/* 🆕 V3 — Message incitatif feedback (cahier 10/06/2026 v2) */}
+          <View
+            style={{
+              marginTop: 16,
+              padding: 14,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: "rgba(255,107,26,0.35)",
+              backgroundColor: "rgba(255,107,26,0.06)",
+              flexDirection: "row",
+              alignItems: "flex-start",
+              gap: 10,
+            }}
+          >
+            <Ionicons
+              name="chatbubble-ellipses-outline"
+              size={18}
+              color={colors.primary}
+              style={{ marginTop: 2 }}
+            />
+            <View style={{ flex: 1 }}>
+              <Text
+                style={{
+                  color: colors.primary,
+                  fontWeight: "800",
+                  fontSize: 12,
+                  letterSpacing: 0.4,
+                  marginBottom: 4,
+                }}
+              >
+                💡 UNE MESURE MANQUE ? UNE DIFFICULTÉ RENCONTRÉE ?
+              </Text>
+              <Text
+                style={{
+                  color: colors.textPrimary,
+                  fontSize: 12,
+                  lineHeight: 17,
+                  marginBottom: 10,
+                }}
+              >
+                N&apos;hésitez pas à nous envoyer vos suggestions. Votre
+                expertise aide à améliorer MesureChâssis.
+              </Text>
+              <TouchableOpacity
+                testID="pdf-feedback-button"
+                onPress={() => router.push("/feedback")}
+                activeOpacity={0.85}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 6,
+                  paddingVertical: 8,
+                  paddingHorizontal: 12,
+                  borderRadius: 8,
+                  borderWidth: 1,
+                  borderColor: colors.primary,
+                  alignSelf: "flex-start",
+                }}
+              >
+                <Ionicons name="paper-plane-outline" size={14} color={colors.primary} />
+                <Text style={{ color: colors.primary, fontWeight: "800", fontSize: 11 }}>
+                  ENVOYER UNE SUGGESTION
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </ScrollView>
       )}
     </SafeAreaView>

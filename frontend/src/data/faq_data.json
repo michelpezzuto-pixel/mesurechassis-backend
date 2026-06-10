@@ -123,5 +123,40 @@
     "id": "25",
     "question": "Mes données sont-elles sécurisées ?",
     "answer": "Oui. Vos données sont hébergées dans des serveurs européens (Railway, Belgique). Aucune donnée n'est partagée avec des tiers à des fins publicitaires. Consultez notre politique de confidentialité : https://www.mesurechassis.com/confidentialite.html"
+  },
+  {
+    "id": "26",
+    "question": "Comment saisir un Polygone (Triangle, Pentagone, Hexagone, Octogone) ?",
+    "answer": "Dans le wizard de mesure, choisissez la forme « POLYGONE » (lettre P) puis sélectionnez le nombre d'arêtes (3, 5, 6 ou 8). Saisie obligatoire : Largeur et Hauteur hors-tout, longueur d'une arête. Saisie facultative : angle de chaque sommet (par défaut : 60° pour 3, 108° pour 5, 120° pour 6, 135° pour 8). Le schéma SVG se met à jour en temps réel."
+  },
+  {
+    "id": "27",
+    "question": "Comment vérifier la longueur d'un arc (plein cintre / arc surbaissé) ?",
+    "answer": "Après avoir saisi Largeur + Hauteur d'appui H1 + Hauteur totale H2, le champ « VÉRIFICATION DE L'ARC » affiche la longueur calculée par l'application. Suivez la courbe avec votre mètre ruban (uniquement la partie courbe, pas les jambages), saisissez votre mesure, et le badge ✓ VÉRIFIÉ ou ✗ ÉCART s'affiche automatiquement (tolérance ±1 % ou ±15 mm)."
+  },
+  {
+    "id": "28",
+    "question": "Comment saisir un pan coupé (Angle 90°) ?",
+    "answer": "Choisissez « PAN COUPÉ » dans le wizard. Sélectionnez le côté coupé : GAUCHE, DROITE ou LES DEUX. Vous pouvez saisir des hauteurs gauche/droite asymétriques (Hg ≠ Hd), la largeur et la hauteur du pan, et un angle personnalisé (135° par défaut). Les annotations s'affichent directement DANS la zone du pan coupé sur le schéma."
+  },
+  {
+    "id": "29",
+    "question": "Le module Bow-Window est-il disponible ?",
+    "answer": "Pas encore. Le module est en cours de fabrication. En attendant, vous pouvez nous envoyer vos remarques ou votre expertise (techniques de mesure, idées d'amélioration) via le bouton « ENVOYER VOS REMARQUES / EXPERTISE À L'ADMINISTRATEUR » qui s'affiche quand vous sélectionnez Bow-Window."
+  },
+  {
+    "id": "30",
+    "question": "Comment fonctionne la nouvelle liste compacte d'ouvertures ?",
+    "answer": "Les blocs d'ouvertures sont désormais plus petits pour doubler la densité d'affichage. Un simple tap sur la carte ouvre directement le détail. La suppression se fait via l'icône corbeille rouge intégrée à la carte (plus de bouton textuel)."
+  },
+  {
+    "id": "31",
+    "question": "À quoi sert la vue récapitulatif PDF ?",
+    "answer": "C'est la nouvelle vue par défaut quand vous touchez « PDF ». Elle affiche le récapitulatif structuré (chantier + structure du mur + toutes les ouvertures avec leurs cotes) en lecture seule. Le PDF n'est généré qu'au clic sur « PARTAGER » : c'est plus rapide et économe en données mobiles."
+  },
+  {
+    "id": "32",
+    "question": "Comment simplifier la saisie d'une forme ovale ?",
+    "answer": "L'ovale a été simplifié : seulement la Largeur totale + Hauteur totale sont demandées. Le schéma SVG affiche automatiquement l'ellipse correspondante."
   }
 ]

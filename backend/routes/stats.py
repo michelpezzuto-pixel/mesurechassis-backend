@@ -139,7 +139,11 @@ async def stats_commercials(user=Depends(require_admin)):
 
 @router.get("/stats/commercials/export.pdf")
 async def stats_commercials_pdf(user=Depends(require_admin)):
+    # 🆕 V3 — Rapport enrichi avec les données globales de l'entreprise
+    #    (cahier 10/06/2026 v2 : "afficher les données réelles : chantiers,
+    #    taux, alertes — pas de page vide").
     data = await stats_commercials(user)
+    company_stats = await stats_company(user)
     buf = io.BytesIO()
     doc = SimpleDocTemplate(
         buf, pagesize=A4, title="Rapport Performance Commerciaux"
@@ -165,40 +169,109 @@ async def stats_commercials_pdf(user=Depends(require_admin)):
             styles["Normal"],
         )
     )
-    story.append(Spacer(1, 8))
-    story.append(
-        Paragraph(
-            f"<b>Total chantiers créés :</b> {data['total_created']}  ·  "
-            f"<b>Convertis :</b> {data['total_converted']}  ·  "
-            f"<b>Taux global :</b> {data['global_conversion_rate']}%",
-            styles["Normal"],
-        )
-    )
-    story.append(Spacer(1, 18))
-    rows = [["Commercial", "Email", "Créés", "Convertis", "Conversion %"]]
-    for r in data["commercials"]:
-        rows.append(
-            [
-                r["name"],
-                r["email"],
-                str(r["created"]),
-                str(r["converted"]),
-                f"{r['conversion_rate']}%",
-            ]
-        )
-    tbl = Table(rows, colWidths=[110, 170, 60, 70, 80])
-    tbl.setStyle(
+    story.append(Spacer(1, 14))
+
+    # ─── KPIs globaux ──────────────────────────────────────────────────
+    story.append(Paragraph("<b>📊 INDICATEURS GLOBAUX</b>", styles["Heading2"]))
+    kpi_rows = [
+        ["Chantiers créés", str(data["total_created"])],
+        ["Chantiers convertis", str(data["total_converted"])],
+        ["Taux de conversion global", f"{data['global_conversion_rate']}%"],
+        ["Taux de clôture", f"{company_stats.get('closure_rate', 0)}%"],
+        ["Total mesures saisies", str(company_stats.get("total_mesures", 0))],
+        ["Total alertes techniques", str(company_stats.get("total_alerts", 0))],
+    ]
+    kpi_tbl = Table(kpi_rows, colWidths=[280, 200])
+    kpi_tbl.setStyle(
         TableStyle(
             [
-                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#FF5A00")),
-                ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("BACKGROUND", (0, 0), (0, -1), colors.HexColor("#F5F5F5")),
+                ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
                 ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
-                ("ALIGN", (2, 0), (-1, -1), "RIGHT"),
+                ("ALIGN", (1, 0), (1, -1), "RIGHT"),
+                ("FONTSIZE", (0, 0), (-1, -1), 11),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+                ("TOPPADDING", (0, 0), (-1, -1), 6),
             ]
         )
     )
-    story.append(tbl)
+    story.append(kpi_tbl)
+    story.append(Spacer(1, 18))
+
+    # ─── Répartition des chantiers par statut ──────────────────────────
+    status_data = company_stats.get("by_status", {})
+    status_labels = {
+        "devis_a_faire": "Devis à faire",
+        "a_mesurer": "À mesurer",
+        "a_verifier": "À vérifier",
+        "technique_a_valider": "Technique à valider",
+        "en_fabrication": "En fabrication",
+        "en_commande": "En commande",
+        "cloture": "Clôturé",
+        "refuse": "Refusé",
+    }
+    story.append(Paragraph("<b>🏗 RÉPARTITION DES CHANTIERS PAR STATUT</b>", styles["Heading2"]))
+    status_rows = [["Statut", "Nombre"]]
+    for key, label in status_labels.items():
+        if key in status_data:
+            status_rows.append([label, str(status_data[key])])
+    if len(status_rows) > 1:
+        status_tbl = Table(status_rows, colWidths=[280, 200])
+        status_tbl.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#FF5A00")),
+                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                    ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                    ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+                    ("ALIGN", (1, 1), (1, -1), "RIGHT"),
+                ]
+            )
+        )
+        story.append(status_tbl)
+    else:
+        story.append(Paragraph("<i>Aucun chantier créé pour le moment.</i>", styles["Italic"]))
+    story.append(Spacer(1, 18))
+
+    # ─── Tableau des commerciaux ───────────────────────────────────────
+    story.append(Paragraph("<b>👤 DÉTAIL PAR COMMERCIAL</b>", styles["Heading2"]))
+    rows = [["Commercial", "Email", "Créés", "Convertis", "Conversion %"]]
+    if data["commercials"]:
+        for r in data["commercials"]:
+            rows.append(
+                [
+                    r["name"],
+                    r["email"],
+                    str(r["created"]),
+                    str(r["converted"]),
+                    f"{r['conversion_rate']}%",
+                ]
+            )
+        tbl = Table(rows, colWidths=[110, 170, 60, 70, 80])
+        tbl.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#FF5A00")),
+                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                    ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                    ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+                    ("ALIGN", (2, 0), (-1, -1), "RIGHT"),
+                ]
+            )
+        )
+        story.append(tbl)
+    else:
+        story.append(Paragraph("<i>Aucun commercial enregistré pour cette société.</i>", styles["Italic"]))
+
+    # ─── Pied de page ──────────────────────────────────────────────────
+    story.append(Spacer(1, 24))
+    story.append(
+        Paragraph(
+            "<i>Rapport généré automatiquement par MesureChâssis.</i>",
+            styles["Italic"],
+        )
+    )
+
     doc.build(story)
     buf.seek(0)
     return StreamingResponse(
