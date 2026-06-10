@@ -22,6 +22,7 @@ from reportlab.platypus import (Image as RLImage, Paragraph,
 from db import db
 from deps import require_active_subscription
 from utils import WALL_TYPE_LABELS, block_label, status_label
+from i18n_labels import pdf_labels, status_label_i18n
 
 router = APIRouter()
 
@@ -88,8 +89,16 @@ def restrict_advanced_exports(
 # ---------------------------- PDF --------------------------------------
 @router.get("/chantiers/{chantier_id}/export.pdf")
 async def export_pdf(
-    chantier_id: str, user=Depends(block_free_plan_exports)
+    chantier_id: str,
+    lang: str = "fr",
+    user=Depends(block_free_plan_exports),
 ):
+    """Export PDF avec support multilingue FR/NL/EN via `?lang=`.
+
+    La langue détermine tous les libellés visibles (en-tête, statuts, champs
+    de mesures, sections photos). Fallback FR si langue non reconnue.
+    """
+    L = pdf_labels(lang)
     chantier = await db.chantiers.find_one(
         {
             "id": chantier_id,
@@ -151,7 +160,7 @@ async def export_pdf(
         ),
         Spacer(1, 2),
         Paragraph(
-            '<font size="8" color="#666666">via MesureChâssis</font>',
+            f'<font size="8" color="#666666">{L["via"]}</font>',
             styles["Normal"],
         ),
     ]
@@ -175,8 +184,7 @@ async def export_pdf(
     # Bandeau orange "DOCUMENT INTERNE"
     internal_banner = Table(
         [[Paragraph(
-            '<font color="#FFFFFF" size="9"><b>DOCUMENT INTERNE</b> — '
-            "Fiche technique de mesurage, usage strictement interne</font>",
+            f'<font color="#FFFFFF" size="9">{L["internal_banner"]}</font>',
             styles["Normal"],
         )]],
         colWidths=[160 * mm],
@@ -197,31 +205,31 @@ async def export_pdf(
 
     story.append(
         Paragraph(
-            "<b>Fiche Chantier</b>",
+            f"<b>{L['fiche']}</b>",
             styles["Title"],
         )
     )
     story.append(Spacer(1, 8))
     story.append(
-        Paragraph(f"<b>Client :</b> {chantier['client_name']}", styles["Normal"])
+        Paragraph(f"<b>{L['client']} :</b> {chantier['client_name']}", styles["Normal"])
     )
     story.append(
-        Paragraph(f"<b>Adresse :</b> {chantier['address']}", styles["Normal"])
+        Paragraph(f"<b>{L['address']} :</b> {chantier['address']}", styles["Normal"])
     )
     story.append(
         Paragraph(
-            f"<b>Statut :</b> {status_label(chantier['status'])}",
+            f"<b>{L['status']} :</b> {status_label_i18n(chantier['status'], lang)}",
             styles["Normal"],
         )
     )
     story.append(
         Paragraph(
-            f"<b>Date :</b> {chantier['created_at'][:10]}", styles["Normal"]
+            f"<b>{L['date']} :</b> {chantier['created_at'][:10]}", styles["Normal"]
         )
     )
     story.append(Spacer(1, 18))
     story.append(
-        Paragraph(f"<b>Ouvertures ({len(mesures)})</b>", styles["Heading2"])
+        Paragraph(f"<b>{L['openings_section']} ({len(mesures)})</b>", styles["Heading2"])
     )
 
     for i, m in enumerate(mesures, 1):
@@ -232,63 +240,63 @@ async def export_pdf(
                 styles["Heading3"],
             )
         )
-        rows = [["Mesure", "Valeur (mm)"]]
+        rows = [[L["measure_col"], L["value_col"]]]
         opts = m.get("options") or {}
         fields = [
-            ("Hauteur baie", m.get("bay_height")),
-            ("Largeur baie", m.get("bay_width")),
-            ("Diagonale 1", m.get("bay_diagonal_1") or m.get("bay_diagonal")),
-            ("Diagonale 2", m.get("bay_diagonal_2") or m.get("bay_diagonal")),
-            ("Réserve Sol Fini", m.get("floor_reserve")),
-            ("Épaisseur Bloc Béton", m.get("bloc_thickness")),
-            ("Épaisseur Isolant", m.get("insulation_thickness")),
-            ("Finition extérieure", m.get("finish_outer")),
-            ("Finition intérieure", m.get("finish_inner")),
-            ("Type paroi", m.get("wall_type")),
+            (L["field"]["bay_height"], m.get("bay_height")),
+            (L["field"]["bay_width"], m.get("bay_width")),
+            (L["field"]["bay_diagonal_1"], m.get("bay_diagonal_1") or m.get("bay_diagonal")),
+            (L["field"]["bay_diagonal_2"], m.get("bay_diagonal_2") or m.get("bay_diagonal")),
+            (L["field"]["floor_reserve"], m.get("floor_reserve")),
+            (L["field"]["bloc_thickness"], m.get("bloc_thickness")),
+            (L["field"]["insulation_thickness"], m.get("insulation_thickness")),
+            (L["field"]["finish_outer"], m.get("finish_outer")),
+            (L["field"]["finish_inner"], m.get("finish_inner")),
+            (L["field"]["wall_type"], m.get("wall_type")),
             # === Champs options (Étape 3 — wizard V2) ===
-            ("Allège — présence", "OUI" if opts.get("has_breastwork") else None),
-            ("Allège — hauteur", opts.get("breastwork_height_mm")),
-            ("Feuillure gauche", opts.get("feuillure_left_mm")),
-            ("Feuillure droite", opts.get("feuillure_right_mm")),
-            ("Feuillure haute", opts.get("feuillure_top_mm")),
-            ("Seuil — déjà posé", "OUI" if opts.get("sill_already_installed") is True else ("NON" if opts.get("sill_already_installed") is False else None)),
-            ("Seuil — épaisseur future", opts.get("sill_thickness_mm")),
-            ("Coupe horizontale", "OUI" if opts.get("has_horizontal_cut") else None),
-            ("Trait 1m — actif", "OUI" if opts.get("has_1m_level_mark") else None),
-            ("Trait 1m — mesure brute", opts.get("trait_1m_brut_mm")),
+            (L["field"]["breastwork_present"], L["yes"] if opts.get("has_breastwork") else None),
+            (L["field"]["breastwork_height"], opts.get("breastwork_height_mm")),
+            (L["field"]["feuillure_left"], opts.get("feuillure_left_mm")),
+            (L["field"]["feuillure_right"], opts.get("feuillure_right_mm")),
+            (L["field"]["feuillure_top"], opts.get("feuillure_top_mm")),
+            (L["field"]["sill_installed"], L["yes"] if opts.get("sill_already_installed") is True else (L["no"] if opts.get("sill_already_installed") is False else None)),
+            (L["field"]["sill_thickness"], opts.get("sill_thickness_mm")),
+            (L["field"]["horizontal_cut"], L["yes"] if opts.get("has_horizontal_cut") else None),
+            (L["field"]["mark_1m_active"], L["yes"] if opts.get("has_1m_level_mark") else None),
+            (L["field"]["mark_1m_brut"], opts.get("trait_1m_brut_mm")),
             # Spécifiques formes
-            ("Triangle — base", opts.get("triangle_base_mm")),
-            ("Triangle — hauteur", opts.get("triangle_height_mm")),
-            ("Œil-de-bœuf — diamètre", opts.get("oeil_diameter_mm")),
-            ("Porte garage — linteau", opts.get("garage_lintel_mm")),
-            ("Porte garage — écoinçon gauche", opts.get("garage_ecoincon_left_mm")),
-            ("Porte garage — écoinçon droit", opts.get("garage_ecoincon_right_mm")),
+            (L["field"]["triangle_base"], opts.get("triangle_base_mm")),
+            (L["field"]["triangle_height"], opts.get("triangle_height_mm")),
+            (L["field"]["oeil_diameter"], opts.get("oeil_diameter_mm")),
+            (L["field"]["garage_lintel"], opts.get("garage_lintel_mm")),
+            (L["field"]["garage_ecoincon_left"], opts.get("garage_ecoincon_left_mm")),
+            (L["field"]["garage_ecoincon_right"], opts.get("garage_ecoincon_right_mm")),
             # Legacy
-            ("Largeur haut", m.get("width_top")),
-            ("Largeur milieu", m.get("width_middle")),
-            ("Largeur bas", m.get("width_bottom")),
-            ("Hauteur gauche", m.get("height_left")),
-            ("Hauteur milieu", m.get("height_middle")),
-            ("Hauteur droite", m.get("height_right")),
-            ("Diagonale 1", m.get("diag_1")),
-            ("Diagonale 2", m.get("diag_2")),
-            ("Hauteur 1/4 gauche", m.get("height_quarter_left")),
-            ("Hauteur 1/4 droite", m.get("height_quarter_right")),
-            ("Hauteur petite", m.get("height_small")),
-            ("Hauteur grande", m.get("height_large")),
-            ("Largeur petite", m.get("width_small")),
-            ("Largeur intermédiaire", m.get("width_intermediate")),
+            (L["field"]["width_top"], m.get("width_top")),
+            (L["field"]["width_middle"], m.get("width_middle")),
+            (L["field"]["width_bottom"], m.get("width_bottom")),
+            (L["field"]["height_left"], m.get("height_left")),
+            (L["field"]["height_middle"], m.get("height_middle")),
+            (L["field"]["height_right"], m.get("height_right")),
+            (L["field"]["diag_1"], m.get("diag_1")),
+            (L["field"]["diag_2"], m.get("diag_2")),
+            (L["field"]["height_quarter_left"], m.get("height_quarter_left")),
+            (L["field"]["height_quarter_right"], m.get("height_quarter_right")),
+            (L["field"]["height_small"], m.get("height_small")),
+            (L["field"]["height_large"], m.get("height_large")),
+            (L["field"]["width_small"], m.get("width_small")),
+            (L["field"]["width_intermediate"], m.get("width_intermediate")),
         ]
         for label, val in fields:
             if val is not None:
-                if label == "Type paroi":
+                if label == L["field"]["wall_type"]:
                     rows.append(
                         [label, WALL_TYPE_LABELS.get(str(val), str(val))]
                     )
                 else:
                     rows.append([label, str(val)])
         if m.get("slope_angle_deg") is not None:
-            rows.append(["Angle de pente", f"{m['slope_angle_deg']}°"])
+            rows.append([L["slope_angle"], f"{m['slope_angle_deg']}°"])
         tbl = Table(rows, colWidths=[260, 200])
         tbl.setStyle(
             TableStyle(
@@ -316,14 +324,13 @@ async def export_pdf(
         story.append(Spacer(1, 18))
         story.append(
             Paragraph(
-                f"<b>📷 Photos chantier — Anti-litige ({len(site_photos)})</b>",
+                f"<b>{L['photos_section']} ({len(site_photos)})</b>",
                 styles["Heading2"],
             )
         )
         story.append(
             Paragraph(
-                '<font size="9" color="#666666"><i>Preuves photographiques '
-                "de l'état existant au moment de la prise de mesures.</i></font>",
+                f'<font size="9" color="#666666"><i>{L["photos_caption"]}</i></font>',
                 styles["Normal"],
             )
         )
@@ -342,7 +349,7 @@ async def export_pdf(
         row: list[Any] = []
         for idx, ph in enumerate(site_photos, 1):
             uri = ph.get("uri") or ""
-            caption = (ph.get("caption") or "").strip() or f"Photo {idx}"
+            caption = (ph.get("caption") or "").strip() or L["photo_default_caption"].format(idx=idx)
             cell_content: list[Any] = []
             try:
                 if uri.startswith("data:"):
@@ -358,7 +365,7 @@ async def export_pdf(
             except Exception:
                 cell_content.append(
                     Paragraph(
-                        f'<font color="#999999">[Photo {idx} illisible]</font>',
+                        f'<font color="#999999">[{L["photo_unreadable"].format(idx=idx)}]</font>',
                         styles["Normal"],
                     )
                 )
@@ -1055,3 +1062,4 @@ async def export_erp_xml(
             )
         },
     )
+

@@ -1,10 +1,12 @@
 /**
  * Step2Shape — Wizard Étape 2/3 : sélection de la forme du châssis.
  * Extrait de new-mesure.tsx (refacto V3 — juin 2026).
+ * 🌍 i18n — Labels & descriptions traduits via `wizard.shapes.<key>.label/desc`.
  */
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { ShapeIcon } from "@/src/components/ShapeIcon";
 import { colors } from "@/src/theme";
 import { wizardStyles as styles } from "./wizardStyles";
@@ -17,17 +19,21 @@ export function Step2Shape({
   onPick: (s: Shape) => void;
   current: Shape | null;
 }) {
+  const { t } = useTranslation();
   return (
     <View>
-      <Text style={styles.h1}>SÉLECTION DE LA MENUISERIE</Text>
-      <Text style={styles.h2}>Étape 2/3 · Choisissez la forme exacte du châssis</Text>
-      <Text style={styles.helperText}>
-        Le type d&apos;ouvrant (Fixe, Ouvrant, Oscillo-battant, Coulissant) sera défini en atelier via
-        le libellé / référence saisi à l&apos;étape suivante.
-      </Text>
+      <Text style={styles.h1}>{t("wizard.step2.title")}</Text>
+      <Text style={styles.h2}>{t("wizard.step2.subtitle")}</Text>
+      <Text style={styles.helperText}>{t("wizard.step2.helperText")}</Text>
       <View style={{ gap: 10, marginTop: 16 }}>
         {SHAPES.map((s) => {
           const active = current === s.key;
+          const label = t(`wizard.shapes.${s.key}.label`, {
+            defaultValue: s.label,
+          });
+          const desc = t(`wizard.shapes.${s.key}.desc`, {
+            defaultValue: s.desc,
+          });
           return (
             <TouchableOpacity
               key={s.key}
@@ -48,8 +54,8 @@ export function Step2Shape({
                 />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={[styles.shapeTitle, active && { color: colors.primary }]}>{s.label}</Text>
-                <Text style={styles.shapeDesc}>{s.desc}</Text>
+                <Text style={[styles.shapeTitle, active && { color: colors.primary }]}>{label}</Text>
+                <Text style={styles.shapeDesc}>{desc}</Text>
               </View>
               <Ionicons name="chevron-forward" size={20} color={active ? colors.primary : colors.borderStrong} />
             </TouchableOpacity>
@@ -58,11 +64,7 @@ export function Step2Shape({
       </View>
       <View style={[styles.inlineHintBox, { marginTop: 18 }]}>
         <Ionicons name="information-circle" size={14} color={colors.textSecondary} />
-        <Text style={styles.inlineHintText}>
-          Sélectionnez la forme correspondant le mieux à votre châssis. Pour
-          un polygone (triangle, pentagone, hexagone, octogone), choisissez
-          « POLYGONE » puis indiquez le nombre d&apos;arêtes.
-        </Text>
+        <Text style={styles.inlineHintText}>{t("wizard.step2.hint")}</Text>
       </View>
     </View>
   );

@@ -629,7 +629,7 @@ export default function SignIn() {
               style={{ alignItems: "center", marginTop: 14, padding: 8 }}
             >
               <Text style={{ color: colors.primary, fontSize: 13, fontWeight: "700", letterSpacing: 0.4 }}>
-                Mot de passe oublié ?
+                {t("auth.forgotPassword")}
               </Text>
             </TouchableOpacity>
           )}

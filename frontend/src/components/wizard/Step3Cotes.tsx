@@ -1,6 +1,7 @@
 /**
  * Step3Cotes — Wizard Étape 3/3 : cotes adaptatives & intelligentes.
  * Extrait de /app/frontend/app/chantier/[id]/new-mesure.tsx (refacto V3 Phase 2 — juin 2026).
+ * 🌍 i18n complet — toutes les chaînes utilisateur passent par `useTranslation` (clés `wizard.step3.*`).
  *
  * NB : ce composant est volumineux (~750 lignes) car il gère la saisie de
  *      cotes pour les 14 formes (rect, porte, trapeze, triangle, œil-de-bœuf,
@@ -13,6 +14,7 @@ import React from "react";
 import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { colors } from "@/src/theme";
 import { MeasureGuide } from "@/src/components/MeasureGuide";
 import ShapeSchemaV2 from "@/src/components/ShapeSchemaV2";
@@ -67,13 +69,14 @@ export function Step3Cotes({
   computedFloorReserve: number | null;
   computedPerimeter: number | null;
 }) {
+  const { t } = useTranslation();
   const isRectFamily =
     shape === "rect" ||
     shape === "porte_entree" ||
     shape === "porte_garage" ||
     shape === "coulissant_levant";
   const show1mLevel = shape === "porte_entree" || shape === "coulissant_levant";
-  // M3 FIX — Feuillures : masquage si "coupe horizontale" est OFF dans Step 1
+  // Feuillures : masquage si "coupe horizontale" est OFF dans Step 1
   // (en plus de la maçonnerie qui doit avoir des feuillures).
   // 🚪 Sur une porte de garage / coulissant levant, les feuillures n'ont
   // PAS de sens (pose en applique ou sous linteau, pas en feuillure), donc
@@ -94,28 +97,32 @@ export function Step3Cotes({
     setField(which === 1 ? "diag_1_state" : "diag_2_state", "manual");
   };
 
+  // Label traduit de la forme courante (pour le sous-titre).
+  const shapeMeta = SHAPES.find((s) => s.key === shape);
+  const shapeLabel = t(`wizard.shapes.${shape}.label`, {
+    defaultValue: shapeMeta?.label || shape,
+  });
+
   return (
     <View>
-      <Text style={styles.h1}>PRISE DE COTES</Text>
+      <Text style={styles.h1}>{t("wizard.step3.title")}</Text>
       <Text style={styles.h2}>
-        Étape 3/3 · {SHAPES.find((s) => s.key === shape)?.label}
+        {t("wizard.step3.subtitle", { shape: shapeLabel })}
       </Text>
 
       {/* 📐 Guide visuel — montre où prendre les cotes */}
       <MeasureGuide shape={shape} />
-      <Text style={styles.guideHint}>
-        ↑ Repérez les cotes à mesurer sur le schéma, puis renseignez-les ci-dessous.
-      </Text>
+      <Text style={styles.guideHint}>{t("wizard.step3.guideHint")}</Text>
 
       <View ref={labelRef} style={{ marginTop: 14 }}>
         <Text style={[styles.label, labelError && { color: colors.anomaly }]}>
-          LIBELLÉ / RÉFÉRENCE DU CHÂSSIS * {labelError && <Text style={styles.errInline}> ⚠ OBLIGATOIRE</Text>}
+          {t("wizard.step3.labelField")} {labelError && <Text style={styles.errInline}> {t("wizard.step3.labelFieldError")}</Text>}
         </Text>
         <TextInput
           testID="mesure-label-input"
           value={label}
           onChangeText={setLabel}
-          placeholder="ex. Salon, Chambre 1, Porte d'entrée, Réf. F-001..."
+          placeholder={t("wizard.step3.labelFieldPlaceholder")}
           placeholderTextColor={colors.placeholder}
           style={[
             styles.input,
@@ -127,9 +134,7 @@ export function Step3Cotes({
           ]}
         />
         {labelError && (
-          <Text style={styles.errorMsg}>
-            ⚠ Indiquez un libellé / référence pour identifier ce châssis.
-          </Text>
+          <Text style={styles.errorMsg}>{t("wizard.step3.labelFieldHint")}</Text>
         )}
       </View>
 
@@ -144,7 +149,7 @@ export function Step3Cotes({
           >
             <Ionicons name="resize-outline" size={14} color={!s3.renovation_mode ? "#000" : colors.textSecondary} />
             <Text style={[styles.modeTabText, !s3.renovation_mode && styles.modeTabTextActive]}>
-              MODE STANDARD
+              {t("wizard.step3.modeStandard")}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -155,7 +160,7 @@ export function Step3Cotes({
           >
             <Ionicons name="construct-outline" size={14} color={s3.renovation_mode ? "#000" : colors.textSecondary} />
             <Text style={[styles.modeTabText, s3.renovation_mode && styles.modeTabTextActive]}>
-              VÉRIF. RÉNOVATION
+              {t("wizard.step3.modeRenovation")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -164,11 +169,11 @@ export function Step3Cotes({
       {/* Cotes — Trapèze */}
       {shape === "trapeze" && (
         <>
-          <CotField testID="input-bay-width" label="LARGEUR (mm) *" value={s3.bay_width}
+          <CotField testID="input-bay-width" label={t("wizard.step3.width")} value={s3.bay_width}
             onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
-          <CotField testID="input-trap-height-left" label="HAUTEUR GAUCHE (mm) *" value={s3.trap_height_left}
+          <CotField testID="input-trap-height-left" label={t("wizard.step3.leftHeight")} value={s3.trap_height_left}
             onChange={(v) => setField("trap_height_left", v.replace(",", "."))} error={!!err.trap_height_left} />
-          <CotField testID="input-trap-height-right" label="HAUTEUR DROITE (mm) *" value={s3.trap_height_right}
+          <CotField testID="input-trap-height-right" label={t("wizard.step3.rightHeight")} value={s3.trap_height_right}
             onChange={(v) => setField("trap_height_right", v.replace(",", "."))} error={!!err.trap_height_right} />
         </>
       )}
@@ -176,20 +181,20 @@ export function Step3Cotes({
       {/* Triangle */}
       {shape === "triangle" && (
         <>
-          <CotField testID="input-triangle-base" label="BASE (mm) *" value={s3.triangle_base}
+          <CotField testID="input-triangle-base" label={t("wizard.step3.base")} value={s3.triangle_base}
             onChange={(v) => setField("triangle_base", v.replace(",", "."))} error={!!err.triangle_base} />
-          <CotField testID="input-triangle-height" label="HAUTEUR (mm) *" value={s3.triangle_height}
+          <CotField testID="input-triangle-height" label={t("wizard.step3.height")} value={s3.triangle_height}
             onChange={(v) => setField("triangle_height", v.replace(",", "."))} error={!!err.triangle_height} />
         </>
       )}
 
       {/* Œil-de-bœuf */}
       {shape === "oeil_de_boeuf" && (
-        <CotField testID="input-oeil-diameter" label="DIAMÈTRE (mm) *" value={s3.oeil_diameter}
+        <CotField testID="input-oeil-diameter" label={t("wizard.step3.diameter")} value={s3.oeil_diameter}
           onChange={(v) => setField("oeil_diameter", v.replace(",", "."))} error={!!err.oeil_diameter} />
       )}
 
-      {/* 🆕 V2 — Plein cintre */}
+      {/* Plein cintre */}
       {shape === "plein_cintre" && (
         <>
           <ShapeSchemaV2
@@ -200,19 +205,14 @@ export function Step3Cotes({
               H2: parseNum(s3.arch_h2_total) || undefined,
             }}
           />
-          <Text style={styles.helperText}>
-            ⭕ Plein cintre — Arc en demi-cercle au sommet.
-            La hauteur de gauche est identique à la hauteur de droite.
-          </Text>
-          <CotField testID="input-bay-width" label="LARGEUR L (mm) *" value={s3.bay_width}
+          <Text style={styles.helperText}>{t("wizard.step3.helpPleinCintre")}</Text>
+          <CotField testID="input-bay-width" label={t("wizard.step3.widthL")} value={s3.bay_width}
             onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
-          <CotField testID="input-arch-h1" label="HAUTEUR D'APPUI H1 (mm) *" value={s3.arch_h1_appui}
+          <CotField testID="input-arch-h1" label={t("wizard.step3.archH1")} value={s3.arch_h1_appui}
             onChange={(v) => setField("arch_h1_appui", v.replace(",", "."))} error={!!err.arch_h1_appui} />
-          <CotField testID="input-arch-h2" label="HAUTEUR TOTALE H2 (mm) *" value={s3.arch_h2_total}
+          <CotField testID="input-arch-h2" label={t("wizard.step3.archH2")} value={s3.arch_h2_total}
             onChange={(v) => setField("arch_h2_total", v.replace(",", "."))} error={!!err.arch_h2_total} />
-          <Text style={styles.helperText}>
-            ✓ Règle : H2 = H1 + L/2 (le sommet du demi-cercle dépasse l&apos;appui de L/2).
-          </Text>
+          <Text style={styles.helperText}>{t("wizard.step3.rulePleinCintre")}</Text>
           <ArcLengthVerification
             testID="input-perimeter-plein-cintre"
             computed={computedPerimeter}
@@ -222,7 +222,7 @@ export function Step3Cotes({
         </>
       )}
 
-      {/* 🆕 V2 — Arc surbaissé */}
+      {/* Arc surbaissé */}
       {shape === "arc_surbaisse" && (
         <>
           <ShapeSchemaV2
@@ -233,19 +233,14 @@ export function Step3Cotes({
               H2: parseNum(s3.arch_h2_total) || undefined,
             }}
           />
-          <Text style={styles.helperText}>
-            🌗 Arc surbaissé — Arc applati (moins haut qu&apos;un demi-cercle).
-            La hauteur de gauche est identique à la hauteur de droite.
-          </Text>
-          <CotField testID="input-bay-width" label="LARGEUR L (mm) *" value={s3.bay_width}
+          <Text style={styles.helperText}>{t("wizard.step3.helpArcSurbaisse")}</Text>
+          <CotField testID="input-bay-width" label={t("wizard.step3.widthL")} value={s3.bay_width}
             onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
-          <CotField testID="input-arch-h1" label="HAUTEUR D'APPUI H1 (mm) *" value={s3.arch_h1_appui}
+          <CotField testID="input-arch-h1" label={t("wizard.step3.archH1")} value={s3.arch_h1_appui}
             onChange={(v) => setField("arch_h1_appui", v.replace(",", "."))} error={!!err.arch_h1_appui} />
-          <CotField testID="input-arch-h2" label="HAUTEUR TOTALE H2 (mm) *" value={s3.arch_h2_total}
+          <CotField testID="input-arch-h2" label={t("wizard.step3.archH2")} value={s3.arch_h2_total}
             onChange={(v) => setField("arch_h2_total", v.replace(",", "."))} error={!!err.arch_h2_total} />
-          <Text style={styles.helperText}>
-            ✓ Règle : H2 doit être {">"} H1 et la montée (H2 − H1) doit être {"<"} L/2.
-          </Text>
+          <Text style={styles.helperText}>{t("wizard.step3.ruleArcSurbaisse")}</Text>
           <ArcLengthVerification
             testID="input-perimeter-arc-surbaisse"
             computed={computedPerimeter}
@@ -255,7 +250,7 @@ export function Step3Cotes({
         </>
       )}
 
-      {/* 🆕 V2 — Angle 90° (pan coupé gauche / droite / les deux) */}
+      {/* Angle 90° (pan coupé gauche / droite / les deux) */}
       {shape === "angle_90" && (
         <>
           <ShapeSchemaV2
@@ -270,18 +265,17 @@ export function Step3Cotes({
               cutAngleDeg: parseNum(s3.angle90_angle_deg) || 135,
             }}
           />
-          <Text style={styles.helperText}>
-            ◣ Pan coupé — Châssis avec un (ou deux) coin(s) coupé(s) en oblique.
-            La zone hachurée orange sur le schéma indique le pan coupé.
-          </Text>
+          <Text style={styles.helperText}>{t("wizard.step3.helpAngle90")}</Text>
 
           {/* Sélecteur du côté coupé */}
-          <Text style={[styles.sectionLabel, { marginTop: 12 }]}>CÔTÉ(S) COUPÉ(S) *</Text>
+          <Text style={[styles.sectionLabel, { marginTop: 12 }]}>{t("wizard.step3.cutSide")}</Text>
           <View style={[styles.row2, { marginBottom: 10 }]}>
             {(["left", "right", "both"] as const).map((sd) => {
               const active = s3.angle90_side === sd;
-              const label =
-                sd === "left" ? "GAUCHE" : sd === "right" ? "DROITE" : "LES DEUX";
+              const sideLabel =
+                sd === "left" ? t("wizard.step3.cutSideLeft")
+                  : sd === "right" ? t("wizard.step3.cutSideRight")
+                  : t("wizard.step3.cutSideBoth");
               return (
                 <TouchableOpacity
                   key={sd}
@@ -295,63 +289,56 @@ export function Step3Cotes({
                   ]}
                 >
                   <Text style={[styles.modeTabText, active && styles.modeTabTextActive]}>
-                    {label}
+                    {sideLabel}
                   </Text>
                 </TouchableOpacity>
               );
             })}
           </View>
 
-          <CotField testID="input-bay-width" label="LARGEUR TOTALE L (mm) *" value={s3.bay_width}
+          <CotField testID="input-bay-width" label={t("wizard.step3.totalWidthL")} value={s3.bay_width}
             onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
 
           <View style={styles.row2}>
             <View style={{ flex: 1 }}>
-              <CotField testID="input-angle90-h-left" label="HAUTEUR GAUCHE Hg (mm) *" value={s3.angle90_h_left}
+              <CotField testID="input-angle90-h-left" label={t("wizard.step3.leftHeightHg")} value={s3.angle90_h_left}
                 onChange={(v) => setField("angle90_h_left", v.replace(",", "."))} error={!!err.angle90_h_left} />
             </View>
             <View style={{ flex: 1 }}>
-              <CotField testID="input-angle90-h-right" label="HAUTEUR DROITE Hd (mm) *" value={s3.angle90_h_right}
+              <CotField testID="input-angle90-h-right" label={t("wizard.step3.rightHeightHd")} value={s3.angle90_h_right}
                 onChange={(v) => setField("angle90_h_right", v.replace(",", "."))} error={!!err.angle90_h_right} />
             </View>
           </View>
 
-          <Text style={[styles.sectionLabel, { marginTop: 12 }]}>PAN COUPÉ</Text>
+          <Text style={[styles.sectionLabel, { marginTop: 12 }]}>{t("wizard.step3.cutSection")}</Text>
           <View style={styles.row2}>
             <View style={{ flex: 1 }}>
-              <CotField testID="input-angle90-cut-w" label="LARGEUR DU PAN (mm) *" value={s3.angle90_cut_width}
+              <CotField testID="input-angle90-cut-w" label={t("wizard.step3.cutWidth")} value={s3.angle90_cut_width}
                 onChange={(v) => setField("angle90_cut_width", v.replace(",", "."))} error={!!err.angle90_cut_width} />
             </View>
             <View style={{ flex: 1 }}>
-              <CotField testID="input-angle90-cut-h" label="HAUTEUR DU PAN (mm) *" value={s3.angle90_cut_height}
+              <CotField testID="input-angle90-cut-h" label={t("wizard.step3.cutHeight")} value={s3.angle90_cut_height}
                 onChange={(v) => setField("angle90_cut_height", v.replace(",", "."))} error={!!err.angle90_cut_height} />
             </View>
           </View>
-          <CotField testID="input-angle90-angle" label="ANGLE DU PAN (°) — 135° par défaut" value={s3.angle90_angle_deg}
+          <CotField testID="input-angle90-angle" label={t("wizard.step3.cutAngle")} value={s3.angle90_angle_deg}
             onChange={(v) => setField("angle90_angle_deg", v.replace(",", "."))} />
-          <Text style={styles.helperText}>
-            ✓ Règle : Le pan coupé doit être {"<"} dimensions du cadre.
-            L&apos;angle est généralement de 135° (oblique à 45°), mais ajustable selon votre mesure.
-          </Text>
+          <Text style={styles.helperText}>{t("wizard.step3.ruleAngle90")}</Text>
         </>
       )}
 
-      {/* 🆕 V3 — Bow-Window : module en cours de fabrication (cahier 10/06/2026 v2) */}
+      {/* Bow-Window : module en cours de fabrication */}
       {shape === "bow_window" && (
         <>
           <View style={[styles.inlineHintBox, { marginTop: 8, backgroundColor: "rgba(255,165,0,0.10)", borderColor: "rgba(255,165,0,0.45)", flexDirection: "column", alignItems: "flex-start" }]}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
               <Ionicons name="construct" size={18} color={colors.warning} />
               <Text style={[styles.inlineHintText, { color: colors.warning, fontWeight: "800", flex: 1 }]}>
-                🚧 Ce module est en cours de fabrication.
+                {t("wizard.step3.bowInProgress")}
               </Text>
             </View>
             <Text style={[styles.inlineHintText, { color: colors.textPrimary, marginTop: 8, lineHeight: 18 }]}>
-              N&apos;hésitez pas à nous envoyer vos idées ou vos techniques de
-              mesure pour compléter ce module.{"\n\n"}
-              Comment améliorer la fonction Bow-Window ? Comment vous
-              faciliter la tâche en nous indiquant votre expertise dans le
-              choix des mesures ?
+              {t("wizard.step3.bowFeedbackText")}
             </Text>
           </View>
           <TouchableOpacity
@@ -361,57 +348,45 @@ export function Step3Cotes({
             style={[styles.btn, styles.btnPrimary, { marginTop: 14, marginBottom: 6 }]}
           >
             <Ionicons name="paper-plane" size={18} color="#000" />
-            <Text style={styles.btnPrimaryText}>
-              ENVOYER VOS REMARQUES / EXPERTISE À L&apos;ADMINISTRATEUR
-            </Text>
+            <Text style={styles.btnPrimaryText}>{t("wizard.step3.bowSendButton")}</Text>
           </TouchableOpacity>
           <Text style={[styles.helperText, { fontSize: 11, opacity: 0.55, marginTop: 6 }]}>
-            ⓘ Le formulaire de saisie est temporairement désactivé. Choisissez
-            une autre forme dans l&apos;étape précédente, ou retournez en arrière.
+            {t("wizard.step3.bowDisabled")}
           </Text>
         </>
       )}
 
-      {/* 🆕 V2 — Pentagone */}
+      {/* Pentagone */}
       {shape === "pentagone" && (
         <>
-          <Text style={styles.helperText}>
-            ⬠ Pentagone — Forme à toit pointu (rectangle + triangle au sommet).
-            H1 = hauteur des côtés verticaux ; H2 = hauteur totale au sommet.
-          </Text>
-          <CotField testID="input-bay-width" label="LARGEUR BASE (mm) *" value={s3.bay_width}
+          <Text style={styles.helperText}>{t("wizard.step3.helpPentagone")}</Text>
+          <CotField testID="input-bay-width" label={t("wizard.step3.baseWidth")} value={s3.bay_width}
             onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
-          <CotField testID="input-pent-h1" label="HAUTEUR CÔTÉS H1 (mm) *" value={s3.pent_side_height}
+          <CotField testID="input-pent-h1" label={t("wizard.step3.pentSideH")} value={s3.pent_side_height}
             onChange={(v) => setField("pent_side_height", v.replace(",", "."))} error={!!err.pent_side_height} />
-          <CotField testID="input-pent-h2" label="HAUTEUR SOMMET H2 (mm) *" value={s3.pent_top_height}
+          <CotField testID="input-pent-h2" label={t("wizard.step3.pentTopH")} value={s3.pent_top_height}
             onChange={(v) => setField("pent_top_height", v.replace(",", "."))} error={!!err.pent_top_height} />
-          <Text style={styles.helperText}>
-            ✓ Règle : H2 (sommet) doit être {">"} H1 (côtés).
-          </Text>
+          <Text style={styles.helperText}>{t("wizard.step3.rulePentagone")}</Text>
         </>
       )}
 
-      {/* 🆕 V2 — Hexagone */}
+      {/* Hexagone */}
       {shape === "hexagone" && (
         <>
-          <Text style={styles.helperText}>
-            ⬡ Hexagone — Forme avec haut ET bas pan coupé (6 côtés).
-          </Text>
-          <CotField testID="input-bay-width" label="LARGEUR BASE (mm) *" value={s3.bay_width}
+          <Text style={styles.helperText}>{t("wizard.step3.helpHexagone")}</Text>
+          <CotField testID="input-bay-width" label={t("wizard.step3.baseWidth")} value={s3.bay_width}
             onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
-          <CotField testID="input-hex-top-width" label="LARGEUR SOMMET (mm) *" value={s3.hex_top_width}
+          <CotField testID="input-hex-top-width" label={t("wizard.step3.topWidthHex")} value={s3.hex_top_width}
             onChange={(v) => setField("hex_top_width", v.replace(",", "."))} error={!!err.hex_top_width} />
-          <CotField testID="input-bay-height" label="HAUTEUR TOTALE (mm) *" value={s3.bay_height}
+          <CotField testID="input-bay-height" label={t("wizard.step3.totalHeight")} value={s3.bay_height}
             onChange={(v) => setField("bay_height", v.replace(",", "."))} error={!!err.bay_height} />
-          <CotField testID="input-hex-side-h" label="HAUTEUR CÔTÉS VERTICAUX (mm) *" value={s3.hex_side_height}
+          <CotField testID="input-hex-side-h" label={t("wizard.step3.verticalSidesH")} value={s3.hex_side_height}
             onChange={(v) => setField("hex_side_height", v.replace(",", "."))} error={!!err.hex_side_height} />
-          <Text style={styles.helperText}>
-            ✓ Règles : Largeur sommet {"<"} Largeur base ; Hauteur côtés {"<"} Hauteur totale.
-          </Text>
+          <Text style={styles.helperText}>{t("wizard.step3.ruleHexagone")}</Text>
         </>
       )}
 
-      {/* 🆕 V2 — Ovale */}
+      {/* Ovale */}
       {shape === "ovale" && (
         <>
           <ShapeSchemaV2
@@ -421,18 +396,15 @@ export function Step3Cotes({
               H: parseNum(s3.bay_height) || undefined,
             }}
           />
-          <Text style={styles.helperText}>
-            ⬭ Ovale — Forme ellipsoïdale. Saisissez uniquement la largeur
-            et la hauteur totales.
-          </Text>
-          <CotField testID="input-bay-width" label="LARGEUR TOTALE L (mm) *" value={s3.bay_width}
+          <Text style={styles.helperText}>{t("wizard.step3.helpOvale")}</Text>
+          <CotField testID="input-bay-width" label={t("wizard.step3.totalWidthL")} value={s3.bay_width}
             onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
-          <CotField testID="input-bay-height" label="HAUTEUR TOTALE H (mm) *" value={s3.bay_height}
+          <CotField testID="input-bay-height" label={t("wizard.step3.heightH")} value={s3.bay_height}
             onChange={(v) => setField("bay_height", v.replace(",", "."))} error={!!err.bay_height} />
         </>
       )}
 
-      {/* 🆕 V3 — Polygone unifié (3/5/6/8 arêtes) */}
+      {/* Polygone unifié (3/5/6/8 arêtes) */}
       {shape === "polygone" && (
         <>
           <ShapeSchemaV2
@@ -443,21 +415,17 @@ export function Step3Cotes({
               panels: parseInt(s3.polygon_edge_count, 10) || 6,
             }}
           />
-          <Text style={styles.helperText}>
-            ⬡ Polygone — Choisissez le nombre d&apos;arêtes, puis renseignez
-            la longueur de chaque arête et l&apos;angle de chaque sommet.
-            Les valeurs par défaut correspondent à un polygone régulier.
-          </Text>
+          <Text style={styles.helperText}>{t("wizard.step3.helpPolygone")}</Text>
 
-          <Text style={[styles.sectionLabel, { marginTop: 12 }]}>NOMBRE D&apos;ARÊTES *</Text>
+          <Text style={[styles.sectionLabel, { marginTop: 12 }]}>{t("wizard.step3.polygonEdgeCount")}</Text>
           <View style={[styles.row2, { marginBottom: 10, flexWrap: "wrap" }]}>
             {(["3", "5", "6", "8"] as const).map((n) => {
               const active = s3.polygon_edge_count === n;
               const labelMap: Record<string, string> = {
-                "3": "TRIANGLE (3)",
-                "5": "PENTAGONE (5)",
-                "6": "HEXAGONE (6)",
-                "8": "OCTOGONE (8)",
+                "3": t("wizard.step3.polygonTriangle"),
+                "5": t("wizard.step3.polygonPentagon"),
+                "6": t("wizard.step3.polygonHexagon"),
+                "8": t("wizard.step3.polygonOctagon"),
               };
               const defaultAngle: Record<string, string> = {
                 "3": "60",
@@ -495,25 +463,25 @@ export function Step3Cotes({
 
           <CotField
             testID="input-polygon-edge-length"
-            label="LONGUEUR D'UNE ARÊTE (mm) *"
+            label={t("wizard.step3.polygonEdgeLength")}
             value={s3.polygon_edge_length}
             onChange={(v) => setField("polygon_edge_length", v.replace(",", "."))}
             error={!!err.polygon_edge_length}
           />
           <CotField
             testID="input-polygon-angle"
-            label="ANGLE D'UN SOMMET (°) *"
+            label={t("wizard.step3.polygonAngle")}
             value={s3.polygon_angle_deg}
             onChange={(v) => setField("polygon_angle_deg", v.replace(",", "."))}
             error={!!err.polygon_angle_deg}
           />
 
-          <Text style={[styles.sectionLabel, { marginTop: 12 }]}>HORS-TOUT (boîte englobante)</Text>
+          <Text style={[styles.sectionLabel, { marginTop: 12 }]}>{t("wizard.step3.polygonBbox")}</Text>
           <View style={styles.row2}>
             <View style={{ flex: 1 }}>
               <CotField
                 testID="input-polygon-bbox-width"
-                label="LARGEUR (mm) *"
+                label={t("wizard.step3.polygonWidth")}
                 value={s3.polygon_bbox_width}
                 onChange={(v) => setField("polygon_bbox_width", v.replace(",", "."))}
                 error={!!err.polygon_bbox_width}
@@ -522,46 +490,35 @@ export function Step3Cotes({
             <View style={{ flex: 1 }}>
               <CotField
                 testID="input-polygon-bbox-height"
-                label="HAUTEUR (mm) *"
+                label={t("wizard.step3.polygonHeight")}
                 value={s3.polygon_bbox_height}
                 onChange={(v) => setField("polygon_bbox_height", v.replace(",", "."))}
                 error={!!err.polygon_bbox_height}
               />
             </View>
           </View>
-          <Text style={styles.helperText}>
-            ✓ Pour un polygone régulier : tous les côtés ont la même longueur
-            et tous les sommets le même angle. Pour un polygone irrégulier,
-            indiquez la valeur moyenne ou contactez le technicien pour
-            renseigner chaque arête séparément.
-          </Text>
+          <Text style={styles.helperText}>{t("wizard.step3.rulePolygone")}</Text>
         </>
       )}
 
       {/* Porte de garage */}
       {shape === "porte_garage" && (
         <>
-          <CotField testID="input-bay-width" label="LARGEUR (mm) *" value={s3.bay_width}
+          <CotField testID="input-bay-width" label={t("wizard.step3.width")} value={s3.bay_width}
             onChange={(v) => setField("bay_width", v.replace(",", "."))} onBlur={onBlurDimension} error={!!err.bay_width} />
-          <CotField testID="input-bay-height" label="HAUTEUR (mm) *" value={s3.bay_height}
+          <CotField testID="input-bay-height" label={t("wizard.step3.height")} value={s3.bay_height}
             onChange={(v) => setField("bay_height", v.replace(",", "."))} onBlur={onBlurDimension} error={!!err.bay_height} />
-          <Text style={[styles.sectionLabel, { marginTop: 18 }]}>SPÉCIFIQUES PORTE DE GARAGE</Text>
-          <Text style={styles.helperText}>
-            📏 Mesures spécifiques à la pose d&apos;une porte sectionnelle :
-            le linteau est la hauteur sous-plafond disponible au-dessus de
-            la baie ; les écoinçons sont la largeur de mur plein disponible
-            de part et d&apos;autre de la baie pour fixer les rails verticaux
-            (minimum 100 mm recommandé).
-          </Text>
-          <CotField testID="input-garage-lintel" label="LINTEAU (mm) *" value={s3.garage_lintel}
+          <Text style={[styles.sectionLabel, { marginTop: 18 }]}>{t("wizard.step3.garageSection")}</Text>
+          <Text style={styles.helperText}>{t("wizard.step3.garageHint")}</Text>
+          <CotField testID="input-garage-lintel" label={t("wizard.step3.lintel")} value={s3.garage_lintel}
             onChange={(v) => setField("garage_lintel", v.replace(",", "."))} error={!!err.garage_lintel} />
           <View style={styles.row2}>
             <View style={{ flex: 1 }}>
-              <CotField testID="input-garage-ecoincon-left" label="ÉCOINÇON GAUCHE (mm) *" value={s3.garage_ecoincon_left}
+              <CotField testID="input-garage-ecoincon-left" label={t("wizard.step3.ecoinconLeft")} value={s3.garage_ecoincon_left}
                 onChange={(v) => setField("garage_ecoincon_left", v.replace(",", "."))} error={!!err.garage_ecoincon_left} />
             </View>
             <View style={{ flex: 1 }}>
-              <CotField testID="input-garage-ecoincon-right" label="ÉCOINÇON DROIT (mm) *" value={s3.garage_ecoincon_right}
+              <CotField testID="input-garage-ecoincon-right" label={t("wizard.step3.ecoinconRight")} value={s3.garage_ecoincon_right}
                 onChange={(v) => setField("garage_ecoincon_right", v.replace(",", "."))} error={!!err.garage_ecoincon_right} />
             </View>
           </View>
@@ -571,9 +528,9 @@ export function Step3Cotes({
       {/* Rect family standard */}
       {isRectFamily && shape !== "porte_garage" && !s3.renovation_mode && (
         <>
-          <CotField testID="input-bay-width" label="LARGEUR (mm) *" value={s3.bay_width}
+          <CotField testID="input-bay-width" label={t("wizard.step3.width")} value={s3.bay_width}
             onChange={(v) => setField("bay_width", v.replace(",", "."))} onBlur={onBlurDimension} error={!!err.bay_width} />
-          <CotField testID="input-bay-height" label="HAUTEUR (mm) *" value={s3.bay_height}
+          <CotField testID="input-bay-height" label={t("wizard.step3.height")} value={s3.bay_height}
             onChange={(v) => setField("bay_height", v.replace(",", "."))} onBlur={onBlurDimension} error={!!err.bay_height} />
         </>
       )}
@@ -583,21 +540,21 @@ export function Step3Cotes({
         <>
           <View style={styles.row2}>
             <View style={{ flex: 1 }}>
-              <CotField testID="input-width-top" label="LARGEUR HAUT (mm) *" value={s3.width_top}
+              <CotField testID="input-width-top" label={t("wizard.step3.widthTop")} value={s3.width_top}
                 onChange={(v) => setField("width_top", v.replace(",", "."))} error={!!err.width_top} />
             </View>
             <View style={{ flex: 1 }}>
-              <CotField testID="input-width-bottom" label="LARGEUR BAS (mm) *" value={s3.width_bottom}
+              <CotField testID="input-width-bottom" label={t("wizard.step3.widthBottom")} value={s3.width_bottom}
                 onChange={(v) => setField("width_bottom", v.replace(",", "."))} error={!!err.width_bottom} />
             </View>
           </View>
           <View style={styles.row2}>
             <View style={{ flex: 1 }}>
-              <CotField testID="input-height-left" label="HAUTEUR GAUCHE (mm) *" value={s3.height_left}
+              <CotField testID="input-height-left" label={t("wizard.step3.leftHeight")} value={s3.height_left}
                 onChange={(v) => setField("height_left", v.replace(",", "."))} error={!!err.height_left} />
             </View>
             <View style={{ flex: 1 }}>
-              <CotField testID="input-height-right" label="HAUTEUR DROITE (mm) *" value={s3.height_right}
+              <CotField testID="input-height-right" label={t("wizard.step3.rightHeight")} value={s3.height_right}
                 onChange={(v) => setField("height_right", v.replace(",", "."))} error={!!err.height_right} />
             </View>
           </View>
@@ -615,16 +572,16 @@ export function Step3Cotes({
             style={[styles.computeBtn, !canComputeDiag && { opacity: 0.4 }]}
           >
             <Ionicons name="calculator-outline" size={18} color={colors.primary} />
-            <Text style={styles.computeBtnText}>CALCULER LA DIAGONALE</Text>
+            <Text style={styles.computeBtnText}>{t("wizard.step3.computeDiagonal")}</Text>
           </TouchableOpacity>
-          <DiagonalField testID="input-diag-1" label="DIAGONALE 1 (mm) *" value={s3.diag_1}
+          <DiagonalField testID="input-diag-1" label={t("wizard.step3.diag1")} value={s3.diag_1}
             state={s3.diag_1_state}
             onChange={(v) => {
               setField("diag_1", v.replace(",", "."));
               setField("diag_1_state", "manual");
             }}
             onValidate={() => validateDiag(1)} onModify={() => modifyDiag(1)} error={!!err.diag_1} />
-          <DiagonalField testID="input-diag-2" label="DIAGONALE 2 (mm) *" value={s3.diag_2}
+          <DiagonalField testID="input-diag-2" label={t("wizard.step3.diag2")} value={s3.diag_2}
             state={s3.diag_2_state}
             onChange={(v) => {
               setField("diag_2", v.replace(",", "."));
@@ -634,33 +591,28 @@ export function Step3Cotes({
         </>
       )}
 
-      {/* 🆕 Feuillures conditionnelles (Brique/Pierre/Bloc béton) */}
+      {/* Feuillures conditionnelles (Brique/Pierre/Bloc béton) */}
       {showFeuillures && shape !== "oeil_de_boeuf" && (
         <>
-          <Text style={[styles.sectionLabel, { marginTop: 22 }]}>FEUILLURES (optionnel)</Text>
-          <Text style={styles.helperText}>
-            Mesurez les feuillures de la baie selon la spécificité de votre maçonnerie.
-          </Text>
-          <CotField testID="input-feuillure-left" label="FEUILLURE GAUCHE (mm)" value={s3.feuillure_left_mm}
+          <Text style={[styles.sectionLabel, { marginTop: 22 }]}>{t("wizard.step3.feuillureSection")}</Text>
+          <Text style={styles.helperText}>{t("wizard.step3.feuillureHint")}</Text>
+          <CotField testID="input-feuillure-left" label={t("wizard.step3.feuillureLeft")} value={s3.feuillure_left_mm}
             onChange={(v) => setField("feuillure_left_mm", v.replace(",", "."))} />
-          <CotField testID="input-feuillure-right" label="FEUILLURE DROITE (mm)" value={s3.feuillure_right_mm}
+          <CotField testID="input-feuillure-right" label={t("wizard.step3.feuillureRight")} value={s3.feuillure_right_mm}
             onChange={(v) => setField("feuillure_right_mm", v.replace(",", "."))} />
-          <CotField testID="input-feuillure-top" label="FEUILLURE HAUTE (mm)" value={s3.feuillure_top_mm}
+          <CotField testID="input-feuillure-top" label={t("wizard.step3.feuillureTop")} value={s3.feuillure_top_mm}
             onChange={(v) => setField("feuillure_top_mm", v.replace(",", "."))} />
         </>
       )}
 
-      {/* 🆕 Œil-de-bœuf : feuillure circulaire unique (identique tout autour) */}
+      {/* Œil-de-bœuf : feuillure circulaire unique (identique tout autour) */}
       {showFeuillures && shape === "oeil_de_boeuf" && (
         <>
-          <Text style={[styles.sectionLabel, { marginTop: 22 }]}>FEUILLURE (optionnel)</Text>
-          <Text style={styles.helperText}>
-            La feuillure d&apos;un œil-de-bœuf est circulaire et identique sur
-            toute la périphérie. Une seule mesure suffit.
-          </Text>
+          <Text style={[styles.sectionLabel, { marginTop: 22 }]}>{t("wizard.step3.feuillureCircularSection")}</Text>
+          <Text style={styles.helperText}>{t("wizard.step3.feuillureCircularHint")}</Text>
           <CotField
             testID="input-feuillure-circular"
-            label="FEUILLURE CIRCULAIRE (mm)"
+            label={t("wizard.step3.feuillureCircular")}
             value={s3.feuillure_left_mm}
             onChange={(v) => {
               // On stocke la même valeur dans les 3 champs pour garder
@@ -675,24 +627,24 @@ export function Step3Cotes({
         </>
       )}
 
-      {/* 🆕 Allège — par ouverture (rect / trapèze / triangle / œil-de-bœuf) */}
+      {/* Allège — par ouverture (rect / trapèze / triangle / œil-de-bœuf) */}
       {(shape === "rect" ||
         shape === "trapeze" ||
         shape === "triangle" ||
         shape === "oeil_de_boeuf") && (
         <>
-          <Text style={[styles.sectionLabel, { marginTop: 22 }]}>ALLÈGE</Text>
+          <Text style={[styles.sectionLabel, { marginTop: 22 }]}>{t("wizard.step3.breastworkSection")}</Text>
           <CheckboxRow
             testID="opt-breastwork"
-            label="Cette ouverture a une allège"
-            sub="Maçonnerie sous la baie (varie selon les ouvertures)"
+            label={t("wizard.step3.breastworkLabel")}
+            sub={t("wizard.step3.breastworkSub")}
             value={s3.has_breastwork}
             onChange={(v) => setField("has_breastwork", v)}
           />
           {s3.has_breastwork && (
             <CotField
               testID="input-breastwork-height"
-              label="HAUTEUR DE L'ALLÈGE (mm) *"
+              label={t("wizard.step3.breastworkHeight")}
               value={s3.breastwork_height_mm}
               onChange={(v) =>
                 setField("breastwork_height_mm", v.replace(",", "."))
@@ -703,14 +655,14 @@ export function Step3Cotes({
         </>
       )}
 
-      {/* 🆕 Trait de niveau 1m + calcul auto réserve sol */}
+      {/* Trait de niveau 1m + calcul auto réserve sol */}
       {show1mLevel && (
         <>
-          <Text style={[styles.sectionLabel, { marginTop: 22 }]}>RÉSERVE SOL FINI</Text>
+          <Text style={[styles.sectionLabel, { marginTop: 22 }]}>{t("wizard.step3.floorReserveSection")}</Text>
           <CheckboxRow
             testID="opt-1m-level-mark"
-            label="Trait de niveau 1m"
-            sub="Active le calcul automatique via mesure brute"
+            label={t("wizard.step3.mark1mLabel")}
+            sub={t("wizard.step3.mark1mSub")}
             value={s3.has_1m_level_mark}
             onChange={(v) => setField("has_1m_level_mark", v)}
           />
@@ -718,7 +670,7 @@ export function Step3Cotes({
             <>
               <CotField
                 testID="input-trait-1m-brut"
-                label="MESURE DU TRAIT AU SOL BRUT (mm) *"
+                label={t("wizard.step3.mark1mBrut")}
                 value={s3.trait_1m_brut_mm}
                 onChange={(v) => setField("trait_1m_brut_mm", v.replace(",", "."))}
                 error={!!err.trait_1m_brut_mm}
@@ -726,18 +678,18 @@ export function Step3Cotes({
               {computedFloorReserve != null && (
                 <View testID="auto-floor-reserve-display" style={styles.computedBox}>
                   <Ionicons name="calculator" size={16} color={colors.success} />
-                  <Text style={styles.computedLabel}>RÉSERVE SOL CALCULÉE :</Text>
+                  <Text style={styles.computedLabel}>{t("wizard.step3.computedFloorReserve")}</Text>
                   <Text style={styles.computedValue}>
                     {computedFloorReserve} mm
                   </Text>
-                  <Text style={styles.computedFormula}>(brut − 1000 mm)</Text>
+                  <Text style={styles.computedFormula}>{t("wizard.step3.computedFloorReserveFormula")}</Text>
                 </View>
               )}
             </>
           ) : (
             <CotField
               testID="input-floor-reserve"
-              label="RÉSERVE SOL FINI (mm) *"
+              label={t("wizard.step3.floorReserve")}
               value={s3.floor_reserve}
               onChange={(v) => setField("floor_reserve", v.replace(",", "."))}
               error={!!err.floor_reserve}
@@ -750,7 +702,7 @@ export function Step3Cotes({
       {shape === "porte_garage" && (
         <CotField
           testID="input-floor-reserve"
-          label="RÉSERVE SOL FINI (mm) *"
+          label={t("wizard.step3.floorReserve")}
           value={s3.floor_reserve}
           onChange={(v) => setField("floor_reserve", v.replace(",", "."))}
           error={!!err.floor_reserve}
@@ -758,7 +710,7 @@ export function Step3Cotes({
       )}
 
       {/* Photo */}
-      <Text style={[styles.label, { marginTop: 24 }]}>Photo (optionnel)</Text>
+      <Text style={[styles.label, { marginTop: 24 }]}>{t("wizard.step3.photoOptional")}</Text>
       {photo ? (
         <View>
           <Image source={{ uri: photo }} style={styles.photo} />
@@ -770,11 +722,11 @@ export function Step3Cotes({
         <View style={styles.photoRow}>
           <TouchableOpacity testID="photo-camera-button" onPress={() => pickPhoto("camera")} style={styles.photoBtn} activeOpacity={0.7}>
             <Ionicons name="camera" size={22} color={colors.primary} />
-            <Text style={styles.photoBtnText}>Caméra</Text>
+            <Text style={styles.photoBtnText}>{t("wizard.step3.camera")}</Text>
           </TouchableOpacity>
           <TouchableOpacity testID="photo-library-button" onPress={() => pickPhoto("library")} style={styles.photoBtn} activeOpacity={0.7}>
             <Ionicons name="images" size={22} color={colors.primary} />
-            <Text style={styles.photoBtnText}>Galerie</Text>
+            <Text style={styles.photoBtnText}>{t("wizard.step3.gallery")}</Text>
           </TouchableOpacity>
         </View>
       )}

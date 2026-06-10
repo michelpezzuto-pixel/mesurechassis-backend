@@ -110,8 +110,10 @@ export function getApiKey(): string | null {
   return HAS_API_KEY ? (API_KEY as string) : null;
 }
 
-export const PDF_URL = (chantierId: string) =>
-  `${BASE_URL}/api/chantiers/${chantierId}/export.pdf`;
+export const PDF_URL = (chantierId: string, lang?: string) => {
+  const base = `${BASE_URL}/api/chantiers/${chantierId}/export.pdf`;
+  return lang ? `${base}?lang=${encodeURIComponent(lang)}` : base;
+};
 export const JSON_URL = (chantierId: string) =>
   `${BASE_URL}/api/chantiers/${chantierId}/export.json`;
 export const XLSX_URL = (chantierId: string) =>

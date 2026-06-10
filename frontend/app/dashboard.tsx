@@ -19,6 +19,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
 import { api } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
+import { useTranslation } from "react-i18next";
 import { subscribeQueueSize, syncQueue, enqueueChantier, isNetworkError } from "@/src/services/offlineQueue";
 import { colors, statusMeta, getStatusLabel, READY_FOR_EXPORT_BADGE } from "@/src/theme";
 import { useResponsive } from "@/src/utils/responsive";
@@ -35,17 +36,21 @@ type Chantier = {
 };
 
 // Filtres alignés sur le pipeline 4-étapes (filtrage côté client par stage).
-const FILTERS: { key: "all" | "measure" | "verify" | "fab" | "done"; label: string }[] = [
-  { key: "all", label: "Tous" },
-  { key: "measure", label: "À mesurer" },
-  { key: "verify", label: "À vérifier" },
-  { key: "fab", label: "En fabrication" },
-  { key: "done", label: "Terminés" },
-];
+// 🆕 V3 — Les labels sont désormais traduits via i18n dans le composant.
+//   La constante statique a été remplacée par un FILTERS local dans Dashboard.
 
 export default function Dashboard() {
   const { user, signOut, company } = useAuth();
   const router = useRouter();
+  const { t } = useTranslation();
+  // 🆕 V3 — Filtres traduits dynamiquement via i18n (au lieu d'une constante statique)
+  const FILTERS: { key: "all" | "measure" | "verify" | "fab" | "done"; labelKey: string }[] = [
+    { key: "all", labelKey: "dashboard.filters.all" },
+    { key: "measure", labelKey: "dashboard.filters.toMeasure" },
+    { key: "verify", labelKey: "dashboard.filters.validated" },
+    { key: "fab", labelKey: "dashboard.filters.inProduction" },
+    { key: "done", labelKey: "dashboard.filters.done" },
+  ];
   const [items, setItems] = useState<Chantier[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -424,7 +429,7 @@ export default function Dashboard() {
           testID="search-input"
           value={q}
           onChangeText={setQ}
-          placeholder="Rechercher un client ou une adresse..."
+          placeholder={t("dashboard.search")}
           placeholderTextColor={colors.placeholder}
           style={styles.searchInput}
           returnKeyType="search"
@@ -452,7 +457,7 @@ export default function Dashboard() {
               activeOpacity={0.7}
             >
               <Text style={[styles.chipText, filter === item.key && styles.chipTextActive]}>
-                {item.label}
+                {t(item.labelKey)}
               </Text>
             </TouchableOpacity>
           )}
@@ -485,8 +490,8 @@ export default function Dashboard() {
           ListEmptyComponent={
             <View style={styles.empty}>
               <Ionicons name="folder-open-outline" size={48} color={colors.borderStrong} />
-              <Text style={styles.emptyText}>Aucun chantier</Text>
-              <Text style={styles.emptySub}>Créez votre premier chantier ↓</Text>
+              <Text style={styles.emptyText}>{t("dashboard.empty")}</Text>
+              <Text style={styles.emptySub}>{t("dashboard.createFirst")} ↓</Text>
             </View>
           }
         />

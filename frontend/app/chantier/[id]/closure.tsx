@@ -14,6 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { api, buildAuthHeaders, PDF_URL } from "@/src/services/api";
 import { useAuth } from "@/src/context/AuthContext";
 import { colors, blockMeta, statusMeta, getStatusLabel, NEXT_STATUS, CLOSURE_BUTTON_LABEL_BY_STATUS, CLOSURE_BUTTON_LABEL, CLOSURE_DESCRIPTION_BY_STATUS } from "@/src/theme";
@@ -36,6 +37,7 @@ type Mesure = {
 };
 
 export default function Closure() {
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [chantier, setChantier] = useState<Chantier | null>(null);
@@ -109,7 +111,7 @@ export default function Closure() {
           await Sharing.shareAsync(fileUri, { mimeType });
         }
       } catch (e: any) {
-        Alert.alert("Erreur", e?.message || "Partage impossible.");
+        Alert.alert(t("common.error"), e?.message || t("closure.errors.share"));
       }
     };
     reader.readAsDataURL(blob);
@@ -119,7 +121,9 @@ export default function Closure() {
     setExporting(true);
     try {
       const headers = await buildAuthHeaders();
-      const r = await fetch(PDF_URL(String(id)), { headers });
+      // 🌍 Passe la langue courante du UI pour traduire labels et statut du PDF.
+      const { default: i18n } = await import("@/src/i18n");
+      const r = await fetch(PDF_URL(String(id), i18n.language), { headers });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const blob = await r.blob();
       await shareBlob(blob, `chantier-${id}.pdf`, "application/pdf");
@@ -135,7 +139,7 @@ export default function Closure() {
           /* fallthrough */
         }
       }
-      Alert.alert("Erreur", "Export PDF indisponible.");
+      Alert.alert(t("common.error"), t("closure.errors.exportPdf"));
     } finally {
       setExporting(false);
     }
@@ -148,7 +152,7 @@ export default function Closure() {
       const blob = new Blob([json], { type: "application/json" });
       await shareBlob(blob, `chantier-${id}.json`, "application/json");
     } catch {
-      Alert.alert("Erreur", "Export JSON impossible.");
+      Alert.alert(t("common.error"), t("closure.errors.exportJson"));
     }
   };
 
@@ -167,7 +171,7 @@ export default function Closure() {
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       );
     } catch {
-      Alert.alert("Erreur", "Export Excel impossible.");
+      Alert.alert(t("common.error"), t("closure.errors.exportXlsx"));
     }
   };
 
@@ -246,19 +250,17 @@ export default function Closure() {
       } else {
         const isFinal = nextStatus === "cloture";
         Alert.alert(
-          isFinal ? "✅ Chantier terminé / livré" : "✅ Étape validée",
-          isFinal
-            ? "Le chantier est marqué 'Terminé / Livré'. Le PDF, CSV et JSON sont prêts pour export."
-            : "Le statut du chantier vient d'avancer dans le pipeline. Vous serez redirigé vers le Dashboard.",
-          [{ text: "OK", onPress: () => router.replace("/dashboard") }]
+          isFinal ? t("closure.doneTitle") : t("closure.stepDoneTitle"),
+          isFinal ? t("closure.doneMessage") : t("closure.stepDoneMessage"),
+          [{ text: t("common.ok"), onPress: () => router.replace("/dashboard") }]
         );
       }
     } catch (e: any) {
       const msg =
         e?.response?.status === 403
-          ? "Vous n'avez pas les droits pour cette action."
-          : "Action impossible.";
-      Alert.alert("Erreur", msg);
+          ? t("closure.errors.noRights")
+          : t("closure.errors.actionImpossible");
+      Alert.alert(t("common.error"), msg);
     }
   }, [id, router, nextStatus]);
 
@@ -269,10 +271,10 @@ export default function Closure() {
       (isArtisanFlow
         ? ARTISAN_DESCRIPTIONS[chantier.status]
         : CLOSURE_DESCRIPTION_BY_STATUS[chantier.status]) ||
-      `Le chantier passera en « ${nextLabelForMsg} ».`;
+      t("closure.passageTo", { label: nextLabelForMsg });
     const confirmText =
       nextStatus === "cloture"
-        ? "Marquer ce chantier comme « Terminé / Livré » ?\n\nIl sera archivé en lecture seule. Vous pourrez toujours consulter les mesures et les exports."
+        ? t("closure.closeConfirmText")
         : description;
     if (Platform.OS === "web") {
       const ok = typeof window !== "undefined" && window.confirm(confirmText);
@@ -281,16 +283,16 @@ export default function Closure() {
     }
     Alert.alert(
       nextStatus === "cloture"
-        ? "Clôturer définitivement ?"
-        : "Confirmer la transition ?",
+        ? t("closure.closeConfirmTitle")
+        : t("closure.closeConfirmTransitionTitle"),
       confirmText,
       [
-        { text: "Annuler", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
           text:
             nextStatus === "cloture"
-              ? "Oui, clôturer"
-              : "Oui, confirmer",
+              ? t("closure.yesClose")
+              : t("closure.yesConfirm"),
           style: "destructive",
           onPress: performClosure,
         },
@@ -313,7 +315,7 @@ export default function Closure() {
     <SafeAreaView style={styles.flex} edges={["bottom"]}>
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 60 }}>
         <View style={styles.summaryCard}>
-          <Text style={styles.cardSection}>RÉSUMÉ</Text>
+          <Text style={styles.cardSection}>{t("closure.summary")}</Text>
           <Text style={styles.clientName}>{chantier.client_name}</Text>
           <Text style={styles.addr}>{chantier.address}</Text>
           {meta && (
@@ -328,19 +330,19 @@ export default function Closure() {
         <View style={styles.statsRow}>
           <View style={styles.statCard}>
             <Text style={styles.statValue}>{mesures.length}</Text>
-            <Text style={styles.statLabel}>Ouvertures</Text>
+            <Text style={styles.statLabel}>{t("closure.openings")}</Text>
           </View>
           <View style={styles.statCard}>
             <Text style={[styles.statValue, totalAlerts > 0 && { color: colors.alert }]}>
               {totalAlerts}
             </Text>
-            <Text style={styles.statLabel}>Alertes</Text>
+            <Text style={styles.statLabel}>{t("closure.alerts")}</Text>
           </View>
         </View>
 
-        <Text style={styles.section}>DÉTAIL DES MESURES</Text>
+        <Text style={styles.section}>{t("closure.detail")}</Text>
         {mesures.length === 0 && (
-          <Text style={styles.empty}>Aucune mesure enregistrée.</Text>
+          <Text style={styles.empty}>{t("closure.noMeasures")}</Text>
         )}
         {mesures.map((m, idx) => {
           const block = blockMeta[m.block_type] ?? { label: m.block_type, icon: "square-outline" };
@@ -351,7 +353,7 @@ export default function Closure() {
               </Text>
               <Text style={styles.mesureType}>{block.label}</Text>
               <View style={styles.gridDim}>
-                {dimensionFields(m).map((d) => (
+                {dimensionFields(m, t).map((d) => (
                   <View key={d.label} style={styles.dimItem}>
                     <Text style={styles.dimLabel}>{d.label}</Text>
                     <Text style={styles.dimValue}>
@@ -361,7 +363,7 @@ export default function Closure() {
                 ))}
               </View>
               {m.slope_angle_deg != null && (
-                <Text style={styles.slope}>Pente : {m.slope_angle_deg}°</Text>
+                <Text style={styles.slope}>{t("closure.slope")} : {m.slope_angle_deg}°</Text>
               )}
               {m.alerts && m.alerts.length > 0 && (
                 <View style={styles.alertsBox}>
@@ -411,37 +413,37 @@ export default function Closure() {
   );
 }
 
-function dimensionFields(m: any): { label: string; value: number | string }[] {
+function dimensionFields(m: any, t: (k: string) => string): { label: string; value: number | string }[] {
   const out: { label: string; value: number | string }[] = [];
   const map: [string, string][] = [
-    ["bay_height", "Hauteur (baie)"],
-    ["bay_width", "Largeur (baie)"],
-    ["bay_diagonal", "Diagonale"],
-    ["floor_reserve", "Réserve Sol Fini"],
-    ["bloc_thickness", "Épais. Bloc Béton"],
-    ["insulation_thickness", "Épais. Isolant"],
-    ["finish_outer", "Finition ext."],
-    ["finish_inner", "Finition int."],
+    ["bay_height", t("closure.dim.bay_height")],
+    ["bay_width", t("closure.dim.bay_width")],
+    ["bay_diagonal", t("closure.dim.bay_diagonal")],
+    ["floor_reserve", t("closure.dim.floor_reserve")],
+    ["bloc_thickness", t("closure.dim.bloc_thickness")],
+    ["insulation_thickness", t("closure.dim.insulation_thickness")],
+    ["finish_outer", t("closure.dim.finish_outer")],
+    ["finish_inner", t("closure.dim.finish_inner")],
     // Legacy
-    ["width_top", "L. haut"],
-    ["width_middle", "L. milieu"],
-    ["width_bottom", "L. bas"],
-    ["height_left", "H. gauche"],
-    ["height_middle", "H. milieu"],
-    ["height_right", "H. droite"],
-    ["diag_1", "Diag 1"],
-    ["diag_2", "Diag 2"],
-    ["height_quarter_left", "H. ¼ G"],
-    ["height_quarter_right", "H. ¼ D"],
-    ["height_small", "H. petite"],
-    ["height_large", "H. grande"],
-    ["width_small", "L. petite"],
-    ["width_intermediate", "L. inter."],
+    ["width_top", t("closure.dim.width_top")],
+    ["width_middle", t("closure.dim.width_middle")],
+    ["width_bottom", t("closure.dim.width_bottom")],
+    ["height_left", t("closure.dim.height_left")],
+    ["height_middle", t("closure.dim.height_middle")],
+    ["height_right", t("closure.dim.height_right")],
+    ["diag_1", t("closure.dim.diag_1")],
+    ["diag_2", t("closure.dim.diag_2")],
+    ["height_quarter_left", t("closure.dim.height_quarter_left")],
+    ["height_quarter_right", t("closure.dim.height_quarter_right")],
+    ["height_small", t("closure.dim.height_small")],
+    ["height_large", t("closure.dim.height_large")],
+    ["width_small", t("closure.dim.width_small")],
+    ["width_intermediate", t("closure.dim.width_intermediate")],
   ];
   for (const [k, l] of map) if (m[k] != null) out.push({ label: l, value: m[k] });
   if (m.wall_type) {
     out.push({
-      label: "Type paroi",
+      label: t("closure.dim.wall_type"),
       value:
         m.wall_type === "ite"
           ? "ITE"
