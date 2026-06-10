@@ -84,7 +84,9 @@ type Shape =
   | "bow_window"
   | "pentagone"
   | "hexagone"
-  | "ovale";
+  | "ovale"
+  // 🆕 V3 — Polygone unifié (cahier 09/06/2026)
+  | "polygone";
 
 type DiagState = "auto" | "validated" | "manual";
 
@@ -113,16 +115,15 @@ const SHAPES: {
   { key: "porte_entree", letter: "B", label: "PORTE D'ENTRÉE", icon: "exit-outline", desc: "Avec réserve sol & trait niveau 1m" },
   { key: "porte_garage", letter: "C", label: "PORTE DE GARAGE", icon: "car-outline", desc: "Avec linteau et écoinçons" },
   { key: "trapeze", letter: "D", label: "TRAPÈZE", icon: "triangle-outline", desc: "Hauteur gauche ≠ Hauteur droite" },
-  { key: "triangle", letter: "E", label: "TRIANGLE", icon: "trail-sign-outline", desc: "Base + hauteur" },
   { key: "oeil_de_boeuf", letter: "H", label: "ŒIL-DE-BŒUF", icon: "ellipse-outline", desc: "Ouverture circulaire (diamètre)" },
   { key: "coulissant_levant", letter: "K", label: "COULISSANT LEVANT", icon: "swap-horizontal-outline", desc: "Levant-coulissant avec réserve sol" },
   // 🆕 V2 — Formes complexes
   { key: "plein_cintre", letter: "L", label: "PLEIN CINTRE", icon: "radio-button-on-outline", desc: "Arc parfait en demi-cercle au sommet" },
   { key: "arc_surbaisse", letter: "M", label: "ARC SURBAISSÉ", icon: "remove-outline", desc: "Arc applati (flèche < demi-largeur)" },
-  { key: "angle_90", letter: "N", label: "ANGLE 90°", icon: "git-branch-outline", desc: "Deux baies à angle droit (coin de mur)" },
+  { key: "angle_90", letter: "N", label: "PAN COUPÉ", icon: "git-branch-outline", desc: "Châssis avec coin coupé en oblique" },
   { key: "bow_window", letter: "O", label: "BOW-WINDOW", icon: "infinite-outline", desc: "Baie courbe — plusieurs panneaux" },
-  { key: "pentagone", letter: "P", label: "PENTAGONE", icon: "home-outline", desc: "Toit pointu (rectangle + triangle)" },
-  { key: "hexagone", letter: "Q", label: "HEXAGONE", icon: "shapes-outline", desc: "6 côtés (rare, abri / véranda)" },
+  // 🆕 V3 — Polygone unifié (remplace Triangle / Pentagone / Hexagone / Octogone)
+  { key: "polygone", letter: "P", label: "POLYGONE", icon: "shapes-outline", desc: "Forme polygonale (3 à 8 arêtes — sommets éditables)" },
   { key: "ovale", letter: "R", label: "OVALE", icon: "ellipse-outline", desc: "Ellipse (axe horizontal + vertical)" },
 ];
 
@@ -217,6 +218,12 @@ type Step3Data = {
   angle90_angle_deg: string; // Angle du pan (135° par défaut, éditable)
   angle90_h_left: string; // Hauteur gauche (asymétrique)
   angle90_h_right: string; // Hauteur droite (asymétrique)
+  // 🆕 V3 — Polygone unifié (3/5/6/8 arêtes)
+  polygon_edge_count: "3" | "5" | "6" | "8";
+  polygon_edge_length: string; // Longueur uniforme de chaque arête (mm)
+  polygon_angle_deg: string;   // Angle de chaque sommet (°) — éditable
+  polygon_bbox_width: string;  // Largeur hors-tout (mm)
+  polygon_bbox_height: string; // Hauteur hors-tout (mm)
   // 🆕 Vérification PÉRIMÈTRE (formes arc + angle)
   perimeter_measured: string; // Mesure ruban faite par le mesureur (mm)
   // 4. Bow-Window
@@ -268,6 +275,11 @@ const initStep3 = (): Step3Data => ({
   angle90_angle_deg: "135",
   angle90_h_left: "",
   angle90_h_right: "",
+  polygon_edge_count: "6",
+  polygon_edge_length: "",
+  polygon_angle_deg: "120",
+  polygon_bbox_width: "",
+  polygon_bbox_height: "",
   perimeter_measured: "",
   bow_panel_count: "",
   bow_depth_projection: "",
@@ -475,6 +487,13 @@ export default function NewMesureWizard() {
                 opts.angle90_h_right_mm || m.height_right || m.bay_height,
               ),
               perimeter_measured: toStr(opts.arc_measured_mm || opts.perimeter_measured_mm),
+              polygon_edge_count: (["3", "5", "6", "8"].includes(String(opts.polygon_edge_count))
+                ? String(opts.polygon_edge_count)
+                : "6") as "3" | "5" | "6" | "8",
+              polygon_edge_length: toStr(opts.polygon_edge_length_mm),
+              polygon_angle_deg: toStr(opts.polygon_angle_deg) || "120",
+              polygon_bbox_width: toStr(opts.polygon_bbox_width_mm || (m.shape === "polygone" ? m.bay_width : null)),
+              polygon_bbox_height: toStr(opts.polygon_bbox_height_mm || (m.shape === "polygone" ? m.bay_height : null)),
               bow_panel_count: opts.bow_panel_count === 5 ? "5" : (opts.bow_panel_count === 3 ? "3" : ""),
               bow_depth_projection: toStr(opts.bow_depth_projection_mm),
               pent_side_height: toStr(opts.pent_side_height_mm),
@@ -782,6 +801,12 @@ export default function NewMesureWizard() {
       // 🆕 V2 — Ovale : Largeur totale (L) et Hauteur totale (H). Pas d'autre contrainte.
       if (!parseNum(s3.bay_width)) err.bay_width = true;
       if (!parseNum(s3.bay_height)) err.bay_height = true;
+    } else if (shape === "polygone") {
+      // 🆕 V3 — Polygone : 4 cotes obligatoires
+      if (!parseNum(s3.polygon_edge_length)) err.polygon_edge_length = true;
+      if (!parseNum(s3.polygon_angle_deg)) err.polygon_angle_deg = true;
+      if (!parseNum(s3.polygon_bbox_width)) err.polygon_bbox_width = true;
+      if (!parseNum(s3.polygon_bbox_height)) err.polygon_bbox_height = true;
     } else {
       if (s3.renovation_mode && shape === "rect") {
         if (!parseNum(s3.width_top)) err.width_top = true;
@@ -987,6 +1012,14 @@ export default function NewMesureWizard() {
       opts.ovale_radius_x_mm = L / 2;
       opts.ovale_radius_y_mm = H / 2;
     }
+    // 🆕 V3 — Polygone unifié
+    if (shape === "polygone") {
+      opts.polygon_edge_count = parseInt(s3.polygon_edge_count, 10);
+      opts.polygon_edge_length_mm = parseNum(s3.polygon_edge_length);
+      opts.polygon_angle_deg = parseNum(s3.polygon_angle_deg);
+      opts.polygon_bbox_width_mm = parseNum(s3.polygon_bbox_width);
+      opts.polygon_bbox_height_mm = parseNum(s3.polygon_bbox_height);
+    }
 
     const payload: Record<string, unknown> = {
       chantier_id: id,
@@ -1051,6 +1084,10 @@ export default function NewMesureWizard() {
       payload.bay_height = Math.max(Hleft, Hright) || null;
       payload.height_left = Hleft || null;
       payload.height_right = Hright || null;
+    } else if (shape === "polygone") {
+      // 🆕 V3 — Polygone : on mappe les hors-tout (bbox) sur bay_width / bay_height
+      payload.bay_width = parseNum(s3.polygon_bbox_width);
+      payload.bay_height = parseNum(s3.polygon_bbox_height);
     } else {
       payload.bay_height = parseNum(s3.bay_height);
       payload.bay_diagonal_1 = parseNum(s3.diag_1);
@@ -1711,8 +1748,9 @@ function Step2Shape({
       <View style={[styles.inlineHintBox, { marginTop: 18 }]}>
         <Ionicons name="information-circle" size={14} color={colors.textSecondary} />
         <Text style={styles.inlineHintText}>
-          Les formes complexes (Plein cintre, Arc surbaissé, Angle 90°, Bow-Window) seront
-          disponibles en V2.
+          Sélectionnez la forme correspondant le mieux à votre châssis. Pour
+          un polygone (triangle, pentagone, hexagone, octogone), choisissez
+          « POLYGONE » puis indiquez le nombre d&apos;arêtes.
         </Text>
       </View>
     </View>
@@ -2125,13 +2163,111 @@ function Step3Cotes({
       {shape === "ovale" && (
         <>
           <Text style={styles.helperText}>
-            ⬭ Ovale — Forme ellipsoïdale.
-            Rayon horizontal = L/2 ; Rayon vertical = H/2.
+            ⬭ Ovale — Forme ellipsoïdale. Saisissez uniquement la largeur
+            et la hauteur totales.
           </Text>
-          <CotField testID="input-bay-width" label="LARGEUR L (mm) *" value={s3.bay_width}
+          <CotField testID="input-bay-width" label="LARGEUR TOTALE L (mm) *" value={s3.bay_width}
             onChange={(v) => setField("bay_width", v.replace(",", "."))} error={!!err.bay_width} />
-          <CotField testID="input-bay-height" label="HAUTEUR H (mm) *" value={s3.bay_height}
+          <CotField testID="input-bay-height" label="HAUTEUR TOTALE H (mm) *" value={s3.bay_height}
             onChange={(v) => setField("bay_height", v.replace(",", "."))} error={!!err.bay_height} />
+        </>
+      )}
+
+      {/* 🆕 V3 — Polygone unifié (3/5/6/8 arêtes) */}
+      {shape === "polygone" && (
+        <>
+          <Text style={styles.helperText}>
+            ⬡ Polygone — Choisissez le nombre d&apos;arêtes, puis renseignez
+            la longueur de chaque arête et l&apos;angle de chaque sommet.
+            Les valeurs par défaut correspondent à un polygone régulier.
+          </Text>
+
+          <Text style={[styles.sectionLabel, { marginTop: 12 }]}>NOMBRE D&apos;ARÊTES *</Text>
+          <View style={[styles.row2, { marginBottom: 10, flexWrap: "wrap" }]}>
+            {(["3", "5", "6", "8"] as const).map((n) => {
+              const active = s3.polygon_edge_count === n;
+              const labelMap: Record<string, string> = {
+                "3": "TRIANGLE (3)",
+                "5": "PENTAGONE (5)",
+                "6": "HEXAGONE (6)",
+                "8": "OCTOGONE (8)",
+              };
+              const defaultAngle: Record<string, string> = {
+                "3": "60",
+                "5": "108",
+                "6": "120",
+                "8": "135",
+              };
+              return (
+                <TouchableOpacity
+                  key={n}
+                  testID={`polygon-edges-${n}`}
+                  onPress={() => {
+                    setField("polygon_edge_count", n);
+                    // Réinitialise l'angle par défaut si l'utilisateur n'a
+                    // pas encore édité une valeur (ou s'il avait celle d'un
+                    // autre polygone).
+                    if (!s3.polygon_angle_deg || Object.values(defaultAngle).includes(s3.polygon_angle_deg)) {
+                      setField("polygon_angle_deg", defaultAngle[n]);
+                    }
+                  }}
+                  activeOpacity={0.85}
+                  style={[
+                    styles.modeTab,
+                    { minWidth: "47%", marginBottom: 6 },
+                    active && styles.modeTabActive,
+                  ]}
+                >
+                  <Text style={[styles.modeTabText, active && styles.modeTabTextActive]}>
+                    {labelMap[n]}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          <CotField
+            testID="input-polygon-edge-length"
+            label="LONGUEUR D'UNE ARÊTE (mm) *"
+            value={s3.polygon_edge_length}
+            onChange={(v) => setField("polygon_edge_length", v.replace(",", "."))}
+            error={!!err.polygon_edge_length}
+          />
+          <CotField
+            testID="input-polygon-angle"
+            label="ANGLE D'UN SOMMET (°) *"
+            value={s3.polygon_angle_deg}
+            onChange={(v) => setField("polygon_angle_deg", v.replace(",", "."))}
+            error={!!err.polygon_angle_deg}
+          />
+
+          <Text style={[styles.sectionLabel, { marginTop: 12 }]}>HORS-TOUT (boîte englobante)</Text>
+          <View style={styles.row2}>
+            <View style={{ flex: 1 }}>
+              <CotField
+                testID="input-polygon-bbox-width"
+                label="LARGEUR (mm) *"
+                value={s3.polygon_bbox_width}
+                onChange={(v) => setField("polygon_bbox_width", v.replace(",", "."))}
+                error={!!err.polygon_bbox_width}
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <CotField
+                testID="input-polygon-bbox-height"
+                label="HAUTEUR (mm) *"
+                value={s3.polygon_bbox_height}
+                onChange={(v) => setField("polygon_bbox_height", v.replace(",", "."))}
+                error={!!err.polygon_bbox_height}
+              />
+            </View>
+          </View>
+          <Text style={styles.helperText}>
+            ✓ Pour un polygone régulier : tous les côtés ont la même longueur
+            et tous les sommets le même angle. Pour un polygone irrégulier,
+            indiquez la valeur moyenne ou contactez le technicien pour
+            renseigner chaque arête séparément.
+          </Text>
         </>
       )}
 

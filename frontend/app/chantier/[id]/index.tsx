@@ -975,55 +975,29 @@ export default function ChantierDetail() {
                   <View style={styles.mesureThumbPlaceholder}>
                     <ShapeIcon
                       shape={trueShape}
-                      size={40}
+                      size={28}
                       color={colors.textPrimary}
                       strokeWidth={1.8}
                     />
                   </View>
                 )}
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.mesureLabel}>
+                <View style={{ flex: 1, minWidth: 0 }}>
+                  <Text style={styles.mesureLabel} numberOfLines={1}>
                     #{index + 1} · {item.label}
                   </Text>
-                  <Text style={styles.mesureType}>{trueLabel}</Text>
-                  {item.slope_angle_deg != null && (
-                    <Text style={styles.slope}>Pente : {item.slope_angle_deg}°</Text>
-                  )}
+                  <Text style={styles.mesureType} numberOfLines={1}>
+                    {trueLabel}
+                    {item.slope_angle_deg != null ? `  ·  ${item.slope_angle_deg}°` : ""}
+                  </Text>
                 </View>
-              </View>
-              {item.alerts && item.alerts.length > 0 && (
-                <View style={styles.alertWrap}>
-                  {item.alerts.map((a, i) => (
-                    <Text key={i} style={styles.alertText}>
-                      {a}
-                    </Text>
-                  ))}
-                </View>
-              )}
-              {(canEditMesures || showCommercialFabIntercept || showArchivedLockIntercept) && (
-                <View style={styles.mesureActions}>
-                  <TouchableOpacity
-                    testID={`edit-mesure-${item.id}`}
-                    onPress={() => {
-                      if (showArchivedLockIntercept) {
-                        interceptArchivedLock();
-                        return;
-                      }
-                      if (showCommercialFabIntercept) {
-                        interceptCommercialFab();
-                        return;
-                      }
-                      router.push(`/chantier/${id}/new-mesure?mesure_id=${item.id}`);
-                    }}
-                    activeOpacity={0.7}
-                    style={styles.mesureEditBtn}
-                  >
-                    <Ionicons name="create-outline" size={14} color={colors.primary} />
-                    <Text style={styles.mesureEditText}>MODIFIER</Text>
-                  </TouchableOpacity>
+                {/* 🆕 V3 — Action de suppression sous forme d'icône discrète
+                    intégrée à la carte (plus de bouton textuel lourd).
+                    Le tap sur la carte déclenche l'édition. */}
+                {(canEditMesures || showCommercialFabIntercept || showArchivedLockIntercept) && (
                   <TouchableOpacity
                     testID={`delete-mesure-${item.id}`}
-                    onPress={() => {
+                    onPress={(e) => {
+                      e.stopPropagation?.();
                       if (showArchivedLockIntercept) {
                         interceptArchivedLock();
                         return;
@@ -1049,15 +1023,24 @@ export default function ChantierDetail() {
                               }
                             },
                           },
-                        ]
-                      );
+                          ]
+                        );
                     }}
-                    activeOpacity={0.7}
-                    style={styles.mesureDelBtn}
+                    hitSlop={{ top: 10, left: 10, right: 10, bottom: 10 }}
+                    style={styles.mesureTrashIcon}
+                    activeOpacity={0.6}
                   >
-                    <Ionicons name="trash-outline" size={14} color={colors.anomaly} />
-                    <Text style={styles.mesureDelText}>SUPPRIMER</Text>
+                    <Ionicons name="trash-outline" size={18} color={colors.anomaly} />
                   </TouchableOpacity>
+                )}
+              </View>
+              {item.alerts && item.alerts.length > 0 && (
+                <View style={styles.alertWrap}>
+                  {item.alerts.map((a, i) => (
+                    <Text key={i} style={styles.alertText} numberOfLines={2}>
+                      {a}
+                    </Text>
+                  ))}
                 </View>
               )}
               {isArchived && (
@@ -1779,11 +1762,11 @@ export default function ChantierDetail() {
           <TouchableOpacity
             testID="add-mesure-button"
             onPress={() => router.push(`/chantier/${id}/new-mesure`)}
-            style={[styles.btn, styles.btnPrimary]}
+            style={[styles.btn, styles.btnPrimaryCompact]}
             activeOpacity={0.85}
           >
-            <Ionicons name="add-circle" size={22} color="#000" />
-            <Text style={styles.btnPrimaryText}>AJOUTER UNE OUVERTURE</Text>
+            <Ionicons name="add" size={22} color="#000" />
+            <Text style={styles.btnPrimaryTextCompact}>AJOUTER</Text>
           </TouchableOpacity>
         )}
         {canEditMesures && chantier?.wall_config?.masonry_type && (
@@ -2280,23 +2263,36 @@ const styles = StyleSheet.create({
     borderColor: colors.borderSubtle,
     borderWidth: 1,
     borderRadius: 10,
-    padding: 12,
-    marginBottom: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    marginBottom: 6,
   },
-  mesureRow: { flexDirection: "row", alignItems: "center", gap: 12 },
-  mesureThumb: { width: 64, height: 64, borderRadius: 8, backgroundColor: colors.bg },
+  mesureRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+  mesureThumb: { width: 44, height: 44, borderRadius: 6, backgroundColor: colors.bg },
   mesureThumbPlaceholder: {
-    width: 64,
-    height: 64,
-    borderRadius: 8,
+    width: 44,
+    height: 44,
+    borderRadius: 6,
     backgroundColor: colors.bg,
     borderWidth: 1,
     borderColor: colors.borderSubtle,
     alignItems: "center",
     justifyContent: "center",
   },
-  mesureLabel: { color: colors.textPrimary, fontWeight: "800", fontSize: 15 },
-  mesureType: { color: colors.textSecondary, marginTop: 2, fontSize: 13 },
+  mesureLabel: { color: colors.textPrimary, fontWeight: "800", fontSize: 14 },
+  mesureType: { color: colors.textSecondary, marginTop: 1, fontSize: 12 },
+  // 🆕 V3 — Icône corbeille discrète intégrée au bloc (remplace les
+  //    boutons textuels MODIFIER/SUPPRIMER pour gagner en compacité).
+  mesureTrashIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255,30,30,0.08)",
+    borderWidth: 1,
+    borderColor: "rgba(255,30,30,0.25)",
+  },
   mesureActions: {
     flexDirection: "row",
     gap: 8,
@@ -2419,6 +2415,17 @@ const styles = StyleSheet.create({
   },
   btnPrimary: { backgroundColor: colors.primary },
   btnPrimaryText: { color: "#000", fontWeight: "900", fontSize: 15, letterSpacing: 1 },
+  // 🆕 V3 — Bouton "AJOUTER" compact (cahier des charges 09/06/2026 : libérer
+  //    de l'espace en bas d'écran pour gagner en densité d'affichage).
+  btnPrimaryCompact: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    alignSelf: "flex-end",
+    minWidth: 140,
+    minHeight: 44,
+  },
+  btnPrimaryTextCompact: { color: "#000", fontWeight: "900", fontSize: 13, letterSpacing: 0.8 },
   btnSecondary: { borderWidth: 2, borderColor: colors.borderStrong },
   btnSecondaryText: { color: colors.textPrimary, fontWeight: "800", letterSpacing: 1 },
   // Modales (overlay sombre + carte centrée) — utilisés par AFFECTER,

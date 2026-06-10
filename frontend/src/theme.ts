@@ -177,6 +177,15 @@ export const shapeMeta: Record<string, { label: string }> = {
   triangle: { label: "Triangle" },
   oeil_de_boeuf: { label: "Œil-de-bœuf" },
   coulissant_levant: { label: "Coulissant levant" },
+  // 🆕 V2/V3 — Formes complexes
+  plein_cintre: { label: "Plein cintre" },
+  arc_surbaisse: { label: "Arc surbaissé" },
+  angle_90: { label: "Pan coupé" },
+  bow_window: { label: "Bow-window" },
+  pentagone: { label: "Pentagone" },
+  hexagone: { label: "Hexagone" },
+  ovale: { label: "Ovale" },
+  polygone: { label: "Polygone" },
 };
 
 /**

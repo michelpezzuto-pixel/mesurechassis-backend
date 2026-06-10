@@ -33,7 +33,9 @@ export type ShapeKey =
   | "bow_window"
   | "pentagone"
   | "hexagone"
-  | "ovale";
+  | "ovale"
+  // 🆕 V3 — Polygone unifié (juin 2026)
+  | "polygone";
 
 /**
  * Récupère la VRAIE forme d'une mesure depuis ses options ou par fallback
@@ -57,6 +59,14 @@ export function blockTypeToShape(
       case "triangle":
       case "oeil_de_boeuf":
       case "coulissant_levant":
+      case "plein_cintre":
+      case "arc_surbaisse":
+      case "angle_90":
+      case "bow_window":
+      case "pentagone":
+      case "hexagone":
+      case "ovale":
+      case "polygone":
         return optShape;
     }
   }
