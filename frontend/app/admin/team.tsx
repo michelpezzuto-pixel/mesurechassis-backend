@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -54,6 +54,9 @@ export default function TeamAdmin() {
   // A3 — Mot de passe attribué directement par l'Admin
   const [memberPassword, setMemberPassword] = useState("");
   const [showMemberPassword, setShowMemberPassword] = useState(false);
+  // 🐛 Fix iOS Safari : l'autofill peut désynchroniser le state JS et le DOM.
+  // On lit la valeur réelle de l'input via ref au moment du submit.
+  const passwordInputRef = useRef<TextInput | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [lastInviteLink, setLastInviteLink] = useState<string | null>(null);
 
@@ -108,8 +111,23 @@ export default function TeamAdmin() {
       setSubmitting(true);
       setLastInviteLink(null);
       try {
+        // 🐛 Fix iOS Safari : lire la valeur réelle du DOM (l'autofill iOS
+        // peut désynchroniser le state JS). On essaie d'abord le state React,
+        // puis on bascule sur le DOM si vide.
+        let pwd = memberPassword;
+        if (!pwd && Platform.OS === "web" && passwordInputRef.current) {
+          // RN-Web : l'input natif est exposé via _internalFiberInstanceHandleDEV
+          // mais on peut accéder à `.value` directement sur l'élément DOM.
+          const node = passwordInputRef.current as unknown as HTMLInputElement;
+          if (node && typeof node.value === "string") {
+            pwd = node.value;
+          }
+        }
+        // Trim final (au cas où autofill ajouterait un espace)
+        pwd = (pwd || "").trim();
+
         // Vérif locale du mot de passe
-        if (!memberPassword || memberPassword.length < 6) {
+        if (!pwd || pwd.length < 6) {
           Alert.alert("Mot de passe trop court", "6 caractères minimum.");
           setSubmitting(false);
           return;
@@ -117,7 +135,7 @@ export default function TeamAdmin() {
         const res = await api.post("/team/members", {
           name: name.trim(),
           email: email.trim(),
-          password: memberPassword,
+          password: pwd,
           role,
           confirm_extra_seat: confirmExtraSeat,
         });
@@ -126,7 +144,7 @@ export default function TeamAdmin() {
           "✅ Collaborateur créé",
           `Identifiants à transmettre à ${name.trim()} :\n\n` +
           `📧 Email : ${email.trim()}\n` +
-          `🔐 Mot de passe : ${memberPassword}\n\n` +
+          `🔐 Mot de passe : ${pwd}\n\n` +
           `(Communiquez ces identifiants par SMS / WhatsApp / papier — l'application n'envoie PAS d'email.)`,
         );
         setName("");
@@ -345,6 +363,7 @@ export default function TeamAdmin() {
               </Text>
               <View style={styles.passwordWrap}>
                 <TextInput
+                  ref={passwordInputRef}
                   testID="invite-form-password"
                   value={memberPassword}
                   onChangeText={setMemberPassword}
@@ -355,6 +374,7 @@ export default function TeamAdmin() {
                   autoCorrect={false}
                   autoComplete="new-password"
                   textContentType="newPassword"
+                  passwordRules="minlength: 6;"
                   returnKeyType="done"
                   style={styles.passwordInput}
                 />
