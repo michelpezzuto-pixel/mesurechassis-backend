@@ -1,6 +1,7 @@
 """Routes d'authentification + gestion utilisateurs + double opt-in."""
 from __future__ import annotations
 
+import logging
 import os
 import secrets
 import uuid
@@ -10,6 +11,8 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 
 from db import BETA_MODE, VALID_ROLES, db
+
+logger = logging.getLogger("mesurechassis.auth")
 from deps import (
     auth_user,
     create_access_token,

@@ -374,7 +374,7 @@ def send_feedback_email(
     )
     safe_page = (page_context or "").replace("<", "&lt;").replace(">", "&gt;")
     reply_subject = (
-        f"Re%3A%20Feedback%20MesureCh%C3%A2ssis"  # URL-encoded "Re: Feedback MesureChâssis"
+        "Re%3A%20Feedback%20MesureCh%C3%A2ssis"  # URL-encoded "Re: Feedback MesureChâssis"
     )
     reply_body = (
         f"Bonjour%20{sender_name.split()[0] if sender_name else ''}%2C%0A%0A"

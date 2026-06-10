@@ -94,7 +94,10 @@ class ReferralStatus(BaseModel):
 
 
 class UpdateCodeRequest(BaseModel):
-    code: str = Field(min_length=4, max_length=24)
+    # ⚠️ Pas de `min_length`/`max_length` Pydantic ici — on préfère lever
+    # un HTTPException(400) explicite dans l'endpoint (cohérence avec les
+    # autres erreurs métier qui sont en 400, pas en 422).
+    code: str
 
 
 class ValidateCodeRequest(BaseModel):
@@ -164,14 +167,17 @@ async def update_my_code(payload: UpdateCodeRequest, user=Depends(auth_user)):
     """
     company_id = user.get("company_id") or ""
     new_code = _normalize_code(payload.code)
+    # Validation manuelle (cohérence 400 partout, pas de 422 Pydantic)
+    if not new_code or len(new_code) < 4 or len(new_code) > 24:
+        raise HTTPException(400, "Le code doit faire entre 4 et 24 caractères.")
     if not CODE_REGEX.match(new_code):
         raise HTTPException(
             400,
             "Format invalide. Utilisez 4 à 24 caractères : lettres, chiffres et tirets.",
         )
     reserved = {"ADMIN", "MESURECHASSIS", "TEST", "DEMO", "NULL", "UNDEFINED"}
-    if new_code in reserved or any(new_code.startswith(p) for p in ("MC-",)):
-        # Les codes auto-générés démarrent par `MC-` → réservé au système.
+    # Les codes auto-générés démarrent par `MC-` → réservé au système.
+    if new_code in reserved or new_code.startswith("MC-"):
         raise HTTPException(400, "Ce code est réservé. Choisissez-en un autre.")
 
     # Vérifie l'unicité (sauf si c'est déjà le mien)

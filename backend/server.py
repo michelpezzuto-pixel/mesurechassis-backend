@@ -12,6 +12,7 @@ from contextlib import asynccontextmanager
 from fastapi import APIRouter, FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from starlette.middleware.cors import CORSMiddleware
+import logging
 import os
 
 from db import client as mongo_client
@@ -32,6 +33,20 @@ from seed import seed_data
 async def lifespan(_app: FastAPI):
     # --- Startup ---------------------------------------------------------
     await seed_data()
+    # 🆕 Build 9 — Index unique sur referral_code (anti-collision concurrente).
+    # `sparse=True` permet aux documents sans champ d'exister sans violer
+    # l'unicité (migration progressive depuis les comptes pré-existants).
+    try:
+        from db import db as _db
+        await _db.companies.create_index(
+            "referral_code", unique=True, sparse=True, name="referral_code_unique"
+        )
+    except Exception as _e:
+        # Pas critique : l'index existe peut-être déjà, ou collision sur
+        # données legacy → on log et on continue.
+        logging.getLogger("mesurechassis").warning(
+            "Index referral_code non créé : %s", _e
+        )
     yield
     # --- Shutdown --------------------------------------------------------
     mongo_client.close()
