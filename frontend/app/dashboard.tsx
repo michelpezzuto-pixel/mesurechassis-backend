@@ -442,6 +442,19 @@ export default function Dashboard() {
             <Text style={styles.actionBtnText} numberOfLines={1}>Testeurs</Text>
           </TouchableOpacity>
         )}
+        {/* Campagne emailing prospection testeurs — accessible depuis mobile
+            (l'admin lance le lot du jour en 1 clic depuis son iPhone). */}
+        {user?.role === "admin" && (
+          <TouchableOpacity
+            testID="admin-campagne-button"
+            onPress={() => router.push("/admin/campagne" as never)}
+            style={styles.actionBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="megaphone-outline" size={18} color={colors.primary} />
+            <Text style={styles.actionBtnText} numberOfLines={1}>Campagne</Text>
+          </TouchableOpacity>
+        )}
         {/* Feedback — bouton unique pour tous les rôles (admin/commercial/technicien).
             Ouvre la page /feedback qui inclut un formulaire dépliable de
             nouveau message ET l'historique des retours (tous pour admin,

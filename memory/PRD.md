@@ -203,3 +203,17 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
   - index.html : featureList SEO enrichie (trilingue + parrainage), softwareVersion 1.1.0
 - Flux entreprise déjà bien documenté dans guide.html (Commercial → Technicien → Admin → verrou fabrication) ✅
 - ⚠️ Resterait à faire : remplacer l'image images/7-formes-de-baies.jpg (capture d'app montrant l'ancien wizard 7 formes)
+
+## 📣 Module Campagne emailing testeurs — TERMINÉ ✅ (11 juin 2026, soir)
+- **But** : prospection des 56 artisans belges en 1 clic pour recruter les 12 testeurs Google Play.
+- Backend `/app/backend/routes/campaign.py` (branché dans server.py) :
+  - `POST /api/campaign/send-batch` — envoie le lot du jour (MAX 15/jour anti-spam Resend, 3s entre envois, statut `sending` anti double-clic, BackgroundTasks + asyncio.to_thread)
+  - `GET /api/campaign/stats` — pending/sent/failed/sent_today/converted (croisement avec tester_signups)
+  - `GET /api/campaign/prospects` + `POST /api/campaign/prospects/import` (dédoublonné)
+  - Seed auto au démarrage depuis `/app/backend/static/liste_prospects_testeurs.csv` (idempotent → fonctionne aussi sur Railway au déploiement)
+  - Tout est protégé `require_admin` (RBAC vérifié : 401 sans token)
+- Frontend `/app/frontend/app/admin/campagne.tsx` : stats (à contacter / envoyés / quota jour / inscrits), bouton "ENVOYER LE LOT DU JOUR", liste prospects avec badges, polling 4s pendant l'envoi. Bouton "Campagne" (megaphone) dans le dashboard admin — VISIBLE SUR MOBILE (le client envoie depuis son iPhone). Header expo-router masqué dans _layout.tsx.
+- Email : objet sans "beta" (conformité stores), corps personnalisé {company}, lien devenir-testeur.html, mention STOP (RGPD).
+- **Tests** : envoi réel validé via delivered@resend.dev (Resend 200 OK, statut sent, prospect test supprimé) ; pytest `tests/test_campaign.py` (4 tests) ; screenshots dashboard + écran campagne OK. AUCUN email réel envoyé aux prospects — premier clic = le client.
+- ⚠️ Pour la prod : pousser via "Save to GitHub" → Railway redéploie → seed auto des 56 prospects → le client clique chaque jour depuis son iPhone.
+- ⚠️ Volume de masse (France/Luxembourg) → basculer sur Brevo plus tard (ne pas augmenter DAILY_LIMIT au-delà de ~15 avec Resend).

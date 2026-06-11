@@ -17,6 +17,7 @@ import os
 
 from db import client as mongo_client
 from routes import auth as auth_routes
+from routes import campaign as campaign_routes
 from routes import chantiers as chantiers_routes
 from routes import company as company_routes
 from routes import exports as exports_routes
@@ -34,6 +35,14 @@ from seed import seed_data
 async def lifespan(_app: FastAPI):
     # --- Startup ---------------------------------------------------------
     await seed_data()
+    # 🆕 Campagne — import auto des prospects depuis le CSV embarqué (idempotent,
+    # dédoublonné par email). Fonctionne aussi sur Railway car le CSV est commité.
+    try:
+        await campaign_routes.seed_prospects_from_csv()
+    except Exception as _e:
+        logging.getLogger("mesurechassis").warning(
+            "Import CSV prospects échoué : %s", _e
+        )
     # 🆕 Build 9 — Index unique sur referral_code (anti-collision concurrente).
     # `sparse=True` permet aux documents sans champ d'exister sans violer
     # l'unicité (migration progressive depuis les comptes pré-existants).
@@ -68,6 +77,8 @@ api.include_router(exports_routes.router)
 # 🆕 Build 9 — Système de parrainage (2 mois offerts par filleul actif)
 api.include_router(referral_routes.router)
 api.include_router(testers_routes.router)
+# 🆕 Campagne emailing — prospection testeurs à 1 bouton (max 15/jour via Resend)
+api.include_router(campaign_routes.router)
 
 # ─────────────────────────────────────────────────────────────────────
 # Route publique TEMPORAIRE pour télécharger les screenshots tablette
