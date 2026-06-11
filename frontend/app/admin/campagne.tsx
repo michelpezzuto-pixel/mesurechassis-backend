@@ -21,6 +21,8 @@ type Stats = {
   sent_today: number;
   daily_limit: number;
   converted: number;
+  relance_due: number;
+  relances_sent: number;
 };
 
 type Prospect = {
@@ -30,12 +32,14 @@ type Prospect = {
   region: string;
   status: "pending" | "sending" | "sent" | "failed";
   sent_at: string | null;
+  relance_sent_at?: string | null;
 };
 
 const STATUS_UI: Record<string, { label: string; color: string }> = {
   pending: { label: "À CONTACTER", color: "#9ca3af" },
   sending: { label: "ENVOI…", color: "#FBBF24" },
   sent: { label: "ENVOYÉ", color: "#22C55E" },
+  relanced: { label: "RELANCÉ", color: "#60A5FA" },
   failed: { label: "ÉCHEC", color: "#F87171" },
 };
 
@@ -93,8 +97,8 @@ export default function AdminCampagne() {
   };
 
   const remaining = stats ? stats.daily_limit - stats.sent_today : 0;
-  const canSend =
-    !!stats && stats.pending > 0 && remaining > 0 && stats.sending === 0;
+  const todo = stats ? stats.pending + stats.relance_due : 0;
+  const canSend = !!stats && todo > 0 && remaining > 0 && stats.sending === 0;
 
   return (
     <SafeAreaView style={styles.flex} edges={["top", "bottom"]}>
@@ -166,13 +170,21 @@ export default function AdminCampagne() {
                 <Text style={styles.sendBtnText}>
                   {remaining <= 0
                     ? "Limite du jour atteinte — revenez demain"
-                    : stats.pending === 0
+                    : todo === 0
                       ? "Liste épuisée 🎉"
-                      : `ENVOYER LE LOT DU JOUR (${Math.min(remaining, stats.pending)} emails)`}
+                      : `ENVOYER LE LOT DU JOUR (${Math.min(remaining, todo)} emails)`}
                 </Text>
               </>
             )}
           </TouchableOpacity>
+
+          {!!stats.relance_due && (
+            <Text style={styles.relanceInfo} testID="campagne-relance-info">
+              🔁 {stats.relance_due} relance{stats.relance_due > 1 ? "s" : ""} J+5
+              incluse{stats.relance_due > 1 ? "s" : ""} en priorité dans le
+              prochain lot
+            </Text>
+          )}
 
           {message && (
             <Text style={styles.message} testID="campagne-message">
@@ -185,7 +197,11 @@ export default function AdminCampagne() {
             keyExtractor={(p) => p.id}
             contentContainerStyle={{ padding: 16, paddingBottom: 50 }}
             renderItem={({ item }) => {
-              const ui = STATUS_UI[item.status] ?? STATUS_UI.pending;
+              const key =
+                item.status === "sent" && item.relance_sent_at
+                  ? "relanced"
+                  : item.status;
+              const ui = STATUS_UI[key] ?? STATUS_UI.pending;
               return (
                 <View style={styles.card} testID={`prospect-${item.email}`}>
                   <View style={{ flex: 1 }}>
@@ -248,6 +264,13 @@ const styles = StyleSheet.create({
   message: {
     color: colors.textSecondary,
     fontSize: 12.5,
+    textAlign: "center",
+    paddingHorizontal: 20,
+    marginBottom: 4,
+  },
+  relanceInfo: {
+    color: "#60A5FA",
+    fontSize: 12,
     textAlign: "center",
     paddingHorizontal: 20,
     marginBottom: 4,

@@ -11,6 +11,8 @@ from routes.campaign import (
     EMAIL_RE,
     ORIGIN_PHRASES,
     PROSPECTS_CSV,
+    RELANCE_DELAY_DAYS,
+    RELANCE_TEMPLATE,
     SUBJECTS,
 )
 
@@ -54,3 +56,13 @@ def test_regex_email():
     assert EMAIL_RE.match("info@ftchassis.be")
     assert not EMAIL_RE.match("pas-un-email")
     assert not EMAIL_RE.match("a@b")
+
+
+def test_relance_j5():
+    """Relance auto J+5 : délai correct, template avec lien + STOP."""
+    assert RELANCE_DELAY_DAYS == 5
+    body = RELANCE_TEMPLATE.format(company="FT Châssis")
+    assert "FT Châssis" in body
+    assert "https://mesurechassis.com/devenir-testeur.html" in body
+    assert "STOP" in body
+    assert "beta" not in body.lower()
