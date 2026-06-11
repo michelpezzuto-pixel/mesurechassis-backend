@@ -193,3 +193,13 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
 - Script reproductible : /app/scripts/update_site_vitrine.py
 - Archive : GET /api/_downloads/site-maj-offre-lancement (à dézipper et uploader via le gestionnaire Easyhost, écrase les 13 .html)
 - Email de campagne testeurs finalisé et remis au client (lien devenir-testeur.html)
+
+## 🔄 Site vitrine V2 — audit fonctionnalités (11 juin 2026, suite)
+- Client a signalé : guide obsolète (7 formes au lieu de 12, formes "V2" annoncées comme à venir alors qu'implémentées)
+- Corrections appliquées sur les 14 pages (archive régénérée, même endpoint /api/_downloads/site-maj-offre-lancement) :
+  - "7 formes" → "12 formes" partout (guide grille complète A→R avec Plein cintre, Arc surbaissé, Pan coupé, Bow-window, Polygone, Ovale ; Triangle retiré car remplacé par Polygone)
+  - PRIX corrigés : Entreprise 54,99 → 59,99 € (index, FAQ, CGV) + mention plan Pro 89,99 € dans FAQ
+  - FAQ : +2 questions (multilingue FR/EN/NL, parrainage 2 mois offerts)
+  - index.html : featureList SEO enrichie (trilingue + parrainage), softwareVersion 1.1.0
+- Flux entreprise déjà bien documenté dans guide.html (Commercial → Technicien → Admin → verrou fabrication) ✅
+- ⚠️ Resterait à faire : remplacer l'image images/7-formes-de-baies.jpg (capture d'app montrant l'ancien wizard 7 formes)
