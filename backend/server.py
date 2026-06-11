@@ -94,6 +94,19 @@ async def get_playstore_tablet_asset(filename: str):
     return FileResponse(path, media_type="image/jpeg", filename=filename)
 
 
+@api.get("/_downloads/liste-prospects")
+async def download_liste_prospects():
+    """Liste des prospects testeurs nettoyée (CSV ; compatible Excel/Brevo)."""
+    path = "/app/backend/static/liste_prospects_testeurs.csv"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Liste introuvable")
+    return FileResponse(
+        path,
+        media_type="text/csv",
+        filename="liste_prospects_testeurs.csv",
+    )
+
+
 @api.get("/_downloads/site-maj-offre-lancement")
 async def download_site_maj():
     """Pages du site vitrine mises à jour (bêta → offre de lancement, QR testeur)."""
