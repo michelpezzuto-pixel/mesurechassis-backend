@@ -19,6 +19,7 @@ from db import client as mongo_client
 from routes import auth as auth_routes
 from routes import campaign as campaign_routes
 from routes import chantiers as chantiers_routes
+from routes import linkedin as linkedin_routes
 from routes import company as company_routes
 from routes import exports as exports_routes
 from routes import feedbacks as feedbacks_routes
@@ -82,6 +83,8 @@ api.include_router(referral_routes.router)
 api.include_router(testers_routes.router)
 # 🆕 Campagne emailing — prospection testeurs à 1 bouton (max 15/jour via Resend)
 api.include_router(campaign_routes.router)
+# 🆕 Campagne LinkedIn 15 jours — post du jour + visuels
+api.include_router(linkedin_routes.router)
 
 # ─────────────────────────────────────────────────────────────────────
 # Route publique TEMPORAIRE pour télécharger les screenshots tablette

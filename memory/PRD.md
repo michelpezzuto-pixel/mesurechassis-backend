@@ -250,3 +250,13 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
 - Endpoint manuel : `POST /api/campaign/recap-now` (admin) — testé en réel : Resend 200 OK, delivered=true
 - Tests : 7/7 pytest test_campaign.py (test_recap_hebdo_config ajouté)
 - ⚠️ Le récap automatique ne tourne en continu QUE sur Railway (le preview Emergent s'endort) → refaire "Save to GitHub"
+
+## 💼 Campagne LinkedIn 15 jours (11 juin 2026, nuit) — TERMINÉ ✅
+- Choix client : profil perso Michel, objectif notoriété pré-lancement, ton artisan authentique, visuels générés, écran in-app
+- Backend `/app/backend/routes/linkedin.py` : 15 posts FR pré-rédigés (storytelling J1→J15 : histoire, problème, wizard, 12 formes, PDF, artisan solo, entreprise/rôles, verrou fab, trilingue, exports, dashboard, coulisses IA, parrainage, témoignages, récap)
+  - `GET /api/linkedin/today` (premier jour non publié), `GET /api/linkedin/posts`, `POST /api/linkedin/mark-posted`, `POST /api/linkedin/unmark-posted` (admin) ; progression dans `db.linkedin_progress`
+  - `GET /api/linkedin/image/{day}` PUBLIC (PNG marketing, permet appui long → enregistrer sur iPhone)
+- Visuels : `scripts/generate_linkedin_cards.py` (PIL, 1080×1080, charte #FF5A00/#0C0C0E, badge JOUR X/15, kicker, titre, carte app, footer 2 lignes) → 15 PNG committés dans `static/linkedin/`
+- Frontend `/app/frontend/app/admin/linkedin.tsx` : barre de progression, post du jour, visuel, COPIER LE TEXTE (expo-clipboard, texte+hashtags), MARQUER COMME PUBLIÉ → jour suivant, liste 15 jours avec coches. Bouton "LinkedIn" dashboard admin + Stack.Screen
+- Tests : pytest 4/4 (test_linkedin.py), cycle complet curl (mark J1 → today=J2 → unmark → J1), UI screenshot OK (copie validée), visuel vérifié sans chevauchement (corrigé footer)
+- ⚠️ "Save to GitHub" nécessaire pour avoir le module en prod (mais le client l'utilise depuis le preview comme la campagne email)

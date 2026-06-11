@@ -455,6 +455,17 @@ export default function Dashboard() {
             <Text style={styles.actionBtnText} numberOfLines={1}>Campagne</Text>
           </TouchableOpacity>
         )}
+        {user?.role === "admin" && (
+          <TouchableOpacity
+            testID="admin-linkedin-button"
+            onPress={() => router.push("/admin/linkedin" as never)}
+            style={styles.actionBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="logo-linkedin" size={18} color={colors.primary} />
+            <Text style={styles.actionBtnText} numberOfLines={1}>LinkedIn</Text>
+          </TouchableOpacity>
+        )}
         {/* Feedback — bouton unique pour tous les rôles (admin/commercial/technicien).
             Ouvre la page /feedback qui inclut un formulaire dépliable de
             nouveau message ET l'historique des retours (tous pour admin,

@@ -1,0 +1,345 @@
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import * as Clipboard from "expo-clipboard";
+import { api } from "@/src/services/api";
+import { colors } from "@/src/theme";
+
+const BASE_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+
+type Post = {
+  day: number;
+  title: string;
+  subtitle: string;
+  text: string;
+  hashtags: string;
+  posted?: boolean;
+};
+
+type Today = {
+  total: number;
+  posted_count: number;
+  done: boolean;
+  post: Post | null;
+  image_url: string | null;
+};
+
+/** Vue ADMIN : campagne LinkedIn 15 jours — post du jour à copier en 1 clic. */
+export default function AdminLinkedin() {
+  const router = useRouter();
+  const [today, setToday] = useState<Today | null>(null);
+  const [allPosts, setAllPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  const fetchAll = useCallback(async () => {
+    try {
+      const [t, p] = await Promise.all([
+        api.get<Today>("/linkedin/today"),
+        api.get<{ posts: Post[] }>("/linkedin/posts"),
+      ]);
+      setToday(t.data);
+      setAllPosts(p.data.posts);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void fetchAll();
+  }, [fetchAll]);
+
+  const copyText = async () => {
+    if (!today?.post) return;
+    await Clipboard.setStringAsync(
+      `${today.post.text}\n\n${today.post.hashtags}`,
+    );
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  };
+
+  const markPosted = async () => {
+    if (!today?.post) return;
+    try {
+      await api.post("/linkedin/mark-posted", { day: today.post.day });
+      setMessage(`✅ Jour ${today.post.day} publié — à demain !`);
+      void fetchAll();
+    } catch (e: any) {
+      setMessage(`⚠️ ${e?.response?.data?.detail || "Erreur"}`);
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.flex} edges={["top", "bottom"]}>
+      <View style={styles.topBar}>
+        <TouchableOpacity
+          testID="linkedin-back-button"
+          onPress={() => router.back()}
+          hitSlop={10}
+        >
+          <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
+        </TouchableOpacity>
+        <Text style={styles.topTitle}>💼 CAMPAGNE LINKEDIN</Text>
+        <TouchableOpacity
+          testID="linkedin-refresh-button"
+          onPress={() => void fetchAll()}
+          hitSlop={10}
+        >
+          <Ionicons name="refresh" size={20} color={colors.primary} />
+        </TouchableOpacity>
+      </View>
+
+      {loading || !today ? (
+        <ActivityIndicator color={colors.primary} style={{ marginTop: 60 }} />
+      ) : (
+        <ScrollView contentContainerStyle={styles.scroll}>
+          {/* Progression */}
+          <View style={styles.progressRow} testID="linkedin-progress">
+            <Text style={styles.progressText}>
+              {today.posted_count}/{today.total} posts publiés
+            </Text>
+            <View style={styles.progressTrack}>
+              <View
+                style={[
+                  styles.progressFill,
+                  { width: `${(today.posted_count / today.total) * 100}%` },
+                ]}
+              />
+            </View>
+          </View>
+
+          {today.done ? (
+            <View style={styles.doneBox} testID="linkedin-done">
+              <Text style={styles.doneEmoji}>🏆</Text>
+              <Text style={styles.doneText}>
+                Campagne terminée ! Les 15 posts sont publiés. Bravo Michel !
+              </Text>
+            </View>
+          ) : (
+            today.post && (
+              <>
+                <View style={styles.dayBadge}>
+                  <Text style={styles.dayBadgeText}>
+                    JOUR {today.post.day}/{today.total}
+                  </Text>
+                </View>
+                <Text style={styles.title} testID="linkedin-post-title">
+                  {today.post.title}
+                </Text>
+                <Text style={styles.subtitle}>{today.post.subtitle}</Text>
+
+                {/* Visuel — appui long pour enregistrer sur iPhone */}
+                <Image
+                  testID="linkedin-post-image"
+                  source={{ uri: `${BASE_URL}${today.image_url}` }}
+                  style={styles.visual}
+                  resizeMode="contain"
+                />
+                <Text style={styles.hint}>
+                  📲 Appui long sur l&apos;image → « Enregistrer l&apos;image »,
+                  puis attachez-la à votre post LinkedIn
+                </Text>
+
+                {/* Texte du post */}
+                <View style={styles.textBox}>
+                  <Text style={styles.postText} testID="linkedin-post-text">
+                    {today.post.text}
+                  </Text>
+                  <Text style={styles.hashtags}>{today.post.hashtags}</Text>
+                </View>
+
+                <TouchableOpacity
+                  testID="linkedin-copy-button"
+                  style={[styles.copyBtn, copied && styles.copyBtnOk]}
+                  onPress={() => void copyText()}
+                  activeOpacity={0.8}
+                >
+                  <Ionicons
+                    name={copied ? "checkmark-circle" : "copy-outline"}
+                    size={20}
+                    color="#fff"
+                  />
+                  <Text style={styles.copyBtnText}>
+                    {copied ? "COPIÉ ! COLLEZ DANS LINKEDIN" : "COPIER LE TEXTE"}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  testID="linkedin-mark-posted-button"
+                  style={styles.postedBtn}
+                  onPress={() => void markPosted()}
+                  activeOpacity={0.8}
+                >
+                  <Ionicons name="checkmark-done" size={18} color={colors.primary} />
+                  <Text style={styles.postedBtnText}>
+                    MARQUER COMME PUBLIÉ → POST SUIVANT
+                  </Text>
+                </TouchableOpacity>
+              </>
+            )
+          )}
+
+          {!!message && (
+            <Text style={styles.message} testID="linkedin-message">
+              {message}
+            </Text>
+          )}
+
+          {/* Aperçu des 15 jours */}
+          <Text style={styles.listHeader}>LES 15 POSTS</Text>
+          {allPosts.map((p) => (
+            <View key={p.day} style={styles.row} testID={`linkedin-row-${p.day}`}>
+              <Text style={[styles.rowDay, p.posted && { color: "#22C55E" }]}>
+                J{p.day}
+              </Text>
+              <Text style={styles.rowTitle} numberOfLines={1}>
+                {p.title}
+              </Text>
+              <Ionicons
+                name={p.posted ? "checkmark-circle" : "ellipse-outline"}
+                size={18}
+                color={p.posted ? "#22C55E" : "#3f3f46"}
+              />
+            </View>
+          ))}
+        </ScrollView>
+      )}
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  flex: { flex: 1, backgroundColor: colors.bg },
+  topBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.surfaceElevated,
+  },
+  topTitle: { color: colors.textPrimary, fontSize: 15, fontWeight: "800" },
+  scroll: { padding: 16, paddingBottom: 48 },
+  progressRow: { marginBottom: 18 },
+  progressText: {
+    color: colors.textSecondary,
+    fontSize: 12.5,
+    marginBottom: 6,
+    fontWeight: "600",
+  },
+  progressTrack: {
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.surfaceElevated,
+    overflow: "hidden",
+  },
+  progressFill: { height: 8, backgroundColor: colors.primary },
+  dayBadge: {
+    alignSelf: "flex-start",
+    backgroundColor: colors.primary,
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    marginBottom: 10,
+  },
+  dayBadgeText: { color: "#fff", fontWeight: "800", fontSize: 12 },
+  title: { color: colors.textPrimary, fontSize: 20, fontWeight: "800" },
+  subtitle: { color: colors.textSecondary, fontSize: 13.5, marginTop: 4 },
+  visual: {
+    width: "100%",
+    aspectRatio: 1,
+    borderRadius: 14,
+    marginTop: 14,
+    backgroundColor: colors.surface,
+  },
+  hint: {
+    color: colors.textSecondary,
+    fontSize: 11.5,
+    marginTop: 8,
+    textAlign: "center",
+  },
+  textBox: {
+    backgroundColor: colors.surface,
+    borderRadius: 14,
+    padding: 14,
+    marginTop: 14,
+  },
+  postText: { color: colors.textPrimary, fontSize: 13.5, lineHeight: 20 },
+  hashtags: { color: "#60A5FA", fontSize: 12.5, marginTop: 10 },
+  copyBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    backgroundColor: "#0A66C2",
+    borderRadius: 26,
+    paddingVertical: 14,
+    marginTop: 16,
+  },
+  copyBtnOk: { backgroundColor: "#16A34A" },
+  copyBtnText: { color: "#fff", fontWeight: "800", fontSize: 13.5 },
+  postedBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    borderWidth: 1.5,
+    borderColor: colors.primary,
+    borderRadius: 26,
+    paddingVertical: 12,
+    marginTop: 10,
+  },
+  postedBtnText: { color: colors.primary, fontWeight: "800", fontSize: 12.5 },
+  message: {
+    color: colors.textSecondary,
+    fontSize: 12.5,
+    textAlign: "center",
+    marginTop: 12,
+  },
+  doneBox: {
+    alignItems: "center",
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    padding: 28,
+    marginTop: 10,
+  },
+  doneEmoji: { fontSize: 40, marginBottom: 8 },
+  doneText: {
+    color: colors.textPrimary,
+    fontSize: 14.5,
+    textAlign: "center",
+    fontWeight: "600",
+  },
+  listHeader: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    fontWeight: "800",
+    letterSpacing: 1,
+    marginTop: 26,
+    marginBottom: 8,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    backgroundColor: colors.surface,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 6,
+  },
+  rowDay: { color: colors.textSecondary, fontWeight: "800", width: 32, fontSize: 12.5 },
+  rowTitle: { color: colors.textPrimary, flex: 1, fontSize: 13 },
+});
