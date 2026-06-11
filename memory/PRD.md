@@ -217,3 +217,12 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
 - **Tests** : envoi réel validé via delivered@resend.dev (Resend 200 OK, statut sent, prospect test supprimé) ; pytest `tests/test_campaign.py` (4 tests) ; screenshots dashboard + écran campagne OK. AUCUN email réel envoyé aux prospects — premier clic = le client.
 - ⚠️ Pour la prod : pousser via "Save to GitHub" → Railway redéploie → seed auto des 56 prospects → le client clique chaque jour depuis son iPhone.
 - ⚠️ Volume de masse (France/Luxembourg) → basculer sur Brevo plus tard (ne pas augmenter DAILY_LIMIT au-delà de ~15 avec Resend).
+
+## 🇱🇺 Extension campagne Luxembourg + adaptation pays (11 juin 2026, nuit)
+- Option B client : email adapté par pays — `country` sur chaque prospect (`be`/`fr`/`lu`)
+  - BE : objet/corps avec "app belge" (inchangé) ; FR/LU : "app de prise de mesures pensée pour le métier" / "conçue par un menuisier"
+  - `SUBJECTS` + `ORIGIN_PHRASES` dans routes/campaign.py ; fallback country manquant → "be"
+- CSV `/app/backend/static/liste_prospects_testeurs.csv` réécrit avec colonne PAYS : 56 BE + 28 LU = 84 prospects (TEBA écarté, pas d'email ; 0 doublon)
+- DB locale à jour : 84 pending (stats API vérifiées). Railway : seed auto au prochain déploiement.
+- Tests : pytest test_campaign.py 5/5 (dont test_adaptation_pays)
+- �待 Liste FRANCE pas encore fournie par le client — à importer de la même façon (PAYS=fr) quand il l'enverra.
