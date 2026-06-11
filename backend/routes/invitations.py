@@ -64,19 +64,15 @@ async def create_invitation(
             "Pour inviter des collaborateurs, passez à un compte Entreprise.",
         )
 
-    # 💰 Seats Entreprise : 2 sièges gratuits inclus (1 commercial + 1 technicien).
-    # À partir du 3ème siège facturable → +4,99 €/utilisateur/mois.
-    # On compte les users actifs/pending NON supprimés et NON admin de cette
-    # company. Le master admin n'est pas facturé comme "siège".
-    seats_used = await db.users.count_documents(
-        {
-            "company_id": company_id,
-            "status": {"$ne": "deleted"},
-            "role": {"$in": ["commercial", "technician"]},
-        }
-    )
-    FREE_SEATS = 2
-    SEAT_PRICE_EUR = 4.99
+    # 💰 Seats : sièges équipe inclus selon le plan (admin non compté).
+    #   * Entreprise : 2 sièges gratuits, +4,99 €/utilisateur/mois au-delà.
+    #   * Entreprise Pro : 5 sièges gratuits, +9,99 €/utilisateur/mois au-delà.
+    from seats import count_team_seats, get_company_plan, seat_config_for_plan, sync_stripe_seats
+
+    seat_cfg = seat_config_for_plan(await get_company_plan(company_id))
+    seats_used = await count_team_seats(company_id)
+    FREE_SEATS = seat_cfg["free_team_seats"]
+    SEAT_PRICE_EUR = seat_cfg["seat_price_eur"]
     # Le user qu'on s'apprête à créer occupera le siège (seats_used + 1).
     next_seat_index = seats_used + 1
     extra_seat_billed = next_seat_index > FREE_SEATS
@@ -126,6 +122,7 @@ async def create_invitation(
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     await db.users.insert_one(user_doc)
+    await sync_stripe_seats(company_id)
 
     token = _new_token()
     await db.email_verifications.insert_one(

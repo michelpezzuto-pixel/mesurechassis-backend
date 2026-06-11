@@ -38,7 +38,7 @@ Relevés de mesures de châssis pour menuisiers pros. PDF, équipes, chantiers.
 | Élément | Format | Statut |
 |---|---|---|
 | Icône | 512×512 PNG (32 bits) | ✅ Existante (`assets/images/icon.png` à exporter en 512) |
-| **Bannière "feature graphic"** | **1024×500 PNG/JPG** | ❌ À créer (obligatoire !) |
+| Bannière "feature graphic" | 1024×500 PNG/JPG | ✅ Générée — télécharger : `{BACKEND_URL}/api/_downloads/play-feature-graphic` |
 | Captures téléphone | min 2, ratio 16:9 à 9:16, min 320px | ❌ À prendre (utiliser les mêmes que l'App Store) |
 | Captures tablette 7"/10" | optionnelles mais recommandées | — |
 
@@ -59,7 +59,7 @@ Google Play exige Google Play Billing pour les achats numériques in-app — mê
 ## 8️⃣ Soumission
 1. **Premier upload : MANUEL obligatoire** (règle Google) :
    - Play Console → Créer l'app → Production (ou Test fermé si compte personnel) → Importer l'AAB
-   - Télécharger l'AAB depuis : https://expo.dev/accounts/michelpezzuto/projects/mesurechassis/builds (build Android `81fe2c95-aa4e-4288-bf71-8c3efc5f3593`)
+   - **AAB prêt (v1.1.0, versionCode 27)** : https://expo.dev/artifacts/eas/v83v--DU_iqkw77oiluH0Yf2J5RcvUDA9M6lMwbYP9Y.aab
 2. Uploads suivants automatisables via `eas submit -p android` (nécessite une clé de compte de service Google Cloud JSON)
 
 ---

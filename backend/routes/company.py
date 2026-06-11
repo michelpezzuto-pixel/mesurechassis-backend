@@ -59,7 +59,7 @@ async def update_company_profile(
 async def switch_account_type(
     payload: dict, user=Depends(require_admin)
 ):
-    """Bascule entre Artisan (24.99€) et Entreprise (54.99€).
+    """Bascule entre Artisan (24.99€) et Entreprise (59.99€).
 
     - Artisan → Entreprise : passe le tarif et débloque la gestion d'équipe.
     - Entreprise → Artisan : retombe à 24.99€, bloque les équipes.
@@ -140,16 +140,18 @@ async def create_team_member(payload: dict, user=Depends(require_admin)):
         raise HTTPException(409, "Un compte avec cet email existe déjà")
 
     # === Vérification de siège supplémentaire payant ============================
-    # En compte Entreprise : 2 sièges gratuits inclus (1 Commercial + 1 Technicien).
-    # Chaque utilisateur supplémentaire coûte 4,99 €/mois.
+    # Sièges équipe inclus selon le plan (admin non compté) :
+    #   * Entreprise : 2 sièges (3 comptes au total), +4,99 €/mois par siège sup.
+    #   * Entreprise Pro : 5 sièges (6 comptes au total), +9,99 €/mois par siège sup.
     # Si on dépasse, on renvoie HTTP 402 avec le détail. Le frontend affiche
     # alors une pop-up de confirmation et rejoue la requête avec
     # `confirm_extra_seat=true` pour valider l'ajout payant.
-    FREE_SEATS = 2
-    SEAT_PRICE_EUR = 4.99
-    current_count = await db.users.count_documents(
-        {"company_id": company_id, "role": {"$in": ["commercial", "technician"]}}
-    )
+    from seats import count_team_seats, get_company_plan, seat_config_for_plan, sync_stripe_seats
+
+    seat_cfg = seat_config_for_plan(await get_company_plan(company_id))
+    FREE_SEATS = seat_cfg["free_team_seats"]
+    SEAT_PRICE_EUR = seat_cfg["seat_price_eur"]
+    current_count = await count_team_seats(company_id)
     next_seat_index = current_count + 1
     extra_seat_billed = next_seat_index > FREE_SEATS
     extra_seats_total = max(0, next_seat_index - FREE_SEATS)
@@ -161,7 +163,7 @@ async def create_team_member(payload: dict, user=Depends(require_admin)):
             detail={
                 "code": "EXTRA_SEAT_REQUIRED",
                 "message": (
-                    "Votre forfait Entreprise inclut 2 sièges gratuits ; "
+                    f"Votre forfait {seat_cfg['label']} inclut {FREE_SEATS} sièges d'équipe gratuits ; "
                     f"chaque utilisateur supplémentaire coûte {SEAT_PRICE_EUR:.2f} €/mois."
                 ),
                 "free_seats": FREE_SEATS,
@@ -187,6 +189,7 @@ async def create_team_member(payload: dict, user=Depends(require_admin)):
         "created_at": now_iso,
     }
     await db.users.insert_one(user_doc)
+    await sync_stripe_seats(company_id)
     return {
         "ok": True,
         "user": {
@@ -231,6 +234,8 @@ async def delete_team_member(member_id: str, user=Depends(require_admin)):
     if member.get("role") == "admin":
         raise HTTPException(403, "Impossible de supprimer un Admin")
     await db.users.delete_one({"id": member_id})
+    from seats import sync_stripe_seats
+    await sync_stripe_seats(company_id)
     return {"ok": True}
 
 

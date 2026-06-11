@@ -11,8 +11,8 @@ Architecture :
 
 Plans MesureChâssis (3 mois d'essai gratuit) :
   * Artisan Solo     — 24,99 €/mois — 1 utilisateur
-  * Entreprise       — 54,99 €/mois — 3 utilisateurs + 4,99 €/utilisateur sup.
-  * Entreprise Pro   — 84,99 €/mois — 6 utilisateurs + 9,99 €/utilisateur sup.
+  * Entreprise       — 59,99 €/mois — 3 utilisateurs + 4,99 €/utilisateur sup.
+  * Entreprise Pro   — 89,99 €/mois — 6 utilisateurs + 9,99 €/utilisateur sup.
 
 Variables d'environnement requises (à ajouter sur Railway) :
   * STRIPE_SECRET_KEY                 — sk_test_… ou sk_live_…

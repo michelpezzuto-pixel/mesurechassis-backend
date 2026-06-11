@@ -28,7 +28,7 @@
 4. **Test fumée** : un checkout réel à 1 € OU un coupon 100% → vérifier le passage `subscription_status=active` en DB
 5. **Décision séparée** : passage `BETA_MODE=False` (fin de l'offre de lancement gratuite) — à décider indépendamment de la clé LIVE
 
-## ⚠️ Incohérences de prix repérées dans l'UI (à harmoniser avant la commercialisation)
-- subscription.tsx (web) : Entreprise **54,99 €** / Pro **84,99 €**
-- company-profile.tsx + team.tsx + index.tsx (web) : Entreprise **59,99 €** / Pro **89,99 €**
-→ Choisir le prix officiel et harmoniser (5 min de travail, me demander).
+## ⚠️ Incohérences de prix — ✅ RÉSOLU (11 juin, harmonisation à 59,99 € / 89,99 €)
+- UI web : Entreprise 59,99 € / Pro 89,99 € partout
+- Backend : commentaires/docstrings harmonisés ; logique de sièges par plan dans `/app/backend/seats.py`
+- ⚠️ Le jour J : créer les prix Stripe LIVE avec ces montants exacts (59,99 / 89,99 / 24,99 / extra 4,99 / extra 9,99)

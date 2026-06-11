@@ -92,6 +92,19 @@ async def get_playstore_tablet_asset(filename: str):
     return FileResponse(path, media_type="image/jpeg", filename=filename)
 
 
+@api.get("/_downloads/play-feature-graphic")
+async def download_play_feature_graphic():
+    """Feature graphic Google Play (1024×500) générée pour la fiche store."""
+    path = "/app/backend/static/play_feature_graphic_1024x500.png"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Bannière introuvable")
+    return FileResponse(
+        path,
+        media_type="image/png",
+        filename="mesurechassis_feature_graphic_1024x500.png",
+    )
+
+
 @api.get("/_downloads/site-mesurechassis")
 async def download_site_zip():
     """Endpoint temporaire pour télécharger l'archive du site vitrine."""

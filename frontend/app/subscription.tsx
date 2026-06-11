@@ -648,9 +648,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   subscribeBtn: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.primary,
+    backgroundColor: colors.primary,
     paddingVertical: 14,
     borderRadius: 10,
     marginTop: 12,
@@ -658,10 +656,14 @@ const styles = StyleSheet.create({
   },
   subscribeBtnHighlight: {
     backgroundColor: colors.primary,
-    borderColor: colors.primary,
+    shadowColor: colors.primary,
+    shadowOpacity: 0.45,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
   },
   subscribeBtnText: {
-    color: "#000",
+    color: "#FFFFFF",
     fontWeight: "800",
     fontSize: 14,
   },

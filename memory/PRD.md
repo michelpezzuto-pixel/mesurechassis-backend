@@ -148,3 +148,13 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
 - Plan de bascule Stripe LIVE : `/app/memory/stripe_live_switch.md` (⏸️ EN ATTENTE feu vert client — incohérences de prix 54,99/59,99 repérées à harmoniser)
 - **Dossier complet** : `/app/memory/apple_resubmission.md` (réponse à Apple EN + notes review + étapes restantes)
 - **Vigilance** : clé Stripe backend en mode TEST → passer en LIVE avant commercialisation web.
+
+## 💰 Tarification dynamique + assets Play Store (11 juin 2026, après-midi)
+- **Tarifs officiels confirmés par le client** : Artisan 24,99 € / Entreprise 59,99 € (3 comptes : 1 admin + 2 équipe, +4,99 €/user sup.) / Pro 89,99 € (6 comptes, +9,99 €/user sup.)
+- **Nouveau module `/app/backend/seats.py`** : config sièges par plan + `sync_stripe_seats()` (aligne la quantité du line item "extra user" Stripe à chaque ajout/suppression de membre — no-op sans abonnement Stripe)
+- `company.py` (création/suppression membre) et `invitations.py` : seat check par plan (402 EXTRA_SEAT_REQUIRED dynamique), testé E2E : Entreprise 402@3e siège/4,99 €, Pro OK jusqu'à 5 sièges puis 402@6e/9,99 € ✅
+- Tests pytest : `/app/backend/tests/test_seats.py` (5/5 ✅)
+- **Contraste boutons abonnement corrigé** : orange plein #FF5A00 + texte blanc (vérifié screenshot ✅)
+- **Feature graphic Play Store 1024×500 générée** (script `/app/scripts/generate_feature_graphic.py`) — téléchargeable via `GET /api/_downloads/play-feature-graphic`
+- **AAB Android final** : v1.1.0 versionCode 27 → lien direct dans play_store_listing_fr.md
+- ⚠️ Le backend Railway doit être redéployé (Save to GitHub) pour embarquer la nouvelle logique de sièges.
