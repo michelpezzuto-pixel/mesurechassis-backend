@@ -145,8 +145,12 @@ export default function CompanyProfile() {
       Alert.alert(
         "✅ Formule modifiée",
         target === "artisan"
-          ? "Vous êtes désormais en formule Artisan (24,99 €/mois)."
-          : "Vous êtes désormais en formule Entreprise (59,99 €/mois). La gestion d'équipe est débloquée."
+          ? Platform.OS === "ios"
+            ? "Vous êtes désormais en formule Artisan."
+            : "Vous êtes désormais en formule Artisan (24,99 €/mois)."
+          : Platform.OS === "ios"
+            ? "Vous êtes désormais en formule Entreprise. La gestion d'équipe est débloquée."
+            : "Vous êtes désormais en formule Entreprise (59,99 €/mois). La gestion d'équipe est débloquée."
       );
     } catch (e: any) {
       const detail = e?.response?.data?.detail;
@@ -436,7 +440,7 @@ export default function CompanyProfile() {
               {betaMode ? (
                 <View style={styles.betaBadge}>
                   <Ionicons name="rocket" size={12} color="#34d399" />
-                  <Text style={styles.betaBadgeText}>BETA GRATUITE</Text>
+                  <Text style={styles.betaBadgeText}>OFFRE DE LANCEMENT</Text>
                 </View>
               ) : (
                 <View
@@ -455,8 +459,8 @@ export default function CompanyProfile() {
             {betaMode ? (
               <>
                 <Text style={styles.betaIntro}>
-                  🎉 Profitez de l&apos;accès complet à MesureChâssis pendant la
-                  phase de test. Aucun paiement n&apos;est requis.
+                  🎉 Profitez de l&apos;accès complet à MesureChâssis, offert
+                  pendant la période de lancement.
                 </Text>
                 <Text style={styles.betaFeedback}>
                   Vos retours nous aident à grandir ! Signalez-nous la moindre
@@ -728,8 +732,12 @@ export default function CompanyProfile() {
                 </Text>
                 <Text style={styles.accountTypeDesc}>
                   {profile?.account_type === "artisan"
-                    ? "Compte solo, 1 utilisateur unique — 24,99 €/mois"
-                    : "Admin + Commercial + Technicien inclus — 59,99 €/mois (+4,99 €/utilisateur supplémentaire)"}
+                    ? Platform.OS === "ios"
+                      ? "Compte solo, 1 utilisateur unique"
+                      : "Compte solo, 1 utilisateur unique — 24,99 €/mois"
+                    : Platform.OS === "ios"
+                      ? "Admin + Commercial + Technicien inclus"
+                      : "Admin + Commercial + Technicien inclus — 59,99 €/mois (+4,99 €/utilisateur supplémentaire)"}
                 </Text>
               </View>
             </View>
@@ -748,8 +756,12 @@ export default function CompanyProfile() {
                 />
                 <Text style={styles.btnGhostText}>
                   {profile?.account_type === "artisan"
-                    ? "PASSER EN COMPTE ENTREPRISE (59,99 €/mois)"
-                    : "PASSER EN COMPTE ARTISAN (24,99 €/mois)"}
+                    ? Platform.OS === "ios"
+                      ? "PASSER EN COMPTE ENTREPRISE"
+                      : "PASSER EN COMPTE ENTREPRISE (59,99 €/mois)"
+                    : Platform.OS === "ios"
+                      ? "PASSER EN COMPTE ARTISAN"
+                      : "PASSER EN COMPTE ARTISAN (24,99 €/mois)"}
                 </Text>
               </TouchableOpacity>
             )}
@@ -1033,18 +1045,26 @@ export default function CompanyProfile() {
               {profile?.account_type === "artisan" ? (
                 <Text style={styles.modalBody}>
                   Vous allez passer en formule{" "}
-                  <Text style={styles.bold}>Entreprise — 59,99 €/mois</Text>.
-                  {"\n\n"}
+                  <Text style={styles.bold}>
+                    Entreprise{Platform.OS !== "ios" ? " — 59,99 €/mois" : ""}
+                  </Text>
+                  .{"\n\n"}
                   ✅ Vous débloquez la gestion d&apos;équipe (Commercial + Technicien
-                  inclus, +4,99 €/utilisateur supplémentaire).
+                  inclus
+                  {Platform.OS !== "ios"
+                    ? ", +4,99 €/utilisateur supplémentaire"
+                    : ""}
+                  ).
                   {"\n\n"}
                   ✅ Vous conservez tous vos chantiers et vos données.
                 </Text>
               ) : (
                 <Text style={styles.modalBody}>
                   Vous allez passer en formule{" "}
-                  <Text style={styles.bold}>Artisan — 24,99 €/mois</Text>.
-                  {"\n\n"}
+                  <Text style={styles.bold}>
+                    Artisan{Platform.OS !== "ios" ? " — 24,99 €/mois" : ""}
+                  </Text>
+                  .{"\n\n"}
                   ✅ Vous{" "}
                   <Text style={styles.bold}>conservez tous vos chantiers</Text>{" "}
                   ainsi que les noms des personnes ayant pris les mesures.

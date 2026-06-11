@@ -268,7 +268,7 @@ export default function ReferralScreen() {
           <Text style={styles.infoText}>
             • Partagez votre code à un menuisier{"\n"}
             • Il s&apos;inscrit à MesureChâssis avec votre code{"\n"}
-            • Dès qu&apos;il paie son 1er abonnement, vous gagnez{" "}
+            • Dès l&apos;activation de son 1er abonnement, vous gagnez{" "}
             <Text style={{ fontWeight: "900", color: colors.primary }}>
               2 mois offerts
             </Text>{" "}
@@ -291,8 +291,8 @@ export default function ReferralScreen() {
         {/* Hint plateforme */}
         {Platform.OS === "ios" && (
           <Text style={styles.iosHint}>
-            🍎 Les récompenses sont créditées automatiquement lors du paiement de
-            l&apos;abonnement de votre filleul depuis mesurechassis.com.
+            🍎 Les récompenses sont créditées automatiquement lors de
+            l&apos;activation de l&apos;abonnement de votre filleul.
           </Text>
         )}
       </ScrollView>

@@ -318,9 +318,9 @@
     "trapeze": "Trapezium"
   },
   "beta": {
-    "label": "BETA · gratis",
+    "label": "LANCERINGSAANBOD",
     "feedback": "Uw feedback is waardevol",
-    "mailSubject": "MesureChâssis — Beta feedback",
+    "mailSubject": "MesureChâssis — Klantenfeedback",
     "mailBody": "Hallo MesureChâssis team,\n\nHier is mijn feedback / suggestie:\n\n"
   },
   "dashboardExtended": {

@@ -351,9 +351,9 @@
     "trapeze": "Trapèze"
   },
   "beta": {
-    "label": "BETA · gratuit",
+    "label": "OFFRE DE LANCEMENT",
     "feedback": "Vos retours sont précieux",
-    "mailSubject": "MesureChâssis — Retour beta",
+    "mailSubject": "MesureChâssis — Retour client",
     "mailBody": "Bonjour l'équipe MesureChâssis,\n\nVoici mon retour / suggestion :\n\n"
   },
   "dashboardExtended": {

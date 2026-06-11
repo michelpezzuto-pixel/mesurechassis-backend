@@ -583,7 +583,7 @@ export default function SignIn() {
                     <>
                       <Text style={styles.bold}>Mode Entreprise Pro</Text> :
                       vous serez Admin. Équipe étendue (6 utilisateurs inclus)
-                      et fonctions avancées (Bluetooth laser, à venir).
+                      et fonctions avancées.
                     </>
                   ) : (
                     <>

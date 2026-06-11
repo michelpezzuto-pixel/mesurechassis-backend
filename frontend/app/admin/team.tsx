@@ -547,7 +547,9 @@ export default function TeamAdmin() {
             <Text style={styles.extraTitle}>SUPPLÉMENT UTILISATEUR</Text>
             <Text style={styles.extraDesc}>
               Votre forfait{" "}
-              <Text style={styles.extraBold}>Entreprise (59,99 €/mois)</Text>{" "}
+              <Text style={styles.extraBold}>
+                Entreprise{Platform.OS !== "ios" ? " (59,99 €/mois)" : ""}
+              </Text>{" "}
               comprend{" "}
               <Text style={styles.extraBold}>
                 {extraSeatInfo?.free_seats ?? 2} sièges gratuits
@@ -559,20 +561,22 @@ export default function TeamAdmin() {
               </Text>{" "}
               utilisateur.
             </Text>
-            <View style={styles.extraPriceBox}>
-              <Text style={styles.extraPriceLabel}>SUPPLÉMENT MENSUEL</Text>
-              <Text style={styles.extraPriceValue}>
-                +{(extraSeatInfo?.seat_price_eur ?? 4.99).toFixed(2)} € /mois
-              </Text>
-              {extraSeatInfo &&
-                extraSeatInfo.extra_seats_total > 1 && (
-                  <Text style={styles.extraPriceSub}>
-                    Total sièges payants après ajout :{" "}
-                    {extraSeatInfo.extra_seats_total} (
-                    {extraSeatInfo.extra_amount_eur.toFixed(2)} €/mois)
-                  </Text>
-                )}
-            </View>
+            {Platform.OS !== "ios" && (
+              <View style={styles.extraPriceBox}>
+                <Text style={styles.extraPriceLabel}>SUPPLÉMENT MENSUEL</Text>
+                <Text style={styles.extraPriceValue}>
+                  +{(extraSeatInfo?.seat_price_eur ?? 4.99).toFixed(2)} € /mois
+                </Text>
+                {extraSeatInfo &&
+                  extraSeatInfo.extra_seats_total > 1 && (
+                    <Text style={styles.extraPriceSub}>
+                      Total sièges payants après ajout :{" "}
+                      {extraSeatInfo.extra_seats_total} (
+                      {extraSeatInfo.extra_amount_eur.toFixed(2)} €/mois)
+                    </Text>
+                  )}
+              </View>
+            )}
             <Text style={styles.extraFine}>
               La facturation prendra effet lors de l&apos;activation par
               l&apos;utilisateur invité. Vous pouvez retirer un utilisateur à

@@ -11,7 +11,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.mesurechassis.escalier",
-      "buildNumber": "1",
+      "buildNumber": "8",
       "infoPlist": {
         "NSCameraUsageDescription": "Photographier les ouvertures à mesurer",
         "NSPhotoLibraryUsageDescription": "Joindre une photo à une mesure",

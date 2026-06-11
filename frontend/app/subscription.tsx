@@ -318,12 +318,12 @@ export default function SubscriptionScreen() {
               color={colors.primary}
             />
             <View style={{ flex: 1, marginLeft: 10 }}>
-              <Text style={styles.iosNoticeTitle}>Gestion sur le web</Text>
+              <Text style={styles.iosNoticeTitle}>Gestion du compte</Text>
               <Text style={styles.iosNoticeBody}>
-                Pour souscrire, changer ou annuler votre formule, rendez-vous
-                sur <Text style={{ fontWeight: "800" }}>mesurechassis.com</Text>{" "}
-                depuis un navigateur. Votre compte est synchronisé
-                automatiquement.
+                La souscription et la gestion des formules ne sont pas
+                disponibles dans l&apos;application. Votre compte et vos
+                données restent synchronisés automatiquement sur tous vos
+                appareils.
               </Text>
             </View>
           </View>

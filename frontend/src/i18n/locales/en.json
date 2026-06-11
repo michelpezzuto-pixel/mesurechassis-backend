@@ -318,9 +318,9 @@
     "trapeze": "Trapezoid"
   },
   "beta": {
-    "label": "BETA · free",
+    "label": "LAUNCH OFFER",
     "feedback": "Your feedback matters",
-    "mailSubject": "MesureChâssis — Beta feedback",
+    "mailSubject": "MesureChâssis — Customer feedback",
     "mailBody": "Hello MesureChâssis team,\n\nHere is my feedback / suggestion:\n\n"
   },
   "dashboardExtended": {
