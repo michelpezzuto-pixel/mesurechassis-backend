@@ -575,7 +575,6 @@ export default function Dashboard() {
         />
         </>
       )}
-      )}
 
       <TouchableOpacity
         testID="new-chantier-button"

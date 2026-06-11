@@ -39,6 +39,7 @@
   "submit": {
     "production": {
       "ios": {
+        "ascAppId": "6776357930",
         "language": "fr-FR"
       }
     }

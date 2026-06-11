@@ -288,10 +288,10 @@ export default function ReferralScreen() {
           </View>
         )}
 
-        {/* Hint plateforme */}
-        {Platform.OS === "ios" && (
+        {/* Hint plateforme (mobile natif) */}
+        {Platform.OS !== "web" && (
           <Text style={styles.iosHint}>
-            🍎 Les récompenses sont créditées automatiquement lors de
+            ℹ️ Les récompenses sont créditées automatiquement lors de
             l&apos;activation de l&apos;abonnement de votre filleul.
           </Text>
         )}

@@ -548,7 +548,7 @@ export default function TeamAdmin() {
             <Text style={styles.extraDesc}>
               Votre forfait{" "}
               <Text style={styles.extraBold}>
-                Entreprise{Platform.OS !== "ios" ? " (59,99 €/mois)" : ""}
+                Entreprise{Platform.OS === "web" ? " (59,99 €/mois)" : ""}
               </Text>{" "}
               comprend{" "}
               <Text style={styles.extraBold}>
@@ -561,7 +561,7 @@ export default function TeamAdmin() {
               </Text>{" "}
               utilisateur.
             </Text>
-            {Platform.OS !== "ios" && (
+            {Platform.OS === "web" && (
               <View style={styles.extraPriceBox}>
                 <Text style={styles.extraPriceLabel}>SUPPLÉMENT MENSUEL</Text>
                 <Text style={styles.extraPriceValue}>

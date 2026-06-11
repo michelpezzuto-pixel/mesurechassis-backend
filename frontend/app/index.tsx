@@ -424,7 +424,7 @@ export default function SignIn() {
                         )}
                       </View>
                       <Text style={styles.typeDesc}>{opt.desc}</Text>
-                      {Platform.OS !== "ios" && (
+                      {Platform.OS === "web" && (
                         <Text
                           style={[
                             styles.profilePrice,

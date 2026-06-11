@@ -129,3 +129,22 @@ Mini-bouton rouge non-intrusif **en haut à droite** de chaque étape du wizard.
 
 ## Business smart-add
 Le feedback continu (anomalie/idée + snapshot des données) construit une **boucle de feedback produit** automatique : chaque chantier réel devient une source d'amélioration UX/métier traçable côté admin — différenciateur fort vs concurrents (papier + Excel).
+
+## 🍎 Re-soumission Apple Store (11 juin 2026)
+- **Contexte** : Build 1.0.0 (7) refusé par Apple le 5 juin — Guidelines 2.2 (Beta Testing) + 3.1.1 (Payments).
+- **Correctifs build 1.1.0 (8)** :
+  - iOS : tous les prix/CTA d'abonnement masqués (company-profile, modal formule, sièges supplémentaires team.tsx, parrainage)
+  - iOS : bandeau "Mon abonnement" neutre, sans URL d'achat externe (conformité 3.1.3)
+  - Toutes plateformes : wording "BETA GRATUITE / phase de test" → "OFFRE DE LANCEMENT" (i18n FR/EN/NL)
+  - "(Bluetooth laser, à venir)" retiré de l'inscription
+- **Compte démo Apple Review (prod Railway)** : `applereview@mesurechassis.com` / `AppleReview2026!` + chantier démo
+- **Build 9** : compilé sur EAS et **soumis sur App Store Connect** (⚠️ build 8 NE PAS UTILISER : bug `)}` parasite dans dashboard.tsx = crash iOS, corrigé en build 9)
+- **Bug critique corrigé** : `)}` orphelin dans dashboard.tsx (texte brut dans SafeAreaView → crash natif)
+
+## 🤖 Préparation Play Store + Stripe LIVE (11 juin 2026, après-midi)
+- Masquage des prix/CTA Stripe étendu à **Android** (Google Play Billing policy) : seul le **web** affiche les plans (`Platform.OS === "web"`)
+- Build Android AAB lancé sur EAS : `81fe2c95-aa4e-4288-bf71-8c3efc5f3593` (version code 27)
+- Fiche Play Store complète : `/app/memory/play_store_listing_fr.md` (⚠️ compte Play Console à créer, type ORGANISATION recommandé, feature graphic 1024×500 à créer)
+- Plan de bascule Stripe LIVE : `/app/memory/stripe_live_switch.md` (⏸️ EN ATTENTE feu vert client — incohérences de prix 54,99/59,99 repérées à harmoniser)
+- **Dossier complet** : `/app/memory/apple_resubmission.md` (réponse à Apple EN + notes review + étapes restantes)
+- **Vigilance** : clé Stripe backend en mode TEST → passer en LIVE avant commercialisation web.

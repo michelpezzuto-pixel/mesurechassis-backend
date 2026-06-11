@@ -145,10 +145,10 @@ export default function CompanyProfile() {
       Alert.alert(
         "✅ Formule modifiée",
         target === "artisan"
-          ? Platform.OS === "ios"
+          ? Platform.OS !== "web"
             ? "Vous êtes désormais en formule Artisan."
             : "Vous êtes désormais en formule Artisan (24,99 €/mois)."
-          : Platform.OS === "ios"
+          : Platform.OS !== "web"
             ? "Vous êtes désormais en formule Entreprise. La gestion d'équipe est débloquée."
             : "Vous êtes désormais en formule Entreprise (59,99 €/mois). La gestion d'équipe est débloquée."
       );
@@ -732,10 +732,10 @@ export default function CompanyProfile() {
                 </Text>
                 <Text style={styles.accountTypeDesc}>
                   {profile?.account_type === "artisan"
-                    ? Platform.OS === "ios"
+                    ? Platform.OS !== "web"
                       ? "Compte solo, 1 utilisateur unique"
                       : "Compte solo, 1 utilisateur unique — 24,99 €/mois"
-                    : Platform.OS === "ios"
+                    : Platform.OS !== "web"
                       ? "Admin + Commercial + Technicien inclus"
                       : "Admin + Commercial + Technicien inclus — 59,99 €/mois (+4,99 €/utilisateur supplémentaire)"}
                 </Text>
@@ -756,10 +756,10 @@ export default function CompanyProfile() {
                 />
                 <Text style={styles.btnGhostText}>
                   {profile?.account_type === "artisan"
-                    ? Platform.OS === "ios"
+                    ? Platform.OS !== "web"
                       ? "PASSER EN COMPTE ENTREPRISE"
                       : "PASSER EN COMPTE ENTREPRISE (59,99 €/mois)"
-                    : Platform.OS === "ios"
+                    : Platform.OS !== "web"
                       ? "PASSER EN COMPTE ARTISAN"
                       : "PASSER EN COMPTE ARTISAN (24,99 €/mois)"}
                 </Text>
@@ -1046,12 +1046,12 @@ export default function CompanyProfile() {
                 <Text style={styles.modalBody}>
                   Vous allez passer en formule{" "}
                   <Text style={styles.bold}>
-                    Entreprise{Platform.OS !== "ios" ? " — 59,99 €/mois" : ""}
+                    Entreprise{Platform.OS === "web" ? " — 59,99 €/mois" : ""}
                   </Text>
                   .{"\n\n"}
                   ✅ Vous débloquez la gestion d&apos;équipe (Commercial + Technicien
                   inclus
-                  {Platform.OS !== "ios"
+                  {Platform.OS === "web"
                     ? ", +4,99 €/utilisateur supplémentaire"
                     : ""}
                   ).
@@ -1062,7 +1062,7 @@ export default function CompanyProfile() {
                 <Text style={styles.modalBody}>
                   Vous allez passer en formule{" "}
                   <Text style={styles.bold}>
-                    Artisan{Platform.OS !== "ios" ? " — 24,99 €/mois" : ""}
+                    Artisan{Platform.OS === "web" ? " — 24,99 €/mois" : ""}
                   </Text>
                   .{"\n\n"}
                   ✅ Vous{" "}

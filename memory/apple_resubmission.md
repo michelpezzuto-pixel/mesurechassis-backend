@@ -1,12 +1,17 @@
-# 🍎 RE-SOUMISSION APPLE — Build 8 (v1.1.0)
+# 🍎 RE-SOUMISSION APPLE — Build 9 (v1.1.0)
 
 **Date** : 11 juin 2026
 **Refus initial** : 5 juin 2026 — Build 1.0.0 (7) — Guidelines 2.2 (Beta) + 3.1.1 (Payments)
-**Build correctif** : 1.1.0 (8) — EAS build ID `f20c9b28-be44-4fe2-8c8b-ba0c6dbcc037`
+**Build correctif** : 1.1.0 (**9**) — EAS build ID `3d58849f-d360-4a96-81ef-0e0ac914b91e`
+
+## 🚨 ATTENTION : NE PAS UTILISER LE BUILD 8 !
+Le build 1.1.0 (8) contient un bug critique découvert après compilation : un `)}` parasite dans
+`dashboard.tsx` qui fait **planter le Dashboard sur iOS** (texte brut dans une View). Corrigé dans le build 9.
+➡️ Dans App Store Connect, sélectionner uniquement le build **1.1.0 (9)**.
 
 ---
 
-## ✅ CORRECTIFS APPLIQUÉS DANS LE BUILD 8
+## ✅ CORRECTIFS APPLIQUÉS DANS LE BUILD 9
 
 ### Guideline 3.1.1 (Payments) — tous les prix/CTA Stripe retirés d'iOS
 | Écran | Avant (build 7) | Après (build 8, iOS uniquement) |
@@ -17,6 +22,8 @@
 | Équipe (siège supplémentaire) | "+4,99 €/mois" + encadré prix | Encadré prix masqué sur iOS |
 | Parrainage | "Dès qu'il paie son abonnement… depuis mesurechassis.com" | "Dès l'activation de son abonnement" (aucune URL d'achat) |
 | Inscription | Prix déjà masqués sur iOS (déjà OK build courant) | inchangé |
+
+**Bonus build 9** : le masquage des prix s'applique désormais aussi sur **Android** (conformité Google Play Billing) — seul le web affiche les plans/prix Stripe.
 
 ### Guideline 2.2 (Beta) — tout le wording "beta/test" supprimé (toutes plateformes)
 - Badge "BETA GRATUITE" → **"OFFRE DE LANCEMENT"** (FR) / "LAUNCH OFFER" (EN) / "LANCERINGSAANBOD" (NL)
@@ -44,7 +51,7 @@
 ```
 Hello,
 
-Thank you for your detailed review. We have addressed both issues in a new build (version 1.1.0, build 8).
+Thank you for your detailed review. We have addressed both issues in a new build (version 1.1.0, build 9).
 
 Guideline 3.1.1 — Payments:
 MesureChâssis is a B2B SaaS tool for professional window-installation companies. In the new build, the iOS app no longer contains any subscription purchase flow, pricing information, or payment call-to-action of any kind. All purchasing UI has been removed from the iOS binary, and the app does not link out to any external payment mechanism. Subscriptions are sold separately, outside the app, and the iOS app is only used to access an existing account (multiplatform service, Guideline 3.1.3(b)).
@@ -60,6 +67,7 @@ Suggested test flow: log in → open the demo project "Dupont Jean" → tap "+ N
 
 Thank you for your time and consideration.
 ```
+(⚠️ Le texte mentionne "version 1.1.0, build 8" dans la 1ère phrase d'origine : dire **build 9**.)
 
 ---
 
@@ -81,16 +89,15 @@ Test flow:
 
 ## 🚀 ÉTAPES RESTANTES
 
-1. ✅ Build 8 lancé sur EAS (auto-incrément 7→8, certificats existants réutilisés)
-   - Suivi : https://expo.dev/accounts/michelpezzuto/projects/mesurechassis/builds/f20c9b28-be44-4fe2-8c8b-ba0c6dbcc037
-2. ⏳ Quand le build est terminé : soumission TestFlight
-   - Il manque l'`ascAppId` (Apple ID numérique de l'app) dans `eas.json` → demandé au client
-   - Commande : `eas submit --platform ios --id f20c9b28-be44-4fe2-8c8b-ba0c6dbcc037`
-3. ⏳ Dans App Store Connect :
-   - Sélectionner le build 1.1.0 (8) sur la fiche version
+1. ✅ Build 9 compilé sur EAS et soumission App Store Connect lancée (automatique)
+   - Suivi : https://expo.dev/accounts/michelpezzuto/projects/mesurechassis/builds/3d58849f-d360-4a96-81ef-0e0ac914b91e
+2. ⏳ Dans App Store Connect :
+   - Sélectionner le build **1.1.0 (9)** sur la fiche version (PAS le 8 !)
    - Renseigner le compte démo dans App Review Information
-   - Répondre au message d'Apple avec le texte ci-dessus
+   - Répondre au message d'Apple avec le texte ci-dessus (corriger "build 9")
    - "Soumettre à nouveau à l'équipe de vérification des apps"
+3. 🤖 Android : build AAB en file d'attente EAS — `81fe2c95-aa4e-4288-bf71-8c3efc5f3593`
+   - Fiche Play Store complète : `/app/memory/play_store_listing_fr.md`
 
 ## ⚠️ POINTS DE VIGILANCE POST-APPROBATION
 - La clé Stripe backend est en mode TEST (`sk_test_…`) → basculer en clé LIVE avant la commercialisation web (sans impact Apple).

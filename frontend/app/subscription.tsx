@@ -284,7 +284,7 @@ export default function SubscriptionScreen() {
          * une app B2B SaaS ne peut PAS proposer la gestion d'un abonnement
          * payé hors IAP depuis l'app iOS. Sur iOS, l'utilisateur est invité
          * à se rendre sur mesurechassis.com. */}
-        {status?.has_subscription && Platform.OS !== "ios" && (
+        {status?.has_subscription && Platform.OS === "web" && (
           <TouchableOpacity
             style={[styles.manageBtn, openingPortal && { opacity: 0.6 }]}
             onPress={handleManageSubscription}
@@ -310,7 +310,7 @@ export default function SubscriptionScreen() {
         {/* 🍎 iOS — Bandeau d'information remplaçant les CTA Stripe.
          * Conforme à la règle App Store : aucune mention de paiement
          * externe, juste un rappel que la gestion se fait sur le site web. */}
-        {Platform.OS === "ios" && (
+        {Platform.OS !== "web" && (
           <View style={styles.iosNoticeBox}>
             <Ionicons
               name="information-circle-outline"
@@ -332,7 +332,7 @@ export default function SubscriptionScreen() {
         {/* ===== LISTE DES PLANS =====
          * 🍎 Masquée sur iOS (App Store 3.1.1) — voir bandeau d'info ci-dessus.
          */}
-        {Platform.OS !== "ios" && (
+        {Platform.OS === "web" && (
           <>
             <Text style={styles.sectionTitle}>
               {status?.has_subscription ? "Changer de plan" : "Choisir un plan"}
