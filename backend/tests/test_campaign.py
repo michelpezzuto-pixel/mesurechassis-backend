@@ -9,8 +9,9 @@ from routes.campaign import (
     BODY_TEMPLATE,
     DAILY_LIMIT,
     EMAIL_RE,
+    ORIGIN_PHRASES,
     PROSPECTS_CSV,
-    SUBJECT,
+    SUBJECTS,
 )
 
 
@@ -31,11 +32,22 @@ def test_limite_quotidienne_anti_spam():
 
 def test_template_email():
     """Le corps personnalise l'entreprise et contient lien testeur + mention STOP."""
-    body = BODY_TEMPLATE.format(company="FT Châssis")
+    body = BODY_TEMPLATE.format(company="FT Châssis", origin=ORIGIN_PHRASES["be"])
     assert "FT Châssis" in body
     assert "https://mesurechassis.com/devenir-testeur.html" in body
     assert "STOP" in body  # RGPD / désinscription
-    assert "beta" not in SUBJECT.lower()  # conformité stores
+    for subject in SUBJECTS.values():
+        assert "beta" not in subject.lower()  # conformité stores
+
+
+def test_adaptation_pays():
+    """Option B client : 'belge' pour BE uniquement, texte neutre pour FR/LU."""
+    assert "belge" in ORIGIN_PHRASES["be"]
+    assert "belge" not in ORIGIN_PHRASES["fr"]
+    assert "belge" not in ORIGIN_PHRASES["lu"]
+    assert "belge" in SUBJECTS["be"]
+    assert "belge" not in SUBJECTS["fr"]
+    assert "belge" not in SUBJECTS["lu"]
 
 
 def test_regex_email():

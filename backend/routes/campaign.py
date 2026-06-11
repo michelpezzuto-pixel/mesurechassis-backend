@@ -28,11 +28,23 @@ EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 DAILY_LIMIT = 15
 PAUSE_BETWEEN_SENDS_S = 3
 
-SUBJECT = "Artisan menuisier ? Testez en avant-première l'app belge de prise de mesures"
+SUBJECTS = {
+    "be": "Artisan menuisier ? Testez en avant-première l'app belge de prise de mesures",
+    "fr": "Artisan menuisier ? Testez en avant-première l'app de prise de mesures pensée pour le métier",
+    "lu": "Artisan menuisier ? Testez en avant-première l'app de prise de mesures pensée pour le métier",
+}
+
+# {origin} : phrase d'accroche adaptée au pays du prospect (option B du client —
+# les belges voient "application mobile belge", FR/LU un texte neutre).
+ORIGIN_PHRASES = {
+    "be": "une application mobile belge",
+    "fr": "une application mobile conçue par un menuisier",
+    "lu": "une application mobile conçue par un menuisier",
+}
 
 BODY_TEMPLATE = """Bonjour,
 
-Je me permets de contacter {company} car je lance un outil pensé pour notre métier. Je m'appelle Michel Pezzuto et, comme vous, je connais les réalités du terrain. C'est pourquoi j'ai créé MesureChâssis : une application mobile belge qui en finit avec le carnet de notes et les erreurs de ressaisie sur les chantiers.
+Je me permets de contacter {company} car je lance un outil pensé pour notre métier. Je m'appelle Michel Pezzuto et, comme vous, je connais les réalités du terrain. C'est pourquoi j'ai créé MesureChâssis : {origin} qui en finit avec le carnet de notes et les erreurs de ressaisie sur les chantiers.
 
 Concrètement, MesureChâssis vous permet de :
 
@@ -88,6 +100,7 @@ async def seed_prospects_from_csv() -> None:
                     "email": email,
                     "company": (row.get("ENTREPRISE") or "").strip(),
                     "region": (row.get("REGION") or "").strip(),
+                    "country": (row.get("PAYS") or "be").strip().lower(),
                     "status": "pending",
                     "sent_at": None,
                     "created_at": datetime.now(timezone.utc).isoformat(),
@@ -117,6 +130,7 @@ async def import_prospects(payload: dict, user=Depends(require_admin)):
                 "email": email,
                 "company": (it.get("company") or "").strip(),
                 "region": (it.get("region") or "").strip(),
+                "country": (it.get("country") or "be").strip().lower(),
                 "status": "pending",  # pending → sent | failed
                 "sent_at": None,
                 "created_at": datetime.now(timezone.utc).isoformat(),
@@ -171,12 +185,17 @@ async def _send_batch_task(prospect_ids: list[str]) -> None:
         if not doc or doc.get("status") not in ("sending",):
             continue
         company = doc.get("company") or "votre entreprise"
-        body = BODY_TEMPLATE.format(company=company)
+        country = (doc.get("country") or "be").lower()
+        subject = SUBJECTS.get(country, SUBJECTS["fr"])
+        body = BODY_TEMPLATE.format(
+            company=company,
+            origin=ORIGIN_PHRASES.get(country, ORIGIN_PHRASES["fr"]),
+        )
         try:
             # send_email est synchrone (appel HTTP Resend) → thread séparé
             # pour ne pas bloquer l'event loop pendant le lot.
             res = await asyncio.to_thread(
-                send_email, to=doc["email"], subject=SUBJECT, body=body
+                send_email, to=doc["email"], subject=subject, body=body
             )
             status = "sent" if res.get("delivered") else "failed"
         except Exception as exc:  # noqa: BLE001
