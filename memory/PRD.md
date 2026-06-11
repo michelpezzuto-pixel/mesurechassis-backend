@@ -165,3 +165,11 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
 - Backend : `/app/backend/routes/testers.py` (GET/PATCH/DELETE admin-only, register public)
 - Testé E2E : inscription web ✅, doublon idempotent ✅, email invalide 400 ✅, 401 sans auth ✅, notification Resend ✅, vue admin ✅
 - ⚠️ Redéployer (Save to GitHub → Railway + web) pour rendre la page publique accessible en production
+
+## 🌐 Page testeurs hébergée sur mesurechassis.com (11 juin 2026, fin de journée)
+- Constat : le déploiement Emergent d'une app Expo fournit les builds mobiles, pas d'URL web → solution retenue : page statique sur le site vitrine du client (Easyhost, upload FileZilla)
+- `/app/backend/static/devenir-testeur.html` : page autonome aux couleurs du site (Syne/DM Sans, #FF6B35), formulaire fetch → `https://capable-gratitude-production-db51.up.railway.app/api/testers/register`
+- Téléchargeable via `GET /api/_downloads/devenir-testeur-html` — à uploader à la racine du site → URL finale `https://mesurechassis.com/devenir-testeur.html`
+- CORS Railway vérifié OK pour l'origine mesurechassis.com ✅
+- ⚠️ PRÉREQUIS : "Save to GitHub" pour que Railway reçoive routes/testers.py (sinon 404, vérifié)
+- Le site vitrine pointe encore vers la preview (beta.html → window-field-app.preview...) : à corriger lors de la mise à jour du site (backlog)

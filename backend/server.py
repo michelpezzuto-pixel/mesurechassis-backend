@@ -94,6 +94,19 @@ async def get_playstore_tablet_asset(filename: str):
     return FileResponse(path, media_type="image/jpeg", filename=filename)
 
 
+@api.get("/_downloads/devenir-testeur-html")
+async def download_devenir_testeur_html():
+    """Page statique d'inscription testeur à héberger sur mesurechassis.com."""
+    path = "/app/backend/static/devenir-testeur.html"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Page introuvable")
+    return FileResponse(
+        path,
+        media_type="text/html",
+        filename="devenir-testeur.html",
+    )
+
+
 @api.get("/_downloads/play-feature-graphic")
 async def download_play_feature_graphic():
     """Feature graphic Google Play (1024×500) générée pour la fiche store."""

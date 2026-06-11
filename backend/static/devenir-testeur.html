@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Devenez testeur — MesureChâssis</title>
+<meta name="description" content="Rejoignez le programme de testeurs MesureChâssis : accès gratuit en avant-première à l'application de prise de mesures pour menuisiers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#121214; --surface:#1a1a1e; --border:rgba(255,255,255,.08);
+    --orange:#FF6B35; --green:#4CAF50; --white:#fff; --gray1:#e8e8e8; --gray2:#a8a8b0; --gray3:#5a5a65;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--gray1);font-family:'DM Sans',sans-serif;min-height:100vh}
+  .wrap{max-width:640px;margin:0 auto;padding:3rem 1.25rem 4rem}
+  .logo{display:flex;align-items:center;gap:.6rem;justify-content:center;margin-bottom:2rem}
+  .logo-badge{width:46px;height:46px;border-radius:12px;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+  .logo-name{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;color:var(--white)}
+  .logo-name em{font-style:normal;color:var(--orange)}
+  .tag{display:block;text-align:center;font-size:.72rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:.6rem}
+  h1{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,5vw,2.2rem);font-weight:800;color:var(--white);text-align:center;letter-spacing:-.02em;margin-bottom:.8rem}
+  .lead{text-align:center;color:var(--gray2);font-weight:300;line-height:1.7;margin-bottom:1.8rem}
+  .feats{display:flex;flex-direction:column;gap:.65rem;margin-bottom:1.6rem}
+  .feat{display:flex;gap:.6rem;align-items:flex-start;font-size:.95rem}
+  .feat svg{flex:none;margin-top:2px}
+  .require{display:flex;gap:.7rem;align-items:center;background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.3);border-radius:10px;padding:.8rem 1rem;font-size:.88rem;margin-bottom:2rem;color:var(--gray1)}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.8rem;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+  label{display:block;font-size:.82rem;font-weight:600;color:var(--gray2);margin:1rem 0 .35rem}
+  label:first-of-type{margin-top:0}
+  input{width:100%;background:#121214;border:1px solid var(--border);border-radius:10px;padding:.85rem 1rem;color:var(--white);font-size:1rem;font-family:inherit;transition:border-color .2s}
+  input:focus{outline:none;border-color:var(--orange)}
+  .btn{width:100%;margin-top:1.4rem;background:var(--orange);color:#fff;border:none;border-radius:12px;padding:1rem;font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;letter-spacing:.04em;cursor:pointer;transition:transform .15s,box-shadow .15s}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(255,107,53,.3)}
+  .btn:disabled{opacity:.55;cursor:wait;transform:none}
+  .error{display:none;color:#f87171;font-size:.88rem;margin-top:.9rem}
+  .gdpr{font-size:.74rem;color:var(--gray3);text-align:center;margin-top:1rem;line-height:1.5}
+  .success{display:none;text-align:center;padding:2.5rem 1rem}
+  .success-icon{width:84px;height:84px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 1.4rem;font-size:2.4rem;color:#fff}
+  .success h2{font-family:'Syne',sans-serif;color:var(--white);font-size:1.5rem;margin-bottom:.9rem}
+  .success p{color:var(--gray2);line-height:1.7}
+  .back{display:inline-block;margin-top:1.6rem;color:var(--orange);text-decoration:none;font-weight:600;border:1px solid var(--orange);border-radius:10px;padding:.65rem 1.4rem}
+  footer{text-align:center;margin-top:2.5rem;font-size:.78rem;color:var(--gray3)}
+  footer a{color:var(--gray3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="logo">
+    <div class="logo-badge">📐</div>
+    <div class="logo-name">Mesure<em>Châssis</em></div>
+  </div>
+
+  <span class="tag">Programme testeurs · Avant-première</span>
+  <h1>Devenez testeur de MesureChâssis</h1>
+  <p class="lead">L'application belge qui digitalise la prise de mesures de châssis pour les professionnels de la menuiserie. <strong style="color:var(--gray1)">Accès complet et gratuit</strong> pour nos premiers testeurs.</p>
+
+  <div class="feats">
+    <div class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Prise de mesures guidée sur chantier (7 formes de baies)</div>
+    <div class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Gestion des chantiers et des équipes (commercial / technicien)</div>
+    <div class="feat"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Exports PDF / Excel / CSV prêts pour la production</div>
+  </div>
+
+  <div class="require">
+    <span style="font-size:1.2rem">ℹ️</span>
+    <span>Conditions : un téléphone <strong>Android</strong> et une adresse <strong>Gmail / Google</strong>. Vous recevrez le lien d'installation Google Play par email.</span>
+  </div>
+
+  <div class="card">
+    <form id="testerForm">
+      <label for="f-name">Votre nom *</label>
+      <input id="f-name" name="name" type="text" placeholder="Jean Dupont" required autocomplete="name">
+
+      <label for="f-company">Société (optionnel)</label>
+      <input id="f-company" name="company" type="text" placeholder="Menuiserie Dupont SRL" autocomplete="organization">
+
+      <label for="f-email">Adresse Gmail / Google *</label>
+      <input id="f-email" name="email" type="email" placeholder="vous@gmail.com" required autocomplete="email">
+
+      <label for="f-phone">Téléphone (optionnel)</label>
+      <input id="f-phone" name="phone" type="tel" placeholder="+32 470 00 00 00" autocomplete="tel">
+
+      <div class="error" id="errorMsg"></div>
+      <button class="btn" id="submitBtn" type="submit">JE DEVIENS TESTEUR →</button>
+      <p class="gdpr">Vos coordonnées servent uniquement à vous inviter au programme de test et ne sont jamais partagées avec des tiers. Désinscription sur simple demande : info@mesurechassis.com</p>
+    </form>
+
+    <div class="success" id="successView">
+      <div class="success-icon">✓</div>
+      <h2>Inscription enregistrée !</h2>
+      <p>Merci ! 🧡<br><br>Vous recevrez très prochainement le <strong style="color:var(--gray1)">lien d'invitation Google Play</strong> sur votre adresse email.<br><br>📱 Pensez à ouvrir ce lien depuis votre téléphone <strong style="color:var(--gray1)">Android</strong>.</p>
+      <a class="back" href="https://mesurechassis.com">← Retour au site</a>
+    </div>
+  </div>
+
+  <footer>© MesureChâssis · <a href="https://mesurechassis.com/confidentialite.html">Politique de confidentialité</a></footer>
+</div>
+
+<script>
+  var API = "https://capable-gratitude-production-db51.up.railway.app/api/testers/register";
+  document.getElementById("testerForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    var btn = document.getElementById("submitBtn");
+    var err = document.getElementById("errorMsg");
+    err.style.display = "none";
+    btn.disabled = true;
+    btn.textContent = "ENVOI EN COURS…";
+    try {
+      var res = await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: document.getElementById("f-name").value.trim(),
+          company: document.getElementById("f-company").value.trim(),
+          email: document.getElementById("f-email").value.trim(),
+          phone: document.getElementById("f-phone").value.trim(),
+        }),
+      });
+      var data = await res.json().catch(function () { return {}; });
+      if (!res.ok) throw new Error(data.detail || "Une erreur est survenue. Réessayez.");
+      document.getElementById("testerForm").style.display = "none";
+      document.getElementById("successView").style.display = "block";
+    } catch (ex) {
+      err.textContent = ex.message;
+      err.style.display = "block";
+      btn.disabled = false;
+      btn.textContent = "JE DEVIENS TESTEUR →";
+    }
+  });
+</script>
+</body>
+</html>
