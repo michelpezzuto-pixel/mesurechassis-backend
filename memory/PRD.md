@@ -226,3 +226,18 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
 - DB locale à jour : 84 pending (stats API vérifiées). Railway : seed auto au prochain déploiement.
 - Tests : pytest test_campaign.py 5/5 (dont test_adaptation_pays)
 - �待 Liste FRANCE pas encore fournie par le client — à importer de la même façon (PAYS=fr) quand il l'enverra.
+
+## 🔁 Relance J+5 + France + anti-doublon Outlook (11 juin 2026, fin de soirée)
+- **Relance auto J+5** : `RELANCE_TEMPLATE` + `RELANCE_DELAY_DAYS=5` dans routes/campaign.py
+  - Éligible si status=sent, jamais relancé, sent_at ≤ J-5, et PAS inscrit testeur (croisement tester_signups)
+  - Relances envoyées EN PRIORITÉ dans le lot quotidien, quota global 15/jour (premiers envois + relances confondus via `_quota_used_today`)
+  - Sujet "Re: <sujet pays>", verrou anti double-clic (relance_sent_at horodaté au scheduling), `relance_failed` si échec
+  - Stats : +`relance_due`, +`relances_sent` ; UI : badge bleu "RELANCÉ", ligne info "🔁 X relances J+5 incluses"
+- **France** : 15 prospects importés (IDF/Normandie/Bretagne, PAYS=fr) → total 99
+- **Anti-doublon Outlook** : le client avait envoyé 9 emails manuellement le 11/06 ~20h15 (identifiés via capture Outlook) :
+  hoyauxjeannoel, chassisiso, artisanduchassis, menuiseriebrahy, moustimath, info.rrconcept, adnet.laurent, genotte.chassis, tdschassis (tous @gmail)
+  → marqués sent (sent_via=outlook_manuel, sent_at=2026-06-11T18:15Z), relance J+5 auto le 16/06
+  → CSV : colonne `CONTACTE_LE` ajoutée + seed adapté → la prod Railway seedera ces 9 comme "sent" (pas de doublon en prod)
+- État : 90 pending / 9 sent / quota jour 9/15 (6 restants aujourd'hui)
+- Tests : 11/11 pytest (test_relance_j5 ajouté), envoi relance réel validé via delivered@resend.dev, écran 99 prospects vérifié
+- ⚠️ Le client doit refaire "Save to GitHub" (son push précédent ne contient ni la France, ni la relance, ni l'anti-doublon)

@@ -113,6 +113,9 @@ async def seed_prospects_from_csv() -> None:
                 continue
             if await db.prospects.find_one({"email": email}):
                 continue
+            # CONTACTE_LE rempli = prospect déjà contacté manuellement (Outlook)
+            # avant la mise en place du module → seedé "sent" pour éviter le doublon.
+            contacte_le = (row.get("CONTACTE_LE") or "").strip()
             await db.prospects.insert_one(
                 {
                     "id": str(uuid.uuid4()),
@@ -120,8 +123,8 @@ async def seed_prospects_from_csv() -> None:
                     "company": (row.get("ENTREPRISE") or "").strip(),
                     "region": (row.get("REGION") or "").strip(),
                     "country": (row.get("PAYS") or "be").strip().lower(),
-                    "status": "pending",
-                    "sent_at": None,
+                    "status": "sent" if contacte_le else "pending",
+                    "sent_at": contacte_le or None,
                     "created_at": datetime.now(timezone.utc).isoformat(),
                 }
             )
