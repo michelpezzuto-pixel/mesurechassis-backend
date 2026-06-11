@@ -94,6 +94,19 @@ async def get_playstore_tablet_asset(filename: str):
     return FileResponse(path, media_type="image/jpeg", filename=filename)
 
 
+@api.get("/_downloads/site-maj-offre-lancement")
+async def download_site_maj():
+    """Pages du site vitrine mises à jour (bêta → offre de lancement, QR testeur)."""
+    path = "/app/backend/static/site_maj_offre_lancement.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="site_maj_offre_lancement.zip",
+    )
+
+
 @api.get("/_downloads/devenir-testeur-html")
 async def download_devenir_testeur_html():
     """Page statique d'inscription testeur à héberger sur mesurechassis.com."""

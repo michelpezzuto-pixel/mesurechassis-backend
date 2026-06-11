@@ -184,3 +184,12 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
 - **⚠️ RÈGLE** : ne JAMAIS remettre un pip freeze complet dans requirements.txt (Railway casse). Ajouter uniquement les nouveaux paquets réellement importés.
 - **Résultat** : Deployment successful ✅ — API testeurs + tarification par plan + compte Apple review actifs en production
 - Chaîne testeur E2E validée en prod : page mesurechassis.com/devenir-testeur.html → API Railway → email Resend vers info@mesurechassis.com ✅
+
+## 🌐 Mise à jour site vitrine préparée (11 juin 2026, soir)
+- 13 pages récupérées depuis mesurechassis.com et transformées (51 remplacements) :
+  - Wording "Bêta/bêta gratuite" → "Offre de lancement" / "avant-première" (0 occurrence restante)
+  - Tous les liens preview Emergent (qui se met en veille) → https://mesurechassis.com/devenir-testeur.html
+  - 2 QR codes régénérés vers la page testeur ; CTA renommés ("Devenir testeur →", "S'inscrire au programme de test")
+- Script reproductible : /app/scripts/update_site_vitrine.py
+- Archive : GET /api/_downloads/site-maj-offre-lancement (à dézipper et uploader via le gestionnaire Easyhost, écrase les 13 .html)
+- Email de campagne testeurs finalisé et remis au client (lien devenir-testeur.html)
