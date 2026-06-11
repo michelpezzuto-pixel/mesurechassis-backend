@@ -66,3 +66,12 @@ def test_relance_j5():
     assert "https://mesurechassis.com/devenir-testeur.html" in body
     assert "STOP" in body
     assert "beta" not in body.lower()
+
+
+def test_recap_hebdo_config():
+    """Récap hebdo : destinataire admin, programmé le lundi matin."""
+    from routes.campaign import RECAP_HOUR_UTC, RECAP_RECIPIENT, RECAP_WEEKDAY
+
+    assert RECAP_RECIPIENT == "info@mesurechassis.com"
+    assert RECAP_WEEKDAY == 0  # lundi
+    assert 6 <= RECAP_HOUR_UTC <= 9  # matinée belge

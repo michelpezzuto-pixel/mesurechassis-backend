@@ -87,6 +87,91 @@ info@mesurechassis.com · https://mesurechassis.com
 —
 Pour ne plus être contacté, répondez simplement STOP."""
 
+RECAP_RECIPIENT = "info@mesurechassis.com"
+RECAP_WEEKDAY = 0  # lundi
+RECAP_HOUR_UTC = 7  # ≈ 9h heure belge (été)
+
+
+async def send_weekly_recap() -> dict:
+    """Construit et envoie le récap hebdo de la campagne à l'admin."""
+    week_ago = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
+    sent_week = await db.prospects.count_documents({"sent_at": {"$gte": week_ago}})
+    relances_week = await db.prospects.count_documents(
+        {"relance_sent_at": {"$gte": week_ago}}
+    )
+    signups_week = await db.tester_signups.count_documents(
+        {"created_at": {"$gte": week_ago}}
+    )
+    signups_total = await db.tester_signups.count_documents({})
+    pending = await db.prospects.count_documents({"status": "pending"})
+    sent_total = await db.prospects.count_documents({"status": "sent"})
+    relance_due = len(await _relances_dues())
+
+    objectif = f"{signups_total}/12 testeurs Google Play"
+    body = f"""Bonjour Michel,
+
+Voici le point hebdomadaire de votre campagne de recrutement de testeurs MesureChâssis :
+
+📊 CETTE SEMAINE
+✉️ Emails de prospection envoyés : {sent_week}
+🔁 Relances J+5 envoyées : {relances_week}
+🎉 Nouveaux testeurs inscrits : {signups_week}
+
+📈 SITUATION GLOBALE
+🎯 Objectif Google Play : {objectif}
+📬 Prospects contactés au total : {sent_total}
+⏳ Prospects restant à contacter : {pending}
+🔔 Relances en attente d'envoi : {relance_due}
+
+👉 Pensez à votre clic quotidien « Envoyer le lot du jour » dans l'app (Dashboard → Campagne).
+
+Bonne semaine !
+— Votre assistant MesureChâssis"""
+
+    res = await asyncio.to_thread(
+        send_email,
+        to=RECAP_RECIPIENT,
+        subject="📊 Récap hebdo campagne testeurs — MesureChâssis",
+        body=body,
+    )
+    logger.info(
+        "Récap hebdo envoyé à %s (delivered=%s)", RECAP_RECIPIENT, res.get("delivered")
+    )
+    return res
+
+
+async def weekly_recap_loop() -> None:
+    """Boucle de fond : envoie le récap chaque lundi ≈ 9h belge (1 fois max/semaine)."""
+    while True:
+        try:
+            now = datetime.now(timezone.utc)
+            if now.weekday() == RECAP_WEEKDAY and now.hour >= RECAP_HOUR_UTC:
+                monday = now.replace(
+                    hour=0, minute=0, second=0, microsecond=0
+                ).isoformat()
+                marker = await db.campaign_meta.find_one({"key": "weekly_recap"})
+                if not marker or marker.get("last_sent", "") < monday:
+                    await send_weekly_recap()
+                    await db.campaign_meta.update_one(
+                        {"key": "weekly_recap"},
+                        {"$set": {"last_sent": now.isoformat()}},
+                        upsert=True,
+                    )
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("Récap hebdo en erreur (réessai dans 1h) : %s", exc)
+        await asyncio.sleep(3600)
+
+
+@router.post("/campaign/recap-now")
+async def recap_now(user=Depends(require_admin)):
+    """Envoi immédiat du récap (test / à la demande depuis l'app)."""
+    res = await send_weekly_recap()
+    return {
+        "ok": True,
+        "delivered": bool(res.get("delivered")),
+        "message": f"Récap envoyé à {RECAP_RECIPIENT} ✉️",
+    }
+
 
 def _today_start_iso() -> str:
     now = datetime.now(timezone.utc)

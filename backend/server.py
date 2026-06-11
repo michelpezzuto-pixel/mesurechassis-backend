@@ -43,6 +43,9 @@ async def lifespan(_app: FastAPI):
         logging.getLogger("mesurechassis").warning(
             "Import CSV prospects échoué : %s", _e
         )
+    # 🆕 Récap hebdo campagne (lundi ≈ 9h belge) — tâche de fond annulée au shutdown
+    import asyncio as _asyncio
+    _recap_task = _asyncio.create_task(campaign_routes.weekly_recap_loop())
     # 🆕 Build 9 — Index unique sur referral_code (anti-collision concurrente).
     # `sparse=True` permet aux documents sans champ d'exister sans violer
     # l'unicité (migration progressive depuis les comptes pré-existants).

@@ -241,3 +241,12 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
 - État : 90 pending / 9 sent / quota jour 9/15 (6 restants aujourd'hui)
 - Tests : 11/11 pytest (test_relance_j5 ajouté), envoi relance réel validé via delivered@resend.dev, écran 99 prospects vérifié
 - ⚠️ Le client doit refaire "Save to GitHub" (son push précédent ne contient ni la France, ni la relance, ni l'anti-doublon)
+
+## 📊 Récap hebdo automatique par email (11 juin 2026, 23h)
+- `send_weekly_recap()` + `weekly_recap_loop()` dans routes/campaign.py — tâche de fond asyncio (lancée au lifespan, AUCUNE dépendance ajoutée → Railway safe)
+- Chaque LUNDI ≥ 7h UTC (≈9h belge), 1 fois max/semaine (marqueur `db.campaign_meta` key=weekly_recap)
+- Contenu : envois/relances/inscrits de la semaine + objectif X/12 testeurs + restants + relances dues
+- Destinataire : info@mesurechassis.com (constante RECAP_RECIPIENT)
+- Endpoint manuel : `POST /api/campaign/recap-now` (admin) — testé en réel : Resend 200 OK, delivered=true
+- Tests : 7/7 pytest test_campaign.py (test_recap_hebdo_config ajouté)
+- ⚠️ Le récap automatique ne tourne en continu QUE sur Railway (le preview Emergent s'endort) → refaire "Save to GitHub"
