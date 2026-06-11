@@ -173,3 +173,14 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
 - CORS Railway vérifié OK pour l'origine mesurechassis.com ✅
 - ⚠️ PRÉREQUIS : "Save to GitHub" pour que Railway reçoive routes/testers.py (sinon 404, vérifié)
 - Le site vitrine pointe encore vers la preview (beta.html → window-field-app.preview...) : à corriger lors de la mise à jour du site (backlog)
+
+## 🚂 Fix déploiement Railway (11 juin 2026, soir) — IMPORTANT POUR FUTURS AGENTS
+- **Problème** : "Save to GitHub" pousse TOUT le workspace sur la branche `conflict_070626_1317`, alors que l'ancienne branche `main` contenait le backend À LA RACINE. Railway buildait la racine → échec.
+- **Fixes appliqués** :
+  1. Railway Settings → Source → Root Directory = `/backend` (fait par le client)
+  2. Branche connectée = `conflict_070626_1317` (auto-deploy ON)
+  3. Créé `/app/backend/Procfile` + `/app/backend/railway.json` (commande uvicorn)
+  4. `requirements.txt` réécrit PROPREMENT (16 paquets pinés, identiques à l'ancien main) — l'ancien contenait un pip freeze complet avec `emergentintegrations` introuvable sur PyPI → c'était la cause du build failed
+- **⚠️ RÈGLE** : ne JAMAIS remettre un pip freeze complet dans requirements.txt (Railway casse). Ajouter uniquement les nouveaux paquets réellement importés.
+- **Résultat** : Deployment successful ✅ — API testeurs + tarification par plan + compte Apple review actifs en production
+- Chaîne testeur E2E validée en prod : page mesurechassis.com/devenir-testeur.html → API Railway → email Resend vers info@mesurechassis.com ✅
