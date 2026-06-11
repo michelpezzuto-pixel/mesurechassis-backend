@@ -158,3 +158,10 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
 - **Feature graphic Play Store 1024×500 générée** (script `/app/scripts/generate_feature_graphic.py`) — téléchargeable via `GET /api/_downloads/play-feature-graphic`
 - **AAB Android final** : v1.1.0 versionCode 27 → lien direct dans play_store_listing_fr.md
 - ⚠️ Le backend Railway doit être redéployé (Save to GitHub) pour embarquer la nouvelle logique de sièges.
+
+## 🧪 Système de recrutement de testeurs Google Play (11 juin 2026, soir)
+- **Page publique `/devenir-testeur`** (sans login) : pitch + formulaire (nom, société, Gmail, tél) → `POST /api/testers/register` (dédup par email, notification Resend à info@mesurechassis.com à chaque inscription)
+- **Vue admin `/admin/testers`** (bouton "Testeurs" sur dashboard, web only) : compteurs objectif 12, bouton "Copier tous les emails" (collage direct dans Play Console), marquer "AJOUTÉ", supprimer
+- Backend : `/app/backend/routes/testers.py` (GET/PATCH/DELETE admin-only, register public)
+- Testé E2E : inscription web ✅, doublon idempotent ✅, email invalide 400 ✅, 401 sans auth ✅, notification Resend ✅, vue admin ✅
+- ⚠️ Redéployer (Save to GitHub → Railway + web) pour rendre la page publique accessible en production

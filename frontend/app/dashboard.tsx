@@ -429,6 +429,19 @@ export default function Dashboard() {
             <Text style={styles.actionBtnText} numberOfLines={1}>{t("dashboardExtended.stats")}</Text>
           </TouchableOpacity>
         )}
+        {/* Testeurs Google Play : outil de pré-lancement, géré depuis le web
+            uniquement (l'admin copie les emails vers Play Console). */}
+        {user?.role === "admin" && Platform.OS === "web" && (
+          <TouchableOpacity
+            testID="admin-testers-button"
+            onPress={() => router.push("/admin/testers" as never)}
+            style={styles.actionBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="flask-outline" size={18} color={colors.primary} />
+            <Text style={styles.actionBtnText} numberOfLines={1}>Testeurs</Text>
+          </TouchableOpacity>
+        )}
         {/* Feedback — bouton unique pour tous les rôles (admin/commercial/technicien).
             Ouvre la page /feedback qui inclut un formulaire dépliable de
             nouveau message ET l'historique des retours (tous pour admin,

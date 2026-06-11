@@ -26,6 +26,7 @@ from routes import mesures as mesures_routes
 from routes import referral as referral_routes
 from routes import stats as stats_routes
 from routes import stripe_routes
+from routes import testers as testers_routes
 from seed import seed_data
 
 
@@ -66,6 +67,7 @@ api.include_router(stats_routes.router)
 api.include_router(exports_routes.router)
 # 🆕 Build 9 — Système de parrainage (2 mois offerts par filleul actif)
 api.include_router(referral_routes.router)
+api.include_router(testers_routes.router)
 
 # ─────────────────────────────────────────────────────────────────────
 # Route publique TEMPORAIRE pour télécharger les screenshots tablette
