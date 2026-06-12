@@ -25,6 +25,7 @@ type Post = {
   hashtags: string;
   fb_hashtags: string;
   posted?: boolean;
+  image_url?: string;
 };
 
 type Today = {
@@ -45,6 +46,8 @@ export default function AdminLinkedin() {
   const [message, setMessage] = useState<string | null>(null);
   const [confirming, setConfirming] = useState(false);
   const [marking, setMarking] = useState(false);
+  // Consultation d'un jour précis (ex: rattrapage Facebook d'un post déjà publié)
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
 
   const fetchAll = useCallback(async () => {
     try {
@@ -63,11 +66,16 @@ export default function AdminLinkedin() {
     void fetchAll();
   }, [fetchAll]);
 
+  // Post affiché : celui sélectionné dans la liste, sinon le post du jour
+  const shown: Post | null = selectedDay
+    ? (allPosts.find((p) => p.day === selectedDay) ?? null)
+    : (today?.post ?? null);
+  const isConsultation = !!selectedDay && selectedDay !== today?.post?.day;
+
   const copyText = async (target: "li" | "fb") => {
-    if (!today?.post) return;
-    const tags =
-      target === "fb" ? today.post.fb_hashtags : today.post.hashtags;
-    await Clipboard.setStringAsync(`${today.post.text}\n\n${tags}`);
+    if (!shown) return;
+    const tags = target === "fb" ? shown.fb_hashtags : shown.hashtags;
+    await Clipboard.setStringAsync(`${shown.text}\n\n${tags}`);
     setCopied(target);
     setTimeout(() => setCopied(null), 2500);
   };
@@ -132,7 +140,7 @@ export default function AdminLinkedin() {
             </View>
           </View>
 
-          {today.done ? (
+          {today.done && !isConsultation ? (
             <View style={styles.doneBox} testID="linkedin-done">
               <Text style={styles.doneEmoji}>🏆</Text>
               <Text style={styles.doneText}>
@@ -140,22 +148,36 @@ export default function AdminLinkedin() {
               </Text>
             </View>
           ) : (
-            today.post && (
+            shown && (
               <>
+                {isConsultation && (
+                  <TouchableOpacity
+                    testID="linkedin-back-to-today"
+                    style={styles.consultBanner}
+                    onPress={() => setSelectedDay(null)}
+                    activeOpacity={0.8}
+                  >
+                    <Ionicons name="eye-outline" size={16} color="#60A5FA" />
+                    <Text style={styles.consultText}>
+                      Consultation du Jour {shown.day} — toucher ici pour
+                      revenir au post du jour
+                    </Text>
+                  </TouchableOpacity>
+                )}
                 <View style={styles.dayBadge}>
                   <Text style={styles.dayBadgeText}>
-                    JOUR {today.post.day}/{today.total}
+                    JOUR {shown.day}/{today.total}
                   </Text>
                 </View>
                 <Text style={styles.title} testID="linkedin-post-title">
-                  {today.post.title}
+                  {shown.title}
                 </Text>
-                <Text style={styles.subtitle}>{today.post.subtitle}</Text>
+                <Text style={styles.subtitle}>{shown.subtitle}</Text>
 
                 {/* Visuel — appui long pour enregistrer sur iPhone */}
                 <Image
                   testID="linkedin-post-image"
-                  source={{ uri: `${BASE_URL}${today.image_url}` }}
+                  source={{ uri: `${BASE_URL}/api/linkedin/image/${shown.day}` }}
                   style={styles.visual}
                   resizeMode="contain"
                 />
@@ -167,9 +189,9 @@ export default function AdminLinkedin() {
                 {/* Texte du post */}
                 <View style={styles.textBox}>
                   <Text style={styles.postText} testID="linkedin-post-text">
-                    {today.post.text}
+                    {shown.text}
                   </Text>
-                  <Text style={styles.hashtags}>{today.post.hashtags}</Text>
+                  <Text style={styles.hashtags}>{shown.hashtags}</Text>
                 </View>
 
                 <TouchableOpacity
@@ -212,32 +234,35 @@ export default function AdminLinkedin() {
                   </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                  testID="linkedin-mark-posted-button"
-                  style={[
-                    styles.postedBtn,
-                    confirming && { backgroundColor: colors.primary },
-                    marking && { opacity: 0.5 },
-                  ]}
-                  onPress={() => void markPosted()}
-                  disabled={marking}
-                  activeOpacity={0.8}
-                >
-                  <Ionicons
-                    name={confirming ? "alert-circle" : "checkmark-done"}
-                    size={18}
-                    color={confirming ? "#fff" : colors.primary}
-                  />
-                  <Text
-                    style={[styles.postedBtnText, confirming && { color: "#fff" }]}
+                {/* Marquage publié uniquement pour le post du jour (pas en consultation) */}
+                {!isConsultation && (
+                  <TouchableOpacity
+                    testID="linkedin-mark-posted-button"
+                    style={[
+                      styles.postedBtn,
+                      confirming && { backgroundColor: colors.primary },
+                      marking && { opacity: 0.5 },
+                    ]}
+                    onPress={() => void markPosted()}
+                    disabled={marking}
+                    activeOpacity={0.8}
                   >
-                    {marking
-                      ? "..."
-                      : confirming
-                        ? `CONFIRMER : JOUR ${today.post.day} PUBLIÉ ?`
-                        : "MARQUER COMME PUBLIÉ → POST SUIVANT"}
-                  </Text>
-                </TouchableOpacity>
+                    <Ionicons
+                      name={confirming ? "alert-circle" : "checkmark-done"}
+                      size={18}
+                      color={confirming ? "#fff" : colors.primary}
+                    />
+                    <Text
+                      style={[styles.postedBtnText, confirming && { color: "#fff" }]}
+                    >
+                      {marking
+                        ? "..."
+                        : confirming
+                          ? `CONFIRMER : JOUR ${shown.day} PUBLIÉ ?`
+                          : "MARQUER COMME PUBLIÉ → POST SUIVANT"}
+                    </Text>
+                  </TouchableOpacity>
+                )}
               </>
             )
           )}
@@ -248,10 +273,24 @@ export default function AdminLinkedin() {
             </Text>
           )}
 
-          {/* Aperçu des 15 jours */}
-          <Text style={styles.listHeader}>LES 15 POSTS</Text>
+          {/* Aperçu des 15 jours — toucher un jour pour le consulter/copier */}
+          <Text style={styles.listHeader}>
+            LES 15 POSTS — touchez un jour pour le revoir
+          </Text>
           {allPosts.map((p) => (
-            <View key={p.day} style={styles.row} testID={`linkedin-row-${p.day}`}>
+            <TouchableOpacity
+              key={p.day}
+              style={[
+                styles.row,
+                selectedDay === p.day && { borderWidth: 1, borderColor: "#60A5FA" },
+              ]}
+              testID={`linkedin-row-${p.day}`}
+              onPress={() => {
+                setSelectedDay(p.day === today.post?.day ? null : p.day);
+                setCopied(null);
+              }}
+              activeOpacity={0.7}
+            >
               <Text style={[styles.rowDay, p.posted && { color: "#22C55E" }]}>
                 J{p.day}
               </Text>
@@ -263,7 +302,7 @@ export default function AdminLinkedin() {
                 size={18}
                 color={p.posted ? "#22C55E" : "#3f3f46"}
               />
-            </View>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       )}
@@ -298,6 +337,16 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   progressFill: { height: 8, backgroundColor: colors.primary },
+  consultBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "rgba(96,165,250,0.12)",
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 12,
+  },
+  consultText: { color: "#60A5FA", fontSize: 12, flex: 1 },
   dayBadge: {
     alignSelf: "flex-start",
     backgroundColor: colors.primary,

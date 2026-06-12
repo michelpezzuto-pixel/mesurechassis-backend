@@ -282,3 +282,7 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
 - 13 pages HTML de /app/site_mesurechassis_final/ : bloc `social-mc` (SVG inline FB #1877F2 + LI #0A66C2) inséré sous l'email du footer
 - ZIP régénéré : /app/site_mesurechassis_final.zip — téléchargeable via GET /api/_downloads/site-mesurechassis (vérifié 200)
 - ⏳ Client doit téléverser le ZIP sur Easyhost
+
+## 🔁 Consultation des jours passés (12 juin 2026)
+- Liste "LES 15 POSTS" cliquable : toucher un jour → mode consultation (bandeau bleu "toucher pour revenir au post du jour", boutons copie LI/FB actifs, bouton MARQUER masqué). Testé screenshot : J1 consultable, retour J2 OK.
+- Cas d'usage : rattrapage Facebook du J1 que le client avait publié sur LinkedIn seulement.
