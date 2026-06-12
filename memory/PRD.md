@@ -276,3 +276,9 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
 - Assets générés : `static/linkedin/fb_profil.png` (logo app 1024×1024) + `fb_couverture.png` (bannière 1640×856, PIL, charte app)
 - Endpoint public : `GET /api/linkedin/asset/{fb_profil.png|fb_couverture.png}` (whitelist FB_ASSETS)
 - Checklist de création de page fournie au client (catégorie, à propos, CTA, username, etc.)
+
+## 🌐 Icônes sociales sur le site vitrine (12 juin 2026)
+- Page Facebook créée par le client : https://www.facebook.com/share/1Feu4NEyDx/ — LinkedIn perso : https://www.linkedin.com/in/michel-pezzuto-aa4797235
+- 13 pages HTML de /app/site_mesurechassis_final/ : bloc `social-mc` (SVG inline FB #1877F2 + LI #0A66C2) inséré sous l'email du footer
+- ZIP régénéré : /app/site_mesurechassis_final.zip — téléchargeable via GET /api/_downloads/site-mesurechassis (vérifié 200)
+- ⏳ Client doit téléverser le ZIP sur Easyhost
