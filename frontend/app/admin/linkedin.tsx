@@ -23,6 +23,7 @@ type Post = {
   subtitle: string;
   text: string;
   hashtags: string;
+  fb_hashtags: string;
   posted?: boolean;
 };
 
@@ -40,7 +41,7 @@ export default function AdminLinkedin() {
   const [today, setToday] = useState<Today | null>(null);
   const [allPosts, setAllPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<"li" | "fb" | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [confirming, setConfirming] = useState(false);
   const [marking, setMarking] = useState(false);
@@ -62,13 +63,13 @@ export default function AdminLinkedin() {
     void fetchAll();
   }, [fetchAll]);
 
-  const copyText = async () => {
+  const copyText = async (target: "li" | "fb") => {
     if (!today?.post) return;
-    await Clipboard.setStringAsync(
-      `${today.post.text}\n\n${today.post.hashtags}`,
-    );
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
+    const tags =
+      target === "fb" ? today.post.fb_hashtags : today.post.hashtags;
+    await Clipboard.setStringAsync(`${today.post.text}\n\n${tags}`);
+    setCopied(target);
+    setTimeout(() => setCopied(null), 2500);
   };
 
   const markPosted = async () => {
@@ -173,17 +174,41 @@ export default function AdminLinkedin() {
 
                 <TouchableOpacity
                   testID="linkedin-copy-button"
-                  style={[styles.copyBtn, copied && styles.copyBtnOk]}
-                  onPress={() => void copyText()}
+                  style={[styles.copyBtn, copied === "li" && styles.copyBtnOk]}
+                  onPress={() => void copyText("li")}
                   activeOpacity={0.8}
                 >
                   <Ionicons
-                    name={copied ? "checkmark-circle" : "copy-outline"}
+                    name={copied === "li" ? "checkmark-circle" : "logo-linkedin"}
                     size={20}
                     color="#fff"
                   />
                   <Text style={styles.copyBtnText}>
-                    {copied ? "COPIÉ ! COLLEZ DANS LINKEDIN" : "COPIER LE TEXTE"}
+                    {copied === "li"
+                      ? "COPIÉ ! COLLEZ DANS LINKEDIN"
+                      : "COPIER POUR LINKEDIN"}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  testID="facebook-copy-button"
+                  style={[
+                    styles.copyBtn,
+                    styles.fbBtn,
+                    copied === "fb" && styles.copyBtnOk,
+                  ]}
+                  onPress={() => void copyText("fb")}
+                  activeOpacity={0.8}
+                >
+                  <Ionicons
+                    name={copied === "fb" ? "checkmark-circle" : "logo-facebook"}
+                    size={20}
+                    color="#fff"
+                  />
+                  <Text style={styles.copyBtnText}>
+                    {copied === "fb"
+                      ? "COPIÉ ! COLLEZ DANS FACEBOOK"
+                      : "COPIER POUR FACEBOOK"}
                   </Text>
                 </TouchableOpacity>
 
@@ -316,6 +341,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   copyBtnOk: { backgroundColor: "#16A34A" },
+  fbBtn: { backgroundColor: "#1877F2", marginTop: 10 },
   copyBtnText: { color: "#fff", fontWeight: "800", fontSize: 13.5 },
   postedBtn: {
     flexDirection: "row",

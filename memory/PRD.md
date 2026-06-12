@@ -265,3 +265,9 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
 - Le client avait cliqué 4× "MARQUER COMME PUBLIÉ" → jours 1-4 marqués. Corrigé en DB : seul J1 reste publié, J2 affiché.
 - Anti-récidive : bouton à 2 temps (1er clic → "CONFIRMER : JOUR X PUBLIÉ ?" orange, expire après 4s ; 2e clic → validation) + verrou `marking`. Testé screenshot : confirmation + expiration OK, progression intacte (1/15).
 - ✅ Premier lot email du matin parti (logs Resend 200 : pasquarelli, raposo, winchassis, mister-chassis, mordant, profenetres, chassisprime...) — campagne opérationnelle en conditions réelles.
+
+## 📘 Version Facebook ajoutée (12 juin 2026, matin)
+- Décision client : poster aussi sur Facebook (profil perso, pas encore de page entreprise)
+- Backend : champ `fb_hashtags` (3 premiers hashtags) ajouté à chaque post dans routes/linkedin.py
+- Frontend : 2 boutons de copie — "COPIER POUR LINKEDIN" (bleu LI, texte+hashtags complets) et "COPIER POUR FACEBOOK" (bleu FB #1877F2, texte+3 hashtags max)
+- Tests : 5/5 pytest (test_version_facebook), copie FB validée en screenshot

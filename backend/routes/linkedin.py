@@ -373,6 +373,8 @@ for _p in POSTS:
     _p["text"] = _p["text"].replace("{site}", SITE)
     # Sécurité : retire tout retour à la ligne accidentel dans les hashtags
     _p["hashtags"] = " ".join(_p["hashtags"].split())
+    # Version Facebook : même texte, mais 3 hashtags max (codes de la plateforme)
+    _p["fb_hashtags"] = " ".join(_p["hashtags"].split()[:3])
 
 
 def _progress_key(day: int) -> dict:

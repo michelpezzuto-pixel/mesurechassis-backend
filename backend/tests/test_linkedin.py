@@ -32,6 +32,13 @@ def test_hashtags_sans_retour_ligne():
         assert p["hashtags"].startswith("#")
 
 
+def test_version_facebook():
+    """Chaque post a une version Facebook avec 3 hashtags max."""
+    for p in POSTS:
+        assert p["fb_hashtags"].startswith("#")
+        assert len(p["fb_hashtags"].split()) <= 3
+
+
 def test_visuels_generes():
     """Les 15 PNG doivent être committés dans static/linkedin/."""
     assert IMAGES_DIR.exists()
