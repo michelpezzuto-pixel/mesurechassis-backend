@@ -434,6 +434,20 @@ async def unmark_posted(payload: dict, user=Depends(require_admin)):
     return {"ok": True}
 
 
+FB_ASSETS = {"fb_profil.png", "fb_couverture.png"}
+
+
+@router.get("/linkedin/asset/{name}")
+async def linkedin_asset(name: str):
+    """Kit réseaux sociaux (logo, couverture FB) — public, contenu marketing."""
+    if name not in FB_ASSETS:
+        raise HTTPException(404, "Asset inconnu")
+    path = IMAGES_DIR / name
+    if not path.exists():
+        raise HTTPException(404, "Asset introuvable")
+    return FileResponse(path, media_type="image/png", filename=name)
+
+
 @router.get("/linkedin/image/{day}")
 async def linkedin_image(day: int):
     """Visuel PNG 1080×1080 du jour — public (contenu marketing, aucun secret).

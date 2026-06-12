@@ -271,3 +271,8 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
 - Backend : champ `fb_hashtags` (3 premiers hashtags) ajouté à chaque post dans routes/linkedin.py
 - Frontend : 2 boutons de copie — "COPIER POUR LINKEDIN" (bleu LI, texte+hashtags complets) et "COPIER POUR FACEBOOK" (bleu FB #1877F2, texte+3 hashtags max)
 - Tests : 5/5 pytest (test_version_facebook), copie FB validée en screenshot
+
+## 📘 Kit page Facebook (12 juin 2026)
+- Assets générés : `static/linkedin/fb_profil.png` (logo app 1024×1024) + `fb_couverture.png` (bannière 1640×856, PIL, charte app)
+- Endpoint public : `GET /api/linkedin/asset/{fb_profil.png|fb_couverture.png}` (whitelist FB_ASSETS)
+- Checklist de création de page fournie au client (catégorie, à propos, CTA, username, etc.)
