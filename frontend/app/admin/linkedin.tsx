@@ -42,6 +42,8 @@ export default function AdminLinkedin() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [confirming, setConfirming] = useState(false);
+  const [marking, setMarking] = useState(false);
 
   const fetchAll = useCallback(async () => {
     try {
@@ -70,13 +72,23 @@ export default function AdminLinkedin() {
   };
 
   const markPosted = async () => {
-    if (!today?.post) return;
+    if (!today?.post || marking) return;
+    // 1er appui = demande de confirmation ; 2e appui = validation.
+    if (!confirming) {
+      setConfirming(true);
+      setTimeout(() => setConfirming(false), 4000);
+      return;
+    }
+    setConfirming(false);
+    setMarking(true);
     try {
       await api.post("/linkedin/mark-posted", { day: today.post.day });
       setMessage(`✅ Jour ${today.post.day} publié — à demain !`);
-      void fetchAll();
+      await fetchAll();
     } catch (e: any) {
       setMessage(`⚠️ ${e?.response?.data?.detail || "Erreur"}`);
+    } finally {
+      setMarking(false);
     }
   };
 
@@ -177,13 +189,28 @@ export default function AdminLinkedin() {
 
                 <TouchableOpacity
                   testID="linkedin-mark-posted-button"
-                  style={styles.postedBtn}
+                  style={[
+                    styles.postedBtn,
+                    confirming && { backgroundColor: colors.primary },
+                    marking && { opacity: 0.5 },
+                  ]}
                   onPress={() => void markPosted()}
+                  disabled={marking}
                   activeOpacity={0.8}
                 >
-                  <Ionicons name="checkmark-done" size={18} color={colors.primary} />
-                  <Text style={styles.postedBtnText}>
-                    MARQUER COMME PUBLIÉ → POST SUIVANT
+                  <Ionicons
+                    name={confirming ? "alert-circle" : "checkmark-done"}
+                    size={18}
+                    color={confirming ? "#fff" : colors.primary}
+                  />
+                  <Text
+                    style={[styles.postedBtnText, confirming && { color: "#fff" }]}
+                  >
+                    {marking
+                      ? "..."
+                      : confirming
+                        ? `CONFIRMER : JOUR ${today.post.day} PUBLIÉ ?`
+                        : "MARQUER COMME PUBLIÉ → POST SUIVANT"}
                   </Text>
                 </TouchableOpacity>
               </>

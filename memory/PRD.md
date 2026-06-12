@@ -260,3 +260,8 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
 - Frontend `/app/frontend/app/admin/linkedin.tsx` : barre de progression, post du jour, visuel, COPIER LE TEXTE (expo-clipboard, texte+hashtags), MARQUER COMME PUBLIÉ → jour suivant, liste 15 jours avec coches. Bouton "LinkedIn" dashboard admin + Stack.Screen
 - Tests : pytest 4/4 (test_linkedin.py), cycle complet curl (mark J1 → today=J2 → unmark → J1), UI screenshot OK (copie validée), visuel vérifié sans chevauchement (corrigé footer)
 - ⚠️ "Save to GitHub" nécessaire pour avoir le module en prod (mais le client l'utilise depuis le preview comme la campagne email)
+
+## 🛠️ Fix double-clic LinkedIn (12 juin 2026, matin)
+- Le client avait cliqué 4× "MARQUER COMME PUBLIÉ" → jours 1-4 marqués. Corrigé en DB : seul J1 reste publié, J2 affiché.
+- Anti-récidive : bouton à 2 temps (1er clic → "CONFIRMER : JOUR X PUBLIÉ ?" orange, expire après 4s ; 2e clic → validation) + verrou `marking`. Testé screenshot : confirmation + expiration OK, progression intacte (1/15).
+- ✅ Premier lot email du matin parti (logs Resend 200 : pasquarelli, raposo, winchassis, mister-chassis, mordant, profenetres, chassisprime...) — campagne opérationnelle en conditions réelles.
