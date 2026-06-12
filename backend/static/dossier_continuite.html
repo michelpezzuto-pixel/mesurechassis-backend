@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dossier de Continuité — MesureChâssis</title>
+<style>
+  :root { --orange: #E84E0F; --dark: #1a1a1e; --grey: #555; --light: #f6f6f7; }
+  * { box-sizing: border-box; }
+  body { font-family: Georgia, 'Times New Roman', serif; color: #222; line-height: 1.65; max-width: 820px; margin: 0 auto; padding: 32px 24px; }
+  h1 { font-size: 2rem; color: var(--dark); border-bottom: 4px solid var(--orange); padding-bottom: 12px; }
+  h2 { font-size: 1.25rem; color: var(--orange); margin-top: 2.2em; border-bottom: 1px solid #ddd; padding-bottom: 6px; }
+  h3 { font-size: 1.05rem; margin-top: 1.5em; }
+  .subtitle { color: var(--grey); font-style: italic; margin-top: -8px; }
+  .alert { background: #fff6f1; border-left: 4px solid var(--orange); padding: 14px 18px; margin: 20px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: .92rem; }
+  th, td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--light); }
+  .fill { border-bottom: 1px dotted #999; display: inline-block; min-width: 280px; height: 1.2em; }
+  .small { font-size: .85rem; color: var(--grey); }
+  ol li, ul li { margin-bottom: .45em; }
+  .scenario { background: var(--light); border-radius: 8px; padding: 16px 20px; margin: 14px 0; }
+  .page-break { page-break-before: always; }
+  @media print { body { padding: 0; } .noprint { display: none; } }
+  .footer { margin-top: 3em; padding-top: 1em; border-top: 1px solid #ddd; font-size: .8rem; color: var(--grey); }
+</style>
+</head>
+<body>
+
+<h1>📋 Dossier de Continuité<br>MesureChâssis</h1>
+<p class="subtitle">À l'attention de la personne qui reprendra les rênes — préparé par Michel Pezzuto, fondateur.<br>
+Document mis à jour le : <span class="fill"></span></p>
+
+<div class="alert">
+<strong>Si vous lisez ce document</strong>, c'est que je ne suis plus en mesure de m'occuper de MesureChâssis.
+Ce dossier vous explique ce que c'est, ce que ça vaut, comment ça fonctionne, et ce que vous pouvez en faire —
+<strong>même si vous n'y connaissez rien en informatique</strong>. Prenez votre temps, tout est expliqué.
+Les mots de passe ne sont pas dans ce document : ils sont dans l'enveloppe / le gestionnaire indiqué ci-dessous.
+</div>
+
+<p><strong>📍 Emplacement des mots de passe :</strong> <span class="fill"></span></p>
+<p><strong>👤 Personne de confiance à contacter :</strong> <span class="fill"></span></p>
+<p><strong>⚖️ Notaire :</strong> <span class="fill"></span></p>
+
+<h2>1. Qu'est-ce que MesureChâssis ?</h2>
+<p><strong>MesureChâssis est une application mobile professionnelle</strong> destinée aux menuisiers et entreprises
+de pose de châssis/fenêtres. Elle remplace le carnet de notes sur les chantiers : prise de mesures guidée
+(12 formes de baies), génération automatique de fiches techniques PDF prêtes pour la production, gestion d'équipe
+(commerciaux, techniciens), exports CSV/XML, en 3 langues (français, anglais, néerlandais).</p>
+<p>C'est un <strong>logiciel par abonnement (SaaS)</strong> : les clients paient un abonnement mensuel via Stripe.
+L'application est <em>(au moment de la rédaction)</em> en cours de publication sur l'App Store (Apple) et Google Play,
+avec une campagne de recrutement de testeurs et une prospection commerciale en Belgique, France et Luxembourg.</p>
+
+<h2>2. Les morceaux du puzzle (l'écosystème)</h2>
+<table>
+<tr><th>Élément</th><th>Où ça se trouve</th><th>À quoi ça sert</th></tr>
+<tr><td><strong>Le code source</strong> (le cœur, la propriété)</td><td>GitHub — dépôt <em>mesurechassis-backend</em></td><td>Tout le programme de l'application. C'est l'actif principal. Qui a le code peut tout reconstruire.</td></tr>
+<tr><td><strong>Le serveur de production</strong></td><td>Railway.app</td><td>Fait tourner l'application 24h/24 et héberge la base de données (clients, chantiers, mesures). Se redéploie automatiquement depuis GitHub.</td></tr>
+<tr><td><strong>L'app dans les stores</strong></td><td>Apple App Store Connect + Google Play Console</td><td>Les vitrines de téléchargement de l'app sur iPhone et Android.</td></tr>
+<tr><td><strong>Les paiements</strong></td><td>Stripe.com</td><td>Encaisse les abonnements des clients. L'argent arrive sur le compte bancaire relié.</td></tr>
+<tr><td><strong>Le site internet</strong></td><td>mesurechassis.com — hébergé chez Easyhost</td><td>Vitrine commerciale + adresse email info@mesurechassis.com + nom de domaine.</td></tr>
+<tr><td><strong>Les emails automatiques</strong></td><td>Resend.com</td><td>Envoie les emails de l'application (vérifications, campagnes, récap hebdo).</td></tr>
+<tr><td><strong>L'atelier de développement</strong></td><td>Emergent (app.emergent.sh)</td><td>La plateforme où l'application a été créée avec un assistant IA. Tout l'historique du projet y est. On peut continuer à faire évoluer l'app en lui parlant en français, sans savoir programmer.</td></tr>
+</table>
+
+<h2>3. Combien ça coûte par mois ?</h2>
+<table>
+<tr><th>Service</th><th>Coût approximatif</th><th>Si on ne paie plus…</th></tr>
+<tr><td>Railway (serveur + base de données)</td><td>± 5 à 20 €/mois selon l'usage</td><td>L'application s'arrête de fonctionner pour tous les utilisateurs.</td></tr>
+<tr><td>Apple Developer</td><td>99 €/an</td><td>L'app est retirée de l'App Store.</td></tr>
+<tr><td>Google Play</td><td>25 $ une seule fois (déjà payé)</td><td>Rien — acquis à vie.</td></tr>
+<tr><td>Easyhost (site + domaine + email)</td><td>± 50-100 €/an</td><td>Le site et l'adresse email cessent de fonctionner. <strong>Le nom de domaine peut être racheté par n'importe qui</strong> — à renouveler en priorité !</td></tr>
+<tr><td>Resend (emails)</td><td>Gratuit (petit volume) à ~20 €/mois</td><td>Les emails automatiques ne partent plus.</td></tr>
+<tr><td>Stripe</td><td>Gratuit (commission ~1,5-3 % par paiement)</td><td>—</td></tr>
+<tr><td>Emergent (développement IA)</td><td>Crédits à la demande — uniquement quand on développe</td><td>Rien — l'app continue de tourner. On perd juste la possibilité de la faire évoluer facilement.</td></tr>
+</table>
+<p><strong>Total pour maintenir l'app en vie : environ 30 à 50 € par mois.</strong></p>
+
+<h2 class="page-break">4. Les revenus</h2>
+<p>Les clients s'abonnent depuis l'application (sauf sur iPhone, conformité Apple) ou via le site.
+Les tarifs en vigueur sont visibles sur <strong>mesurechassis.com</strong> (page Tarifs) : formule artisan solo et
+formule entreprise avec places commerciales/techniciens supplémentaires facturées par siège.
+L'argent encaissé par Stripe est viré automatiquement sur le compte bancaire relié au compte Stripe.</p>
+<p>📊 Pour voir les chiffres en temps réel : se connecter sur <strong>dashboard.stripe.com</strong> (abonnés actifs, revenus)
+et sur le <strong>tableau de bord admin de l'application</strong> (statistiques d'usage).</p>
+
+<h2>5. Vous reprenez ? Vos 3 options</h2>
+
+<div class="scenario">
+<h3>Option A — Continuer l'aventure 🚀</h3>
+<ol>
+<li>Récupérez les accès (enveloppe) et changez tous les mots de passe.</li>
+<li>Vérifiez que Railway, Easyhost et Apple Developer sont payés (cartes bancaires à jour).</li>
+<li>Connectez-vous sur <strong>app.emergent.sh</strong> : ouvrez le projet MesureChâssis et écrivez simplement à l'assistant IA
+« Je reprends le projet de Michel, fais-moi un état des lieux ». Il connaît tout le projet et vous guidera en français.</li>
+<li>Alternative classique : engagez un développeur freelance (technologies : React Native/Expo + FastAPI/Python + MongoDB —
+très répandues, n'importe quel bon freelance peut reprendre).</li>
+<li>Répondez aux clients via info@mesurechassis.com.</li>
+</ol>
+</div>
+
+<div class="scenario">
+<h3>Option B — Mettre en pause (geler à moindre coût) ⏸️</h3>
+<ol>
+<li><strong>Gardez absolument</strong> : le nom de domaine (Easyhost) et le dépôt GitHub. Coût : ~100 €/an.</li>
+<li>Prévenez les clients abonnés par email, remboursez le mois en cours via Stripe.</li>
+<li>Suspendez le serveur Railway (plus de frais mensuels).</li>
+<li>Tout pourra être relancé plus tard : le code et le domaine sont le patrimoine.</li>
+</ol>
+</div>
+
+<div class="scenario">
+<h3>Option C — Vendre 💰</h3>
+<p>MesureChâssis a de la valeur : un produit fini, multilingue, publié dans les stores, avec un positionnement de niche
+(menuiserie) et une base de prospects. Acheteurs potentiels :</p>
+<ul>
+<li><strong>Les éditeurs de logiciels pour la menuiserie</strong> (ex. : Elcia, Ramasoft, A+W) — le produit complète leurs gammes ;</li>
+<li><strong>Un concurrent ou une entreprise de menuiserie</strong> ambitieuse qui veut l'outil pour elle ;</li>
+<li><strong>Les places de marché de revente de SaaS</strong> : acquire.com, flippa.com (annonces en anglais).</li>
+</ul>
+<p>Faites-vous accompagner par le notaire/comptable pour la cession. Ce qui se vend : le code (GitHub), le domaine,
+la marque, les comptes stores et la base clients.</p>
+</div>
+
+<h2>6. Checklist des 30 premiers jours</h2>
+<ol>
+<li>☐ Récupérer l'enveloppe des mots de passe et tester chaque connexion</li>
+<li>☐ Changer tous les mots de passe + mettre votre propre email de secours partout</li>
+<li>☐ Vérifier les moyens de paiement (Railway, Apple, Easyhost) pour éviter toute coupure</li>
+<li>☐ Renouveler le domaine mesurechassis.com si l'échéance approche</li>
+<li>☐ Consulter Stripe : y a-t-il des clients payants à prévenir/servir ?</li>
+<li>☐ Ouvrir app.emergent.sh et demander un état des lieux à l'assistant</li>
+<li>☐ Décider : continuer / pauser / vendre (voir options ci-dessus)</li>
+</ol>
+
+<h2>7. Notes personnelles de Michel</h2>
+<p class="small">(Espace libre : mot pour le repreneur, conseils, contacts de confiance…)</p>
+<p><span class="fill" style="min-width:100%"></span></p>
+<p><span class="fill" style="min-width:100%"></span></p>
+<p><span class="fill" style="min-width:100%"></span></p>
+<p><span class="fill" style="min-width:100%"></span></p>
+
+<div class="footer">
+Dossier de continuité MesureChâssis — à conserver avec l'enveloppe des accès, chez le notaire ou dans un coffre.
+À mettre à jour à chaque changement important (nouveau service, nouveau tarif, nouvelle banque).
+</div>
+
+</body>
+</html>

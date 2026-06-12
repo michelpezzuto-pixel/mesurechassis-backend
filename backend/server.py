@@ -163,6 +163,15 @@ async def download_play_feature_graphic():
     )
 
 
+@api.get("/_downloads/dossier-continuite")
+async def download_dossier_continuite():
+    """Dossier de continuité d'entreprise (à imprimer et joindre aux accès)."""
+    path = "/app/backend/static/dossier_continuite.html"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Dossier introuvable")
+    return FileResponse(path, media_type="text/html")
+
+
 @api.get("/_downloads/site-mesurechassis")
 async def download_site_zip():
     """Endpoint temporaire pour télécharger l'archive du site vitrine."""

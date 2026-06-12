@@ -286,3 +286,9 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
 ## 🔁 Consultation des jours passés (12 juin 2026)
 - Liste "LES 15 POSTS" cliquable : toucher un jour → mode consultation (bandeau bleu "toucher pour revenir au post du jour", boutons copie LI/FB actifs, bouton MARQUER masqué). Testé screenshot : J1 consultable, retour J2 OK.
 - Cas d'usage : rattrapage Facebook du J1 que le client avait publié sur LinkedIn seulement.
+
+## 📋 Dossier de continuité d'entreprise (12 juin 2026)
+- Demande client : protéger MesureChâssis en cas de disparition (continuité/succession)
+- Conseils donnés : gestionnaire de mots de passe ou enveloppe notaire, successeur désigné, contact légataire Apple/Google, notaire (SRL/succession)
+- Document créé : /app/backend/static/dossier_continuite.html (imprimable, pour repreneur non-technique : écosystème, coûts ~30-50€/mois, revenus, 3 options continuer/pauser/vendre, checklist 30 jours, champs à compléter à la main)
+- Endpoint : GET /api/_downloads/dossier-continuite (vérifié 200)
