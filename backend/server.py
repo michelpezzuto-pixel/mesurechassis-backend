@@ -172,6 +172,15 @@ async def download_dossier_continuite():
     return FileResponse(path, media_type="text/html")
 
 
+@api.get("/_downloads/roadmap")
+async def download_roadmap():
+    """Roadmap 18 mois MesureChâssis (document HTML imprimable)."""
+    path = "/app/backend/static/roadmap.html"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Roadmap introuvable")
+    return FileResponse(path, media_type="text/html")
+
+
 @api.get("/_downloads/site-mesurechassis")
 async def download_site_zip():
     """Endpoint temporaire pour télécharger l'archive du site vitrine."""

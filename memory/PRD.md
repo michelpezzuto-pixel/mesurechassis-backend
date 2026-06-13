@@ -311,3 +311,57 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
   - Possible ajout d'un champ "Catégorie chantier" : Extérieur / Intérieur / Mixte
   - Export PDF à enrichir avec nouvelle section
 - **Pourquoi c'est pertinent** : élargit le marché total adressable (TAM) — les menuisiers font souvent les deux (ext. + int.), permettrait d'augmenter le prix moyen ou de garder le client toute l'année
+
+### ✅ DÉCISION STRATÉGIQUE — Architecture produit (13 juin 2026)
+- **Validé par le client** : la menuiserie intérieure sera **intégrée dans la même app** (PAS d'app séparée).
+- Modèle de pricing à 3 paliers prévu :
+  - **MesureChâssis Basic** — 25 €/mois — Extérieur uniquement (état actuel)
+  - **MesureChâssis Pro** — 39 €/mois — Basic + Module Intérieur + Exports avancés + Devis auto
+  - **MesureChâssis Entreprise** — sur devis — Multi-équipes >10 + intégration ERP (Elcia)
+- Activation via toggle d'abonnement Stripe (price_id différents par formule)
+- Argumentaire : effet plateforme, lock-in client, TAM élargi à 42 000 entreprises FR/BE
+
+---
+
+## 🚀 BACKLOG FONCTIONNALITÉS FUTURES (13 juin 2026)
+Brainstorm validé avec le client. Toutes ces idées sont en réserve, à implémenter selon la roadmap. **Ne rien développer sans validation explicite préalable.**
+
+### 🥇 Pépites (fort impact, complexité raisonnable)
+1. **Détection auto des cotes par photo (IA)** — GPT-4o Vision / Gemini 3 Pro Vision — référence d'échelle (carte bancaire / mètre)
+2. **Module Devis automatique** — PDF généré depuis les mesures + catalogue produits perso + envoi email signé
+3. **Signature électronique du bon de commande** — `react-native-signature-canvas` — closing immédiat sur place
+4. **Planning des poses (vue calendrier)** — drag & drop + affectation poseur + sync Google Cal/Outlook
+5. **Carnet clients (mini-CRM)** — historique + recontact auto à 5 ans + anniversaire chantier
+
+### 🥈 Très utiles (bon ROI, complexité moyenne)
+6. **Croquis main libre annoté** — `@shopify/react-native-skia`
+7. **Bon de commande fournisseur** — formats Schüco/Reynaers/Aluk (avant l'API Elcia)
+8. **Facturation intégrée** — numérotation auto + suivi paiements + export comptable (FEC/Sage/Cegid)
+9. **Statistiques business (dashboard patron)** — CA, taux conversion devis→commande, marge moyenne
+10. **Vidéo de l'ouverture (annotation vocale)** — contexte pour le poseur avant d'arriver
+11. **Géolocalisation des chantiers** — carte + itinéraire optimisé tournée pose — `react-native-maps`
+12. **Alertes intelligentes** — relances devis, upsell triple vitrage, anticipation matériel
+
+### 🥉 Sympas (à envisager plus tard)
+13. **QR Code sur chaque baie** — étiquette posée + caractéristiques Uw/garantie/date
+14. **Calcul aides énergétiques** — MaPrimeRénov' (FR) + Primes Énergie (BE)
+15. **Assistant IA pour techniciens** — base de connaissance interne contextuelle
+16. **Mode hors-ligne complet** — `expo-sqlite` + watermelonDB — chantier sans réseau
+17. **Portail client** — lien magique + suivi étape par étape
+18. **Demande d'avis Google automatique** — SMS/email 3j après pose
+19. **Garantie & SAV trackable** — certificat + ticketing SAV
+20. **Bibliothèque produits collaborative** — catalogue communautaire (Schüco LivIng, Reynaers SlimLine, etc.)
+
+### 🌟 Disruptifs (gros effet WOW)
+21. **Mode AR (Réalité Augmentée)** — mesures auto via ARKit/ARCore + visualisation 3D — `expo-three`
+22. **Visio-mesure à distance** — devis national sans déplacement
+23. **Comparateur multi-fournisseurs** — 3 devis fournisseurs en parallèle (position plateforme)
+
+### ⚠️ Règle d'or à respecter
+N'ajouter une feature QUE SI :
+- Plusieurs clients la réclament, OU
+- Elle débloque une nouvelle formule de prix, OU
+- Elle est un argument de closing décisif en démo
+
+Sinon = bruit qui complexifie le produit. À NE PAS faire sans demande explicite du client.
+

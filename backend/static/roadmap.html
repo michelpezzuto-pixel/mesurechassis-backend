@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>MesureChâssis — Roadmap 18 mois</title>
+<style>
+  @page { size: A4; margin: 14mm; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1a1a1a; line-height: 1.55; max-width: 980px; margin: 0 auto; padding: 24px; background: #fafafa; }
+  h1 { color: #0a66c2; font-size: 28px; margin-bottom: 4px; border-bottom: 3px solid #0a66c2; padding-bottom: 8px; }
+  h2 { color: #1f3a5f; font-size: 20px; margin-top: 32px; border-left: 5px solid #0a66c2; padding-left: 12px; }
+  h3 { color: #2c5282; font-size: 16px; margin-top: 24px; }
+  .meta { color: #666; font-size: 13px; margin-bottom: 24px; }
+  .phase { background: #fff; border-radius: 10px; padding: 18px 22px; margin: 16px 0; box-shadow: 0 2px 6px rgba(0,0,0,0.06); border-top: 4px solid #0a66c2; page-break-inside: avoid; }
+  .phase-1 { border-top-color: #3b82f6; }
+  .phase-2 { border-top-color: #10b981; }
+  .phase-3 { border-top-color: #f59e0b; }
+  .phase-4 { border-top-color: #ef4444; }
+  .phase-5 { border-top-color: #8b5cf6; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; margin-right: 6px; vertical-align: middle; }
+  .badge-p0 { background: #fee2e2; color: #991b1b; }
+  .badge-p1 { background: #fef3c7; color: #92400e; }
+  .badge-p2 { background: #dbeafe; color: #1e40af; }
+  .badge-p3 { background: #e0e7ff; color: #3730a3; }
+  .badge-done { background: #d1fae5; color: #065f46; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th { background: #0a66c2; color: white; text-align: left; padding: 8px 10px; }
+  td { padding: 8px 10px; border-bottom: 1px solid #e5e7eb; }
+  tr:nth-child(even) td { background: #f9fafb; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 14px 0; }
+  .kpi { background: #f1f5f9; border-radius: 8px; padding: 12px; text-align: center; }
+  .kpi-value { font-size: 22px; font-weight: 800; color: #0a66c2; }
+  .kpi-label { font-size: 11px; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
+  ul { margin: 8px 0 8px 18px; padding: 0; }
+  li { margin: 4px 0; }
+  .legend { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 12px 16px; margin: 16px 0; font-size: 13px; }
+  .timeline { background: linear-gradient(90deg, #3b82f6 0%, #10b981 25%, #f59e0b 50%, #ef4444 75%, #8b5cf6 100%); height: 8px; border-radius: 4px; margin: 16px 0 4px 0; }
+  .timeline-labels { display: flex; justify-content: space-between; font-size: 11px; color: #64748b; font-weight: 600; }
+  .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #e5e7eb; font-size: 11px; color: #64748b; text-align: center; }
+  .print-btn { position: fixed; top: 16px; right: 16px; background: #0a66c2; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+  @media print { .print-btn { display: none; } body { background: white; } }
+</style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()">🖨️ Imprimer / PDF</button>
+
+<h1>🗺️ Roadmap MesureChâssis — 18 mois</h1>
+<div class="meta">Plan stratégique d'évolution produit aligné sur le plan de prospection 300 clients. Document généré le 13 juin 2026.</div>
+
+<div class="legend">
+  <strong>💡 Principe directeur :</strong> Chaque feature ajoutée doit (1) être réclamée par plusieurs clients, OU (2) débloquer une nouvelle formule de prix, OU (3) être un argument de closing décisif. <strong>Pas de feature gratuite à l'effort</strong> : on construit ce qui rapporte ou ce qui retient.
+</div>
+
+<div class="timeline"></div>
+<div class="timeline-labels">
+  <span>Aujourd'hui</span>
+  <span>M+3</span>
+  <span>M+6</span>
+  <span>M+9</span>
+  <span>M+12</span>
+  <span>M+15</span>
+  <span>M+18</span>
+</div>
+
+<h2>🎯 Objectifs business associés</h2>
+<div class="kpi-grid">
+  <div class="kpi"><div class="kpi-value">300</div><div class="kpi-label">clients payants</div></div>
+  <div class="kpi"><div class="kpi-value">14 700 €</div><div class="kpi-label">MRR mois 18</div></div>
+  <div class="kpi"><div class="kpi-value">~176 k€</div><div class="kpi-label">ARR fin année 2</div></div>
+</div>
+
+<!-- ===== PHASE 1 ===== -->
+<div class="phase phase-1">
+  <h2 style="border-left-color:#3b82f6;margin-top:0">🔵 PHASE 1 — Conversion (Mois 1 à 3)</h2>
+  <p><em>Objectif : transformer les premiers prospects en clients payants. Outils de closing avant tout.</em></p>
+
+  <h3>Fonctionnalités à livrer</h3>
+  <table>
+    <tr><th style="width:60%">Feature</th><th>Priorité</th><th>Justification</th></tr>
+    <tr><td>📊 <strong>Pipeline Prospects</strong> (CRM léger admin)</td><td><span class="badge badge-p0">P0</span></td><td>Suivre le funnel pour piloter la prospection</td></tr>
+    <tr><td>📝 <strong>Templates 4 emails de séquence</strong> (J+0, J+5, J+12, J+20)</td><td><span class="badge badge-p0">P0</span></td><td>Industrialiser la prospection mail existante</td></tr>
+    <tr><td>📅 <strong>Intégration Calendly / Cal.com</strong> sur le site vitrine</td><td><span class="badge badge-p1">P1</span></td><td>Prise de RDV démo en 2 clics</td></tr>
+    <tr><td>🔄 <strong>Migration Resend → Brevo</strong></td><td><span class="badge badge-p1">P1</span></td><td>Permettre 4 200+ emails/mois (vs ~3 000 chez Resend)</td></tr>
+    <tr><td>✍️ <strong>Signature électronique du bon de commande</strong></td><td><span class="badge badge-p1">P1</span></td><td>Closing immédiat sur place — accélère le cycle de vente</td></tr>
+  </table>
+  <p><strong>Résultat attendu :</strong> 20 premiers clients signés, taux de closing > 25 %.</p>
+</div>
+
+<!-- ===== PHASE 2 ===== -->
+<div class="phase phase-2">
+  <h2 style="border-left-color:#10b981;margin-top:0">🟢 PHASE 2 — Monétisation (Mois 4 à 6)</h2>
+  <p><em>Objectif : justifier la formule Pro à 39 €/mois et augmenter le panier moyen.</em></p>
+
+  <h3>Fonctionnalités à livrer</h3>
+  <table>
+    <tr><th style="width:60%">Feature</th><th>Priorité</th><th>Justification</th></tr>
+    <tr><td>💰 <strong>Module Devis automatique</strong> (PDF + envoi email)</td><td><span class="badge badge-p0">P0</span></td><td>Argument N°1 pour vendre la formule Pro</td></tr>
+    <tr><td>📚 <strong>Catalogue produits personnalisable</strong> (gammes + prix unitaires)</td><td><span class="badge badge-p0">P0</span></td><td>Prérequis du module Devis</td></tr>
+    <tr><td>💼 <strong>3 paliers Stripe</strong> : Basic 25 € / Pro 39 € / Entreprise sur devis</td><td><span class="badge badge-p0">P0</span></td><td>Activer la monétisation étagée</td></tr>
+    <tr><td>📞 <strong>Mini-CRM clients</strong> (historique + fiche client enrichie)</td><td><span class="badge badge-p1">P1</span></td><td>Baisse churn + upsell recontact 5 ans</td></tr>
+    <tr><td>📐 <strong>Croquis main libre annoté</strong> (skia)</td><td><span class="badge badge-p2">P2</span></td><td>Sympathie produit, demande terrain</td></tr>
+  </table>
+  <p><strong>Résultat attendu :</strong> 55 clients, dont 30 % en formule Pro (+14 €/mois × 16 clients = +224 €/mois).</p>
+</div>
+
+<!-- ===== PHASE 3 ===== -->
+<div class="phase phase-3">
+  <h2 style="border-left-color:#f59e0b;margin-top:0">🟡 PHASE 3 — Élargissement du marché (Mois 7 à 9)</h2>
+  <p><em>Objectif : intégrer la menuiserie intérieure pour élargir le TAM de 19k à 42k entreprises.</em></p>
+
+  <h3>Fonctionnalités à livrer</h3>
+  <table>
+    <tr><th style="width:60%">Feature</th><th>Priorité</th><th>Justification</th></tr>
+    <tr><td>🪵 <strong>Module Menuiserie Intérieure</strong> (portes, placards, escaliers, plinthes)</td><td><span class="badge badge-p0">P0</span></td><td>Double le marché adressable</td></tr>
+    <tr><td>🗓️ <strong>Planning des poses (vue calendrier + drag&drop)</strong></td><td><span class="badge badge-p1">P1</span></td><td>Indispensable pour les patrons gérant des équipes</td></tr>
+    <tr><td>🚛 <strong>Géolocalisation des chantiers</strong> + itinéraire optimisé</td><td><span class="badge badge-p2">P2</span></td><td>Économie carburant + organisation tournées</td></tr>
+    <tr><td>🎥 <strong>Vidéo + annotation vocale de l'ouverture</strong></td><td><span class="badge badge-p2">P2</span></td><td>Le poseur a le contexte avant d'arriver</td></tr>
+  </table>
+  <p><strong>Résultat attendu :</strong> 100 clients, premiers clients agenceurs/cuisinistes, MRR ~4 900 €.</p>
+</div>
+
+<!-- ===== PHASE 4 ===== -->
+<div class="phase phase-4">
+  <h2 style="border-left-color:#ef4444;margin-top:0">🔴 PHASE 4 — Effet WOW commercial (Mois 10 à 12)</h2>
+  <p><em>Objectif : créer un argument de démo imparable pour booster le taux de closing.</em></p>
+
+  <h3>Fonctionnalités à livrer</h3>
+  <table>
+    <tr><th style="width:60%">Feature</th><th>Priorité</th><th>Justification</th></tr>
+    <tr><td>📸 <strong>Détection auto des cotes par photo (IA)</strong> — GPT-4o Vision / Gemini 3 Pro</td><td><span class="badge badge-p0">P0</span></td><td>WOW effect majeur en démo — différenciation produit</td></tr>
+    <tr><td>🧾 <strong>Facturation intégrée</strong> (numérotation + suivi paiements + export FEC)</td><td><span class="badge badge-p1">P1</span></td><td>Devis → Facture en 1 clic — boucle complète</td></tr>
+    <tr><td>📊 <strong>Dashboard patron (stats business)</strong></td><td><span class="badge badge-p1">P1</span></td><td>Argument fidélisation patrons</td></tr>
+    <tr><td>🌡️ <strong>Alertes intelligentes</strong> (relances devis, anticipation matériel)</td><td><span class="badge badge-p2">P2</span></td><td>Différenciateur produit</td></tr>
+  </table>
+  <p><strong>Résultat attendu :</strong> 165 clients, MRR ~8 085 €. Premiers contacts sérieux possibles avec fédérations & fournisseurs.</p>
+</div>
+
+<!-- ===== PHASE 5 ===== -->
+<div class="phase phase-5">
+  <h2 style="border-left-color:#8b5cf6;margin-top:0">🟣 PHASE 5 — Industrialisation & extension (Mois 13 à 18)</h2>
+  <p><em>Objectif : scaler vers 300 clients + préparer la négociation Elcia en position de force.</em></p>
+
+  <h3>Fonctionnalités à livrer</h3>
+  <table>
+    <tr><th style="width:60%">Feature</th><th>Priorité</th><th>Justification</th></tr>
+    <tr><td>📲 <strong>Mode hors-ligne complet</strong> (expo-sqlite + sync)</td><td><span class="badge badge-p0">P0</span></td><td>Indispensable pour les chantiers en cave / sans réseau</td></tr>
+    <tr><td>📦 <strong>Bon de commande fournisseur</strong> (formats Schüco/Reynaers/Aluk)</td><td><span class="badge badge-p1">P1</span></td><td>Prépare l'intégration ERP Elcia ultérieure</td></tr>
+    <tr><td>⭐ <strong>Demande d'avis Google automatique</strong> (SMS/email à J+3 pose)</td><td><span class="badge badge-p1">P1</span></td><td>Boost SEO local des menuisiers — viralité</td></tr>
+    <tr><td>👥 <strong>Portail client</strong> (lien magique suivi chantier)</td><td><span class="badge badge-p1">P1</span></td><td>Argument transparence + différenciation</td></tr>
+    <tr><td>🛡️ <strong>Garantie &amp; SAV trackable</strong> (certificat + ticketing)</td><td><span class="badge badge-p2">P2</span></td><td>Argument "long terme" + lock-in</td></tr>
+    <tr><td>🏷️ <strong>QR Code sur chaque baie</strong> (étiquette + caractéristiques)</td><td><span class="badge badge-p2">P2</span></td><td>Sympathie commerciale forte</td></tr>
+    <tr><td>🌍 <strong>Calcul aides énergétiques</strong> (MaPrimeRénov' FR + Primes BE)</td><td><span class="badge badge-p2">P2</span></td><td>Closing argument fort sur gros chantiers</td></tr>
+    <tr><td>🇩🇪 <strong>Traduction allemande (DE)</strong></td><td><span class="badge badge-p2">P2</span></td><td>Ouvre le marché allemand (40 000 menuisiers)</td></tr>
+  </table>
+  <p><strong>Résultat attendu :</strong> 300 clients, MRR ~14 700 €, ARR ~176 k€. Prêt pour Phase 6.</p>
+</div>
+
+<h2>🎁 Bonus — Phase 6 et au-delà (M+18 et plus)</h2>
+<p>Une fois les 300 clients atteints, ces features deviendront pertinentes :</p>
+<ul>
+  <li>🤝 <strong>Partenariat Elcia / Ramasoft négocié en position de force</strong> (35-40 €/client minimum, pas 50/50)</li>
+  <li>🥽 <strong>Mode AR (Réalité Augmentée)</strong> — visualisation 3D des châssis posés</li>
+  <li>📞 <strong>Visio-mesure à distance</strong> — devis national sans déplacement</li>
+  <li>🧮 <strong>Comparateur multi-fournisseurs</strong> — position de plateforme</li>
+  <li>📚 <strong>Bibliothèque produits collaborative</strong> — effet réseau</li>
+  <li>🤖 <strong>Assistant IA pour techniciens</strong> — réponses contextuelles sur le chantier</li>
+  <li>🇸🇪 <strong>Internationalisation</strong> — Pays-Bas, Suisse, Italie (langues déjà ou faciles à ajouter)</li>
+</ul>
+
+<h2>📐 Vue d'ensemble — Calendrier condensé</h2>
+<table>
+  <tr><th>Période</th><th>Phase</th><th>Clients cible</th><th>MRR cible</th><th>Features clés</th></tr>
+  <tr><td>M1 → M3</td><td>🔵 Conversion</td><td>20</td><td>980 €</td><td>Pipeline + Signature électronique + Brevo</td></tr>
+  <tr><td>M4 → M6</td><td>🟢 Monétisation</td><td>55</td><td>2 695 €</td><td>Devis auto + Catalogue + 3 paliers Stripe</td></tr>
+  <tr><td>M7 → M9</td><td>🟡 Élargissement</td><td>100</td><td>4 900 €</td><td>Menuiserie intérieure + Planning</td></tr>
+  <tr><td>M10 → M12</td><td>🔴 Effet WOW</td><td>165</td><td>8 085 €</td><td>IA détection cotes + Facturation</td></tr>
+  <tr><td>M13 → M18</td><td>🟣 Industrialisation</td><td>300</td><td>14 700 €</td><td>Hors-ligne + Portail client + DE</td></tr>
+</table>
+
+<h2>⚠️ Garde-fous</h2>
+<ul>
+  <li><strong>Pas plus de 2-3 features majeures par phase</strong> — qualité &gt; quantité</li>
+  <li><strong>Chaque feature passe par un test utilisateur</strong> auprès de 3 clients existants avant déploiement</li>
+  <li><strong>Aucune fonctionnalité ne sera ajoutée sans validation explicite de Michel</strong> — ce document est une boussole, pas un contrat</li>
+  <li><strong>Si le marché évolue</strong> (réclamations clients, opportunité fournisseur, refus App Store...), la roadmap est ajustée en conséquence</li>
+</ul>
+
+<div class="footer">
+  Document généré automatiquement par MesureChâssis Studio — 13 juin 2026 — version 1.0<br>
+  À conserver. Ne pas diffuser à l'extérieur de l'entreprise.
+</div>
+
+</body>
+</html>
