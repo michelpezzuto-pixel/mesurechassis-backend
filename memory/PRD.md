@@ -379,10 +379,25 @@ Sinon = bruit qui complexifie le produit. À NE PAS faire sans demande explicite
 Toute modification du code de mesure pendant la review = risque de devoir re-soumettre.
 
 ### Description technique de la forme
-- **Type** : Pentagone à base horizontale, 2 côtés verticaux, et 2 pans inclinés convergeant vers un sommet (souvent asymétrique).
-- **Usage typique** : Combles aménagés, sous-pente, mezzanines, baies de pignon, lucarnes triangulaires.
-- **Variante** : peut être symétrique (sommet centré, "fronton") ou asymétrique (sommet décalé, comme sur la photo client).
-- **Photo de référence** : fournie par le client le 13/06/2026 (baie composée de 3 vantaux fixes, sous-pente, ciel bleu visible).
+- **Type** : Pentagone à base horizontale, 2 côtés verticaux, et 2 pans inclinés convergeant vers un sommet.
+- **Usage typique** : Combles aménagés, sous-pente, mezzanines, baies de pignon, fronton triangulaire.
+- **Variantes possibles** :
+  - **Symétrique** (sommet centré, "fronton classique") — le plus fréquent en neuf
+  - **Asymétrique** (sommet décalé) — fréquent en rénovation / sous-pente irrégulière
+- **Photo de référence** : fournie par le client le 13/06/2026. ⚠️ **Précision client** : "le châssis est symétrique sur la photo, mais la photo a été prise de côté → effet d'angle".
+
+### 🔑 RÈGLE MÉTIER CRITIQUE — Validée par le client
+**TOUTES les cotes doivent être saisies INDIVIDUELLEMENT, même si la forme est censée être symétrique.**
+
+Justification métier (citation client) :
+> "Il est impératif de mettre chaque mesure qu'il soit asymétrique ou complètement symétrique."
+
+Raison technique :
+- Sur le terrain, **aucune ouverture n'est parfaitement symétrique**, même si conçue ainsi à l'origine (murs anciens, tassement, défauts de maçonnerie).
+- Le menuisier doit relever **chaque cote** pour détecter les différences entre la théorie et la réalité.
+- Ces différences sont la base des alertes "faux-aplomb" et "hors-équerre" déjà implémentées sur les autres formes.
+- ❌ **NE JAMAIS** proposer un mode "symétrique : je remplis 1 côté et l'autre est auto-calculé" → ce serait un piège métier majeur.
+- ✅ Tous les champs sont **obligatoires et indépendants**, comme pour les autres `block_type` existants.
 
 ### Spécifications de mesure (à implémenter le jour J)
 **Cotes à saisir (8 valeurs)** :
