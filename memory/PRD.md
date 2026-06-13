@@ -365,3 +365,50 @@ N'ajouter une feature QUE SI :
 
 Sinon = bruit qui complexifie le produit. À NE PAS faire sans demande explicite du client.
 
+
+## 🔷 NOUVELLE FORME DE BAIE À AJOUTER — Pentagone asymétrique / Sous-pente (13 juin 2026)
+
+### Demande client
+"Une forme supplémentaire à rajouter mais pas maintenant, on attend toujours que Google et Apple soient en règle, garde-le en mémoire" (photo fournie d'une baie en sous-pente).
+
+### Statut
+⏸️ **EN ATTENTE** — ne PAS implémenter tant que :
+1. Apple Build 9 n'est pas validé/refusé ✅
+2. Google Play (12 testeurs sur 14 jours) n'est pas complet ✅
+
+Toute modification du code de mesure pendant la review = risque de devoir re-soumettre.
+
+### Description technique de la forme
+- **Type** : Pentagone à base horizontale, 2 côtés verticaux, et 2 pans inclinés convergeant vers un sommet (souvent asymétrique).
+- **Usage typique** : Combles aménagés, sous-pente, mezzanines, baies de pignon, lucarnes triangulaires.
+- **Variante** : peut être symétrique (sommet centré, "fronton") ou asymétrique (sommet décalé, comme sur la photo client).
+- **Photo de référence** : fournie par le client le 13/06/2026 (baie composée de 3 vantaux fixes, sous-pente, ciel bleu visible).
+
+### Spécifications de mesure (à implémenter le jour J)
+**Cotes à saisir (8 valeurs)** :
+- **L_bas** (largeur de la base horizontale)
+- **H_gauche** (hauteur du côté gauche vertical)
+- **H_droite** (hauteur du côté droit vertical)
+- **Pan_gauche** (longueur du pan incliné gauche, du haut du côté gauche au sommet)
+- **Pan_droit** (longueur du pan incliné droit, du sommet au haut du côté droit)
+- **H_sommet** (hauteur du sommet par rapport à la base — pour calcul vérification)
+- **Décalage_sommet** (position horizontale du sommet par rapport au côté gauche — permet asymétrie)
+- **Diagonale_vérif** (diagonale du coin bas-gauche au sommet, ou bas-droit au sommet — contrôle géométrie)
+
+**Alertes à calculer** :
+- ⚠️ **Asymétrie sommet** : si `Décalage_sommet ≠ L_bas / 2` → on annote "Pentagone asymétrique"
+- ⚠️ **Pente gauche/droite** : calcul en degrés via `atan((H_sommet - H_gauche) / Décalage_sommet)` et `atan((H_sommet - H_droite) / (L_bas - Décalage_sommet))`
+- ⚠️ **Cohérence géométrique** : Pythagore sur les pans inclinés vs cotes verticales et horizontales
+- ⚠️ **Faux-aplomb** sur les 2 côtés verticaux
+
+### Impact technique anticipé
+- Nouveau `block_type = "pentagone_souspente"` (ou similaire)
+- Nouveau schéma SVG dédié (5 segments — base + 2 verticaux + 2 pans inclinés)
+- Aperçu visuel dans l'app : forme dessinée dynamiquement avec les cotes saisies (comme déjà fait pour Trapèze)
+- Export PDF : section dédiée avec dessin coté
+- Multilingue (FR/EN/NL) à ajouter pour les libellés
+
+### Stockage de la photo de référence
+La photo fournie par le client doit servir de **référence visuelle** pour le développement le jour J.
+À sauvegarder dans `/app/memory/assets/forme_pentagone_souspente_2026-06-13.jpg` si besoin (photo iPhone client, baie 3 vantaux sous-pente).
+
