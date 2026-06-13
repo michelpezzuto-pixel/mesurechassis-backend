@@ -292,3 +292,22 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
 - Conseils donnés : gestionnaire de mots de passe ou enveloppe notaire, successeur désigné, contact légataire Apple/Google, notaire (SRL/succession)
 - Document créé : /app/backend/static/dossier_continuite.html (imprimable, pour repreneur non-technique : écosystème, coûts ~30-50€/mois, revenus, 3 options continuer/pauser/vendre, checklist 30 jours, champs à compléter à la main)
 - Endpoint : GET /api/_downloads/dossier-continuite (vérifié 200)
+
+
+## 💡 Idées futures / Backlog produit (à ne PAS implémenter sans demande explicite)
+
+### 🪵 Menuiserie intérieure (notée le 13 juin 2026)
+- **Demande client** : "Je pense que ça peut être intéressant de rajouter la menuiserie intérieure. On ne va pas le faire pour l'instant. Est-ce que tu peux garder ça en mémoire ?"
+- **Statut** : ⏸️ EN PAUSE — idée gardée en mémoire, à ne pas développer tant que le client ne le redemande pas explicitement
+- **Périmètre potentiel à explorer le jour J** :
+  - Portes intérieures (simples, doubles, coulissantes intérieures, à galandage)
+  - Placards / dressings sur mesure
+  - Cloisons et verrières d'intérieur
+  - Escaliers (mesure de trémie, hauteur sol-à-sol, giron, échappée)
+  - Plinthes / habillages
+- **Impact technique anticipé** :
+  - Nouveau type de bloc de mesure (`block_type = "interieur"`) avec sous-types
+  - Nouveaux schémas SVG dédiés
+  - Possible ajout d'un champ "Catégorie chantier" : Extérieur / Intérieur / Mixte
+  - Export PDF à enrichir avec nouvelle section
+- **Pourquoi c'est pertinent** : élargit le marché total adressable (TAM) — les menuisiers font souvent les deux (ext. + int.), permettrait d'augmenter le prix moyen ou de garder le client toute l'année
