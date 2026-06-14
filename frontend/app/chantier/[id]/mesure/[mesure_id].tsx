@@ -24,7 +24,7 @@
  *  6. Feuillures
  *  7. Notes & alertes
  */
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -147,6 +147,7 @@ export default function MesureViewScreen() {
   const router = useRouter();
   const [mesure, setMesure] = useState<Mesure | null>(null);
   const [loading, setLoading] = useState(true);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -164,6 +165,18 @@ export default function MesureViewScreen() {
       cancelled = true;
     };
   }, [mesure_id]);
+
+  // 🔝 Force le scroll en haut à chaque ouverture / changement d'ouverture.
+  // Garantit que l'utilisateur voit toujours la photo + identification (forme)
+  // en premier, et non un état de scroll hérité d'une visite précédente.
+  useEffect(() => {
+    if (!loading && mesure) {
+      // Petit délai pour laisser le ScrollView monter avec son contenu
+      requestAnimationFrame(() => {
+        scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+      });
+    }
+  }, [loading, mesure, mesure_id]);
 
   const trueShape = useMemo(() => {
     if (!mesure) return "rect";
@@ -221,7 +234,7 @@ export default function MesureViewScreen() {
         </Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView ref={scrollViewRef} contentContainerStyle={styles.content}>
         {/* ── 1. Photo ─────────────────────────────────── */}
         {mesure.photo_url ? (
           <View style={styles.photoWrap}>

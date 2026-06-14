@@ -582,3 +582,10 @@ Les formes "premium" correspondent aux chantiers les plus rémunérateurs (réno
 **Après** validation finale Google Play (post 14 jours testeurs) **ET** validation Apple Build 9.
 À insérer en **priorité Phase 1** de la roadmap (avant les autres features) car le freemium impacte toute la stratégie commerciale.
 
+
+## 🐛 FIX UX — Scroll au top sur consultation d'ouverture (14 juin 2026)
+- **Demande client** : "Quand je clique sur une ouverture, j'aimerais que la page qui s'ouvre apparaisse directement la forme de l'ouverture parce que sur certains je clique dessus, j'atterris en bas de la page."
+- **Cause** : `/app/frontend/app/chantier/[id]/mesure/[mesure_id].tsx` n'avait pas de reset de scroll lors du montage / changement de `mesure_id`. Sur les ouvertures avec beaucoup de cotes (trapèze, cintrée, polygone...), le scroll héritait parfois d'une position précédente.
+- **Fix** : Ajout d'une `ref` sur le `ScrollView` + `useEffect` qui force `scrollTo({y: 0, animated: false})` via `requestAnimationFrame` dès que la mesure est chargée (deps : `[loading, mesure, mesure_id]`).
+- **Statut** : ✅ Corrigé en local — sera inclus dans le push J+7 (avec Mode Freemium + Mode Artisan + fix alignement boutons Android).
+
