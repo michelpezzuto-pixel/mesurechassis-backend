@@ -427,3 +427,61 @@ Raison technique :
 La photo fournie par le client doit servir de **référence visuelle** pour le développement le jour J.
 À sauvegarder dans `/app/memory/assets/forme_pentagone_souspente_2026-06-13.jpg` si besoin (photo iPhone client, baie 3 vantaux sous-pente).
 
+
+## 🐛 BUG UI ANDROID — Alignement boutons écran CHANTIER (13 juin 2026)
+
+### Symptôme constaté
+Sur l'écran "CHANTIER" (détail d'un chantier), les 3 boutons d'action principale sont :
+- 🚩 **CLÔTURER**
+- ➕ **AJOUTER UNE OUVERTURE**
+- 🔧 **MODIFIER LA STRUCTURE DU MUR**
+
+| Plateforme | Rendu actuel |
+|---|---|
+| 🍎 iOS (Build 9 envoyé à Apple) | ✅ 3 boutons alignés horizontalement sur une seule ligne |
+| 🤖 Android (build Google Play closed test actuelle) | ❌ 3 boutons empilés verticalement (chacun sur sa propre ligne) |
+
+### Cause probable
+La build Android actuellement en closed testing sur Google Play est **antérieure** à la correction d'alignement des 3 boutons effectuée pour Build 9 iOS. La build Android n'a pas été republiée depuis cette correction.
+
+### ⏸️ Statut
+**NE PAS CORRIGER MAINTENANT** — décision validée par le client.
+
+Raisons :
+- Les 6 testeurs Google sont actuellement actifs (validation Google obtenue le 13/06/2026)
+- Pousser une nouvelle build = risque de remettre la piste en examen par Google (2-7 jours)
+- Réexamen = perte des 14 jours de test → tout recommencer
+- Bug uniquement esthétique, pas bloquant fonctionnellement
+
+### ✅ À FAIRE — Après validation finale Google (post 14 jours)
+1. Vérifier que le code Frontend pour cet écran a bien le `flexDirection: 'row'` avec `flex: 1` sur les 3 boutons
+2. Faire un build Android avec la correction + tout autre fix accumulé entre-temps
+3. Pousser sur le track approprié (production ou nouvelle closed test)
+4. Vérifier rendu OK sur Samsung de Vienna (`pezzutovienna1947@gmail.com`)
+
+### Fichier concerné (à vérifier le jour J)
+Probablement : `/app/frontend/app/chantier/[id].tsx` ou `/app/frontend/app/(authenticated)/chantier/...` — chercher la section avec les 3 boutons CLÔTURER / AJOUTER UNE OUVERTURE / MODIFIER LA STRUCTURE DU MUR.
+
+---
+
+## ✅ JALON IMPORTANT — Google Play Closed Testing EN LIGNE (13 juin 2026)
+
+### Configuration finalisée
+- ✅ Liste de diffusion créée et **rattachée à la piste de test fermé** (étape qui avait été oubliée initialement, identifiée et corrigée)
+- ✅ Publication gérée **DÉSACTIVÉE** (auto-publication post-approbation Google)
+- ✅ Google a validé les modifications
+- ✅ Tests confirmés OK sur Samsung de Vienna (`pezzutovienna1947@gmail.com`) — app installée, fonctionnelle
+
+### Testeurs actuels inscrits (6/12)
+1. antoniopezzuto465@gmail.com
+2. ayoubbenkira1290@gmail.com
+3. michelpezzuto@gmail.com (le développeur lui-même)
+4. pezzutovienna1947@gmail.com (Vienna — testée OK)
+5. sibenkiraayoubi1290@gmail.com
+6. viennapezzuto1947@gmail.com
+
+### Reste à faire
+- 🔍 Recruter **6 testeurs supplémentaires** pour atteindre les 12 requis par Google
+- ⏰ Attendre les **14 jours** d'usage actif minimum requis
+- 🚫 Pendant cette période : **NE PAS MODIFIER** la piste de test fermé, ni pousser de nouvelle build
+
