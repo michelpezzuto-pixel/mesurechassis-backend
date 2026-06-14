@@ -498,10 +498,31 @@ Idée proposée par le client le 14/06/2026, **validée et notée** pour implém
 
 | Palier | Prix | Cible | Formes débloquées | Autres restrictions |
 |---|---|---|---|---|
-| 🆓 **Gratuit** | 0 € | Artisan starter / curieux | 5 basiques | Aucune autre limite (toutes fonctions actives) |
-| 💎 **Premium** | 19 €/mois | Artisan confirmé | **Les 12 formes** | Aucune restriction |
-| 🏆 **Pro** | 39 €/mois | Artisan + bureau | 12 formes + Devis auto + Catalogue produits | (cf. roadmap M4-M6) |
-| 🏢 **Entreprise** | Sur devis | Sociétés 10+ pers | Tout + RBAC + Multi-utilisateurs + Intégrations ERP | — |
+| 🆓 **Gratuit** | 0 € | Artisan starter / curieux | 5 basiques | Aucune autre limite (toutes fonctions actives), 1 utilisateur |
+| 💎 **Premium** | 19 €/mois | Artisan confirmé | **Les 12 formes** | 1 utilisateur |
+| 🏆 **Pro** | 39 €/mois | Artisan + bureau | 12 formes + Devis auto + Catalogue produits | 1 utilisateur (cf. roadmap M4-M6) |
+| 🏢 **Entreprise** | **25 €/utilisateur/mois** | Sociétés 2+ pers | Tout + RBAC + Multi-utilisateurs + Admin + Intégrations ERP | Essai gratuit 14j sans CB |
+
+### ⚠️ Pas de freemium pour la formule Entreprise (validé client 14 juin 2026)
+**Raison** : Les entreprises ont un budget logiciels et acceptent de payer. Le freemium les laisserait abuser des fonctions multi-user/RBAC/admin gratuitement.
+
+**Solution Entreprise** : **Essai gratuit 14 jours sans carte bancaire**
+- Toutes les fonctions débloquées pendant 14j
+- Email rappel à J+7 et J+12
+- À J+14 sans abonnement → app passe en **mode lecture seule** (pas de perte de données, juste interdiction de créer de nouveaux chantiers)
+- Si abonnement souscrit → tout continue normalement
+
+### 🎯 Stratégie "Land and Expand"
+Tunnel de croissance naturel :
+1. Artisan solo s'inscrit en **Gratuit**
+2. Décroche un chantier complexe → upgrade **Premium 19 €**
+3. Embauche un ouvrier → upgrade **Pro 39 €** ou **Entreprise**
+4. ✅ Le même client peut passer de 0 € à 100 €+/mois sur 12-24 mois
+
+### 🪤 Anti-contournement "Entreprise → 2 comptes Solos"
+Un duo de menuisiers pourrait être tenté de prendre **2 comptes Premium à 19 €** (= 38 €) au lieu de **1 Entreprise à 50 €**. C'est PRÉVU et NORMAL :
+- Sans Entreprise : pas de partage de chantiers, pas de vue patron unifiée, pas d'affectation, pas de stats consolidées
+- Très vite, ils basculent en Entreprise **d'eux-mêmes** → upsell naturel sans forcing
 
 ### 🟢 Formes GRATUITES (libre accès, toujours)
 1. **Carré**
