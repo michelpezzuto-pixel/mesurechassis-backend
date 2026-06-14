@@ -485,3 +485,71 @@ Probablement : `/app/frontend/app/chantier/[id].tsx` ou `/app/frontend/app/(auth
 - ⏰ Attendre les **14 jours** d'usage actif minimum requis
 - 🚫 Pendant cette période : **NE PAS MODIFIER** la piste de test fermé, ni pousser de nouvelle build
 
+
+## 🚀 NOUVELLE STRATÉGIE PRODUIT — Modèle FREEMIUM (14 juin 2026)
+
+### Validation client
+Idée proposée par le client le 14/06/2026, **validée et notée** pour implémentation post-validation stores. Cette stratégie REMPLACE le modèle 100 % payant actuel.
+
+### Citation client
+> "Est-ce que l'application ne serait pas gratuite avec toutes les fonctionnalités mais seulement 4 ouvertures, genre carré, rectangles, portes, portes de garage, et trapèze, s'ils désirent déverrouiller les autres ouvertures, c'est payant 19 €."
+
+### 📊 Nouveau modèle de pricing à 4 paliers
+
+| Palier | Prix | Cible | Formes débloquées | Autres restrictions |
+|---|---|---|---|---|
+| 🆓 **Gratuit** | 0 € | Artisan starter / curieux | 5 basiques | Aucune autre limite (toutes fonctions actives) |
+| 💎 **Premium** | 19 €/mois | Artisan confirmé | **Les 12 formes** | Aucune restriction |
+| 🏆 **Pro** | 39 €/mois | Artisan + bureau | 12 formes + Devis auto + Catalogue produits | (cf. roadmap M4-M6) |
+| 🏢 **Entreprise** | Sur devis | Sociétés 10+ pers | Tout + RBAC + Multi-utilisateurs + Intégrations ERP | — |
+
+### 🟢 Formes GRATUITES (libre accès, toujours)
+1. **Carré**
+2. **Rectangle**
+3. **Porte** (porte d'entrée, porte fenêtre simple)
+4. **Porte de garage**
+5. **Trapèze**
+
+➡️ Couvre ~60-70 % des chantiers d'un menuisier débutant.
+
+### 🔒 Formes PREMIUM (verrouillées, 19 €/mois pour débloquer)
+6. Coulissant
+7. Cintrée / Plein cintre
+8. Anse-de-panier
+9. Œil-de-bœuf
+10. Pentagone sous-pente (à venir)
+11. Trapèze isocèle complexe
+12. Formes asymétriques / sur-mesure
+*(liste à finaliser au moment de l'implémentation, basée sur les 12 formes actuelles)*
+
+### 🎯 Logique métier derrière ce choix
+Les formes "premium" correspondent aux chantiers les plus rémunérateurs (rénovation chic, bâtiments classés, combles haut-de-gamme, maisons de caractère). L'artisan qui décroche ces chantiers à 8 000 - 30 000 € **peut et veut** payer 19 €/mois car le ROI est évident.
+
+### 💡 Raffinements à intégrer
+- **Essai gratuit du Premium** : 14 jours toutes formes débloquées à l'installation, puis retour aux 5 basiques
+- **Notification intelligente** lors du clic sur une forme verrouillée (pitch contextuel + bouton "Débloquer")
+- **Réduction annuelle** : 19 €/mois OU 190 €/an (2 mois offerts)
+- **Support payant uniquement** : chat/email réservé aux clients Premium+, FAQ pour les gratuits
+
+### 🛠️ Implémentation technique (estimée 3-5 jours dev)
+1. Ajouter champ `premium_unlocked: bool` (+ `premium_until: datetime`) sur le modèle `users`
+2. Ajouter price_id Stripe "premium_monthly_19" et "premium_yearly_190"
+3. Sur l'écran de sélection de forme : afficher icône 🔒 sur les 7 formes verrouillées si `premium_unlocked = false`
+4. Tap sur forme verrouillée → modal "Débloquer pour 19 €/mois" avec CTA Stripe Checkout
+5. Webhook Stripe `checkout.session.completed` → flip `premium_unlocked = true` + set `premium_until`
+6. Webhook `customer.subscription.deleted` → flip à `false`
+7. ⚠️ **iOS** : appliquer la même règle que pour les abonnements actuels — pas d'achat in-app, rediriger vers le site web (conformité Apple Guideline 3.1.1)
+
+### ⚠️ Risques identifiés
+- **Stripe iOS** : paiements masqués comme aujourd'hui, redirection vers `mesurechassis.com` pour upgrade
+- **Support utilisateur** : flux entrant plus important avec les gratuits → besoin d'un centre d'aide self-service
+
+### 📈 Impact business projeté (vs modèle 100 % payant actuel)
+- **Court terme (6 mois)** : MRR plus faible mais base d'utilisateurs **5-10x plus large**
+- **Long terme (24-36 mois)** : effet cascade par bouche-à-oreille → MRR final supérieur
+- Modèle inspiré de **Notion, Canva, Figma, Spotify** (tous démarrés en freemium)
+
+### 📅 Quand implémenter ?
+**Après** validation finale Google Play (post 14 jours testeurs) **ET** validation Apple Build 9.
+À insérer en **priorité Phase 1** de la roadmap (avant les autres features) car le freemium impacte toute la stratégie commerciale.
+
