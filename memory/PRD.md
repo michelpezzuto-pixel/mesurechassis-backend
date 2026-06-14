@@ -531,6 +531,14 @@ Les formes "premium" correspondent aux chantiers les plus rémunérateurs (réno
 - **Réduction annuelle** : 19 €/mois OU 190 €/an (2 mois offerts)
 - **Support payant uniquement** : chat/email réservé aux clients Premium+, FAQ pour les gratuits
 
+### 🚫 Restrictions ÉCARTÉES par le client (14 juin 2026)
+- ❌ **Limite de 3 chantiers actifs en gratuit** — REJETÉE par le client.
+  - Raison (citation client) : "Ils seraient capables de les imprimer en PDF, utiliser toutes les fonctionnalités pour les machines ou autres, et après supprimer pour en recréer de nouveaux chantiers."
+  - Analyse : la limite serait facilement contournable (export PDF → suppression → recréation). Elle ne bloquerait que les utilisateurs honnêtes, frustrant l'expérience sans générer de revenus.
+- ❌ **Filigrane sur les PDF gratuits** — non envisagé, dévalue le produit pour un usage pro
+- ❌ **Limite d'exports/mois** — contournable via multi-comptes
+- ✅ **Seule restriction conservée** : verrouillage des **7 formes "premium"** (non contournable, alignée sur la valeur métier réelle)
+
 ### 🛠️ Implémentation technique (estimée 3-5 jours dev)
 1. Ajouter champ `premium_unlocked: bool` (+ `premium_until: datetime`) sur le modèle `users`
 2. Ajouter price_id Stripe "premium_monthly_19" et "premium_yearly_190"
