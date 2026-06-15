@@ -623,3 +623,40 @@ Les formes "premium" correspondent aux chantiers les plus rémunérateurs (réno
   2. Créer composant `<PremiumLockModal />` (tap sur forme verrouillée)
   3. iOS : pas de checkout in-app → redirection vers mesurechassis.com/abonnement
 
+
+## 🎁 PARRAINAGE & CODES PROMO — Nouvelle stratégie (15 juin 2026)
+
+### Décision client
+Citation client : "Le filleul n'a le droit à rien sauf s'il devient parrain, le parrain peut avoir 2 mois gratuit, on peut aussi créer des codes promotionnel, mais concernant le code promo, ce serait plutôt si l'application est promotionnée par un influenceur par exemple ou pour la fête des pères ou autre occasion qui pourrait toucher une autre clientèle."
+
+### 🎁 PARRAINAGE — Règles simples
+- 👤 **Filleul** : aucune récompense (sauf s'il devient parrain lui-même)
+- 🏆 **Parrain** : 2 mois gratuits offerts (sur son abonnement Premium ou Pro)
+- 🔁 **Effet cascade** : un filleul qui devient parrain à son tour gagne 2 mois
+- ✅ Conditions d'éligibilité (à confirmer côté code) :
+  - Le filleul doit avoir souscrit un abonnement payant (Premium/Pro/Entreprise) au moins 1 mois
+  - Sinon trop facile à contourner (s'inscrire en gratuit ne rapporte rien)
+
+### 🎟️ CODES PROMO — Usage stratégique
+Séparé du parrainage. Cible : **acquisition externe** via partenaires.
+
+Cas d'usage :
+- 🎬 **Influenceurs** (YouTubeur menuiserie, TikTok BTP) : code "MARTIN20" → -20% pendant 3 mois
+- 🎁 **Fêtes commerciales** : Fête des pères, Saint-Valentin du menuisier (😄), Black Friday, rentrée artisanale
+- 🤝 **Partenariats fournisseurs** : code Schüco/Reynaers/Aluk → -1 mois offert
+- 📰 **Médias spécialisés** : magazines, salons (Batimat, Polyclose)
+- 🏢 **B2B ciblé** : fédérations (FFB, Confédération Construction)
+
+Format proposé :
+- Code court (8 lettres max) : LANCEMENT, FETEPAPA26, BATIMAT26
+- Pourcentage OU mois gratuits OU prix fixe sur N mois
+- Limite d'utilisation totale (ex: max 100 utilisations)
+- Date d'expiration
+
+### Implémentation (à coder après le Freemium)
+1. Backend : modèle `referral_codes` et `promo_codes` séparés
+2. API : `POST /api/referral/use` et `POST /api/promo/redeem`
+3. Frontend : champ "Code promo" sur l'écran d'abonnement web (PAS dans iOS pour conformité Apple)
+4. Admin : interface pour créer/désactiver des codes
+5. Webhook Stripe : appliquer la réduction sur la souscription
+
