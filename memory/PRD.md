@@ -693,3 +693,88 @@ Décision client (15/06/2026) : "Pour l'instant on laisse le bêta chez Google c
 - Sur Android/Web, le modal affiche le prix (19€/mois) et un CTA vers `/subscription` interne
 - ✅ Évite tout risque de rejet Apple sur ce point pour les futures soumissions
 
+
+## 📍 AUTOCOMPLÉTION D'ADRESSES — Implémentation (15 juin 2026)
+
+### Demande client
+Citation client : "Quand on désire mettre une adresse dans le nouveau chantier, que les adresses se mettent automatiquement quand on commence à saisir les rues comme dans une application de GPS."
+
+### Solution choisie
+**API Photon (Komoot)** basée sur OpenStreetMap :
+- ✅ 100% gratuite, pas de clé API requise
+- ✅ CORS ouvert (appel direct depuis le frontend, pas besoin de proxy backend)
+- ✅ Excellente couverture FR, BE, LU, NL et toute l'Europe
+- ✅ Endpoint : `https://photon.komoot.io/api/?q=...&limit=5&lang=fr`
+- ✅ Retourne street, postcode, city, country, countrycode
+
+### Composant créé
+- `/app/frontend/src/components/AddressAutocomplete.tsx`
+- Debounce 500ms (évite de hammer l'API)
+- Filtre par pays par défaut : BE, FR, LU, NL
+- Auto-remplit le code postal et la ville quand on tape sur une suggestion
+- Spinner pendant la recherche
+- Liste déroulante de max 5 suggestions
+
+### Intégration
+- `/app/frontend/app/dashboard.tsx` (modal "Nouveau chantier")
+  - Remplacé le simple `TextInput` adresse par `AddressAutocomplete`
+  - `onSelect` callback remplit aussi `setNewPostal` et `setNewCity` automatiquement
+
+### Clavier numérique / email
+Vérification effectuée le 15/06/2026 — TOUS les champs sont déjà bien configurés :
+- ✅ Cotes (NumberField primitive) → `keyboardType="decimal-pad"`
+- ✅ Emails (login, register, invite, team) → `keyboardType="email-address"` + `autoCapitalize="none"`
+- ✅ Téléphone (me.tsx) → `keyboardType="phone-pad"`
+- ✅ Code postal (dashboard.tsx) → `keyboardType="number-pad"`
+- ℹ️ Le champ "Libellé / Référence du châssis" est intentionnellement alphanumérique (peut contenir "Salon", "A1", "1200", etc.)
+
+
+## 🐛 UX POLISH — Vocabulaire "technicien/commercial" en mode ARTISAN (15 juin 2026)
+
+### Demande client
+Le client a noté pendant l'utilisation : sur l'écran **Statistiques**, en mode artisan (1 personne seule), les libellés affichent encore des termes RBAC d'entreprise qui n'ont aucun sens :
+- ❌ "À vérifier par le technicien" → l'artisan EST le technicien, c'est lui qui mesure et qui vérifie au bureau
+- ❌ "Performance par technicien" → il n'y a qu'une seule personne
+
+Citation client : "Il est écrit à vérifier par le technicien, mais ici je suis dans artisan, donc c'est vérifié au bureau et y'a pas de technicien ni de commercial."
+
+### ⏸️ Statut
+**À FAIRE PLUS TARD** — le client demande de **noter pour faire en batch** avec d'autres modifications. Pas d'urgence.
+
+### Détail technique (à appliquer le jour J)
+**Principe** : Adapter le vocabulaire UX selon `artisan_mode === true` (déjà disponible dans `useAuth().company.artisan_mode`).
+
+**Mapping suggéré (mode ARTISAN uniquement)** :
+
+| Mode Entreprise (actuel, à conserver) | Mode Artisan (nouveau) |
+|---|---|
+| "À vérifier par le technicien" | "À vérifier au bureau" |
+| "Performance par technicien" | (masquer la section, n'a pas de sens) |
+| "Assigné au technicien : X" | "Mesuré le : [date]" |
+| "Le commercial a créé..." | "Vous avez créé..." |
+| "L'équipe va valider..." | "Vous validerez au bureau..." |
+| "Inviter un technicien" | (masquer / désactiver) |
+| "Inviter un commercial" | (masquer / désactiver) |
+| "Filtrer par technicien" | (masquer) |
+| "Rôles" dans les paramètres | (masquer) |
+
+### Fichiers concernés à scruter
+- `/app/frontend/app/stats.tsx` (ou similaire pour l'écran de statistiques)
+- `/app/frontend/src/i18n/locales/{fr,en,nl}/translation.json` (clés `stats.*`, `roles.*`, `team.*`)
+- Tous les écrans `/app/frontend/app/admin/*.tsx` qui peuvent contenir des termes RBAC
+- `/app/frontend/app/dashboard.tsx` (badges de statut sur les cartes chantiers)
+
+### Approche recommandée
+1. **Centraliser** dans un fichier `/app/frontend/src/lib/labels.ts` :
+   ```ts
+   export function getRoleLabel(key: string, artisanMode: boolean) {
+     const mapping = artisanMode ? ARTISAN_LABELS : ENTERPRISE_LABELS;
+     return mapping[key] ?? ENTERPRISE_LABELS[key];
+   }
+   ```
+2. **Remplacer** tous les `t("stats.toVerifyByTech")` par `t(getStatusLabelKey(status, artisanMode))`
+3. **Tester** avec deux comptes : 1 artisan + 1 entreprise multi-users
+
+### Quand l'implémenter
+À grouper avec d'autres polishs UX dans un futur batch. Le client a explicitement demandé de **ne pas le faire maintenant** mais de tout faire d'un seul coup quand il y aura assez de modifications accumulées.
+

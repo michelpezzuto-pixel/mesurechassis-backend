@@ -28,6 +28,7 @@ import TrialCountdownBanner from "@/src/components/TrialCountdownBanner";
 import ChatHelp from "@/src/components/ChatHelp";
 import AppointmentPicker from "@/src/components/AppointmentPicker";
 import OnboardingCard from "@/src/components/OnboardingCard";
+import { AddressAutocomplete } from "@/src/components/AddressAutocomplete";
 
 type Chantier = {
   id: string;
@@ -696,10 +697,16 @@ export default function Dashboard() {
               </View>
 
               <Text style={styles.label}>{t("dashboardExtended.modal.addressLabel")}</Text>
-              <TextInput
+              <AddressAutocomplete
                 testID="new-address-input"
                 value={newAddr}
                 onChangeText={setNewAddr}
+                onSelect={(data) => {
+                  // Auto-remplissage : si Photon nous donne CP + ville, on remplit
+                  // les autres champs pour gagner du temps à l'utilisateur.
+                  if (data.postalCode) setNewPostal(data.postalCode.slice(0, 5));
+                  if (data.city) setNewCity(data.city);
+                }}
                 placeholder={t("dashboardExtended.modal.addressPlaceholder")}
                 placeholderTextColor={colors.placeholder}
                 style={[
