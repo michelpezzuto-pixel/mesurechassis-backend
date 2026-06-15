@@ -910,3 +910,66 @@ Citation client : "On va récolter un max de mails mais après que l'application
 - ❌ Script Python de scraping → pas rentable face à Apollo
 - ❌ Scraping massif des annuaires → CGU + RGPD risqués
 
+
+## 🤖 AGENT IA SUPPORT CLIENT MULTILINGUE — Idée stratégique (15 juin 2026)
+
+### Demande client
+Citation client : "Bien plus tard, quand on va l'exporter en Italie, en Espagne et même beaucoup plus loin, est-ce qu'on ne pourra pas avoir des agents qui puissent répondre aux questions de chaque utilisateur automatiquement et qui me renvoient une liste concernant ce qu'ils ne savent pas ? Moi, j'y répondrais et l'agent le garderait en mémoire — s'il devait répondre à la même question."
+
+### Vision
+**Agent IA conversationnel multilingue avec base de connaissances auto-apprenante** — gère 95% des questions support sans intervention humaine, et apprend des 5% restants pour devenir progressivement autonome à 99%.
+
+### ⏸️ Statut
+**TRÈS LONG TERME** — à implémenter **APRÈS** :
+1. Validation App Store + Google Play
+2. Premiers 50-100 clients payants
+3. Stabilisation du produit FR/BE/LU
+4. Décision d'ouvrir un nouveau marché (Italie, Espagne, etc.)
+
+### 🏗️ Architecture cible
+1. **Base de connaissances (RAG)** :
+   - Indexation vectorielle de tous les PDF/tutos/FAQ
+   - Outil : Qdrant ou Pinecone (auto-hébergé sur Railway = gratuit)
+   - Mise à jour automatique à chaque nouvelle question résolue
+
+2. **Agent conversationnel (LLM)** :
+   - Modèle : Claude Sonnet 4.5 ou GPT-5.2 (via Emergent LLM Key)
+   - Détection automatique de la langue (italien, espagnol, allemand, arabe, etc.)
+   - Réponse dans la langue du client
+   - System prompt : "Tu es l'assistant MesureChâssis. Réponds dans la langue du client. Si tu ne sais pas avec >80% de confiance, dis 'Je transfère à un humain'."
+
+3. **Escalation intelligente** :
+   - Confiance < 80% → notification dans l'admin MesureChâssis
+   - Le patron (Michel ou support) reçoit :
+     - Question originale (langue cliente)
+     - Traduction française automatique
+     - Contexte conversation
+   - Il répond en français
+   - L'IA traduit + reformule pour le client + ajoute à la base de connaissances
+
+4. **Apprentissage continu** :
+   - Chaque échange validé → ajouté à la base vectorielle
+   - L'agent s'améliore mécaniquement chaque jour
+   - Analytics : "Top 10 questions les plus posées" → utile pour le produit
+
+### 🌍 Bénéfice pour l'internationalisation
+- Ouverture Italie/Espagne/Allemagne **sans embaucher** de support local
+- Support 24/7 multilingue à coût ridicule (~10-50€/mois pour 1000 conversations)
+- Avantage compétitif **énorme** vs Elcia/Ramasoft qui ont du support traditionnel
+
+### 💰 Estimation budget mensuel
+- API LLM (Claude/GPT via Emergent LLM Key) : ~10-50€/mois pour 500-1000 conversations
+- Base vectorielle : 0€ (auto-hébergé)
+- Stockage : 0€ (MongoDB existant)
+- **TOTAL** : 10-50€/mois (vs ~3000-4000€/mois pour embaucher 1 support FR)
+
+### Fichiers à créer le jour J
+- `/app/backend/services/ai_agent.py` (orchestrateur IA)
+- `/app/backend/services/knowledge_base.py` (RAG + vectorisation)
+- `/app/backend/routes/support.py` (endpoints chat + escalation)
+- `/app/frontend/src/components/ChatBubble.tsx` (UI de chat dans l'app)
+- `/app/frontend/app/admin/support-inbox.tsx` (file d'attente des escalations)
+
+### Intégration prévue
+À traiter via `integration_playbook_expert_v2` le jour J pour récupérer le bon SDK et les bonnes pratiques.
+
