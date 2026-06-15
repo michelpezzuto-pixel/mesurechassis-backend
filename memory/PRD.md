@@ -778,3 +778,101 @@ Citation client : "Il est écrit à vérifier par le technicien, mais ici je sui
 ### Quand l'implémenter
 À grouper avec d'autres polishs UX dans un futur batch. Le client a explicitement demandé de **ne pas le faire maintenant** mais de tout faire d'un seul coup quand il y aura assez de modifications accumulées.
 
+
+## 🛒 ÉCRAN D'ABONNEMENT — Mise à jour COMPLÈTE (15 juin 2026)
+
+### Demande client
+Citation client : "Faudra changer les plans des abonnements et mettre à jour le centre d'aide."
+
+### ⏸️ Statut
+**À FAIRE PLUS TARD** — à grouper avec les autres modifs en batch.
+
+### Capture d'écran actuelle (à remplacer)
+Page actuelle "/subscription" affiche :
+- 🔴 Bandeau : "Démarrez votre essai gratuit de **3 mois**" → ❌ doit devenir "14 jours" (et seulement pour Premium+)
+- 🔴 Header : "✨ **3 mois gratuits** pour démarrer, sans engagement" → ❌ supprimer (freemium ≠ trial)
+- 🔴 Plan "Artisan Solo" à **24,99 €/mois** → ❌ obsolète, doit devenir Premium 19 €/mois
+- 🔴 Plan "Entreprise" à **59,99 €/mois pour 3 utilisateurs** → ❌ ne correspond plus au modèle 25 €/user
+- 🔴 Pas de plan "Pro" (39 €/mois) → ❌ manque
+- 🔴 Pas de plan "Gratuit" mis en avant → ❌ doit être l'option par défaut
+
+### ✅ Nouvelle structure à implémenter
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  CHOISISSEZ LA FORMULE QUI VOUS CONVIENT                │
+│                                                         │
+│  ✨ Essai 14 jours toutes formes débloquées             │
+│     à l'inscription (automatique)                       │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────┐  ┌─────────────────────┐  ┌─────────────────────┐
+│  🆓 GRATUIT         │  │  💎 PREMIUM         │  │  🏆 PRO             │
+│                     │  │  ⭐ POPULAIRE       │  │                     │
+│  0 €                │  │  19 € /mois         │  │  39 € /mois         │
+│                     │  │  ou 190 € /an       │  │  ou 390 € /an       │
+│                     │  │  (2 mois offerts)   │  │  (2 mois offerts)   │
+│                     │  │                     │  │                     │
+│  ✓ 5 formes         │  │  ✓ 12 formes        │  │  ✓ 12 formes        │
+│    basiques         │  │    débloquées       │  │  ✓ Devis auto       │
+│  ✓ Chantiers        │  │  ✓ Chantiers        │  │  ✓ Catalogue        │
+│    illimités        │  │    illimités        │  │    produits         │
+│  ✓ Photos &         │  │  ✓ Tout du Gratuit  │  │  ✓ Stats avancées   │
+│    alertes          │  │  ✓ Exports avancés  │  │  ✓ Support prioritaire│
+│  ✓ Exports          │  │  ✓ Support email    │  │                     │
+│    PDF/CSV/XML      │  │                     │  │                     │
+│                     │  │                     │  │                     │
+│  [Plan actuel]      │  │ [Souscrire 19 €]    │  │ [Souscrire 39 €]    │
+└─────────────────────┘  └─────────────────────┘  └─────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│  🏢 ENTREPRISE — Pour les équipes 2+ personnes          │
+│                                                         │
+│  25 € / utilisateur / mois                              │
+│                                                         │
+│  ✓ Tout du Pro                                          │
+│  ✓ Multi-utilisateurs (commercial + technicien)         │
+│  ✓ RBAC (rôles et permissions)                          │
+│  ✓ Module Admin (gestion équipe, feedbacks)             │
+│  ✓ Stats par membre de l'équipe                         │
+│  ✓ Support téléphonique dédié                           │
+│  ✓ Essai gratuit 14 jours sans carte bancaire           │
+│                                                         │
+│  [Démarrer l'essai 14 jours]                            │
+└─────────────────────────────────────────────────────────┘
+```
+
+### ⚠️ Conformité iOS
+Si Apple revoit la fiche après le passage en production, l'écran d'abonnement doit RESTER masqué sur iOS (Guideline 3.1.1/3.1.3(b)). Le bouton "S'abonner" depuis l'app iOS doit afficher : "Gérez votre abonnement depuis votre profil — accédez à mesurechassis.com/abonnement depuis votre navigateur."
+
+### Fichiers à modifier le jour J
+- `/app/frontend/app/subscription.tsx` — refonte complète de l'UI
+- `/app/backend/routes/stripe_routes.py` — vérifier les `STRIPE_PRICE_*` (créer Premium 19 €, Premium yearly 190 €, Pro yearly 390 € si pas déjà fait)
+- `/app/backend/.env` — ajouter `STRIPE_PRICE_PREMIUM`, `STRIPE_PRICE_PREMIUM_YEARLY`, etc.
+
+---
+
+## 📖 CENTRE D'AIDE — Mise à jour (15 juin 2026)
+
+### Demande client
+Le centre d'aide / FAQ contient des références obsolètes à l'ancien modèle d'abonnement (3 mois gratuits, prix 24,99 € / 59,99 €).
+
+### ⏸️ Statut
+**À FAIRE PLUS TARD** — batch.
+
+### Sections à mettre à jour (à confirmer après audit)
+- Sections "Tarifs" / "Combien ça coûte ?"
+- Sections "Essai gratuit" / "Période d'essai"
+- Sections "Choix du plan" / "Quelle formule choisir ?"
+- Sections "Annulation" / "Comment annuler ?"
+- FAQ : "Puis-je changer de plan ?"
+- FAQ : "Que se passe-t-il à la fin de l'essai gratuit ?"
+
+### Nouveau message clé à diffuser
+"MesureChâssis est gratuit pour démarrer. Inscrivez-vous, profitez de 14 jours d'essai complet (toutes les 12 formes débloquées), puis choisissez : restez en gratuit avec les 5 formes basiques, ou souscrivez à Premium (19 €/mois) pour les 12 formes."
+
+### Fichiers à scruter le jour J
+- `/app/frontend/app/help.tsx` (ou `/app/frontend/app/centre-aide.tsx`)
+- `/app/frontend/src/i18n/locales/{fr,en,nl}/translation.json` (clés `help.*`, `faq.*`, `pricing.*`)
+- `/app/site_mesurechassis_final/` (pages statiques du site vitrine — section Tarifs)
+
