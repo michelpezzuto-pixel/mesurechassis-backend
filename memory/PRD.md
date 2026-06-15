@@ -876,3 +876,37 @@ Le centre d'aide / FAQ contient des références obsolètes à l'ancien modèle 
 - `/app/frontend/src/i18n/locales/{fr,en,nl}/translation.json` (clés `help.*`, `faq.*`, `pricing.*`)
 - `/app/site_mesurechassis_final/` (pages statiques du site vitrine — section Tarifs)
 
+
+## 📥 PROSPECTION MASSIVE — Plan B post-Apple (15 juin 2026)
+
+### Décision client (15/06/2026)
+Citation client : "On va récolter un max de mails mais après que l'application soit sur Apple Store. Pour Google, on va se contenter des 90 mails déjà disponibles."
+
+### Plan
+- ⏸️ **AVANT** validation Apple → on **gèle** la prospection massive
+  - On se contente des **90 prospects déjà en base** pour la campagne Google testeurs
+  - Envoi de 15 emails/jour (rythme actuel) — bonne hygiène warm-up
+  - On reste sous le radar des filtres anti-spam pendant la période sensible
+
+- 🚀 **APRÈS** validation Apple → on lance le **mode prospection massive**
+  - Cible : 5000+ emails ciblés menuiserie BE/FR/LU
+  - Outil retenu : **Apollo.io** (plan gratuit pour démarrer, puis 49€/mois)
+  - Filtres Apollo à appliquer :
+    - Industry : Construction / Carpentry / Building Materials
+    - Country : Belgium, France, Luxembourg
+    - Company size : 1-50 employees (TPE/PME)
+  - Workflow : Apollo → CSV → import dans admin MesureChâssis → campagne batch
+  - Conformité RGPD : "intérêt légitime B2B" + STOP visible + offre pertinente = ✅
+
+### Outils alternatifs notés (pour comparaison le jour J)
+- 🥇 Apollo.io (49-99€/mois) — recommandé, plan gratuit OK pour tester
+- 🥈 Hunter.io (49€/mois) — par nom de domaine
+- 🥉 Lusha (39-79€/mois)
+- 🏅 Kaspr (LinkedIn integration, 30-79€/mois)
+- 💰 Annuaire JCB (99-299€ one-shot, FR seulement)
+- 💎 Cognism (500-1000€/mois — pour plus tard quand le CA décolle)
+
+### Ce qu'on a écarté
+- ❌ Script Python de scraping → pas rentable face à Apollo
+- ❌ Scraping massif des annuaires → CGU + RGPD risqués
+
