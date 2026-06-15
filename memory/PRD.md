@@ -660,3 +660,36 @@ Format proposé :
 4. Admin : interface pour créer/désactiver des codes
 5. Webhook Stripe : appliquer la réduction sur la souscription
 
+
+## 💎 FREEMIUM — Implémentation TERMINÉE (15 juin 2026)
+
+### Architecture livrée
+- **Backend** :
+  - `models.py` : champ `freemium_trial_ends_at: Optional[str]` ajouté à `CompanyProfile`
+  - `routes/auth.py` : à la création d'un nouveau compte, set `freemium_trial_ends_at = now() + 14 jours` (que beta soit ON ou OFF)
+  - `routes/company.py` : exposition du champ dans `GET /api/company/profile`
+- **Frontend** :
+  - `src/lib/freemium.ts` : helpers `isFreeShape`, `isPremiumUser`, `isInFreemiumTrial`, `getFreemiumTrialDaysRemaining`
+  - `src/context/AuthContext.tsx` : type `CompanyProfile.freemium_trial_ends_at` ajouté
+  - `src/components/wizard/Step2Shape.tsx` : verrouillage visuel + interception tap
+  - `src/components/premium/PremiumLockModal.tsx` : modal conforme iOS (neutre) / Android (pitch + CTA)
+
+### Logique de déverrouillage (ordre de priorité)
+1. `beta_mode` actif (côté serveur) → Premium pour tous (état actuel pour testeurs Google)
+2. Essai gratuit 14 jours (`freemium_trial_ends_at > now`) → Premium
+3. Abonnement Stripe actif (`subscription_status in [active, trialing]`) → Premium
+4. Plan "trial" ou "pro" legacy → Premium
+5. Sinon → Free (5 formes seulement)
+
+### Activation du Freemium pour tous
+Décision client (15/06/2026) : "Pour l'instant on laisse le bêta chez Google console pour montrer aux testeurs qu'il n'est pas encore fini, l'illusion du développeur qui travaille pour faire évoluer l'application."
+
+→ Beta_mode reste activé pour les testeurs Google actuels.
+→ Le freemium s'active naturellement le jour où on flippe `BETA_MODE = False` sur Railway.
+→ Les nouveaux inscrits auront un essai 14 jours automatique (champ déjà pré-rempli en base).
+
+### Conformité Apple 3.1.3(b)
+- Sur iOS, le modal Premium n'affiche AUCUN prix, AUCUN bouton de paiement, AUCUN lien externe vers Stripe
+- Sur Android/Web, le modal affiche le prix (19€/mois) et un CTA vers `/subscription` interne
+- ✅ Évite tout risque de rejet Apple sur ce point pour les futures soumissions
+

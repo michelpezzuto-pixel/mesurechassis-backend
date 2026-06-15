@@ -173,6 +173,10 @@ class CompanyProfile(BaseModel):
     # 🚧 Quand True, le frontend doit masquer paywall / trial / freemium
     # et afficher la bannière verte "Beta Gratuite".
     beta_mode: bool = False
+    # 💎 Freemium (juin 2026) — Date ISO de fin de l'essai gratuit de 14 jours
+    # qui débloque les 12 formes. Après expiration, retour au mode gratuit
+    # (5 formes) sauf si abonnement actif.
+    freemium_trial_ends_at: Optional[str] = None
 
 
 class CompanyProfileUpdate(BaseModel):

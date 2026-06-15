@@ -51,25 +51,59 @@ export function isFreeShape(shape: Shape | null | undefined): boolean {
 /**
  * L'utilisateur a-t-il un statut "premium" (= peut accéder à TOUTES les formes) ?
  *
- * Règle métier :
- *   - Mode beta gratuit → Premium (admin-only override)
- *   - Mode "trial" actif → Premium (essai gratuit toutes fonctions)
- *   - Abonnement actif (solo/entreprise/pro) → Premium
- *   - Sinon → Free (formes premium verrouillées)
+ * Règle métier (ordre de priorité) :
+ *   1. Mode beta gratuit          → Premium (admin/testeurs)
+ *   2. Essai gratuit 14 jours actif → Premium (nouveaux utilisateurs)
+ *   3. Abonnement actif/trialing   → Premium
+ *   4. Plan "trial" ou "pro"       → Premium (cas legacy)
+ *   5. Sinon                       → Free (formes premium verrouillées)
  */
 export function isPremiumUser(company: CompanyProfile | null | undefined): boolean {
   if (!company) return false;
-  // Override beta : pendant la beta, tout le monde a accès à tout
+  // 1. Override beta (admin/testeurs)
   if (company.beta_mode === true) return true;
-  // Plan "free" explicite → pas Premium
+  // 2. Essai gratuit 14 jours (auto-attribué à l'inscription)
+  if (isInFreemiumTrial(company)) return true;
+  // 3. Plan "free" explicite → pas Premium
   if (company.plan === "free") return false;
-  // Abonnement actif ou en période d'essai → Premium
+  // 4. Abonnement actif ou en période d'essai Stripe → Premium
   const status = company.subscription_status;
   if (status === "active" || status === "trialing") return true;
-  // Plan "trial" ou "pro" → Premium (cas legacy)
+  // 5. Plan "trial" ou "pro" → Premium (cas legacy)
   if (company.plan === "trial" || company.plan === "pro") return true;
   // Par défaut → pas Premium
   return false;
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// 🎁 ESSAI GRATUIT 14 JOURS
+// ════════════════════════════════════════════════════════════════════════
+
+/**
+ * L'utilisateur est-il actuellement dans sa période d'essai gratuit 14 jours ?
+ * Vérifie `freemium_trial_ends_at` (date ISO) contre l'horloge actuelle.
+ */
+export function isInFreemiumTrial(company: CompanyProfile | null | undefined): boolean {
+  if (!company?.freemium_trial_ends_at) return false;
+  const end = Date.parse(company.freemium_trial_ends_at);
+  if (Number.isNaN(end)) return false;
+  return end > Date.now();
+}
+
+/**
+ * Combien de jours restants avant la fin de l'essai gratuit ?
+ * Retourne `null` si pas d'essai en cours.
+ */
+export function getFreemiumTrialDaysRemaining(
+  company: CompanyProfile | null | undefined,
+): number | null {
+  if (!company?.freemium_trial_ends_at) return null;
+  const end = Date.parse(company.freemium_trial_ends_at);
+  if (Number.isNaN(end)) return null;
+  const now = Date.now();
+  if (end <= now) return 0;
+  const ms = end - now;
+  return Math.ceil(ms / (24 * 60 * 60 * 1000));
 }
 
 /**

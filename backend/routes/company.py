@@ -27,6 +27,8 @@ def _to_profile(doc: dict, company_id: str) -> CompanyProfile:
         cancel_at_period_end=bool(doc.get("cancel_at_period_end", False)),
         cancelled_at=doc.get("cancelled_at"),
         beta_mode=BETA_MODE,
+        # 💎 Freemium — date de fin de l'essai 14 jours (toutes formes débloquées)
+        freemium_trial_ends_at=doc.get("freemium_trial_ends_at"),
     )
 
 

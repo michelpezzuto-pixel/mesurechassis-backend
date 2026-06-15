@@ -228,6 +228,11 @@ async def register(payload: dict, request: Request):
         beta_expires = (
             datetime.now(timezone.utc) + timedelta(days=365 * 10)
         ).isoformat()
+        # 💎 Freemium trial 14 jours : même en BETA, on initialise le champ
+        # pour qu'il soit déjà présent en base le jour où on coupera BETA.
+        freemium_trial_ends = (
+            datetime.now(timezone.utc) + timedelta(days=14)
+        ).isoformat()
         company_doc = {
             "company_id": company_id,
             "name": company_name,
@@ -242,12 +247,15 @@ async def register(payload: dict, request: Request):
             "chantiers_lifetime_count": 0,
             "cancel_at_period_end": False,
             "beta_account": True,
+            # 💎 Freemium (juin 2026) — Pré-rempli pour la transition future
+            "freemium_trial_ends_at": freemium_trial_ends,
             "created_at": datetime.now(timezone.utc).isoformat(),
         }
     else:
-        # Prod : essai gratuit 90 jours sans CB.
-        trial_expires = (
-            datetime.now(timezone.utc) + timedelta(days=90)
+        # 💎 Prod (post-beta) : Freemium avec essai gratuit 14 jours toutes formes.
+        # Passé 14 jours sans abonnement → retour au mode gratuit 5 formes.
+        freemium_trial_ends = (
+            datetime.now(timezone.utc) + timedelta(days=14)
         ).isoformat()
         company_doc = {
             "company_id": company_id,
@@ -256,12 +264,14 @@ async def register(payload: dict, request: Request):
             # 🆕 V3 — Plan Stripe préféré
             "preferred_plan": preferred_plan,
             "artisan_mode": is_artisan,
-            "subscription_status": "trial",
-            "subscription_expires_at": trial_expires,
-            "trial_expires_at": trial_expires,
-            "plan": "trial",
+            # Pas d'abonnement par défaut — l'utilisateur est en freemium
+            "subscription_status": None,
+            "subscription_expires_at": None,
+            "plan": "free",
             "chantiers_lifetime_count": 0,
             "cancel_at_period_end": False,
+            # 💎 Essai 14j toutes formes débloquées (le frontend lit ce champ)
+            "freemium_trial_ends_at": freemium_trial_ends,
             "created_at": datetime.now(timezone.utc).isoformat(),
         }
     await db.companies.insert_one(company_doc)

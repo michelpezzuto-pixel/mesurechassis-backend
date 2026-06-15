@@ -28,6 +28,12 @@ export type CompanyProfile = {
   cancelled_at?: string | null;
   /** 🚧 Quand True → mode Beta Gratuite (pas de paywall, accès illimité). */
   beta_mode?: boolean;
+  /**
+   * 💎 Freemium — Date de fin de l'essai gratuit de 14 jours (ISO string).
+   * Pendant cette période, l'utilisateur a accès à TOUTES les formes (12).
+   * Passé ce délai et sans abonnement actif, retour au mode gratuit (5 formes).
+   */
+  freemium_trial_ends_at?: string | null;
 };
 
 export type SubscriptionLock = {
