@@ -321,6 +321,12 @@ Le feedback continu (anomalie/idée + snapshot des données) construit une **bou
 - Activation via toggle d'abonnement Stripe (price_id différents par formule)
 - Argumentaire : effet plateforme, lock-in client, TAM élargi à 42 000 entreprises FR/BE
 
+### ⚠️ MISE À JOUR (15 juin 2026) — Mode Artisan ANNULÉ
+Après vérification de la dernière version de l'app, le client confirme que **l'app fonctionne déjà parfaitement pour les artisans comme pour les entreprises**. Pas besoin d'ajouter de "Mode Artisan" séparé.
+> Citation client (15/06/2026) : "L'application est parfaite concernant l'artisan et l'entreprise, pas besoin de modifier l'artisan."
+
+→ **Le freemium (5 formes gratuites / 19 € pour débloquer les 7 autres) reste prévu** comme stratégie commerciale principale.
+
 ---
 
 ## 🚀 BACKLOG FONCTIONNALITÉS FUTURES (13 juin 2026)
@@ -368,7 +374,11 @@ Sinon = bruit qui complexifie le produit. À NE PAS faire sans demande explicite
 
 ## 🔷 NOUVELLE FORME DE BAIE À AJOUTER — Pentagone asymétrique / Sous-pente (13 juin 2026)
 
-### Demande client
+### ⚠️ MISE À JOUR (15 juin 2026) — ANNULÉ
+Client a vérifié dans la dernière version de l'app et **la forme existe déjà**. Pas besoin d'implémentation supplémentaire.
+> Citation client (15/06/2026) : "je n'en veux plus car je l'ai déjà, tout apparaît dans la dernière version que je n'avais pas vu"
+
+### Demande client initiale (conservée pour historique)
 "Une forme supplémentaire à rajouter mais pas maintenant, on attend toujours que Google et Apple soient en règle, garde-le en mémoire" (photo fournie d'une baie en sous-pente).
 
 ### Statut
