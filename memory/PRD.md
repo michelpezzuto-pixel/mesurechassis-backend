@@ -599,3 +599,27 @@ Les formes "premium" correspondent aux chantiers les plus rémunérateurs (réno
 - **Fix** : Ajout d'une `ref` sur le `ScrollView` + `useEffect` qui force `scrollTo({y: 0, animated: false})` via `requestAnimationFrame` dès que la mesure est chargée (deps : `[loading, mesure, mesure_id]`).
 - **Statut** : ✅ Corrigé en local — sera inclus dans le push J+7 (avec Mode Freemium + Mode Artisan + fix alignement boutons Android).
 
+
+## 📋 MISE À JOUR DÉCISIONS (15 juin 2026 — matin)
+
+### ✅ Décisions validées
+- **5 formes gratuites confirmées** : rect, porte_entree, porte_garage, trapeze, coulissant_levant (avec coulissant levant validé par le client)
+- **🚫 Plus de période d'essai 3 mois** : abandonnée. Le freemium devient le mode "essai" naturel — on garde les utilisateurs qui veulent en mode gratuit, ils paient quand ils ont besoin de plus.
+  - Implication : à supprimer du backend `TRIAL_PERIOD_DAYS = 90` dans `/app/backend/routes/stripe_routes.py` (ligne 61) le jour du déploiement Freemium
+  - Vérifier aussi `subscription_status = "trialing"` dans la logique frontend
+- **🎁 Parrainage à REVOIR** : l'offre actuelle (basée sur l'ancien modèle 100% payant) doit être réadaptée au modèle freemium. À discuter avec le client avant implémentation. Backlog.
+
+### 🍎 Statut Apple Build 9 (15 juin 2026)
+- ❌ **REFUSÉE** — Apple a marqué la soumission "iOS 1.0 - Problèmes non résolus"
+- ⚠️ Contrat Apple Developer Program à signer en parallèle (nouveau contrat de licence)
+- 🎯 À FAIRE par le client : lire le motif de refus dans la soumission Jeudi 23h29
+- 🔄 Pas dramatique : 40% des apps sont refusées au moins 1x au lancement. Itération attendue.
+
+### 💎 Mode Freemium — État du dev (15 juin 2026)
+- ✅ Helper créé : `/app/frontend/src/lib/freemium.ts`
+- ✅ Stratégie : réutilise le système d'abonnements existant (solo/entreprise/pro) — pas de nouveau plan Stripe
+- ⏳ À faire ensuite :
+  1. Modifier `Step2Shape.tsx` pour afficher icône 🔒 sur formes premium si pas d'abonnement
+  2. Créer composant `<PremiumLockModal />` (tap sur forme verrouillée)
+  3. iOS : pas de checkout in-app → redirection vers mesurechassis.com/abonnement
+
