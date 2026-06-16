@@ -137,6 +137,22 @@ async def download_site_maj():
     )
 
 
+@api.get("/_downloads/site-freemium-apple")
+async def download_site_freemium_apple():
+    """Pages du site vitrine refondues pour conformité Apple Store + offre Freemium.
+    Inclut : index, faq, tarifs (nouveau), telecharger, contact, guide, légal,
+    + redirections beta.html / devenir-testeur.html.
+    """
+    path = "/app/backend/static/site_freemium_apple_compliant.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="site_freemium_apple_compliant.zip",
+    )
+
+
 @api.get("/_downloads/devenir-testeur-html")
 async def download_devenir_testeur_html():
     """Page statique d'inscription testeur à héberger sur mesurechassis.com."""

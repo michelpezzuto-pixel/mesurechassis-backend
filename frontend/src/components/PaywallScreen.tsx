@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   Alert,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -81,9 +82,9 @@ export default function PaywallScreen({
             <Text style={styles.alertTitle}>Votre accès a expiré</Text>
           </View>
           <Text style={styles.alertBody}>
-            Votre période d'essai de 3 mois est terminée ou votre abonnement
-            n'est pas en ordre. Régularisez votre abonnement pour récupérer
-            l'accès complet à vos chantiers, mesures et exports.
+            {Platform.OS === "ios"
+              ? "Votre accès est actuellement suspendu. Pour rétablir votre compte, contactez notre support."
+              : "Votre période d'essai de 3 mois est terminée ou votre abonnement n'est pas en ordre. Régularisez votre abonnement pour récupérer l'accès complet à vos chantiers, mesures et exports."}
           </Text>
         </View>
 
@@ -124,8 +125,28 @@ export default function PaywallScreen({
           )}
         </View>
 
-        {/* ============ OFFRE PRO ============ */}
-        <View style={styles.proCard}>
+        {/* ============ OFFRE PRO ============
+         * 🍎 iOS — Apple App Store Guidelines 3.1.1 :
+         * sur iOS on n'affiche AUCUN CTA d'achat. À la place,
+         * un bandeau neutre invite à contacter le support.
+         */}
+        {Platform.OS === "ios" ? (
+          <View style={styles.iosNoticeCard}>
+            <Ionicons
+              name="information-circle-outline"
+              size={22}
+              color={colors.primary}
+            />
+            <Text style={styles.iosNoticeText}>
+              Pour réactiver votre compte, contactez notre support à{" "}
+              <Text style={styles.bold}>support@mesurechassis.fr</Text>.
+              {"\n\n"}
+              Vos données restent stockées en sécurité et seront restaurées
+              dès que votre accès sera rétabli.
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.proCard}>
           <View style={styles.proHeader}>
             <Ionicons name="rocket" size={20} color={colors.primary} />
             <Text style={styles.proTitle}>PASSER EN PRO</Text>
@@ -209,6 +230,7 @@ export default function PaywallScreen({
             </Text>
           )}
         </View>
+        )}
 
         <Text style={styles.bullet}>📋 Pendant ce verrouillage :</Text>
         <Text style={styles.help}>
@@ -331,6 +353,28 @@ const styles = StyleSheet.create({
     borderColor: "#34d399",
     padding: 18,
     marginBottom: 18,
+  },
+  // ----- iOS notice card (App Store 3.1.1 compliant) -----
+  iosNoticeCard: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+    backgroundColor: "#1a0e05",
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 18,
+  },
+  iosNoticeText: {
+    color: colors.textPrimary,
+    fontSize: 13,
+    lineHeight: 19,
+    flex: 1,
+  },
+  bold: {
+    fontWeight: "800",
+    color: colors.primary,
   },
   proHeader: { flexDirection: "row", alignItems: "center", gap: 8 },
   proTitle: {

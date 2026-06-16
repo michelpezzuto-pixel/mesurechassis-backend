@@ -440,7 +440,9 @@ export default function CompanyProfile() {
               {betaMode ? (
                 <View style={styles.betaBadge}>
                   <Ionicons name="rocket" size={12} color="#34d399" />
-                  <Text style={styles.betaBadgeText}>OFFRE DE LANCEMENT</Text>
+                  <Text style={styles.betaBadgeText}>
+                    {Platform.OS === "ios" ? "COMPTE ACTIF" : "OFFRE DE LANCEMENT"}
+                  </Text>
                 </View>
               ) : (
                 <View
@@ -458,6 +460,30 @@ export default function CompanyProfile() {
 
             {betaMode ? (
               <>
+                {Platform.OS === "ios" ? (
+                  /* 🍎 iOS — App Store 2.2 (Beta Testing) + 3.1.1 :
+                   * pas de mention "lancement"/"retours"/"avis". On
+                   * affiche un statut neutre. */
+                  <>
+                    <Text style={styles.betaIntro}>
+                      Votre compte est actif et opérationnel.
+                    </Text>
+                    {isAdmin && (
+                      <TouchableOpacity
+                        testID="contact-support-button"
+                        onPress={() => setSupportOpen(true)}
+                        activeOpacity={0.85}
+                        style={[styles.btn, styles.btnPrimary, { marginTop: 14 }]}
+                      >
+                        <Ionicons name="mail" size={20} color="#000" />
+                        <Text style={styles.btnPrimaryText}>
+                          CONTACTER LE SUPPORT
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                  </>
+                ) : (
+                  <>
                 <Text style={styles.betaIntro}>
                   🎉 Profitez de l&apos;accès complet à MesureChâssis, offert
                   pendant la période de lancement.
@@ -479,6 +505,8 @@ export default function CompanyProfile() {
                       DONNER MON AVIS / CONTACTER LE SUPPORT
                     </Text>
                   </TouchableOpacity>
+                )}
+                  </>
                 )}
               </>
             ) : (

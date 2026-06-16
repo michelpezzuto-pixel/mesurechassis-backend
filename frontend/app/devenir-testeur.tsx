@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -20,6 +20,11 @@ import { colors } from "@/src/theme";
  * Page PUBLIQUE (sans connexion) : inscription des artisans candidats
  * testeurs Google Play avant le lancement officiel.
  * URL web : /devenir-testeur
+ *
+ * 🍎 iOS — App Store Guideline 2.2 (Beta Testing) :
+ * la fonctionnalité de recrutement de testeurs n'est PAS autorisée
+ * sur les builds production iOS. On redirige automatiquement vers
+ * l'accueil si l'écran est ouvert depuis iOS.
  */
 export default function DevenirTesteur() {
   const router = useRouter();
@@ -30,6 +35,24 @@ export default function DevenirTesteur() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // 🍎 iOS — redirection automatique vers l'accueil
+  useEffect(() => {
+    if (Platform.OS === "ios") {
+      router.replace("/");
+    }
+  }, [router]);
+
+  // 🍎 iOS — fenêtre vide pendant la redirection
+  if (Platform.OS === "ios") {
+    return (
+      <SafeAreaView style={styles.flex} edges={["top", "bottom"]}>
+        <View style={[styles.flex, { justifyContent: "center", alignItems: "center" }]}>
+          <ActivityIndicator color={colors.primary} />
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   const submit = async () => {
     setError(null);

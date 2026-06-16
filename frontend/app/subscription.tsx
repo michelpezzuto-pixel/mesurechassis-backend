@@ -428,49 +428,69 @@ export default function SubscriptionScreen() {
 }
 
 function computeStatusLabel(s: SubscriptionStatus | null) {
+  // 🍎 iOS — App Store Guideline 3.1.1 : on retire toute mention
+  // d'essai, prélèvement, souscription, renouvellement. Les libellés
+  // iOS sont strictement neutres ("Compte actif" / "Compte suspendu").
+  const isIOS = Platform.OS === "ios";
   if (!s || !s.has_subscription) {
     return {
-      title: "Aucun abonnement actif",
-      body: "Démarrez votre essai gratuit de 3 mois en choisissant un plan ci-dessous.",
-      color: "neutral" as const,
-      icon: "lock-closed-outline" as const,
+      title: isIOS ? "Compte actif" : "Aucun abonnement actif",
+      body: isIOS
+        ? "Votre compte est opérationnel. La gestion du compte se fait depuis votre espace personnel sur le site web."
+        : "Démarrez votre essai gratuit de 3 mois en choisissant un plan ci-dessous.",
+      color: isIOS ? ("green" as const) : ("neutral" as const),
+      icon: isIOS
+        ? ("checkmark-circle" as const)
+        : ("lock-closed-outline" as const),
     };
   }
   if (s.status === "trialing") {
     return {
-      title: `Essai gratuit en cours`,
-      body: `Il vous reste ${s.days_left_in_trial ?? "?"} jour(s). Aucun prélèvement avant la fin de l'essai.`,
+      title: isIOS ? "Compte actif" : "Essai gratuit en cours",
+      body: isIOS
+        ? "Votre compte est opérationnel."
+        : `Il vous reste ${s.days_left_in_trial ?? "?"} jour(s). Aucun prélèvement avant la fin de l'essai.`,
       color: "green" as const,
-      icon: "gift-outline" as const,
+      icon: isIOS
+        ? ("checkmark-circle" as const)
+        : ("gift-outline" as const),
     };
   }
   if (s.status === "active") {
     return {
-      title: "Abonnement actif ✨",
-      body: `Renouvellement automatique le ${formatDate(s.current_period_end)}.`,
+      title: isIOS ? "Compte actif ✨" : "Abonnement actif ✨",
+      body: isIOS
+        ? "Votre compte est opérationnel."
+        : `Renouvellement automatique le ${formatDate(s.current_period_end)}.`,
       color: "green" as const,
       icon: "checkmark-circle" as const,
     };
   }
   if (s.status === "past_due") {
     return {
-      title: "Paiement en retard ⚠️",
-      body: "Une facture est en attente de règlement. Mettez à jour votre moyen de paiement pour éviter le verrouillage.",
+      title: isIOS ? "Compte en attente ⚠️" : "Paiement en retard ⚠️",
+      body: isIOS
+        ? "La gestion du compte se fait depuis votre espace personnel sur le site web."
+        : "Une facture est en attente de règlement. Mettez à jour votre moyen de paiement pour éviter le verrouillage.",
       color: "orange" as const,
       icon: "warning-outline" as const,
     };
   }
   if (s.status === "canceled" || s.status === "unpaid") {
     return {
-      title: "Abonnement annulé",
-      body: "Souscrivez à nouveau pour réactiver l'accès à toutes les fonctionnalités.",
+      title: isIOS ? "Compte suspendu" : "Abonnement annulé",
+      body: isIOS
+        ? "Pour réactiver votre compte, contactez notre support."
+        : "Souscrivez à nouveau pour réactiver l'accès à toutes les fonctionnalités.",
       color: "red" as const,
       icon: "close-circle-outline" as const,
     };
   }
   return {
     title: `Statut : ${s.status ?? "inconnu"}`,
-    body: "Consultez votre portail pour plus de détails.",
+    body: isIOS
+      ? "La gestion du compte se fait depuis votre espace personnel sur le site web."
+      : "Consultez votre portail pour plus de détails.",
     color: "neutral" as const,
     icon: "information-circle-outline" as const,
   };

@@ -61,10 +61,14 @@ export default function SignIn() {
   //
   // 🆕 V3 (juin 2026) — Séparation explicite des 3 profils à l'inscription
   // pour matcher les 3 plans Stripe (Artisan Solo / Entreprise / Entreprise Pro).
-  // Sur iOS, les prix sont masqués pour respecter App Store Guideline 3.1.1.
+  // 🍎 iOS — App Store Guidelines 3.1.1 & 3.1.3(c) : on n'affiche AUCUN choix
+  // de plan / profil business sur iOS. L'inscription est strictement
+  // individuelle ("artisan" par défaut). Les utilisateurs qui veulent une
+  // organisation/équipe doivent passer par mesurechassis.com.
   const [accountType, setAccountType] = useState<"artisan" | "entreprise" | "pro">(
     "artisan",
   );
+  const isIOS = Platform.OS === "ios";
   const [submitting, setSubmitting] = useState(false);
 
   // ─── Mot de passe oublié (modal) ───
@@ -357,7 +361,14 @@ export default function SignIn() {
             <>
               {/* 🆕 V3 — Sélection du profil avec 3 plans (Artisan / Entreprise / Pro).
                * Les prix sont affichés sur Web/Android mais MASQUÉS sur iOS
-               * (App Store 3.1.1 — pas de mention de paiement externe). */}
+               * (App Store 3.1.1 — pas de mention de paiement externe).
+               *
+               * 🍎 iOS — App Store 3.1.1 + 3.1.3(c) : la sélection
+               * Entreprise/Pro est entièrement masquée. Sur iOS, on force
+               * un compte individuel ("artisan") sans aucune mention
+               * d'abonnement ni d'organisation. */}
+              {!isIOS && (
+                <>
               <Text style={styles.label}>{t("auth.chooseProfile")}</Text>
               {([
                 {
@@ -443,6 +454,8 @@ export default function SignIn() {
                   </TouchableOpacity>
                 );
               })}
+                </>
+              )}
 
               <Text style={styles.label}>
                 {accountType === "artisan"
@@ -566,6 +579,9 @@ export default function SignIn() {
                 </Text>
               )}
 
+              {/* 🍎 iOS — masqué : l'app iOS ne mentionne ni Admin
+               *  ni Entreprise ni Pro (App Store 3.1.1/3.1.3(c)). */}
+              {!isIOS && (
               <View style={styles.infoBox}>
                 <Ionicons
                   name="information-circle"
@@ -594,6 +610,7 @@ export default function SignIn() {
                   )}
                 </Text>
               </View>
+              )}
             </>
           )}
 

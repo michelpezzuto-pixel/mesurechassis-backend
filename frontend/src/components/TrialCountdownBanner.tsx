@@ -28,6 +28,12 @@ export default function TrialCountdownBanner() {
   // Pas de bannière tant que le profil société n'est pas chargé
   if (!company) return null;
 
+  // 🍎 iOS — App Store Guideline 2.2 (Beta Testing) :
+  // les bannières d'invitation au feedback peuvent être interprétées
+  // comme des fonctionnalités de beta testing. On masque toute la
+  // bannière sur iOS pour rester strictement neutre.
+  if (Platform.OS === "ios") return null;
+
   // Hors mode beta → on n'affiche rien ici (Stripe / paywall prendra le
   // relais une fois la facturation activée).
   if (!company.beta_mode) return null;
