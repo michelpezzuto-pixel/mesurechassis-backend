@@ -25,15 +25,29 @@ logger = logging.getLogger("mesurechassis.campaign")
 router = APIRouter()
 
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
-DAILY_LIMIT = 15
+DAILY_LIMIT = 30
 PAUSE_BETWEEN_SENDS_S = 3
-RELANCE_DELAY_DAYS = 5  # relance auto J+5 si pas inscrit comme testeur
+RELANCE_DELAY_DAYS = 3  # 1ère relance J+3 si pas répondu
+SECOND_RELANCE_DELAY_DAYS = 7  # 2e relance J+7 (dernière chance)
 
+# === SUJETS (testés pour CTR optimal en B2B menuisiers) ============
 SUBJECTS = {
-    "be": "Artisan menuisier ? Testez en avant-première l'app belge de prise de mesures",
-    "fr": "Artisan menuisier ? Testez en avant-première l'app de prise de mesures pensée pour le métier",
-    "lu": "Artisan menuisier ? Testez en avant-première l'app de prise de mesures pensée pour le métier",
+    "be": "Question entre menuisiers 🪟",
+    "fr": "Question entre menuisiers 🪟",
+    "lu": "Question entre menuisiers 🪟",
 }
+SUBJECT_RELANCE_1 = "Un mot rapide ?"
+SUBJECT_RELANCE_2 = "Dernière relance — promis"
+
+# Lien direct vers la version web de l'app (accès direct sans installation)
+APP_WEB_URL = "https://window-field-app.preview.emergentagent.com"
+# QR code généré dynamiquement via api.qrserver.com (gratuit, illimité)
+QR_IMG_URL = (
+    "https://api.qrserver.com/v1/create-qr-code/"
+    "?size=200x200"
+    "&data=https%3A%2F%2Fwindow-field-app.preview.emergentagent.com"
+    "&color=121214&bgcolor=ffffff&qzone=1"
+)
 
 # {origin} : phrase d'accroche adaptée au pays du prospect (option B du client —
 # les belges voient "application mobile belge", FR/LU un texte neutre).
@@ -43,46 +57,77 @@ ORIGIN_PHRASES = {
     "lu": "une application mobile conçue par un menuisier",
 }
 
+# ═════════════════════════════════════════════════════════════════════
+# === MAIL #2 — Premier contact (court, max 80 mots, QR + lien) ═════
+# ═════════════════════════════════════════════════════════════════════
 BODY_TEMPLATE = """Bonjour,
 
-Je me permets de contacter {company} car je lance un outil pensé pour notre métier. Je m'appelle Michel Pezzuto et, comme vous, je connais les réalités du terrain. C'est pourquoi j'ai créé MesureChâssis : {origin} qui en finit avec le carnet de notes et les erreurs de ressaisie sur les chantiers.
+Je suis Michel, menuisier comme vous.
 
-Concrètement, MesureChâssis vous permet de :
+J'en avais marre des erreurs de cotes sur mes chantiers, alors j'ai créé une app : MesureChâssis.
 
-✅ Relever vos cotes avec un assistant guidé — 12 formes de baies, du rectangle au bow-window
-✅ Organiser vos chantiers et vos équipes (commercial / technicien)
-✅ Générer en un clic des fiches PDF techniques prêtes pour la production
+3 questions par jour. 0 erreur. Mes châssis rentrent TOUS au premier coup maintenant.
 
-Avant le lancement officiel sur Google Play, j'ouvre l'application à un groupe d'artisans — et j'aimerais vous compter parmi eux. L'accès est entièrement gratuit.
+🎁 Je l'offre à tous les menuisiers belges jusqu'au 30 septembre 2026.
+Pas de carte bancaire, juste un test.
 
-👉 Pour devenir testeur (30 secondes) :
-https://mesurechassis.com/devenir-testeur.html
+Scannez le QR code ci-dessous ou cliquez ici (2 min pour tester) :
+👉 {app_web_url}
 
-Il vous faut simplement un téléphone Android et une adresse Gmail. Vous recevrez ensuite le lien d'installation Google Play par email.
+[QR_CODE_PLACEHOLDER]
 
-Votre regard de professionnel compte : chaque retour m'aide à construire l'outil dont notre métier a vraiment besoin.
+Si vous testez, dites-moi ce que vous en pensez — votre retour vaut de l'or pour moi.
 
-Bien cordialement,
-Michel Pezzuto — Fondateur de MesureChâssis
-info@mesurechassis.com · https://mesurechassis.com
+Michel Pezzuto — Menuisier · Fondateur MesureChâssis
+📧 info@mesurechassis.com · 🌐 https://mesurechassis.com
 
 —
 Vous recevez cet email car votre entreprise est active dans la menuiserie. Pour ne plus être contacté, répondez simplement STOP."""
 
+# ═════════════════════════════════════════════════════════════════════
+# === MAIL #3 — Relance J+3 (soft, court) ═══════════════════════════
+# ═════════════════════════════════════════════════════════════════════
 RELANCE_TEMPLATE = """Bonjour,
 
-Il y a quelques jours, je proposais à {company} de découvrir MesureChâssis en avant-première — l'application qui simplifie la prise de mesures sur chantier (12 formes de baies, fiches PDF prêtes pour la production).
+Je vous ai envoyé un message il y a quelques jours sur MesureChâssis. Je sais que vous êtes débordé.
 
-Les places de testeurs se remplissent et je voulais m'assurer que mon premier message ne s'était pas perdu : l'accès reste entièrement gratuit, et il suffit d'un téléphone Android et d'une adresse Gmail.
+Juste un mot : avez-vous eu 2 minutes pour scanner le QR code ?
 
-👉 Inscription en 30 secondes :
-https://mesurechassis.com/devenir-testeur.html
+[QR_CODE_PLACEHOLDER]
 
-Votre regard de professionnel serait précieux pour construire un outil qui colle vraiment au terrain.
+👉 {app_web_url}
+
+L'accès reste 100 % gratuit jusqu'au 30 septembre 2026.
+
+Si vous n'êtes pas intéressé, dites-le-moi franchement, je ne reviendrai pas.
+Si vous voulez que je vous montre comment ça marche en visio (10 min), répondez juste à ce mail.
 
 Bien cordialement,
-Michel Pezzuto — Fondateur de MesureChâssis
-info@mesurechassis.com · https://mesurechassis.com
+Michel Pezzuto — MesureChâssis
+
+—
+Pour ne plus être contacté, répondez simplement STOP."""
+
+# ═════════════════════════════════════════════════════════════════════
+# === MAIL #4 — Relance J+7 (dernier essai, ouverte et honnête) ══════
+# ═════════════════════════════════════════════════════════════════════
+RELANCE_2_TEMPLATE = """Bonjour,
+
+Je vous écris une dernière fois (promis !).
+
+Si MesureChâssis ne vous intéresse pas, pas de souci, je vous laisse tranquille.
+
+Si vous voulez juste jeter un œil pour vous faire un avis, voici l'app en accès direct (2 min, gratuit jusqu'au 30 septembre 2026) :
+
+👉 {app_web_url}
+
+[QR_CODE_PLACEHOLDER]
+
+Une réponse « oui » ou « non » me suffit, je ne prends pas mal 🙏
+
+Bonne continuation,
+Michel Pezzuto — Fondateur MesureChâssis
+📧 info@mesurechassis.com
 
 —
 Pour ne plus être contacté, répondez simplement STOP."""
@@ -263,12 +308,29 @@ async def _quota_used_today() -> int:
 
 
 async def _relances_dues() -> list[dict]:
-    """Prospects contactés il y a ≥ J+5, jamais relancés, pas encore inscrits."""
+    """Prospects à relancer J+3 (1ère relance) — pas répondu après le premier envoi."""
     cutoff = (
         datetime.now(timezone.utc) - timedelta(days=RELANCE_DELAY_DAYS)
     ).isoformat()
     docs = await db.prospects.find(
         {"status": "sent", "relance_sent_at": None, "sent_at": {"$lte": cutoff}},
+        {"_id": 0, "id": 1, "email": 1},
+    ).to_list(500)
+    signups = await _signup_emails()
+    return [d for d in docs if d["email"] not in signups]
+
+
+async def _second_relances_dues() -> list[dict]:
+    """Prospects à relancer J+7 (2e relance, dernière) — déjà relancés une fois."""
+    cutoff = (
+        datetime.now(timezone.utc) - timedelta(days=SECOND_RELANCE_DELAY_DAYS)
+    ).isoformat()
+    docs = await db.prospects.find(
+        {
+            "status": "sent",
+            "relance_sent_at": {"$ne": None, "$lte": cutoff},
+            "relance_2_sent_at": None,
+        },
         {"_id": 0, "id": 1, "email": 1},
     ).to_list(500)
     signups = await _signup_emails()
@@ -316,7 +378,7 @@ async def list_prospects(user=Depends(require_admin)):
 async def _send_batch_task(items: list[dict]) -> None:
     """Tâche de fond : envoie les emails un par un, espacés (anti-spam).
 
-    `items` : [{"id": ..., "kind": "new" | "relance"}].
+    `items` : [{"id": ..., "kind": "new" | "relance" | "relance2"}].
     """
     for item in items:
         pid, kind = item["id"], item["kind"]
@@ -327,15 +389,35 @@ async def _send_batch_task(items: list[dict]) -> None:
             continue
         company = doc.get("company") or "votre entreprise"
         country = (doc.get("country") or "be").lower()
-        subject = SUBJECTS.get(country, SUBJECTS["fr"])
         if kind == "relance":
-            subject = "Re: " + subject
-            body = RELANCE_TEMPLATE.format(company=company)
+            subject = SUBJECT_RELANCE_1
+            body = RELANCE_TEMPLATE.format(
+                company=company, app_web_url=APP_WEB_URL,
+            )
+        elif kind == "relance2":
+            subject = SUBJECT_RELANCE_2
+            body = RELANCE_2_TEMPLATE.format(
+                company=company, app_web_url=APP_WEB_URL,
+            )
         else:
+            subject = SUBJECTS.get(country, SUBJECTS["fr"])
             body = BODY_TEMPLATE.format(
                 company=company,
                 origin=ORIGIN_PHRASES.get(country, ORIGIN_PHRASES["fr"]),
+                app_web_url=APP_WEB_URL,
             )
+        # Insertion du QR code (image HTML inline) à la place du placeholder
+        # send_email rend automatiquement le body en HTML — le tag <img> sera
+        # préservé. On marque clairement la ligne pour les clients texte aussi.
+        qr_html_block = (
+            f'<div style="text-align:center;margin:20px 0">'
+            f'<img src="{QR_IMG_URL}" alt="QR code MesureChassis" '
+            f'width="200" height="200" '
+            f'style="border:1px solid #ddd;border-radius:8px;padding:8px;background:#fff" />'
+            f'<br><span style="font-size:12px;color:#666">'
+            f'(scannez ce QR avec votre téléphone)</span></div>'
+        )
+        body = body.replace("[QR_CODE_PLACEHOLDER]", qr_html_block)
         try:
             # send_email est synchrone (appel HTTP Resend) → thread séparé
             # pour ne pas bloquer l'event loop pendant le lot.
@@ -349,6 +431,8 @@ async def _send_batch_task(items: list[dict]) -> None:
         now_iso = datetime.now(timezone.utc).isoformat()
         if kind == "relance":
             update = {"relance_sent_at": now_iso, "relance_failed": not ok}
+        elif kind == "relance2":
+            update = {"relance_2_sent_at": now_iso, "relance_2_failed": not ok}
         else:
             update = {"status": "sent" if ok else "failed", "sent_at": now_iso}
         await db.prospects.update_one({"id": pid}, {"$set": update})
@@ -360,9 +444,12 @@ async def _send_batch_task(items: list[dict]) -> None:
 
 @router.post("/campaign/send-batch")
 async def send_batch(background_tasks: BackgroundTasks, user=Depends(require_admin)):
-    """Envoie le lot du jour : relances J+5 en priorité, puis nouveaux prospects.
+    """Envoie le lot du jour, dans cet ordre de priorité :
+      1. Relances J+7 (dernière chance, leads les plus tièdes)
+      2. Relances J+3 (rappel soft)
+      3. Nouveaux prospects (premier contact)
 
-    Quota global de 15 emails/jour (premiers envois + relances confondus).
+    Quota global : 30 emails/jour (toutes catégories confondues).
     """
     remaining = DAILY_LIMIT - await _quota_used_today()
     if remaining <= 0:
@@ -371,18 +458,29 @@ async def send_batch(background_tasks: BackgroundTasks, user=Depends(require_adm
             f"Limite quotidienne atteinte ({DAILY_LIMIT} emails/jour). Revenez demain !",
         )
     now_iso = datetime.now(timezone.utc).isoformat()
+    items: list[dict] = []
 
-    # 1) Relances J+5 prioritaires (leads encore tièdes)
-    relances = (await _relances_dues())[:remaining]
-    if relances:
-        # Horodatage immédiat = verrou anti double-clic
+    # 1) Relances J+7 (priorité max — dernière chance)
+    second_relances = (await _second_relances_dues())[:remaining]
+    if second_relances:
         await db.prospects.update_many(
-            {"id": {"$in": [d["id"] for d in relances]}},
-            {"$set": {"relance_sent_at": now_iso}},
+            {"id": {"$in": [d["id"] for d in second_relances]}},
+            {"$set": {"relance_2_sent_at": now_iso}},
         )
-    items = [{"id": d["id"], "kind": "relance"} for d in relances]
+        items += [{"id": d["id"], "kind": "relance2"} for d in second_relances]
 
-    # 2) Nouveaux prospects sur les créneaux restants
+    # 2) Relances J+3
+    slots = remaining - len(items)
+    if slots > 0:
+        relances = (await _relances_dues())[:slots]
+        if relances:
+            await db.prospects.update_many(
+                {"id": {"$in": [d["id"] for d in relances]}},
+                {"$set": {"relance_sent_at": now_iso}},
+            )
+            items += [{"id": d["id"], "kind": "relance"} for d in relances]
+
+    # 3) Nouveaux prospects sur les créneaux restants
     slots = remaining - len(items)
     if slots > 0:
         batch = (
@@ -401,9 +499,71 @@ async def send_batch(background_tasks: BackgroundTasks, user=Depends(require_adm
     if not items:
         raise HTTPException(404, "Aucun prospect en attente ni relance due 🎉")
     background_tasks.add_task(_send_batch_task, items)
-    n_rel = len(relances)
-    msg = f"Envoi de {len(items)} emails lancé"
+    n_rel = sum(1 for x in items if x["kind"] == "relance")
+    n_rel2 = sum(1 for x in items if x["kind"] == "relance2")
+    n_new = sum(1 for x in items if x["kind"] == "new")
+    parts = []
+    if n_new:
+        parts.append(f"{n_new} nouveau{'x' if n_new > 1 else ''}")
     if n_rel:
-        msg += f" (dont {n_rel} relance{'s' if n_rel > 1 else ''} J+5)"
+        parts.append(f"{n_rel} relance{'s' if n_rel > 1 else ''} J+3")
+    if n_rel2:
+        parts.append(f"{n_rel2} relance{'s' if n_rel2 > 1 else ''} J+7")
+    msg = f"Envoi de {len(items)} emails lancé ({' · '.join(parts)})"
     msg += f" — ≈{len(items) * PAUSE_BETWEEN_SENDS_S}s. Actualisez pour suivre."
-    return {"ok": True, "scheduled": len(items), "relances": n_rel, "message": msg}
+    return {
+        "ok": True,
+        "scheduled": len(items),
+        "new": n_new,
+        "relances": n_rel,
+        "relances_2": n_rel2,
+        "message": msg,
+    }
+
+
+# ════════════════════════════════════════════════════════════════════
+# === RESET / TABULA RASA — pour relancer une campagne depuis zéro ═══
+# ════════════════════════════════════════════════════════════════════
+@router.post("/campaign/prospects/reset")
+async def reset_prospects(payload: dict, user=Depends(require_admin)):
+    """Remet tous les prospects (ou un sous-ensemble) en statut "pending".
+
+    Utilisation : Michel veut redémarrer une campagne depuis zéro après
+    refonte des templates → on remet tout en pending et le bouton
+    « Envoyer le lot du jour » repart de zéro avec les nouveaux mails.
+
+    Body : { "scope": "all" | "sent" }
+      - "all"  : remet TOUT en pending (y compris failed)
+      - "sent" : ne remet que ceux qui ont déjà reçu un mail (utile pour
+                 ré-envoyer un mail #2 modernisé à tous les anciens contactés)
+    """
+    scope = (payload or {}).get("scope", "sent")
+    if scope == "all":
+        flt = {}
+    elif scope == "sent":
+        flt = {"status": {"$in": ["sent", "failed"]}}
+    else:
+        raise HTTPException(400, "scope invalide (all | sent)")
+    res = await db.prospects.update_many(
+        flt,
+        {
+            "$set": {
+                "status": "pending",
+                "sent_at": None,
+                "relance_sent_at": None,
+                "relance_2_sent_at": None,
+                "relance_failed": False,
+                "relance_2_failed": False,
+            }
+        },
+    )
+    logger.info(
+        "Campagne RESET (scope=%s) — %s prospects remis en pending",
+        scope, res.modified_count,
+    )
+    return {
+        "ok": True,
+        "scope": scope,
+        "reset": res.modified_count,
+        "message": f"{res.modified_count} prospect(s) remis en file d'envoi.",
+    }
