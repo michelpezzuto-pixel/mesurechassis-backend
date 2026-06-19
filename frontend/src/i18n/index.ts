@@ -18,11 +18,34 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import fr from "./locales/fr.json";
 import nl from "./locales/nl.json";
 import en from "./locales/en.json";
+import { adaptArtisan } from "@/src/utils/artisanText";
 
 export const SUPPORTED_LANGUAGES = ["fr", "nl", "en"] as const;
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
 
 const STORAGE_KEY = "mc.lang";
+
+// ════════════════════════════════════════════════════════════════════════════
+// 🆕 Build 9 — PostProcessor "artisan"
+// ════════════════════════════════════════════════════════════════════════════
+// En mode Artisan (compte solo), l'utilisateur EST à la fois le commercial,
+// le technicien et l'admin. Les mentions "commercial / technicien" deviennent
+// confuses. Ce postProcessor remplace ces termes par "vous" / "atelier" SANS
+// avoir à toucher à chaque écran : la transformation est appliquée à toutes
+// les chaînes retournées par `t()`.
+//
+// L'état `__artisanMode` est mis à jour par AuthContext via `setArtisanMode()`.
+// ════════════════════════════════════════════════════════════════════════════
+let __artisanMode = false;
+export function setArtisanMode(active: boolean): void {
+  __artisanMode = !!active;
+}
+const artisanPostProcessor = {
+  type: "postProcessor" as const,
+  name: "artisan",
+  process: (value: string) => adaptArtisan(String(value ?? ""), __artisanMode),
+};
+
 
 /** Détecte la langue à utiliser au démarrage.
  *  Priorité : AsyncStorage > Langue système > FR
@@ -49,18 +72,23 @@ async function detectInitialLanguage(): Promise<SupportedLanguage> {
 }
 
 // Initialisation synchrone avec FR — puis mise à jour async via init().
-void i18n.use(initReactI18next).init({
-  resources: {
-    fr: { translation: fr },
-    nl: { translation: nl },
-    en: { translation: en },
-  },
-  lng: "fr",
-  fallbackLng: "fr",
-  interpolation: { escapeValue: false },
-  react: { useSuspense: false },
-  compatibilityJSON: "v4",
-});
+void i18n
+  .use(initReactI18next)
+  .use(artisanPostProcessor)
+  .init({
+    resources: {
+      fr: { translation: fr },
+      nl: { translation: nl },
+      en: { translation: en },
+    },
+    lng: "fr",
+    fallbackLng: "fr",
+    interpolation: { escapeValue: false },
+    react: { useSuspense: false },
+    compatibilityJSON: "v4",
+    // 🆕 Build 9 — applique partout la transformation Artisan
+    postProcess: ["artisan"],
+  });
 
 // Au boot : détecte la langue et applique de manière asynchrone.
 void detectInitialLanguage().then((lng) => {

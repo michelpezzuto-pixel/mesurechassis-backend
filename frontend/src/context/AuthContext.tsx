@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { api, clearToken, getToken, onSubscriptionState, saveToken } from "@/src/services/api";
 import { registerPushTokenWithBackend } from "@/src/services/notifications";
 import PaywallScreen from "@/src/components/PaywallScreen";
+import i18n, { setArtisanMode as setI18nArtisanMode } from "@/src/i18n";
 
 export type Role = "admin" | "commercial" | "technician";
 
@@ -216,6 +217,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const artisanMode = !!company?.artisan_mode;
+
+  // 🆕 Build 9 — Synchronise le postProcessor i18n "artisan" pour adapter
+  // automatiquement le vocabulaire (commercial / technicien → vous / atelier).
+  // `i18n.emit("languageChanged")` force le re-render des composants i18n
+  // sans changer la langue, pour que `t()` repasse par le postProcessor.
+  useEffect(() => {
+    setI18nArtisanMode(artisanMode);
+    try {
+      i18n.emit("languageChanged", i18n.language);
+    } catch {
+      /* silent — i18n peut ne pas être prêt en SSR */
+    }
+  }, [artisanMode]);
 
   const hasRole = (roles: Role[]) => {
     if (artisanMode) return true;

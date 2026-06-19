@@ -1,0 +1,47 @@
+{
+  "summary": "Backend referral regression validated after frontend i18n/banner/app.json changes. 40/40 tests pass (32 existing /app/backend/tests/test_referral.py + 8 new smoke tests in test_referral_cousin_smoke.py using cousin.admin@test.mesurechassis.com per request). All 8 scenarios from the review request behave as specified: GET /referral/me returns full ReferralStatus shape, custom code accepted with code_is_custom=true, too-short/ADMIN/MC- prefix all rejected, /referral/validate works for known + unknown codes, and /auth/register with referral_code=DEMO-ADMIN correctly sets referred_by_company_id=default in DB. No backend regression.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/referral/code (length errors)", "issue": "Returns 400 for too-short codes (e.g. 'AB') with detail 'Le code doit faire entre 4 et 24 caractères.' — spec-compliant. Note: prior iteration claimed 422 from Pydantic min_length but the current code (routes/referral.py:171-172) validates manually and returns 400 properly. No change needed."},
+      {"endpoint": "POST /api/referral/code (spaces)", "issue": "Pre-existing deviation (already noted in iter7): 'A B C' is normalized to 'A-B-C' via _normalize_code() and accepted. Not introduced by frontend changes."},
+      {"endpoint": "POST /api/auth/register", "issue": "MC_AUTO_VERIFY_ON_REGISTER=0 in /app/backend/.env (was implicitly 1 last iteration). New accounts now created in pending_verification → cannot login immediately. The referral tests needed a DB-side activation patch. Frontend signup → login flow will break for end users unless email verification is wired up OR the env is flipped back to 1. NOT a referral bug but worth flagging."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_referral.py",
+    "/app/backend/tests/test_referral_cousin_smoke.py",
+    "/app/test_reports/pytest/iter8_full_referral.xml"
+  ],
+  "action_items": [
+    "(Decide) MC_AUTO_VERIFY_ON_REGISTER was switched from 1→0 between iter7 and iter8 in /app/backend/.env. If the verification email flow is not yet wired in the UI, end users will be stuck at login. Confirm intent or revert to 1.",
+    "(Optional) Add a MongoDB unique sparse index on companies.referral_code to harden against race conditions: db.companies.create_index('referral_code', unique=True, sparse=True). Currently only application-level uniqueness check.",
+    "(Cosmetic, pre-existing) Decide policy on spaces in custom referral codes — currently 'A B C' is silently normalized to 'A-B-C'. Either accept as design or strip the .replace(' ', '-') in _normalize_code()."
+  ],
+  "critical_code_review_comments": [
+    "Frontend changes (i18n postProcessor 'artisan', iOS portrait override in app.json, FilleulInviteBanner) have ZERO impact on backend referral routes — confirmed by running full referral test suite green.",
+    "ReferralStatus payload shape exactly matches the spec: code, code_is_custom, max_referrals=10, referrals_used, referrals_pending, credit_months_total, credit_months_remaining, referred_by_code.",
+    "ensure_referral_code() helper correctly lazily creates an MC-XXXXXX code on first call for any company missing one. Verified end-to-end in test_register_with_referral_code_links_referrer.",
+    "link_referral_at_signup() never raises (wrapped in try/except in auth.py:282-284) — registration cannot be blocked by referral system. ✅",
+    "Public /referral/validate (no auth) exposes parrain `name` (no email/phone). By design but worth a PII review."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_referral.py (patched _register helper to auto-activate users in DB after register — necessary because MC_AUTO_VERIFY_ON_REGISTER=0 now keeps accounts in pending_verification; the referral suite is not the verification suite)",
+    "/app/backend/tests/test_referral_cousin_smoke.py (NEW — 8 smoke tests using cousin.admin@test.mesurechassis.com per review-request)"
+  ],
+  "success_rate": {
+    "backend": "100% (40/40 referral tests pass)",
+    "frontend": "not tested (backend-only request)"
+  },
+  "seed_data_creation": "test_referral_cousin_smoke.py: 1 throwaway company pytestref_cousinflw_*@pytest.example.com per run, deleted in fixture finally-block. test_referral.py: ~24 throwaway companies per run, cleaned by autouse fixture. test_post_referral_code_custom_valid mutates cousin.admin's company referral_code (no cleanup — DB stays in test state per review-request instructions).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "(1) MC_AUTO_VERIFY_ON_REGISTER=0 in /app/backend/.env — new accounts via /auth/register land in status=pending_verification and cannot login. Tests that need to chain register→login must directly flip the user to status=active in DB (see _register helper in test_referral.py). (2) BETA_MODE=True so account_type=entreprise/artisan/pro all get plan=pro + active subscription. (3) DEMO-ADMIN is admin@mesurechassis.fr's referral code → /validate returns parrain_name='default' (the company name). (4) Cousin admin's referral_code may now be a TEST-V-XXXXXXXXXX custom value (not the auto MC- one) — re-running test_post_referral_code_custom_valid is idempotent (always sets a fresh unique code). (5) No MongoDB unique index on referral_code — only app-level. (6) Frontend changes in this iteration are i18n + dashboard banner only; backend untouched and untouchable.",
+  "rca_of_issue": "No bug found. The initial 22-test failure on first run was a TEST-fixture issue caused by MC_AUTO_VERIFY_ON_REGISTER=0: the _register helper created accounts in pending_verification, then _login failed with 403 email_not_verified. Fixed by injecting a status=active flip in DB right after register inside the test helper. Re-ran: 32/32 + 8/8 = 40/40 green. The referral endpoints themselves are unchanged and behave correctly."
+}

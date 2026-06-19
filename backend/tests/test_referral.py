@@ -27,7 +27,12 @@ PYTEST_TAG_EMAIL = "pytestref_"
 # ───────────────────── helpers ─────────────────────
 async def _register(client, *, email_suffix: str, referral_code: str | None = None,
                     company_name: str | None = None):
-    """Crée un compte admin via /auth/register (master mode, BETA)."""
+    """Crée un compte admin via /auth/register (master mode, BETA).
+
+    Force le user en `status=active` après création pour bypass le mode
+    `pending_verification` (MC_AUTO_VERIFY_ON_REGISTER=0 en preview).
+    Le double opt-in n'est pas l'objet de ces tests.
+    """
     email = f"{PYTEST_TAG_EMAIL}{email_suffix}_{uuid.uuid4().hex[:6]}@pytest.example.com".lower()
     body = {
         "name": f"PYTEST {email_suffix}",
@@ -39,6 +44,16 @@ async def _register(client, *, email_suffix: str, referral_code: str | None = No
     if referral_code is not None:
         body["referral_code"] = referral_code
     r = await client.post("/api/auth/register", json=body)
+    # Auto-activate pour éviter les blocages double opt-in dans les tests
+    if r.status_code == 200:
+        from datetime import datetime, timezone
+        await db.users.update_one(
+            {"email": email},
+            {"$set": {
+                "status": "active",
+                "email_verified_at": datetime.now(timezone.utc).isoformat(),
+            }},
+        )
     return r, email
 
 

@@ -26,6 +26,7 @@ import { colors, statusMeta, getStatusLabelI18n, READY_FOR_EXPORT_BADGE } from "
 import { useResponsive } from "@/src/utils/responsive";
 import TrialCountdownBanner from "@/src/components/TrialCountdownBanner";
 import FreebieCountdown from "@/src/components/FreebieCountdown";
+import FilleulInviteBanner from "@/src/components/FilleulInviteBanner";
 import ChatHelp from "@/src/components/ChatHelp";
 import AppointmentPicker from "@/src/components/AppointmentPicker";
 import OnboardingCard from "@/src/components/OnboardingCard";
@@ -499,6 +500,9 @@ export default function Dashboard() {
       </View>
 
       <FreebieCountdown />
+
+      {/* 🆕 Build 9 — Incite le filleul à parrainer (disparaît dès 1er parrainage) */}
+      <FilleulInviteBanner />
 
       <View style={{ paddingHorizontal: 16 }}>
         <TrialCountdownBanner />

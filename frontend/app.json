@@ -17,7 +17,16 @@
         "NSPhotoLibraryUsageDescription": "Joindre une photo à une mesure",
         "NSPhotoLibraryAddUsageDescription": "Enregistrer un PDF de mesures dans votre photothèque",
         "NSMicrophoneUsageDescription": "Dicter vos notes de chantier à voix haute",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "UISupportedInterfaceOrientations": [
+          "UIInterfaceOrientationPortrait"
+        ],
+        "UISupportedInterfaceOrientations~ipad": [
+          "UIInterfaceOrientationPortrait",
+          "UIInterfaceOrientationPortraitUpsideDown",
+          "UIInterfaceOrientationLandscapeLeft",
+          "UIInterfaceOrientationLandscapeRight"
+        ]
       }
     },
     "android": {
