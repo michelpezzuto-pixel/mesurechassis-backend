@@ -60,13 +60,26 @@ export default function YannScreen() {
   const [loading, setLoading] = useState(false);
   const [quotaRemaining, setQuotaRemaining] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [paywalled, setPaywalled] = useState(false);
+  const [accessReason, setAccessReason] = useState<string | null>(null);
 
-  // Charge le quota au montage
+  // Charge le quota + statut d'accès au montage
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await api.get<{ remaining: number; limit: number }>("/yann/quota");
+        const { data } = await api.get<{
+          remaining: number;
+          limit: number;
+          allowed?: boolean;
+          access_reason?: string;
+        }>("/yann/quota");
         setQuotaRemaining(data.remaining);
+        if (data.allowed === false) {
+          setPaywalled(true);
+          setAccessReason(data.access_reason ?? "plan_too_low");
+        } else {
+          setAccessReason(data.access_reason ?? null);
+        }
       } catch {
         // silent
       }
@@ -114,9 +127,15 @@ export default function YannScreen() {
         ]);
         scrollToEnd();
       } catch (e: any) {
+        // 402 = paywall (l'accès n'est plus autorisé, sortie de beta/trial)
+        if (e?.response?.status === 402) {
+          setPaywalled(true);
+          setAccessReason(e?.response?.data?.detail?.reason ?? "plan_too_low");
+          return;
+        }
         const detail =
           e?.response?.data?.detail ?? "Yann n'a pas pu répondre. Réessayez dans un instant.";
-        setError(String(detail));
+        setError(typeof detail === "string" ? detail : detail?.message ?? "Erreur");
       } finally {
         setLoading(false);
       }
@@ -174,13 +193,48 @@ export default function YannScreen() {
             <Text style={styles.headerTitle}>Yann</Text>
             <Text style={styles.headerSub}>
               Assistant IA MesureChâssis
-              {quotaRemaining !== null && ` · ${quotaRemaining} msg/j restants`}
+              {!paywalled && quotaRemaining !== null && ` · ${quotaRemaining} msg/j restants`}
             </Text>
           </View>
         </View>
       </View>
 
-      {/* ─── Messages ────────────────────────────────────────────── */}
+      {/* ─── Paywall (sortie de la période beta + pas d'add-on) ──── */}
+      {paywalled ? (
+        <View style={styles.paywallWrap}>
+          <View style={styles.paywallCard}>
+            <View style={styles.paywallIcon}>
+              <Text style={styles.paywallIconText}>🤖</Text>
+            </View>
+            <Text style={styles.paywallTitle}>Yann est en option sur votre plan</Text>
+            <Text style={styles.paywallText}>
+              Votre assistant IA est inclus dans la formule{" "}
+              <Text style={styles.paywallStrong}>Entreprise Pro</Text>, et disponible en option à{" "}
+              <Text style={styles.paywallStrong}>5 €/mois</Text> sur Artisan Solo et Entreprise.
+            </Text>
+            <Text style={styles.paywallText}>
+              Vous y avez aussi accès gratuitement pendant vos{" "}
+              <Text style={styles.paywallStrong}>14 jours d&apos;essai</Text>.
+            </Text>
+
+            {Platform.OS !== "ios" && (
+              <TouchableOpacity
+                style={styles.paywallCta}
+                onPress={() => router.replace("/subscription")}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.paywallCtaText}>Voir les formules</Text>
+                <Ionicons name="arrow-forward" size={18} color="#000" />
+              </TouchableOpacity>
+            )}
+            {Platform.OS === "ios" && (
+              <Text style={styles.paywallNote}>
+                Pour activer Yann, rendez-vous sur mesurechassis.com depuis votre ordinateur.
+              </Text>
+            )}
+          </View>
+        </View>
+      ) : (
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={{ flex: 1 }}
@@ -263,6 +317,7 @@ export default function YannScreen() {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
+      )}
     </View>
   );
 }
@@ -442,5 +497,66 @@ const styles = StyleSheet.create({
   },
   sendBtnDisabled: {
     backgroundColor: "#2a2a2f",
+  },
+  // ─── Paywall styles ────────────────────────────────────────────
+  paywallWrap: {
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: 20,
+  },
+  paywallCard: {
+    backgroundColor: colors.surface,
+    borderRadius: 18,
+    padding: 24,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  paywallIcon: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: "rgba(147, 51, 234, 0.16)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 18,
+  },
+  paywallIconText: { fontSize: 36 },
+  paywallTitle: {
+    fontSize: 19,
+    fontWeight: "900",
+    color: colors.textPrimary,
+    textAlign: "center",
+    marginBottom: 14,
+  },
+  paywallText: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: colors.textSecondary,
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  paywallStrong: { color: colors.textPrimary, fontWeight: "800" },
+  paywallCta: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: colors.primary,
+    paddingHorizontal: 22,
+    paddingVertical: 14,
+    borderRadius: 12,
+    marginTop: 16,
+  },
+  paywallCtaText: {
+    color: "#000",
+    fontSize: 15,
+    fontWeight: "800",
+  },
+  paywallNote: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    textAlign: "center",
+    marginTop: 14,
+    fontStyle: "italic",
   },
 });

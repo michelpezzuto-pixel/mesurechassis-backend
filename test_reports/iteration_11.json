@@ -1,0 +1,45 @@
+{
+  "summary": "Tested NEW Yann paywall logic. Created /app/backend/tests/test_yann_paywall.py with 14 tests (8 pure unit tests on services.yann_access.is_yann_allowed covering all 6 branches incl. expired trial + missing company_doc, + 6 integration tests). All 24 tests pass (10 existing test_yann.py + 14 new) in 16.87s. UNIT: BETA→beta, trial(future)→trial, trial(past)→expired, suspended→no_subscription, pro→pro, addon→addon, low+no-addon→plan_too_low, None company_doc→plan_too_low. INTEGRATION: (1) Live server with BETA_MODE=True: GET /api/yann/quota returns allowed=true, access_reason='beta', limit=30. (2) BETA_MODE=False monkey-patched on services.yann_access AND deps (critical — deps.ensure_company would otherwise force plan=pro back) — verified via in-process ASGITransport client: suspended→402 detail={code:'yann_paywall', reason:'no_subscription', message}; trial(future)→quota allowed=true reason='trial'; plan=pro→reason='pro'; plan=trial+addon=True→reason='addon'; plan=trial+no addon→402 reason='plan_too_low'. No real LLM calls were made for the paywall scenarios (blocked cases return 402 before LLM; allowed cases verified via GET /quota which exposes the same allowed/access_reason fields). Company doc snapshotted & restored via replace_one — verified post-test state matches pre-test (plan=pro, subscription_status=active, expires 2036).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "services/yann_access.py:_is_future", "issue": "When subscription_expires_at is None the helper returns False, causing a trial without expiry date to be reported as 'expired'. The branch comment in the docstring says 'None = sans limite' but the code returns False. Either fix code to treat None as future, or update docstring. Cosmetic for current usage (trial always has expiry)."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_yann_paywall.py",
+    "/app/backend/tests/test_yann.py",
+    "/app/test_reports/pytest/iter11_yann_paywall.xml",
+    "/app/test_reports/pytest/iter11_yann_full.xml"
+  ],
+  "action_items": [
+    "Optional: fix docstring/behavior mismatch in services/yann_access.py:_is_future for None expires_at.",
+    "Consider extracting BETA_MODE access via `db.BETA_MODE` attribute lookup (instead of `from db import BETA_MODE`) in deps.py and services/yann_access.py — this would make the flag dynamically togglable without dual-module monkey-patching (useful for ops/tests)."
+  ],
+  "critical_code_review_comments": [
+    "is_yann_allowed is well-factored, returns precise reason codes, and is unit-testable in isolation (no DB calls). 6 documented branches all reachable.",
+    "Order of checks is correct: BETA → trial → suspended → pro → addon → fallback (plan_too_low). Suspended properly short-circuits before pro/addon — verified.",
+    "POST /api/yann/chat now returns the spec-compliant 402 with detail={code:'yann_paywall', reason, message} — confirmed in integration test.",
+    "GET /api/yann/quota now exposes `allowed` and `access_reason` — enables UI to show the right CTA without invoking the LLM.",
+    "Re-evaluating paywall on every call (not just at session start) is correct — upgrades take effect immediately.",
+    "ARCHITECTURE NOTE: `from db import BETA_MODE` creates a snapshot reference in both deps.py and services/yann_access.py. Toggling db.BETA_MODE at runtime won't propagate — tests work around this by patching both modules. Not a bug, but worth knowing for ops."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_yann_paywall.py (new)"
+  ],
+  "success_rate": {
+    "backend": "100% (24/24 tests pass — 10 existing + 14 new)",
+    "frontend": "N/A (backend only per request)"
+  },
+  "seed_data_creation": "No persistent test data created. Integration tests snapshot the cousin-entreprise-7c4e44 company doc, mutate it during the test (plan/subscription_status/yann_addon_active), and restore via replace_one in fixture teardown. Verified post-run that the company is back to plan=pro, subscription_status=active, expires 2036.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Yann paywall is implemented and verified across all 6 branches. test_yann_paywall.py uses two strategies: (a) pure unit tests with monkeypatch on ya_module.BETA_MODE for the is_yann_allowed function, (b) in-process ASGITransport client with BETA_MODE patched on BOTH services.yann_access AND deps modules — necessary because deps.ensure_company would otherwise reset plan=pro/active on every auth call when BETA_MODE is True. The live preview server still has BETA_MODE=True so end-users currently get 'beta' access. No regressions in existing test_yann.py.",
+  "rca_of_issue": "N/A — no failures."
+}

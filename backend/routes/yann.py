@@ -28,7 +28,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from db import db
-from deps import auth_user
+from deps import auth_user, ensure_company
+from services.yann_access import is_yann_allowed
 
 load_dotenv()
 logger = logging.getLogger("mesurechassis.yann")
@@ -111,6 +112,24 @@ async def chat_with_yann(payload: ChatRequest, user=Depends(auth_user)):
     user_id = user.get("user_id") or user.get("id") or ""
     if not user_id:
         raise HTTPException(401, "Utilisateur non authentifié")
+
+    # ─── Paywall (BETA = ouvert / trial = ouvert / Pro = ouvert / add-on = ouvert) ──
+    company_id = user.get("company_id", "default")
+    company_doc = await ensure_company(company_id)
+    allowed, reason = is_yann_allowed(user, company_doc)
+    if not allowed:
+        raise HTTPException(
+            402,
+            detail={
+                "code": "yann_paywall",
+                "reason": reason,
+                "message": (
+                    "L'Assistant IA Yann est inclus dans la formule Entreprise Pro "
+                    "ou disponible en option à 5 €/mois sur Artisan Solo et Entreprise. "
+                    "Vous pouvez aussi l'essayer gratuitement pendant vos 14 jours d'essai."
+                ),
+            },
+        )
 
     message = (payload.message or "").strip()
     if not message:
@@ -222,8 +241,12 @@ async def get_conversation_history(session_id: str, user=Depends(auth_user)):
 
 @router.get("/yann/quota")
 async def get_daily_quota(user=Depends(auth_user)):
-    """Retourne le quota Yann restant pour aujourd'hui."""
+    """Retourne le quota Yann restant pour aujourd'hui + statut d'accès."""
     user_id = user.get("user_id") or user.get("id") or ""
+    company_id = user.get("company_id", "default")
+    company_doc = await ensure_company(company_id)
+    allowed, reason = is_yann_allowed(user, company_doc)
+
     today_iso = datetime.now(timezone.utc).date().isoformat()
     quota_doc = await db.yann_quota.find_one({"user_id": user_id, "date": today_iso})
     used = (quota_doc or {}).get("count", 0)
@@ -231,4 +254,6 @@ async def get_daily_quota(user=Depends(auth_user)):
         "limit": DAILY_MESSAGE_LIMIT,
         "used": used,
         "remaining": max(0, DAILY_MESSAGE_LIMIT - used),
+        "allowed": allowed,
+        "access_reason": reason,
     }
