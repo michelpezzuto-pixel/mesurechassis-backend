@@ -1,0 +1,42 @@
+{
+  "summary": "Backend non-regression smoke after FRONTEND-ONLY changes (subscription pricing, chantier action buttons, me.tsx Centre d'aide card, help.tsx, faq_data.json). 47/47 tests green: 7 new smoke tests in test_smoke_frontend_nonregression.py covering exactly the 7 endpoints from the review-request + the 40 existing referral tests (32 in test_referral.py + 8 in test_referral_cousin_smoke.py). All flows behave as specified — no backend regression detected.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "passlib bcrypt warning", "issue": "Backend logs show `AttributeError: module 'bcrypt' has no attribute '__about__'` at first password check. Pre-existing, harmless (passlib trapped) — login still returns 200. No action required."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_smoke_frontend_nonregression.py",
+    "/app/backend/tests/test_referral.py",
+    "/app/backend/tests/test_referral_cousin_smoke.py",
+    "/app/test_reports/pytest/iter9_smoke.xml",
+    "/app/test_reports/pytest/iter9_referral.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "The frontend changes (subscription.tsx pricing grid + Platform !== 'ios', chantier/[id]/index.tsx button alignment, me.tsx help card, help.tsx, faq_data.json) touch ZERO backend file — confirmed by directory diff. Smoke tests + full referral suite green = no behavioural drift on the API surface.",
+    "POST /api/auth/login returns 401 (not 400/403) for wrong password — consistent with HTTP semantics. ✅",
+    "GET /api/auth/me, /company/profile, /stripe/subscription-status, /referral/me, /chantiers all return 200 for cousin.artisan with correct payload shapes. ✅",
+    "cousin.artisan still has artisan_mode=true on /company/profile — required for the Mode Artisan branches in the new subscription pricing UI. ✅",
+    "cousin.artisan auto-generated a fresh MC-U5ICG5 referral code on first /referral/me call (lazy creation works as designed)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_smoke_frontend_nonregression.py (NEW — 7 smoke tests, one per endpoint in the review-request)"
+  ],
+  "success_rate": {
+    "backend": "100% (47/47: 7 smoke + 40 referral)",
+    "frontend": "not tested (backend-only request per E1)"
+  },
+  "seed_data_creation": "None for smoke suite (read-only on existing cousin.* accounts). The referral suite uses its own throwaway PYTEST_ companies cleaned by autouse fixture; one cousin.admin custom referral_code mutation persists by design.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Backend is rock solid for cousin.artisan + cousin.admin flows. Use /app/backend/tests/test_smoke_frontend_nonregression.py as the canonical fast regression suite (3s) before/after any frontend-only change. To run: `cd /app/backend && pytest tests/test_smoke_frontend_nonregression.py -v --no-cov`. The --no-cov flag is needed because pytest.ini enforces 80% coverage which a 7-endpoint smoke can't reach. EXPO_PUBLIC_BACKEND_URL is the env var (not EXPO_BACKEND_URL) — conftest.py reads from frontend/.env.",
+  "rca_of_issue": "No bug found. Smoke confirms the 4 frontend files modified in this session do not touch any backend contract."
+}

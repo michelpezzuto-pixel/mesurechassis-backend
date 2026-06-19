@@ -46,6 +46,18 @@ type SubscriptionStatus = {
 
 type PlanKey = "solo" | "entreprise" | "pro";
 
+/**
+ * 🆕 Build 9 (juin 2026) — Nouvelle grille tarifaire MesureChâssis.
+ *
+ * Stratégie : prix d'appel à 19,99 € (Artisan), équipe illimitée à 59,99 €
+ * sans supplément utilisateur, et tier "Pro" très haut (249 €) avec toutes
+ * les fonctionnalités futures incluses (Devis auto, Assistant IA Yann,
+ * mesure par photo, intégrations machines & logiciels externes). L'écart
+ * de prix joue un rôle d'ancrage pour mettre en avant les 2 premiers tiers.
+ *
+ * 🍎 Conformité Apple : ces prix s'affichent UNIQUEMENT sur Android & Web.
+ * Sur iOS, un bandeau neutre les remplace (Reader App / App Store 3.1.1).
+ */
 const PLANS: {
   key: PlanKey;
   name: string;
@@ -58,13 +70,15 @@ const PLANS: {
   {
     key: "solo",
     name: "Artisan Solo",
-    price: "24,99 €",
+    price: "19,99 €",
     unit: "/mois",
     features: [
       "1 utilisateur (vous-même)",
       "Chantiers illimités",
+      "Toutes les formes d'ouvertures",
       "Exports PDF & Excel",
       "Support par email",
+      "Option Assistant IA Yann : +5 €/mois",
     ],
   },
   {
@@ -75,24 +89,27 @@ const PLANS: {
     badge: "POPULAIRE",
     highlight: true,
     features: [
-      "3 utilisateurs inclus",
-      "Combinaison libre commercial + technicien",
-      "Utilisateur supplémentaire : +4,99 €/mois",
-      "Tableaux de bord équipe",
+      "Équipe ILLIMITÉE — pas de supplément par utilisateur",
+      "Rôles : Admin, Commercial, Technicien",
+      "Tableaux de bord équipe & statistiques",
+      "Exports PDF & Excel personnalisés",
       "Support prioritaire",
+      "Option Assistant IA Yann : +5 €/mois",
     ],
   },
   {
     key: "pro",
     name: "Entreprise Pro",
-    price: "89,99 €",
+    price: "249 €",
     unit: "/mois",
+    badge: "TOUT INCLUS",
     features: [
-      "6 utilisateurs inclus",
-      "Utilisateur supplémentaire : +9,99 €/mois",
-      "📡 Bluetooth (mesure laser) — à venir",
-      "🚀 Fonctionnalités avancées pour faciliter encore plus vos prises de mesures",
-      "Support dédié",
+      "Équipe ILLIMITÉE",
+      "🤖 Assistant IA Yann INCLUS (support intelligent)",
+      "📐 Devis automatiques générés depuis vos mesures",
+      "📸 Mesure par PHOTO (IA détection des cotes) — à venir",
+      "🔗 Intégrations machines & logiciels métier (CAO, ERP…)",
+      "Support dédié 7j/7",
     ],
   },
 ];
@@ -284,7 +301,7 @@ export default function SubscriptionScreen() {
          * une app B2B SaaS ne peut PAS proposer la gestion d'un abonnement
          * payé hors IAP depuis l'app iOS. Sur iOS, l'utilisateur est invité
          * à se rendre sur mesurechassis.com. */}
-        {status?.has_subscription && Platform.OS === "web" && (
+        {status?.has_subscription && Platform.OS !== "ios" && (
           <TouchableOpacity
             style={[styles.manageBtn, openingPortal && { opacity: 0.6 }]}
             onPress={handleManageSubscription}
@@ -310,7 +327,7 @@ export default function SubscriptionScreen() {
         {/* 🍎 iOS — Bandeau d'information remplaçant les CTA Stripe.
          * Conforme à la règle App Store : aucune mention de paiement
          * externe, juste un rappel que la gestion se fait sur le site web. */}
-        {Platform.OS !== "web" && (
+        {Platform.OS === "ios" && (
           <View style={styles.iosNoticeBox}>
             <Ionicons
               name="information-circle-outline"
@@ -331,8 +348,10 @@ export default function SubscriptionScreen() {
 
         {/* ===== LISTE DES PLANS =====
          * 🍎 Masquée sur iOS (App Store 3.1.1) — voir bandeau d'info ci-dessus.
+         * ✅ Visible sur Android et Web (l'app Android n'est pas soumise à
+         * cette restriction et peut afficher prix + lien externe Stripe).
          */}
-        {Platform.OS === "web" && (
+        {Platform.OS !== "ios" && (
           <>
             <Text style={styles.sectionTitle}>
               {status?.has_subscription ? "Changer de plan" : "Choisir un plan"}

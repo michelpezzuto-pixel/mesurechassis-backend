@@ -160,6 +160,25 @@ export default function MyInfoScreen() {
             <Ionicons name="chevron-forward" size={22} color={colors.textSecondary} />
           </TouchableOpacity>
 
+          {/* 🆕 Build 9 — Accès direct au Centre d'aide / FAQ */}
+          <TouchableOpacity
+            testID="open-help-btn"
+            onPress={() => router.push("/help")}
+            activeOpacity={0.85}
+            style={styles.referralCard}
+          >
+            <View style={[styles.referralIcon, { backgroundColor: "rgba(59, 130, 246, 0.16)" }]}>
+              <Ionicons name="help-circle" size={22} color="#3B82F6" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.referralTitle}>Centre d&apos;aide</Text>
+              <Text style={styles.referralDesc}>
+                FAQ, guide des formules, parrainage, prise de mesures…
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={22} color={colors.textSecondary} />
+          </TouchableOpacity>
+
           {/* ===== IDENTITÉ ===== */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{t("screens.me.identity")}</Text>

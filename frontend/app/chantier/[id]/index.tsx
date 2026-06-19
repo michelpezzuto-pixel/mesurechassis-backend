@@ -1804,7 +1804,14 @@ export default function ChantierDetail() {
                     size={20}
                     color={colors.textPrimary}
                   />
-                  <Text style={styles.gridBtnTextSecondary}>{t("chantierDetail.footer.close")}</Text>
+                  <Text
+                    style={styles.gridBtnTextSecondary}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.8}
+                  >
+                    {t("chantierDetail.footer.close")}
+                  </Text>
                 </TouchableOpacity>
               )}
               {showAdd && (
@@ -1815,7 +1822,14 @@ export default function ChantierDetail() {
                   activeOpacity={0.85}
                 >
                   <Ionicons name="add" size={22} color="#000" />
-                  <Text style={styles.gridBtnTextPrimary}>{t("chantierDetail.footer.add")}</Text>
+                  <Text
+                    style={styles.gridBtnTextPrimary}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.8}
+                  >
+                    {t("chantierDetail.footer.add")}
+                  </Text>
                 </TouchableOpacity>
               )}
               {showEditWall && (
@@ -1826,7 +1840,12 @@ export default function ChantierDetail() {
                   activeOpacity={0.85}
                 >
                   <Ionicons name="construct-outline" size={20} color={colors.primary} />
-                  <Text style={[styles.gridBtnTextSecondary, { color: colors.primary }]}>
+                  <Text
+                    style={[styles.gridBtnTextSecondary, { color: colors.primary }]}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.8}
+                  >
                     {t("chantierDetail.footer.wall")}
                   </Text>
                 </TouchableOpacity>
@@ -2591,9 +2610,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 8,
     alignItems: "stretch",
+    // 🆕 Android — empêche le wrap en 2 lignes des boutons sur petits écrans
+    flexWrap: "nowrap",
   },
   gridBtn: {
     flex: 1,
+    flexShrink: 1,
+    // Permet aux boutons de se contracter sans wrap sur Android petit écran
+    minWidth: 0,
     minHeight: 56,
     borderRadius: 8,
     flexDirection: "row",

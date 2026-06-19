@@ -158,5 +158,35 @@
     "id": "32",
     "question": "Comment simplifier la saisie d'une forme ovale ?",
     "answer": "L'ovale a été simplifié : seulement la Largeur totale + Hauteur totale sont demandées. Le schéma SVG affiche automatiquement l'ellipse correspondante."
+  },
+  {
+    "id": "33",
+    "question": "🎁 Comment fonctionne le parrainage MesureChâssis ?",
+    "answer": "Allez dans Profil → Mon parrainage. Partagez votre code (ex. JEAN-MENUISERIE) à un menuisier. Dès qu'il s'inscrit ET active son abonnement, vous gagnez 2 mois offerts sur votre prochain renouvellement. Limite : 10 filleuls maximum par parrain (soit jusqu'à 20 mois cumulés). Vous pouvez personnaliser votre code pour qu'il soit reconnaissable."
+  },
+  {
+    "id": "34",
+    "question": "🎁 Le filleul gagne-t-il quelque chose lui aussi ?",
+    "answer": "Non, par défaut le filleul ne gagne rien à l'inscription. EN REVANCHE, dès qu'il devient à son tour parrain (en partageant SON code à d'autres menuisiers), il gagne lui aussi 2 mois offerts par filleul actif, dans la même limite de 10."
+  },
+  {
+    "id": "35",
+    "question": "🤖 Qu'est-ce que l'Assistant IA Yann ?",
+    "answer": "Yann est un assistant intelligent intégré qui répond à toutes vos questions sur l'application en français (saisie, exports, gestion équipe, particularités métier…). Disponible en option à +5 €/mois sur les formules Artisan Solo et Entreprise, et INCLUS de base dans l'Entreprise Pro."
+  },
+  {
+    "id": "36",
+    "question": "💳 Pourquoi je ne vois pas les prix sur iPhone ?",
+    "answer": "Sur iOS, MesureChâssis est référencé comme « Reader App » selon les règles de l'App Store : votre compte et vos données restent synchronisés automatiquement sur tous vos appareils, mais l'inscription et la gestion d'abonnement se font depuis mesurechassis.com ou depuis l'application Android. C'est une contrainte Apple, pas une limitation de l'app."
+  },
+  {
+    "id": "37",
+    "question": "🔨 Je suis Artisan solo — pourquoi l'app m'appelle « Vous » au lieu de « Commercial » ?",
+    "answer": "En mode Artisan, vous êtes seul à utiliser l'app : nous adaptons automatiquement le vocabulaire pour que les écrans soient cohérents (au lieu de « le commercial doit transmettre au technicien », on affiche directement « vous pouvez passer à l'étape suivante »). Si vous basculez plus tard en mode Entreprise avec équipe, les rôles métier réapparaissent."
+  },
+  {
+    "id": "38",
+    "question": "📐 Quelle est la différence entre les 3 formules payantes ?",
+    "answer": "Artisan Solo (19,99 €/mois) : 1 utilisateur, toutes les fonctionnalités de base. Entreprise (59,99 €/mois) : équipe ILLIMITÉE, sans supplément par utilisateur, tableaux de bord équipe. Entreprise Pro (249 €/mois) : tout l'Entreprise + Assistant IA Yann + Devis automatiques + Mesure par photo (à venir) + Intégrations machines & logiciels métier."
   }
 ]
