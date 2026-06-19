@@ -1,0 +1,51 @@
+{
+  "summary": "Apple Review demo account verified for Build 102 submission. Login works (200 + valid JWT), account is artisan_mode=true with account_type='artisan' (no business/team features visible to reviewer), role=admin, Yann works (allowed=true + LLM chat returns valid French reply). Subscription is non-expired (2036-06-16 — see issue below). Regression suite (test_yann.py + test_yann_paywall.py + test_referral.py = 56 tests) all PASS. ONE spec deviation: subscription_status is forced to 'active' instead of 'trial' by BETA_MODE=True in db.py — this is harmless for Apple reviewer (no paywall blocks them) but conflicts with the literal spec. Also pre-test setup: the user existed without a company doc and without a `status` field — both were created/added directly in MongoDB (the main agent forgot the company doc when creating the user).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "GET /api/company/profile",
+        "issue": "subscription_status returns 'active' instead of 'trial' (Apple Review spec asked for 'trial'). Root cause: deps.py:ensure_company() forces subscription_status='active' and plan='pro' whenever BETA_MODE=True (db.py:61). Also forces subscription_expires_at to ~10 years ahead if current expiration is <1 year away (got 2036-06-16 instead of the seeded 2027-06-19). Functionally OK for the reviewer (no paywall), but does not match the literal spec."
+      },
+      {
+        "endpoint": "GET /api/auth/me",
+        "issue": "Response (UserPublic model) does NOT carry subscription_status / subscription_expires_at. Spec point #3 ('GET /api/auth/me must show subscription_status: trial') is impossible against this endpoint — those fields live on /api/company/profile. Tests were aligned to /api/company/profile accordingly."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_apple_review.py",
+    "/app/test_reports/pytest/iter13_apple_review.xml",
+    "/app/test_reports/pytest/iter13_regression.xml"
+  ],
+  "action_items": [
+    "OPTIONAL (for spec compliance): If Apple insists on subscription_status='trial', either (a) disable BETA_MODE for the Apple Review company_id only by adding a guard in deps.py:ensure_company(), or (b) flip db.py:BETA_MODE=False entirely. Current 'active' state is functionally equivalent for the reviewer (no paywall, no team features visible).",
+    "Document for the next developer creating an Apple Review account: the user doc alone is not enough — also seed a `companies` doc with account_type='artisan', artisan_mode=true. Without it, ensure_company() auto-creates one with artisan_mode=false (Apple would then see business features!).",
+    "Consider adding subscription_status & subscription_expires_at to the UserPublic model (or document clearly that they live on /api/company/profile) so the iOS app and reviewers don't get confused.",
+    "Backend bcrypt warning at every verify_password call: 'AttributeError: module bcrypt has no attribute __about__' (passlib + bcrypt version mismatch). Non-blocking but spams logs — bump passlib or pin bcrypt<4."
+  ],
+  "critical_code_review_comments": [
+    "deps.py:ensure_company() silently overrides subscription_status/plan/expires_at whenever BETA_MODE is on — this makes 'trial' state un-seedable, which is exactly the trap that hit this Apple Review account.",
+    "routes/auth.py:register() creates the company doc inline with the right artisan flags, but the manual create-user path used to seed Apple Review evidently skipped that step. Worth extracting a single seed_company(account_type=...) helper to avoid this drift."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_apple_review.py (created)",
+    "MongoDB: users collection — added status='active' + email_verified_at on the Apple Review user",
+    "MongoDB: companies collection — created the missing company doc {company_id: XeSOIuf5mkg, account_type: artisan, artisan_mode: true, subscription_status: trial, subscription_expires_at: 2027-06-19}. NB: BETA_MODE auto-flipped these to active / 2036 after first login."
+  ],
+  "success_rate": {
+    "backend": "98% (62/63 — 6/7 Apple Review checks + 56/56 regression)",
+    "frontend": "N/A (frontend testing not requested)"
+  },
+  "seed_data_creation": "Created the missing companies doc for company_id=XeSOIuf5mkg (Apple Review) with account_type=artisan, artisan_mode=true, subscription_status=trial, expires=2027-06-19. Also set status=active + email_verified_at on the user doc. After first login, BETA_MODE auto-mutated subscription_status→active, plan→pro, expires→2036 (see backend_issues.minor).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Apple Review account is functionally ready for App Store Build 102 review: login OK, artisan_mode hides business/team UI, no paywall, Yann/LLM OK. The only deviation from the literal spec is subscription_status='active' vs 'trial' — caused by BETA_MODE=True. If Apple rejects on that label, the main agent must either disable BETA for that specific company_id or flip BETA_MODE globally.",
+  "rca_of_issue": "RCA — Apple kept rejecting builds because the demo account 'didn't exist'. When the main agent finally created the user this iteration, they only inserted into `users` and forgot the matching `companies` doc. Consequence: at first /api/auth/me call, deps.py:ensure_company() auto-created a default company with artisan_mode=FALSE — which would have shown Apple the business/team screens and triggered another rejection. Fix applied: seeded the companies doc directly with account_type='artisan' + artisan_mode=true. Secondary issue surfaced during testing: BETA_MODE=True forces subscription_status='active' regardless, so the 'trial' label cannot be set as long as BETA_MODE is on."
+}

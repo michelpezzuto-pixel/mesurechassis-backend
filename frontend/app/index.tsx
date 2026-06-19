@@ -458,7 +458,9 @@ export default function SignIn() {
               )}
 
               <Text style={styles.label}>
-                {accountType === "artisan"
+                {isIOS
+                  ? "Votre nom"
+                  : accountType === "artisan"
                   ? "Votre nom complet"
                   : "Nom complet (Master Admin)"}
               </Text>
@@ -475,7 +477,9 @@ export default function SignIn() {
                 style={styles.input}
               />
 
-              {accountType === "artisan" ? (
+              {/* 🍎 iOS — App Store 3.1.1/3.1.3(c) : aucun champ d'inscription
+               * business/entreprise. Compte purement individuel. */}
+              {isIOS ? null : accountType === "artisan" ? (
                 <>
                   <Text style={styles.label}>
                     Nom commercial (optionnel)
@@ -619,7 +623,7 @@ export default function SignIn() {
             testID="login-email-input"
             value={email}
             onChangeText={setEmail}
-            placeholder="prenom.nom@entreprise.fr"
+            placeholder={isIOS ? "vous@exemple.com" : "prenom.nom@entreprise.fr"}
             placeholderTextColor={colors.placeholder}
             keyboardType="email-address"
             autoCapitalize="none"
@@ -729,7 +733,7 @@ export default function SignIn() {
                     testID="forgot-email-input"
                     value={forgotEmail}
                     onChangeText={setForgotEmail}
-                    placeholder="vous@entreprise.fr"
+                    placeholder={isIOS ? "vous@exemple.com" : "vous@entreprise.fr"}
                     placeholderTextColor={colors.placeholder}
                     autoCapitalize="none"
                     autoCorrect={false}
