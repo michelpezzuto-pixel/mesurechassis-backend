@@ -67,9 +67,15 @@ def is_yann_allowed(user: dict, company_doc: Optional[dict] = None) -> tuple[boo
 
 
 def _is_future(iso_or_dt) -> bool:
-    """True si la date donnée est dans le futur (ou None = sans limite)."""
+    """True si la date donnée est dans le futur.
+
+    Cas particulier : `None` ou vide est traité comme une expiration
+    indéfinie → on retourne True (« sans limite »). Cela ne s'applique
+    en pratique qu'aux comptes admin internes : les trials standard
+    ont toujours une `subscription_expires_at` définie.
+    """
     if not iso_or_dt:
-        return False
+        return True  # None = sans expiration → autorisé
     if isinstance(iso_or_dt, datetime):
         dt = iso_or_dt
     else:

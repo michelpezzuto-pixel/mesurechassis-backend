@@ -433,6 +433,64 @@ export default function SubscriptionScreen() {
               );
             })}
 
+            {/* ═════ Add-on Assistant IA Yann (+5 €/mois) ═════
+              * Affiché UNIQUEMENT sur Android/Web (iOS = neutre Reader App)
+              * Le bouton "Activer" mène à un checkout Stripe dédié quand le
+              * Price ID sera configuré. Tant que `STRIPE_YANN_ADDON_READY`
+              * n'est pas activé côté config, on affiche "Bientôt disponible".
+              */}
+            <View style={styles.addonCard}>
+              <View style={styles.addonHeader}>
+                <View style={styles.addonIconWrap}>
+                  <Text style={styles.addonIconText}>Y</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.addonTitle}>
+                    Assistant IA Yann <Text style={styles.addonBadge}>+5 €/mois</Text>
+                  </Text>
+                  <Text style={styles.addonSubtitle}>
+                    Add-on disponible sur Artisan Solo et Entreprise · INCLUS dans Entreprise Pro
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.addonFeatures}>
+                <View style={styles.featureRow}>
+                  <Ionicons name="checkmark" size={16} color={colors.primary} />
+                  <Text style={styles.featureText}>
+                    Répond à vos questions sur l&apos;application en français
+                  </Text>
+                </View>
+                <View style={styles.featureRow}>
+                  <Ionicons name="checkmark" size={16} color={colors.primary} />
+                  <Text style={styles.featureText}>
+                    Connaît votre métier, vos formules et le workflow
+                  </Text>
+                </View>
+                <View style={styles.featureRow}>
+                  <Ionicons name="checkmark" size={16} color={colors.primary} />
+                  <Text style={styles.featureText}>
+                    Gratuit pendant la période d&apos;essai de 14 jours
+                  </Text>
+                </View>
+              </View>
+
+              <TouchableOpacity
+                style={styles.addonCta}
+                onPress={() => router.push("/yann")}
+                activeOpacity={0.85}
+                testID="try-yann-btn"
+              >
+                <Text style={styles.addonCtaText}>Essayer Yann maintenant</Text>
+                <Ionicons name="arrow-forward" size={18} color="#000" />
+              </TouchableOpacity>
+
+              <Text style={styles.addonNote}>
+                💡 L&apos;activation payante de l&apos;add-on sera disponible bientôt depuis
+                votre espace de facturation Stripe.
+              </Text>
+            </View>
+
             <Text style={styles.smallNote}>
               🔒 Paiement sécurisé via Stripe. Cartes bancaires et SEPA acceptés.
               {"\n"}TVA collectée selon votre pays de résidence.
@@ -712,5 +770,76 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 8,
     lineHeight: 16,
+  },
+  // ─── Add-on Assistant IA Yann ──────────────────────────────────
+  addonCard: {
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "rgba(147, 51, 234, 0.4)",
+    padding: 16,
+    marginTop: 20,
+    marginBottom: 4,
+  },
+  addonHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    marginBottom: 12,
+  },
+  addonIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(147, 51, 234, 0.18)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  addonIconText: {
+    color: "#9333EA",
+    fontSize: 22,
+    fontWeight: "900",
+  },
+  addonTitle: {
+    color: colors.textPrimary,
+    fontSize: 15,
+    fontWeight: "900",
+  },
+  addonBadge: {
+    color: "#9333EA",
+    fontSize: 13,
+    fontWeight: "800",
+  },
+  addonSubtitle: {
+    color: colors.textSecondary,
+    fontSize: 11.5,
+    marginTop: 2,
+    lineHeight: 15,
+  },
+  addonFeatures: {
+    gap: 6,
+    marginBottom: 14,
+  },
+  addonCta: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: colors.primary,
+    paddingVertical: 12,
+    borderRadius: 10,
+  },
+  addonCtaText: {
+    color: "#000",
+    fontSize: 14,
+    fontWeight: "800",
+  },
+  addonNote: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    textAlign: "center",
+    marginTop: 10,
+    lineHeight: 15,
+    fontStyle: "italic",
   },
 });
