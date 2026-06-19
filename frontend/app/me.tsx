@@ -179,6 +179,28 @@ export default function MyInfoScreen() {
             <Ionicons name="chevron-forward" size={22} color={colors.textSecondary} />
           </TouchableOpacity>
 
+          {/* 🆕 Build 9 — Assistant IA Yann (Claude Sonnet 4.5) */}
+          <TouchableOpacity
+            testID="open-yann-btn"
+            onPress={() => router.push("/yann")}
+            activeOpacity={0.85}
+            style={[styles.referralCard, { borderColor: "rgba(147, 51, 234, 0.4)" }]}
+          >
+            <View style={[styles.referralIcon, { backgroundColor: "rgba(147, 51, 234, 0.16)" }]}>
+              <Text style={{ fontSize: 22, fontWeight: "900", color: "#9333EA" }}>Y</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.referralTitle}>
+                Yann · Assistant IA{" "}
+                <Text style={{ color: "#9333EA", fontSize: 10, fontWeight: "800" }}>BÊTA</Text>
+              </Text>
+              <Text style={styles.referralDesc}>
+                Posez-lui toutes vos questions sur l&apos;app, en français.
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={22} color={colors.textSecondary} />
+          </TouchableOpacity>
+
           {/* ===== IDENTITÉ ===== */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{t("screens.me.identity")}</Text>

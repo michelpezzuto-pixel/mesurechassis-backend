@@ -26,6 +26,7 @@ from routes import feedbacks as feedbacks_routes
 from routes import invitations as invitations_routes
 from routes import mesures as mesures_routes
 from routes import referral as referral_routes
+from routes import yann as yann_routes
 from routes import stats as stats_routes
 from routes import stripe_routes
 from routes import testers as testers_routes
@@ -80,6 +81,9 @@ api.include_router(stats_routes.router)
 api.include_router(exports_routes.router)
 # 🆕 Build 9 — Système de parrainage (2 mois offerts par filleul actif)
 api.include_router(referral_routes.router)
+
+# 🆕 Build 9 — Assistant IA Yann (Claude Sonnet 4.5 via Emergent LLM Key)
+api.include_router(yann_routes.router)
 api.include_router(testers_routes.router)
 # 🆕 Campagne emailing — prospection testeurs à 1 bouton (max 15/jour via Resend)
 api.include_router(campaign_routes.router)
@@ -150,6 +154,27 @@ async def download_site_freemium_apple():
         path,
         media_type="application/zip",
         filename="site_freemium_apple_compliant.zip",
+    )
+
+
+@api.get("/_downloads/site-v2-gratuit-parrainage")
+async def download_site_v2():
+    """Site vitrine v2 (Build 9 — juin 2026) — emphase GRATUIT + PARRAINAGE.
+
+    Différences vs v1 :
+      • Hero : 2 badges visibles (5 ouvertures GRATUITES à vie + 20 mois offerts)
+      • Nouvelle section dédiée "🎁 PROGRAMME PARRAINAGE" avant les tarifs
+      • Prix Artisan Solo passé de 24,99 € → 19,99 €
+      • Plan Société : équipe ILLIMITÉE (suppression du +4,99 €/utilisateur)
+      • Mention de l'add-on Assistant IA Yann disponible
+    """
+    path = "/app/backend/static/site_v2_gratuit_parrainage.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="site_v2_gratuit_parrainage.zip",
     )
 
 
