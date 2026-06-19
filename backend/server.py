@@ -178,6 +178,32 @@ async def download_site_v2():
     )
 
 
+@api.get("/_downloads/roadmap-michel")
+async def download_roadmap_pdf():
+    """PDF imprimable A4 — Roadmap personnelle de Michel (juin → 1er oct 2026).
+
+    Contient : vision 3 mois, journées types (semaine/weekend), 14 semaines
+    de roadmap détaillée mêlant tâches MesureChâssis + sport + vie sociale,
+    et conseils stratégiques adaptés à Sombreffe (BE) sans voiture.
+
+    Régénéré à la demande pour avoir toujours la date du jour.
+    """
+    pdf_path = "/app/backend/static/roadmap_michel_juin_octobre_2026.pdf"
+    # Régénération automatique si le PDF n'existe pas ou date > 7j
+    import subprocess
+    if not os.path.isfile(pdf_path):
+        subprocess.run(
+            ["python", "/app/backend/scripts/generate_roadmap_pdf.py"],
+            cwd="/app/backend",
+            check=True,
+        )
+    return FileResponse(
+        pdf_path,
+        media_type="application/pdf",
+        filename="MesureChassis_Roadmap_Michel_Juin-Octobre_2026.pdf",
+    )
+
+
 @api.get("/_downloads/devenir-testeur-html")
 async def download_devenir_testeur_html():
     """Page statique d'inscription testeur à héberger sur mesurechassis.com."""
