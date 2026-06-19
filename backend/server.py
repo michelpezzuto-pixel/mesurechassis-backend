@@ -27,6 +27,7 @@ from routes import invitations as invitations_routes
 from routes import mesures as mesures_routes
 from routes import referral as referral_routes
 from routes import yann as yann_routes
+from routes import partners as partners_routes
 from routes import stats as stats_routes
 from routes import stripe_routes
 from routes import testers as testers_routes
@@ -84,6 +85,9 @@ api.include_router(referral_routes.router)
 
 # 🆕 Build 9 — Assistant IA Yann (Claude Sonnet 4.5 via Emergent LLM Key)
 api.include_router(yann_routes.router)
+
+# 🆕 Build 9 — Partenaires affiliés (système d'influence marketing)
+api.include_router(partners_routes.router)
 api.include_router(testers_routes.router)
 # 🆕 Campagne emailing — prospection testeurs à 1 bouton (max 15/jour via Resend)
 api.include_router(campaign_routes.router)
@@ -180,16 +184,8 @@ async def download_site_v2():
 
 @api.get("/_downloads/roadmap-michel")
 async def download_roadmap_pdf():
-    """PDF imprimable A4 — Roadmap personnelle de Michel (juin → 1er oct 2026).
-
-    Contient : vision 3 mois, journées types (semaine/weekend), 14 semaines
-    de roadmap détaillée mêlant tâches MesureChâssis + sport + vie sociale,
-    et conseils stratégiques adaptés à Sombreffe (BE) sans voiture.
-
-    Régénéré à la demande pour avoir toujours la date du jour.
-    """
+    """PDF imprimable A4 — Roadmap personnelle de Michel (juin → 1er oct 2026)."""
     pdf_path = "/app/backend/static/roadmap_michel_juin_octobre_2026.pdf"
-    # Régénération automatique si le PDF n'existe pas ou date > 7j
     import subprocess
     if not os.path.isfile(pdf_path):
         subprocess.run(
@@ -201,6 +197,28 @@ async def download_roadmap_pdf():
         pdf_path,
         media_type="application/pdf",
         filename="MesureChassis_Roadmap_Michel_Juin-Octobre_2026.pdf",
+    )
+
+
+@api.get("/_downloads/partner-contract")
+async def download_partner_contract():
+    """Modèle de contrat partenariat affilié — PDF prêt à signer (BE/FR).
+
+    Document juridique conforme RGPD, droit belge applicable. À imprimer en
+    2 exemplaires, signer, scanner et renvoyer à contact@mesurechassis.com.
+    """
+    pdf_path = "/app/backend/static/contrat_partenariat_modele.pdf"
+    import subprocess
+    if not os.path.isfile(pdf_path):
+        subprocess.run(
+            ["python", "/app/backend/scripts/generate_partner_contract.py"],
+            cwd="/app/backend",
+            check=True,
+        )
+    return FileResponse(
+        pdf_path,
+        media_type="application/pdf",
+        filename="MesureChassis_Contrat_Partenariat_Affilie.pdf",
     )
 
 

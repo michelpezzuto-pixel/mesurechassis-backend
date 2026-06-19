@@ -1,0 +1,52 @@
+{
+  "summary": "Affiliate Partners backend tested end-to-end: 25/25 pytest tests PASS covering CRUD, RBAC (admin-only), validation (reserved prefix, invalid platform, duplicate code), auto-activation on contract signing, public tracking endpoints (track-click + lookup), stats (per-partner zero-state + global summary), and the two PDF download endpoints. All created test partners were soft-deleted via the API (status='terminated') for cleanup.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "POST /api/partners",
+        "issue": "Successful create returns HTTP 200 instead of 201. response_model is set but no status_code=201 on the decorator. Cosmetic — tests still pass."
+      },
+      {
+        "endpoint": "GET /api/partners",
+        "issue": "list_partners has no pagination/limit. For an admin tool that's currently fine, but will scale poorly past a few hundred partners."
+      },
+      {
+        "endpoint": "PATCH /api/partners/{id}",
+        "issue": "`updates = {k: v for k, v in payload.model_dump(exclude_unset=True).items() if v is not None}` silently drops fields set to None. That's intentional here but means clearing a field (e.g. iban=null, notes='') via PATCH is impossible. Worth noting."
+      },
+      {
+        "endpoint": "POST /api/affiliate/track-click",
+        "issue": "When the code is unknown OR the partner is not active, both responses return `{ok: false}` with reason='code_not_active' only in the latter case. Unknown-code response has no `reason` field at all, which is inconsistent with the active-but-pending case. Frontend can't distinguish 'wrong code' vs 'not yet active'."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_partners.py",
+    "/app/test_reports/pytest/iter12_partners.xml"
+  ],
+  "action_items": [
+    "(Optional) Add status_code=201 to @router.post('/partners') for REST correctness.",
+    "(Optional) Add a `reason: 'unknown_code'` field to /affiliate/track-click when code does not exist, to mirror the 'code_not_active' branch.",
+    "(Optional) Consider pagination on GET /api/partners once partner count grows."
+  ],
+  "critical_code_review_comments": [
+    "Endpoint route ordering is OK: /partners/stats/summary is declared after /partners/{partner_id}/stats but FastAPI matches by segment count, so no collision.",
+    "Soft-delete via PATCH on the same id after DELETE is possible (delete just sets status='terminated'); make sure admin UI handles re-activation/idempotency.",
+    "lookup_code is unauthenticated and reveals partner_name + handle for active codes — acceptable for the signup flow but be aware of enumeration risk if codes are predictable."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_partners.py (new)"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "not tested (per request)"},
+  "seed_data_creation": "Created 4 test partners during the run, all soft-deleted (status='terminated') after teardown. No hard-delete endpoint exists (by design).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Test file /app/backend/tests/test_partners.py is reusable. Uses cousin.admin / cousin.commercial / cousin.technicien credentials from /app/memory/test_credentials.md. Module-scope teardown DELETEs every partner created during the run. Frontend (admin/partners.tsx) was NOT tested per request — please run UI tests if needed."
+}
