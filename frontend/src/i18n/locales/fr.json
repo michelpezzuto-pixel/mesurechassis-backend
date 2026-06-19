@@ -767,6 +767,10 @@
       "msgCommercial": "Les mesures sont figées pour garantir la cohérence avec l'atelier. Contactez le technicien en cas d'urgence.",
       "msgOther": "Seul le technicien peut modifier exceptionnellement les mesures à ce stade."
     },
+    "importCdc": {
+      "cta": "✨ Importer un cahier des charges",
+      "sub": "L'IA détecte automatiquement les châssis depuis un PDF, Excel ou photo. Vous n'avez plus qu'à vérifier sur place."
+    },
     "exports": {
       "title": "EXPORTS",
       "freeLockBadge": "VERROU FREE",
@@ -843,5 +847,44 @@
     "soloHint": "Vous êtes en mode Artisan Solo : créez directement votre premier chantier via le bouton « + Nouveau chantier ».",
     "commercialHint": "Aucun chantier ne vous a encore été affecté. Demandez à votre Admin de vous en assigner un, ou créez-en un vous-même.",
     "techHint": "Aucun chantier en attente de validation technique. Les chantiers apparaîtront ici une fois que le commercial aura terminé ses mesures."
+  },
+  "importSpec": {
+    "title": "Importer cahier des charges",
+    "heroTitle": "Pré-remplissez votre chantier en 30 secondes",
+    "heroSub": "Importez le cahier des charges du client (PDF, Excel ou photo). L'IA détecte automatiquement les châssis à mesurer.",
+    "sourceLabel": "Choisissez la source",
+    "sourcePdf": "Document PDF",
+    "sourcePdfSub": "Plan, devis, cahier des charges au format PDF",
+    "sourceExcel": "Fichier Excel",
+    "sourceExcelSub": "Tableau .xlsx avec dimensions des ouvertures",
+    "sourceCamera": "Prendre une photo",
+    "sourceCameraSub": "Photographier un document papier",
+    "sourceGallery": "Photo depuis la galerie",
+    "sourceGallerySub": "Choisir une image existante",
+    "infoTip": "L'IA détecte les fenêtres, portes, baies coulissantes et leurs dimensions. Vous pourrez tout vérifier avant validation.",
+    "loadingTitle": "Yann analyse votre document…",
+    "loadingSub": "Quelques secondes pour identifier vos châssis et leurs dimensions.",
+    "aiDetected": "{{count}} type(s) d'ouverture détecté(s) — {{total}} châssis au total",
+    "addItem": "Ajouter une ouverture manuellement",
+    "itemLabel": "Nom de l'ouverture",
+    "width": "Largeur",
+    "height": "Hauteur",
+    "quantity": "Quantité",
+    "notesPlaceholder": "Notes : matériau, couleur, type d'ouvrant…",
+    "confirmCta": "Valider l'import",
+    "confirmTitle": "Confirmer l'import",
+    "confirmMessage": "{{count}} ouvertures vont être ajoutées au chantier avec leurs mesures théoriques. Vous pourrez les ajuster sur le terrain.",
+    "successTitle": "✅ Import réussi",
+    "successMessage": "{{count}} ouvertures ont été ajoutées au chantier. Vous pouvez maintenant les ouvrir pour valider les mesures sur place.",
+    "noItemsTitle": "Aucun châssis détecté",
+    "noItemsMessage": "L'IA n'a pas identifié de châssis dans ce document. Essayez avec un autre format ou ajoutez les ouvertures manuellement.",
+    "uploadError": "L'analyse a échoué. Vérifiez le format du fichier et réessayez.",
+    "confirmError": "Impossible de valider l'import. Réessayez.",
+    "invalidLabelMessage": "Chaque ouverture doit avoir un nom.",
+    "cancelTitle": "Annuler l'import ?",
+    "cancelMessage": "Toutes les ouvertures détectées seront perdues. Vous pourrez recommencer plus tard.",
+    "cancelConfirm": "Annuler",
+    "permTitle": "Permission requise",
+    "permMessage": "Autorisez l'accès à votre appareil photo / vos photos pour importer une image."
   }
 }

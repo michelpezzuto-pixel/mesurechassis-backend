@@ -1116,9 +1116,26 @@ export default function ChantierDetail() {
             <Ionicons name="grid-outline" size={48} color={colors.borderStrong} />
             <Text style={styles.emptyText}>{t("chantierDetail.empty.title")}</Text>
             {canEditMesures ? (
-              <Text style={styles.emptyHint}>
-                {t("chantierDetail.empty.hint")}
-              </Text>
+              <>
+                <Text style={styles.emptyHint}>
+                  {t("chantierDetail.empty.hint")}
+                </Text>
+                {/* 🆕 Build 11 — Import cahier des charges via IA (PDF/Excel/Photo) */}
+                <TouchableOpacity
+                  testID="import-spec-cta"
+                  onPress={() => router.push(`/chantier/${id}/import-spec`)}
+                  activeOpacity={0.85}
+                  style={styles.importCta}
+                >
+                  <Ionicons name="sparkles" size={18} color="#000" />
+                  <Text style={styles.importCtaText}>
+                    {t("chantierDetail.importCdc.cta")}
+                  </Text>
+                </TouchableOpacity>
+                <Text style={styles.importCtaSub}>
+                  {t("chantierDetail.importCdc.sub")}
+                </Text>
+              </>
             ) : showArchivedLockIntercept ? (
               <Text style={styles.emptyHint}>
                 {t("chantierDetail.empty.hintArchived")}
@@ -2520,6 +2537,27 @@ const styles = StyleSheet.create({
     lineHeight: 17,
     marginTop: 4,
     paddingHorizontal: 12,
+  },
+  importCta: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    backgroundColor: colors.primary,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    borderRadius: 12,
+    marginTop: 20,
+    minWidth: 240,
+  },
+  importCtaText: { fontSize: 14, fontWeight: "700", color: "#000" },
+  importCtaSub: {
+    fontSize: 11,
+    color: colors.textSecondary,
+    textAlign: "center",
+    marginTop: 8,
+    paddingHorizontal: 24,
+    lineHeight: 16,
   },
   emptyCta: {
     flexDirection: "row",

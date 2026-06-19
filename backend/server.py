@@ -29,6 +29,7 @@ from routes import referral as referral_routes
 from routes import yann as yann_routes
 from routes import partners as partners_routes
 from routes import stats as stats_routes
+from routes import spec_import as spec_import_routes
 from routes import stripe_routes
 from routes import testers as testers_routes
 from seed import seed_data
@@ -88,6 +89,9 @@ api.include_router(yann_routes.router)
 
 # 🆕 Build 9 — Partenaires affiliés (système d'influence marketing)
 api.include_router(partners_routes.router)
+# 🆕 Build 11 — Import cahier des charges (PDF/Excel/Photo) → IA Gemini 2.5 Flash
+api.include_router(spec_import_routes.router)
+
 api.include_router(testers_routes.router)
 # 🆕 Campagne emailing — prospection testeurs à 1 bouton (max 15/jour via Resend)
 api.include_router(campaign_routes.router)
