@@ -36,8 +36,8 @@ SUBJECTS = {
     "fr": "Question entre menuisiers 🪟",
     "lu": "Question entre menuisiers 🪟",
 }
-SUBJECT_RELANCE_1 = "Un mot rapide ?"
-SUBJECT_RELANCE_2 = "Dernière relance — promis"
+SUBJECT_RELANCE_1 = "📸 Une nouveauté qui change tout sur chantier"
+SUBJECT_RELANCE_2 = "📸 Dernière chance — l'IA qui lit vos bordereaux"
 
 # Lien direct vers la version web de l'app (accès direct sans installation)
 APP_WEB_URL = "https://window-field-app.preview.emergentagent.com"
@@ -85,22 +85,25 @@ Michel Pezzuto — Menuisier · Fondateur MesureChâssis
 Vous recevez cet email car votre entreprise est active dans la menuiserie. Pour ne plus être contacté, répondez simplement STOP."""
 
 # ═════════════════════════════════════════════════════════════════════
-# === MAIL #3 — Relance J+3 (soft, court) ═══════════════════════════
+# === MAIL #3 — Relance J+3 (mise en avant feature scan bordereau) ══
 # ═════════════════════════════════════════════════════════════════════
 RELANCE_TEMPLATE = """Bonjour,
 
-Je vous ai envoyé un message il y a quelques jours sur MesureChâssis. Je sais que vous êtes débordé.
+Je vous ai écrit il y a quelques jours sur MesureChâssis. Vous êtes débordé, je le sais — vous l'êtes encore plus en ce moment.
 
-Juste un mot : avez-vous eu 2 minutes pour scanner le QR code ?
+Justement, je voulais vous parler d'une nouveauté qui peut vous faire gagner 30 minutes par chantier :
+
+📸 Vous prenez en photo le bordereau de soumission de votre client (PDF, Excel ou simple photo d'un papier) → MesureChâssis liste AUTOMATIQUEMENT toutes les ouvertures avec leurs dimensions théoriques.
+
+Plus qu'à passer sur place et valider les cotes réelles. Fini la double saisie, fini les oublis.
 
 [QR_CODE_PLACEHOLDER]
 
 👉 {app_web_url}
 
-L'accès reste 100 % gratuit jusqu'au 30 septembre 2026.
+100 % gratuit jusqu'au 30 septembre 2026, sans carte bancaire.
 
-Si vous n'êtes pas intéressé, dites-le-moi franchement, je ne reviendrai pas.
-Si vous voulez que je vous montre comment ça marche en visio (10 min), répondez juste à ce mail.
+Si vous voulez que je vous montre en visio (10 min), répondez juste à ce mail.
 
 Bien cordialement,
 Michel Pezzuto — MesureChâssis
@@ -109,21 +112,25 @@ Michel Pezzuto — MesureChâssis
 Pour ne plus être contacté, répondez simplement STOP."""
 
 # ═════════════════════════════════════════════════════════════════════
-# === MAIL #4 — Relance J+7 (dernier essai, ouverte et honnête) ══════
+# === MAIL #4 — Relance J+7 (dernier essai, démo concrète feature IA) ═
 # ═════════════════════════════════════════════════════════════════════
 RELANCE_2_TEMPLATE = """Bonjour,
 
-Je vous écris une dernière fois (promis !).
+Je vous écris une dernière fois (promis 🙏).
 
-Si MesureChâssis ne vous intéresse pas, pas de souci, je vous laisse tranquille.
+Si vous lisez encore ces lignes, prenez 30 secondes pour imaginer ça :
 
-Si vous voulez juste jeter un œil pour vous faire un avis, voici l'app en accès direct (2 min, gratuit jusqu'au 30 septembre 2026) :
+📋 Votre client vous envoie un cahier des charges PDF avec 12 fenêtres.
+📸 Vous le prenez en photo dans l'app → en 10 secondes, les 12 ouvertures sont créées avec leurs dimensions.
+🔍 Sur place, vous validez juste les cotes réelles. Voilà.
 
-👉 {app_web_url}
+C'est ce que MesureChâssis fait depuis cette semaine. Avec une IA qui comprend les plans, les Excel et même les bordereaux manuscrits.
 
 [QR_CODE_PLACEHOLDER]
 
-Une réponse « oui » ou « non » me suffit, je ne prends pas mal 🙏
+👉 {app_web_url}
+
+Gratuit jusqu'au 30 septembre 2026. Un « oui » ou un « non », ça me va — je ne prends pas mal.
 
 Bonne continuation,
 Michel Pezzuto — Fondateur MesureChâssis
