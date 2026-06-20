@@ -14,6 +14,12 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+try:
+    from zoneinfo import ZoneInfo  # Python 3.9+
+    _BRUSSELS_TZ = ZoneInfo("Europe/Brussels")
+except ImportError:  # pragma: no cover — fallback offset fixe (UTC+1)
+    _BRUSSELS_TZ = timezone(timedelta(hours=1))
+
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 
 from db import db
@@ -29,6 +35,19 @@ DAILY_LIMIT = 30
 PAUSE_BETWEEN_SENDS_S = 3
 RELANCE_DELAY_DAYS = 3  # 1ère relance J+3 si pas répondu
 SECOND_RELANCE_DELAY_DAYS = 7  # 2e relance J+7 (dernière chance)
+
+
+def _is_weekend_brussels() -> bool:
+    """True si on est samedi ou dimanche en heure belge (Europe/Brussels).
+
+    Évite d'envoyer des mails de prospection le week-end :
+      • mauvais taux d'ouverture pro
+      • risque accru de classement en spam
+      • impression négative ("il bosse même le dimanche")
+    """
+    local_now = datetime.now(_BRUSSELS_TZ)
+    # weekday() : lundi=0 … dimanche=6 → samedi=5, dimanche=6
+    return local_now.weekday() >= 5
 
 # === SUJETS (testés pour CTR optimal en B2B menuisiers) ============
 SUBJECTS = {
@@ -450,14 +469,31 @@ async def _send_batch_task(items: list[dict]) -> None:
 
 
 @router.post("/campaign/send-batch")
-async def send_batch(background_tasks: BackgroundTasks, user=Depends(require_admin)):
+async def send_batch(
+    background_tasks: BackgroundTasks,
+    force_weekend: bool = False,
+    user=Depends(require_admin),
+):
     """Envoie le lot du jour, dans cet ordre de priorité :
       1. Relances J+7 (dernière chance, leads les plus tièdes)
       2. Relances J+3 (rappel soft)
       3. Nouveaux prospects (premier contact)
 
     Quota global : 30 emails/jour (toutes catégories confondues).
+
+    🗓️ FILTRE WEEK-END (Europe/Brussels) :
+       Par défaut, l'envoi est BLOQUÉ le samedi et le dimanche. Les emails
+       B2B ont un meilleur taux d'ouverture en semaine et envoyer le
+       week-end donne l'impression d'être désorganisé. Pour passer outre
+       (cas exceptionnel : campagne urgente), passer `?force_weekend=true`.
     """
+    if _is_weekend_brussels() and not force_weekend:
+        raise HTTPException(
+            423,  # Locked
+            "Envoi désactivé le week-end (samedi/dimanche, heure belge). "
+            "Le quota d'aujourd'hui sera disponible lundi matin. "
+            "Pour forcer un envoi exceptionnel, ajoutez ?force_weekend=true.",
+        )
     remaining = DAILY_LIMIT - await _quota_used_today()
     if remaining <= 0:
         raise HTTPException(
