@@ -69,8 +69,9 @@ type SpecDraft = {
   source: "pdf" | "excel" | "image";
   summary: string;
   items: SpecItem[];
-  status: string;
+  status: "processing" | "pending" | "imported" | "rejected" | "failed";
   created_at: string;
+  error_message?: string | null;
 };
 
 const BLOCK_OPTIONS: { value: BlockType; label: string; icon: string }[] = [
@@ -97,6 +98,43 @@ export default function ImportSpecScreen() {
   // ───────────────────────────────────────────────────────────────────
   // Upload helpers
   // ───────────────────────────────────────────────────────────────────
+  // ───────────────────────────────────────────────────────────────────
+  // Polling : appelle /spec-drafts/{id} jusqu'à status final (pending|failed)
+  //   - Tente toutes les 3 secondes
+  //   - Max 60 essais soit 3 minutes (timeout final)
+  //   - Évite tout timeout Cloudflare car chaque requête est < 5 sec
+  // ───────────────────────────────────────────────────────────────────
+  const pollDraftUntilReady = useCallback(
+    async (draftId: string): Promise<SpecDraft> => {
+      const MAX_TRIES = 60;
+      const INTERVAL_MS = 3000;
+      for (let i = 0; i < MAX_TRIES; i++) {
+        await new Promise((resolve) => setTimeout(resolve, INTERVAL_MS));
+        try {
+          const r = await api.get<SpecDraft>(`/spec-drafts/${draftId}`);
+          const d = r.data;
+          if (d.status !== "processing") {
+            console.log(
+              `[import-spec] poll done in ${i + 1} tries (${(i + 1) * INTERVAL_MS / 1000}s) — status=${d.status}`,
+            );
+            return d;
+          }
+        } catch (e: any) {
+          // Si 404 etc, on remonte immédiatement
+          if (e?.response?.status === 404) {
+            throw new Error("Brouillon introuvable côté serveur");
+          }
+          // Erreur réseau temporaire → on retente
+          console.warn("[import-spec] poll error, retry…", e?.message);
+        }
+      }
+      throw new Error(
+        "L'analyse prend plus de 3 minutes. Réessayez avec un document plus petit ou contactez le support.",
+      );
+    },
+    [],
+  );
+
   const uploadFile = useCallback(
     async (file: { uri: string; name: string; mimeType?: string }) => {
       if (!id) return;
@@ -155,13 +193,29 @@ export default function ImportSpecScreen() {
             timeout: 120_000, // 2 min : l'IA peut prendre du temps sur gros PDF
           }
         );
-        setDraft(res.data);
-        setItems(res.data.items || []);
-        if ((res.data.items || []).length === 0) {
+
+        // 🆕 La route est ASYNCHRONE depuis Build 11.1 : la réponse
+        // initiale retourne status="processing". On poll alors le
+        // backend toutes les 3 secondes jusqu'à status="pending" ou
+        // "failed". Évite tout timeout Cloudflare.
+        let draftData = res.data;
+        if (draftData.status === "processing") {
+          draftData = await pollDraftUntilReady(draftData.id);
+        }
+
+        if (draftData.status === "failed") {
+          throw new Error(
+            draftData.error_message ||
+              "L'analyse IA n'a pas abouti. Réessayez ou utilisez un autre fichier.",
+          );
+        }
+
+        setDraft(draftData);
+        setItems(draftData.items || []);
+        if ((draftData.items || []).length === 0) {
           Alert.alert(
             t("importSpec.noItemsTitle"),
-            res.data.summary ||
-              t("importSpec.noItemsMessage"),
+            draftData.summary || t("importSpec.noItemsMessage"),
           );
         }
       } catch (e: any) {

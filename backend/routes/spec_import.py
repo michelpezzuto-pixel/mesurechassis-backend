@@ -3,12 +3,15 @@
 Workflow utilisateur :
     1. L'artisan ouvre un chantier → clique "Importer cahier des charges"
     2. Il sélectionne un PDF, un Excel (.xlsx) ou une photo (JPG/PNG)
-    3. Le backend appelle Gemini 2.5 Flash pour extraire la liste des
-       châssis → stocke un brouillon dans `spec_drafts`
-    4. L'artisan voit la prévisualisation, ajuste, supprime, puis valide
-    5. Validation → création des mesures correspondantes en base avec
+    3. Le backend stocke le fichier puis lance l'analyse Gemini 2.5 Flash
+       EN BACKGROUND (sinon Cloudflare timeout à ~100s sur les gros PDF).
+    4. La requête POST retourne immédiatement un draft en status="processing".
+    5. Le frontend poll GET /spec-drafts/{id} toutes les 3s jusqu'à ce
+       que status passe à "pending" (succès) ou "failed" (erreur).
+    6. L'artisan voit la prévisualisation, ajuste, supprime, puis valide
+    7. Validation → création des mesures correspondantes en base avec
        les dimensions théoriques pré-remplies (flag `imported_from_spec`)
-    6. Sur le chantier : l'artisan voit les mesures importées avec un
+    8. Sur le chantier : l'artisan voit les mesures importées avec un
        badge spécial et peut les ouvrir pour confirmer/ajuster les
        mesures réelles relevées sur place.
 
@@ -18,12 +21,13 @@ Paywall :
 """
 from __future__ import annotations
 
+import asyncio
 import logging
 import uuid
 from datetime import datetime, timezone
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, File, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 
 from db import BETA_MODE, VALID_BLOCK_TYPES, db
@@ -69,9 +73,10 @@ class SpecDraft(BaseModel):
     source: str  # pdf | excel | image
     summary: str = ""
     items: List[SpecItem] = Field(default_factory=list)
-    status: str = "pending"  # pending | imported | rejected
+    status: str = "pending"  # processing | pending | imported | rejected | failed
     created_at: str
     created_by: str
+    error_message: Optional[str] = None  # rempli si status == "failed"
 
 
 class ConfirmImportPayload(BaseModel):
@@ -174,14 +179,17 @@ def _expand_items_for_mesures(items: List[dict]) -> List[dict]:
 @router.post("/chantiers/{chantier_id}/import-spec", response_model=SpecDraft)
 async def import_spec(
     chantier_id: str,
+    background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     user=Depends(require_roles(EDIT_ROLES)),
 ):
-    """Upload un cahier des charges, lance l'analyse IA, stocke un brouillon.
+    """Upload un cahier des charges + lance l'analyse IA EN BACKGROUND.
 
-    Retourne le brouillon (`SpecDraft`) avec la liste des items détectés
-    par l'IA. L'utilisateur peut ensuite éditer/valider via
-    `/confirm-import` ou rejeter via `/reject-import`.
+    ⚡ Ne bloque PAS la requête HTTP pendant l'analyse IA (qui peut
+    prendre 30-90 secondes sur un gros PDF) — sinon Cloudflare timeout.
+
+    Le draft est créé en `status="processing"`. Le frontend doit poller
+    GET /spec-drafts/{id} pour récupérer le résultat final.
     """
     # 1) Accès au chantier
     chantier = await check_chantier_access(db, chantier_id, user)
@@ -207,27 +215,7 @@ async def import_spec(
             "Format non supporté. Utilisez PDF, Excel (.xlsx) ou image (JPG/PNG).",
         )
 
-    # 5) Appel IA
-    session_id = f"spec_{chantier_id}_{uuid.uuid4().hex[:8]}"
-    try:
-        if source == "pdf":
-            ai_result = await parse_pdf(raw_bytes, session_id)
-        elif source == "excel":
-            ai_result = await parse_excel(raw_bytes, session_id)
-        else:  # image
-            ai_result = await parse_image(
-                raw_bytes,
-                file.content_type or "image/jpeg",
-                session_id,
-            )
-    except Exception as e:  # noqa: BLE001
-        logger.exception("IA spec_parser a échoué — chantier=%s file=%s", chantier_id, file.filename)
-        raise HTTPException(
-            502,
-            f"L'analyse IA a échoué — réessayez. ({type(e).__name__})",
-        ) from e
-
-    # 6) Persistance du brouillon
+    # 5) Crée immédiatement un brouillon "processing" en base
     draft_id = str(uuid.uuid4())
     now = datetime.now(timezone.utc).isoformat()
     draft_doc = {
@@ -236,18 +224,82 @@ async def import_spec(
         "company_id": chantier.get("company_id", "default"),
         "filename": file.filename or "document",
         "source": source,
-        "summary": ai_result.get("summary", ""),
-        "items": ai_result.get("items", []),
-        "status": "pending",
+        "summary": "",
+        "items": [],
+        "status": "processing",  # 🆕 nouveau status : analyse en cours
         "created_at": now,
         "created_by": user.get("user_id") or user.get("id") or "",
-        # On garde la réponse brute IA pour debug (visible en admin)
-        "raw_response": ai_result.get("raw_response", ""),
+        "raw_response": "",
     }
     await db.spec_drafts.insert_one(draft_doc)
+
+    # 6) Lance l'analyse IA EN BACKGROUND (non bloquant)
+    mime = file.content_type or "image/jpeg"
+    background_tasks.add_task(
+        _run_ai_analysis_bg,
+        draft_id=draft_id,
+        raw_bytes=raw_bytes,
+        source=source,
+        mime=mime,
+    )
+
+    # 7) Retourne immédiatement le brouillon (le frontend va poller)
     draft_doc.pop("_id", None)
     draft_doc.pop("raw_response", None)
     return SpecDraft(**draft_doc)
+
+
+async def _run_ai_analysis_bg(
+    draft_id: str,
+    raw_bytes: bytes,
+    source: str,
+    mime: str,
+) -> None:
+    """Tâche d'arrière-plan : appelle Gemini puis met à jour le draft.
+
+    Toutes les exceptions sont catchées : on marque le draft en status
+    "failed" pour que le frontend puisse afficher un message d'erreur
+    propre à l'utilisateur.
+    """
+    session_id = f"spec_bg_{draft_id[:8]}"
+    try:
+        if source == "pdf":
+            ai_result = await parse_pdf(raw_bytes, session_id)
+        elif source == "excel":
+            ai_result = await parse_excel(raw_bytes, session_id)
+        else:  # image
+            ai_result = await parse_image(raw_bytes, mime, session_id)
+        items = ai_result.get("items", [])
+        await db.spec_drafts.update_one(
+            {"id": draft_id},
+            {
+                "$set": {
+                    "status": "pending",  # prêt pour validation utilisateur
+                    "items": items,
+                    "summary": ai_result.get("summary", ""),
+                    "raw_response": ai_result.get("raw_response", ""),
+                    "completed_at": datetime.now(timezone.utc).isoformat(),
+                }
+            },
+        )
+        logger.info(
+            "✅ Spec import OK draft=%s source=%s items=%d",
+            draft_id,
+            source,
+            len(items),
+        )
+    except Exception as e:  # noqa: BLE001
+        logger.exception("❌ Spec import KO draft=%s", draft_id)
+        await db.spec_drafts.update_one(
+            {"id": draft_id},
+            {
+                "$set": {
+                    "status": "failed",
+                    "error_message": f"{type(e).__name__}: {str(e)[:300]}",
+                    "completed_at": datetime.now(timezone.utc).isoformat(),
+                }
+            },
+        )
 
 
 @router.get("/chantiers/{chantier_id}/spec-drafts", response_model=List[SpecDraft])

@@ -10,6 +10,7 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 
 from fastapi import APIRouter, FastAPI, HTTPException, Request
+from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse
 from starlette.middleware.cors import CORSMiddleware
@@ -119,7 +120,7 @@ async def _log_422(request: Request, exc: RequestValidationError):
         )
     except Exception as e:  # noqa: BLE001
         _log.warning("422 handler failed to log: %s", e)
-    return JSONResponse(status_code=422, content={"detail": exc.errors()})
+    return JSONResponse(status_code=422, content=jsonable_encoder({"detail": exc.errors()}))
 
 # ─────────────────────────────────────────────────────────────────────
 # Route publique TEMPORAIRE pour télécharger les screenshots tablette
