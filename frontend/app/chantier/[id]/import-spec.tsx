@@ -95,54 +95,63 @@ export default function ImportSpecScreen() {
   const [items, setItems] = useState<SpecItem[]>([]);
   const [confirming, setConfirming] = useState(false);
   const [checkingExisting, setCheckingExisting] = useState(true);
+  const [pendingDrafts, setPendingDrafts] = useState<SpecDraft[]>([]);
 
   // ───────────────────────────────────────────────────────────────────
-  // Au montage : récupère un draft pending existant si Cloudflare a
-  // timeout l'upload précédent mais que le backend a quand même réussi.
+  // Au montage : récupère TOUS les drafts pending existants. Si l'upload
+  // précédent a Cloudflare-timeout côté client mais que le backend a
+  // réussi, on peut récupérer les résultats stockés en base.
   // ───────────────────────────────────────────────────────────────────
+  const refreshDrafts = useCallback(async () => {
+    if (!id) return;
+    try {
+      const r = await api.get<SpecDraft[]>(`/chantiers/${id}/spec-drafts`);
+      const found = (r.data || []).filter(
+        (d) => d.status === "pending" || d.status === "processing",
+      );
+      setPendingDrafts(found);
+      console.log(
+        "[import-spec] Drafts trouvés :",
+        found.length,
+        found.map((d) => `${d.id.slice(0, 8)}…(${d.status},${d.items.length})`),
+      );
+    } catch (e: any) {
+      console.warn("[import-spec] refresh drafts failed:", e?.message);
+    }
+  }, [id]);
+
   React.useEffect(() => {
     if (!id) {
       setCheckingExisting(false);
       return;
     }
-    let cancelled = false;
     (async () => {
-      try {
-        const r = await api.get<SpecDraft[]>(`/chantiers/${id}/spec-drafts`);
-        if (cancelled) return;
-        // Cherche le draft le plus récent (pending ou processing)
-        const latest = (r.data || []).find(
-          (d) => d.status === "pending" || d.status === "processing",
-        );
-        if (latest) {
-          console.log(
-            "[import-spec] Draft existant retrouvé :",
-            latest.id,
-            "status=",
-            latest.status,
-            "items=",
-            (latest.items || []).length,
-          );
-          let finalDraft = latest;
-          if (latest.status === "processing") {
-            finalDraft = await pollDraftUntilReady(latest.id);
-          }
-          if (finalDraft.status === "pending" && !cancelled) {
-            setDraft(finalDraft);
-            setItems(finalDraft.items || []);
-          }
-        }
-      } catch (e: any) {
-        console.warn("[import-spec] check existing failed:", e?.message);
-      } finally {
-        if (!cancelled) setCheckingExisting(false);
-      }
+      await refreshDrafts();
+      setCheckingExisting(false);
     })();
-    return () => {
-      cancelled = true;
-    };
+  }, [id, refreshDrafts]);
+
+  // Bouton "Ouvrir cet import" — bascule un draft en mode preview
+  const openExistingDraft = useCallback(
+    async (d: SpecDraft) => {
+      let finalDraft = d;
+      if (d.status === "processing") {
+        setUploading(true);
+        try {
+          finalDraft = await pollDraftUntilReady(d.id);
+        } catch (e: any) {
+          Alert.alert(t("common.error"), e?.message || "Polling échoué");
+          setUploading(false);
+          return;
+        }
+        setUploading(false);
+      }
+      setDraft(finalDraft);
+      setItems(finalDraft.items || []);
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+    [t],
+  );
 
   // ───────────────────────────────────────────────────────────────────
   // Upload helpers
@@ -562,8 +571,55 @@ export default function ImportSpecScreen() {
                 <Text style={styles.heroSub}>{t("importSpec.heroSub")}</Text>
               </View>
 
+              {/* 🆕 Encart "Imports déjà analysés" — très visible */}
+              {pendingDrafts.length > 0 && (
+                <View style={styles.pendingCard}>
+                  <View style={styles.pendingHeader}>
+                    <Ionicons name="checkmark-circle" size={20} color="#10B981" />
+                    <Text style={styles.pendingTitle}>
+                      {pendingDrafts.length === 1
+                        ? `1 import déjà analysé par l'IA`
+                        : `${pendingDrafts.length} imports déjà analysés par l'IA`}
+                    </Text>
+                  </View>
+                  <Text style={styles.pendingSub}>
+                    Cliquez pour voir les châssis détectés et les valider.
+                  </Text>
+                  {pendingDrafts.slice(0, 3).map((d) => {
+                    const totalCount = (d.items || []).reduce(
+                      (sum, it) => sum + Math.max(1, it.quantity || 1),
+                      0,
+                    );
+                    return (
+                      <TouchableOpacity
+                        key={d.id}
+                        style={styles.pendingItem}
+                        onPress={() => openExistingDraft(d)}
+                        activeOpacity={0.8}
+                      >
+                        <View style={{ flex: 1 }}>
+                          <Text style={styles.pendingItemName} numberOfLines={1}>
+                            📎 {d.filename}
+                          </Text>
+                          <Text style={styles.pendingItemMeta}>
+                            {d.items.length} type(s) — {totalCount} châssis détectés
+                          </Text>
+                        </View>
+                        <Ionicons
+                          name="arrow-forward-circle"
+                          size={26}
+                          color={C.primary}
+                        />
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              )}
+
               <Text style={styles.sectionLabel}>
-                {t("importSpec.sourceLabel")}
+                {pendingDrafts.length > 0
+                  ? "Ou importez un NOUVEAU document"
+                  : t("importSpec.sourceLabel")}
               </Text>
 
               <SourceButton
@@ -901,6 +957,51 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderColor: C.border,
+  },
+  pendingCard: {
+    marginTop: 16,
+    backgroundColor: "#10B98115",
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: "#10B98144",
+  },
+  pendingHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 4,
+  },
+  pendingTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#10B981",
+    flex: 1,
+  },
+  pendingSub: {
+    fontSize: 12,
+    color: C.textSecondary,
+    marginBottom: 10,
+    lineHeight: 17,
+  },
+  pendingItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    backgroundColor: C.bg,
+    borderRadius: 10,
+    padding: 12,
+    marginTop: 6,
+  },
+  pendingItemName: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: C.textPrimary,
+  },
+  pendingItemMeta: {
+    fontSize: 11,
+    color: C.textMuted,
+    marginTop: 2,
   },
   heroTitle: {
     fontSize: 18,
