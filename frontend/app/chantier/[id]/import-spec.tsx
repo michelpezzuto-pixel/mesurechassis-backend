@@ -221,6 +221,56 @@ export default function ImportSpecScreen() {
       } catch (e: any) {
         const detail = e?.response?.data?.detail;
         const status = e?.response?.status;
+
+        // 🆘 PLAN B : si Cloudflare 502 / timeout réseau pendant l'upload,
+        // l'analyse a PEUT-ÊTRE quand même réussi côté serveur. On va
+        // chercher le dernier draft pending de ce chantier pour récupérer
+        // le résultat.
+        const isNetworkOrTimeout =
+          !status ||
+          status === 502 ||
+          status === 503 ||
+          status === 504 ||
+          status === 524 ||
+          /network|timeout/i.test(e?.message || "");
+
+        if (isNetworkOrTimeout && id) {
+          console.warn(
+            "[import-spec] Réseau échoué → tentative de récupération du draft...",
+          );
+          try {
+            const recovery = await api.get<SpecDraft[]>(
+              `/chantiers/${id}/spec-drafts`,
+            );
+            // On cherche le draft le plus récent (status pending ou processing)
+            const latest = (recovery.data || []).find(
+              (d) => d.status === "pending" || d.status === "processing",
+            );
+            if (latest) {
+              console.log(
+                "[import-spec] Draft récupéré :",
+                latest.id,
+                "status=",
+                latest.status,
+              );
+              const finalDraft =
+                latest.status === "processing"
+                  ? await pollDraftUntilReady(latest.id)
+                  : latest;
+              if (finalDraft.status === "pending") {
+                setDraft(finalDraft);
+                setItems(finalDraft.items || []);
+                return; // ✅ Succès via recovery !
+              }
+            }
+          } catch (recoveryErr: any) {
+            console.warn(
+              "[import-spec] Recovery a échoué :",
+              recoveryErr?.message,
+            );
+          }
+        }
+
         let message = t("importSpec.uploadError");
         if (status === 402 && detail?.message) {
           message = detail.message;
