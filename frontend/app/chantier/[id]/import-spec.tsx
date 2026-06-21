@@ -94,6 +94,55 @@ export default function ImportSpecScreen() {
   const [draft, setDraft] = useState<SpecDraft | null>(null);
   const [items, setItems] = useState<SpecItem[]>([]);
   const [confirming, setConfirming] = useState(false);
+  const [checkingExisting, setCheckingExisting] = useState(true);
+
+  // ───────────────────────────────────────────────────────────────────
+  // Au montage : récupère un draft pending existant si Cloudflare a
+  // timeout l'upload précédent mais que le backend a quand même réussi.
+  // ───────────────────────────────────────────────────────────────────
+  React.useEffect(() => {
+    if (!id) {
+      setCheckingExisting(false);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await api.get<SpecDraft[]>(`/chantiers/${id}/spec-drafts`);
+        if (cancelled) return;
+        // Cherche le draft le plus récent (pending ou processing)
+        const latest = (r.data || []).find(
+          (d) => d.status === "pending" || d.status === "processing",
+        );
+        if (latest) {
+          console.log(
+            "[import-spec] Draft existant retrouvé :",
+            latest.id,
+            "status=",
+            latest.status,
+            "items=",
+            (latest.items || []).length,
+          );
+          let finalDraft = latest;
+          if (latest.status === "processing") {
+            finalDraft = await pollDraftUntilReady(latest.id);
+          }
+          if (finalDraft.status === "pending" && !cancelled) {
+            setDraft(finalDraft);
+            setItems(finalDraft.items || []);
+          }
+        }
+      } catch (e: any) {
+        console.warn("[import-spec] check existing failed:", e?.message);
+      } finally {
+        if (!cancelled) setCheckingExisting(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   // ───────────────────────────────────────────────────────────────────
   // Upload helpers
