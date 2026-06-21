@@ -9,8 +9,9 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 
-from fastapi import APIRouter, FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi import APIRouter, FastAPI, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import FileResponse, JSONResponse
 from starlette.middleware.cors import CORSMiddleware
 import logging
 import os
@@ -97,6 +98,28 @@ api.include_router(testers_routes.router)
 api.include_router(campaign_routes.router)
 # 🆕 Campagne LinkedIn 15 jours — post du jour + visuels
 api.include_router(linkedin_routes.router)
+
+
+# ─────────────────────────────────────────────────────────────────────
+# 🪪 Handler global 422 — log détaillé des erreurs de validation pour
+# débugger les uploads multipart (notamment l'import cahier des charges).
+# ─────────────────────────────────────────────────────────────────────
+@app.exception_handler(RequestValidationError)
+async def _log_422(request: Request, exc: RequestValidationError):
+    try:
+        body_preview = ""
+        # On essaie de lire le content-type pour diagnostic
+        ctype = request.headers.get("content-type", "")
+        logger.warning(
+            "❌ 422 %s %s | content-type=%r | errors=%s",
+            request.method,
+            request.url.path,
+            ctype,
+            exc.errors(),
+        )
+    except Exception as e:  # noqa: BLE001
+        logger.warning("422 handler failed to log: %s", e)
+    return JSONResponse(status_code=422, content={"detail": exc.errors()})
 
 # ─────────────────────────────────────────────────────────────────────
 # Route publique TEMPORAIRE pour télécharger les screenshots tablette
