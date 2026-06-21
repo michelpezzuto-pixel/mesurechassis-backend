@@ -103,22 +103,47 @@ export default function ImportSpecScreen() {
       setUploading(true);
       try {
         const formData = new FormData();
-        // 🌐 Sur le WEB : FormData attend un Blob/File natif. On fetch
-        // l'URI (qui est un blob:// ou data:// sur web après DocumentPicker
-        // ou ImagePicker) pour récupérer le vrai Blob du fichier.
-        // 📱 Sur MOBILE (iOS/Android natif) : RN accepte le shortcut
-        // { uri, name, type } qui sera converti en multipart correctement.
-        if (Platform.OS === "web") {
+        // ────────────────────────────────────────────────────────────
+        // 🔧 Stratégie d'upload robuste (web + iOS Safari + Android)
+        //
+        // Détection multi-niveaux pour décider si on peut faire fetch+blob :
+        //   1. Plateforme = "web" → toujours fetch+blob (Blob natif W3C)
+        //   2. iOS Safari dans navigateur (Platform === "web" déjà capturé)
+        //   3. App native Expo Go / iOS standalone → format RN { uri, name, type }
+        //
+        // Pour iOS Safari (le cas de Michel) : `Platform.OS === "web"` doit
+        // être vrai. Si ce n'est pas le cas, on tombe en fallback RN.
+        // ────────────────────────────────────────────────────────────
+        const isWebLike =
+          Platform.OS === "web" ||
+          (typeof window !== "undefined" && typeof Blob !== "undefined");
+        console.log(
+          "[import-spec] upload",
+          { platform: Platform.OS, isWebLike, name: file.name, mime: file.mimeType },
+        );
+
+        if (isWebLike) {
+          // 🌐 WEB / Safari mobile : on convertit l'URI en Blob natif
           const resp = await fetch(file.uri);
-          const blob = await resp.blob();
+          if (!resp.ok) {
+            throw new Error(`Lecture du fichier impossible (${resp.status})`);
+          }
+          let blob = await resp.blob();
+          // Si le mime du blob est vide ou trop générique, on le force
+          if (!blob.type && file.mimeType) {
+            blob = new Blob([await blob.arrayBuffer()], { type: file.mimeType });
+          }
           formData.append("file", blob, file.name);
+          console.log("[import-spec] blob OK", blob.size, "bytes,", blob.type);
         } else {
+          // 📱 Mobile NATIF (Expo Go, iOS/Android standalone)
           formData.append("file", {
             uri: file.uri,
             name: file.name,
             type: file.mimeType || "application/octet-stream",
           } as any);
         }
+
         // ⚠️ NE PAS définir Content-Type manuellement : axios doit le
         // construire avec la bonne `boundary=...`. Si on force
         // "multipart/form-data" tout court, le serveur ne sait pas où

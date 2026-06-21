@@ -106,11 +106,11 @@ api.include_router(linkedin_routes.router)
 # ─────────────────────────────────────────────────────────────────────
 @app.exception_handler(RequestValidationError)
 async def _log_422(request: Request, exc: RequestValidationError):
+    import logging as _logging
+    _log = _logging.getLogger("mesurechassis.422")
     try:
-        body_preview = ""
-        # On essaie de lire le content-type pour diagnostic
         ctype = request.headers.get("content-type", "")
-        logger.warning(
+        _log.warning(
             "❌ 422 %s %s | content-type=%r | errors=%s",
             request.method,
             request.url.path,
@@ -118,7 +118,7 @@ async def _log_422(request: Request, exc: RequestValidationError):
             exc.errors(),
         )
     except Exception as e:  # noqa: BLE001
-        logger.warning("422 handler failed to log: %s", e)
+        _log.warning("422 handler failed to log: %s", e)
     return JSONResponse(status_code=422, content={"detail": exc.errors()})
 
 # ─────────────────────────────────────────────────────────────────────
