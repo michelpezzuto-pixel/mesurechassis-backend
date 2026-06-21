@@ -103,17 +103,30 @@ export default function ImportSpecScreen() {
       setUploading(true);
       try {
         const formData = new FormData();
-        // React Native FormData accepte un objet { uri, name, type }
-        formData.append("file", {
-          uri: file.uri,
-          name: file.name,
-          type: file.mimeType || "application/octet-stream",
-        } as any);
+        // 🌐 Sur le WEB : FormData attend un Blob/File natif. On fetch
+        // l'URI (qui est un blob:// ou data:// sur web après DocumentPicker
+        // ou ImagePicker) pour récupérer le vrai Blob du fichier.
+        // 📱 Sur MOBILE (iOS/Android natif) : RN accepte le shortcut
+        // { uri, name, type } qui sera converti en multipart correctement.
+        if (Platform.OS === "web") {
+          const resp = await fetch(file.uri);
+          const blob = await resp.blob();
+          formData.append("file", blob, file.name);
+        } else {
+          formData.append("file", {
+            uri: file.uri,
+            name: file.name,
+            type: file.mimeType || "application/octet-stream",
+          } as any);
+        }
+        // ⚠️ NE PAS définir Content-Type manuellement : axios doit le
+        // construire avec la bonne `boundary=...`. Si on force
+        // "multipart/form-data" tout court, le serveur ne sait pas où
+        // séparer les parties → erreur 422 Unprocessable Entity.
         const res = await api.post<SpecDraft>(
           `/chantiers/${id}/import-spec`,
           formData,
           {
-            headers: { "Content-Type": "multipart/form-data" },
             timeout: 120_000, // 2 min : l'IA peut prendre du temps sur gros PDF
           }
         );
