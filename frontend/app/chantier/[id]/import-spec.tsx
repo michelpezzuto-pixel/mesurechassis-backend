@@ -252,10 +252,10 @@ export default function ImportSpecScreen() {
           }
         );
 
-        // 🆕 La route est ASYNCHRONE depuis Build 11.1 : la réponse
+        // 🆕 Build 11.2 : la route est ASYNCHRONE et l'IA convertit
+        // DIRECTEMENT les items en mesures dans le chantier. La réponse
         // initiale retourne status="processing". On poll alors le
-        // backend toutes les 3 secondes jusqu'à status="pending" ou
-        // "failed". Évite tout timeout Cloudflare.
+        // backend jusqu'à status="imported" (succès) ou "failed".
         let draftData = res.data;
         if (draftData.status === "processing") {
           draftData = await pollDraftUntilReady(draftData.id);
@@ -268,14 +268,20 @@ export default function ImportSpecScreen() {
           );
         }
 
-        setDraft(draftData);
-        setItems(draftData.items || []);
-        if ((draftData.items || []).length === 0) {
-          Alert.alert(
-            t("importSpec.noItemsTitle"),
-            draftData.summary || t("importSpec.noItemsMessage"),
-          );
-        }
+        // ✅ Succès — l'IA a créé les mesures directement dans le chantier.
+        // On affiche un message de confirmation puis on redirige vers
+        // le tableau de bord du chantier où Michel verra ses châssis.
+        const created = (draftData as any).mesures_created ?? draftData.items.length;
+        Alert.alert(
+          "✅ Import réussi",
+          `${created} châssis ont été ajoutés à votre chantier avec leurs mesures théoriques. Vous pouvez maintenant les ouvrir et valider sur place.`,
+          [
+            {
+              text: "Voir mon chantier",
+              onPress: () => router.replace(`/chantier/${id}`),
+            },
+          ],
+        );
       } catch (e: any) {
         const detail = e?.response?.data?.detail;
         const status = e?.response?.status;

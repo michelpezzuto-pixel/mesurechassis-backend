@@ -257,6 +257,11 @@ async def _run_ai_analysis_bg(
 ) -> None:
     """Tâche d'arrière-plan : appelle Gemini puis met à jour le draft.
 
+    🆕 Build 11.2 : APRÈS analyse IA réussie, on crée AUTOMATIQUEMENT
+    les mesures correspondantes dans le chantier (avec flag imported_from_spec
+    et statut "à valider"). Plus de preview intermédiaire — Michel
+    arrive directement sur la liste de châssis pré-remplis.
+
     Toutes les exceptions sont catchées : on marque le draft en status
     "failed" pour que le frontend puisse afficher un message d'erreur
     propre à l'utilisateur.
@@ -270,23 +275,51 @@ async def _run_ai_analysis_bg(
         else:  # image
             ai_result = await parse_image(raw_bytes, mime, session_id)
         items = ai_result.get("items", [])
+
+        # 🆕 Conversion automatique en mesures
+        draft = await db.spec_drafts.find_one({"id": draft_id})
+        chantier_id = draft["chantier_id"] if draft else None
+        mesures_created = 0
+        if items and chantier_id:
+            mesure_payloads = _expand_items_for_mesures(items)
+            now_iso = datetime.now(timezone.utc).isoformat()
+            for p in mesure_payloads:
+                doc = {
+                    **p,
+                    "id": str(uuid.uuid4()),
+                    "chantier_id": chantier_id,
+                    "created_at": now_iso,
+                    "alerts": [],
+                    "slope_angle_deg": None,
+                }
+                await db.mesures.insert_one(doc)
+                mesures_created += 1
+
+        # Marque le draft comme directement "imported" (plus de pending)
         await db.spec_drafts.update_one(
             {"id": draft_id},
             {
                 "$set": {
-                    "status": "pending",  # prêt pour validation utilisateur
+                    "status": "imported" if items else "failed",
                     "items": items,
                     "summary": ai_result.get("summary", ""),
                     "raw_response": ai_result.get("raw_response", ""),
+                    "mesures_created": mesures_created,
                     "completed_at": datetime.now(timezone.utc).isoformat(),
+                    "error_message": (
+                        ""
+                        if items
+                        else "Aucun châssis n'a pu être détecté dans ce document."
+                    ),
                 }
             },
         )
         logger.info(
-            "✅ Spec import OK draft=%s source=%s items=%d",
+            "✅ Spec import OK draft=%s source=%s items=%d mesures=%d",
             draft_id,
             source,
             len(items),
+            mesures_created,
         )
     except Exception as e:  # noqa: BLE001
         logger.exception("❌ Spec import KO draft=%s", draft_id)
