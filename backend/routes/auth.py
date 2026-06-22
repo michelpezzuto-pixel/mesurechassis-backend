@@ -356,7 +356,17 @@ async def verify_email(payload: VerifyEmailRequest):
     rec = await db.email_verifications.find_one({"token": payload.token})
     if not rec:
         raise HTTPException(400, "Lien de vérification invalide")
+    # 🆕 Build 11.3 (Apple Fix) — Si le lien est déjà utilisé, mais que
+    # l'utilisateur existe et est actif, on retourne un succès gracieux
+    # avec un JWT, plutôt qu'une erreur. Cela évite l'écran "LIEN INVALIDE"
+    # quand l'utilisateur clique 2× ou quand auto-verify a déjà activé.
     if rec.get("used"):
+        existing = await db.users.find_one({"id": rec["user_id"]}, {"_id": 0})
+        if existing and existing.get("status") == "active":
+            jwt_token = create_access_token(existing["id"], existing["role"])
+            return TokenResponse(
+                access_token=jwt_token, user=user_to_public(existing)
+            )
         raise HTTPException(400, "Lien déjà utilisé")
     try:
         expires = datetime.fromisoformat(

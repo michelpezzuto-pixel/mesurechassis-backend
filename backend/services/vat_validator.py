@@ -137,6 +137,16 @@ async def check_vat_vies(vat_normalized: str, timeout: float = 5.0) -> tuple[boo
                 )
                 return True, None  # fallback OK
             data = resp.json()
+            # 🛡️ Fix Build 11.3.1 : VIES retourne parfois HTTP 200 avec
+            # `valid: null` (Member State Service temporairement indisponible
+            # — documenté par la Commission). On NE doit PAS rejeter dans
+            # ce cas : on fallback en acceptant comme pour un timeout.
+            if data.get("valid") is None:
+                logger.warning(
+                    "VIES valid=null pour %s (MS service temporairement KO) — fallback accept",
+                    vat_normalized,
+                )
+                return True, None
             is_valid = bool(data.get("valid"))
             company_name = data.get("name") or None
             if not is_valid:
