@@ -160,6 +160,54 @@ async def download_liste_prospects():
     )
 
 
+# 🆕 Build 11.3 — Screenshots Apple App Store (iPhone 6.5" + iPad 12.9")
+@api.get("/_downloads/apple-screenshots")
+async def download_apple_screenshots():
+    """ZIP de tous les screenshots Apple Store aux dimensions exactes.
+
+    Contient :
+        • iphone/01-05_*.png  → 1242×2688 px (iPhone 6.5")
+        • ipad/01-03_*.png    → 2048×2732 px (iPad Pro 12.9")
+
+    Si le ZIP n'existe pas, on le génère à la volée à partir du dossier
+    /app/backend/static_artifacts/screenshots/ (peuplé par
+    scripts/generate_apple_screenshots.py).
+    """
+    import zipfile
+    src = "/app/backend/static_artifacts/screenshots"
+    zip_path = "/app/backend/static_artifacts/apple_screenshots.zip"
+    if not os.path.isdir(src):
+        raise HTTPException(404, "Dossier de screenshots introuvable")
+    # Recrée le zip à chaque appel pour s'assurer qu'il est à jour
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+        for root, _, files in os.walk(src):
+            for f in sorted(files):
+                if f.endswith(".png"):
+                    full = os.path.join(root, f)
+                    arc = os.path.relpath(full, src)
+                    zf.write(full, arc)
+    return FileResponse(
+        zip_path,
+        media_type="application/zip",
+        filename="mesurechassis_apple_screenshots.zip",
+    )
+
+
+@api.get("/_downloads/apple-screenshot/{device}/{name}")
+async def download_single_apple_screenshot(device: str, name: str):
+    """Téléchargement d'un screenshot individuel.
+
+    Exemple : /api/_downloads/apple-screenshot/iphone/01_login.png
+    """
+    if device not in {"iphone", "ipad"}:
+        raise HTTPException(404, "Device invalide")
+    safe = os.path.basename(name)  # bloque les traversals
+    path = f"/app/backend/static_artifacts/screenshots/{device}/{safe}"
+    if not os.path.isfile(path):
+        raise HTTPException(404, "Screenshot introuvable")
+    return FileResponse(path, media_type="image/png", filename=safe)
+
+
 @api.get("/_downloads/site-maj-offre-lancement")
 async def download_site_maj():
     """Pages du site vitrine mises à jour (bêta → offre de lancement, QR testeur)."""
