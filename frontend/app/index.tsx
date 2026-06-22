@@ -47,6 +47,8 @@ export default function SignIn() {
   const [showResetPassword, setShowResetPassword] = useState(false);
   const [name, setName] = useState("");
   const [companyName, setCompanyName] = useState("");
+  // 🆕 Build 11.3 — Numéro de TVA européen obligatoire (Apple Review)
+  const [vatNumber, setVatNumber] = useState("");
   // 🆕 Build 9 — Code parrainage optionnel saisi à l'inscription
   const [referralCode, setReferralCode] = useState("");
   const [referralStatus, setReferralStatus] = useState<{
@@ -188,6 +190,14 @@ export default function SignIn() {
       );
       return;
     }
+    // 🆕 Build 11.3 — TVA obligatoire (service B2B européen)
+    if (mode === "register" && !vatNumber.trim()) {
+      Alert.alert(
+        "Numéro de TVA requis",
+        "MesureChâssis est réservé aux professionnels. Saisissez votre numéro de TVA européen (ex: BE0123456789).",
+      );
+      return;
+    }
     setSubmitting(true);
     try {
       if (mode === "login") {
@@ -205,6 +215,8 @@ export default function SignIn() {
           accountType,
           // 🆕 Build 9 — Code parrainage optionnel
           referralCode.trim() || undefined,
+          // 🆕 Build 11.3 — Numéro de TVA européen
+          vatNumber.trim() || undefined,
         );
         setPendingVerification({
           email: email.trim(),
@@ -367,8 +379,13 @@ export default function SignIn() {
                * Entreprise/Pro est entièrement masquée. Sur iOS, on force
                * un compte individuel ("artisan") sans aucune mention
                * d'abonnement ni d'organisation. */}
-              {!isIOS && (
-                <>
+              {/* 🆕 Build 11.3 — App Store 3.1.1/3.1.3(c) : MesureChâssis
+               * est désormais un service B2B pur. L'inscription requiert
+               * un numéro de TVA européen valide (vérifié via API VIES).
+               * Apple accepte ce modèle (cf. Slack, Notion Business, etc.).
+               *
+               * Sur iOS, on ne montre PAS les prix (paiement géré via web,
+               * conforme à la "Reader App" rule). */}
               <Text style={styles.label}>{t("auth.chooseProfile")}</Text>
               {([
                 {
@@ -435,7 +452,8 @@ export default function SignIn() {
                         )}
                       </View>
                       <Text style={styles.typeDesc}>{opt.desc}</Text>
-                      {Platform.OS === "web" && (
+                      {/* 🍎 Prix masqués sur iOS (Reader App rule) */}
+                      {!isIOS && (
                         <Text
                           style={[
                             styles.profilePrice,
@@ -454,8 +472,6 @@ export default function SignIn() {
                   </TouchableOpacity>
                 );
               })}
-                </>
-              )}
 
               <Text style={styles.label}>
                 {isIOS
@@ -477,9 +493,9 @@ export default function SignIn() {
                 style={styles.input}
               />
 
-              {/* 🍎 iOS — App Store 3.1.1/3.1.3(c) : aucun champ d'inscription
-               * business/entreprise. Compte purement individuel. */}
-              {isIOS ? null : accountType === "artisan" ? (
+              {/* 🆕 Build 11.3 — Champ company_name visible sur iOS aussi
+               * (modèle B2B avec TVA, conforme Apple 3.1.3(c)) */}
+              {accountType === "artisan" ? (
                 <>
                   <Text style={styles.label}>
                     Nom commercial (optionnel)
@@ -509,6 +525,30 @@ export default function SignIn() {
                   />
                 </>
               )}
+
+              {/* 🆕 Build 11.3 — Numéro de TVA européen OBLIGATOIRE
+               * Service B2B exclusivement réservé aux professionnels.
+               * Validé via API VIES officielle. */}
+              <Text style={styles.label}>
+                Numéro de TVA{" "}
+                <Text style={{ color: colors.alert }}>*</Text>
+              </Text>
+              <TextInput
+                testID="register-vat-input"
+                value={vatNumber}
+                onChangeText={(v) => setVatNumber(v.toUpperCase().replace(/\s/g, ""))}
+                placeholder="ex. BE0123456789"
+                placeholderTextColor={colors.placeholder}
+                autoCapitalize="characters"
+                autoCorrect={false}
+                maxLength={20}
+                style={styles.input}
+              />
+              <Text style={styles.helpHint}>
+                MesureChâssis est un service réservé aux professionnels.
+                Format européen accepté : BE, FR, DE, NL, LU, IT, ES, PT,
+                AT et tous les États membres de l&apos;UE.
+              </Text>
 
               {/* 🆕 Build 9 — Code parrainage (optionnel) */}
               <Text style={styles.label}>Code parrainage (optionnel)</Text>

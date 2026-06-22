@@ -57,6 +57,7 @@ type AuthCtx = {
     companyName?: string,
     accountType?: "artisan" | "entreprise" | "pro",
     referralCode?: string,
+    vatNumber?: string,
   ) => Promise<{ verification_link?: string; message?: string }>;
   verifyEmail: (token: string) => Promise<void>;
   acceptInvitation: (
@@ -147,6 +148,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     companyName?: string,
     accountType?: "artisan" | "entreprise" | "pro",
     referralCode?: string,
+    vatNumber?: string,
   ): Promise<{ verification_link?: string; message?: string }> => {
     const body: Record<string, unknown> = {
       name,
@@ -159,6 +161,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // 🆕 Build 9 — Code parrainage optionnel
     if (referralCode && referralCode.trim()) {
       body.referral_code = referralCode.trim();
+    }
+    // 🆕 Build 11.3 — Numéro de TVA européen obligatoire (Apple 3.1.3(c))
+    if (vatNumber && vatNumber.trim()) {
+      body.vat_number = vatNumber.trim();
     }
     const res = await api.post("/auth/register", body);
     // Pas de token : compte en pending_verification.

@@ -194,6 +194,34 @@ async def register(payload: dict, request: Request):
                 detail="Le nom de l'entreprise est requis pour un compte Entreprise.",
             )
 
+    # 🆕 Build 11.3 — Validation TVA européenne obligatoire pour
+    # Admin/Artisan (Apple Review Guideline 3.1.3(c)).
+    # MesureChâssis se positionne désormais comme service B2B européen.
+    # Les comptes Commercial/Technicien (créés via /auth/invite) sont
+    # exemptés : ils héritent de la TVA de leur company parent.
+    vat_raw = (payload.get("vat_number") or "").strip()
+    if not vat_raw:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Un numéro de TVA européen est requis pour s'inscrire. "
+                "MesureChâssis est un service réservé aux professionnels "
+                "de la menuiserie. Exemple : BE0123456789"
+            ),
+        )
+    # Bypass VIES uniquement pour le compte démo Apple Review
+    # (vat bidon mais format valide, pour ne pas être bloqué par VIES).
+    is_apple_review = email_lower == "applereview@mesurechassis.com"
+    from services.vat_validator import validate_vat as _validate_vat
+    vat_ok, vat_normalized, vat_msg = await _validate_vat(
+        vat_raw, skip_vies=is_apple_review
+    )
+    if not vat_ok:
+        raise HTTPException(
+            status_code=400,
+            detail=vat_msg or "Numéro de TVA invalide.",
+        )
+
     base_slug = company_name.strip().lower()
     safe_slug = "".join(c if c.isalnum() else "-" for c in base_slug).strip("-")
     company_id = f"{safe_slug or 'co'}-{uuid.uuid4().hex[:6]}"
@@ -241,6 +269,9 @@ async def register(payload: dict, request: Request):
             "preferred_plan": preferred_plan,
             # Artisan → artisan_mode automatique (bypass RBAC complet)
             "artisan_mode": is_artisan,
+            # 🆕 Build 11.3 — TVA européenne (validée VIES, sauf compte Apple Review)
+            "vat_number": vat_normalized,
+            "vat_country": (vat_normalized or "")[:2] if vat_normalized else None,
             "subscription_status": "active",
             "subscription_expires_at": beta_expires,
             "plan": "pro",
@@ -264,6 +295,9 @@ async def register(payload: dict, request: Request):
             # 🆕 V3 — Plan Stripe préféré
             "preferred_plan": preferred_plan,
             "artisan_mode": is_artisan,
+            # 🆕 Build 11.3 — TVA européenne (validée VIES, sauf compte Apple Review)
+            "vat_number": vat_normalized,
+            "vat_country": (vat_normalized or "")[:2] if vat_normalized else None,
             # Pas d'abonnement par défaut — l'utilisateur est en freemium
             "subscription_status": None,
             "subscription_expires_at": None,
