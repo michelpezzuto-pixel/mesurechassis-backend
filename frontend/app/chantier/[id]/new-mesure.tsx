@@ -29,6 +29,7 @@ import {
   Modal,
   Platform,
   ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -87,6 +88,15 @@ export default function NewMesureWizard() {
   // 🏗️ Si le chantier a déjà une wall_config → on saute l'étape 1
   //    (configuration mur déjà faite une fois pour tout le chantier).
   const [wallConfigLocked, setWallConfigLocked] = useState(false);
+
+  // 🆕 Import CDC — Mode "validation d'une mesure importée par IA".
+  //   Si la mesure courante a `options.imported_from_spec === true` ET
+  //   n'est pas encore validée sur place (`options.validated_on_site !== true`),
+  //   on affiche un bandeau orange et on change le bouton "ENREGISTRER" → "VALIDER".
+  const [isImportedMode, setIsImportedMode] = useState(false);
+  // Preserve les options "non gérées par le wizard" (ex: imported_from_spec,
+  // theoretical_*, spec_notes) pour les ré-injecter au submit (merge).
+  const [importedOptionsBackup, setImportedOptionsBackup] = useState<Record<string, any> | null>(null);
 
   const [s1, setS1] = useState<Step1Data>(initStep1());
   const [s1Err, setS1Err] = useState<Record<string, boolean>>({});
@@ -177,6 +187,19 @@ export default function NewMesureWizard() {
             setLabel(m.label || "");
             setPhoto(m.photo_url || null);
             const opts = m.options || {};
+            // 🆕 Import CDC — Détection mode "validation d'une mesure IA"
+            const importedNotYetValidated =
+              !!opts.imported_from_spec && !opts.validated_on_site;
+            setIsImportedMode(importedNotYetValidated);
+            // 💾 Backup des options spécifiques IA pour les ré-injecter au submit
+            //    (sinon elles seraient perdues car le wizard reconstruit `opts` from scratch)
+            setImportedOptionsBackup({
+              imported_from_spec: !!opts.imported_from_spec,
+              spec_notes: opts.spec_notes || "",
+              theoretical_width_mm: opts.theoretical_width_mm ?? null,
+              theoretical_height_mm: opts.theoretical_height_mm ?? null,
+              spec_draft_id: opts.spec_draft_id || null,
+            });
             const toStr = (v: any) => (v == null || v === "" ? "" : String(v));
             // S'il n'y a pas de wall_config sur le chantier mais que la mesure
             // possède une copie des champs maçonnerie, on hydrate quand même.
@@ -795,6 +818,27 @@ export default function NewMesureWizard() {
       options: opts,
     };
 
+    // 🆕 Import CDC — Si on est en mode "validation d'une mesure IA",
+    //   on marque la mesure comme validée sur place ET on ré-injecte les
+    //   métadonnées IA backupées au chargement (sinon elles seraient perdues).
+    if (isImportedMode && importedOptionsBackup) {
+      (payload.options as Record<string, any>).imported_from_spec = true;
+      (payload.options as Record<string, any>).spec_notes = importedOptionsBackup.spec_notes || "";
+      (payload.options as Record<string, any>).theoretical_width_mm = importedOptionsBackup.theoretical_width_mm;
+      (payload.options as Record<string, any>).theoretical_height_mm = importedOptionsBackup.theoretical_height_mm;
+      (payload.options as Record<string, any>).spec_draft_id = importedOptionsBackup.spec_draft_id;
+      // 🚦 Marquage de la validation sur place (passage du badge orange "À valider" au cercle vert "V")
+      (payload.options as Record<string, any>).validated_on_site = true;
+      (payload.options as Record<string, any>).validated_at = new Date().toISOString();
+    } else if (importedOptionsBackup) {
+      // Cas : mesure déjà validée précédemment — on conserve l'historique
+      (payload.options as Record<string, any>).imported_from_spec = importedOptionsBackup.imported_from_spec;
+      (payload.options as Record<string, any>).spec_notes = importedOptionsBackup.spec_notes || "";
+      (payload.options as Record<string, any>).theoretical_width_mm = importedOptionsBackup.theoretical_width_mm;
+      (payload.options as Record<string, any>).theoretical_height_mm = importedOptionsBackup.theoretical_height_mm;
+      (payload.options as Record<string, any>).validated_on_site = true;
+    }
+
     if (shape === "trapeze") {
       payload.height_left = parseNum(s3.trap_height_left);
       payload.height_right = parseNum(s3.trap_height_right);
@@ -1033,6 +1077,23 @@ export default function NewMesureWizard() {
           </TouchableOpacity>
         </View>
 
+        {/* 🆕 Import CDC — Bandeau orange "À VALIDER" quand mesure issue d'un cahier des charges IA */}
+        {isImportedMode && (
+          <View style={importBannerStyles.banner}>
+            <Ionicons name="sparkles" size={18} color="#FF9F0A" />
+            <View style={{ flex: 1 }}>
+              <Text style={importBannerStyles.title}>
+                Mesure issue du cahier des charges
+              </Text>
+              <Text style={importBannerStyles.subtitle}>
+                {importedOptionsBackup?.theoretical_width_mm && importedOptionsBackup?.theoretical_height_mm
+                  ? `Cotes théoriques : ${importedOptionsBackup.theoretical_width_mm} × ${importedOptionsBackup.theoretical_height_mm} mm. Vérifiez et ajustez sur place, puis Validez.`
+                  : "Vérifiez les cotes théoriques pré-remplies, ajustez si besoin, puis Validez."}
+              </Text>
+            </View>
+          </View>
+        )}
+
         <ScrollView
           ref={scrollRef}
           contentContainerStyle={{
@@ -1099,15 +1160,29 @@ export default function NewMesureWizard() {
               testID="wizard-submit"
               onPress={submit}
               disabled={saving}
-              style={[styles.btn, styles.btnPrimary]}
+              style={[
+                styles.btn,
+                isImportedMode ? importBannerStyles.btnValidate : styles.btnPrimary,
+              ]}
               activeOpacity={0.85}
             >
               {saving ? (
-                <ActivityIndicator color="#000" />
+                <ActivityIndicator color={isImportedMode ? "#fff" : "#000"} />
               ) : (
                 <>
-                  <Ionicons name="checkmark-circle" size={22} color="#000" />
-                  <Text style={styles.btnPrimaryText}>ENREGISTRER</Text>
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={22}
+                    color={isImportedMode ? "#fff" : "#000"}
+                  />
+                  <Text
+                    style={[
+                      styles.btnPrimaryText,
+                      isImportedMode && { color: "#fff" },
+                    ]}
+                  >
+                    {isImportedMode ? "VALIDER" : "ENREGISTRER"}
+                  </Text>
                 </>
               )}
             </TouchableOpacity>
@@ -1167,3 +1242,35 @@ export default function NewMesureWizard() {
   );
 }
 
+// 🆕 Import CDC — Styles locaux pour le bandeau "À VALIDER" et le bouton "VALIDER" vert
+const importBannerStyles = StyleSheet.create({
+  banner: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+    backgroundColor: "#FF9F0A15",
+    borderColor: "#FF9F0A66",
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    marginHorizontal: 14,
+    marginTop: 10,
+    borderRadius: 10,
+  },
+  title: {
+    color: "#FF9F0A",
+    fontWeight: "900",
+    fontSize: 13,
+    letterSpacing: 0.4,
+  },
+  subtitle: {
+    color: "#FFCC7A",
+    fontSize: 12,
+    lineHeight: 16,
+    marginTop: 2,
+  },
+  // Bouton VALIDER vert plein
+  btnValidate: {
+    backgroundColor: "#10B981",
+  },
+});

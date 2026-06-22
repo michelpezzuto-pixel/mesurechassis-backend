@@ -91,6 +91,8 @@ export default function ImportSpecScreen() {
   const { t } = useT();
 
   const [uploading, setUploading] = useState(false);
+  // 🆕 Progression du chunked upload : { current: N, total: M } ou null
+  const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number } | null>(null);
   const [draft, setDraft] = useState<SpecDraft | null>(null);
   const [items, setItems] = useState<SpecItem[]>([]);
   const [confirming, setConfirming] = useState(false);
@@ -198,65 +200,119 @@ export default function ImportSpecScreen() {
       if (!id) return;
       setUploading(true);
       try {
-        const formData = new FormData();
         // ────────────────────────────────────────────────────────────
-        // 🔧 Stratégie d'upload robuste (web + iOS Safari + Android)
+        // 🔧 Stratégie d'upload :
+        //   1. Lis le fichier en Blob (web) ou en uri natif (Expo Go)
+        //   2. Si taille > 1.5 Mo → CHUNKED UPLOAD (anti-502 Cloudflare)
+        //   3. Sinon → upload classique (1 seule requête, plus rapide)
         //
-        // Détection multi-niveaux pour décider si on peut faire fetch+blob :
-        //   1. Plateforme = "web" → toujours fetch+blob (Blob natif W3C)
-        //   2. iOS Safari dans navigateur (Platform === "web" déjà capturé)
-        //   3. App native Expo Go / iOS standalone → format RN { uri, name, type }
-        //
-        // Pour iOS Safari (le cas de Michel) : `Platform.OS === "web"` doit
-        // être vrai. Si ce n'est pas le cas, on tombe en fallback RN.
+        // Sur natif (iOS/Android Expo Go), on lit le fichier via fetch(uri)
+        // qui retourne un Blob, puis on découpe avec blob.slice().
         // ────────────────────────────────────────────────────────────
-        const isWebLike =
-          Platform.OS === "web" ||
-          (typeof window !== "undefined" && typeof Blob !== "undefined");
         console.log(
           "[import-spec] upload",
-          { platform: Platform.OS, isWebLike, name: file.name, mime: file.mimeType },
+          { platform: Platform.OS, name: file.name, mime: file.mimeType },
         );
 
-        if (isWebLike) {
-          // 🌐 WEB / Safari mobile : on convertit l'URI en Blob natif
+        // Lecture du fichier en Blob (compatible web + natif via fetch(file://))
+        let fileBlob: Blob;
+        try {
           const resp = await fetch(file.uri);
-          if (!resp.ok) {
-            throw new Error(`Lecture du fichier impossible (${resp.status})`);
+          if (!resp.ok) throw new Error(`Lecture du fichier impossible (${resp.status})`);
+          fileBlob = await resp.blob();
+          // Force le mime si absent
+          if (!fileBlob.type && file.mimeType) {
+            fileBlob = new Blob([await fileBlob.arrayBuffer()], { type: file.mimeType });
           }
-          let blob = await resp.blob();
-          // Si le mime du blob est vide ou trop générique, on le force
-          if (!blob.type && file.mimeType) {
-            blob = new Blob([await blob.arrayBuffer()], { type: file.mimeType });
-          }
-          formData.append("file", blob, file.name);
-          console.log("[import-spec] blob OK", blob.size, "bytes,", blob.type);
-        } else {
-          // 📱 Mobile NATIF (Expo Go, iOS/Android standalone)
-          formData.append("file", {
-            uri: file.uri,
-            name: file.name,
-            type: file.mimeType || "application/octet-stream",
-          } as any);
+        } catch (readErr: any) {
+          throw new Error(readErr?.message || "Impossible de lire le fichier");
         }
 
-        // ⚠️ NE PAS définir Content-Type manuellement : axios doit le
-        // construire avec la bonne `boundary=...`. Si on force
-        // "multipart/form-data" tout court, le serveur ne sait pas où
-        // séparer les parties → erreur 422 Unprocessable Entity.
-        const res = await api.post<SpecDraft>(
-          `/chantiers/${id}/import-spec`,
-          formData,
-          {
-            timeout: 120_000, // 2 min : l'IA peut prendre du temps sur gros PDF
-          }
-        );
+        const totalSize = fileBlob.size;
+        console.log("[import-spec] blob OK", totalSize, "bytes,", fileBlob.type);
 
-        // 🆕 Build 11.2 : la route est ASYNCHRONE et l'IA convertit
-        // DIRECTEMENT les items en mesures dans le chantier. La réponse
-        // initiale retourne status="processing". On poll alors le
-        // backend jusqu'à status="imported" (succès) ou "failed".
-        let draftData = res.data;
+        // 🆕 Seuil chunked : 1.5 Mo (au-delà = chunked obligatoire)
+        const CHUNK_THRESHOLD = 1.5 * 1024 * 1024;
+        const CHUNK_SIZE = 1024 * 1024; // 1 Mo par chunk
+
+        let draftData: SpecDraft;
+
+        if (totalSize > CHUNK_THRESHOLD) {
+          // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+          // 📦 CHUNKED UPLOAD — Découpage en chunks de 1 Mo
+          // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+          const totalChunks = Math.ceil(totalSize / CHUNK_SIZE);
+          console.log(`[import-spec] CHUNKED mode: ${totalChunks} chunks de ${CHUNK_SIZE / 1024} Ko`);
+
+          // Étape 1 : init session côté backend
+          const initRes = await api.post<{ upload_id: string; chunk_size: number }>(
+            `/chantiers/${id}/import-spec/chunked/init`,
+            {
+              filename: file.name,
+              mime_type: file.mimeType || fileBlob.type || "application/octet-stream",
+              total_size: totalSize,
+              total_chunks: totalChunks,
+            },
+            { timeout: 15_000 },
+          );
+          const uploadId = initRes.data.upload_id;
+          console.log("[import-spec] chunked session:", uploadId);
+
+          // Étape 2 : upload chunk par chunk (séquentiel pour minimiser la charge)
+          for (let i = 0; i < totalChunks; i++) {
+            const start = i * CHUNK_SIZE;
+            const end = Math.min(start + CHUNK_SIZE, totalSize);
+            const chunk = fileBlob.slice(start, end);
+            setUploadProgress({ current: i + 1, total: totalChunks });
+
+            const fd = new FormData();
+            fd.append("chunk_index", String(i));
+            fd.append("file", chunk, `chunk_${i}`);
+
+            // Retry simple : 1 retry sur erreur réseau
+            let lastErr: any = null;
+            for (let attempt = 0; attempt < 2; attempt++) {
+              try {
+                await api.post(
+                  `/chantiers/${id}/import-spec/chunked/${uploadId}/chunk`,
+                  fd,
+                  { timeout: 30_000 },
+                );
+                lastErr = null;
+                break;
+              } catch (e: any) {
+                lastErr = e;
+                console.warn(`[import-spec] chunk ${i + 1}/${totalChunks} retry ${attempt + 1}`, e?.message);
+                await new Promise((r) => setTimeout(r, 1500));
+              }
+            }
+            if (lastErr) throw lastErr;
+          }
+
+          // Étape 3 : complete → assemble + lance l'IA en background
+          setUploadProgress(null);
+          const completeRes = await api.post<SpecDraft>(
+            `/chantiers/${id}/import-spec/chunked/${uploadId}/complete`,
+            {},
+            { timeout: 30_000 },
+          );
+          draftData = completeRes.data;
+          console.log("[import-spec] CHUNKED done, draft:", draftData.id);
+        } else {
+          // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+          // 🚀 UPLOAD CLASSIQUE — 1 seule requête (fichiers ≤ 1.5 Mo)
+          // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+          const formData = new FormData();
+          formData.append("file", fileBlob, file.name);
+          const res = await api.post<SpecDraft>(
+            `/chantiers/${id}/import-spec`,
+            formData,
+            { timeout: 120_000 },
+          );
+          draftData = res.data;
+        }
+
+        // Poll jusqu'à statut final (commun aux 2 modes)
         if (draftData.status === "processing") {
           draftData = await pollDraftUntilReady(draftData.id);
         }
@@ -268,9 +324,6 @@ export default function ImportSpecScreen() {
           );
         }
 
-        // ✅ Succès — l'IA a créé les mesures directement dans le chantier.
-        // On affiche un message de confirmation puis on redirige vers
-        // le tableau de bord du chantier où Michel verra ses châssis.
         const created = (draftData as any).mesures_created ?? draftData.items.length;
         Alert.alert(
           "✅ Import réussi",
@@ -285,11 +338,7 @@ export default function ImportSpecScreen() {
       } catch (e: any) {
         const detail = e?.response?.data?.detail;
         const status = e?.response?.status;
-
-        // 🆘 PLAN B : si Cloudflare 502 / timeout réseau pendant l'upload,
-        // l'analyse a PEUT-ÊTRE quand même réussi côté serveur. On va
-        // chercher le dernier draft pending de ce chantier pour récupérer
-        // le résultat.
+        // 🆘 PLAN B : si réseau / 502, on tente de récupérer le dernier draft pending
         const isNetworkOrTimeout =
           !status ||
           status === 502 ||
@@ -306,17 +355,10 @@ export default function ImportSpecScreen() {
             const recovery = await api.get<SpecDraft[]>(
               `/chantiers/${id}/spec-drafts`,
             );
-            // On cherche le draft le plus récent (status pending ou processing)
             const latest = (recovery.data || []).find(
               (d) => d.status === "pending" || d.status === "processing",
             );
             if (latest) {
-              console.log(
-                "[import-spec] Draft récupéré :",
-                latest.id,
-                "status=",
-                latest.status,
-              );
               const finalDraft =
                 latest.status === "processing"
                   ? await pollDraftUntilReady(latest.id)
@@ -324,7 +366,7 @@ export default function ImportSpecScreen() {
               if (finalDraft.status === "pending") {
                 setDraft(finalDraft);
                 setItems(finalDraft.items || []);
-                return; // ✅ Succès via recovery !
+                return;
               }
             }
           } catch (recoveryErr: any) {
@@ -348,9 +390,10 @@ export default function ImportSpecScreen() {
         Alert.alert(t("common.error"), message);
       } finally {
         setUploading(false);
+        setUploadProgress(null);
       }
     },
-    [id, t],
+    [id, t, pollDraftUntilReady, router],
   );
 
   const pickPdfOrExcel = useCallback(async () => {
@@ -675,11 +718,27 @@ export default function ImportSpecScreen() {
             <View style={styles.loaderBox}>
               <ActivityIndicator size="large" color={C.primary} />
               <Text style={styles.loaderTitle}>
-                {t("importSpec.loadingTitle")}
+                {uploadProgress
+                  ? `📦 Envoi sécurisé du document...`
+                  : t("importSpec.loadingTitle")}
               </Text>
               <Text style={styles.loaderSub}>
-                {t("importSpec.loadingSub")}
+                {uploadProgress
+                  ? `Chunk ${uploadProgress.current} / ${uploadProgress.total} envoyé`
+                  : t("importSpec.loadingSub")}
               </Text>
+              {uploadProgress && (
+                <View style={styles.progressBarTrack}>
+                  <View
+                    style={[
+                      styles.progressBarFill,
+                      {
+                        width: `${(uploadProgress.current / uploadProgress.total) * 100}%`,
+                      },
+                    ]}
+                  />
+                </View>
+              )}
             </View>
           )}
 
@@ -1094,6 +1153,22 @@ const styles = StyleSheet.create({
     marginTop: 8,
     textAlign: "center",
     lineHeight: 19,
+  },
+  // 🆕 Barre de progression chunked upload
+  progressBarTrack: {
+    width: "85%",
+    height: 8,
+    backgroundColor: C.bg,
+    borderRadius: 4,
+    marginTop: 16,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: C.border,
+  },
+  progressBarFill: {
+    height: "100%",
+    backgroundColor: C.primary,
+    borderRadius: 4,
   },
 
   summaryCard: {

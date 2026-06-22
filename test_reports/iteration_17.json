@@ -1,0 +1,57 @@
+{
+  "summary": "Build 12 — Chunked Upload pour Import CDC validé en backend-only. 14/14 tests pytest passent (100%, ~10s). Couvre les 4 endpoints chunked (init/chunk/complete/abort) + toutes les validations d'erreur (400/404/413) + l'idempotence du retry de chunk + la modification de `_expand_items_for_mesures` (bay_width/bay_height/validated_on_site:false) + une régression sur l'import classique. Le flow E2E init→3 chunks→complete passe en moins de 2s sur un PDF factice de 3 Mo. La session chunked passe bien en status='completed' en DB après /complete, et en 'aborted' après /abort. Le draft créé est en status='processing' tel que documenté. L'analyse Gemini en background échoue (logique : le PDF factice n'a pas de pages), mais c'est NORMAL — le transport chunked ne dépend pas de l'IA, et la requête HTTP retourne bien avant que Gemini ne soit appelé.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "POST /api/chantiers/{cid}/import-spec/chunked/{upload_id}/complete",
+        "issue": "Le warning 'Chunked assembly size mismatch' (spec_import.py:661) loggue mais ne renvoie pas d'erreur. Comportement volontaire (commentaire `# On continue quand même`) mais à confirmer côté produit — un mismatch >0 sur un upload légitime indique soit une corruption, soit une déduplication base64, et pourrait masquer un bug côté client. Suggestion : ajouter un seuil de tolérance (ex: si abs(diff) > 10% → 400)."
+      },
+      {
+        "endpoint": "spec_import.py — CHUNKED_UPLOAD_DIR",
+        "issue": "Le dossier `/tmp/spec_chunked_uploads` est créé au module-load (ligne 483). En cas de redémarrage du pod K8s, les chunks orphelins en cours d'upload sont perdus → l'utilisateur recevra un 404 'Chunks introuvables sur disque'. Acceptable car le client peut retry, mais un cron de cleanup au démarrage (chunks >1h) serait propre. Pas bloquant."
+      },
+      {
+        "endpoint": "_expand_items_for_mesures",
+        "issue": "bay_width/bay_height sont stockés en `float` (via `width or None`), alors que les autres champs `theoretical_width_mm`/`theoretical_height_mm` sont en `int`. Incohérence mineure de typage — vérifier que le modèle MesureCreate accepte bien des floats sur bay_width/bay_height (sinon Pydantic les coercera, mais à valider côté backend route /mesures)."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_chunked_spec_import.py",
+    "/app/test_reports/pytest/iter17_chunked_upload.xml"
+  ],
+  "action_items": [
+    "Aucune action bloquante. Les 2 features (chunked upload + bay_width/validated_on_site) sont validées et prêtes pour intégration frontend.",
+    "[OPTIONNEL/SUGGESTION] Ajouter un seuil de tolérance sur le size-mismatch dans /complete (actuellement warning silencieux).",
+    "[OPTIONNEL] Ajouter un job de cleanup au boot pour purger les dossiers /tmp/spec_chunked_uploads de >1h (failsafe en cas de restart pod).",
+    "[VÉRIFIER côté frontend] Que le wizard hydrate bien `bay_width`/`bay_height` (et non plus width_top/height_left) au chargement des mesures importées — c'est l'intention métier explicite du commentaire L175 de spec_import.py."
+  ],
+  "critical_code_review_comments": [
+    "spec_import.py:586 — la vérification `chunk_index >= meta['total_chunks']` est correcte, mais le message d'erreur dit `(0..{total_chunks-1})` ce qui est OK. Bonne défense en profondeur (le check applicatif protège même si Pydantic ne valide pas les Form ints).",
+    "spec_import.py:604 — le recompte via `iterdir()` à chaque chunk POST est élégant et garantit l'idempotence : un retry du même `chunk_index` overwrite le fichier disque (ligne 600) et le compteur ne change pas. ✅ vérifié par test_chunk_idempotent_overwrite.",
+    "spec_import.py:585 — vérification `meta.get('chantier_id') != chantier_id` excellent (protège contre l'usage cross-chantier d'un upload_id leaké).",
+    "spec_import.py:638-651 — l'assemblage en buffer mémoire est sûr car borné à MAX_UPLOAD_SIZE (15 Mo). Sur un pod 512 Mi RAM ça reste raisonnable même avec 5 uploads simultanés.",
+    "_expand_items_for_mesures (ligne 177-188) — placement correct du `bay_width` et `validated_on_site:false`. Le `width or None` court-circuite proprement les items à 0 mm (l'IA peut renvoyer 0 si elle n'a pas pu mesurer).",
+    "Sécurité : la route /abort n'exige PAS que la session appartienne au caller (elle filtre juste par `id + chantier_id`). C'est OK car require_roles + check_chantier_access en amont garantit déjà l'autorisation au niveau chantier, et un upload_id leaké ne servirait qu'à annuler son propre upload. ✅",
+    "Aucune fuite MongoDB `_id` détectée : les SpecDraft sont retournés via Pydantic (.dict via response_model) qui ignore `_id`, et le `draft_doc.pop('_id', None)` est appelé avant le `return` dans `chunked_complete` (ligne 718)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_chunked_spec_import.py (nouveau — 14 tests, sync pymongo pour DB checks afin d'éviter les conflits asyncio cross-loop avec Motor)"
+  ],
+  "success_rate": {
+    "backend": "100% (14/14 tests passent en 9.93s, incluant 1 vrai upload chunked 3 Mo + 1 import Excel classique régression)",
+    "frontend": "not tested (backend-only requested)"
+  },
+  "seed_data_creation": "Aucune donnée persistante créée. Les tests réutilisent le chantier 'Pharmacie Centrale' du compte applereview ET créent à la volée des spec_chunked_uploads / spec_drafts qui sont marqués completed/aborted (pas de cleanup explicite, mais ces collections sont éphémères par design : tâche cron prévue après 1h selon UPLOAD_TTL_SECONDS). Le test de régression Excel crée 1 mesure dans Pharmacie Centrale — à nettoyer manuellement si besoin.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Test file: /app/backend/tests/test_chunked_spec_import.py (14 tests, ~10s, sync requests + pymongo). Couvre les 4 endpoints chunked + _expand_items_for_mesures (unit). Compte utilisé : applereview@mesurechassis.com (chantier Pharmacie Centrale via lookup, fallback création si absent). Si l'on modifie spec_import.py ou la signature de _expand_items_for_mesures, relancer ce fichier en premier. Note : les DB checks utilisent un MongoClient pymongo sync (pas Motor) pour éviter les conflits cross-loop avec l'event loop session de pytest-asyncio.",
+  "rca_of_issue": "N/A — pas de bug détecté. 2 failures initiales sur les DB checks étaient des problèmes d'infra de test (Motor client lié à l'event loop pytest-asyncio session, race condition lors d'un nouveau loop.run_until_complete), réglés en passant à pymongo synchrone. Aucune modification du code applicatif n'a été nécessaire."
+}

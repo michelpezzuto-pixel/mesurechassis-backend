@@ -1041,9 +1041,24 @@ export default function ChantierDetail() {
                   </View>
                 )}
                 <View style={{ flex: 1, minWidth: 0 }}>
-                  <Text style={styles.mesureLabel} numberOfLines={1}>
-                    #{index + 1} · {item.label}
-                  </Text>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                    <Text style={styles.mesureLabel} numberOfLines={1}>
+                      #{index + 1} · {item.label}
+                    </Text>
+                    {/* 🆕 Import CDC — Badge "À valider" si mesure importée par IA non encore confirmée sur place */}
+                    {item.options?.imported_from_spec && !item.options?.validated_on_site && (
+                      <View style={styles.importBadgeToValidate}>
+                        <Ionicons name="sparkles" size={10} color="#FF9F0A" />
+                        <Text style={styles.importBadgeToValidateText}>À VALIDER</Text>
+                      </View>
+                    )}
+                    {/* 🆕 Import CDC — Cercle vert "V" si mesure validée sur place */}
+                    {item.options?.validated_on_site && (
+                      <View style={styles.validatedCircle}>
+                        <Ionicons name="checkmark" size={11} color="#FFFFFF" />
+                      </View>
+                    )}
+                  </View>
                   <Text style={styles.mesureType} numberOfLines={1}>
                     {trueLabel}
                     {item.slope_angle_deg != null ? `  ·  ${item.slope_angle_deg}°` : ""}
@@ -2473,6 +2488,33 @@ const styles = StyleSheet.create({
   },
   mesureLabel: { color: colors.textPrimary, fontWeight: "800", fontSize: 14 },
   mesureType: { color: colors.textSecondary, marginTop: 1, fontSize: 12 },
+  // 🆕 Import CDC — Badge orange "À VALIDER" sur mesure importée par IA pas encore confirmée
+  importBadgeToValidate: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
+    backgroundColor: "#FF9F0A22",
+    borderColor: "#FF9F0A",
+    borderWidth: 1,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  importBadgeToValidateText: {
+    color: "#FF9F0A",
+    fontSize: 9,
+    fontWeight: "900",
+    letterSpacing: 0.5,
+  },
+  // 🆕 Import CDC — Cercle vert avec V blanc — mesure CDC validée sur place
+  validatedCircle: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: "#32D74B",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   // 🆕 V3 — Icône corbeille discrète intégrée au bloc (remplace les
   //    boutons textuels MODIFIER/SUPPRIMER pour gagner en compacité).
   mesureTrashIcon: {

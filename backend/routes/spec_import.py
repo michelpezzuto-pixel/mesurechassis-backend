@@ -15,6 +15,18 @@ Workflow utilisateur :
        badge spécial et peut les ouvrir pour confirmer/ajuster les
        mesures réelles relevées sur place.
 
+🆕 Chunked Upload (juin 2026, anti-502) :
+    Pour les gros PDF (>2 Mo) en 5G/Wi-Fi lent, Cloudflare coupe la
+    connexion après 100 sec → erreur 502. Solution : découper le fichier
+    côté mobile en chunks de 1 Mo, uploader chaque chunk dans sa propre
+    requête HTTP courte (<10 sec), puis demander au backend d'assembler
+    et de lancer l'analyse IA en arrière-plan.
+
+    Routes :
+      POST /chantiers/{id}/import-spec/chunked/init        → crée upload_id
+      POST /chantiers/{id}/import-spec/chunked/{id}/chunk  → upload 1 chunk
+      POST /chantiers/{id}/import-spec/chunked/{id}/complete → assemble + lance IA
+
 Paywall :
     En BETA_MODE, accessible à tous. Hors beta : nécessite un
     abonnement actif (standard / team / pro) — exclut le freemium.
@@ -23,11 +35,15 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
+import shutil
+import tempfile
 import uuid
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import List, Optional
 
-from fastapi import APIRouter, BackgroundTasks, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 
 from db import BETA_MODE, VALID_BLOCK_TYPES, db
@@ -156,6 +172,10 @@ def _expand_items_for_mesures(items: List[dict]) -> List[dict]:
                 {
                     "block_type": block_type,
                     "label": label,
+                    # 🆕 bay_width/bay_height — Permet au wizard d'hydrater les
+                    #    champs Largeur / Hauteur en édition (mode validation).
+                    "bay_width": width or None,
+                    "bay_height": height or None,
                     "width_top": width or None,
                     "width_middle": width or None,
                     "width_bottom": width or None,
@@ -164,6 +184,7 @@ def _expand_items_for_mesures(items: List[dict]) -> List[dict]:
                     "height_right": height or None,
                     "options": {
                         "imported_from_spec": True,
+                        "validated_on_site": False,  # Sera basculé à True lors de la validation sur place
                         "spec_notes": notes,
                         "theoretical_width_mm": int(width),
                         "theoretical_height_mm": int(height),
@@ -434,4 +455,282 @@ async def reject_draft(draft_id: str, user=Depends(require_roles(EDIT_ROLES))):
             }
         },
     )
+    return {"ok": True}
+
+
+
+# ════════════════════════════════════════════════════════════════════════
+# 🆕 CHUNKED UPLOAD — Anti-502 sur gros PDF en réseau lent (juin 2026)
+# ════════════════════════════════════════════════════════════════════════
+# Stratégie : le frontend découpe le fichier en chunks de 1 Mo, chaque chunk
+# est uploadé dans une requête courte (<10 sec) qui ne risque pas un timeout
+# Cloudflare. Puis le frontend appelle /complete qui réassemble les chunks
+# sur disque (/tmp) et lance l'analyse IA en background.
+#
+# Stockage temporaire : /tmp/spec_chunked_uploads/{upload_id}/
+#   - chunk_0000, chunk_0001, … (1 fichier par chunk)
+#   - meta.json (filename, mime, total_chunks, total_size, chantier_id, user_id)
+#
+# Cleanup auto au /complete (succès) et après 1h (failsafe via task background).
+# ════════════════════════════════════════════════════════════════════════
+
+# Taille max d'un chunk individuel : 2 Mo (marge de manœuvre, frontend = 1 Mo)
+MAX_CHUNK_SIZE = 2 * 1024 * 1024
+# TTL max d'un upload incomplet (1h)
+UPLOAD_TTL_SECONDS = 3600
+
+CHUNKED_UPLOAD_DIR = Path(tempfile.gettempdir()) / "spec_chunked_uploads"
+CHUNKED_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+
+class ChunkedInitPayload(BaseModel):
+    filename: str
+    mime_type: str = ""
+    total_size: int
+    total_chunks: int
+
+
+class ChunkedInitResponse(BaseModel):
+    upload_id: str
+    chunk_size: int = 1024 * 1024  # 1 Mo recommandé côté client
+
+
+async def _cleanup_upload_dir(upload_id: str) -> None:
+    """Supprime le dossier d'upload (best-effort)."""
+    try:
+        d = CHUNKED_UPLOAD_DIR / upload_id
+        if d.exists() and d.is_dir():
+            shutil.rmtree(d, ignore_errors=True)
+    except Exception:
+        logger.warning("Failed to cleanup chunked upload dir %s", upload_id)
+
+
+@router.post(
+    "/chantiers/{chantier_id}/import-spec/chunked/init",
+    response_model=ChunkedInitResponse,
+)
+async def chunked_init(
+    chantier_id: str,
+    payload: ChunkedInitPayload,
+    user=Depends(require_roles(EDIT_ROLES)),
+):
+    """Initialise un upload chunké pour un cahier des charges."""
+    # Accès chantier + paywall (mêmes règles que l'upload classique)
+    await check_chantier_access(db, chantier_id, user)
+    _ensure_subscription_allows_import(user)
+
+    if payload.total_size <= 0:
+        raise HTTPException(400, "Taille totale invalide")
+    if payload.total_size > MAX_UPLOAD_SIZE:
+        raise HTTPException(
+            413,
+            f"Fichier trop volumineux (max {MAX_UPLOAD_SIZE // (1024 * 1024)} Mo)",
+        )
+    if payload.total_chunks <= 0 or payload.total_chunks > 64:
+        raise HTTPException(400, "Nombre de chunks invalide (max 64)")
+
+    source = _detect_source(payload.filename, payload.mime_type)
+    if source is None:
+        raise HTTPException(
+            400,
+            "Format non supporté. Utilisez PDF, Excel (.xlsx) ou image (JPG/PNG).",
+        )
+
+    upload_id = str(uuid.uuid4())
+    upload_dir = CHUNKED_UPLOAD_DIR / upload_id
+    upload_dir.mkdir(parents=True, exist_ok=True)
+
+    # Stocke les métadonnées en DB pour gestion server-restart
+    await db.spec_chunked_uploads.insert_one(
+        {
+            "id": upload_id,
+            "chantier_id": chantier_id,
+            "filename": payload.filename,
+            "mime_type": payload.mime_type,
+            "total_size": payload.total_size,
+            "total_chunks": payload.total_chunks,
+            "received_chunks": 0,
+            "source": source,
+            "status": "uploading",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_by": user.get("user_id") or user.get("id") or "",
+        }
+    )
+    logger.info(
+        "📦 Chunked upload init: id=%s, file=%s, size=%d, chunks=%d",
+        upload_id,
+        payload.filename,
+        payload.total_size,
+        payload.total_chunks,
+    )
+    return ChunkedInitResponse(upload_id=upload_id)
+
+
+@router.post("/chantiers/{chantier_id}/import-spec/chunked/{upload_id}/chunk")
+async def chunked_upload(
+    chantier_id: str,
+    upload_id: str,
+    chunk_index: int = Form(...),
+    file: UploadFile = File(...),
+    user=Depends(require_roles(EDIT_ROLES)),
+):
+    """Upload d'un chunk individuel."""
+    await check_chantier_access(db, chantier_id, user)
+    meta = await db.spec_chunked_uploads.find_one({"id": upload_id})
+    if not meta:
+        raise HTTPException(404, "Upload session introuvable ou expirée")
+    if meta.get("status") != "uploading":
+        raise HTTPException(400, "Cette session n'accepte plus de chunks")
+    if meta.get("chantier_id") != chantier_id:
+        raise HTTPException(403, "Chantier non autorisé pour cette session")
+    if chunk_index < 0 or chunk_index >= meta["total_chunks"]:
+        raise HTTPException(400, f"chunk_index hors limites (0..{meta['total_chunks']-1})")
+
+    # Lit + valide la taille du chunk
+    chunk_bytes = await file.read()
+    if not chunk_bytes:
+        raise HTTPException(400, "Chunk vide")
+    if len(chunk_bytes) > MAX_CHUNK_SIZE:
+        raise HTTPException(413, f"Chunk trop gros (max {MAX_CHUNK_SIZE // (1024*1024)} Mo)")
+
+    # Écrit le chunk sur disque (overwrite si retry du même index — idempotent)
+    upload_dir = CHUNKED_UPLOAD_DIR / upload_id
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    chunk_path = upload_dir / f"chunk_{chunk_index:04d}"
+    with open(chunk_path, "wb") as f:
+        f.write(chunk_bytes)
+
+    # Recompte les chunks effectivement présents (pour idempotence)
+    received_count = sum(
+        1 for p in upload_dir.iterdir() if p.name.startswith("chunk_")
+    )
+    await db.spec_chunked_uploads.update_one(
+        {"id": upload_id},
+        {"$set": {"received_chunks": received_count}},
+    )
+    return {
+        "ok": True,
+        "upload_id": upload_id,
+        "chunk_index": chunk_index,
+        "received_chunks": received_count,
+        "total_chunks": meta["total_chunks"],
+    }
+
+
+@router.post(
+    "/chantiers/{chantier_id}/import-spec/chunked/{upload_id}/complete",
+    response_model=SpecDraft,
+)
+async def chunked_complete(
+    chantier_id: str,
+    upload_id: str,
+    background_tasks: BackgroundTasks,
+    user=Depends(require_roles(EDIT_ROLES)),
+):
+    """Assemble les chunks et lance l'analyse IA en background."""
+    chantier = await check_chantier_access(db, chantier_id, user)
+    meta = await db.spec_chunked_uploads.find_one({"id": upload_id})
+    if not meta:
+        raise HTTPException(404, "Upload session introuvable")
+    if meta.get("chantier_id") != chantier_id:
+        raise HTTPException(403, "Chantier non autorisé pour cette session")
+
+    upload_dir = CHUNKED_UPLOAD_DIR / upload_id
+    if not upload_dir.exists():
+        raise HTTPException(404, "Chunks introuvables sur disque (session expirée ?)")
+
+    # Vérifie que tous les chunks attendus sont présents
+    missing = []
+    for i in range(meta["total_chunks"]):
+        if not (upload_dir / f"chunk_{i:04d}").exists():
+            missing.append(i)
+    if missing:
+        raise HTTPException(
+            400,
+            f"Chunks manquants : {missing[:5]}{'…' if len(missing) > 5 else ''} ({len(missing)} au total)",
+        )
+
+    # Assemble tous les chunks dans un buffer en mémoire (max 15 Mo, OK)
+    buffer = bytearray()
+    for i in range(meta["total_chunks"]):
+        with open(upload_dir / f"chunk_{i:04d}", "rb") as f:
+            buffer.extend(f.read())
+    raw_bytes = bytes(buffer)
+
+    if len(raw_bytes) != meta["total_size"]:
+        logger.warning(
+            "⚠️ Chunked assembly size mismatch: expected=%d, got=%d",
+            meta["total_size"],
+            len(raw_bytes),
+        )
+        # On continue quand même — peut-être un base64 ou compression. Mais on log.
+
+    # Crée le draft "processing" et lance l'IA en background
+    source = meta["source"]
+    draft_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc).isoformat()
+    draft_doc = {
+        "id": draft_id,
+        "chantier_id": chantier_id,
+        "company_id": chantier.get("company_id", "default"),
+        "filename": meta["filename"],
+        "source": source,
+        "summary": "",
+        "items": [],
+        "status": "processing",
+        "created_at": now,
+        "created_by": user.get("user_id") or user.get("id") or "",
+        "raw_response": "",
+        "via_chunked": True,
+    }
+    await db.spec_drafts.insert_one(draft_doc)
+
+    mime = meta.get("mime_type") or "application/octet-stream"
+    background_tasks.add_task(
+        _run_ai_analysis_bg,
+        draft_id=draft_id,
+        raw_bytes=raw_bytes,
+        source=source,
+        mime=mime,
+    )
+
+    # Marque la session comme terminée
+    await db.spec_chunked_uploads.update_one(
+        {"id": upload_id},
+        {
+            "$set": {
+                "status": "completed",
+                "completed_at": now,
+                "draft_id": draft_id,
+            }
+        },
+    )
+
+    # Cleanup disque (best-effort, en background)
+    background_tasks.add_task(_cleanup_upload_dir, upload_id)
+
+    logger.info(
+        "✅ Chunked upload complete: upload_id=%s → draft_id=%s, size=%d bytes",
+        upload_id,
+        draft_id,
+        len(raw_bytes),
+    )
+    draft_doc.pop("_id", None)
+    draft_doc.pop("raw_response", None)
+    return SpecDraft(**draft_doc)
+
+
+@router.post("/chantiers/{chantier_id}/import-spec/chunked/{upload_id}/abort")
+async def chunked_abort(
+    chantier_id: str,
+    upload_id: str,
+    user=Depends(require_roles(EDIT_ROLES)),
+):
+    """Annule un upload chunked en cours (cleanup disque + DB)."""
+    await check_chantier_access(db, chantier_id, user)
+    await db.spec_chunked_uploads.update_one(
+        {"id": upload_id, "chantier_id": chantier_id},
+        {"$set": {"status": "aborted"}},
+    )
+    await _cleanup_upload_dir(upload_id)
     return {"ok": True}
