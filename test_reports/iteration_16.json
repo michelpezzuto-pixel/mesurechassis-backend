@@ -1,0 +1,48 @@
+{
+  "summary": "RETEST Build 11.3.1 — 3 fixes appliqués par le main agent, tous validés en backend-only : (1) VIES valid=null fallback OK, (2) /auth/verify gracieux sur token déjà utilisé OK, (3) compte démo Apple Review login + vat_number persisté OK. 11/11 tests pytest passent (100%). Le scénario BE0428759497 (UPS Belgium) passe désormais du PREMIER essai sans retry loop — la régression HIGH de l'itération 15 est corrigée. Le 2ᵉ appel à /auth/verify avec le même token renvoie maintenant 200 + JWT (avant : 400 'Lien déjà utilisé'). Le cas non géré (user supprimé entre les 2 calls) renvoie bien 400 comme attendu. Le compte applereview@mesurechassis.com peut toujours se loguer normalement et company.vat_number='BE0123456789' / vat_country='BE' sont bien en base.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "services/vat_validator.py",
+        "issue": "passlib log un warning AttributeError sur bcrypt.__about__ (bcrypt ≥4 a retiré l'attribut). Non bloquant — déjà signalé itération 15. Reste cosmétique."
+      },
+      {
+        "endpoint": "POST /api/auth/register",
+        "issue": "Le bypass VIES est hardcodé sur l'email 'applereview@mesurechassis.com' dans routes/auth.py:214. Toujours suggéré de promouvoir en constante module-level (ALLOWED_BYPASS_EMAILS) si d'autres comptes démo arrivent. Non bloquant."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_build_11_3_1_fixes.py",
+    "/app/test_reports/pytest/iter16_build_11_3_1.xml"
+  ],
+  "action_items": [
+    "Aucune action bloquante. Les 3 fixes Build 11.3.1 sont validés et prêts pour la prochaine étape (Apple Review).",
+    "[OPTIONNEL] Mettre à jour test_vat_validation.py de l'itération 15 pour retirer le retry x6 (le fix valid=null le rend obsolète)."
+  ],
+  "critical_code_review_comments": [
+    "Fix 1 (vat_validator.py:144-149) — placement correct, juste avant `is_valid = bool(...)`. Le log WARNING est explicite ('MS service temporairement KO') ce qui aidera l'ops à mesurer la fréquence du fallback. Cohérent avec les autres branches fallback (timeout/réseau).",
+    "Fix 2 (auth.py:363-370) — la garde 'user existe ET status==active' est essentielle : on ne réémet pas de JWT pour un user pending_verification ou deleted. Le code lit explicitement `existing.get('status') == 'active'`, donc un user pending qui clique 2× sur un lien déjà utilisé tomberait toujours sur 400 — comportement correct car le scénario réaliste n'existe pas (verify FAIT passer en active dès le 1er call).",
+    "Fix 3 — la mise à jour de companies.vat_number='BE0123456789' sur le compte applereview est cohérente avec le bypass VIES en place (skip_vies=True), donc le format est validé mais pas le numéro réel. Compte 100% utilisable pour Apple Review.",
+    "Aucun nouveau bug détecté lors du retest. Les 3 corrections sont chirurgicales et n'introduisent pas de régression observable."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_build_11_3_1_fixes.py (nouveau — 11 tests focalisés sur les 3 fixes)"
+  ],
+  "success_rate": {
+    "backend": "100% (11/11 tests passent en 24.8s, incluant 3 vrais appels VIES et 4 appels DB Motor)",
+    "frontend": "not tested (backend only requested)"
+  },
+  "seed_data_creation": "Aucune donnée persistante. Chaque test crée un email unique test-{tag}-{timestamp}@example.com et nettoie users + companies + email_verifications. Le compte applereview@mesurechassis.com est strictement READ-ONLY (login + lecture company), aucune modification.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Tests réutilisables et indépendants : /app/backend/tests/test_build_11_3_1_fixes.py (pytest, ~25s). Couvre les 3 fixes : VIES null fallback (unit), register BE single-shot (E2E), verify-twice graceful (E2E avec fixture qui crée+nettoie un user), Apple Review login. Les fixtures gèrent leur propre event loop Motor (asyncio.new_event_loop) pour éviter les conflits cross-loop. Si l'on touche /auth/verify ou vat_validator.py à l'avenir, relancer ce fichier en premier.",
+  "rca_of_issue": "N/A — c'est un retest de fixes, pas une nouvelle investigation. Pour rappel, le bug HIGH de l'itération 15 (VIES valid=null traité comme False) est désormais correctement neutralisé par les lignes 144-149 de services/vat_validator.py — vérifié par test unitaire monkeypatch (test_vies_fix_valid_null_returns_fallback_true) ET par test E2E réel (test_register_be0428759497_first_try qui passe en 1 essai sans retry)."
+}
