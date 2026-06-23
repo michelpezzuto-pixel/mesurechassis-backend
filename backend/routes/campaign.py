@@ -4,6 +4,12 @@ L'admin importe des prospects (email + entreprise + région) puis clique sur
 « Envoyer le lot du jour » : le backend envoie jusqu'à 15 emails personnalisés
 par jour via Resend (limite anti-spam), avec mention STOP (RGPD) et suivi des
 statuts. Conçu pour pouvoir basculer sur Brevo plus tard (mêmes données).
+
+🆕 RGPD (juin 2026) — Désinscription automatique :
+    - Chaque email contient un lien public « Se désinscrire en 1 clic »
+      signé avec JWT (token tamper-proof, durée illimitée).
+    - L'admin peut aussi désinscrire manuellement depuis le dashboard.
+    - Le CRON d'envoi skippe tous les prospects avec `unsubscribed=True`.
 """
 
 import asyncio
@@ -13,6 +19,7 @@ import re
 import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from urllib.parse import quote
 
 try:
     from zoneinfo import ZoneInfo  # Python 3.9+
@@ -20,9 +27,11 @@ try:
 except ImportError:  # pragma: no cover — fallback offset fixe (UTC+1)
     _BRUSSELS_TZ = timezone(timedelta(hours=1))
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+import jwt
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
+from fastapi.responses import HTMLResponse
 
-from db import db
+from db import JWT_SECRET, db
 from deps import require_admin
 from email_service import send_email
 
@@ -161,6 +170,76 @@ Pour ne plus être contacté, répondez simplement STOP."""
 RECAP_RECIPIENT = "info@mesurechassis.com"
 RECAP_WEEKDAY = 0  # lundi
 RECAP_HOUR_UTC = 7  # ≈ 9h heure belge (été)
+
+
+# ════════════════════════════════════════════════════════════════════
+# 🆕 RGPD — Système de désinscription publique (1 clic, sans login)
+# ════════════════════════════════════════════════════════════════════
+#
+# Chaque email de campagne contient un lien unique signé JWT :
+#   https://www.mesurechassis.com/api/public/unsubscribe?token=...
+#
+# Le token contient {prospect_id, email} et est signé avec JWT_SECRET.
+# Le lien est valable indéfiniment (pas d'expiration : on veut que le
+# prospect puisse cliquer même 6 mois après).
+#
+# Quand le prospect clique :
+#   1. Backend vérifie la signature du token
+#   2. Marque le prospect comme `unsubscribed=True`
+#   3. Affiche une page HTML de confirmation
+#   4. Le CRON suivant skippe automatiquement ce prospect.
+# ════════════════════════════════════════════════════════════════════
+
+# URL publique du backend (utilisée pour générer le lien unsubscribe)
+# En prod = Railway, en dev local = relatif. Configurable via env.
+import os as _os
+PUBLIC_BACKEND_URL = _os.environ.get(
+    "PUBLIC_BACKEND_URL",
+    "https://capable-gratitude-production-db51.up.railway.app",
+).rstrip("/")
+
+
+def _make_unsubscribe_token(prospect_id: str, email: str) -> str:
+    """Génère un token JWT signé pour désinscription 1-clic (sans expiration)."""
+    payload = {
+        "pid": prospect_id,
+        "email": email.lower().strip(),
+        "purpose": "unsubscribe_campaign",
+    }
+    return jwt.encode(payload, JWT_SECRET, algorithm="HS256")
+
+
+def _decode_unsubscribe_token(token: str) -> dict:
+    """Décode et vérifie un token JWT d'unsubscribe. Raise HTTPException si invalide."""
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+    except jwt.InvalidTokenError as e:
+        raise HTTPException(400, f"Lien invalide ou expiré : {e}")
+    if payload.get("purpose") != "unsubscribe_campaign":
+        raise HTTPException(400, "Lien invalide (mauvais usage)")
+    if not payload.get("pid") or not payload.get("email"):
+        raise HTTPException(400, "Lien incomplet")
+    return payload
+
+
+def _build_unsubscribe_url(prospect_id: str, email: str) -> str:
+    """URL complète d'unsubscribe pour insertion dans un email de campagne."""
+    token = _make_unsubscribe_token(prospect_id, email)
+    return f"{PUBLIC_BACKEND_URL}/api/public/unsubscribe?token={quote(token)}"
+
+
+def _build_unsubscribe_footer_html(prospect_id: str, email: str) -> str:
+    """Bloc HTML à insérer en bas d'email (CTA visible + style discret)."""
+    url = _build_unsubscribe_url(prospect_id, email)
+    return (
+        f'<div style="margin-top:30px;padding-top:14px;border-top:1px solid #e5e7eb;'
+        f'font-size:11px;color:#9ca3af;text-align:center;line-height:1.6">'
+        f'MesureChâssis — Outil pro pour menuisiers · '
+        f'<a href="{url}" style="color:#9ca3af;text-decoration:underline">'
+        f'Se désinscrire en 1 clic'
+        f'</a>'
+        f'</div>'
+    )
 
 
 async def send_weekly_recap() -> dict:
@@ -334,12 +413,21 @@ async def _quota_used_today() -> int:
 
 
 async def _relances_dues() -> list[dict]:
-    """Prospects à relancer J+3 (1ère relance) — pas répondu après le premier envoi."""
+    """Prospects à relancer J+3 — `status=sent`, pas encore relancés, déjà patientés."""
     cutoff = (
         datetime.now(timezone.utc) - timedelta(days=RELANCE_DELAY_DAYS)
     ).isoformat()
     docs = await db.prospects.find(
-        {"status": "sent", "relance_sent_at": None, "sent_at": {"$lte": cutoff}},
+        {
+            "status": "sent",
+            "relance_sent_at": None,
+            "sent_at": {"$lte": cutoff},
+            # 🆕 RGPD — Skip les désinscrits
+            "$or": [
+                {"unsubscribed": {"$exists": False}},
+                {"unsubscribed": False},
+            ],
+        },
         {"_id": 0, "id": 1, "email": 1},
     ).to_list(500)
     signups = await _signup_emails()
@@ -356,6 +444,11 @@ async def _second_relances_dues() -> list[dict]:
             "status": "sent",
             "relance_sent_at": {"$ne": None, "$lte": cutoff},
             "relance_2_sent_at": None,
+            # 🆕 RGPD — Skip les désinscrits
+            "$or": [
+                {"unsubscribed": {"$exists": False}},
+                {"unsubscribed": False},
+            ],
         },
         {"_id": 0, "id": 1, "email": 1},
     ).to_list(500)
@@ -372,6 +465,7 @@ async def campaign_stats(user=Depends(require_admin)):
     relances_sent = await db.prospects.count_documents(
         {"relance_sent_at": {"$ne": None}}
     )
+    unsubscribed = await db.prospects.count_documents({"unsubscribed": True})
     # Croisement : prospects contactés devenus testeurs inscrits
     signup_emails = await _signup_emails()
     contacted = await db.prospects.find(
@@ -388,6 +482,7 @@ async def campaign_stats(user=Depends(require_admin)):
         "converted": converted,
         "relance_due": len(await _relances_dues()),
         "relances_sent": relances_sent,
+        "unsubscribed": unsubscribed,
     }
 
 
@@ -444,6 +539,10 @@ async def _send_batch_task(items: list[dict]) -> None:
             f'(scannez ce QR avec votre téléphone)</span></div>'
         )
         body = body.replace("[QR_CODE_PLACEHOLDER]", qr_html_block)
+
+        # 🆕 RGPD — Ajout du lien public unsubscribe en bas d'email
+        unsubscribe_footer = _build_unsubscribe_footer_html(pid, doc["email"])
+        body = body + "\n\n" + unsubscribe_footer
         try:
             # send_email est synchrone (appel HTTP Resend) → thread séparé
             # pour ne pas bloquer l'event loop pendant le lot.
@@ -523,11 +622,20 @@ async def send_batch(
             )
             items += [{"id": d["id"], "kind": "relance"} for d in relances]
 
-    # 3) Nouveaux prospects sur les créneaux restants
+    # 3) Nouveaux prospects sur les créneaux restants (excluant désinscrits)
     slots = remaining - len(items)
     if slots > 0:
         batch = (
-            await db.prospects.find({"status": "pending"}, {"_id": 0, "id": 1})
+            await db.prospects.find(
+                {
+                    "status": "pending",
+                    "$or": [
+                        {"unsubscribed": {"$exists": False}},
+                        {"unsubscribed": False},
+                    ],
+                },
+                {"_id": 0, "id": 1},
+            )
             .limit(slots)
             .to_list(slots)
         )
@@ -610,3 +718,160 @@ async def reset_prospects(payload: dict, user=Depends(require_admin)):
         "reset": res.modified_count,
         "message": f"{res.modified_count} prospect(s) remis en file d'envoi.",
     }
+
+
+
+# ════════════════════════════════════════════════════════════════════
+# 🆕 RGPD — Routes désinscription (admin manuelle + public 1-clic)
+# ════════════════════════════════════════════════════════════════════
+
+@router.post("/campaign/prospects/{prospect_id}/unsubscribe")
+async def admin_unsubscribe_prospect(
+    prospect_id: str,
+    user=Depends(require_admin),
+):
+    """🚫 Désinscription manuelle d'un prospect par l'admin.
+
+    Utilisé quand l'admin reçoit une réponse « STOP » par email et doit
+    désinscrire manuellement. Idempotent : peut être appelé plusieurs fois.
+    """
+    doc = await db.prospects.find_one({"id": prospect_id})
+    if not doc:
+        raise HTTPException(404, "Prospect introuvable")
+    now_iso = datetime.now(timezone.utc).isoformat()
+    await db.prospects.update_one(
+        {"id": prospect_id},
+        {
+            "$set": {
+                "unsubscribed": True,
+                "unsubscribed_at": now_iso,
+                "unsubscribed_via": "admin_manual",
+            }
+        },
+    )
+    logger.info(
+        "🚫 Prospect désinscrit (admin manuel) : %s (%s)",
+        doc.get("email"), prospect_id,
+    )
+    return {
+        "ok": True,
+        "prospect_id": prospect_id,
+        "email": doc.get("email"),
+        "unsubscribed_at": now_iso,
+    }
+
+
+@router.post("/campaign/prospects/{prospect_id}/resubscribe")
+async def admin_resubscribe_prospect(
+    prospect_id: str,
+    user=Depends(require_admin),
+):
+    """🔄 Réinscription manuelle (cas exceptionnel : erreur de manip).
+
+    À utiliser avec PRUDENCE et seulement avec accord exprès du prospect.
+    """
+    doc = await db.prospects.find_one({"id": prospect_id})
+    if not doc:
+        raise HTTPException(404, "Prospect introuvable")
+    await db.prospects.update_one(
+        {"id": prospect_id},
+        {
+            "$set": {"unsubscribed": False},
+            "$unset": {"unsubscribed_at": "", "unsubscribed_via": ""},
+        },
+    )
+    logger.info("🔄 Prospect ré-inscrit : %s", doc.get("email"))
+    return {"ok": True, "prospect_id": prospect_id, "email": doc.get("email")}
+
+
+# ────────────────────────────────────────────────────────────────────
+# Route PUBLIQUE — Pas de require_admin. Accessible via lien JWT signé.
+# ────────────────────────────────────────────────────────────────────
+public_router = APIRouter()
+
+
+@public_router.get("/public/unsubscribe", response_class=HTMLResponse)
+async def public_unsubscribe_page(token: str = Query(...)):
+    """🌐 Page HTML publique de confirmation de désinscription.
+
+    1. Décode le token (vérifie la signature JWT)
+    2. Marque le prospect comme `unsubscribed=True`
+    3. Affiche une confirmation visuelle (sans JavaScript, pour les
+       webmails qui désactivent le JS)
+    """
+    payload = _decode_unsubscribe_token(token)
+    pid = payload["pid"]
+    email = payload["email"]
+
+    doc = await db.prospects.find_one({"id": pid})
+    # On accepte même si le prospect n'existe plus en DB (ex: nettoyage),
+    # pour rassurer l'utilisateur que sa demande est prise en compte.
+    if doc:
+        now_iso = datetime.now(timezone.utc).isoformat()
+        await db.prospects.update_one(
+            {"id": pid},
+            {
+                "$set": {
+                    "unsubscribed": True,
+                    "unsubscribed_at": now_iso,
+                    "unsubscribed_via": "public_link",
+                }
+            },
+        )
+        logger.info(
+            "🚫 Désinscription publique 1-clic : %s (%s)",
+            email, pid,
+        )
+
+    # Page HTML de confirmation propre, mobile-friendly, sans JS
+    html = f"""<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Désinscription confirmée — MesureChâssis</title>
+<style>
+  body {{ margin:0; padding:24px; font-family:-apple-system,Segoe UI,Roboto,sans-serif;
+         background:#0C0C0E; color:#fff; min-height:100vh;
+         display:flex; align-items:center; justify-content:center; }}
+  .card {{ max-width:480px; width:100%; background:#18181B; border-radius:16px;
+          padding:32px 24px; text-align:center; border:1px solid #3F3F46; }}
+  .icon {{ width:72px; height:72px; border-radius:36px; background:#32D74B22;
+          display:flex; align-items:center; justify-content:center;
+          margin:0 auto 16px; font-size:36px; }}
+  h1 {{ font-size:22px; margin:0 0 8px; color:#fff; }}
+  p {{ font-size:15px; line-height:1.5; color:#A1A1AA; margin:8px 0; }}
+  .email {{ background:#27272A; padding:8px 12px; border-radius:8px;
+           display:inline-block; font-family:monospace; color:#fff;
+           margin:8px 0; }}
+  .footer {{ font-size:12px; color:#52525B; margin-top:24px;
+            padding-top:16px; border-top:1px solid #27272A; }}
+  .footer a {{ color:#FF5A00; text-decoration:none; }}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">✅</div>
+    <h1>Vous êtes désinscrit·e</h1>
+    <p>L'adresse suivante ne recevra plus aucun email de notre part&nbsp;:</p>
+    <div class="email">{email}</div>
+    <p>Aucune action supplémentaire n'est requise de votre part.</p>
+    <p>Nous sommes désolés de vous voir partir. Si c'est une erreur,
+       écrivez-nous à
+       <a href="mailto:info@mesurechassis.com" style="color:#FF5A00">
+       info@mesurechassis.com</a>.</p>
+    <div class="footer">
+      MesureChâssis — Outil pro pour menuisiers professionnels<br>
+      <a href="https://www.mesurechassis.com">www.mesurechassis.com</a>
+    </div>
+  </div>
+</body>
+</html>"""
+    return HTMLResponse(content=html, status_code=200)
+
+
+# Petit alias POST → même comportement (certains clients mail "click-tracking"
+# transforment les GET en POST). On accepte les deux pour robustesse.
+@public_router.post("/public/unsubscribe", response_class=HTMLResponse)
+async def public_unsubscribe_page_post(token: str = Query(...)):
+    return await public_unsubscribe_page(token)

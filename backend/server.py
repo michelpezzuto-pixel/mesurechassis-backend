@@ -97,6 +97,8 @@ api.include_router(spec_import_routes.router)
 api.include_router(testers_routes.router)
 # 🆕 Campagne emailing — prospection testeurs à 1 bouton (max 15/jour via Resend)
 api.include_router(campaign_routes.router)
+# 🆕 RGPD — Routeur public unsubscribe (pas d'auth, accès via lien JWT signé)
+api.include_router(campaign_routes.public_router)
 # 🆕 Campagne LinkedIn 15 jours — post du jour + visuels
 api.include_router(linkedin_routes.router)
 

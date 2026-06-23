@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   StyleSheet,
   Text,
@@ -23,6 +24,8 @@ type Stats = {
   converted: number;
   relance_due: number;
   relances_sent: number;
+  // 🆕 RGPD — Nombre de prospects désinscrits (cumul)
+  unsubscribed?: number;
 };
 
 type Prospect = {
@@ -33,6 +36,10 @@ type Prospect = {
   status: "pending" | "sending" | "sent" | "failed";
   sent_at: string | null;
   relance_sent_at?: string | null;
+  // 🆕 RGPD — true si le prospect a cliqué "Se désinscrire" ou si admin l'a blackliste
+  unsubscribed?: boolean;
+  unsubscribed_at?: string | null;
+  unsubscribed_via?: "admin_manual" | "public_link" | string | null;
 };
 
 const STATUS_UI: Record<string, { label: string; color: string }> = {
@@ -96,6 +103,75 @@ export default function AdminCampagne() {
     }
   };
 
+  // 🆕 RGPD — Désinscription manuelle d'un prospect par l'admin
+  //   (utilisé quand un prospect a répondu STOP par email)
+  const unsubscribeProspect = useCallback(
+    (p: Prospect) => {
+      Alert.alert(
+        "Désinscrire ce prospect ?",
+        `${p.email}\n\nIl ne recevra plus AUCUN email de campagne. Cette action est conforme RGPD.`,
+        [
+          { text: "Annuler", style: "cancel" },
+          {
+            text: "🚫 Désinscrire",
+            style: "destructive",
+            onPress: async () => {
+              try {
+                await api.post(`/campaign/prospects/${p.id}/unsubscribe`);
+                setMessage(`🚫 ${p.email} désinscrit avec succès.`);
+                // Update local state pour feedback immédiat (avant le refetch)
+                setProspects((prev) =>
+                  prev.map((q) =>
+                    q.id === p.id
+                      ? { ...q, unsubscribed: true, unsubscribed_via: "admin_manual" }
+                      : q,
+                  ),
+                );
+                void fetchAll();
+              } catch (e: any) {
+                setMessage(`⚠️ ${e?.response?.data?.detail || "Erreur"}`);
+              }
+            },
+          },
+        ],
+      );
+    },
+    [fetchAll],
+  );
+
+  // 🆕 RGPD — Ré-inscription (cas exceptionnel, accord exprès du prospect)
+  const resubscribeProspect = useCallback(
+    (p: Prospect) => {
+      Alert.alert(
+        "Ré-inscrire ce prospect ?",
+        `${p.email}\n\n⚠️ À utiliser SEULEMENT avec accord exprès du prospect.`,
+        [
+          { text: "Annuler", style: "cancel" },
+          {
+            text: "Ré-inscrire",
+            onPress: async () => {
+              try {
+                await api.post(`/campaign/prospects/${p.id}/resubscribe`);
+                setMessage(`✅ ${p.email} ré-inscrit.`);
+                setProspects((prev) =>
+                  prev.map((q) =>
+                    q.id === p.id
+                      ? { ...q, unsubscribed: false, unsubscribed_via: null }
+                      : q,
+                  ),
+                );
+                void fetchAll();
+              } catch (e: any) {
+                setMessage(`⚠️ ${e?.response?.data?.detail || "Erreur"}`);
+              }
+            },
+          },
+        ],
+      );
+    },
+    [fetchAll],
+  );
+
   const remaining = stats ? stats.daily_limit - stats.sent_today : 0;
   const todo = stats ? stats.pending + stats.relance_due : 0;
   const canSend = !!stats && todo > 0 && remaining > 0 && stats.sending === 0;
@@ -146,6 +222,13 @@ export default function AdminCampagne() {
                 {stats.converted}
               </Text>
               <Text style={styles.statLabel}>inscrits 🎉</Text>
+            </View>
+            {/* 🆕 RGPD — Stat désinscrits */}
+            <View style={styles.statBox}>
+              <Text style={[styles.statValue, { color: "#F87171" }]}>
+                {stats.unsubscribed ?? 0}
+              </Text>
+              <Text style={styles.statLabel}>désinscrits</Text>
             </View>
           </View>
 
@@ -202,21 +285,88 @@ export default function AdminCampagne() {
                   ? "relanced"
                   : item.status;
               const ui = STATUS_UI[key] ?? STATUS_UI.pending;
+              const isUnsub = !!item.unsubscribed;
               return (
                 <View style={styles.card} testID={`prospect-${item.email}`}>
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.cardName}>{item.company || item.email}</Text>
-                    <Text style={styles.cardEmail}>{item.email}</Text>
+                    <Text
+                      style={[
+                        styles.cardName,
+                        isUnsub && styles.unsubText,
+                      ]}
+                    >
+                      {item.company || item.email}
+                    </Text>
+                    <Text
+                      style={[styles.cardEmail, isUnsub && styles.unsubText]}
+                    >
+                      {item.email}
+                    </Text>
                     {!!item.region && (
-                      <Text style={styles.cardMeta}>{item.region}</Text>
+                      <Text
+                        style={[styles.cardMeta, isUnsub && styles.unsubText]}
+                      >
+                        {item.region}
+                      </Text>
                     )}
                   </View>
-                  <View
-                    style={[styles.badge, { backgroundColor: `${ui.color}22` }]}
-                  >
-                    <Text style={[styles.badgeText, { color: ui.color }]}>
-                      {ui.label}
-                    </Text>
+                  <View style={styles.rightCol}>
+                    {/* Badge statut (envoyé / pending / etc.) — masqué si désinscrit */}
+                    {!isUnsub && (
+                      <View
+                        style={[
+                          styles.badge,
+                          { backgroundColor: `${ui.color}22` },
+                        ]}
+                      >
+                        <Text style={[styles.badgeText, { color: ui.color }]}>
+                          {ui.label}
+                        </Text>
+                      </View>
+                    )}
+                    {/* 🆕 Badge "DÉSINSCRIT" si opt-out actif */}
+                    {isUnsub && (
+                      <View style={styles.unsubBadge}>
+                        <Ionicons name="ban" size={11} color="#F87171" />
+                        <Text style={styles.unsubBadgeText}>
+                          {item.unsubscribed_via === "public_link"
+                            ? "DÉSINSCRIT (LIEN)"
+                            : "DÉSINSCRIT"}
+                        </Text>
+                      </View>
+                    )}
+                    {/* 🆕 Bouton désinscrire / ré-inscrire */}
+                    {isUnsub ? (
+                      <TouchableOpacity
+                        testID={`resubscribe-${item.email}`}
+                        onPress={() => resubscribeProspect(item)}
+                        style={styles.actionBtnGreen}
+                      >
+                        <Ionicons
+                          name="refresh-circle"
+                          size={14}
+                          color="#22C55E"
+                        />
+                        <Text style={styles.actionBtnTextGreen}>
+                          Ré-inscrire
+                        </Text>
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity
+                        testID={`unsubscribe-${item.email}`}
+                        onPress={() => unsubscribeProspect(item)}
+                        style={styles.actionBtnRed}
+                      >
+                        <Ionicons
+                          name="ban-outline"
+                          size={14}
+                          color="#F87171"
+                        />
+                        <Text style={styles.actionBtnTextRed}>
+                          Désinscrire
+                        </Text>
+                      </TouchableOpacity>
+                    )}
                   </View>
                 </View>
               );
@@ -286,6 +436,66 @@ const styles = StyleSheet.create({
   cardName: { color: colors.textPrimary, fontWeight: "700", fontSize: 14 },
   cardEmail: { color: colors.primary, fontSize: 12.5, marginTop: 1 },
   cardMeta: { color: colors.textSecondary, fontSize: 11.5, marginTop: 1 },
-  badge: { paddingHorizontal: 9, paddingVertical: 4, borderRadius: 7, marginLeft: 10 },
+  badge: { paddingHorizontal: 9, paddingVertical: 4, borderRadius: 7 },
   badgeText: { fontSize: 10, fontWeight: "800" },
+  // 🆕 Colonne droite : badge + bouton désinscrire
+  rightCol: {
+    flexDirection: "column",
+    alignItems: "flex-end",
+    gap: 6,
+    marginLeft: 10,
+  },
+  unsubText: {
+    color: "#71717A",
+    textDecorationLine: "line-through",
+  },
+  unsubBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "#F8717122",
+    borderColor: "#F87171",
+    borderWidth: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  unsubBadgeText: {
+    color: "#F87171",
+    fontSize: 9.5,
+    fontWeight: "900",
+    letterSpacing: 0.3,
+  },
+  actionBtnRed: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "#F8717115",
+    borderColor: "#F8717155",
+    borderWidth: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  actionBtnTextRed: {
+    color: "#F87171",
+    fontSize: 11,
+    fontWeight: "700",
+  },
+  actionBtnGreen: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "#22C55E15",
+    borderColor: "#22C55E55",
+    borderWidth: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  actionBtnTextGreen: {
+    color: "#22C55E",
+    fontSize: 11,
+    fontWeight: "700",
+  },
 });
