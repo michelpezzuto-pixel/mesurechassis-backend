@@ -1,0 +1,1479 @@
+{
+  "description": "Prospects francophones consolidés à importer après validation Apple",
+  "count": 279,
+  "sources": [
+    "liste_menuiseries.xlsx (259 entrées - principalement France)",
+    "Menuisiers_Chassis_Belgique.xlsx (22 entrées Belgique)"
+  ],
+  "breakdown": {
+    "France": 258,
+    "Belgique": 21,
+    "Total": 279
+  },
+  "next_steps": [
+    "1) Attendre validation Apple Build 106+",
+    "2) Après validation : importer via UI admin/campagne",
+    "3) Garder limite 30/jour (warm-up domaine) puis +20/semaine",
+    "4) Flamands purs (Atelier De Kerf, Michiel Maakt, Luc Denie) → version NL avant envoi"
+  ],
+  "prospects": [
+    {
+      "company": "ABCS Menuiserie",
+      "email": "abcs.secretariat@orange.fr",
+      "country": "FR"
+    },
+    {
+      "company": "AD Menuiserie",
+      "email": "sarl.ad.menuiserie@wanadoo.fr",
+      "country": "FR"
+    },
+    {
+      "company": "ADM 45",
+      "email": "adm45@adm45.fr",
+      "country": "FR"
+    },
+    {
+      "company": "Alu Bois PVC",
+      "email": "abp40@orange.fr",
+      "country": "FR"
+    },
+    {
+      "company": "Angle Menuiserie",
+      "email": "contact@anglemenuiserie.fr",
+      "country": "FR"
+    },
+    {
+      "company": "Bois et PVC 36",
+      "email": "contact@boisetpvc36.fr",
+      "country": "FR"
+    },
+    {
+      "company": "FP1 Menuiserie",
+      "email": "contact@fp1menuiserie.fr",
+      "country": "FR"
+    },
+    {
+      "company": "Fenêtres et Confort 83",
+      "email": "contact@fenetresetconfort83.fr",
+      "country": "FR"
+    },
+    {
+      "company": "Legrand Menuiserie",
+      "email": "contact@legrandmenuiserie.fr",
+      "country": "FR"
+    },
+    {
+      "company": "Marc Pauwels",
+      "email": "contact@marcpauwels.fr",
+      "country": "FR"
+    },
+    {
+      "company": "Menuiserie Carpentier",
+      "email": "menuiserie.carpentier36@orange.fr",
+      "country": "FR"
+    },
+    {
+      "company": "Menuiserie Chartres",
+      "email": "menuiserie.chartres@orange.fr",
+      "country": "FR"
+    },
+    {
+      "company": "Menuiserie Decroly",
+      "email": "menuiserie.decroly@orange.fr",
+      "country": "FR"
+    },
+    {
+      "company": "Menuiserie Ibaï",
+      "email": "menuiserie.ibai@orange.fr",
+      "country": "FR"
+    },
+    {
+      "company": "Menuiserie Souchaud",
+      "email": "sarl.souchaud@orange.fr",
+      "country": "FR"
+    },
+    {
+      "company": "Menuiserie Tarbaise",
+      "email": "menuiserietarbaise65@orange.fr",
+      "country": "FR"
+    },
+    {
+      "company": "Menuiserie de la Drôme",
+      "email": "contact@menuiseriedrome.fr",
+      "country": "FR"
+    },
+    {
+      "company": "Menuiserie du Lot-et-Garonne",
+      "email": "contact@menuiserie47.fr",
+      "country": "FR"
+    },
+    {
+      "company": "Menuiserie du Perche",
+      "email": "contact@menuiserieduperche.fr",
+      "country": "FR"
+    },
+    {
+      "company": "Menuiserie du Sud Ouest",
+      "email": "contact@msom.fr",
+      "country": "FR"
+    },
+    {
+      "company": "NDA Fermeture",
+      "email": "nda.fermeture@orange.fr",
+      "country": "FR"
+    },
+    {
+      "company": "NDA Fermeture",
+      "email": "contact@ndafermeture.fr",
+      "country": "FR"
+    },
+    {
+      "company": "Nord PVC",
+      "email": "nordpvc@wanadoo.fr",
+      "country": "FR"
+    },
+    {
+      "company": "AMF Menuiserie",
+      "email": "artisan.amf@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Alu Menuiserie 04",
+      "email": "alumenuiserie04@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Alu Menuiserie 81",
+      "email": "alumenuiserie81@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Alu Menuiserie Vaucluse",
+      "email": "alumenuiserie84@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 01",
+      "email": "contact@artetfenetres01.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 02",
+      "email": "contact@artetfenetres02.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 03",
+      "email": "contact@artetfenetres03.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 04",
+      "email": "contact@artetfenetres04.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 05",
+      "email": "contact@artetfenetres05.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 06",
+      "email": "contact@artetfenetres06.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 07",
+      "email": "contact@artetfenetres07.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 08",
+      "email": "contact@artetfenetres08.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 10",
+      "email": "contact@artetfenetres10.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 12",
+      "email": "contact@artetfenetres12.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 13",
+      "email": "contact@artetfenetres13.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 14",
+      "email": "contact@artetfenetres14.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 15",
+      "email": "contact@artetfenetres15.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 16",
+      "email": "contact@artetfenetres16.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 17",
+      "email": "contact@artetfenetres17.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 19",
+      "email": "contact@artetfenetres19.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 21",
+      "email": "contact@artetfenetres21.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 22",
+      "email": "contact@artetfenetres22.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 23",
+      "email": "contact@artetfenetres23.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 24",
+      "email": "contact@artetfenetres24.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 25",
+      "email": "contact@artetfenetres25.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 26",
+      "email": "contact@artetfenetres26.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 27",
+      "email": "contact@artetfenetres27.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 29",
+      "email": "contact@artetfenetres29.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 30",
+      "email": "contact@artetfenetres30.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 32",
+      "email": "contact@artetfenetres32.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 34",
+      "email": "contact@artetfenetres34.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 35",
+      "email": "contact@artetfenetres35.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 36",
+      "email": "contact@artetfenetres36.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 39",
+      "email": "contact@artetfenetres39.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 40",
+      "email": "contact@artetfenetres40.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 42",
+      "email": "contact@artetfenetres42.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 44",
+      "email": "contact@artetfenetres44.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 46",
+      "email": "contact@artetfenetres46.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 47",
+      "email": "contact@artetfenetres47.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 49",
+      "email": "contact@artetfenetres49.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 50",
+      "email": "contact@artetfenetres50.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 51",
+      "email": "contact@artetfenetres51.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 53",
+      "email": "contact@artetfenetres53.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 54",
+      "email": "contact@artetfenetres54.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 55",
+      "email": "contact@artetfenetres55.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 56",
+      "email": "contact@artetfenetres56.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 57",
+      "email": "contact@artetfenetres57.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 58",
+      "email": "contact@artetfenetres58.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 59",
+      "email": "contact@artetfenetres59.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 60",
+      "email": "contact@artetfenetres60.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 62",
+      "email": "contact@artetfenetres62.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 63",
+      "email": "contact@artetfenetres63.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 64",
+      "email": "contact@artetfenetres64.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 65",
+      "email": "contact@artetfenetres65.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 67",
+      "email": "contact@artetfenetres67.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 68",
+      "email": "contact@artetfenetres68.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 69",
+      "email": "contact@artetfenetres69.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 70",
+      "email": "contact@artetfenetres70.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 71",
+      "email": "contact@artetfenetres71.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 76",
+      "email": "contact@artetfenetres76.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 79",
+      "email": "contact@artetfenetres79.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 80",
+      "email": "contact@artetfenetres80.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 81",
+      "email": "contact@artetfenetres81.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 82",
+      "email": "contact@artetfenetres82.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 83",
+      "email": "contact@artetfenetres83.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 84",
+      "email": "contact@artetfenetres84.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 85",
+      "email": "contact@artetfenetres85.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 86",
+      "email": "contact@artetfenetres86.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 87",
+      "email": "contact@artetfenetres87.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 88",
+      "email": "contact@artetfenetres88.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 89",
+      "email": "contact@artetfenetres89.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Art et Fenêtres 90",
+      "email": "contact@artetfenetres90.com",
+      "country": "FR?"
+    },
+    {
+      "company": "BA Menuiserie",
+      "email": "ba.menuiserie64@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Best Fenêtres",
+      "email": "bestfenetres@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Bordeaux Menuiserie",
+      "email": "contact.bordeauxmenuiserie@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "CP Menuiserie",
+      "email": "christeaut@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Eure-et-Loir Menuiseries",
+      "email": "eureetloir.menuiseries@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Lescar Menuiserie",
+      "email": "lescarmenuiserie@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "MGM Menuiserie",
+      "email": "mgmmenuiserie40@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Ma Menuiserie & Moi",
+      "email": "mamenuiserieetmoi@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Melliet Menuiserie",
+      "email": "melliet.menuiserie@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Agenaise",
+      "email": "menuiserie.agenaise47@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Aixoise",
+      "email": "menuiserie.aixoise@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Alpine",
+      "email": "menuiserie.alpine05@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Alsacienne",
+      "email": "menuiserie.alsacienne68@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Alsacienne",
+      "email": "menuiserie.alsacienne67@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Angevine",
+      "email": "menuiserie.angevine49@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Ardennaise",
+      "email": "menuiserie.ardennaise08@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Ardéchoise",
+      "email": "menuiserie.ardechoise07@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Artésienne",
+      "email": "menuiserie.artesienne62@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Auvergnate",
+      "email": "menuiserie.auvergnate63@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Auxerroise",
+      "email": "menuiserie.auxerroise89@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Aveyronnaise",
+      "email": "menuiserie.aveyronnaise@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Avignonnaise",
+      "email": "menuiserie.avignonnaise@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Axonaise",
+      "email": "menuiserie.axonaise02@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Azuréenne",
+      "email": "menuiserieazureenne06@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Belfort",
+      "email": "menuiserie.belfort@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Belfortaine",
+      "email": "menuiserie.belfortaine90@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Besançon",
+      "email": "menuiserie.besancon@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Bisontine",
+      "email": "menuiserie.bisontine25@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Bourbonnaise",
+      "email": "menuiserie.bourbonnaise03@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Bourguignonne",
+      "email": "menuiserie.bourguignonne71@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Bressane",
+      "email": "menuiserie.bressane@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Bretonne",
+      "email": "menuiserie.bretonne35@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Caennaise",
+      "email": "menuiserie.caennaise14@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Cahors",
+      "email": "menuiserie.cahors46@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Cantaliène",
+      "email": "menuiserie.cantalienne15@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Carmausine",
+      "email": "menuiserie.carmausine@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Cazaux",
+      "email": "menuiserie.cazaux32@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Centrale",
+      "email": "menuiseriecentrale36@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Champenoise",
+      "email": "menuiserie.champenoise52@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Charentaise",
+      "email": "menuiserie.charentaise16@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Colmarienne",
+      "email": "menuiserie.colmarienne@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Comtoise",
+      "email": "menuiserie.comtoise70@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Comtoise",
+      "email": "menuiserie.comtoise25@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Comtoise",
+      "email": "menuiserie.comtoise39@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Corrézienne",
+      "email": "menuiserie.correzienne19@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Costarmoricaine",
+      "email": "menuiserie.costarmoricaine22@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Creusoise",
+      "email": "menuiserie.creusoise23@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Côte d’Azur",
+      "email": "menuiserie.cotedazur06@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Digne",
+      "email": "menuiseriedigne@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Dijonnaise",
+      "email": "menuiserie.dijonnaise21@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Drômoise",
+      "email": "menuiseriedromoise26@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Dubost",
+      "email": "menuiseriedubost18@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Finistérienne",
+      "email": "menuiserie.finisterienne29@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Gapençaise",
+      "email": "menuiserie.gapencaise@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Gard",
+      "email": "menuiseriegard@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Héraultaise",
+      "email": "menuiserie.heraultaise@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Jacquet",
+      "email": "menuiserie.jacquet@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Jurassienne",
+      "email": "menuiseriejurassienne39@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Laguian",
+      "email": "menuiserielaguian@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Landaise",
+      "email": "menuiserielandaise40@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Limousine",
+      "email": "menuiserie.limousine87@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Lons",
+      "email": "menuiserie.lons39@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Lorraine",
+      "email": "menuiserielorraine54@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Lorraine",
+      "email": "menuiserielorraine57@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Lyonnaise",
+      "email": "menuiserie.lyonnaise69@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Marseille",
+      "email": "menuiseriemarseille13@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Mayennaise",
+      "email": "menuiserie.mayennaise53@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Messine",
+      "email": "menuiserie.messine57@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Meusienne",
+      "email": "menuiserie.meusienne55@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Montauban",
+      "email": "menuiserie.montauban82@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Montpellier",
+      "email": "menuiserie.montpellier34@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Morbihannaise",
+      "email": "menuiserie.morbihannaise56@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Mulhousienne",
+      "email": "menuiserie.mulhousienne@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Nancéienne",
+      "email": "menuiserie.nanceienne@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Nantaise",
+      "email": "menuiserie.nantaise44@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Nivernaise",
+      "email": "menuiserie.nivernaise58@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Niçoise",
+      "email": "menuiserie.nicoise@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Nordiste",
+      "email": "menuiserie.nordiste59@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Normande",
+      "email": "menuiserie.normande50@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Normande",
+      "email": "menuiserie.normande76@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Nîmoise",
+      "email": "menuiserie.nimoise@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Occitane",
+      "email": "menuiserie.occitane82@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Occitane",
+      "email": "menuiserie.occitane46@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Occitane",
+      "email": "menuiserie.occitane65@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Oyonnax",
+      "email": "menuiserie.oyonnax@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Picard",
+      "email": "menuiserie.picarde80@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Poitevine",
+      "email": "menuiserie.poitevine86@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Poitevine",
+      "email": "menuiserie.poitevine79@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Privas",
+      "email": "menuiserie.privas07@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Provençale",
+      "email": "menuiserie.provencale@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Provençale",
+      "email": "menuiserie.provencale84@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Provençale",
+      "email": "menuiserie.provencale83@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Périgourdine",
+      "email": "menuiserie.perigourdine24@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Roannaise",
+      "email": "menuiserieroannaise@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Rochelais",
+      "email": "menuiserie.rochelaise17@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Rémoise",
+      "email": "menuiserie.remoise51@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Sarthoise",
+      "email": "menuiserie.sarthoise72@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Strasbourgeoise",
+      "email": "menuiserie.strasbourgeoise67@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Stéphanoise",
+      "email": "menuiserie.stephanoise42@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Toulonnaise",
+      "email": "menuiserie.toulonnaise83@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Troyenne",
+      "email": "menuiserie.troyenne10@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Valence",
+      "email": "menuiserie.valence26@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Vendéenne",
+      "email": "menuiserie.vendeenne85@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Vesulienne",
+      "email": "menuiserie.vesulienne@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Villeneuve",
+      "email": "menuiserie.villeneuve47@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Villeurbannaise",
+      "email": "menuiserie.villeurbannaise@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie Vosgienne",
+      "email": "menuiserie.vosgienne88@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie de Provence",
+      "email": "menuiserieprovence04@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie de Vesoul",
+      "email": "menuiserieduvesoul@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie de la Loire",
+      "email": "menuiseriedelaloire42@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie de l’Ain",
+      "email": "menuiseriedelain01@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie de l’Albigeois",
+      "email": "menuiserie.albigeois81@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie de l’Eure",
+      "email": "menuiseriedeure27@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie de l’Indre",
+      "email": "contact@menuiserie36.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie de l’Oise",
+      "email": "menuiseriedeloise60@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie des Alpes",
+      "email": "menuiseriedesalpes05@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie des Pyrénées",
+      "email": "menuiseriedespyrenees64@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie des Vallées",
+      "email": "menuiseriedesvallees65@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Briançonnais",
+      "email": "menuiseriedubrianconnais@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Bugey",
+      "email": "menuiseriedubugey@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Centre",
+      "email": "menuiserieducentre18@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Comtat",
+      "email": "menuiserieducomtat@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Doubs",
+      "email": "menuiseriedudoubs@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Gard",
+      "email": "menuiseriedugard30@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Gers",
+      "email": "menuiseriedugers32@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Jura",
+      "email": "menuiseriedujura@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Littoral",
+      "email": "menuiseriedulittoral@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Lot",
+      "email": "menuiseriedulot@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Marsan",
+      "email": "menuiseriedumarsan@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Pilat",
+      "email": "menuiseriedupilat@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Plateau",
+      "email": "menuiserieduplateau52@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Quercy",
+      "email": "menuiserieduquercy82@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Quercy",
+      "email": "menuiserieduquercy46@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Rhin",
+      "email": "menuiseriedurhin@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Rhône",
+      "email": "menuiseriedurhone@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Rouergue",
+      "email": "menuiseriedurouergue12@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Sidobre",
+      "email": "menuiseriedusidobre@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Soleil",
+      "email": "menuiseriedusoleil13@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Sud",
+      "email": "menuiseriedusud34@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Sud-Ouest",
+      "email": "m.sudouest32@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Ségala",
+      "email": "menuiseriedusegala@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Territoire",
+      "email": "menuiserieduterritoire70@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Territoire",
+      "email": "menuiserieduterritoire90@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Var",
+      "email": "menuiserieduvar@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Verdon",
+      "email": "menuiserieduverdon@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie du Vivarais",
+      "email": "menuiserieduvivarais@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Menuiserie d’Épinal",
+      "email": "menuiserie.epinal@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "RT Menuiseries",
+      "email": "rtmenuiseries@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Stock Menuiseries Caudry",
+      "email": "menuiseries.caudry@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "VS Fenêtres",
+      "email": "vsfenetre@gmail.com",
+      "country": "FR?"
+    },
+    {
+      "company": "Alu Bois PVC 30",
+      "email": "aluboispvc30@gmail.com",
+      "country": "??"
+    },
+    {
+      "company": "Alu Nenad",
+      "email": "alu.nenad@gmail.com",
+      "country": "??"
+    },
+    {
+      "company": "Alu PVC 65",
+      "email": "alupvc65@gmail.com",
+      "country": "??"
+    },
+    {
+      "company": "Alu PVC Nice",
+      "email": "alupvcnice@gmail.com",
+      "country": "??"
+    },
+    {
+      "company": "Alu et Bois 82",
+      "email": "alubois82@gmail.com",
+      "country": "??"
+    },
+    {
+      "company": "Atelier Bois Tradition",
+      "email": "atelier.bois.tradition28@gmail.com",
+      "country": "??"
+    },
+    {
+      "company": "Atelier du Bois et du Fer",
+      "email": "atelier.bois.fer18@gmail.com",
+      "country": "??"
+    },
+    {
+      "company": "Bois et Alu 26",
+      "email": "boisetalu26@gmail.com",
+      "country": "??"
+    },
+    {
+      "company": "Bois et Alu 69",
+      "email": "boisetalu69@gmail.com",
+      "country": "??"
+    },
+    {
+      "company": "Bois et Confort 07",
+      "email": "boisetconfort07@gmail.com",
+      "country": "??"
+    },
+    {
+      "company": "Denis Plast Alu",
+      "email": "contact@denisplastalu.com",
+      "country": "??"
+    },
+    {
+      "company": "Dufrosa",
+      "email": "sarldufrosa@gmail.com",
+      "country": "??"
+    },
+    {
+      "company": "Eko Nord",
+      "email": "ekonord62@gmail.com",
+      "country": "??"
+    },
+    {
+      "company": "Renowal",
+      "email": "info@renowal.be",
+      "city": "Mont-sur-Marchienne (Charleroi)",
+      "province": "Hainaut",
+      "country": "BE",
+      "sheet": "Wallonie"
+    },
+    {
+      "company": "Deltenre & Fils",
+      "email": "menuiserie@deltenre.eu",
+      "city": "Strépy-Bracquegnies (La Louvière)",
+      "province": "Hainaut",
+      "country": "BE",
+      "sheet": "Wallonie"
+    },
+    {
+      "company": "MENUISERIE KENAN",
+      "email": "info@kenan.be",
+      "city": "Charleroi",
+      "province": "Hainaut",
+      "country": "BE",
+      "sheet": "Wallonie"
+    },
+    {
+      "company": "MENUISERIE DAUBRESSE",
+      "email": "info@daubresse.be",
+      "city": "Lodelinsart (Charleroi)",
+      "province": "Hainaut",
+      "country": "BE",
+      "sheet": "Wallonie"
+    },
+    {
+      "company": "Menuisier Robert Tenhaaf",
+      "email": "tenhaafrobert@gmail.com",
+      "city": "Romsée (Fléron)",
+      "province": "Liège",
+      "country": "BE",
+      "sheet": "Wallonie"
+    },
+    {
+      "company": "Corombelle Rudy",
+      "email": "contact@amenagement-interieur.be",
+      "city": "Dison",
+      "province": "Liège",
+      "country": "BE",
+      "sheet": "Wallonie"
+    },
+    {
+      "company": "Wansart J-C",
+      "email": "wansartsa@hotmail.com",
+      "city": "Sart (Jalhay)",
+      "province": "Liège",
+      "country": "BE",
+      "sheet": "Wallonie"
+    },
+    {
+      "company": "MENUISERIE HENRI LEKEU ET FILS",
+      "email": "henri@menuiserie-lekeu.be",
+      "city": "Bilstain (Limbourg)",
+      "province": "Liège",
+      "country": "BE",
+      "sheet": "Wallonie"
+    },
+    {
+      "company": "MENUISERIE HENRI LEKEU ET FILS",
+      "email": "sebastien@menuiserie-lekeu.be",
+      "city": "Bilstain (Limbourg)",
+      "province": "Liège",
+      "country": "BE",
+      "sheet": "Wallonie"
+    },
+    {
+      "company": "Jamoulle Frédéric",
+      "email": "menuiseriejamoulle@hotmail.com",
+      "city": "Seraing",
+      "province": "Liège",
+      "country": "BE",
+      "sheet": "Wallonie"
+    },
+    {
+      "company": "Losfeld S",
+      "email": "slosfeld@gmail.com",
+      "city": "Floreffe",
+      "province": "Namur",
+      "country": "BE",
+      "sheet": "Wallonie"
+    },
+    {
+      "company": "Menuiserie Fayt-Rousseaux",
+      "email": "info@fayt-rousseaux.be",
+      "city": "Jamagne (Philippeville)",
+      "province": "Namur",
+      "country": "BE",
+      "sheet": "Wallonie"
+    },
+    {
+      "company": "Menuiserie Guerisse Père et fils",
+      "email": "info@menuiserieguerisse.be",
+      "city": "Saint-Hubert",
+      "province": "Luxembourg",
+      "country": "BE",
+      "sheet": "Wallonie"
+    },
+    {
+      "company": "Menuiserie Carez",
+      "email": "raph.60@hotmail.com",
+      "city": "Hives (La Roche-en-Ardenne)",
+      "province": "Luxembourg",
+      "country": "BE",
+      "sheet": "Wallonie"
+    },
+    {
+      "company": "Cornet Menuiserie",
+      "email": "info@cornet-menuiserie.be",
+      "city": "Rulles (Habay)",
+      "province": "Luxembourg",
+      "country": "BE",
+      "sheet": "Wallonie"
+    },
+    {
+      "company": "CD Menuiserie",
+      "email": "daniel@cdmenuiserie.be",
+      "city": "Tintigny",
+      "province": "Luxembourg",
+      "country": "BE",
+      "sheet": "Wallonie"
+    },
+    {
+      "company": "Borcy Menuiserie",
+      "email": "info@menuiserieborcy.be",
+      "city": "Bras (Libramont-Chevigny)",
+      "province": "Luxembourg",
+      "country": "BE",
+      "sheet": "Wallonie"
+    },
+    {
+      "company": "Atelier De Kerf",
+      "email": "info@atelierdekerf.be",
+      "city": "Zellik (Asse)",
+      "province": "Vlaams-Brabant",
+      "country": "BE",
+      "sheet": "Flandre"
+    },
+    {
+      "company": "Menuiserie Mathieu Bielande",
+      "email": "info@menuiseriembielande.be",
+      "city": "Perwez",
+      "province": "Vlaams-Brabant/Namur",
+      "country": "BE",
+      "sheet": "Flandre"
+    },
+    {
+      "company": "Michiel Maakt",
+      "email": "michielmaakt@gmail.com",
+      "city": "Deurne (Anvers)",
+      "province": "Antwerpen",
+      "country": "BE",
+      "sheet": "Flandre"
+    },
+    {
+      "company": "Denie Luc Le Menuisier",
+      "email": "luc.denie@luclemenuisier.be",
+      "city": "Leeuw-Saint-Pierre",
+      "province": "Vlaams-Brabant",
+      "country": "BE",
+      "sheet": "Flandre"
+    }
+  ]
+}
