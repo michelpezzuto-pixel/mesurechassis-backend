@@ -4,6 +4,7 @@ import {
   Alert,
   Image,
   KeyboardAvoidingView,
+  Linking,
   Modal,
   Platform,
   ScrollView,
@@ -72,6 +73,37 @@ export default function SignIn() {
   );
   const isIOS = Platform.OS === "ios";
   const [submitting, setSubmitting] = useState(false);
+
+  // 🍎 iOS — App Store Guidelines 3.1.1 & 3.1.3(c) :
+  // Force impérativement le mode "login" sur iOS. Même si un état mode="register"
+  // arrive par hasard (deep link, hot reload…), on le réinitialise.
+  useEffect(() => {
+    if (isIOS && mode === "register") {
+      setMode("login");
+    }
+  }, [isIOS, mode]);
+
+  // 🍎 iOS — URL externe vers le site web pour créer un compte (validation TVA)
+  //   Apple refuse l'inscription business directement dans l'app.
+  const openRegistrationWebsite = async () => {
+    const url = "https://www.mesurechassis.com/inscription";
+    try {
+      const can = await Linking.canOpenURL(url);
+      if (can) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert(
+          "Ouverture impossible",
+          `Veuillez visiter manuellement : ${url}`,
+        );
+      }
+    } catch {
+      Alert.alert(
+        "Ouverture impossible",
+        `Veuillez visiter manuellement : ${url}`,
+      );
+    }
+  };
 
   // ─── Mot de passe oublié (modal) ───
   const [forgotOpen, setForgotOpen] = useState(false);
@@ -299,16 +331,22 @@ export default function SignIn() {
                 {t("auth.login")}
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              testID="register-tab"
-              onPress={() => setMode("register")}
-              style={[styles.tab, mode === "register" && styles.tabActive]}
-              activeOpacity={0.7}
-            >
-              <Text style={[styles.tabText, mode === "register" && styles.tabTextActive]}>
-                {t("auth.register")}
-              </Text>
-            </TouchableOpacity>
+            {/* 🍎 iOS — App Store Guidelines 3.1.1 & 3.1.3(c) :
+             * Pas d'onglet "Inscription" sur iOS. L'app iOS est uniquement
+             * pour les comptes existants. La création de compte se fait
+             * sur le site web (mesurechassis.com) avec validation TVA. */}
+            {!isIOS && (
+              <TouchableOpacity
+                testID="register-tab"
+                onPress={() => setMode("register")}
+                style={[styles.tab, mode === "register" && styles.tabActive]}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.tabText, mode === "register" && styles.tabTextActive]}>
+                  {t("auth.register")}
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
 
           {pendingVerification ? (
@@ -667,6 +705,9 @@ export default function SignIn() {
             placeholderTextColor={colors.placeholder}
             keyboardType="email-address"
             autoCapitalize="none"
+            autoCorrect={false}
+            textContentType="emailAddress"
+            spellCheck={false}
             style={styles.input}
           />
           <Text style={styles.label}>{t("auth.password")}</Text>
@@ -680,6 +721,8 @@ export default function SignIn() {
               secureTextEntry={!showPassword}
               autoCapitalize="none"
               autoCorrect={false}
+              textContentType="password"
+              spellCheck={false}
               style={styles.passwordInput}
             />
             <TouchableOpacity
@@ -723,6 +766,33 @@ export default function SignIn() {
                 {t("auth.forgotPassword")}
               </Text>
             </TouchableOpacity>
+          )}
+
+          {/* 🍎 iOS — App Store Guidelines 3.1.1 & 3.1.3(c) :
+           * Pas d'inscription possible depuis l'app iOS. Si un visiteur
+           * n'a pas encore de compte, on lui propose UNIQUEMENT le site
+           * web (où la validation TVA business est effectuée).
+           * Cela évite tout amalgame "consumer-facing IAP". */}
+          {mode === "login" && isIOS && (
+            <View style={iosFooterStyles.wrap}>
+              <View style={iosFooterStyles.divider} />
+              <Text style={iosFooterStyles.label}>Pas encore de compte ?</Text>
+              <Text style={iosFooterStyles.help}>
+                Les comptes sont créés exclusivement sur notre site web par
+                les entreprises de menuiserie professionnelles.
+              </Text>
+              <TouchableOpacity
+                testID="ios-register-website-btn"
+                onPress={openRegistrationWebsite}
+                activeOpacity={0.7}
+                style={iosFooterStyles.btn}
+              >
+                <Ionicons name="open-outline" size={16} color={colors.primary} />
+                <Text style={iosFooterStyles.btnText}>
+                  mesurechassis.com
+                </Text>
+              </TouchableOpacity>
+            </View>
           )}
             </>
           )}
@@ -1384,5 +1454,55 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontWeight: "600",
     lineHeight: 16,
+  },
+});
+
+
+// 🍎 iOS — Styles du footer "Pas encore de compte ?" (renvoi vers le site web)
+const iosFooterStyles = StyleSheet.create({
+  wrap: {
+    marginTop: 24,
+    paddingTop: 18,
+    paddingHorizontal: 4,
+    alignItems: "center",
+  },
+  divider: {
+    height: 1,
+    backgroundColor: colors.surfaceElevated,
+    alignSelf: "stretch",
+    marginBottom: 16,
+    opacity: 0.5,
+  },
+  label: {
+    color: colors.textPrimary,
+    fontSize: 13.5,
+    fontWeight: "800",
+    letterSpacing: 0.3,
+    marginBottom: 6,
+  },
+  help: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    textAlign: "center",
+    lineHeight: 17,
+    paddingHorizontal: 12,
+    marginBottom: 12,
+  },
+  btn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    backgroundColor: colors.primary + "12",
+  },
+  btnText: {
+    color: colors.primary,
+    fontSize: 13,
+    fontWeight: "800",
+    letterSpacing: 0.3,
   },
 });

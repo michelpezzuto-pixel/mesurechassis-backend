@@ -1,0 +1,35 @@
+{
+  "summary": "Build 104 Apple Review fixes validated. Backend: 7/7 pytest passed (test_build_104_apple_review.py) — new password `MesureChassis2026` works on LOCAL and PRODUCTION Railway, old password `AppleReview2026!` rejected (401) on both, auth/me returns role=admin, /chantiers returns 3+ demo items, /users accessible. Frontend WEB regression: both `SIGN IN`/`SIGN UP` tabs visible (Platform.OS=web → not iOS-restricted), iOS-only footer 'Pas encore de compte ?' correctly hidden on web, login with new credentials successfully redirects to /dashboard as Apple Reviewer admin. Code inspection of /app/frontend/app/index.tsx confirms all six required iOS guards in place.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_build_104_apple_review.py",
+    "/app/test_reports/pytest/iter18_build_104.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Code inspection of /app/frontend/app/index.tsx confirms: line 7 `Linking` imported from react-native; line 74 `const isIOS = Platform.OS === 'ios'`; lines 80-84 useEffect forces mode='login' when isIOS && mode==='register'; line 88 `openRegistrationWebsite` calls `Linking.openURL('https://www.mesurechassis.com/inscription')`; line 338 register tab JSX wrapped in `{!isIOS && (...)}`; line 776 iOS footer JSX wrapped in `{mode === 'login' && isIOS && (...)}`; lines 708-710 + 723-725 have `autoCorrect={false}` + `textContentType` + `spellCheck={false}` on email/password inputs; line 1462 `iosFooterStyles = StyleSheet.create({...})` exists.",
+    "Apple Review password reset confirmed on BOTH local preview backend AND Railway production. New password contains only letters & digits (no special chars) → eliminates iOS keyboard friction reported in 2.1 rejection.",
+    "Frontend file /app/frontend/app/index.tsx is 1509 lines — exceeds the 700-line guideline. Consider splitting into LoginForm, RegisterForm, LanguageSwitcher modules. NOT a blocker for Apple submission, but recommended refactor."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_build_104_apple_review.py (new)"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "100%"
+  },
+  "seed_data_creation": "None. Used existing applereview@mesurechassis.com demo account.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Build 104 Apple Review submission ready. Test credentials documented in /app/memory/test_credentials.md: applereview@mesurechassis.com / MesureChassis2026 (NO special chars to avoid iOS keyboard issues). The iOS-only UI logic in /app/frontend/app/index.tsx (hide Inscription tab, force mode=login, show external signup link via Linking.openURL) cannot be visually verified in the web preview environment — only via code inspection. Use Expo Go / TestFlight build to verify on a real iOS device before App Store submission.",
+  "rca_of_issue": "Build 103 rejection had two root causes: (1) Apple reviewer could not log in because the test password contained `!`, hard to locate on iOS keyboard during review session — fixed by resetting to `MesureChassis2026` (alphanumeric only) on both local DB and Railway production; (2) Apple guidelines 3.1.1 / 3.1.3(c) forbid in-app business signup as it is considered a consumer-facing purchase mechanism — fixed in /app/frontend/app/index.tsx by (a) hiding the Inscription tab when Platform.OS==='ios' via `{!isIOS && (...)}`, (b) defensive useEffect that flips mode back to 'login' if it ever becomes 'register' on iOS, (c) adding an iOS-only footer that opens `https://www.mesurechassis.com/inscription` in Safari via `Linking.openURL`. Web behavior remains unchanged (full Inscription tab still available). Confirmed via end-to-end backend tests + frontend web regression login flow."
+}
