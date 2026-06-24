@@ -1,0 +1,42 @@
+{
+  "summary": "Build 105+ Apple Review credential verification: 6/7 tests PASSED. PROD Railway login with new lowercase password 'applereview2026' returns 200 + valid JWT + role=admin. Both old passwords ('MesureChassis2026' and 'AppleReview2026!') correctly rejected with 401. LOCAL backend login also returns 200. Authenticated endpoints /api/auth/me (email_verified_at set, status=active) and /api/users (admin list) all pass. ONLY failure: /api/chantiers returns just 1 chantier ('Dupont Jean — Bruxelles') instead of the 3 demo chantiers documented in test_credentials.md (Le Lion d'Or, Maison Dubois, Pharmacie Centrale). This is a seed-data discrepancy on PROD, NOT a credentials / login issue. Apple reviewer login flow is fully unblocked.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "GET /api/chantiers (PROD, applereview account)",
+        "issue": "Returns only 1 chantier ('Dupont Jean — 12 Av Louise, Bruxelles') instead of the 3 demo chantiers documented in test_credentials.md ('Restaurant Le Lion d'Or', 'Maison Dubois', 'Pharmacie Centrale'). Demo dataset on PROD looks out-of-sync with the seed spec. Apple reviewer will still see the app working but with a single, less impressive demo project."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_apple_review_build_105.py",
+    "/app/test_reports/pytest/build_105_apple_review.xml"
+  ],
+  "action_items": [
+    "(Optional) Re-seed PROD with the 3 documented demo chantiers (Le Lion d'Or, Maison Dubois, Pharmacie Centrale) so Apple reviewer sees a richer dataset matching what's described in test_credentials.md — not blocking, but improves demo quality.",
+    "Notify Apple to retry the login with EXACTLY: applereview@mesurechassis.com / applereview2026 (all lowercase, no spaces, no special chars)."
+  ],
+  "critical_code_review_comments": [
+    "test_credentials.md was out-of-date (still showed Build 11.3.2 password). I updated it to reflect Build 105+ new lowercase password and marked both legacy passwords as deactivated."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_apple_review_build_105.py (new)",
+    "/app/memory/test_credentials.md (updated Apple Review section to new lowercase password)"
+  ],
+  "success_rate": {
+    "backend": "86% (6/7 — only failure is seed-data count, not auth)",
+    "frontend": "not tested (per request)"
+  },
+  "seed_data_creation": "None. Used existing applereview@mesurechassis.com account.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Apple Review credentials for Build 105+ confirmed working on BOTH PROD Railway and LOCAL backend with password 'applereview2026' (all lowercase). Old passwords properly rejected. The only outstanding non-blocking issue is that PROD's applereview account currently has just 1 chantier ('Dupont Jean') instead of the 3 demo chantiers (Le Lion d'Or, Maison Dubois, Pharmacie Centrale) referenced in /app/memory/test_credentials.md. Reusable test file: /app/backend/tests/test_apple_review_build_105.py — run with `pytest backend/tests/test_apple_review_build_105.py -v`.",
+  "rca_of_issue": "Apple Review login rejection RCA: NOT a backend bug. Backend verifies the new lowercase password correctly on both PROD and LOCAL. Old passwords return 401 as expected. The Apple reviewer's previous failures were most likely caused by iOS autocorrect/shift on the special-char/uppercase passwords on the reviewer's iPad. Mitigation: new password 'applereview2026' is 100% lowercase + digits, eliminating autocorrect risk. Verified end-to-end: login → JWT → /auth/me (status=active, email_verified_at set) → admin endpoints all return 200."
+}
