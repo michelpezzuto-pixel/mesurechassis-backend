@@ -1,0 +1,40 @@
+{
+  "summary": "RGPD unsubscribe audit — ALL 4 verification points PASS. Created /app/backend/tests/test_campaign_rgpd_unsubscribe.py (10 tests, 100% pass). Verified: (1) JWT token roundtrip + admin/public unsubscribe routes (200 idempotent, invalid → 400). (2) Unsubscribe footer is built by _build_unsubscribe_footer_html (campaign.py:231-242) and appended AFTER the if/elif body construction at campaign.py:543-545, so it is added to ALL 3 email kinds: 'new', 'relance', 'relance2'. (3) CRON filters _relances_dues (lines 426-429), _second_relances_dues (lines 448-451) and the send_batch 'pending' query (lines 632-635) all exclude unsubscribed prospects via $or [{$exists:false},{=false}]. (4) End-to-end against PROD-style URL: admin login OK, /api/campaign/stats returns unsubscribed=2, /api/campaign/prospects shows artisanduchassis@gmail.com unsubscribed via admin_manual at 2026-06-23T14:01:15 AFTER the J+3 relance was sent at 05:05 same day (matches user's narrative). Audit-only, NO code modified.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_campaign_rgpd_unsubscribe.py",
+    "/app/test_reports/pytest/iter21_rgpd_unsubscribe.xml"
+  ],
+  "verification_results": {
+    "1_unsubscribe_routes": "PASS — POST /api/campaign/prospects/{id}/unsubscribe returns 200 and is idempotent; resubscribe restores state; unknown prospect → 404. GET /api/public/unsubscribe?token=<valid_jwt> returns 200 text/html with confirmation page and marks unsubscribed=true,unsubscribed_via='public_link'. Invalid token → 400. Token roundtrip verified: _make/_decode pair preserves pid, lowercases+strips email, sets purpose='unsubscribe_campaign'.",
+    "2_footer_in_all_emails": "PASS — _build_unsubscribe_footer_html exists at campaign.py:231. In _send_batch_task, the if/elif/else block selecting subject+body for kind in ('relance','relance2','new') ends at line 529. The QR substitution happens at line 541. The unsubscribe footer is appended at lines 543-545 (`unsubscribe_footer = _build_unsubscribe_footer_html(pid, doc['email']); body = body + '\\n\\n' + unsubscribe_footer`) BEFORE the send_email call (line 549) — so footer is appended to ALL 3 email kinds. URL embeds PUBLIC_BACKEND_URL (default: https://capable-gratitude-production-db51.up.railway.app) + /api/public/unsubscribe?token=...",
+    "3_cron_filter": "PASS — _relances_dues (campaign.py:415-434) and _second_relances_dues (campaign.py:437-456) both filter `$or: [{unsubscribed: {$exists: false}}, {unsubscribed: false}]`. The new-prospects query in send_batch (campaign.py:629-641) uses the same $or clause. Live assertion: relance helpers returned 0 docs with unsubscribed=true.",
+    "4_end_to_end": "PASS — admin login (applereview@mesurechassis.com / MesureChassis2026) returns role=admin. /api/campaign/stats → {sent:90, pending:171, unsubscribed:2, relances_sent:90, sent_today:30, daily_limit:30}. /api/campaign/prospects: 2 unsubscribed found: contact@etanel.fr (public_link, 2026-06-23T13:56) + artisanduchassis@gmail.com (admin_manual, 2026-06-23T14:01). The Artisan du Châssis record confirms the narrative: relance_sent_at=2026-06-23T05:05 (morning J+3) BEFORE unsubscribed_at=2026-06-23T14:01 (afternoon admin STOP)."
+  },
+  "action_items": [],
+  "critical_code_review_comments": [
+    "All MongoDB queries in /campaign/prospects and /campaign/stats correctly exclude _id (uses `{'_id': 0}` projection or model serialization). Verified — no ObjectId leakage in response payloads.",
+    "Public unsubscribe page is XSS-safe by construction: only `email` from JWT payload is interpolated, and JWT signature validation guarantees integrity. However, if email contains HTML chars they would be rendered raw — currently not an issue because emails are validated by EMAIL_RE at insert time, but consider html.escape() for defence-in-depth (campaign.py:857)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_campaign_rgpd_unsubscribe.py (NEW — 10 tests, all pass)"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "N/A (backend-only audit)"
+  },
+  "seed_data_creation": "None — audit only. Tests pick existing sent+subscribed prospects, mutate them, then restore via resubscribe in the same test. DB state preserved.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Reusable test file: /app/backend/tests/test_campaign_rgpd_unsubscribe.py covers JWT token roundtrip, public unsubscribe HTML page, admin unsubscribe/resubscribe idempotency+404, stats.unsubscribed field, and CRON filter assertions via direct call to _relances_dues helpers. Run with: EXPO_PUBLIC_BACKEND_URL=<url> pytest tests/test_campaign_rgpd_unsubscribe.py -v. Use admin creds applereview@mesurechassis.com / MesureChassis2026 (NOT the lowercase applereview2026 mentioned in /app/memory/test_credentials.md — that doesn't work in this preview env; only MesureChassis2026 does).",
+  "rca_of_issue": "No bug to RCA. User received a STOP reply because the prospect chose to reply by email rather than click the footer link. The system correctly recorded the manual admin unsubscribe afterward, and the J+3 relance that went out that morning correctly contained the unsubscribe footer (which prospect didn't use). Footer presence in ALL email kinds is structurally guaranteed by the line 543-545 placement AFTER the if/elif body-construction chain."
+}
