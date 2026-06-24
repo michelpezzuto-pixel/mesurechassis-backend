@@ -4,7 +4,6 @@ import {
   Alert,
   Image,
   KeyboardAvoidingView,
-  Linking,
   Modal,
   Platform,
   ScrollView,
@@ -14,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import * as WebBrowser from "expo-web-browser";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -83,21 +83,25 @@ export default function SignIn() {
     }
   }, [isIOS, mode]);
 
-  // 🍎 iOS — URL externe vers le site web pour créer un compte (validation TVA)
-  //   Apple refuse l'inscription business directement dans l'app.
+  // 🍎 iOS — In-app browser (Safari View Controller) vers le site web.
+  //   Apple Guideline 4 (Design) : ne PAS sortir l'utilisateur de l'app via
+  //   Linking.openURL — utiliser WebBrowser.openBrowserAsync qui présente
+  //   un Safari View Controller embarqué (l'utilisateur reste DANS l'app
+  //   et peut fermer l'overlay pour revenir au login).
+  //   URL pointée : page d'accueil mesurechassis.com (qui existe et
+  //   présente les tarifs + contact pour la création de compte business).
   const openRegistrationWebsite = async () => {
-    const url = "https://www.mesurechassis.com/inscription";
+    const url = "https://www.mesurechassis.com";
     try {
-      const can = await Linking.canOpenURL(url);
-      if (can) {
-        await Linking.openURL(url);
-      } else {
-        Alert.alert(
-          "Ouverture impossible",
-          `Veuillez visiter manuellement : ${url}`,
-        );
-      }
-    } catch {
+      await WebBrowser.openBrowserAsync(url, {
+        // PAGE_SHEET : modal qui glisse depuis le bas, dismissable au swipe
+        presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
+        // Couleur de la toolbar en harmonie avec l'app
+        controlsColor: "#FF5A00",
+        toolbarColor: "#0C0C0E",
+        showTitle: true,
+      });
+    } catch (err) {
       Alert.alert(
         "Ouverture impossible",
         `Veuillez visiter manuellement : ${url}`,
@@ -768,18 +772,19 @@ export default function SignIn() {
             </TouchableOpacity>
           )}
 
-          {/* 🍎 iOS — App Store Guidelines 3.1.1 & 3.1.3(c) :
-           * Pas d'inscription possible depuis l'app iOS. Si un visiteur
-           * n'a pas encore de compte, on lui propose UNIQUEMENT le site
-           * web (où la validation TVA business est effectuée).
-           * Cela évite tout amalgame "consumer-facing IAP". */}
+          {/* 🍎 iOS — App Store Guidelines 3.1.1, 3.1.3(c) & 4 (Design) :
+           * Pas d'inscription possible depuis l'app iOS (3.1.1/3.1.3c).
+           * Pour éviter de sortir l'utilisateur via le navigateur externe
+           * (rejeté Guideline 4 le 24/06/2026), on ouvre le site web dans
+           * un Safari View Controller embarqué via expo-web-browser.
+           * L'utilisateur reste DANS l'app et peut fermer l'overlay. */}
           {mode === "login" && isIOS && (
             <View style={iosFooterStyles.wrap}>
               <View style={iosFooterStyles.divider} />
               <Text style={iosFooterStyles.label}>Pas encore de compte ?</Text>
               <Text style={iosFooterStyles.help}>
-                Les comptes sont créés exclusivement sur notre site web par
-                les entreprises de menuiserie professionnelles.
+                Les comptes sont créés exclusivement par les entreprises de
+                menuiserie professionnelles via notre site officiel.
               </Text>
               <TouchableOpacity
                 testID="ios-register-website-btn"
@@ -787,9 +792,9 @@ export default function SignIn() {
                 activeOpacity={0.7}
                 style={iosFooterStyles.btn}
               >
-                <Ionicons name="open-outline" size={16} color={colors.primary} />
+                <Ionicons name="globe-outline" size={16} color={colors.primary} />
                 <Text style={iosFooterStyles.btnText}>
-                  mesurechassis.com
+                  En savoir plus sur l&apos;inscription
                 </Text>
               </TouchableOpacity>
             </View>

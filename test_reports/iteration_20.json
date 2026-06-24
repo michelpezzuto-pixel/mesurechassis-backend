@@ -1,0 +1,39 @@
+{
+  "summary": "Build 105 iter-20 Apple Review follow-up — ALL CHECKS PASS. (1) Backend login regression: 7/7 pytest pass. PROD Railway + LOCAL + PUBLIC Kubernetes ingress all return 200 for applereview@mesurechassis.com/MesureChassis2026. /api/auth/me returns role=admin, status=active, email_verified_at set. (2) Code inspection of /app/frontend/app/index.tsx confirmed every required change: `import * as WebBrowser from \"expo-web-browser\"` present (line 16), `Linking` REMOVED from RN imports (lines 2-15), openRegistrationWebsite uses WebBrowser.openBrowserAsync with PAGE_SHEET + controlsColor #FF5A00 + toolbarColor #0C0C0E (lines 93-110), URL is https://www.mesurechassis.com (line 94, NOT /inscription), iOS footer button testID=ios-register-website-btn still present with globe-outline icon (lines 789-799), iOS register tab still hidden via {!isIOS && (...)} (line 342). expo-web-browser ~15.0.10 is declared in package.json. (3) Frontend WEB regression: mobile viewport login screen loads, both Connexion+Inscription tabs visible on web (Platform!=ios), iOS-only ios-register-website-btn correctly absent on web, login submit redirects to /dashboard, user shows as 'Apple Reviewer / Administrator'. (4) URL anti-404: HEAD https://www.mesurechassis.com -> 200; HEAD https://www.mesurechassis.com/inscription -> 404 (confirms the URL fix was required). CREDENTIAL WARNING: /app/memory/test_credentials.md was updated in iter19 to claim password 'applereview2026' (lowercase) — that password is NOW REJECTED by PROD+LOCAL (401). The working password is the original 'MesureChassis2026' as stated in this iteration's review request. Doc is stale and should be reverted.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_apple_review_iter20_followup.py",
+    "/app/test_reports/pytest/iter20_apple_followup.xml"
+  ],
+  "action_items": [
+    "Update /app/memory/test_credentials.md — revert the Apple Review password line back to 'MesureChassis2026'. The iter19 update to 'applereview2026' is stale: that lowercase password is rejected (401) by both PROD Railway and LOCAL backend today. The review request itself confirms 'MesureChassis2026' is the live password.",
+    "(Already correct, no fix needed) WebBrowser.openBrowserAsync implementation matches Apple's Safari View Controller recommendation for Guideline 4 — fall-through Alert.alert handles edge cases. Behavior cannot be verified on web preview; verify on TestFlight Build 106+ before Apple resubmission."
+  ],
+  "critical_code_review_comments": [
+    "Apple Guideline 4 fix is correctly implemented: Safari View Controller (WebBrowser.openBrowserAsync with PAGE_SHEET) keeps users in-app instead of jumping to external Safari via Linking.openURL.",
+    "URL correctly changed from /inscription (404) to landing page (200) — Apple's 2.1(a) rejection root cause is fixed.",
+    "iOS register tab is still hidden ({!isIOS && (...)} on line 342) — previous iteration's fix is intact, no regression.",
+    "Minor: /app/memory/test_credentials.md is out of sync with the actual production password. Suggest reverting to match what works."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_apple_review_iter20_followup.py (new — 7 regression tests, all green)"
+  ],
+  "success_rate": {
+    "backend": "100% (7/7 pytest)",
+    "frontend": "100% (web login + tab visibility + iOS-only button absence)"
+  },
+  "seed_data_creation": "None.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Build 105 follow-up (rejection cycle #4): Safari View Controller swap + URL anti-404 are confirmed live in /app/frontend/app/index.tsx. All login flows return 200 with role=admin on PROD/LOCAL/PUBLIC. Re-runnable test: `pytest backend/tests/test_apple_review_iter20_followup.py -v --no-cov`. NOTE the password in /app/memory/test_credentials.md is stale ('applereview2026') — the real working password is 'MesureChassis2026' (matches the review request). The Safari View Controller overlay itself can ONLY be verified on a physical iOS device / TestFlight, not on web preview — so do not try to UI-test the in-app browser overlay.",
+  "rca_of_issue": "Apple's three rejection points are all addressed: (a) 2.1(a) — the link to https://www.mesurechassis.com/inscription returned 404; the URL was changed to the live landing page (HEAD 200). (b) Guideline 4 (Design) — `Linking.openURL` was sending users out of the app; replaced with `WebBrowser.openBrowserAsync` (Safari View Controller) presented as PAGE_SHEET overlay with branded toolbar/controls. (c) 2.1 Information Needed — login is fully working on PROD Railway (verified 7/7 tests, including /auth/me=admin); Apple reviewer just needs the correct credentials applereview@mesurechassis.com / MesureChassis2026 as currently active."
+}
