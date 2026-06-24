@@ -52,6 +52,53 @@ sur le modèle commercial réel et **refaire tous les contenus marketing**.
 - [ ] **Email à tous les beta testeurs** pour les remercier + leur offrir un avantage (1 mois gratuit ?)
 - [ ] **Post de blog / vidéo** célébrant la sortie
 
+### 7. 🌍 EXPANSION EUROPÉENNE (vision Michel — 24/06/2026)
+**Trigger** : "quand l'app sera sur Apple Store, tout le monde pourra y accéder"
+→ Phase d'expansion internationale à partir de la France/Belgique vers toute l'Europe.
+
+**Pays cibles prioritaires** :
+- 🇮🇹 Italie (forte tradition menuiserie, marché énorme)
+- 🇪🇸 Espagne
+- 🇩🇪 Allemagne (gros volume professionnel)
+- 🇵🇹 Portugal
+- 🇨🇭 Suisse (déjà BE/CH proximité linguistique)
+- Puis tous les pays de l'Espace économique européen
+
+**Travaux requis** :
+
+**a) APPLICATION mobile (Expo)**
+- [ ] Étendre i18n actuel (FR/EN/NL) à : IT, ES, DE, PT, PL, CS
+- [ ] Vérifier que toutes les strings UI sont via `useTranslation()` (pas hardcodées)
+- [ ] Locales date/nombre par pays (séparateurs décimaux : virgule en FR/DE, point en EN/IT)
+- [ ] Devises affichées par pays (EUR partout mais SEK/DKK/CZK pour exports paywall)
+- [ ] **Validation TVA VIES** déjà fonctionnelle pour TOUS les 27 pays UE (vérifier dans `vat_validator.py`)
+
+**b) SITE WEB (mesurechassis.com)**
+- [ ] Refonte multilingue avec sélecteur de langue en header
+- [ ] Hreflang tags pour SEO (`<link rel="alternate" hreflang="it" href="...">`)
+- [ ] Pages clés à traduire : index, tarifs, à-propos, FAQ, CGU/CGV
+- [ ] URLs localisées (`/it/`, `/es/`, `/de/`...)
+- [ ] Vidéo hero (cf prompt Michel du 24/06) en version sous-titrée par langue
+
+**c) BACKEND**
+- [ ] Email templates campagne en toutes langues (selon le pays détecté du prospect)
+- [ ] Détection langue auto (header Accept-Language ou champ explicite)
+- [ ] Resend : configurer reply-to / from name localisé
+
+**d) MARKETING**
+- [ ] Identifier prospects par pays (LinkedIn Sales Navigator, ProDevis bases régionales)
+- [ ] Campagne email pays par pays (commencer 30/jour PAR PAYS pour ne pas griller le domaine)
+- [ ] Partenariats locaux : équivalents Elcia dans chaque pays (Wartmann en CH, Lobor en IT, etc.)
+
+### 8. 🤖 FEATURE YANN-FEEDBACK (vision Michel — 24/06/2026)
+- [ ] Intégrer Yann (IA Claude Sonnet 4.5) pour analyser les feedbacks utilisateurs reçus
+- [ ] Détection automatique des bugs vs features requests vs compliments
+- [ ] Catégorisation auto par module (mesures / exports / chantiers / etc.)
+- [ ] Dashboard admin avec sentiment analysis et priorisation
+- [ ] **À détailler** quand on attaque (spécification fonctionnelle à co-construire avec Michel)
+
+
+
 ## Notes importantes pour le prochain agent
 
 ⚠️ **Ne JAMAIS basculer ces changements avant validation Apple confirmée**. Si on remet
