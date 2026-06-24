@@ -1,29 +1,16 @@
 {
   "description": "Prospects francophones consolidés à importer après validation Apple",
-  "count": 279,
+  "count": 293,
   "sources": [
     "liste_menuiseries.xlsx (259 entrées - principalement France)",
-    "Menuisiers_Chassis_Belgique.xlsx (22 entrées Belgique)"
+    "Menuisiers_Chassis_Belgique.xlsx (22 entrées Belgique)",
+    "Liste Michel BE/LU 24/06/2026 (14 contacts dont 13 Lux)"
   ],
   "breakdown": {
-    "France": 258,
-    "Belgique": 21,
-    "Total": 279,
-    "par_region": {
-      "Autre": 179,
-      "(inconnue)": 21,
-      "Occitanie": 12,
-      "Auvergne-Rhône-Alpes": 11,
-      "Nouvelle-Aquitaine": 11,
-      "Grand Est": 9,
-      "Provence-Alpes-Côte d'Azur": 8,
-      "Bourgogne-Franche-Comté": 8,
-      "Hauts-de-France": 5,
-      "Normandie": 4,
-      "Bretagne": 4,
-      "Pays de la Loire": 4,
-      "Centre-Val de Loire": 3
-    }
+    "🇫🇷 France": 258,
+    "🇧🇪 Belgique": 22,
+    "🇱🇺 Luxembourg": 13,
+    "Total": 293
   },
   "next_steps": [
     "1) Attendre validation Apple Build 106+",
@@ -1747,6 +1734,76 @@
       "province": "Vlaams-Brabant",
       "country": "BE",
       "sheet": "Flandre"
+    },
+    {
+      "company": "BruxMove",
+      "email": "contact@bruxmove.be",
+      "country": "BE"
+    },
+    {
+      "company": "3D Concept Services",
+      "email": "info@3dconceptservices.lu",
+      "country": "LU"
+    },
+    {
+      "company": "Menuiserie Kersch",
+      "email": "info@kersch.lu",
+      "country": "LU"
+    },
+    {
+      "company": "Metalica",
+      "email": "info@metalica.lu",
+      "country": "LU"
+    },
+    {
+      "company": "Weisgerber",
+      "email": "info@weisgerber.lu",
+      "country": "LU"
+    },
+    {
+      "company": "DS Concept",
+      "email": "info@dsconcept.lu",
+      "country": "LU"
+    },
+    {
+      "company": "Allo Menuiserie",
+      "email": "contact@allomenuiserie.lu",
+      "country": "LU"
+    },
+    {
+      "company": "Chassis Smart Lux",
+      "email": "info@chassissmartlux.lu",
+      "country": "LU"
+    },
+    {
+      "company": "Menuiserie Dostert",
+      "email": "info@dostertsa.lu",
+      "country": "LU"
+    },
+    {
+      "company": "MKP (Kraemer & Partners)",
+      "email": "info@mkp.lu",
+      "country": "LU"
+    },
+    {
+      "company": "Menuiserie Collin",
+      "email": "info@menuiserie-collin.lu",
+      "country": "LU"
+    },
+    {
+      "company": "MGM Menuiserie Guy Morheng",
+      "email": "info@mgm.lu",
+      "country": "LU"
+    },
+    {
+      "company": "LM Menuisier",
+      "email": "contact@lm-menuisier.com",
+      "country": "LU"
+    },
+    {
+      "company": "Menuiserie Diffusion",
+      "email": "office@menuiserie-mdlux.com",
+      "country": "LU"
     }
   ]
 }

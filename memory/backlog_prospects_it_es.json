@@ -1,5 +1,711 @@
 {
-  "description": "Prospects italiens/espagnols — à utiliser lors de l'expansion internationale (i18n IT + ES)",
-  "count": 0,
-  "prospects": []
+  "description": "Prospects italiens & espagnols — à utiliser lors de l'expansion internationale (post-i18n IT/ES)",
+  "count": 140,
+  "breakdown": {
+    "🇮🇹 Italie": 92,
+    "🇪🇸 Espagne": 48
+  },
+  "warning": "NE PAS envoyer avant que l'i18n IT/ES soit fait dans l'app + templates emails traduits",
+  "prospects": [
+    {
+      "company": "Legno Infissi",
+      "email": "info@legnoinfissi.it",
+      "country": "IT"
+    },
+    {
+      "company": "Javelin Serramenti",
+      "email": "info@javelinserramenti.it",
+      "country": "IT"
+    },
+    {
+      "company": "Jolly Alluminio",
+      "email": "info@jollyalluminio.it",
+      "country": "IT"
+    },
+    {
+      "company": "Falegnameria Adda",
+      "email": "info@falegnameriaaddasrl.it",
+      "country": "IT"
+    },
+    {
+      "company": "Baitan Serramenti",
+      "email": "info@baitanserramenti.com",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Brescia",
+      "email": "info@serramenti-brescia.net",
+      "country": "IT"
+    },
+    {
+      "company": "Murarotto Serramenti",
+      "email": "murarotto.serramenti@gmail.com",
+      "country": "IT"
+    },
+    {
+      "company": "Mirano Infissi",
+      "email": "info@miranoinfissi.it",
+      "country": "IT"
+    },
+    {
+      "company": "BS Porte",
+      "email": "info@bsporte.it",
+      "country": "IT"
+    },
+    {
+      "company": "ZC Serramenti",
+      "email": "info@zcserramenti.com",
+      "country": "IT"
+    },
+    {
+      "company": "Il Serramento",
+      "email": "info@il-serramento.it",
+      "country": "IT"
+    },
+    {
+      "company": "Veneto Serramenti",
+      "email": "office@venetoserramenti.it",
+      "country": "IT"
+    },
+    {
+      "company": "Costantin Serramenti",
+      "email": "info@costantinserramenti.it",
+      "country": "IT"
+    },
+    {
+      "company": "2F Fanton",
+      "email": "info@2f-fanton.it",
+      "country": "IT"
+    },
+    {
+      "company": "Zanutta Serramenti",
+      "email": "info@zanuttaserramenti.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Serenissima",
+      "email": "info@serramentiserenissima.it",
+      "country": "IT"
+    },
+    {
+      "company": "Infissi Veneti",
+      "email": "info@infissiveneti.it",
+      "country": "IT"
+    },
+    {
+      "company": "Fara Serramenti",
+      "email": "info@faraserramenti.it",
+      "country": "IT"
+    },
+    {
+      "company": "Verona Infissi",
+      "email": "info@veronainfissi.it",
+      "country": "IT"
+    },
+    {
+      "company": "FAMM Infissi",
+      "email": "info@famminfissi.it",
+      "country": "IT"
+    },
+    {
+      "company": "Sertec",
+      "email": "info@sertecpd.it",
+      "country": "IT"
+    },
+    {
+      "company": "AZ Serramenti",
+      "email": "info@azserramentipadova.it",
+      "country": "IT"
+    },
+    {
+      "company": "Metalinfissi",
+      "email": "info@metalnifissi.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Padova",
+      "email": "info@serramentipadova.it",
+      "country": "IT"
+    },
+    {
+      "company": "Infissi Rovigo",
+      "email": "info@infissi-rovigo.it",
+      "country": "IT"
+    },
+    {
+      "company": "Berton Serramenti",
+      "email": "info@bertonserramenti.it",
+      "country": "IT"
+    },
+    {
+      "company": "Ferraro Infissi",
+      "email": "info@ferraroinfissi.it",
+      "country": "IT"
+    },
+    {
+      "company": "Modena Serramenti",
+      "email": "info@modenaserramenti.it",
+      "country": "IT"
+    },
+    {
+      "company": "Zenna Serramenti",
+      "email": "info@zennaserramenti.it",
+      "country": "IT"
+    },
+    {
+      "company": "Dimensione Serramenti",
+      "email": "info@dimensioneserramenti.com",
+      "country": "IT"
+    },
+    {
+      "company": "VM Serramenti",
+      "email": "info@vmserramenti.it",
+      "country": "IT"
+    },
+    {
+      "company": "Base2 Serramenti",
+      "email": "info@base2serramenti.it",
+      "country": "IT"
+    },
+    {
+      "company": "Giemme Infissi Bologna",
+      "email": "giemmebologna@giemme.net",
+      "country": "IT"
+    },
+    {
+      "company": "Digiemme",
+      "email": "info@digiemmenet.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti DGA",
+      "email": "info@serramentidga.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti 2000",
+      "email": "info@serramenti2000.it",
+      "country": "IT"
+    },
+    {
+      "company": "Infissi Design",
+      "email": "info@infissidesign.it",
+      "country": "IT"
+    },
+    {
+      "company": "Euroinfissi",
+      "email": "info@euroinfissi.com",
+      "country": "IT"
+    },
+    {
+      "company": "Master Serramenti",
+      "email": "info@masterserramenti.it",
+      "country": "IT"
+    },
+    {
+      "company": "Albaserramenti",
+      "email": "info@albaserramenti.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Genova",
+      "email": "info@serramentigenova.it",
+      "country": "IT"
+    },
+    {
+      "company": "Infissi Liguria",
+      "email": "info@infissiliguria.it",
+      "country": "IT"
+    },
+    {
+      "company": "Liguria Serramenti",
+      "email": "info@liguriaserramenti.it",
+      "country": "IT"
+    },
+    {
+      "company": "Genova Infissi",
+      "email": "info@genovainfissi.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Savona",
+      "email": "info@serramentisavona.it",
+      "country": "IT"
+    },
+    {
+      "company": "Infissi La Spezia",
+      "email": "info@infissilaspezia.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Imperia",
+      "email": "info@serramentiimperia.it",
+      "country": "IT"
+    },
+    {
+      "company": "Finestre Liguria",
+      "email": "info@finestreliguria.it",
+      "country": "IT"
+    },
+    {
+      "company": "Infissi Trentino",
+      "email": "info@infissitrentino.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Alto Adige",
+      "email": "info@serramenti-altoadige.it",
+      "country": "IT"
+    },
+    {
+      "company": "Falegnameria Pisoni",
+      "email": "info@falegnameriapisoni.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Bolzano",
+      "email": "info@serramentibolzano.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Toscana",
+      "email": "info@serramentitoscana.it",
+      "country": "IT"
+    },
+    {
+      "company": "Infissi Firenze",
+      "email": "info@infissifirenze.it",
+      "country": "IT"
+    },
+    {
+      "company": "Finestre Toscana",
+      "email": "info@finestretoscana.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Siena",
+      "email": "info@serramentisiena.it",
+      "country": "IT"
+    },
+    {
+      "company": "Infissi Pisa",
+      "email": "info@infissipisa.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Marche",
+      "email": "info@serramentimarche.it",
+      "country": "IT"
+    },
+    {
+      "company": "Infissi Ancona",
+      "email": "info@infissiancona.it",
+      "country": "IT"
+    },
+    {
+      "company": "Finestre Pesaro",
+      "email": "info@finestrepesaro.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Macerata",
+      "email": "info@serramentimacerata.it",
+      "country": "IT"
+    },
+    {
+      "company": "Infissi Fano",
+      "email": "info@infissifano.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Napoli",
+      "email": "info@serramentinapoli.it",
+      "country": "IT"
+    },
+    {
+      "company": "Infissi Campania",
+      "email": "info@infissicampania.it",
+      "country": "IT"
+    },
+    {
+      "company": "Napoli Infissi",
+      "email": "info@napoliinfissi.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Salerno",
+      "email": "info@serramentisalerno.it",
+      "country": "IT"
+    },
+    {
+      "company": "Infissi Caserta",
+      "email": "info@infissicaserta.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Puglia",
+      "email": "info@serramentipuglia.it",
+      "country": "IT"
+    },
+    {
+      "company": "Infissi Bari",
+      "email": "info@infissibari.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Lecce",
+      "email": "info@serramentilecce.it",
+      "country": "IT"
+    },
+    {
+      "company": "Finestre Puglia",
+      "email": "info@finestrepuglia.it",
+      "country": "IT"
+    },
+    {
+      "company": "Infissi Foggia",
+      "email": "info@infissifoggia.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Brindisi",
+      "email": "info@serramentibrindisi.it",
+      "country": "IT"
+    },
+    {
+      "company": "Infissi Salentini",
+      "email": "info@infissisalentini.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Taranto",
+      "email": "info@serramentitaranto.it",
+      "country": "IT"
+    },
+    {
+      "company": "Bari Infissi",
+      "email": "info@bariinfissi.it",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Gallipoli",
+      "email": "info@serramentigallipoli.it",
+      "country": "IT"
+    },
+    {
+      "company": "VF Infissi Bari",
+      "email": "info@vfinfissibari.com",
+      "country": "IT"
+    },
+    {
+      "company": "Serramenti Bari",
+      "email": "info@serramentibari.it",
+      "country": "IT"
+    },
+    {
+      "company": "Infissi del Levante",
+      "email": "info@infissidellevante.it",
+      "country": "IT"
+    },
+    {
+      "company": "Bari Serramenti",
+      "email": "info@bariserramenti.it",
+      "country": "IT"
+    },
+    {
+      "company": "GM Infissi",
+      "email": "gm.infissi@gmail.com",
+      "country": "IT"
+    },
+    {
+      "company": "Officine Schena",
+      "email": "ufficiovendite@officineschena.it",
+      "country": "IT"
+    },
+    {
+      "company": "Ladisa Serramenti",
+      "email": "info@serramentiladisa.it",
+      "country": "IT"
+    },
+    {
+      "company": "Mantiz Serramenti",
+      "email": "info@mantizserramenti.it",
+      "country": "IT"
+    },
+    {
+      "company": "C.M. Campanile Stefano",
+      "email": "c.m.campanilestefano@gmail.com",
+      "country": "IT"
+    },
+    {
+      "company": "LD Porte&Finestre",
+      "email": "ldportefinestresrl@gmail.com",
+      "country": "IT"
+    },
+    {
+      "company": "Vito Roppo Infissi",
+      "email": "vito.roppo69@gmail.com",
+      "country": "IT"
+    },
+    {
+      "company": "Stramaglia Serramenti",
+      "email": "stramagliaserramenti@libero.it",
+      "country": "IT"
+    },
+    {
+      "company": "City Infissi",
+      "email": "cityinfissi@libero.it",
+      "country": "IT"
+    },
+    {
+      "company": "Optimum Infissi",
+      "email": "optimum.amministrazione@gmail.com",
+      "country": "IT"
+    },
+    {
+      "company": "Eredi Marinelli",
+      "email": "marinelli.porteefinestre@gmail.com",
+      "country": "IT"
+    },
+    {
+      "company": "Hermanos Cuesta Legazpe",
+      "email": "hermanoscuesta@gmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminios García San Juan",
+      "email": "aluminiosgarciasanjuan@gmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminios Diez",
+      "email": "carpinteriaaluminiosdiez@gmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminios Alpes",
+      "email": "alpesaluminios@gmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Fernandez Pizarro",
+      "email": "pizarro.fernandez@gmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Euro Aluminio & PVC",
+      "email": "euroaluminiopvc@gmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Inituo",
+      "email": "info@inituo.es",
+      "country": "ES"
+    },
+    {
+      "company": "Carpintería José A. Martín",
+      "email": "joseamartinalu@gmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminios y Cerramientos Artísticos",
+      "email": "info@aluminiosartisticos.com",
+      "country": "ES"
+    },
+    {
+      "company": "Alumadrid",
+      "email": "comercial@alumadrid.es",
+      "country": "ES"
+    },
+    {
+      "company": "Atechnor",
+      "email": "info@atechnor.com",
+      "country": "ES"
+    },
+    {
+      "company": "Ventanas Roma",
+      "email": "info@ventanasroma.com",
+      "country": "ES"
+    },
+    {
+      "company": "Ruiz García",
+      "email": "info@ventanaspvcruizgarcia.es",
+      "country": "ES"
+    },
+    {
+      "company": "Vigar",
+      "email": "info@vigarsl.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminios Moratalaz",
+      "email": "aluminiosmoratalaz@hotmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminios Jovi",
+      "email": "info@aluminiosjovi.com",
+      "country": "ES"
+    },
+    {
+      "company": "VCM Ventanas",
+      "email": "info@vcmventanas.es",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminios Moreno",
+      "email": "am@aluminios-moreno.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminios Ciupal",
+      "email": "info@aluminiosciupal.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminios Marfil",
+      "email": "aluminiosmarfil@gmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Macrisal",
+      "email": "contacto@macrisal.com",
+      "country": "ES"
+    },
+    {
+      "company": "Ponsico Aluminiers",
+      "email": "info@carpinteria-aluminio.cat",
+      "country": "ES"
+    },
+    {
+      "company": "Tu Carpinteria BCN",
+      "email": "tucarpinteriabcn@gmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminios Garcilaso",
+      "email": "aluminiosgarcilaso@gmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Gonzalez e Hijos",
+      "email": "gonzalezehijos@hotmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminis Pey",
+      "email": "aluminispey.info@gmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminios JVG",
+      "email": "aluminiosjvg@gmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluspai",
+      "email": "aluspai@aluspai.com",
+      "country": "ES"
+    },
+    {
+      "company": "Multi Finestres",
+      "email": "info@multifinestres.com",
+      "country": "ES"
+    },
+    {
+      "company": "Metal Decor",
+      "email": "md@metal-decor.net",
+      "country": "ES"
+    },
+    {
+      "company": "Hnos. Almansa",
+      "email": "info@hnos-almansa.net",
+      "country": "ES"
+    },
+    {
+      "company": "Tancal",
+      "email": "tancal@tancal.es",
+      "country": "ES"
+    },
+    {
+      "company": "Catal-Pur",
+      "email": "catalpur@gmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Construmap",
+      "email": "info.construmap@gmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminiumm",
+      "email": "aluminiumm22@gmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Neotina",
+      "email": "infoneotina@gmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminis Sagana",
+      "email": "aluminissagana@gmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminou",
+      "email": "aluminou.sl@gmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminios Vimar",
+      "email": "info@aluminiosvimar.com",
+      "country": "ES"
+    },
+    {
+      "company": "Carpintería Metálica Vives",
+      "email": "info@carmetvives.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminios El Poble",
+      "email": "info@aluminioselpoble.es",
+      "country": "ES"
+    },
+    {
+      "company": "Carpintería Vidal",
+      "email": "carpinteriavidal@hotmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminios y PVC Valencia",
+      "email": "aluminiosypvcvalencia@gmail.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminal",
+      "email": "aluminal@aluminal.es",
+      "country": "ES"
+    },
+    {
+      "company": "Carpintería Metálica Roca",
+      "email": "info@carpinteriametalicaroca.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminios Montesa",
+      "email": "info@aluminiosmontesa.com",
+      "country": "ES"
+    },
+    {
+      "company": "Ventanas Valencia",
+      "email": "info@ventanasvalencia.com",
+      "country": "ES"
+    },
+    {
+      "company": "Aluminios Quart de Poblet",
+      "email": "aluminiosquartdepoblet@gmail.com",
+      "country": "ES"
+    }
+  ]
 }
