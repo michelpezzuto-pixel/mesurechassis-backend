@@ -256,13 +256,15 @@ export default function SignIn() {
       }
       // 🛡️ Apple Review fix (Build 107) — Erreur traduite selon la langue
       // (Apple reviewer était en EN, alertes étaient en FR → confusion).
-      // 401 = identifiants incorrects, sinon message générique localisé.
+      // PRIORITÉ : 401 → message i18n localisé (le backend renvoie "Email ou
+      // mot de passe incorrect" en dur côté FR, on l'IGNORE pour utiliser
+      // la traduction frontend selon la langue active).
       const status = e?.response?.status;
       let msg: string;
-      if (typeof detail === "string") {
-        msg = detail;
-      } else if (status === 401) {
+      if (status === 401) {
         msg = t("auth.loginErrors.invalidCredentials");
+      } else if (typeof detail === "string") {
+        msg = detail;
       } else {
         msg = t("auth.loginErrors.defaultMsg");
       }

@@ -1,0 +1,33 @@
+{
+  "summary": "Build 107 — re-verification of iteration 22 fix (if-chain reorder in /app/frontend/app/index.tsx onSubmit error handler). All 5 requested checks PASS. EN alert='Error / Incorrect email or password.', NL='Fout / Onjuist e-mailadres of wachtwoord.', FR='Erreur / Email ou mot de passe incorrect.' (regression OK). Demo-btn → login-submit → navigation to /dashboard works with role=admin. Backend smoke: POST /api/auth/login 200 (valid) / 401 (wrong). The Apple Guideline 2.1 rejection cause is resolved.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "/dashboard (top banner)",
+        "issues": [
+          "When language is switched to EN before login, the orange launch-offer banner on the dashboard still renders the French strings 'Accès TOTAL GRATUIT · Plus que 97 jours · Profiter →'. The rest of the dashboard (Hello / Administrator / NEW PROJECT / TO MEASURE / VALIDATED / IN PRO…) is correctly translated. This is a separate i18n leak from the iteration 22 fix but is RELEVANT to the Apple 2.1 rejection (reviewer browses in EN). Recommend Main Agent localizes that banner before Build 107 submission."
+        ]
+      }
+    ],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_23.json"],
+  "action_items": [
+    "(Optional, not blocking iter22 fix) Localize the dashboard launch-offer banner ('Accès TOTAL GRATUIT · Plus que N jours · Profiter →') in en.json/nl.json so no FR text leaks on the dashboard for Apple reviewer.",
+    "Iteration 22 fix is confirmed working — Build 107 can be re-submitted to Apple for Guideline 2.1."
+  ],
+  "critical_code_review_comments": [
+    "index.tsx lines 257-271: if-chain order is correct (401 → invalidCredentials FIRST, then string detail, then defaultMsg). Matches problem statement. Do not refactor.",
+    "index.tsx is 1532 lines — over the 700-line guideline. Consider splitting (Forgot-password modal, Register form, Lang switcher) into smaller modules in a future iteration. Not urgent for Build 107."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "100% (2/2 smoke)", "frontend": "100% (4/4)" },
+  "seed_data_creation": "None. Used existing applereview@mesurechassis.com / MesureChassis2026.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Iteration 22 if-chain reorder VERIFIED on Build 107 web preview. EN/NL/FR Alert messages localize correctly when 401. Demo-btn + login → /dashboard nav works. Backend 200/401 OK. One unrelated i18n leak remains on the dashboard launch-offer banner (FR text on EN session) — flagged but did not block. Do not modify the if-chain in /app/frontend/app/index.tsx lines 257-271.",
+  "rca_of_issue": "N/A — verification run only. Root cause of original Apple 2.1 rejection (FR error on EN UI) was the wrong branch order in onSubmit: 'typeof detail === string' was evaluated before status===401, so the backend's hardcoded FR detail 'Email ou mot de passe incorrect' overrode the i18n key. Iteration 22's reorder (401 first → t('auth.loginErrors.invalidCredentials')) is in place and working."
+}
