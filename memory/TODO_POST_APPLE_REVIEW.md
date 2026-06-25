@@ -98,6 +98,95 @@ sur le modèle commercial réel et **refaire tous les contenus marketing**.
 - [ ] **À détailler** quand on attaque (spécification fonctionnelle à co-construire avec Michel)
 
 
+### 9. 💰 STRATÉGIE SPONSORSHIP B2B — Vision Michel 24/06/2026
+
+**Objectif** : Monétiser via les gammistes/profilistes du secteur menuiserie au lieu (ou en complément) de la conversion artisan-à-artisan classique.
+
+**Cibles prioritaires** (par ordre de pertinence belge/francophone) :
+- 🇧🇪 **Aliplast** (Tisselt, Belgique) — gammiste alu majeur, prioritaire géo
+- 🇩🇪 **Schüco** (Bielefeld, Allemagne)
+- 🇧🇪 **Reynaers Aluminium** (Duffel, Belgique) — historique belge
+- 🇩🇪 **Profine / KÖMMERLING** (PVC premium)
+- 🇧🇪 **AluK Group** (gammiste alu)
+- 🇩🇪 **Heroal** (alu)
+- 🇸🇪 **Sapa Building Systems** (devenu Hydro)
+
+**5 modèles de monétisation envisagés** (du plus discret au plus rentable) :
+
+1. **Catalogue Produits Embarqué** ⭐ RECO PRINCIPALE
+   - Modal "Profil utilisé" avec gammes Schüco/Aliplast/Reynaers/etc.
+   - Pricing : 5-15K€/an par gammiste
+   - 5 gammistes = 25-75K€/an passifs
+   - Apple OK ✅ (non-intrusif)
+   - Bonus : exports PDF mentionnent automatiquement le profil
+
+2. **White Label / OEM** 🚀 DEAL MAJEUR
+   - Le gammiste distribue l'app sous SA marque ("Schüco MeasurePro", "Aliplast Survey")
+   - Pricing : 50-200K€/an + variable
+   - **C'est le pitch à présenter à Batibouw 2027** (cf section "BATIBOUW 2027")
+   - Attention : peut impliquer exclusivité
+
+3. **Sponsoring de Fonctionnalité ("Powered by")**
+   - "Calcul Uw thermique propulsé par Aliplast"
+   - Pricing : 3-8K€/an par feature
+
+4. **Génération de leads qualifiés**
+   - L'artisan finit ses mesures → "Demander un devis aux gammistes partenaires"
+   - Commission 10-50€/lead transmis
+   - Potentiel 10-50K€/MOIS si 1000 leads/mois
+
+5. **Bannière in-app classique** ❌ DÉCONSEILLÉ
+   - Trop peu rentable, risque Apple Guideline 4.2
+
+**Pièges à éviter** :
+- ❌ Exclusivité avec 1 gammiste trop tôt → garde-toi plusieurs partenaires
+- ❌ Pub agressive qui pollue l'app
+- ❌ Favoriser visuellement 1 marque (algo rotation équitable)
+- ❌ **JAMAIS** vendre les données des artisans (actif #1)
+- ❌ Apple rejet pour "consumer ads" → mention discrète uniquement
+
+### 9.bis 🎪 BATIBOUW 2027 — STRATÉGIE PARASITE 🥷
+
+**Date** : Salon Batibouw 2027 (généralement fin février / début mars à Brussels Expo)
+
+**Mission** : Aller en mode "visiteur stratégique" sans payer de stand, et pitcher les gammistes UN PAR UN sur leur stand.
+
+**Pourquoi cette approche** :
+- 💸 Économie : un stand à Batibouw = 15-50K€ pour 1 semaine
+- 🎯 Tous les décideurs gammistes sont sur place ce semaine-là (directeur marketing, directeur commercial, direction générale)
+- 🤝 Approche personnelle = + de chances qu'un appel à froid LinkedIn
+- 🍻 Discussion informelle stand = bien plus efficace qu'un email
+
+**Plan d'attaque** :
+1. **Préparer en amont** (janvier 2027) :
+   - Pitch deck 10 slides (problème menuisier / solution app / KPIs après 1 an / proposition partenariat)
+   - Démo iPad prête à montrer (login `applereview@mesurechassis.com` / `MesureChassis2026`)
+   - Flyer A5 imprimé en 50 exemplaires avec QR code → app
+   - Carte de visite avec photo professionnelle
+2. **Au salon** :
+   - J1 : repérer tous les stands gammistes + horaires d'affluence
+   - J2-J3 : aller voir le commercial → demander une carte de visite du directeur marketing → revenir le surlendemain avec un mail préparé
+   - J4-J5 : retour pitch avec démo live "regardez en 3 minutes ce que vos menuisiers utilisent"
+3. **Suivi post-salon** (mars 2027) :
+   - Email de remerciement avec deck en pièce jointe
+   - Calendly pour réunion follow-up
+
+**Si ça marche vraiment bien** :
+- 🎯 Reverter la décision et **prendre un stand pour Batibouw 2028** (avec budget validé via les premiers contrats sponsoring)
+- Stand cible : 18-36m², zone "Innovations digitales" du salon
+
+**Garder en mémoire** :
+- ⚠️ Ne pas oublier de **réserver les billets visiteurs** dès l'ouverture des inscriptions Batibouw (octobre 2026 généralement)
+- ⚠️ S'inscrire au B2B Day du salon (jour réservé professionnels, moins de foule, + de temps pour pitcher)
+
+**Notes commerciales** :
+- Préparer un argumentaire spécifique à chaque gammiste (étude de leur catalogue avant le salon)
+- Avoir un "deal type" prêt : 12K€/an Catalogue Embarqué + 12 mois d'exclusivité catégorie
+- Backup : proposer un POC gratuit 3 mois si réticence (zéro risque pour eux)
+
+
+
+
 
 ## Notes importantes pour le prochain agent
 
