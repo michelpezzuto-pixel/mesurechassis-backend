@@ -49,7 +49,18 @@
     "signIn": "Inloggen",
     "signUp": "Account aanmaken",
     "emailPlaceholder": "voornaam.naam@bedrijf.be",
-    "acceptCgv": "Door een account aan te maken accepteert u de <0>AV</0> en het <1>Privacybeleid</1>."
+    "acceptCgv": "Door een account aan te maken accepteert u de <0>AV</0> en het <1>Privacybeleid</1>.",
+    "loginErrors": {
+      "errorTitle": "Fout",
+      "fieldsRequiredTitle": "Verplichte velden",
+      "fieldsRequiredMsg": "E-mail en wachtwoord zijn verplicht.",
+      "invalidCredentials": "Onjuist e-mailadres of wachtwoord.",
+      "defaultMsg": "Aanmelden mislukt. Controleer uw gegevens."
+    },
+    "demo": {
+      "label": "🍎 Demo (App Review)",
+      "hint": "Demogegevens invullen"
+    }
   },
   "dashboard": {
     "title": "Mijn projecten",

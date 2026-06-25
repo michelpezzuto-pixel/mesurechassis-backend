@@ -59,7 +59,18 @@
     "signIn": "Se connecter",
     "signUp": "Créer le compte",
     "emailPlaceholder": "prenom.nom@entreprise.fr",
-    "acceptCgv": "En créant un compte, vous acceptez les <0>CGV</0> et la <1>Politique de confidentialité</1>."
+    "acceptCgv": "En créant un compte, vous acceptez les <0>CGV</0> et la <1>Politique de confidentialité</1>.",
+    "loginErrors": {
+      "errorTitle": "Erreur",
+      "fieldsRequiredTitle": "Champs requis",
+      "fieldsRequiredMsg": "Email et mot de passe sont obligatoires.",
+      "invalidCredentials": "Email ou mot de passe incorrect.",
+      "defaultMsg": "Connexion impossible. Vérifiez vos identifiants."
+    },
+    "demo": {
+      "label": "🍎 Demo (App Review)",
+      "hint": "Remplir les identifiants de démonstration"
+    }
   },
   "dashboard": {
     "title": "Mes chantiers",

@@ -13,7 +13,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import * as WebBrowser from "expo-web-browser";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -83,31 +82,11 @@ export default function SignIn() {
     }
   }, [isIOS, mode]);
 
-  // 🍎 iOS — In-app browser (Safari View Controller) vers le site web.
-  //   Apple Guideline 4 (Design) : ne PAS sortir l'utilisateur de l'app via
-  //   Linking.openURL — utiliser WebBrowser.openBrowserAsync qui présente
-  //   un Safari View Controller embarqué (l'utilisateur reste DANS l'app
-  //   et peut fermer l'overlay pour revenir au login).
-  //   URL pointée : page d'accueil mesurechassis.com (qui existe et
-  //   présente les tarifs + contact pour la création de compte business).
-  const openRegistrationWebsite = async () => {
-    const url = "https://www.mesurechassis.com";
-    try {
-      await WebBrowser.openBrowserAsync(url, {
-        // PAGE_SHEET : modal qui glisse depuis le bas, dismissable au swipe
-        presentationStyle: WebBrowser.WebBrowserPresentationStyle.PAGE_SHEET,
-        // Couleur de la toolbar en harmonie avec l'app
-        controlsColor: "#FF5A00",
-        toolbarColor: "#0C0C0E",
-        showTitle: true,
-      });
-    } catch (err) {
-      Alert.alert(
-        "Ouverture impossible",
-        `Veuillez visiter manuellement : ${url}`,
-      );
-    }
-  };
+  // 🍎 iOS — App Store Guideline 4 (Design) — Build 107 :
+  //   Tout out-link vers un site web externe (Linking.openURL ou
+  //   WebBrowser.openBrowserAsync) a été supprimé. Apple a rejeté
+  //   Build 106 même avec Safari View Controller. L'app est désormais
+  //   "Login Only" — création de compte hors-app via contact commercial.
 
   // ─── Mot de passe oublié (modal) ───
   const [forgotOpen, setForgotOpen] = useState(false);
@@ -207,8 +186,17 @@ export default function SignIn() {
   }, [user, loading, router]);
 
   const onSubmit = async () => {
-    if (!email.trim() || !password.trim()) {
-      Alert.alert("Champs requis", "Email et mot de passe sont obligatoires.");
+    // 🛡️ Apple Review fix (Build 107) — Sanitize email & password.
+    // Sur iPad, le clavier tactile peut ajouter un espace en fin de saisie
+    // (autocomplete / dictation). On trim agressivement pour éviter tout
+    // échec de login dû à un caractère parasite.
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPassword = password.trim();
+    if (!cleanEmail || !cleanPassword) {
+      Alert.alert(
+        t("auth.loginErrors.fieldsRequiredTitle"),
+        t("auth.loginErrors.fieldsRequiredMsg"),
+      );
       return;
     }
     if (mode === "register" && !name.trim()) {
@@ -237,14 +225,14 @@ export default function SignIn() {
     setSubmitting(true);
     try {
       if (mode === "login") {
-        await signIn(email.trim(), password);
+        await signIn(cleanEmail, cleanPassword);
         router.replace("/dashboard");
       } else {
         // Master Admin signup — pas de token immédiat, on attend la vérification email.
         const res = await signUp(
           name.trim(),
-          email.trim(),
-          password,
+          cleanEmail,
+          cleanPassword,
           (accountType === "entreprise" || accountType === "pro")
             ? companyName.trim() || undefined
             : companyName.trim() || undefined,
@@ -255,7 +243,7 @@ export default function SignIn() {
           vatNumber.trim() || undefined,
         );
         setPendingVerification({
-          email: email.trim(),
+          email: cleanEmail,
           link: res.verification_link,
         });
       }
@@ -263,14 +251,22 @@ export default function SignIn() {
       const detail = e?.response?.data?.detail;
       // Email non vérifié → bascule vers l'écran de vérification
       if (e?.response?.status === 403 && detail?.code === "email_not_verified") {
-        setPendingVerification({ email: email.trim() });
+        setPendingVerification({ email: cleanEmail });
         return;
       }
-      const msg =
-        typeof detail === "string"
-          ? detail
-          : "Connexion impossible. Vérifiez vos identifiants.";
-      Alert.alert("Erreur", msg);
+      // 🛡️ Apple Review fix (Build 107) — Erreur traduite selon la langue
+      // (Apple reviewer était en EN, alertes étaient en FR → confusion).
+      // 401 = identifiants incorrects, sinon message générique localisé.
+      const status = e?.response?.status;
+      let msg: string;
+      if (typeof detail === "string") {
+        msg = detail;
+      } else if (status === 401) {
+        msg = t("auth.loginErrors.invalidCredentials");
+      } else {
+        msg = t("auth.loginErrors.defaultMsg");
+      }
+      Alert.alert(t("auth.loginErrors.errorTitle"), msg);
     } finally {
       setSubmitting(false);
     }
@@ -772,32 +768,34 @@ export default function SignIn() {
             </TouchableOpacity>
           )}
 
-          {/* 🍎 iOS — App Store Guidelines 3.1.1, 3.1.3(c) & 4 (Design) :
-           * Pas d'inscription possible depuis l'app iOS (3.1.1/3.1.3c).
-           * Pour éviter de sortir l'utilisateur via le navigateur externe
-           * (rejeté Guideline 4 le 24/06/2026), on ouvre le site web dans
-           * un Safari View Controller embarqué via expo-web-browser.
-           * L'utilisateur reste DANS l'app et peut fermer l'overlay. */}
-          {mode === "login" && isIOS && (
-            <View style={iosFooterStyles.wrap}>
-              <View style={iosFooterStyles.divider} />
-              <Text style={iosFooterStyles.label}>Pas encore de compte ?</Text>
-              <Text style={iosFooterStyles.help}>
-                Les comptes sont créés exclusivement par les entreprises de
-                menuiserie professionnelles via notre site officiel.
+          {/* 🍎 iOS — App Store Guideline 4 (Design) — Build 107 :
+           * Apple a rejeté Build 106 car le bouton "En savoir plus" ouvrait
+           * un Safari View Controller (`expo-web-browser`) → toujours
+           * considéré comme "default web browser" par le reviewer.
+           *
+           * Solution radicale (Build 107) :
+           * - SUPPRESSION complète du lien externe vers mesurechassis.com.
+           * - L'app iOS est désormais "Login Only" : les nouveaux clients
+           *   passent par contact commercial hors de l'app pour création
+           *   de compte (cohérent avec positionnement B2B strict).
+           * - Bouton "🍎 Demo (App Review)" discret pour faciliter le test
+           *   par le reviewer Apple → un tap pré-remplit les identifiants.
+           */}
+          {mode === "login" && (
+            <TouchableOpacity
+              testID="apple-review-demo-btn"
+              onPress={() => {
+                setEmail("applereview@mesurechassis.com");
+                setPassword("MesureChassis2026");
+              }}
+              activeOpacity={0.7}
+              style={iosFooterStyles.demoBtn}
+              accessibilityLabel={t("auth.demo.hint")}
+            >
+              <Text style={iosFooterStyles.demoText}>
+                {t("auth.demo.label")}
               </Text>
-              <TouchableOpacity
-                testID="ios-register-website-btn"
-                onPress={openRegistrationWebsite}
-                activeOpacity={0.7}
-                style={iosFooterStyles.btn}
-              >
-                <Ionicons name="globe-outline" size={16} color={colors.primary} />
-                <Text style={iosFooterStyles.btnText}>
-                  En savoir plus sur l&apos;inscription
-                </Text>
-              </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
           )}
             </>
           )}
@@ -1508,6 +1506,25 @@ const iosFooterStyles = StyleSheet.create({
     color: colors.primary,
     fontSize: 13,
     fontWeight: "800",
+    letterSpacing: 0.3,
+  },
+  // 🍎 Build 107 — Demo button pour App Review
+  demoBtn: {
+    alignSelf: "center",
+    marginTop: 22,
+    marginBottom: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.surfaceElevated,
+    backgroundColor: "transparent",
+    opacity: 0.7,
+  },
+  demoText: {
+    color: colors.textSecondary,
+    fontSize: 11.5,
+    fontWeight: "600",
     letterSpacing: 0.3,
   },
 });

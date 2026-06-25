@@ -49,7 +49,18 @@
     "signIn": "Sign in",
     "signUp": "Create account",
     "emailPlaceholder": "firstname.name@company.com",
-    "acceptCgv": "By creating an account, you accept the <0>Terms</0> and the <1>Privacy Policy</1>."
+    "acceptCgv": "By creating an account, you accept the <0>Terms</0> and the <1>Privacy Policy</1>.",
+    "loginErrors": {
+      "errorTitle": "Error",
+      "fieldsRequiredTitle": "Required fields",
+      "fieldsRequiredMsg": "Email and password are required.",
+      "invalidCredentials": "Incorrect email or password.",
+      "defaultMsg": "Unable to sign in. Please check your credentials."
+    },
+    "demo": {
+      "label": "🍎 Demo (App Review)",
+      "hint": "Fill in demo credentials"
+    }
   },
   "dashboard": {
     "title": "My projects",

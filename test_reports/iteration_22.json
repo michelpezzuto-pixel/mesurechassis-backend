@@ -1,0 +1,63 @@
+{
+  "summary": "Build 107 Apple Review fix — testing reveals 1 CRITICAL frontend regression that DOES NOT FIX the Apple Guideline 2.1 issue. Backend (7/7 tests PASS) and most frontend checks PASS: no external links, demo button prefills correctly, dashboard reachable with 3 demo chantiers (M. Lefèvre / Mme Dubois / Dr. Martin). BUT the i18n error translation does not work in EN/NL because the frontend prefers the raw backend detail string over the i18n key. With language=EN, submitting a wrong password shows Alert title='Error' (correctly translated) but body='Email ou mot de passe incorrect' (FRENCH, identical to the message Apple flagged in Build 106). This is the very bug Build 107 is meant to fix — it is NOT fixed.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "POST /api/auth/login",
+        "issue": "Backend returns French-only error message 'Email ou mot de passe incorrect' (auth.py:438,442). Frontend i18n logic depends on this, so a cleaner fix would be to either (a) return a structured detail `{code: 'invalid_credentials'}` so the frontend can localise, or (b) honour Accept-Language header. Currently the backend forces French regardless of client language."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "Login screen — onSubmit catch block",
+        "issue": "BLOCKER for Apple Review (Guideline 2.1). At /app/frontend/app/index.tsx:261-268 the branch order is wrong: `if (typeof detail === 'string') msg = detail; else if (status === 401) msg = t('auth.loginErrors.invalidCredentials');` — because the backend ALWAYS sends `detail` as a French string on 401, the i18n key is NEVER used. Reviewer with EN selected will see French error body. Fix: swap branches — check `status === 401` FIRST and use the i18n key; only fall back to `detail` string when status is not 401. Verified live: window.alert captured = 'Error\\n\\nEmail ou mot de passe incorrect' after EN switch + wrong password.",
+        "testID": "login-submit-button",
+        "priority": "CRITICAL"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_build_107_apple_review.py",
+    "/app/test_reports/pytest/iter22_build_107.xml"
+  ],
+  "verification_results": {
+    "1_no_external_links_on_login": "PASS — Body text check found NO 'En savoir plus', 'Pas encore de compte', or visible 'mesurechassis.com'. grep on /app/frontend/app/index.tsx confirms no `WebBrowser` import, no `openRegistrationWebsite`, no `Linking.openURL` to mesurechassis.com. All remaining references are in comments or the demo email value.",
+    "2_demo_button_prefills": "PASS — testID='apple-review-demo-btn' visible on /web; clicking it sets email='applereview@mesurechassis.com' and password='MesureChassis2026' (length 17, includes the `é`-free literal).",
+    "3_demo_login_to_dashboard": "PASS — Submit after prefill navigated to /dashboard. Dashboard shows 'Apple Reviewer', 'M. Lefèvre', 'Mme Dubois', 'Dr. Martin', 'Administrator' badge.",
+    "4_en_error_alert": "FAIL — Title 'Error' (EN ✅) but body 'Email ou mot de passe incorrect' (FR ❌). This is the EXACT message Apple flagged on Build 106. See ui_bugs above.",
+    "5_backend_apple_login_200": "PASS — applereview@mesurechassis.com / MesureChassis2026 → 200, role=admin, JWT 3-segment, user.email matches (case-insensitive).",
+    "6_backend_apple_wrong_password_401": "PASS — Returns 401 with detail='Email ou mot de passe incorrect'.",
+    "7_backend_regression": "PASS — admin@mesurechassis.fr/admin123 → 200, tech@mesurechassis.fr/tech123 → 200 (note: /app/memory/test_credentials.md incorrectly lists tech password as 'admin123'; actual password is 'tech123' — see context_for_next_testing_agent).",
+    "8_edge_cases": "PASS — Uppercase email accepted (200); empty fields → 422."
+  },
+  "action_items": [
+    "[CRITICAL — Apple Review blocker] Reorder branches in /app/frontend/app/index.tsx around lines 261-268 so that `status === 401` is checked BEFORE the `typeof detail === 'string'` fallback. Suggested code:\n\n  if (status === 401) {\n    msg = t('auth.loginErrors.invalidCredentials');\n  } else if (typeof detail === 'string') {\n    msg = detail;\n  } else {\n    msg = t('auth.loginErrors.defaultMsg');\n  }\n\nWithout this swap, the Apple reviewer with EN selected will STILL see the French body and reject Build 107 for the same Guideline 2.1 reason as Build 106.",
+    "[Optional — defence in depth] Change backend at /app/backend/routes/auth.py:438,442 to raise HTTPException(401, detail={'code': 'invalid_credentials'}) so the frontend always sees a non-string detail and can route exclusively via i18n. (If applied, also update any other consumers parsing this detail.)",
+    "[Doc fix — non-blocking] Update /app/memory/test_credentials.md: the tech account password is `tech123`, NOT `admin123` as the file currently states (the conftest already uses the correct value).",
+    "[Cleanup — non-blocking] Backend logs show repeated 'passlib bcrypt __about__ AttributeError' warnings (trapped, non-fatal). Consider pinning bcrypt<4 or upgrading passlib to silence the warning."
+  ],
+  "critical_code_review_comments": [
+    "The catch block in onSubmit uses `e?.response?.data?.detail` but the special-case `detail?.code === 'email_not_verified'` (line 253) will silently fail when detail is a string — `'string'?.code` is undefined which is fine, but the structure assumption is fragile. Consider always returning detail as an object from the backend for consistency.",
+    "Trim() is correctly applied on both email and password (lines 193-194) before signIn() — addresses the iPad keyboard parasitic-whitespace concern from the rejection note.",
+    "Demo button is correctly NOT conditioned on Platform.OS === 'ios' (lines 784-799), so it is visible on the web preview used for testing, as documented in the agent-to-agent context note.",
+    "No remaining import of `expo-web-browser` and no `openRegistrationWebsite` function in /app/frontend/app/index.tsx — Guideline 4 surface fix is correct."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_build_107_apple_review.py (NEW — 7 tests, all pass)"
+  ],
+  "success_rate": {
+    "backend": "100% (7/7)",
+    "frontend": "75% (3/4 critical scenarios — the EN error-message scenario FAILS, which is the Apple Review blocker itself)"
+  },
+  "seed_data_creation": "None. Tests use existing applereview / admin / tech accounts; no DB mutation.",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Re-run after the branch-order fix. Easiest validation: page.add_init_script overrides window.alert (Alert.alert on RN Web routes through it); after selecting EN flag and submitting wrong password, captured alert MUST start with 'Error\\n\\nIncorrect email or password' (en.json) — NOT 'Email ou mot de passe incorrect'. Also retest NL via [data-testid=\"auth-lang-nl\"] — expected body 'Onjuist e-mailadres of wachtwoord.'. Test file already in place: /app/backend/tests/test_build_107_apple_review.py. Note: tech@mesurechassis.fr password is `tech123` (NOT admin123 as /app/memory/test_credentials.md claims).",
+  "rca_of_issue": "Root cause of Apple Guideline 2.1 5th rejection persistence: In /app/frontend/app/index.tsx onSubmit catch block (lines 261-268), the branch `if (typeof detail === 'string') msg = detail;` is evaluated BEFORE the 401 i18n branch. Since /app/backend/routes/auth.py:438,442 raises `HTTPException(401, 'Email ou mot de passe incorrect')` — a plain French string — the first branch always wins for invalid-credentials cases, so `t('auth.loginErrors.invalidCredentials')` is dead code. Reproduction: viewport 390x844 → click [data-testid=\"auth-lang-en\"] → fill applereview@mesurechassis.com + bad password → submit → window.alert captured = 'Error\\n\\nEmail ou mot de passe incorrect'. Mitigation: reorder the if-chain so 401 is checked first (see action_items). Build 107 i18n keys are correct in fr/en/nl.json — only the priority logic is wrong."
+}
