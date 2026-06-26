@@ -212,15 +212,26 @@ VIDEO_2_CLIPS = [
     {
         "name": "v2_s2_taking_photo_of_specdoc",
         "prompt": base_prompt(
-            "Scene: Continuing from the previous shot — the same carpenter "
-            "(visible from chest-up wearing his HV jacket) holds his "
-            "smartphone above the open cahier des charges document on the "
-            "desk. The phone's camera viewfinder is clearly visible on "
-            "screen, framing the printed list of windows on the paper. "
-            "Corner-detection brackets align around the document edges. "
-            "He taps the capture button with his thumb — a quick white "
-            "flash on the phone screen. Focused, professional expression. "
-            "Close-up over-the-shoulder shot."
+            "Scene: The same carpenter (visible from chest-up wearing his "
+            "HV jacket) holds his smartphone horizontally above the open "
+            "cahier des charges document on his wooden workshop desk. "
+            "CRITICAL: The smartphone screen is FULLY TURNED ON and "
+            "BRIGHTLY LIT throughout the entire shot — the screen is "
+            "NEVER black, NEVER off, NEVER dark. The smartphone screen "
+            "clearly shows a LIVE CAMERA VIEWFINDER interface: a real-"
+            "time camera preview displaying the paper document below "
+            "(the printed list of windows visible inside the phone "
+            "screen as a smaller version of the actual document on the "
+            "desk). On top of this live camera preview: four bright "
+            "ORANGE animated corner-detection brackets (L-shaped corners "
+            "at the four corners of the document) align around the "
+            "paper. At the bottom of the phone screen, a large round "
+            "WHITE capture button is visible. The carpenter taps the "
+            "white capture button with his thumb — a brief WHITE FLASH "
+            "fills the phone screen momentarily. Focused, professional "
+            "expression on the carpenter's face. Close-up over-the-"
+            "shoulder shot. The smartphone screen content must be CRISP "
+            "and CLEARLY VISIBLE."
         ),
     },
     {
