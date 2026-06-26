@@ -138,34 +138,55 @@ VIDEO_2_CLIPS = [
         ),
     },
     {
-        "name": "v2_s3_ai_detecting_windows",
+        "name": "v2_s3_ai_detecting_with_to_validate_badges",
         "prompt": (
             f"{COMMON_STYLE}"
             "Scene: Close-up of the smartphone screen ONLY (the phone fills "
             "80% of the frame). The captured plan image is on screen. Animated "
             "orange glowing rectangles (color #FF5A00) appear ONE BY ONE on "
             "each window of the facade drawing — first the big living room "
-            "window, then the bedroom window, then the smaller bathroom "
-            "window — each with a small checkmark icon appearing next to it. "
-            "Subtle particle effects of magic detection. A side panel slides "
-            "in from the right showing a list of detected windows: 'Window 1, "
-            "Window 2, Window 3, Window 4' with dimensions auto-filling. Modern "
-            "mobile UI, dark theme with orange accents."
+            "window, then the bedroom window, then the smaller bathroom window "
+            "— each with a small checkmark icon. A side panel slides in from "
+            "the right showing a list of detected windows: 'Window 1, Window "
+            "2, Window 3, Window 4' with dimensions auto-filling. CRITICAL "
+            "DETAIL: On each line of the list, a small ORANGE pill-shaped "
+            "BADGE with the text 'TO VALIDATE' (or 'À VALIDER') gently pulses, "
+            "clearly visible and readable. Modern mobile UI, dark theme with "
+            "orange #FF5A00 accents. Subtle magic particle detection effects."
         ),
     },
     {
-        "name": "v2_s4_carpenter_happy_logo",
+        "name": "v2_s4_back_on_site_measure_and_validate",
         "prompt": (
             f"{COMMON_STYLE}"
-            "Scene: 3D cartoon carpenter holding the smartphone, looking at "
-            "the screen with a huge satisfied smile, eyes sparkling with "
-            "wonder. He gives a confident thumbs-up to camera. The smartphone "
-            "screen visible shows all windows detected and listed perfectly. "
-            "Camera slowly zooms out from him to reveal he's now back at the "
-            "construction site (same site as Video 1) but this time relaxed, "
-            "smiling, in control. Sunny weather, blue sky. Ends with him "
-            "walking confidently toward the windows to measure. Hero shot, "
-            "uplifting mood."
+            "Scene: The 3D cartoon carpenter is back on the sunny residential "
+            "construction site (same setting as Video 1, but now blue sky, "
+            "bright sunshine). He holds a laser distance meter in one hand "
+            "and his smartphone in the other. He points the laser at a window "
+            "frame — the laser meter display shows '1240 mm'. Then close-up "
+            "shift to the smartphone screen showing a window-editing screen "
+            "of the app with dimensions filled in, and a large prominent "
+            "ORANGE 'VALIDATE' button at the bottom. His thumb presses the "
+            "button — a satisfying green checkmark animation appears, and the "
+            "small orange 'TO VALIDATE' badge transforms into a GREEN "
+            "'VALIDATED ✓' badge. His face shows satisfaction and control. "
+            "Smooth camera motion. Confident, professional mood."
+        ),
+    },
+    {
+        "name": "v2_s5_back_to_office_serene",
+        "prompt": (
+            f"{COMMON_STYLE}"
+            "Scene: The 3D cartoon carpenter walks back into his workshop "
+            "office (same setting as Video 1's first scene). Warm late-day "
+            "lighting — golden hour orange sunset through the window. He "
+            "walks in with a relaxed, confident, smiling expression — total "
+            "calm. He places his smartphone gently on the desk and stretches "
+            "his arms above his head in a 'mission accomplished' gesture. The "
+            "desk is clean and organized — no crumpled paper in sight. He "
+            "picks up a coffee mug, sits in his armchair, looks at his "
+            "smartphone one last time with a small proud smile. Hero final "
+            "shot, 'perfect end of day' mood, uplifting and serene."
         ),
     },
 ]
