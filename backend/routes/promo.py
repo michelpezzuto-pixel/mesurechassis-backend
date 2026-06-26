@@ -16,6 +16,8 @@ PROMO_DIR = Path("/app/backend/static/promo")
 ALLOWED_FILES = {
     "video1_galere.mp4",
     "video2_magie.mp4",
+    "video1_galere_v2.mp4",
+    "video2_magie_v2.mp4",
 }
 
 
