@@ -18,6 +18,7 @@ ALLOWED_FILES = {
     "video2_magie.mp4",
     "video1_galere_v2.mp4",
     "video2_magie_v2.mp4",
+    "video_complete_v2.mp4",
 }
 
 
