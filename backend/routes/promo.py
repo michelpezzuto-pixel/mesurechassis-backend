@@ -25,6 +25,8 @@ ALLOWED_FILES = {
     "video_motion_v1.mp4",
     "video_motion_v2.mp4",
     "video_motion_v3.mp4",
+    "video_motion_v4_music.mp4",
+    "site_mesurechassis_simplifie.zip",
 }
 
 
@@ -32,15 +34,21 @@ ALLOWED_FILES = {
 def serve_promo_video(filename: str):
     """Sert une vidéo promo MP4 (public, no auth, cacheable)."""
     if filename not in ALLOWED_FILES:
-        raise HTTPException(status_code=404, detail="Video not found")
+        raise HTTPException(status_code=404, detail="File not found")
     path = PROMO_DIR / filename
     if not path.exists():
-        raise HTTPException(status_code=404, detail="Video file not found on disk")
+        raise HTTPException(status_code=404, detail="File not found on disk")
+    # Détecter le media-type selon l'extension
+    if filename.endswith(".zip"):
+        media_type = "application/zip"
+    else:
+        media_type = "video/mp4"
     return FileResponse(
         path,
-        media_type="video/mp4",
+        media_type=media_type,
+        filename=filename,
         headers={
-            "Cache-Control": "public, max-age=60",  # 60s cache only
+            "Cache-Control": "public, max-age=60",
             "Accept-Ranges": "bytes",
         },
     )
