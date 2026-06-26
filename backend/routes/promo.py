@@ -22,6 +22,7 @@ ALLOWED_FILES = {
     "video_complete_v2.mp4",
     "video_complete_v3.mp4",
     "video_complete_v4.mp4",
+    "video_motion_v1.mp4",
 }
 
 
