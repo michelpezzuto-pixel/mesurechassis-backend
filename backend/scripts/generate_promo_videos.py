@@ -141,18 +141,19 @@ VIDEO_2_CLIPS = [
         "name": "v2_s3_ai_detecting_with_to_validate_badges",
         "prompt": (
             f"{COMMON_STYLE}"
-            "Scene: Close-up of the smartphone screen ONLY (the phone fills "
-            "80% of the frame). The captured plan image is on screen. Animated "
-            "orange glowing rectangles (color #FF5A00) appear ONE BY ONE on "
-            "each window of the facade drawing — first the big living room "
-            "window, then the bedroom window, then the smaller bathroom window "
-            "— each with a small checkmark icon. A side panel slides in from "
-            "the right showing a list of detected windows: 'Window 1, Window "
-            "2, Window 3, Window 4' with dimensions auto-filling. CRITICAL "
-            "DETAIL: On each line of the list, a small ORANGE pill-shaped "
-            "BADGE with the text 'TO VALIDATE' (or 'À VALIDER') gently pulses, "
-            "clearly visible and readable. Modern mobile UI, dark theme with "
-            "orange #FF5A00 accents. Subtle magic particle detection effects."
+            "Scene: Close-up of a smartphone screen filling 80% of the frame. "
+            "The phone shows a photo of an architectural facade blueprint with "
+            "several window outlines. Orange rectangle outlines (color #FF5A00) "
+            "appear gently one after another around each window in the "
+            "blueprint, each accompanied by a small green checkmark icon. A "
+            "side panel slides in smoothly from the right showing a clean list "
+            "of items: 'Window 1', 'Window 2', 'Window 3', 'Window 4', each "
+            "row displaying numerical dimensions like '1200 x 1500 mm'. Each "
+            "row also shows a small orange rounded pill label with the text "
+            "'TO VALIDATE' gently fading in and out. Modern professional "
+            "mobile app interface, dark theme background with orange accents. "
+            "Clean software demonstration aesthetic, no special effects, no "
+            "particles, just polished UI motion design."
         ),
     },
     {

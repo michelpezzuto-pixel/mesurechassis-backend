@@ -34,6 +34,7 @@ from routes import stats as stats_routes
 from routes import spec_import as spec_import_routes
 from routes import stripe_routes
 from routes import testers as testers_routes
+from routes import promo as promo_routes
 from seed import seed_data
 
 
@@ -101,6 +102,9 @@ api.include_router(campaign_routes.router)
 api.include_router(campaign_routes.public_router)
 # 🆕 Campagne LinkedIn 15 jours — post du jour + visuels
 api.include_router(linkedin_routes.router)
+
+# 🎬 Vidéos promo Sora 2 (publiques, pour mesurechassis.com + réseaux sociaux)
+api.include_router(promo_routes.router)
 
 
 # ─────────────────────────────────────────────────────────────────────
