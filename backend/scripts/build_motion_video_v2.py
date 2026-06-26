@@ -110,19 +110,28 @@ def make_app_screen_scene(phone_image, duration, title, subtitle, output):
 
 
 def make_title_card(duration, lines, output, bg="black"):
-    """Carte titre noire : plusieurs lignes empilées centrées.
+    """Carte titre noire : plusieurs lignes empilées avec espacement généreux.
 
     lines = [(text, color, fontsize, fade_start), ...]
     """
     n = len(lines)
-    base_y = H // 2 - (n * 60)  # rough centering
+    # Calcul des positions Y avec espacement = fontsize * 1.5 (large gap)
+    total_h = sum(fs * 1.45 for _, _, fs, _ in lines)
+    y_cursor = (H - total_h) / 2
+    y_positions = []
+    for _, _, fs, _ in lines:
+        y_positions.append(int(y_cursor))
+        y_cursor += fs * 1.45
+
     drawtexts = []
     for i, (text, color, fs, fade_start) in enumerate(lines):
         text_safe = esc(text)
-        y = base_y + i * (fs + 30)
+        y = y_positions[i]
+        is_bold = "bold" in color
+        clean_color = color.replace("-bold", "")
         drawtexts.append(
-            f"drawtext=fontfile={FONT_BOLD if 'bold' in color else FONT_REG}:"
-            f"text='{text_safe}':fontcolor={color.replace('-bold','')}:"
+            f"drawtext=fontfile={FONT_BOLD if is_bold else FONT_REG}:"
+            f"text='{text_safe}':fontcolor={clean_color}:"
             f"fontsize={fs}:x=(w-text_w)/2:y={y}:"
             f"alpha='if(lt(t,{fade_start}),0,if(lt(t,{fade_start}+0.5),(t-{fade_start})/0.5,if(lt(t,{duration}-0.4),1,({duration}-t)/0.4)))'"
         )
@@ -162,7 +171,7 @@ def main():
 
     # ── ACTE 2 — La galère (4 plans × 4s) ────────────────────────
     s = WORK / "02_office_phone.mp4"
-    make_image_scene(ASSETS / "p2_office_phone.jpg", 4,
+    make_image_scene(ASSETS / "p2_atelier_chassis.jpg", 4,
                      "9h15 — Appel pour un mesurage",
                      "Carnet, mètre, smartphone…", s)
     scenes.append(s); print(f"  ✓ {s.name}")
