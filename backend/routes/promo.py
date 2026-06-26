@@ -26,6 +26,7 @@ ALLOWED_FILES = {
     "video_motion_v2.mp4",
     "video_motion_v3.mp4",
     "video_motion_v4_music.mp4",
+    "hero_video_faststart.mp4",
     "site_mesurechassis_simplifie.zip",
 }
 
