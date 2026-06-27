@@ -1,13 +1,15 @@
 """Endpoint public — sert les ressources du POC ArUco (sans auth).
 
-Permet à l'utilisateur de télécharger directement le PDF, les SVG et le DXF
-depuis n'importe quel navigateur, sans avoir à pousser sur GitHub.
+Permet à l'utilisateur de télécharger directement le PDF, les SVG, le DXF et
+l'icône d'app depuis n'importe quel navigateur, sans avoir à pousser sur GitHub.
 
 Routes :
     GET /api/poc/markers.pdf          → planche A4 12 markers ArUco 50 mm
     GET /api/poc/markers/{file}       → fichier individuel du dossier markers/
     GET /api/poc/results.md           → rapport markdown précision
     GET /api/poc/dxf/{file}.dxf       → fichiers DXF
+    GET /api/poc/icon.png             → icône d'app verte 1024x1024 (build iOS)
+    GET /api/poc/protocol.md          → protocole de test physique
 """
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse, PlainTextResponse
