@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="50.0mm" height="56.0mm" viewBox="0 0 50.0 56.0">
+<rect width="50.0" height="56.0" fill="white"/>
+<rect x="0.0" y="0.0" width="6.25" height="6.25" fill="black"/>
+<rect x="6.25" y="0.0" width="6.25" height="6.25" fill="black"/>
+<rect x="12.5" y="0.0" width="6.25" height="6.25" fill="black"/>
+<rect x="18.75" y="0.0" width="6.25" height="6.25" fill="black"/>
+<rect x="25.0" y="0.0" width="6.25" height="6.25" fill="black"/>
+<rect x="31.25" y="0.0" width="6.25" height="6.25" fill="black"/>
+<rect x="37.5" y="0.0" width="6.25" height="6.25" fill="black"/>
+<rect x="43.75" y="0.0" width="6.25" height="6.25" fill="black"/>
+<rect x="0.0" y="6.25" width="6.25" height="6.25" fill="black"/>
+<rect x="6.25" y="6.25" width="6.25" height="6.25" fill="black"/>
+<rect x="12.5" y="6.25" width="6.25" height="6.25" fill="black"/>
+<rect x="18.75" y="6.25" width="6.25" height="6.25" fill="black"/>
+<rect x="25.0" y="6.25" width="6.25" height="6.25" fill="black"/>
+<rect x="31.25" y="6.25" width="6.25" height="6.25" fill="black"/>
+<rect x="37.5" y="6.25" width="6.25" height="6.25" fill="black"/>
+<rect x="43.75" y="6.25" width="6.25" height="6.25" fill="black"/>
+<rect x="0.0" y="12.5" width="6.25" height="6.25" fill="black"/>
+<rect x="6.25" y="12.5" width="6.25" height="6.25" fill="black"/>
+<rect x="18.75" y="12.5" width="6.25" height="6.25" fill="black"/>
+<rect x="25.0" y="12.5" width="6.25" height="6.25" fill="black"/>
+<rect x="31.25" y="12.5" width="6.25" height="6.25" fill="black"/>
+<rect x="43.75" y="12.5" width="6.25" height="6.25" fill="black"/>
+<rect x="0.0" y="18.75" width="6.25" height="6.25" fill="black"/>
+<rect x="6.25" y="18.75" width="6.25" height="6.25" fill="black"/>
+<rect x="18.75" y="18.75" width="6.25" height="6.25" fill="black"/>
+<rect x="25.0" y="18.75" width="6.25" height="6.25" fill="black"/>
+<rect x="31.25" y="18.75" width="6.25" height="6.25" fill="black"/>
+<rect x="43.75" y="18.75" width="6.25" height="6.25" fill="black"/>
+<rect x="0.0" y="25.0" width="6.25" height="6.25" fill="black"/>
+<rect x="6.25" y="25.0" width="6.25" height="6.25" fill="black"/>
+<rect x="12.5" y="25.0" width="6.25" height="6.25" fill="black"/>
+<rect x="25.0" y="25.0" width="6.25" height="6.25" fill="black"/>
+<rect x="31.25" y="25.0" width="6.25" height="6.25" fill="black"/>
+<rect x="37.5" y="25.0" width="6.25" height="6.25" fill="black"/>
+<rect x="43.75" y="25.0" width="6.25" height="6.25" fill="black"/>
+<rect x="0.0" y="31.25" width="6.25" height="6.25" fill="black"/>
+<rect x="6.25" y="31.25" width="6.25" height="6.25" fill="black"/>
+<rect x="12.5" y="31.25" width="6.25" height="6.25" fill="black"/>
+<rect x="25.0" y="31.25" width="6.25" height="6.25" fill="black"/>
+<rect x="31.25" y="31.25" width="6.25" height="6.25" fill="black"/>
+<rect x="37.5" y="31.25" width="6.25" height="6.25" fill="black"/>
+<rect x="43.75" y="31.25" width="6.25" height="6.25" fill="black"/>
+<rect x="0.0" y="37.5" width="6.25" height="6.25" fill="black"/>
+<rect x="6.25" y="37.5" width="6.25" height="6.25" fill="black"/>
+<rect x="12.5" y="37.5" width="6.25" height="6.25" fill="black"/>
+<rect x="37.5" y="37.5" width="6.25" height="6.25" fill="black"/>
+<rect x="43.75" y="37.5" width="6.25" height="6.25" fill="black"/>
+<rect x="0.0" y="43.75" width="6.25" height="6.25" fill="black"/>
+<rect x="6.25" y="43.75" width="6.25" height="6.25" fill="black"/>
+<rect x="12.5" y="43.75" width="6.25" height="6.25" fill="black"/>
+<rect x="18.75" y="43.75" width="6.25" height="6.25" fill="black"/>
+<rect x="25.0" y="43.75" width="6.25" height="6.25" fill="black"/>
+<rect x="31.25" y="43.75" width="6.25" height="6.25" fill="black"/>
+<rect x="37.5" y="43.75" width="6.25" height="6.25" fill="black"/>
+<rect x="43.75" y="43.75" width="6.25" height="6.25" fill="black"/>
+<text x="25.0" y="54.5" font-family="Arial, sans-serif" font-size="3" text-anchor="middle" fill="black">ArUco 4x4_50  ID=3  50mm</text>
+</svg>
