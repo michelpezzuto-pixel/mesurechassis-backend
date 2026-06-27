@@ -1,0 +1,13 @@
+node_modules/
+.expo/
+/ios/
+/android/
+web-build/
+dist/
+*.log
+.DS_Store
+.env
+.env.local
+# OpenCV vendored framework (too big for git, user downloads it)
+modules/aruco-detector/ios/Frameworks/opencv2.framework
+modules/aruco-detector/ios/Frameworks/*.zip

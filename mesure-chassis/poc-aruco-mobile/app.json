@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "ArUco POC",
+    "slug": "poc-aruco-mobile",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "pocaruco",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.mesurechassis.pocaruco",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Detect ArUco markers on stair steps in real time",
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.mesurechassis.pocaruco",
+      "permissions": ["android.permission.CAMERA"]
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "react-native-vision-camera",
+        {
+          "cameraPermissionText": "$(PRODUCT_NAME) needs camera access to detect ArUco markers",
+          "enableCodeScanner": false
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "15.1",
+            "useFrameworks": "static"
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
