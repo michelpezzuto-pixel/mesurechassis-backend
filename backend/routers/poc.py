@@ -68,6 +68,19 @@ async def results_md():
     return md.read_text(encoding="utf-8")
 
 
+@router.get("/icon.png")
+async def app_icon():
+    """Icône d'app verte 1024x1024 PNG, prête pour l'upload du build iOS."""
+    icon_path = POC_DIR / "icon_green_1024.png"
+    if not icon_path.exists():
+        raise HTTPException(404, "Icône non générée. Lancez generate_icon.py")
+    return FileResponse(
+        path=str(icon_path),
+        media_type="image/png",
+        filename="icon_green_1024.png",
+    )
+
+
 @router.get("/protocol.md", response_class=PlainTextResponse)
 async def protocol_md():
     """Protocole de test physique."""
