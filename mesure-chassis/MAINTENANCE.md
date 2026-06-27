@@ -244,42 +244,46 @@ yarn expo prebuild --platform ios
 
 ## 5. Modèle de données châssis
 
-### 5.1 Pydantic (backend)
+### 5.1 Pydantic (backend) — **catalogue officiel à 7 formes**
 
 ```python
 # /app/backend/models/chassis_schemas.py
 from pydantic import BaseModel, Field
 from typing import List, Optional, Literal
 
+# ── 7 FORMES OFFICIELLES (planche artisan menuisier) ──────────────────────
+# Référence visuelle : /app/mesure-chassis/src/sketches/index.tsx
 ChassisShape = Literal[
-    "fixe",            # Châssis fixe non ouvrant
-    "ouvrant_1v",      # 1 vantail
-    "ouvrant_2v",      # 2 vantaux
-    "oscillo_battant", # OB
-    "coulissant",      # Châssis coulissant
+    "rectangulaire",  # Fenêtre fixe rectangulaire (4 carreaux)
+    "trapeze",        # Trapèze (sommet incliné, 2 vantaux)
+    "triangulaire",   # Triangle (2 vantaux + axe vertical)
+    "oeil_de_boeuf",  # Œil de bœuf (ovale + croix centrale)
+    "porte",          # Porte simple (verticale étroite + poignée)
+    "porte_garage",   # Porte de garage (large + lames horizontales)
+    "coulissant",     # Coulissant (2 vantaux + flèche directionnelle)
 ]
 
 MaterialKind = Literal["pvc", "alu", "bois", "mixte_bois_alu"]
-GlazingKind  = Literal["double", "triple", "feuilleté", "phonique"]
+GlazingKind  = Literal["double", "triple", "feuillete", "phonique"]
 OpeningSide  = Literal["gauche", "droite", "haut", "bas", "fixe"]
-RalCode      = str  # ex. "RAL 7016" — validé regex côté front
 
 class ChassisOption(BaseModel):
-    key: Literal["ral", "imposte", "allege", "renfort_alu", "poignée_premium"]
+    key: Literal["ral", "imposte", "allege", "renfort_alu", "poignee_premium",
+                 "grille_ventilation", "store_integre"]
     value: Optional[str] = None
     supplement_eur: float = 0.0
 
 class Chassis(BaseModel):
     id: str
     name: str = "Châssis 1"
-    shape: ChassisShape = "ouvrant_1v"
+    shape: ChassisShape = "rectangulaire"
     hauteur_mm: int = Field(..., ge=200, le=4000)
     largeur_mm: int = Field(..., ge=200, le=6000)
     material: MaterialKind = "pvc"
     glazing: GlazingKind = "double"
     opening_side: OpeningSide = "droite"
     options: List[ChassisOption] = []
-    photo_base64: Optional[str] = None  # Photo terrain
+    photo_base64: Optional[str] = None
     remarks: Optional[str] = None
     created_at: str
     updated_at: str
@@ -289,15 +293,30 @@ class ChassisCompute(BaseModel):
     base_price_eur: float
     options_total_eur: float
     total_eur: float
-    warnings: List[str] = []  # ex. "Largeur > 2400mm : pose 2 personnes"
+    warnings: List[str] = []
 ```
 
-### 5.2 Stockage MongoDB
+### 5.2 Formule de surface par forme
+
+| Shape | Formule surface (m²) | Notes |
+|-------|----------------------|-------|
+| `rectangulaire` | `H × L / 1e6` | Standard |
+| `trapeze` | `((H + h_min) / 2) × L / 1e6` | Demande aussi `hauteur_min_mm` (côté bas du sommet incliné) |
+| `triangulaire` | `(H × L) / 2 / 1e6` | Triangle isocèle |
+| `oeil_de_boeuf` | `π × (H/2) × (L/2) / 1e6` | Ellipse |
+| `porte` | `H × L / 1e6` | Inclure le seuil |
+| `porte_garage` | `H × L / 1e6` | Multiplier par 1.4 pour pose (renfort) |
+| `coulissant` | `H × L / 1e6` | Idem rectangulaire |
+
+> ⚠️ Pour `trapeze` et `triangulaire`, prévoir un champ supplémentaire
+> `hauteur_min_mm` (trapèze) ou `pente` (triangle) côté schéma Pydantic.
+
+### 5.3 Stockage MongoDB
 
 ```
 db.projects.chassis = [
   {
-    id, name, shape, hauteur_mm, largeur_mm,
+    id, name, shape, hauteur_mm, largeur_mm, hauteur_min_mm?, 
     material, glazing, opening_side,
     options: [...],
     photo_base64, remarks,
@@ -307,9 +326,6 @@ db.projects.chassis = [
 ]
 ```
 
-Chaque chantier (`project`) contient un tableau `chassis[]`, à l'identique du
-pattern `project.stairs[]` dans MesureEscalier.
-
 ---
 
 ## 6. Patterns clés réutilisés depuis MesureEscalier
@@ -317,30 +333,68 @@ pattern `project.stairs[]` dans MesureEscalier.
 Ces patterns ont été éprouvés terrain dans MesureEscalier et **doivent être
 répliqués tels quels** pour la cohérence UX.
 
-### 6.1 ShapeSelectorBar (5 chips en tête d'éditeur)
+### 6.1 ShapeSelectorBar (7 chips en tête d'éditeur — bibliothèque officielle)
 
-```
-[ FIXE ] [ OUVRANT 1V ] [ OUVRANT 2V ] [ OSCILLO-BATTANT ] [ COULISSANT ]
+Les 7 formes officielles, avec leur sketch line-art associé (cf.
+`/app/mesure-chassis/src/sketches/index.tsx`) :
+
+| Clé             | Label artisan              | Sketch              |
+|-----------------|----------------------------|---------------------|
+| `rectangulaire` | Fenêtre fixe rectangulaire | 4 carreaux verticaux|
+| `trapeze`       | Trapèze                    | Sommet incliné      |
+| `triangulaire`  | Triangulaire               | Triangle isocèle    |
+| `oeil_de_boeuf` | Œil de bœuf                | Ellipse + croix     |
+| `porte`         | Porte                      | Verticale + poignée |
+| `porte_garage`  | Porte de garage            | Lames horizontales  |
+| `coulissant`    | Coulissant                 | 2 vantaux + flèche  |
+
+Implémentation recommandée — un ScrollView horizontal pour absorber les 7 chips :
+
+```tsx
+import { ChassisSketch, CHASSIS_SHORT, ChassisShape } from '@/src/sketches';
+
+const SHAPES: ChassisShape[] = [
+  'rectangulaire', 'trapeze', 'triangulaire', 'oeil_de_boeuf',
+  'porte', 'porte_garage', 'coulissant',
+];
+
+<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+  {SHAPES.map(key => (
+    <TouchableOpacity
+      key={key}
+      style={[styles.chip, current === key && styles.chipActive]}
+      onPress={() => changeShape(key)}
+      testID={`shape-chip-${key}`}
+    >
+      <ChassisSketch shape={key} width={28} height={28}
+        stroke={current === key ? C.DARK : C.WHITE} strokeWidth={1.2} />
+      <Text style={styles.chipTxt}>{CHASSIS_SHORT[key]}</Text>
+    </TouchableOpacity>
+  ))}
+</ScrollView>
 ```
 
-- Mêmes principes : chip actif vert, switch on-the-fly via PATCH chassis,
-  confirmation dialog si données existantes.
-- `testID="shape-chip-<key>"`.
+- Mêmes principes que MesureEscalier : chip actif sur fond vert, switch on-the-fly
+  via PATCH `/chassis/{cid}`, confirmation Alert si données saisies.
 
 ### 6.2 Auto-seed à la création (POST chassis)
 
 ```python
-seed_templates = {
-    "fixe":             {"hauteur_mm": 1200, "largeur_mm": 1000, "opening_side": "fixe"},
-    "ouvrant_1v":       {"hauteur_mm": 1450, "largeur_mm":  700, "opening_side": "droite"},
-    "ouvrant_2v":       {"hauteur_mm": 1450, "largeur_mm": 1400, "opening_side": "droite"},
-    "oscillo_battant":  {"hauteur_mm": 1450, "largeur_mm":  900, "opening_side": "droite"},
-    "coulissant":       {"hauteur_mm": 2100, "largeur_mm": 2400, "opening_side": "droite"},
+# /app/backend/routers/chassis.py
+SEED_TEMPLATES = {
+    "rectangulaire":  {"hauteur_mm": 1450, "largeur_mm": 1000, "opening_side": "fixe"},
+    "trapeze":        {"hauteur_mm": 1800, "largeur_mm": 1200, "opening_side": "fixe",
+                       "hauteur_min_mm": 600},
+    "triangulaire":   {"hauteur_mm": 1500, "largeur_mm": 1500, "opening_side": "fixe"},
+    "oeil_de_boeuf":  {"hauteur_mm":  800, "largeur_mm":  600, "opening_side": "fixe"},
+    "porte":          {"hauteur_mm": 2150, "largeur_mm":  900, "opening_side": "droite"},
+    "porte_garage":   {"hauteur_mm": 2100, "largeur_mm": 2500, "opening_side": "haut"},
+    "coulissant":     {"hauteur_mm": 2100, "largeur_mm": 2400, "opening_side": "droite"},
 }
 ```
 
-Évite le spinner mort et l'utilisateur entre directement dans un formulaire pré-rempli
-avec des valeurs canoniques modifiables.
+Évite le spinner mort et l'utilisateur entre directement dans un formulaire
+pré-rempli avec des valeurs canoniques modifiables.
 
 ### 6.3 Split view Élévation / Plan
 
