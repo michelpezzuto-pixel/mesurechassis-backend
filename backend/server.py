@@ -35,13 +35,21 @@ from routes import spec_import as spec_import_routes
 from routes import stripe_routes
 from routes import testers as testers_routes
 from routes import promo as promo_routes
-from seed import seed_data
+from seed import seed_data, ensure_apple_review_user
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     # --- Startup ---------------------------------------------------------
     await seed_data()
+    # 🍎 Apple App Review demo account — ALWAYS ensured at startup,
+    # independent of MC_SEED_DEMO. Required by the iOS review team.
+    try:
+        await ensure_apple_review_user()
+    except Exception as _e:
+        logging.getLogger("mesurechassis").error(
+            "Apple Review user seeding failed: %s", _e
+        )
     # 🆕 Campagne — import auto des prospects depuis le CSV embarqué (idempotent,
     # dédoublonné par email). Fonctionne aussi sur Railway car le CSV est commité.
     try:

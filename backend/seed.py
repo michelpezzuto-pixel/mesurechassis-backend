@@ -116,4 +116,92 @@ async def seed_data() -> None:
                     "created_at": datetime.now(timezone.utc).isoformat(),
                 }
             )
-        logger.info("Seeded %d demo chantiers", len(demos))
+async def ensure_apple_review_user() -> None:
+    """🍎 Ensure the Apple App Review demo account ALWAYS exists.
+
+    This is NOT optional and does NOT depend on MC_SEED_DEMO. The Apple
+    review team needs to be able to log in with these exact credentials
+    every time they review the iOS app, otherwise the app is rejected.
+
+    Idempotent: if the user already exists, only re-syncs the password
+    hash to guarantee it matches the published credentials (in case the
+    DB was edited or a stale hash was kept).
+    """
+    APPLE_EMAIL = "applereview@mesurechassis.com"
+    APPLE_PASSWORD = "MesureChassis2026"
+    APPLE_COMPANY_ID = "apple-review-demo"
+
+    existing = await db.users.find_one({"email": APPLE_EMAIL})
+    now_iso = datetime.now(timezone.utc).isoformat()
+    fresh_hash = hash_password(APPLE_PASSWORD)
+
+    if existing:
+        # Re-sync password + active status (in case anything changed)
+        await db.users.update_one(
+            {"email": APPLE_EMAIL},
+            {"$set": {
+                "hashed_password": fresh_hash,
+                "status": "active",
+                "email_verified_at": existing.get("email_verified_at") or now_iso,
+                "role": "admin",
+                "company_id": APPLE_COMPANY_ID,
+            }},
+        )
+        logger.info("🍎 Apple Review user re-synced (password reset to canonical)")
+    else:
+        user_doc = {
+            "id": str(uuid.uuid4()),
+            "name": "Apple App Review",
+            "email": APPLE_EMAIL,
+            "role": "admin",
+            "company_id": APPLE_COMPANY_ID,
+            "hashed_password": fresh_hash,
+            "status": "active",
+            "email_verified_at": now_iso,
+            "created_at": now_iso,
+        }
+        await db.users.insert_one(user_doc)
+        logger.info("🍎 Apple Review user CREATED in DB")
+
+    # Ensure company exists for this demo account (full Pro plan)
+    company_existing = await db.companies.find_one({"company_id": APPLE_COMPANY_ID})
+    if not company_existing:
+        ten_years_iso = (
+            datetime.now(timezone.utc).replace(year=datetime.now(timezone.utc).year + 10)
+        ).isoformat()
+        await db.companies.insert_one({
+            "company_id": APPLE_COMPANY_ID,
+            "name": "Apple Review Demo Co.",
+            "account_type": "entreprise",
+            "preferred_plan": "pro",
+            "plan": "pro",
+            "subscription_status": "active",
+            "subscription_expires_at": ten_years_iso,
+            "vat_number": "BE0000000097",
+            "created_at": now_iso,
+        })
+        logger.info("🍎 Apple Review company CREATED (Pro plan, 10y)")
+
+    # Seed a few demo chantiers so the reviewer can explore the app
+    existing_chantiers = await db.chantiers.count_documents({"company_id": APPLE_COMPANY_ID})
+    if existing_chantiers == 0:
+        apple_demos = [
+            ("Démo — Maison Dupont",  "12 rue Demo, 75001 Paris",        "devis_a_faire"),
+            ("Démo — Villa Martin",   "8 av. Demo, 69001 Lyon",          "technique_a_valider"),
+            ("Démo — Boutique Léa",   "5 place Demo, 33000 Bordeaux",    "en_fabrication"),
+            ("Démo — Chantier livré", "23 rue Demo, 59000 Lille",        "cloture"),
+        ]
+        apple_user = await db.users.find_one({"email": APPLE_EMAIL})
+        creator_id = apple_user["id"] if apple_user else "system"
+        for name, addr, status_v in apple_demos:
+            await db.chantiers.insert_one({
+                "id": str(uuid.uuid4()),
+                "client_name": name,
+                "address": addr,
+                "status": status_v,
+                "created_by": creator_id,
+                "assigned_to": creator_id,
+                "company_id": APPLE_COMPANY_ID,
+                "created_at": now_iso,
+            })
+        logger.info("🍎 Seeded %d demo chantiers for Apple Review", len(apple_demos))

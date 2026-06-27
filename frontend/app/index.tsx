@@ -698,6 +698,48 @@ export default function SignIn() {
             </>
           )}
 
+          {/* ════════════════════════════════════════════════════════════
+           * 🍎 BUILD 108 — Apple App Review Demo Banner (iOS ONLY)
+           *
+           * Apple a rejeté Build 107 (Guideline 2.1) car le reviewer ne
+           * trouvait pas le précédent bouton démo trop discret (opacité 0.7,
+           * fontSize 11.5, gris, en bas du formulaire).
+           *
+           * Build 108 : bouton TRÈS visible en HAUT du formulaire, fond
+           * orange plein, texte large, message anglais explicite. Le bouton
+           * pré-remplit les identifiants de l'App Review en un tap.
+           *
+           * Affiché UNIQUEMENT sur iOS et en mode "login".
+           * ════════════════════════════════════════════════════════════ */}
+          {isIOS && mode === "login" && (
+            <View style={iosFooterStyles.appleReviewBanner}>
+              <Text style={iosFooterStyles.appleReviewBannerTitle}>
+                🍎  APP REVIEW — DEMO ACCESS
+              </Text>
+              <Text style={iosFooterStyles.appleReviewBannerSubtitle}>
+                Apple Review team: tap the button below to auto-fill the demo credentials, then tap &quot;Sign In&quot;.
+              </Text>
+              <TouchableOpacity
+                testID="apple-review-demo-btn"
+                onPress={() => {
+                  setEmail("applereview@mesurechassis.com");
+                  setPassword("MesureChassis2026");
+                }}
+                activeOpacity={0.85}
+                style={iosFooterStyles.appleReviewBannerBtn}
+                accessibilityLabel="Auto-fill demo credentials for App Review"
+              >
+                <Text style={iosFooterStyles.appleReviewBannerBtnText}>
+                  ⚡  TAP TO AUTO-FILL DEMO CREDENTIALS
+                </Text>
+              </TouchableOpacity>
+              <Text style={iosFooterStyles.appleReviewBannerCreds}>
+                Email: applereview@mesurechassis.com{"\n"}
+                Password: MesureChassis2026
+              </Text>
+            </View>
+          )}
+
           <Text style={styles.label}>{t("auth.email")}</Text>
           <TextInput
             testID="login-email-input"
@@ -780,25 +822,11 @@ export default function SignIn() {
            * - L'app iOS est désormais "Login Only" : les nouveaux clients
            *   passent par contact commercial hors de l'app pour création
            *   de compte (cohérent avec positionnement B2B strict).
-           * - Bouton "🍎 Demo (App Review)" discret pour faciliter le test
-           *   par le reviewer Apple → un tap pré-remplit les identifiants.
+           *
+           * Build 108 : le bouton démo a été déplacé en HAUT du formulaire
+           *   (juste après les onglets Login/Register) pour être
+           *   immédiatement visible par le reviewer Apple — voir plus haut.
            */}
-          {mode === "login" && (
-            <TouchableOpacity
-              testID="apple-review-demo-btn"
-              onPress={() => {
-                setEmail("applereview@mesurechassis.com");
-                setPassword("MesureChassis2026");
-              }}
-              activeOpacity={0.7}
-              style={iosFooterStyles.demoBtn}
-              accessibilityLabel={t("auth.demo.hint")}
-            >
-              <Text style={iosFooterStyles.demoText}>
-                {t("auth.demo.label")}
-              </Text>
-            </TouchableOpacity>
-          )}
             </>
           )}
         </ScrollView>
@@ -1510,7 +1538,56 @@ const iosFooterStyles = StyleSheet.create({
     fontWeight: "800",
     letterSpacing: 0.3,
   },
-  // 🍎 Build 107 — Demo button pour App Review
+  // 🍎 Build 108 — Banner App Review TRÈS visible en haut du formulaire
+  appleReviewBanner: {
+    backgroundColor: "#FFF3E0",
+    borderWidth: 2,
+    borderColor: "#FF9800",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    marginTop: 8,
+  },
+  appleReviewBannerTitle: {
+    color: "#E65100",
+    fontSize: 15,
+    fontWeight: "800",
+    textAlign: "center",
+    letterSpacing: 0.5,
+    marginBottom: 8,
+  },
+  appleReviewBannerSubtitle: {
+    color: "#5D4037",
+    fontSize: 13,
+    textAlign: "center",
+    lineHeight: 18,
+    marginBottom: 14,
+  },
+  appleReviewBannerBtn: {
+    backgroundColor: "#FF6F00",
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 48,
+  },
+  appleReviewBannerBtnText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "800",
+    letterSpacing: 0.5,
+    textAlign: "center",
+  },
+  appleReviewBannerCreds: {
+    color: "#3E2723",
+    fontSize: 11.5,
+    fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
+    textAlign: "center",
+    marginTop: 10,
+    lineHeight: 16,
+  },
+  // 🍎 Build 107 — Ancien Demo button (déprécié — gardé pour compatibilité)
   demoBtn: {
     alignSelf: "center",
     marginTop: 22,
