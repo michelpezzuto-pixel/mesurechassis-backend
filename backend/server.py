@@ -31,6 +31,8 @@ api.include_router(voice_router.router)
 api.include_router(stats_router.router)
 api.include_router(integration_router.router)
 api.include_router(stairs_v2_router.router)
+from routers import poc as poc_router  # noqa: E402
+api.include_router(poc_router.router)
 
 
 @api.get("/")
