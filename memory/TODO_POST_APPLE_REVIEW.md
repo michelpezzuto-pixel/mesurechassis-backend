@@ -1,7 +1,15 @@
 # 🔴 TODO POST-APPLE REVIEW — MesureChâssis
 
 **Date** : Juin 2026
-**Statut** : En attente de validation Apple Build 102
+**Statut** : En attente de validation Apple Build 108
+
+## 🚨 RAPPEL CRITIQUE POUR L'AGENT
+Dès que Michel dit *"Apple a validé"* ou équivalent :
+1. ▶️ Exécuter cette checklist (Backend / Frontend / Campagne / Tarifs)
+2. ▶️ **PROPOSER À MICHEL** de lancer le plan SEO : voir `/app/memory/seo_action_plan.md`
+   → Première étape rapide (1h30) : Google Business Profile + Search Console + Trustpilot
+3. ▶️ Mettre à jour Stripe avec les nouveaux tarifs : voir `/app/memory/pricing.md`
+   (Solo 19€ / Entreprise 59€ / Pro 249€ / Trial 14 jours / paiement via site web façon Shopify)
 
 ## Contexte
 Pour la soumission Apple Review, tout le contenu commercial / B2B / prix
