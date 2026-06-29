@@ -55,6 +55,12 @@ Pod::Spec.new do |s|
     'SWIFT_OBJC_INTEROP_MODE'  => 'objcxx'
   }
 
-  s.source_files = '**/*.{h,m,mm,swift}'
-  s.public_header_files = '**/*.h'
+  # IMPORTANT: do NOT use `**/*` recursive globs here — that would pull in
+  # the hundreds of nested OpenCV headers from Frameworks/opencv2.framework
+  # (e.g. imgcodecs/legacy/constants_c.h, photo/legacy/constants_c.h, ...)
+  # which collide on a flat output `Headers/` directory and break the build
+  # with "Multiple commands produce" errors. OpenCV's headers are already
+  # exposed through `s.vendored_frameworks` and its own module map.
+  s.source_files = '*.{h,m,mm,swift}'
+  s.public_header_files = 'ArucoBridge.h'
 end
