@@ -17,7 +17,7 @@ async def stats(user=Depends(require_active_access)):
     for s in ["brouillon", "a_mesurer", "a_verifier", "valide", "en_fabrication", "termine"]:
         by_status[s] = await db.projects.count_documents({**q, "status": s})
 
-    project_ids = [p["id"] async for p in db.projects.find(q, {"id": 1, "_id": 0})]
+    project_ids = [p["id"] async for p in db.projects.find(q, {"id": 1, "_id": 0}).limit(1000)]
     total_measurements = (
         await db.measurements.count_documents({"project_id": {"$in": project_ids}})
         if project_ids else 0
@@ -29,7 +29,7 @@ async def stats(user=Depends(require_active_access)):
 
     avg_steps = None
     if total_measurements:
-        cursor = db.measurements.find({"project_id": {"$in": project_ids}}, {"result.n_steps": 1, "_id": 0})
+        cursor = db.measurements.find({"project_id": {"$in": project_ids}}, {"result.n_steps": 1, "_id": 0}).limit(1000)
         steps = [m["result"]["n_steps"] async for m in cursor if m.get("result")]
         if steps:
             avg_steps = round(sum(steps) / len(steps), 1)
