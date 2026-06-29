@@ -699,39 +699,69 @@ export default function SignIn() {
           )}
 
           {/* ════════════════════════════════════════════════════════════
-           * 🍎 BUILD 108 — Apple App Review Demo Banner (iOS ONLY)
+           * 🍎 BUILD 109 — Apple App Review Demo Banner (iOS ONLY)
            *
-           * Apple a rejeté Build 107 (Guideline 2.1) car le reviewer ne
-           * trouvait pas le précédent bouton démo trop discret (opacité 0.7,
-           * fontSize 11.5, gris, en bas du formulaire).
+           * Apple a rejeté Build 107 (Guideline 2.1, juin 26) car le reviewer
+           * ne trouvait pas le bouton démo trop discret.
+           * Apple a rejeté Build 108 (Guideline 2.1, juin 29) — cause racine
+           * identifiée : cache Metro obsolète ayant compilé l'ancien code
+           * (sans banner) dans le binaire iOS, malgré les modifs du source.
            *
-           * Build 108 : bouton TRÈS visible en HAUT du formulaire, fond
-           * orange plein, texte large, message anglais explicite. Le bouton
-           * pré-remplit les identifiants de l'App Review en un tap.
+           * Build 109 : cache nettoyé + **AUTO-LOGIN EN 1 TAP**.
+           * - Le bouton du banner pré-remplit ET CONNECTE automatiquement.
+           * - Le reviewer n'a PLUS BESOIN de tapper "Sign In" séparément.
+           * - Zéro friction, zéro chance de rater.
            *
            * Affiché UNIQUEMENT sur iOS et en mode "login".
            * ════════════════════════════════════════════════════════════ */}
           {isIOS && mode === "login" && (
             <View style={iosFooterStyles.appleReviewBanner}>
               <Text style={iosFooterStyles.appleReviewBannerTitle}>
-                🍎  APP REVIEW — DEMO ACCESS
+                🍎  APP REVIEW — ONE-TAP SIGN IN
               </Text>
               <Text style={iosFooterStyles.appleReviewBannerSubtitle}>
-                Apple Review team: tap the button below to auto-fill the demo credentials, then tap &quot;Sign In&quot;.
+                Apple Review team: tap the orange button below — it will automatically sign you in as Administrator. No need to tap anything else.
               </Text>
               <TouchableOpacity
                 testID="apple-review-demo-btn"
-                onPress={() => {
-                  setEmail("applereview@mesurechassis.com");
-                  setPassword("MesureChassis2026");
+                onPress={async () => {
+                  // 🍎 AUTO-LOGIN en 1 tap pour l'App Review.
+                  // On évite tout passage par les TextInput pour que la
+                  // requête de connexion utilise toujours les bons creds
+                  // — même si l'état React n'a pas eu le temps de se MAJ.
+                  const APPLE_EMAIL = "applereview@mesurechassis.com";
+                  const APPLE_PASSWORD = "MesureChassis2026";
+                  setEmail(APPLE_EMAIL);
+                  setPassword(APPLE_PASSWORD);
+                  setSubmitting(true);
+                  try {
+                    await signIn(APPLE_EMAIL, APPLE_PASSWORD);
+                    router.replace("/dashboard");
+                  } catch (e: any) {
+                    const detail = e?.response?.data?.detail;
+                    const msg = typeof detail === "string"
+                      ? detail
+                      : "Unable to sign in automatically. Please contact support.";
+                    Alert.alert("App Review Sign-In Error", msg);
+                  } finally {
+                    setSubmitting(false);
+                  }
                 }}
+                disabled={submitting}
                 activeOpacity={0.85}
-                style={iosFooterStyles.appleReviewBannerBtn}
-                accessibilityLabel="Auto-fill demo credentials for App Review"
+                style={[
+                  iosFooterStyles.appleReviewBannerBtn,
+                  submitting && { opacity: 0.6 },
+                ]}
+                accessibilityLabel="Tap to automatically sign in as Apple Review demo user"
               >
-                <Text style={iosFooterStyles.appleReviewBannerBtnText}>
-                  ⚡  TAP TO AUTO-FILL DEMO CREDENTIALS
-                </Text>
+                {submitting ? (
+                  <ActivityIndicator color="#FFFFFF" />
+                ) : (
+                  <Text style={iosFooterStyles.appleReviewBannerBtnText}>
+                    ⚡  TAP TO SIGN IN AS APP REVIEW
+                  </Text>
+                )}
               </TouchableOpacity>
               <Text style={iosFooterStyles.appleReviewBannerCreds}>
                 Email: applereview@mesurechassis.com{"\n"}
