@@ -1,0 +1,34 @@
+{
+  "summary": "Backend-only non-regression smoke after Emergent 'Generate iOS build' form issue. Validated app.json (valid JSON, expo.name='Mesure escalier', react-native-vision-camera plugin and ios.infoPlist.NSCameraUsageDescription still in place) and backend critical endpoints (POST /api/auth/login, GET /api/projects). All 6 pytest tests passed (6/6 = 100%). No regression introduced. Emergent form lock to 'Mesure châssis' is a platform UI limitation; CFBundleDisplayName at build time uses expo.name='Mesure escalier' from app.json — confirmed.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_app_json_regression.py",
+    "/app/test_reports/pytest/iter6_results.xml"
+  ],
+  "action_items": [
+    "Nothing to fix. app.json is correct and backend smoke endpoints are healthy.",
+    "(Info, not a bug) Emergent 'Generate iOS build' form keeps 'Mesure châssis' locked — this is a platform-side display limitation; the produced .ipa will show 'Mesure escalier' on the iPhone home screen because CFBundleDisplayName is derived from expo.name in app.json."
+  ],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_app_json_regression.py (new)"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "not tested (per request)"
+  },
+  "seed_data_creation": "None — used existing admin@demo.fr account.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "iter6 reused iter5 coverage scope, restricted to: (1) app.json static assertions (valid JSON + expo.name + vision-camera plugin + NSCameraUsageDescription) and (2) backend smoke (login + GET /api/projects). Test file /app/backend/tests/test_app_json_regression.py is reusable for future smoke checks.",
+  "rca_of_issue": "User-reported 'lock' on App name in Emergent build form is NOT a code bug — it's a platform UI constraint of the Emergent 'Generate iOS build' wizard that pins the App name to the original project name ('Mesure châssis') after the first build. The actual iOS app display name (CFBundleDisplayName) is generated from expo.name in app.json, which is currently 'Mesure escalier'. No code change required."
+}
