@@ -1,0 +1,39 @@
+{
+  "summary": "Iteration 8 — Security audit regression (backend only). 24/24 tests PASS. SEC-001: JWT_SECRET rotation verified — admin@demo.fr / Demo1234! login still works (bcrypt OK), wrong password yields 401. SEC-002 cross-tenant: two freshly-registered admins in distinct companies — Admin B cannot list/GET/PUT/DELETE/transmit/unlock Admin A's project, and /api/integration/sites/{pid} also 404s. Admin A still owns and reads its own project. SEC-002 demo tenants: admin@demo.fr (Escaliers Demo SARL) does NOT see marc@mesureescalier.com (Marc Escaliers Indépendant) project, and reverse access is 404. SEC-002 same-tenant: Sophie (technicien, same company as Marie) sees Marie's freshly-created project in GET /api/projects (unassigned visibility preserved). P3 security headers: X-Content-Type-Options=nosniff, X-Frame-Options=DENY, Referrer-Policy=no-referrer all present on /api/. P3 password policy: weak passwords ('shortpw' / 'abcdefgh' / '12345678') correctly rejected with 422, 'Strong1234' accepted. P3 rate-limit: /api/auth/login returns 429 with Retry-After header after >30 failed attempts within window. Regression: full project CRUD, stairs_v2 CRUD, stats, exports (pdf+dxf, <500), photos CRUD, user invite+delete within same tenant — all OK.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_security_audit.py",
+    "/app/test_reports/pytest/iter8_results.xml"
+  ],
+  "action_items": [
+    "Optional production hardening — replace the in-memory LoginRateLimitMiddleware with Redis-backed slowapi when scaling beyond a single pod (already noted in core/middleware.py docstring).",
+    "Optional — consider unifying password policy in a single Pydantic validator class (RegisterRequest and InviteUserRequest currently duplicate _check_password). Minor DRY improvement, not a blocker."
+  ],
+  "critical_code_review_comments": [
+    "core/middleware.py LoginRateLimitMiddleware uses in-memory defaultdict — fine for the single-pod preview but not horizontally scalable; per-IP buckets are also lost on pod restart. Acceptable per the docstring.",
+    "core/config.py JWT_SECRET boot guard correctly refuses (<32 chars OR known defaults). Good.",
+    "core/security.py project_visible_to() now scopes EVERY query by company_id and returns {'_never_match': True} for users without a company_id — solid fail-closed default.",
+    "services/seed.py _backfill_company_ids() is idempotent and groups by company_name first, falling back to a unique per-user tenant. Existing data correctly assigned (3 demo users + 1 existing project visible in logs)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_security_audit.py (new — 24 tests covering SEC-001, SEC-002 cross+same tenant, P3 headers/rate-limit/password policy, full CRUD regression)"
+  ],
+  "success_rate": {
+    "backend": "100% (24/24)",
+    "frontend": "skipped (backend-only request)"
+  },
+  "seed_data_creation": "Two transient test admins in fresh companies (test_admin_a_*@example.com / test_admin_b_*@example.com) plus a few weak-password registration attempts that 422'd. No persisted projects (all CRUD tests clean up after themselves; cross-tenant project is left because Admin A's tenant is isolated and ephemeral).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Reusable suite at /app/backend/tests/test_security_audit.py covers the full security audit (SEC-001 JWT, SEC-002 tenant isolation cross+same-tenant, P3 security headers + password policy + login rate-limit) and core regression (projects CRUD, stairs_v2, stats, exports, photos, user invite/delete). Note: TestZRateLimit MUST run last because it floods the per-IP login bucket — names are alphabetically ordered to enforce this. If you re-run within 5 min of a failed-flood run, subsequent login fixtures may 429; either wait 300s or restart the backend pod to reset the in-memory bucket (`sudo supervisorctl restart backend`).",
+  "rca_of_issue": "N/A — security audit validation, all checks pass."
+}

@@ -25,11 +25,13 @@ async def register(req: RegisterRequest):
     if existing:
         raise HTTPException(status_code=409, detail="Email déjà utilisé")
     user_id = str(uuid.uuid4())
+    company_id = str(uuid.uuid4())  # SEC-002: every new admin = new tenant
     now = now_utc()
     user_doc = {
         "id": user_id,
         "email": req.email.lower(),
         "full_name": req.full_name,
+        "company_id": company_id,
         "company_name": req.company_name or req.full_name,
         "role": "admin",
         "solo_mode": False,
@@ -98,6 +100,7 @@ async def invite_user(req: InviteUserRequest, user=Depends(require_roles("admin"
         "id": uid,
         "email": req.email.lower(),
         "full_name": req.full_name,
+        "company_id": user.get("company_id"),  # SEC-002: same tenant as inviter
         "company_name": user.get("company_name"),
         "role": req.role,
         "solo_mode": False,
@@ -117,7 +120,8 @@ async def invite_user(req: InviteUserRequest, user=Depends(require_roles("admin"
 async def delete_user(uid: str, user=Depends(require_roles("admin"))):
     if uid == user["id"]:
         raise HTTPException(status_code=400, detail="Vous ne pouvez pas vous supprimer vous-même")
-    res = await db.users.delete_one({"id": uid})
+    # SEC-002: only delete users from the SAME company
+    res = await db.users.delete_one({"id": uid, "company_id": user.get("company_id")})
     if res.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Utilisateur introuvable")
     return {"ok": True}

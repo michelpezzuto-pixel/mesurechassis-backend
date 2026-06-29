@@ -4,14 +4,18 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException
 
 from core.db import db
-from core.security import get_current_user
+from core.security import get_current_user, project_visible_to
 
 router = APIRouter()
 
 
 @router.get("/integration/sites/{pid}")
 async def integration_site(pid: str, user=Depends(get_current_user)):
-    p = await db.projects.find_one({"id": pid}, {"_id": 0})
+    # SEC-002: scope to authenticated user's tenant
+    p = await db.projects.find_one(
+        {"id": pid, **project_visible_to(user)},
+        {"_id": 0},
+    )
     if not p:
         raise HTTPException(status_code=404, detail="Chantier introuvable")
     m = await db.measurements.find_one({"project_id": pid}, {"_id": 0})

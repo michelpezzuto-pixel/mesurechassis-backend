@@ -1,10 +1,11 @@
 """All Pydantic request / response schemas."""
 from __future__ import annotations
 
+import re
 from datetime import datetime
 from typing import List, Literal, Optional
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from core.security import now_utc
 
@@ -14,12 +15,33 @@ ProjectStatus = Literal[
 ]
 
 
+# ── Password policy (P3 hardening) ──────────────────────────────────────
+# Require 8+ chars with at least 1 letter AND 1 digit.
+# Existing demo password `Demo1234!` (9 chars) satisfies this.
+_PWD_MIN_LEN = 8
+_PWD_LETTER_RE = re.compile(r"[A-Za-z]")
+_PWD_DIGIT_RE = re.compile(r"\d")
+
+
+def _validate_password_strength(v: str) -> str:
+    if not isinstance(v, str) or len(v) < _PWD_MIN_LEN:
+        raise ValueError(
+            f"Le mot de passe doit contenir au moins {_PWD_MIN_LEN} caractères."
+        )
+    if not _PWD_LETTER_RE.search(v) or not _PWD_DIGIT_RE.search(v):
+        raise ValueError(
+            "Le mot de passe doit contenir au moins une lettre et un chiffre."
+        )
+    return v
+
+
 # ---------------------- Users ----------------------
 class UserPublic(BaseModel):
     id: str
     email: EmailStr
     full_name: str
     role: Role
+    company_id: Optional[str] = None
     company_name: Optional[str] = None
     solo_mode: bool = False
     company_logo_base64: Optional[str] = None  # data URI or raw base64
@@ -42,8 +64,13 @@ class ProfileUpdate(BaseModel):
 class RegisterRequest(BaseModel):
     full_name: str
     email: EmailStr
-    password: str = Field(min_length=6)
+    password: str = Field(min_length=_PWD_MIN_LEN)
     company_name: Optional[str] = None
+
+    @field_validator("password")
+    @classmethod
+    def _check_password(cls, v: str) -> str:
+        return _validate_password_strength(v)
 
 
 class LoginRequest(BaseModel):
@@ -59,8 +86,13 @@ class AuthResponse(BaseModel):
 class InviteUserRequest(BaseModel):
     full_name: str
     email: EmailStr
-    password: str = Field(min_length=6)
+    password: str = Field(min_length=_PWD_MIN_LEN)
     role: Literal["technicien"] = "technicien"
+
+    @field_validator("password")
+    @classmethod
+    def _check_password(cls, v: str) -> str:
+        return _validate_password_strength(v)
 
 
 # ---------------------- Projects ----------------------

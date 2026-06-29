@@ -9,7 +9,11 @@ from __future__ import annotations
 from fastapi import APIRouter, FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
+from core.config import (
+    CORS_ORIGINS, LOGIN_RATE_LIMIT_MAX, LOGIN_RATE_LIMIT_WINDOW_SEC,
+)
 from core.db import client, db
+from core.middleware import LoginRateLimitMiddleware, SecurityHeadersMiddleware
 from services.seed import seed_demo_users
 from routers import auth as auth_router
 from routers import projects as projects_router
@@ -42,10 +46,20 @@ async def root():
 
 app.include_router(api)
 
+# ── Middleware stack (order matters: outermost-first) ──────────────────────
+# P3 hardening — Login rate-limit + global security headers
+app.add_middleware(
+    LoginRateLimitMiddleware,
+    max_attempts=LOGIN_RATE_LIMIT_MAX,
+    window_sec=LOGIN_RATE_LIMIT_WINDOW_SEC,
+)
+app.add_middleware(SecurityHeadersMiddleware)
+
+# SEC P3: explicit origin allow-list, NOT wildcard (was allow_origins=["*"]).
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=["*"],
+    allow_origins=CORS_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
 )

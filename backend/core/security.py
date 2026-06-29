@@ -118,11 +118,22 @@ def has_technician_powers(user) -> bool:
 def project_visible_to(user) -> dict:
     """MongoDB filter restricting projects to the user's scope.
 
-    - Admin: sees everything.
-    - Technicien: sees assigned + unassigned projects.
+    SEC-002 fix (tenant isolation):
+    EVERY query is now scoped by `company_id`. An admin can see all projects
+    of THEIR OWN company but NEVER projects of another company.
+
+    - Admin: ALL projects WHERE company_id == user.company_id.
+    - Technicien: assigned-to-me + unassigned projects WHERE company_id == user.company_id.
+    - User without a company_id (legacy/corrupted): see nothing.
     """
+    cid = user.get("company_id")
+    if not cid:
+        return {"_never_match": True}
     if user["role"] == "admin":
-        return {}
+        return {"company_id": cid}
     if user["role"] == "technicien":
-        return {"$or": [{"technicien_id": user["id"]}, {"technicien_id": None}]}
+        return {
+            "company_id": cid,
+            "$or": [{"technicien_id": user["id"]}, {"technicien_id": None}],
+        }
     return {"_never_match": True}

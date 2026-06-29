@@ -37,6 +37,7 @@ async def create_project(payload: ProjectCreate, user=Depends(require_roles("adm
         "commercial_id": user["id"],
         "creator_id": user["id"],
         "technicien_id": user["id"] if user.get("solo_mode") else None,
+        "company_id": user.get("company_id"),  # SEC-002: tenant ownership
         "company_name": user.get("company_name"),
         "locked": bool(user.get("solo_mode")),
         "transmitted_at": now_utc() if user.get("solo_mode") else None,
@@ -63,36 +64,40 @@ async def get_project(pid: str, user=Depends(require_active_access)):
 
 @router.put("/{pid}")
 async def update_project(pid: str, payload: ProjectUpdate, user=Depends(require_active_access)):
-    p = await db.projects.find_one({"id": pid})
+    # SEC-002: scope by tenant
+    q = {"id": pid, **project_visible_to(user)}
+    p = await db.projects.find_one(q)
     if not p:
         raise HTTPException(status_code=404, detail="Chantier introuvable")
     if user["role"] != "admin":
         raise HTTPException(status_code=403, detail="Seuls les Admin peuvent modifier l'identification client")
     update = {k: v for k, v in payload.model_dump().items() if v is not None}
     update["updated_at"] = now_utc()
-    await db.projects.update_one({"id": pid}, {"$set": update})
-    return await db.projects.find_one({"id": pid}, {"_id": 0})
+    await db.projects.update_one(q, {"$set": update})
+    return await db.projects.find_one(q, {"_id": 0})
 
 
 @router.delete("/{pid}")
 async def delete_project(pid: str, user=Depends(require_active_access)):
-    p = await db.projects.find_one({"id": pid})
+    q = {"id": pid, **project_visible_to(user)}
+    p = await db.projects.find_one(q)
     if not p:
         raise HTTPException(status_code=404, detail="Chantier introuvable")
     if user["role"] != "admin":
         raise HTTPException(status_code=403, detail="Suppression réservée aux Admin")
-    await db.projects.delete_one({"id": pid})
+    await db.projects.delete_one(q)
     await db.measurements.delete_many({"project_id": pid})
     return {"ok": True}
 
 
 @router.post("/{pid}/transmit")
 async def transmit_project(pid: str, user=Depends(require_roles("admin"))):
-    p = await db.projects.find_one({"id": pid})
+    q = {"id": pid, **project_visible_to(user)}
+    p = await db.projects.find_one(q)
     if not p:
         raise HTTPException(status_code=404, detail="Chantier introuvable")
     await db.projects.update_one(
-        {"id": pid},
+        q,
         {"$set": {
             "locked": True, "status": "a_mesurer",
             "transmitted_at": now_utc(), "updated_at": now_utc(),
@@ -105,11 +110,12 @@ async def transmit_project(pid: str, user=Depends(require_roles("admin"))):
 async def unlock_project(pid: str, user=Depends(require_roles("admin"))):
     """Admin uniquement : déverrouille un chantier transmis pour pouvoir
     le ré-éditer (corriger des mesures, ajouter un escalier oublié, etc.)."""
-    p = await db.projects.find_one({"id": pid})
+    q = {"id": pid, **project_visible_to(user)}
+    p = await db.projects.find_one(q)
     if not p:
         raise HTTPException(status_code=404, detail="Chantier introuvable")
     await db.projects.update_one(
-        {"id": pid},
+        q,
         {"$set": {
             "locked": False, "status": "brouillon",
             "updated_at": now_utc(),
@@ -120,11 +126,19 @@ async def unlock_project(pid: str, user=Depends(require_roles("admin"))):
 
 @router.post("/{pid}/assign")
 async def assign_technicien(pid: str, payload: AssignRequest, user=Depends(require_roles("admin"))):
-    tech = await db.users.find_one({"id": payload.technicien_id, "role": "technicien"})
+    # SEC-002: project must belong to admin's company AND technician must too
+    q = {"id": pid, **project_visible_to(user)}
+    if not await db.projects.find_one(q, {"id": 1}):
+        raise HTTPException(status_code=404, detail="Chantier introuvable")
+    tech = await db.users.find_one({
+        "id": payload.technicien_id,
+        "role": "technicien",
+        "company_id": user.get("company_id"),
+    })
     if not tech:
         raise HTTPException(status_code=404, detail="Technicien introuvable")
     await db.projects.update_one(
-        {"id": pid},
+        q,
         {"$set": {"technicien_id": payload.technicien_id, "updated_at": now_utc()}},
     )
     return {"ok": True}
