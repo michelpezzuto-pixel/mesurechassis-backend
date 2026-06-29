@@ -54,6 +54,16 @@ Pod::Spec.new do |s|
   # own module map under Frameworks/opencv2.framework/Modules, so framework-
   # style imports `#import <opencv2/opencv.hpp>` from ArucoBridge.mm resolve
   # via FRAMEWORK_SEARCH_PATHS alone — no flat header search path needed.
+  #
+  # IMPORTANT: we do NOT set SWIFT_OBJC_INTEROP_MODE = 'objcxx'. Forcing
+  # Obj-C++ mode for the Swift↔ObjC bridging header makes clang parse the
+  # umbrella headers of every imported module (incl. ExpoModulesCore →
+  # React-Fabric → <yoga/style/Style.h>) as C++ headers, which fails because
+  # those C++ paths are not on ArucoDetector's HEADER_SEARCH_PATHS.
+  # `ArucoBridge.h` deliberately exposes ONLY plain Objective-C types
+  # (NSDictionary, NSNumber, CVPixelBufferRef) — no C++ leaks — so the
+  # default `objc` interop mode is enough. The OpenCV C++ code is hidden
+  # inside `ArucoBridge.mm`, which is already compiled as Objective-C++.
 
   # Fetch opencv2.framework once if it's not already vendored. Runs during
   # `pod install` (i.e. on the EAS build server, not on dev machines / web
@@ -79,8 +89,7 @@ Pod::Spec.new do |s|
   s.pod_target_xcconfig = {
     'DEFINES_MODULE'          => 'YES',
     'CLANG_CXX_LANGUAGE_STANDARD' => 'c++17',
-    'GCC_PREPROCESSOR_DEFINITIONS' => 'OPENCV_DISABLE_DEPRECATED_DEPRECATION=1',
-    'SWIFT_OBJC_INTEROP_MODE'  => 'objcxx'
+    'GCC_PREPROCESSOR_DEFINITIONS' => 'OPENCV_DISABLE_DEPRECATED_DEPRECATION=1'
   }
 
   # IMPORTANT: do NOT use `**/*` recursive globs here — that would pull in
