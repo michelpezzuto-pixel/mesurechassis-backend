@@ -2,7 +2,7 @@
   "expo": {
     "name": "Mesure escalier",
     "slug": "mesure-escalier",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "mesureescalier",
@@ -19,7 +19,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.mesurechassis.escalier",
-      "buildNumber": "4",
+      "buildNumber": "5",
       "infoPlist": {
         "NSMicrophoneUsageDescription": "Dicter les remarques terrain à voix haute",
         "NSCameraUsageDescription": "Scanner les marqueurs ArUco et photographier vos chantiers",
