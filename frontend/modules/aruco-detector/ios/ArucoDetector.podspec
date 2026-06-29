@@ -43,11 +43,17 @@ Pod::Spec.new do |s|
   s.frameworks     = 'AVFoundation', 'CoreMedia', 'CoreVideo', 'Accelerate'
   s.libraries      = 'c++'
 
-  s.xcconfig = {
-    'FRAMEWORK_SEARCH_PATHS' => '"$(PODS_TARGET_SRCROOT)/Frameworks" $(inherited)',
-    'OTHER_LDFLAGS'          => '-framework opencv2 $(inherited)',
-    'HEADER_SEARCH_PATHS'    => '"$(PODS_TARGET_SRCROOT)/Frameworks/opencv2.framework/Headers" $(inherited)',
-  }
+  # IMPORTANT: use `pod_target_xcconfig` (NOT `xcconfig`) so these settings
+  # apply ONLY to the ArucoDetector pod target itself and are NOT propagated
+  # to the consumer app target. Using a global `xcconfig` would also override
+  # HEADER_SEARCH_PATHS during Swift module re-compilation of ExpoModulesCore
+  # (which transitively includes React-Fabric → yoga/style/Style.h), breaking
+  # the build with "'yoga/style/Style.h' file not found".
+  #
+  # We do NOT override HEADER_SEARCH_PATHS here: opencv2.framework ships its
+  # own module map under Frameworks/opencv2.framework/Modules, so framework-
+  # style imports `#import <opencv2/opencv.hpp>` from ArucoBridge.mm resolve
+  # via FRAMEWORK_SEARCH_PATHS alone — no flat header search path needed.
 
   # Fetch opencv2.framework once if it's not already vendored. Runs during
   # `pod install` (i.e. on the EAS build server, not on dev machines / web
