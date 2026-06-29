@@ -1,0 +1,43 @@
+{
+  "summary": "Iteration 7 — Targeted post-fix non-regression (backend only). All 7 tests PASS. (1) stats.py with .limit(1000) added on the two cursors returns 200 with the expected schema (total_projects, by_status, total_measurements, validated_measurements, average_steps, team_size). (2) Auth POST /api/auth/login (admin@demo.fr) and GET /api/projects with Bearer token still work. (3) app.json is valid JSON. (4) opencv2.framework is absent from /app/frontend/modules/aruco-detector/ios/Frameworks (folder exists but empty). (5) /app/frontend (excl. node_modules/dist/.metro-cache/.expo) = 3 MB, well under 50 MB. (6) Metro web preview serves 200 on localhost:3000. Note: the review request mentions GET /api/stats/overview but the actual route is GET /api/stats (verified in server.py / routers/stats.py) — tested the real endpoint and it works.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": [
+      {
+        "component": "expo-av plugin",
+        "issue": "expo-av is deprecated; replace with expo-audio (audio) and/or expo-video (video). Reference: /app/frontend/app.json:62-65"
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_post_fix_regression.py",
+    "/app/test_reports/pytest/iter7_results.xml"
+  ],
+  "action_items": [
+    "Endpoint naming clarification: review request said GET /api/stats/overview but the implemented route is GET /api/stats. If frontend / clients expect /overview, decide whether to rename the route or update the request docs.",
+    "Migrate expo-av plugin in /app/frontend/app.json to expo-audio/expo-video (deprecated)."
+  ],
+  "critical_code_review_comments": [
+    "stats.py: the .limit(1000) cap is silent — if a tenant has >1000 projects, stats will under-count measurements/avg_steps with no warning. Consider aggregation pipeline ($lookup or $group on measurements.project_id) so the cap is not needed, or at minimum surface a 'truncated: true' flag in the response.",
+    "stats.py: the average_steps computation loads up to 1000 measurement docs into Python just to average n_steps. Replace with a MongoDB $group/$avg aggregation for O(1) memory and better latency on large datasets.",
+    "stats.py: stats router exposes only /stats (no /overview alias) — review request typo or pending feature, worth confirming with main agent."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_post_fix_regression.py (new)"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "skipped (backend-only request)"
+  },
+  "seed_data_creation": "None — used existing seeded admin (admin@demo.fr) and demo project.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Post-fix regression validated (stats.py .limit(1000), opencv2.framework removal, frontend size). Backend healthy: login/projects/stats all 200. Reusable test suite at /app/backend/tests/test_post_fix_regression.py covers auth, projects list, stats schema, repo hygiene (app.json valid, opencv framework absent, /app/frontend < 50MB), and Metro web 200. Note real stats route is /api/stats not /api/stats/overview.",
+  "rca_of_issue": "N/A — non-regression validation only, no bugs found."
+}
