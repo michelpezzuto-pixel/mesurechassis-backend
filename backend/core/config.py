@@ -47,20 +47,18 @@ EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
 TRIAL_DAYS = int(os.environ.get("TRIAL_DAYS", "90"))
 
 # ── CORS ──────────────────────────────────────────────────────────────────
-# Comma-separated list of origins. "*" only allowed in DEV. In prod, set a
-# real list via the deployment environment. Empty value → wildcard (dev).
+# Comma-separated list of allowed origins, loaded EXCLUSIVELY from env.
+# Production deployments MUST set CORS_ORIGINS in their environment to the
+# real frontend domain(s). If empty, CORS denies every cross-origin browser
+# request (native mobile apps are unaffected — they don't send Origin).
 _cors_raw = os.environ.get("CORS_ORIGINS", "").strip()
-if _cors_raw:
-    CORS_ORIGINS = [o.strip() for o in _cors_raw.split(",") if o.strip()]
-else:
-    # Dev fallback: allow the Expo packager preview host + localhost.
-    # NOT a wildcard — wildcards combined with allow_credentials are unsafe.
-    CORS_ORIGINS = [
-        "https://stair-pro.preview.emergentagent.com",
-        "http://localhost:3000",
-        "http://localhost:8081",
-        "http://localhost:19006",
-    ]
+CORS_ORIGINS = [o.strip() for o in _cors_raw.split(",") if o.strip()]
+if not CORS_ORIGINS:
+    logger.warning(
+        "CORS_ORIGINS is empty — all cross-origin browser requests will be "
+        "denied. Set CORS_ORIGINS in the deployment environment to your "
+        "frontend domain(s), e.g. 'https://app.example.com,https://www.example.com'."
+    )
 
 # ── Login rate-limit ──────────────────────────────────────────────────────
 # Generous default (30 attempts / 5 min) — tightens significantly in
