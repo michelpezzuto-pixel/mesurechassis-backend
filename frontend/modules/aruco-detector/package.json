@@ -1,0 +1,7 @@
+{
+  "name": "aruco-detector",
+  "version": "0.1.0",
+  "description": "Local Expo module: ArUco marker detection via OpenCV iOS",
+  "main": "index.ts",
+  "private": true
+}

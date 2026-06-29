@@ -245,6 +245,22 @@ export default function StairEditor() {
         <ShapeSelectorBar shape={stair.shape} onChange={changeShape} />
 
         <ScrollView contentContainerStyle={{ padding: SP.lg, paddingBottom: 130 }} keyboardShouldPersistTaps="handled">
+          {/* ─── Scanner ArUco (POC détection) ───────────────────────── */}
+          <TouchableOpacity
+            style={styles.scanBtn}
+            activeOpacity={0.85}
+            onPress={() => router.push('/scan-aruco' as any)}
+          >
+            <View style={styles.scanBtnIcon}>
+              <MaterialCommunityIcons name="qrcode-scan" size={22} color="#22d3ee" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.scanBtnTitle}>Scanner les marqueurs ArUco</Text>
+              <Text style={styles.scanBtnSub}>Détection live des tags collés sur les marches</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#94a3b8" />
+          </TouchableOpacity>
+
           {/* KPI global */}
           {compute && (
             <View style={styles.kpiBlock}>
@@ -1610,6 +1626,20 @@ const styles = StyleSheet.create({
   kpiLabel: { ...FONT.label, fontSize: 9, color: C.GRAY3 },
   kpiVal: { ...FONT.h2, color: C.ACCENT, fontSize: 18 },
   kpiUnit: { ...FONT.small, color: C.GRAY3, fontSize: 9 },
+
+  // Scanner ArUco button
+  scanBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: SP.md,
+    backgroundColor: C.CARD, borderRadius: R.md, padding: SP.md, marginBottom: SP.md,
+    borderWidth: 1, borderColor: 'rgba(34,211,238,0.45)', borderLeftWidth: 3,
+  },
+  scanBtnIcon: {
+    width: 40, height: 40, borderRadius: 20,
+    backgroundColor: 'rgba(34,211,238,0.12)',
+    justifyContent: 'center', alignItems: 'center',
+  },
+  scanBtnTitle: { ...FONT.h3, color: C.WHITE, fontSize: 14 },
+  scanBtnSub: { ...FONT.small, color: C.GRAY3, fontSize: 11, marginTop: 2 },
 
   warnBox: { flexDirection: 'row', backgroundColor: 'rgba(245,158,11,0.12)', borderColor: C.WARN, borderWidth: 1, borderLeftWidth: 4, borderRadius: R.md, padding: SP.md, marginBottom: SP.md },
   warnTxt: { ...FONT.small, color: C.WHITE, fontSize: 11, lineHeight: 16, marginBottom: 4 },

@@ -86,3 +86,4 @@ android-sdk/
 credentials.json
 *.key
 .credentials
+frontend/modules/aruco-detector/ios/Frameworks/opencv2.framework/Versions/A/opencv2
