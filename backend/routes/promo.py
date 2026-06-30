@@ -34,7 +34,7 @@ ALLOWED_FILES = {
 
 # 🎬 Sous-dossiers TikTok / réseaux sociaux dont TOUS les fichiers
 # sont accessibles publiquement (images PNG, audio MP3).
-PUBLIC_SUBDIRS = {"tiktok_script5"}
+PUBLIC_SUBDIRS = {"tiktok_script5", "tiktok_script2"}
 
 
 @router.get("/{subdir}/{filename}")
