@@ -11,12 +11,12 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.mesurechassis.escalier",
-      "buildNumber": "109",
+      "buildNumber": "110",
       "infoPlist": {
-        "NSCameraUsageDescription": "Photographier les ouvertures à mesurer",
-        "NSPhotoLibraryUsageDescription": "Joindre une photo à une mesure",
-        "NSPhotoLibraryAddUsageDescription": "Enregistrer un PDF de mesures dans votre photothèque",
-        "NSMicrophoneUsageDescription": "Dicter vos notes de chantier à voix haute",
+        "NSCameraUsageDescription": "MesureChâssis utilise l'appareil photo pour permettre aux menuisiers professionnels de photographier les ouvertures (fenêtres, châssis, baies) lors de leurs prises de mesures sur chantier. Exemple : prendre une photo d'une fenêtre PVC à remplacer et l'attacher à la fiche de mesure du client pour validation atelier.",
+        "NSPhotoLibraryUsageDescription": "MesureChâssis accède à votre photothèque pour permettre aux menuisiers professionnels d'attacher des photos existantes à leurs fiches de mesures de chantier. Exemple : sélectionner une photo prise précédemment d'une porte d'entrée à remplacer pour la joindre au dossier client lors de la création du devis.",
+        "NSPhotoLibraryAddUsageDescription": "MesureChâssis enregistre les exports PDF de fiches de mesures dans votre photothèque pour partage et archivage. Exemple : sauvegarder le PDF récapitulatif d'un chantier de 5 châssis livrés au client dans vos photos pour le retrouver facilement.",
+        "NSMicrophoneUsageDescription": "MesureChâssis utilise le microphone pour la dictée vocale des notes de chantier. Exemple : dicter à voix haute 'pose en applique côté rue, prévoir cale de 10mm' pendant la prise de mesures, sans avoir à taper au clavier les mains occupées par le mètre.",
         "ITSAppUsesNonExemptEncryption": false,
         "UISupportedInterfaceOrientations": [
           "UIInterfaceOrientationPortrait"

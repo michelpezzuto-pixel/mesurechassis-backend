@@ -205,3 +205,37 @@ async def ensure_apple_review_user() -> None:
                 "created_at": now_iso,
             })
         logger.info("🍎 Seeded %d demo chantiers for Apple Review", len(apple_demos))
+
+    # 🍎 Build 110 — Apple a explicitement demandé un compte NON-Administrateur
+    # pour pouvoir tester les autres rôles (Guideline 2.1).
+    # Création d'un 2e compte Technicien dans la MÊME company que l'admin
+    # (apple-review-demo), pour montrer le RBAC en action.
+    APPLE_TECH_EMAIL = "applereview-tech@mesurechassis.com"
+    APPLE_TECH_PASSWORD = "MesureChassis2026"
+    existing_tech = await db.users.find_one({"email": APPLE_TECH_EMAIL})
+    fresh_tech_hash = hash_password(APPLE_TECH_PASSWORD)
+    if existing_tech:
+        await db.users.update_one(
+            {"email": APPLE_TECH_EMAIL},
+            {"$set": {
+                "hashed_password": fresh_tech_hash,
+                "status": "active",
+                "email_verified_at": existing_tech.get("email_verified_at") or now_iso,
+                "role": "technician",
+                "company_id": APPLE_COMPANY_ID,
+            }},
+        )
+        logger.info("🍎 Apple Review TECHNICIAN user re-synced")
+    else:
+        await db.users.insert_one({
+            "id": str(uuid.uuid4()),
+            "name": "Apple Review Technician",
+            "email": APPLE_TECH_EMAIL,
+            "role": "technician",
+            "company_id": APPLE_COMPANY_ID,
+            "hashed_password": fresh_tech_hash,
+            "status": "active",
+            "email_verified_at": now_iso,
+            "created_at": now_iso,
+        })
+        logger.info("🍎 Apple Review TECHNICIAN user CREATED")
