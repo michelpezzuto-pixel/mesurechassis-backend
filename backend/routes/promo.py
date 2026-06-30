@@ -3,6 +3,8 @@
 Les vidéos générées via Sora 2 sont stockées dans /app/backend/static/promo/
 et exposées via /api/promo/{filename}.mp4 (accessibles publiquement, sans auth)
 pour intégration sur le site web mesurechassis.com et réseaux sociaux.
+
+Sous-dossier `tiktok_script5/` : assets TikTok générés par IA (Nano Banana + TTS).
 """
 from pathlib import Path
 from fastapi import APIRouter, HTTPException
@@ -29,6 +31,41 @@ ALLOWED_FILES = {
     "hero_video_faststart.mp4",
     "site_mesurechassis_simplifie.zip",
 }
+
+# 🎬 Sous-dossiers TikTok / réseaux sociaux dont TOUS les fichiers
+# sont accessibles publiquement (images PNG, audio MP3).
+PUBLIC_SUBDIRS = {"tiktok_script5"}
+
+
+@router.get("/{subdir}/{filename}")
+def serve_promo_subdir(subdir: str, filename: str):
+    """Sert un asset dans un sous-dossier whitelisté (TikTok, etc.)."""
+    if subdir not in PUBLIC_SUBDIRS:
+        raise HTTPException(status_code=404, detail="Subdir not allowed")
+    # Anti path-traversal
+    if ".." in filename or "/" in filename or "\\" in filename:
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    path = PROMO_DIR / subdir / filename
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="File not found on disk")
+    # Détecter le media-type
+    if filename.endswith(".mp3"):
+        media_type = "audio/mpeg"
+    elif filename.endswith(".png"):
+        media_type = "image/png"
+    elif filename.endswith(".mp4"):
+        media_type = "video/mp4"
+    else:
+        media_type = "application/octet-stream"
+    return FileResponse(
+        path,
+        media_type=media_type,
+        filename=filename,
+        headers={
+            "Cache-Control": "public, max-age=3600",
+            "Accept-Ranges": "bytes",
+        },
+    )
 
 
 @router.get("/{filename}")
