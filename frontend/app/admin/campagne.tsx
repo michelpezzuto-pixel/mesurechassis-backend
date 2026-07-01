@@ -50,6 +50,43 @@ const STATUS_UI: Record<string, { label: string; color: string }> = {
   failed: { label: "ÉCHEC", color: "#F87171" },
 };
 
+/**
+ * 🚫 Domaines emails génériques (fournisseurs) — À ne PAS afficher comme nom
+ * d'entreprise. Utilisé pour filtrer les cas où le champ `company` a été
+ * incorrectement rempli avec le fournisseur email (ex: "Gmail", "Free").
+ */
+const GENERIC_EMAIL_DOMAINS = new Set([
+  "gmail", "googlemail",
+  "yahoo", "yahoo.fr", "yahoo.com",
+  "hotmail", "hotmail.fr", "hotmail.com",
+  "outlook", "outlook.fr", "outlook.com",
+  "live", "live.fr", "live.com",
+  "orange", "orange.fr",
+  "free", "free.fr",
+  "wanadoo", "wanadoo.fr",
+  "sfr", "sfr.fr",
+  "laposte", "laposte.net",
+  "bbox", "bouygtel",
+  "aol", "aol.fr", "aol.com",
+  "icloud", "me.com", "mac.com",
+  "protonmail", "proton.me",
+  "voila", "voila.fr",
+  "numericable", "neuf.fr",
+  "skynet", "skynet.be",
+  "telenet", "telenet.be",
+  "belgacom", "belgacom.be", "proximus.be",
+  "gmx", "gmx.fr", "gmx.com",
+  "mail", "mail.com", "mail.ru",
+]);
+
+/** Retourne le nom à afficher : ignore les "companies" qui sont en fait des domaines email génériques. */
+function displayName(p: { company?: string; email: string }): string {
+  const c = (p.company || "").trim();
+  if (!c) return p.email;
+  if (GENERIC_EMAIL_DOMAINS.has(c.toLowerCase())) return p.email;
+  return c;
+}
+
 /** Vue ADMIN : campagne email prospection testeurs (1 bouton / jour). */
 export default function AdminCampagne() {
   const router = useRouter();
@@ -295,7 +332,7 @@ export default function AdminCampagne() {
                         isUnsub && styles.unsubText,
                       ]}
                     >
-                      {item.company || item.email}
+                      {displayName(item)}
                     </Text>
                     <Text
                       style={[styles.cardEmail, isUnsub && styles.unsubText]}

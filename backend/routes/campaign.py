@@ -45,6 +45,44 @@ PAUSE_BETWEEN_SENDS_S = 3
 RELANCE_DELAY_DAYS = 3  # 1ère relance J+3 si pas répondu
 SECOND_RELANCE_DELAY_DAYS = 7  # 2e relance J+7 (dernière chance)
 
+# 🚫 Domaines email GÉNÉRIQUES — Si un import contient l'un de ces mots dans
+# le champ « company » (typiquement un scraper qui a pris le domaine à la
+# place du vrai nom d'entreprise), on vide le champ pour éviter d'afficher
+# des noms comme « Mr Gmail » / « Mr Free ».
+_GENERIC_EMAIL_DOMAINS = {
+    "gmail", "googlemail",
+    "yahoo", "yahoo.fr", "yahoo.com",
+    "hotmail", "hotmail.fr", "hotmail.com",
+    "outlook", "outlook.fr", "outlook.com",
+    "live", "live.fr", "live.com",
+    "orange", "orange.fr",
+    "free", "free.fr",
+    "wanadoo", "wanadoo.fr",
+    "sfr", "sfr.fr",
+    "laposte", "laposte.net",
+    "bbox", "bouygtel",
+    "aol", "aol.fr", "aol.com",
+    "icloud", "me.com", "mac.com",
+    "protonmail", "proton.me",
+    "voila", "voila.fr",
+    "numericable", "neuf.fr",
+    "skynet", "skynet.be",
+    "telenet", "telenet.be",
+    "belgacom", "belgacom.be", "proximus.be",
+    "gmx", "gmx.fr", "gmx.com",
+    "mail", "mail.com", "mail.ru",
+}
+
+
+def _clean_company(raw: str | None) -> str:
+    """Retourne le nom d'entreprise nettoyé — vide si c'est un domaine email générique."""
+    c = (raw or "").strip()
+    if not c:
+        return ""
+    if c.lower() in _GENERIC_EMAIL_DOMAINS:
+        return ""
+    return c
+
 
 def _is_weekend_brussels() -> bool:
     """True si on est samedi ou dimanche en heure belge (Europe/Brussels).
@@ -355,7 +393,7 @@ async def seed_prospects_from_csv() -> None:
                 {
                     "id": str(uuid.uuid4()),
                     "email": email,
-                    "company": (row.get("ENTREPRISE") or "").strip(),
+                    "company": _clean_company(row.get("ENTREPRISE")),
                     "region": (row.get("REGION") or "").strip(),
                     "country": (row.get("PAYS") or "be").strip().lower(),
                     "status": "sent" if contacte_le else "pending",
@@ -385,7 +423,7 @@ async def import_prospects(payload: dict, user=Depends(require_admin)):
             {
                 "id": str(uuid.uuid4()),
                 "email": email,
-                "company": (it.get("company") or "").strip(),
+                "company": _clean_company(it.get("company")),
                 "region": (it.get("region") or "").strip(),
                 "country": (it.get("country") or "be").strip().lower(),
                 "status": "pending",  # pending → sent | failed
