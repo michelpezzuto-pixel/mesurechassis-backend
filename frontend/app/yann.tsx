@@ -207,30 +207,40 @@ export default function YannScreen() {
               <Text style={styles.paywallIconText}>🤖</Text>
             </View>
             <Text style={styles.paywallTitle}>Yann est en option sur votre plan</Text>
-            <Text style={styles.paywallText}>
-              Votre assistant IA est inclus dans la formule{" "}
-              <Text style={styles.paywallStrong}>Entreprise Pro</Text>, et disponible en option à{" "}
-              <Text style={styles.paywallStrong}>5 €/mois</Text> sur Artisan Solo et Entreprise.
-            </Text>
-            <Text style={styles.paywallText}>
-              Vous y avez aussi accès gratuitement pendant vos{" "}
-              <Text style={styles.paywallStrong}>14 jours d&apos;essai</Text>.
-            </Text>
-
-            {Platform.OS !== "ios" && (
-              <TouchableOpacity
-                style={styles.paywallCta}
-                onPress={() => router.replace("/subscription")}
-                activeOpacity={0.85}
-              >
-                <Text style={styles.paywallCtaText}>Voir les formules</Text>
-                <Ionicons name="arrow-forward" size={18} color="#000" />
-              </TouchableOpacity>
-            )}
-            {Platform.OS === "ios" && (
-              <Text style={styles.paywallNote}>
-                Pour activer Yann, rendez-vous sur mesurechassis.com depuis votre ordinateur.
-              </Text>
+            {/* 🍎 iOS — Texte NEUTRE (aucune mention de plan, prix ni essai)
+             * pour se conformer à l'App Store Guideline 3.1.1 et 3.1.3(c).
+             * Sur Android/Web : texte détaillé avec plans et prix Stripe. */}
+            {Platform.OS === "ios" ? (
+              <>
+                <Text style={styles.paywallText}>
+                  Votre assistant IA est disponible selon votre formule
+                  professionnelle. Contactez votre administrateur pour l&apos;activer.
+                </Text>
+                <Text style={styles.paywallNote}>
+                  L&apos;activation de Yann se fait par votre administrateur
+                  depuis l&apos;espace professionnel mesurechassis.com.
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text style={styles.paywallText}>
+                  Votre assistant IA est inclus dans la formule{" "}
+                  <Text style={styles.paywallStrong}>Entreprise Pro</Text>, et disponible en option à{" "}
+                  <Text style={styles.paywallStrong}>5 €/mois</Text> sur Artisan Solo et Entreprise.
+                </Text>
+                <Text style={styles.paywallText}>
+                  Vous y avez aussi accès gratuitement pendant vos{" "}
+                  <Text style={styles.paywallStrong}>14 jours d&apos;essai</Text>.
+                </Text>
+                <TouchableOpacity
+                  style={styles.paywallCta}
+                  onPress={() => router.replace("/subscription")}
+                  activeOpacity={0.85}
+                >
+                  <Text style={styles.paywallCtaText}>Voir les formules</Text>
+                  <Ionicons name="arrow-forward" size={18} color="#000" />
+                </TouchableOpacity>
+              </>
             )}
           </View>
         </View>
