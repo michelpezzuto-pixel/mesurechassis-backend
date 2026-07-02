@@ -78,7 +78,12 @@ async def ensure_company(company_id: str) -> dict:
     )
     if doc:
         update: dict = {}
-        if BETA_MODE:
+        # 🍎 Exception ciblée : le compte apple-review-expired doit RESTER
+        # expiré pour qu'Apple puisse tester le paywall iOS (Guideline 2.1).
+        # Aucun forçage BETA_MODE pour cette company_id précise.
+        is_apple_expired_demo = company_id == "apple-review-expired"
+
+        if BETA_MODE and not is_apple_expired_demo:
             # Force tout le monde en plan Pro actif pendant la phase beta.
             if doc.get("plan") != "pro":
                 update["plan"] = "pro"
@@ -216,6 +221,11 @@ async def auth_user(authorization: Optional[str] = Header(None)) -> dict:
 
 
 def is_subscription_blocked(user: dict) -> bool:
+    # 🍎 Exception ciblée : le compte applereview-expired doit TOUJOURS être
+    # bloqué (paywall) pour qu'Apple puisse tester le flux d'expiration
+    # sur iOS (Guideline 2.1). Aucun bypass BETA_MODE.
+    if user.get("company_id") == "apple-review-expired":
+        return True
     # 🚧 BETA GRATUITE : jamais de blocage tant que BETA_MODE=True.
     if BETA_MODE:
         return False

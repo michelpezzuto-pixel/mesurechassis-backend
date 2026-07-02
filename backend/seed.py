@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import os
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from db import db, logger
 from deps import hash_password
@@ -239,3 +239,95 @@ async def ensure_apple_review_user() -> None:
             "created_at": now_iso,
         })
         logger.info("🍎 Apple Review TECHNICIAN user CREATED")
+
+    # ────────────────────────────────────────────────────────────────
+    # 🍎 Build 113 — Apple a demandé (Guideline 2.1) un compte demo
+    # AVEC ABONNEMENT EXPIRÉ pour tester le flux paywall / renouvellement.
+    # Création d'une 2e entreprise (apple-review-expired) avec un
+    # subscription_status="expired" et subscription_expires_at dans le passé.
+    # Sur iOS, cet utilisateur verra le PaywallScreen NEUTRE (pas de prix,
+    # juste "contactez support@mesurechassis.fr").
+    # ────────────────────────────────────────────────────────────────
+    APPLE_EXPIRED_EMAIL = "applereview-expired@mesurechassis.com"
+    APPLE_EXPIRED_PASSWORD = "MesureChassis2026"
+    APPLE_EXPIRED_COMPANY_ID = "apple-review-expired"
+
+    existing_expired_user = await db.users.find_one({"email": APPLE_EXPIRED_EMAIL})
+    fresh_expired_hash = hash_password(APPLE_EXPIRED_PASSWORD)
+
+    if existing_expired_user:
+        await db.users.update_one(
+            {"email": APPLE_EXPIRED_EMAIL},
+            {"$set": {
+                "hashed_password": fresh_expired_hash,
+                "status": "active",
+                "email_verified_at": existing_expired_user.get("email_verified_at") or now_iso,
+                "role": "admin",
+                "company_id": APPLE_EXPIRED_COMPANY_ID,
+            }},
+        )
+        logger.info("🍎 Apple Review EXPIRED user re-synced")
+    else:
+        await db.users.insert_one({
+            "id": str(uuid.uuid4()),
+            "name": "Apple Review Expired",
+            "email": APPLE_EXPIRED_EMAIL,
+            "role": "admin",
+            "company_id": APPLE_EXPIRED_COMPANY_ID,
+            "hashed_password": fresh_expired_hash,
+            "status": "active",
+            "email_verified_at": now_iso,
+            "created_at": now_iso,
+        })
+        logger.info("🍎 Apple Review EXPIRED user CREATED")
+
+    # Compagnie expirée (subscription_status=expired, expires_at dans le passé)
+    expired_company = await db.companies.find_one({"company_id": APPLE_EXPIRED_COMPANY_ID})
+    thirty_days_ago = (
+        datetime.now(timezone.utc) - timedelta(days=30)
+    ).isoformat()
+    ninety_days_ago = (
+        datetime.now(timezone.utc) - timedelta(days=90)
+    ).isoformat()
+
+    expired_company_doc = {
+        "company_id": APPLE_EXPIRED_COMPANY_ID,
+        "name": "Apple Review Expired Demo Co.",
+        "account_type": "entreprise",
+        "preferred_plan": "entreprise",
+        "plan": "entreprise",
+        "subscription_status": "expired",
+        "subscription_expires_at": thirty_days_ago,
+        "trial_started_at": ninety_days_ago,
+        "trial_expires_at": thirty_days_ago,
+        "vat_number": "BE0000000098",
+        "created_at": now_iso,
+    }
+    if expired_company:
+        await db.companies.update_one(
+            {"company_id": APPLE_EXPIRED_COMPANY_ID},
+            {"$set": expired_company_doc},
+        )
+        logger.info("🍎 Apple Review EXPIRED company re-synced (status=expired, 30d ago)")
+    else:
+        await db.companies.insert_one(expired_company_doc)
+        logger.info("🍎 Apple Review EXPIRED company CREATED (status=expired, 30d ago)")
+
+    # 1 seul chantier démo (l'utilisateur ne pourra de toute façon rien faire à cause du paywall)
+    existing_expired_chantiers = await db.chantiers.count_documents(
+        {"company_id": APPLE_EXPIRED_COMPANY_ID}
+    )
+    if existing_expired_chantiers == 0:
+        expired_user = await db.users.find_one({"email": APPLE_EXPIRED_EMAIL})
+        expired_creator_id = expired_user["id"] if expired_user else "system"
+        await db.chantiers.insert_one({
+            "id": str(uuid.uuid4()),
+            "client_name": "Démo — Compte expiré (bloqué)",
+            "address": "1 rue Demo, 75001 Paris",
+            "status": "devis_a_faire",
+            "created_by": expired_creator_id,
+            "assigned_to": expired_creator_id,
+            "company_id": APPLE_EXPIRED_COMPANY_ID,
+            "created_at": ninety_days_ago,
+        })
+        logger.info("🍎 Seeded 1 demo chantier for Apple Review EXPIRED account")
