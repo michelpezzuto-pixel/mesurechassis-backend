@@ -98,9 +98,9 @@ def _is_weekend_brussels() -> bool:
 
 # === SUJETS (testés pour CTR optimal en B2B menuisiers) ============
 SUBJECTS = {
-    "be": "Question entre menuisiers 🪟",
-    "fr": "Question entre menuisiers 🪟",
-    "lu": "Question entre menuisiers 🪟",
+    "be": "Question entre menuisiers",
+    "fr": "Question entre menuisiers",
+    "lu": "Question entre menuisiers",
 }
 SUBJECT_RELANCE_1 = "📸 Une nouveauté qui change tout sur chantier"
 SUBJECT_RELANCE_2 = "📸 Dernière chance — l'IA qui lit vos bordereaux"
