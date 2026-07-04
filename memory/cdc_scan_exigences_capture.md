@@ -122,3 +122,96 @@ Effort estimé : 4-5 jours de dev.
 ---
 
 **⏸️ NE PAS COMMENCER TANT QUE APPLE N'A PAS VALIDÉ**
+
+---
+
+## 🔔 ALERTES DATES D'EXÉCUTION — Email + Notifications Push
+
+**Demande utilisateur ajoutée le 04/07/2026** :
+
+Quand le CDC contient des **dates d'exécution** (délai de livraison, date de pose, jalons contractuels…), l'application doit **alerter automatiquement** l'utilisateur pour éviter les oublis et retards.
+
+### 📅 Événements à alerter
+
+| Événement CDC | Alerte prévue |
+|---|---|
+| **J-30 avant date de pose** | Rappel : "Commander le châssis chez le fournisseur" |
+| **J-14 avant date de pose** | Rappel : "Vérifier la disponibilité du poseur + planifier" |
+| **J-7 avant date de pose** | Rappel : "Prévenir client + confirmer accès chantier" |
+| **J-3 avant date de pose** | Rappel : "Préparer outils + charger véhicule" |
+| **Jour J** | Notification : "Chantier à poser aujourd'hui" |
+| **J+1 après pose** | Rappel : "Envoyer PV réception + facture" |
+| **J+7 après pose** | Rappel : "Appel de courtoisie client" |
+| **Date échéance paiement** | Alerte : "Facture N° X impayée depuis Y jours" |
+| **Fin garantie décennale J-30** | Rappel : "Renouveler assurance décennale" |
+
+### 🛠️ Canaux d'alerte
+
+**Canal 1 — Emails** (via Resend, déjà en place) :
+- Envoi automatique à l'utilisateur assigné (poseur, commercial, admin)
+- Sujet clair : "🔔 Chantier Dupont — Pose dans 3 jours"
+- Corps : détails chantier + lien direct dans l'app
+- Configuration par utilisateur : peut activer/désactiver chaque type d'alerte
+
+**Canal 2 — Notifications Push** :
+- Push in-app via **Emergent-managed push notifications**
+- Nécessite intégration via `integration_playbook_expert_v2`
+- Nécessite un build iOS/Android déployé (ne marche pas sur Expo Go)
+- Configuration granulaire par utilisateur (badges, sons, quiet hours)
+
+**Canal 3 — In-app** :
+- Badge rouge sur l'icône de menu "Alertes"
+- Bandeau en haut du dashboard : "🔔 3 chantiers à préparer cette semaine"
+- Section dédiée avec liste chronologique
+
+### 🎯 Personnalisation par rôle
+
+- **Technicien poseur** → alertes J-3, jour J, J+1 (opérationnel)
+- **Commercial** → alertes J-14, J+7, échéances paiement (relation client)
+- **Admin/Manager** → tout + alertes escalade si J-3 pas confirmé
+- **Utilisateur solo** → tout (pas de dispatch équipe)
+
+### 🛠️ Implémentation technique
+
+**Backend** :
+- Modèle `Alerte` : `chantier_id`, `type`, `date_prevue`, `sent_email`, `sent_push`, `read_at`
+- Job cron (APScheduler ou Celery Beat) exécuté toutes les heures :
+  - Query chantiers avec date_pose comprise dans les prochains 30 jours
+  - Génère les alertes correspondantes (J-30, J-14, J-7, J-3, J, J+1, J+7)
+  - Idempotence stricte (une même alerte ne part qu'une fois)
+- Endpoint `GET /api/alerts` : liste des alertes non lues de l'utilisateur
+- Endpoint `PATCH /api/alerts/{id}/read` : marquer comme lu
+
+**Frontend** :
+- Section "Alertes" dans le menu principal
+- Badge notification sur icône (React Native badge)
+- Bandeau dashboard "Alertes actives (N)"
+- Écran détails alerte → deep-link vers chantier concerné
+- Écran Paramètres → toggles par type d'alerte + canaux (email/push/in-app)
+
+### 📌 Priorité
+
+**P2 — Post-Apple validation**
+
+**Sprint dédié : Sprint 4bis — "Alertes intelligentes"**
+- 2j : Backend (modèle Alerte, cron scheduler, endpoints)
+- 1j : Frontend (écran alertes, badges, deep-links)
+- 1j : Emails auto (templates Resend par type d'alerte)
+- 1j : Push notifications (via integration_playbook_expert_v2 Emergent-managed)
+- 1j : Paramètres user (activer/désactiver, quiet hours)
+- 1j : Tests + refinement
+
+**Total** : 7 jours de dev.
+
+### 🔑 Points d'attention
+
+- **Nécessite un build natif iOS + Android** (Emergent Publish) pour tester les push — ne fonctionnera pas en Expo Go
+- **Google Play Console** : demander `google-services.json` à l'utilisateur si Firebase requis
+- **Timezone** : respecter timezone de l'utilisateur (Europe/Paris, Europe/Brussels)
+- **Quiet hours** : ne pas envoyer de push entre 20h et 8h
+- **Anti-spam** : max 3 alertes par jour par utilisateur (agrégation intelligente)
+- **RGPD** : consentement explicite à la première ouverture (opt-in)
+
+---
+
+**⏸️ NE PAS COMMENCER TANT QUE APPLE N'A PAS VALIDÉ**
