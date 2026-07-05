@@ -973,3 +973,24 @@ Citation client : "Bien plus tard, quand on va l'exporter en Italie, en Espagne 
 ### Intégration prévue
 À traiter via `integration_playbook_expert_v2` le jour J pour récupérer le bon SDK et les bonnes pratiques.
 
+
+---
+
+## 🍎 STATUT APPLE — Build 115 soumis (5 juillet 2026)
+
+### Historique récent
+- Build 113/114 : Apple a ACCEPTÉ la défense B2B (Guideline 3.1.1 résolue). Restait le test du paywall compte expiré.
+- Build 114 REFUSÉ (Guideline 2.1a, 04/07/2026) : alerte « Erreur — Chargement impossible » au login du compte expiré au lieu du PaywallScreen (16e refus au total).
+
+### Correctif Build 115 (détails complets : /app/memory/APPLE_RESPONSE_BUILD_115.md)
+1. `backend/routes/company.py` : `beta_mode=false` pour la société `apple-review-expired` (sinon le frontend masquait le paywall).
+2. `frontend/src/services/api.ts` : suppression de la race condition (le succès d'une requête effaçait le verrou paywall).
+3. `frontend/app/dashboard.tsx` + `admin/stats.tsx` : plus d'alerte générique sur HTTP 402.
+- ✅ Validé par testing_agent (backend 5/5 + frontend e2e, iteration_24.json). Aucune régression compte actif.
+- ✅ Build 115 SOUMIS à Apple le 05/07/2026. ⏳ EN ATTENTE du verdict.
+
+### Dès l'approbation Apple (dans l'ordre)
+1. 🔒 P0 : correctifs sécurité (`TODO_POST_APPLE_REVIEW.md`) — JWT_SECRET, PLATFORM_ADMIN_TOKEN, routes ZIP publiques.
+2. 🎬 Scripts TikTok #7 à #10 (format 15 slides, 2.5s/image, CTA « Télécharger gratuitement », sans prix).
+3. 📧 Campagne prospection massive (`strategie_campagne_post_apple.md`).
+4. Odoo/auto-devis (`roadmap_odoo_devis_post_apple.md`), extraction CDC (`cdc_scan_exigences_capture.md`), config mur optionnelle (`workflow_wall_config_optionnelle.md`).
