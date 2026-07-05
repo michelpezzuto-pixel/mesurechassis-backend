@@ -50,11 +50,13 @@ export function onSubscriptionState(cb: (s: SubscriptionState) => void) {
 }
 
 api.interceptors.response.use(
-  (r) => {
-    // Any successful call proves subscription is healthy → clear paywall
-    subscriptionListeners.forEach((cb) => cb({ expired: false }));
-    return r;
-  },
+  // ⚠️ Ne JAMAIS effacer le verrou paywall sur un simple succès : les
+  // endpoints non soumis à l'abonnement (auth/me, company/profile, push
+  // token…) réussissent même pour un compte expiré, ce qui démontait le
+  // PaywallScreen et laissait apparaître une alerte "Chargement impossible"
+  // (rejet Apple 2.1a, Build 114). Le verrou n'est levé que par
+  // fetchCompany() (AuthContext) ou signOut().
+  (r) => r,
   (err) => {
     if (err?.response?.status === 402) {
       const d = err.response.data?.detail ?? {};

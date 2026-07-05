@@ -157,8 +157,12 @@ export default function Dashboard() {
               (c) => (statusMeta[c.status]?.stage ?? "verify") === filter,
             );
       setItems(filtered);
-    } catch (e) {
-      Alert.alert("Erreur", "Chargement impossible.");
+    } catch (e: any) {
+      // 🍎 402 abonnement expiré : le PaywallScreen (AuthContext) prend le
+      // relais — aucune alerte générique par-dessus (Apple 2.1a, Build 114).
+      if (e?.response?.status !== 402) {
+        Alert.alert("Erreur", "Chargement impossible.");
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);

@@ -1,0 +1,38 @@
+{
+  "summary": "Build 114 Apple Guideline 2.1a fix VERIFIED. Backend: 5/5 pytest OK — beta_mode=false for apple-review-expired, beta_mode=true for apple-review-demo, /api/chantiers returns 402 subscription_expired for expired and 200 for active, /api/auth/me works for expired. Frontend web preview (Expo): after login with applereview-expired, PaywallScreen 'ACCÈS BLOQUÉ' displays IMMEDIATELY, ZERO 'Chargement impossible' alert fires, paywall persists >10s (no race condition), CONTACTER LE SUPPORT + SE DÉCONNECTER + S'ABONNER À PRO buttons all present, logout returns to /. Regression: applereview@mesurechassis.com loads dashboard normally (no paywall, no alert, chantiers list visible). NOTE: Initial test run showed 4 stale alerts because Metro had cached the old bundle — after `supervisorctl restart expo`, the alerts disappeared. Main agent should be aware that end-users on TestFlight/App Store get the fresh bundle, so this is a testing-environment quirk only.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": [
+      {
+        "component": "expo-router navigation",
+        "issue": "Console error 'The action REPLACE with payload {name:dashboard} was not handled by any navigator. Do you have a route named dashboard?' fires during signIn on web preview. It is a dev-only warning and does NOT affect the paywall display (AuthProvider covers children with PaywallScreen before nav resolves). Reference: /app/frontend/app/index.tsx (login submit handler)."
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_24.json",
+    "/app/backend/tests/test_build_114_apple_paywall.py",
+    "/app/test_reports/pytest/iter24_build114.xml"
+  ],
+  "action_items": [
+    "Build 114 fix is confirmed on both backend and frontend web preview. Safe to re-submit to Apple for Guideline 2.1a.",
+    "OPTIONAL: investigate 'REPLACE with payload {name:dashboard} was not handled' router warning (harmless but noisy in dev console).",
+    "OPTIONAL cleanup: dashboard.tsx is 1350+ lines and admin/stats.tsx is 500 lines — consider splitting in a future iteration (not blocking Build 114)."
+  ],
+  "critical_code_review_comments": [
+    "routes/company.py L32: beta_mode expression `BETA_MODE and company_id != 'apple-review-expired'` correctly special-cases the Apple review expired demo account. Do NOT modify.",
+    "src/services/api.ts L52-75: axios success interceptor no longer clears the subscription lock — race condition fix confirmed. The 402 branch correctly emits {expired:true, status, expires_at} to listeners.",
+    "app/dashboard.tsx L163 and app/admin/stats.tsx L69-71: both correctly skip Alert.alert on HTTP 402. Verified in browser — 4×402 responses generated 0 alerts.",
+    "src/context/AuthContext.tsx L274: paywall condition `user && lock.expired && !company?.beta_mode` correctly gates PaywallScreen. Regression: active demo (beta_mode=true) bypasses paywall as intended."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "100% (5/5)", "frontend": "100% (4/4 critical checks: paywall shown, no alert, 10s persistence, logout returns to login; regression active-account dashboard OK)" },
+  "seed_data_creation": "None. Used seeded applereview@ and applereview-expired@ accounts (canonical passwords).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Apple Build 114 paywall fix is fully verified. Backend pytest at /app/backend/tests/test_build_114_apple_paywall.py runs in ~4s and asserts beta_mode + 402 code. If retesting frontend, always `sudo supervisorctl restart expo` first to bust Metro's dev bundle cache (a stale bundle initially showed 4 spurious alerts that were actually from a previous build). Confirm success by: expired login → PaywallScreen 'ACCÈS BLOQUÉ' up in <2s, ZERO window dialogs, paywall remains after 10s. Frontend URL: https://window-field-app.preview.emergentagent.com.",
+  "rca_of_issue": "Original Apple 2.1a rejection cause was 3-fold and all three are fixed: (1) routes/company.py:_to_profile returned beta_mode=true for every company including apple-review-expired, so AuthContext's condition `!company?.beta_mode` hid the PaywallScreen — fixed by `BETA_MODE and company_id != 'apple-review-expired'`. (2) src/services/api.ts response interceptor cleared the subscription lock on every successful (non-402) response, so /company/profile succeeding after login re-mounted the dashboard behind the paywall (race condition) — fixed by removing the success-branch clear. (3) dashboard.tsx (fetchData) and admin/stats.tsx (fetchData) unconditionally showed Alert.alert('Erreur','Chargement impossible.') on API failure — fixed with `if (status !== 402)` guards so the PaywallScreen is the ONLY UI shown on subscription-expired. All three fixes verified end-to-end via pytest + Playwright."
+}

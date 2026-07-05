@@ -26,7 +26,10 @@ def _to_profile(doc: dict, company_id: str) -> CompanyProfile:
         chantiers_lifetime_count=int(doc.get("chantiers_lifetime_count", 0)),
         cancel_at_period_end=bool(doc.get("cancel_at_period_end", False)),
         cancelled_at=doc.get("cancelled_at"),
-        beta_mode=BETA_MODE,
+        # 🍎 Apple Review (Guideline 2.1) : le compte de démo expiré ne doit
+        # JAMAIS être en beta_mode, sinon le frontend masque le PaywallScreen
+        # et l'utilisateur voit une erreur générique au lieu du paywall.
+        beta_mode=BETA_MODE and company_id != "apple-review-expired",
         # 💎 Freemium — date de fin de l'essai 14 jours (toutes formes débloquées)
         freemium_trial_ends_at=doc.get("freemium_trial_ends_at"),
     )
