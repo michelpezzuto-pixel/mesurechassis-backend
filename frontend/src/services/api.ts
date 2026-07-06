@@ -49,6 +49,14 @@ export function onSubscriptionState(cb: (s: SubscriptionState) => void) {
   return () => subscriptionListeners.delete(cb);
 }
 
+// Session-expired event bus — souscrit par AuthContext pour forcer la
+// déconnexion propre quand le JWT est expiré/invalide (401).
+const authExpiredListeners = new Set<() => void>();
+export function onAuthExpired(cb: () => void) {
+  authExpiredListeners.add(cb);
+  return () => authExpiredListeners.delete(cb);
+}
+
 api.interceptors.response.use(
   // ⚠️ Ne JAMAIS effacer le verrou paywall sur un simple succès : les
   // endpoints non soumis à l'abonnement (auth/me, company/profile, push
@@ -68,6 +76,20 @@ api.interceptors.response.use(
             expires_at: d.subscription_expires_at,
           })
         );
+      }
+    }
+    // 🔐 401 = JWT expiré/invalide → déconnexion automatique (sauf sur les
+    // routes d'auth elles-mêmes : un mauvais mot de passe ne doit pas
+    // déclencher de signOut global).
+    if (err?.response?.status === 401) {
+      const url = String(err.config?.url || "");
+      const isAuthRoute =
+        url.includes("/auth/login") ||
+        url.includes("/auth/register") ||
+        url.includes("/auth/verify") ||
+        url.includes("/invitations");
+      if (!isAuthRoute) {
+        authExpiredListeners.forEach((cb) => cb());
       }
     }
     return Promise.reject(err);

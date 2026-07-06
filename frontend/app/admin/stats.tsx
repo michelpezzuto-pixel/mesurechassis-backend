@@ -66,8 +66,8 @@ export default function AdminStats() {
       if (e?.response?.status === 403) {
         Alert.alert("Accès refusé", "Réservé aux administrateurs.");
         router.replace("/dashboard");
-      } else if (e?.response?.status !== 402) {
-        // 🍎 402 abonnement expiré : le PaywallScreen gère — pas d'alerte.
+      } else if (e?.response?.status !== 402 && e?.response?.status !== 401) {
+        // 🍎 402 → PaywallScreen gère ; 401 → déconnexion auto globale.
         Alert.alert("Erreur", "Chargement impossible.");
       }
     } finally {

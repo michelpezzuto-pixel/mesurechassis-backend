@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState, ReactNode, useCallback } from "react";
+import { Alert } from "react-native";
 import { useRouter } from "expo-router";
-import { api, clearToken, getToken, onSubscriptionState, saveToken } from "@/src/services/api";
+import { api, clearToken, getToken, onAuthExpired, onSubscriptionState, saveToken } from "@/src/services/api";
 import { registerPushTokenWithBackend } from "@/src/services/notifications";
 import PaywallScreen from "@/src/components/PaywallScreen";
 import i18n, { setArtisanMode as setI18nArtisanMode } from "@/src/i18n";
@@ -88,6 +89,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const off = onSubscriptionState((s) => setLock(s));
     return () => { off(); };
+  }, []);
+
+  // 🔐 Session expirée (401 hors routes d'auth) → déconnexion automatique.
+  // Sans ça, l'utilisateur reste bloqué sur un écran avec des alertes
+  // « Chargement impossible » (JWT expiré après 7 jours).
+  const userRef = useRef<User | null>(null);
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
+  useEffect(() => {
+    const off = onAuthExpired(() => {
+      if (!userRef.current) return; // déjà déconnecté / pas connecté
+      userRef.current = null; // évite les alertes multiples (requêtes en vol)
+      Alert.alert(
+        "Session expirée",
+        "Votre session a expiré. Veuillez vous reconnecter."
+      );
+      signOut();
+    });
+    return () => { off(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchCompany = useCallback(async () => {

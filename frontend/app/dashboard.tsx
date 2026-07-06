@@ -158,9 +158,11 @@ export default function Dashboard() {
             );
       setItems(filtered);
     } catch (e: any) {
-      // 🍎 402 abonnement expiré : le PaywallScreen (AuthContext) prend le
-      // relais — aucune alerte générique par-dessus (Apple 2.1a, Build 114).
-      if (e?.response?.status !== 402) {
+      // 🍎 402 abonnement expiré → PaywallScreen (AuthContext) prend le relais.
+      // 🔐 401 session expirée → déconnexion auto globale (onAuthExpired).
+      // Dans les deux cas : aucune alerte générique par-dessus.
+      const st = e?.response?.status;
+      if (st !== 402 && st !== 401) {
         Alert.alert("Erreur", "Chargement impossible.");
       }
     } finally {
