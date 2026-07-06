@@ -253,21 +253,66 @@
       "gallery": "Galerie"
     },
     "shapes": {
-      "rect": { "label": "CARRÉ / RECTANGLE", "desc": "Baie standard rectangulaire" },
-      "porte_entree": { "label": "PORTE D'ENTRÉE", "desc": "Avec réserve sol & trait niveau 1m" },
-      "porte_garage": { "label": "PORTE DE GARAGE", "desc": "Avec linteau et écoinçons" },
-      "trapeze": { "label": "TRAPÈZE", "desc": "Hauteur gauche ≠ Hauteur droite" },
-      "triangle": { "label": "TRIANGLE", "desc": "Forme triangulaire (base + hauteur)" },
-      "oeil_de_boeuf": { "label": "ŒIL-DE-BŒUF", "desc": "Ouverture circulaire (diamètre)" },
-      "coulissant_levant": { "label": "COULISSANT LEVANT", "desc": "Levant-coulissant avec réserve sol" },
-      "plein_cintre": { "label": "PLEIN CINTRE", "desc": "Arc parfait en demi-cercle au sommet" },
-      "arc_surbaisse": { "label": "ARC SURBAISSÉ", "desc": "Arc applati (flèche < demi-largeur)" },
-      "angle_90": { "label": "PAN COUPÉ", "desc": "Châssis avec coin coupé en oblique" },
-      "bow_window": { "label": "BOW-WINDOW", "desc": "Baie courbe — plusieurs panneaux" },
-      "pentagone": { "label": "PENTAGONE", "desc": "Forme à toit pointu (5 côtés)" },
-      "hexagone": { "label": "HEXAGONE", "desc": "Haut + bas pan coupé (6 côtés)" },
-      "polygone": { "label": "POLYGONE", "desc": "Forme polygonale (3 à 8 arêtes — sommets éditables)" },
-      "ovale": { "label": "OVALE", "desc": "Ellipse (axe horizontal + vertical)" }
+      "rect": {
+        "label": "CARRÉ / RECTANGLE",
+        "desc": "Baie standard rectangulaire"
+      },
+      "porte_entree": {
+        "label": "PORTE D'ENTRÉE",
+        "desc": "Avec réserve sol & trait niveau 1m"
+      },
+      "porte_garage": {
+        "label": "PORTE DE GARAGE",
+        "desc": "Avec linteau et écoinçons"
+      },
+      "trapeze": {
+        "label": "TRAPÈZE",
+        "desc": "Hauteur gauche ≠ Hauteur droite"
+      },
+      "triangle": {
+        "label": "TRIANGLE",
+        "desc": "Forme triangulaire (base + hauteur)"
+      },
+      "oeil_de_boeuf": {
+        "label": "ŒIL-DE-BŒUF",
+        "desc": "Ouverture circulaire (diamètre)"
+      },
+      "coulissant_levant": {
+        "label": "COULISSANT LEVANT",
+        "desc": "Levant-coulissant avec réserve sol"
+      },
+      "plein_cintre": {
+        "label": "PLEIN CINTRE",
+        "desc": "Arc parfait en demi-cercle au sommet"
+      },
+      "arc_surbaisse": {
+        "label": "ARC SURBAISSÉ",
+        "desc": "Arc applati (flèche < demi-largeur)"
+      },
+      "angle_90": {
+        "label": "PAN COUPÉ",
+        "desc": "Châssis avec coin coupé en oblique"
+      },
+      "bow_window": {
+        "label": "BOW-WINDOW",
+        "desc": "Baie courbe — plusieurs panneaux"
+      },
+      "pentagone": {
+        "label": "PENTAGONE",
+        "desc": "Forme à toit pointu (5 côtés)"
+      },
+      "hexagone": {
+        "label": "HEXAGONE",
+        "desc": "Haut + bas pan coupé (6 côtés)"
+      },
+      "polygone": {
+        "label": "POLYGONE",
+        "desc": "Forme polygonale (3 à 8 arêtes — sommets éditables)"
+      },
+      "ovale": {
+        "label": "OVALE",
+        "desc": "Ellipse (axe horizontal + vertical)"
+      }
     }
   },
   "closure": {
@@ -844,11 +889,11 @@
   "onboarding": {
     "title": "🚀 Premiers pas",
     "subtitle": "Configurez votre équipe pour commencer à mesurer des chantiers.",
-    "step1Title": "Inviter votre 1er commercial (offert)",
-    "step1Desc": "Le commercial prend les mesures sur le terrain. Vous pourrez lui affecter des chantiers. ✨ 1 place commerciale offerte avec votre essai gratuit.",
+    "step1Title": "Inviter votre 1er commercial",
+    "step1Desc": "Le commercial prend les mesures sur le terrain. Vous pourrez lui affecter des chantiers.",
     "step1Btn": "Aller dans Équipe",
-    "step2Title": "Inviter un technicien (offert)",
-    "step2Desc": "Le technicien valide les mesures avant de lancer la fabrication. ✨ 1 place technicien offerte avec votre essai gratuit. Toute place supplémentaire = 4,99 €/mois.",
+    "step2Title": "Inviter un technicien",
+    "step2Desc": "Le technicien valide les mesures avant de lancer la fabrication.",
     "step2Btn": "Inviter un technicien",
     "step3Title": "Créer votre 1er chantier",
     "step3Desc": "Une fois votre équipe en place, le bouton « + Nouveau chantier » apparaîtra automatiquement en bas de l'écran.",

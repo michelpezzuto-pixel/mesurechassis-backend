@@ -720,7 +720,11 @@ export default function CompanyProfile() {
             )}
           </View>
 
-          {/* === TYPE DE COMPTE (C5 — Bascule Artisan/Entreprise) === */}
+          {/* === TYPE DE COMPTE (C5 — Bascule Artisan/Entreprise) ===
+           * 🍎 Masqué sur iOS (App Store 3.1.1 / 3.1.3(c)) : le compte
+           * "Artisan" est une offre individuelle → interdite sur iOS sans
+           * IAP. Sur iOS, aucune mention de formule ni de bascule. */}
+          {Platform.OS !== "ios" && (
           <View style={styles.card}>
             <Text style={styles.section}>TYPE DE COMPTE</Text>
             <Text style={styles.help}>
@@ -799,6 +803,7 @@ export default function CompanyProfile() {
               </Text>
             )}
           </View>
+          )}
 
           {isAdmin && (
             <TouchableOpacity

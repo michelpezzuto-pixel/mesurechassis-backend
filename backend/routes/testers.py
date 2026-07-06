@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException
 
 from db import db
-from deps import require_admin
+from deps import require_platform_owner
 
 logger = logging.getLogger("mesurechassis.testers")
 
@@ -79,7 +79,7 @@ async def register_tester(payload: dict):
 
 
 @router.get("/testers")
-async def list_testers(user=Depends(require_admin)):
+async def list_testers(user=Depends(require_platform_owner)):
     """Liste des candidats testeurs (admin uniquement)."""
     docs = (
         await db.tester_signups.find({}, {"_id": 0})
@@ -90,7 +90,7 @@ async def list_testers(user=Depends(require_admin)):
 
 
 @router.patch("/testers/{tester_id}/invited")
-async def mark_tester_invited(tester_id: str, user=Depends(require_admin)):
+async def mark_tester_invited(tester_id: str, user=Depends(require_platform_owner)):
     """Marque un testeur comme ajouté dans Play Console (suivi visuel)."""
     res = await db.tester_signups.update_one(
         {"id": tester_id}, {"$set": {"status": "invited"}}
@@ -101,7 +101,7 @@ async def mark_tester_invited(tester_id: str, user=Depends(require_admin)):
 
 
 @router.delete("/testers/{tester_id}")
-async def delete_tester(tester_id: str, user=Depends(require_admin)):
+async def delete_tester(tester_id: str, user=Depends(require_platform_owner)):
     """Supprime une inscription (admin uniquement)."""
     res = await db.tester_signups.delete_one({"id": tester_id})
     if res.deleted_count == 0:

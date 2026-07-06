@@ -33,9 +33,19 @@
     "register": "Sign up",
     "chooseProfile": "Choose your profile",
     "profile": {
-      "artisan": { "title": "Solo Craftsman", "desc": "Solo account — self-employed, ultra-simple" },
-      "entreprise": { "title": "Company", "desc": "Team of 3 — Admin, sales & technicians", "badge": "POPULAR" },
-      "pro": { "title": "Company Pro", "desc": "Team of 6 + Bluetooth & advanced features" },
+      "artisan": {
+        "title": "Solo Craftsman",
+        "desc": "Solo account — self-employed, ultra-simple"
+      },
+      "entreprise": {
+        "title": "Company",
+        "desc": "Team of 3 — Admin, sales & technicians",
+        "badge": "POPULAR"
+      },
+      "pro": {
+        "title": "Company Pro",
+        "desc": "Team of 6 + Bluetooth & advanced features"
+      },
       "freeTrialPrefix": "✨ 90 days free then"
     },
     "fullName": "Your full name",
@@ -69,8 +79,21 @@
     "search": "Search a project…",
     "empty": "No projects yet",
     "createFirst": "Create my first project",
-    "filters": { "all": "All", "toMeasure": "To measure", "measured": "Measured", "validated": "Validated", "inProduction": "In production", "done": "Done" },
-    "status": { "to_measure": "TO MEASURE", "measured": "MEASURED", "validated": "VALIDATED", "in_production": "IN PRODUCTION", "done": "DONE" },
+    "filters": {
+      "all": "All",
+      "toMeasure": "To measure",
+      "measured": "Measured",
+      "validated": "Validated",
+      "inProduction": "In production",
+      "done": "Done"
+    },
+    "status": {
+      "to_measure": "TO MEASURE",
+      "measured": "MEASURED",
+      "validated": "VALIDATED",
+      "in_production": "IN PRODUCTION",
+      "done": "DONE"
+    },
     "openings": "openings",
     "updatedAt": "Updated",
     "createDialog": {
@@ -91,7 +114,12 @@
       "construction": "New construction",
       "renovation": "Renovation",
       "masonryType": "MASONRY TYPE *",
-      "masonry": { "bloc_beton": "Concrete block", "bloc_terre_cuite": "Clay block", "brique": "Brick", "pierre": "Stone" },
+      "masonry": {
+        "bloc_beton": "Concrete block",
+        "bloc_terre_cuite": "Clay block",
+        "brique": "Brick",
+        "pierre": "Stone"
+      },
       "grosOeuvre": "WALL THICKNESS (mm) *",
       "insulation": "INSULATION & FINISH *",
       "insulNone": "Solid wall, no insulation",
@@ -99,7 +127,12 @@
       "insulIte": "Exterior insulation (ITE)",
       "itiThickness": "INTERIOR INSULATION THICKNESS (mm) *",
       "parementType": "FACING TYPE *",
-      "parement": { "crepi": "Render", "brique_parement": "Face brick", "pierre_parement": "Stone facing", "bardage": "Cladding" },
+      "parement": {
+        "crepi": "Render",
+        "brique_parement": "Face brick",
+        "pierre_parement": "Stone facing",
+        "bardage": "Cladding"
+      },
       "iteInsul": "INSULATION THICKNESS (mm) *",
       "crepiThickness": "RENDER THICKNESS (mm) *",
       "coulisseThickness": "CAVITY THICKNESS (mm) *",
@@ -220,21 +253,66 @@
       "gallery": "Gallery"
     },
     "shapes": {
-      "rect": { "label": "SQUARE / RECTANGLE", "desc": "Standard rectangular bay" },
-      "porte_entree": { "label": "FRONT DOOR", "desc": "With floor reserve & 1m level mark" },
-      "porte_garage": { "label": "GARAGE DOOR", "desc": "With lintel and jambs" },
-      "trapeze": { "label": "TRAPEZOID", "desc": "Left height ≠ Right height" },
-      "triangle": { "label": "TRIANGLE", "desc": "Triangular shape (base + height)" },
-      "oeil_de_boeuf": { "label": "OCULUS", "desc": "Circular opening (diameter)" },
-      "coulissant_levant": { "label": "LIFT-AND-SLIDE", "desc": "Lift-and-slide with floor reserve" },
-      "plein_cintre": { "label": "FULL ARCH", "desc": "Perfect half-circle arch at the top" },
-      "arc_surbaisse": { "label": "SEGMENTAL ARCH", "desc": "Flattened arch (rise < half-width)" },
-      "angle_90": { "label": "CUT CORNER", "desc": "Window with corner cut at an angle" },
-      "bow_window": { "label": "BOW-WINDOW", "desc": "Curved bay — multiple panels" },
-      "pentagone": { "label": "PENTAGON", "desc": "Pointed-roof shape (5 sides)" },
-      "hexagone": { "label": "HEXAGON", "desc": "Top + bottom cut (6 sides)" },
-      "polygone": { "label": "POLYGON", "desc": "Polygonal shape (3 to 8 edges — editable vertices)" },
-      "ovale": { "label": "OVAL", "desc": "Ellipse (horizontal + vertical axes)" }
+      "rect": {
+        "label": "SQUARE / RECTANGLE",
+        "desc": "Standard rectangular bay"
+      },
+      "porte_entree": {
+        "label": "FRONT DOOR",
+        "desc": "With floor reserve & 1m level mark"
+      },
+      "porte_garage": {
+        "label": "GARAGE DOOR",
+        "desc": "With lintel and jambs"
+      },
+      "trapeze": {
+        "label": "TRAPEZOID",
+        "desc": "Left height ≠ Right height"
+      },
+      "triangle": {
+        "label": "TRIANGLE",
+        "desc": "Triangular shape (base + height)"
+      },
+      "oeil_de_boeuf": {
+        "label": "OCULUS",
+        "desc": "Circular opening (diameter)"
+      },
+      "coulissant_levant": {
+        "label": "LIFT-AND-SLIDE",
+        "desc": "Lift-and-slide with floor reserve"
+      },
+      "plein_cintre": {
+        "label": "FULL ARCH",
+        "desc": "Perfect half-circle arch at the top"
+      },
+      "arc_surbaisse": {
+        "label": "SEGMENTAL ARCH",
+        "desc": "Flattened arch (rise < half-width)"
+      },
+      "angle_90": {
+        "label": "CUT CORNER",
+        "desc": "Window with corner cut at an angle"
+      },
+      "bow_window": {
+        "label": "BOW-WINDOW",
+        "desc": "Curved bay — multiple panels"
+      },
+      "pentagone": {
+        "label": "PENTAGON",
+        "desc": "Pointed-roof shape (5 sides)"
+      },
+      "hexagone": {
+        "label": "HEXAGON",
+        "desc": "Top + bottom cut (6 sides)"
+      },
+      "polygone": {
+        "label": "POLYGON",
+        "desc": "Polygonal shape (3 to 8 edges — editable vertices)"
+      },
+      "ovale": {
+        "label": "OVAL",
+        "desc": "Ellipse (horizontal + vertical axes)"
+      }
     }
   },
   "closure": {
@@ -807,11 +885,11 @@
   "onboarding": {
     "title": "🚀 Getting started",
     "subtitle": "Set up your team to start measuring projects.",
-    "step1Title": "Invite your 1st salesperson (free)",
-    "step1Desc": "The salesperson takes on-site measurements. You can assign projects to them. ✨ 1 free salesperson seat with your trial.",
+    "step1Title": "Invite your 1st salesperson",
+    "step1Desc": "The salesperson takes on-site measurements. You can assign projects to them.",
     "step1Btn": "Go to Team",
-    "step2Title": "Invite a technician (free)",
-    "step2Desc": "The technician validates measurements before launching production. ✨ 1 free technician seat with your trial. Each additional seat = €4.99/month.",
+    "step2Title": "Invite a technician",
+    "step2Desc": "The technician validates measurements before launching production.",
     "step2Btn": "Invite a technician",
     "step3Title": "Create your 1st project",
     "step3Desc": "Once your team is in place, the « + New project » button will appear automatically at the bottom of the screen.",

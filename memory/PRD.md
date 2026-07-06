@@ -994,3 +994,9 @@ Citation client : "Bien plus tard, quand on va l'exporter en Italie, en Espagne 
 2. 🎬 Scripts TikTok #7 à #10 (format 15 slides, 2.5s/image, CTA « Télécharger gratuitement », sans prix).
 3. 📧 Campagne prospection massive (`strategie_campagne_post_apple.md`).
 4. Odoo/auto-devis (`roadmap_odoo_devis_post_apple.md`), extraction CDC (`cdc_scan_exigences_capture.md`), config mur optionnelle (`workflow_wall_config_optionnelle.md`).
+
+## 🍎 Build 116 (06/07/2026) — Rejet 3.1.1/3.1.3(c) corrigé
+- Build 115 refusé : offre individuelle (Artisan) + prix visibles sur iOS sans IAP.
+- Grand nettoyage « zéro paiement » sur iOS + verrouillage des outils internes
+  (Campagne/LinkedIn/Testeurs réservés au propriétaire via require_platform_owner).
+- Détails complets : /app/memory/APPLE_RESPONSE_BUILD_116.md

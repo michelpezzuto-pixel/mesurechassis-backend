@@ -544,7 +544,35 @@ export default function TeamAdmin() {
             <View style={styles.extraIconWrap}>
               <Ionicons name="card" size={28} color="#000" />
             </View>
-            <Text style={styles.extraTitle}>SUPPLÉMENT UTILISATEUR</Text>
+            <Text style={styles.extraTitle}>
+              {Platform.OS === "ios" ? "LIMITE DE SIÈGES ATTEINTE" : "SUPPLÉMENT UTILISATEUR"}
+            </Text>
+            {/* 🍎 iOS — App Store 3.1.1 : AUCUN langage de facturation ni de
+             * confirmation d'achat. L'ajout de sièges se gère hors app. */}
+            {Platform.OS === "ios" ? (
+              <>
+                <Text style={styles.extraDesc}>
+                  Votre forfait inclut{" "}
+                  <Text style={styles.extraBold}>
+                    {extraSeatInfo?.free_seats ?? 2} sièges d&apos;équipe
+                  </Text>{" "}
+                  (1 commercial + 1 technicien). Pour ajouter des utilisateurs
+                  supplémentaires, contactez notre support :{" "}
+                  <Text style={styles.extraBold}>info@mesurechassis.com</Text>
+                </Text>
+                <View style={styles.extraActions}>
+                  <TouchableOpacity
+                    testID="extra-seat-cancel"
+                    onPress={() => setExtraSeatInfo(null)}
+                    style={[styles.extraBtn, styles.extraBtnPrimary]}
+                    activeOpacity={0.85}
+                  >
+                    <Text style={styles.extraBtnPrimaryText}>FERMER</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            ) : (
+              <>
             <Text style={styles.extraDesc}>
               Votre forfait{" "}
               <Text style={styles.extraBold}>
@@ -614,6 +642,8 @@ export default function TeamAdmin() {
                 )}
               </TouchableOpacity>
             </View>
+              </>
+            )}
           </View>
         </View>
       </Modal>

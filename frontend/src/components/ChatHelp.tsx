@@ -69,7 +69,13 @@ export const ChatHelp: React.FC<Props> = ({
   const [query, setQuery] = useState("");
   const [openId, setOpenId] = useState<string | null>(null);
 
-  const entries = faqData as FaqEntry[];
+  // 🍎 iOS — App Store 3.1.1 / 3.1.3(c) : on retire de la FAQ toute entrée
+  // mentionnant des prix, formules ou abonnements (paiement géré hors app).
+  const entries = (faqData as FaqEntry[]).filter(
+    (e) =>
+      Platform.OS !== "ios" ||
+      !/€|formule|abonnement|tarif|prix/i.test(`${e.question} ${e.answer}`)
+  );
 
   const filtered = useMemo(() => {
     const q = norm(query.trim());

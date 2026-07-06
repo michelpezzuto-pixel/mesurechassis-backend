@@ -132,6 +132,19 @@ export default function Dashboard() {
 
   const canCreate = user?.role === "admin" || user?.role === "commercial";
 
+  // 🔐 Outils internes plateforme (Campagne, LinkedIn, Testeurs) : visibles
+  // UNIQUEMENT pour le propriétaire de MesureChâssis, jamais pour les
+  // admins clients (confidentialité prospects + Apple Review).
+  const PLATFORM_OWNER_EMAILS = [
+    "info@mesurechassis.com",
+    "michelpezzuto@hotmail.com",
+    "michelpezzuto@gmail.com",
+  ];
+  const isPlatformOwner =
+    user?.role === "admin" &&
+    !!user?.email &&
+    PLATFORM_OWNER_EMAILS.includes(user.email.toLowerCase());
+
   const fetchData = useCallback(async () => {
     try {
       const params: Record<string, string> = {};
@@ -439,8 +452,9 @@ export default function Dashboard() {
           </TouchableOpacity>
         )}
         {/* Testeurs Google Play : outil de pré-lancement, géré depuis le web
-            uniquement (l'admin copie les emails vers Play Console). */}
-        {user?.role === "admin" && Platform.OS === "web" && (
+            uniquement (l'admin copie les emails vers Play Console).
+            🔐 Outil interne — visible UNIQUEMENT pour le propriétaire. */}
+        {isPlatformOwner && Platform.OS === "web" && (
           <TouchableOpacity
             testID="admin-testers-button"
             onPress={() => router.push("/admin/testers" as never)}
@@ -451,9 +465,9 @@ export default function Dashboard() {
             <Text style={styles.actionBtnText} numberOfLines={1}>Testeurs</Text>
           </TouchableOpacity>
         )}
-        {/* Campagne emailing prospection testeurs — accessible depuis mobile
-            (l'admin lance le lot du jour en 1 clic depuis son iPhone). */}
-        {user?.role === "admin" && (
+        {/* Campagne emailing prospection — 🔐 outil interne, visible
+            UNIQUEMENT pour le propriétaire de la plateforme. */}
+        {isPlatformOwner && (
           <TouchableOpacity
             testID="admin-campagne-button"
             onPress={() => router.push("/admin/campagne" as never)}
@@ -464,7 +478,7 @@ export default function Dashboard() {
             <Text style={styles.actionBtnText} numberOfLines={1}>Campagne</Text>
           </TouchableOpacity>
         )}
-        {user?.role === "admin" && (
+        {isPlatformOwner && (
           <TouchableOpacity
             testID="admin-linkedin-button"
             onPress={() => router.push("/admin/linkedin" as never)}

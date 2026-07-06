@@ -14,7 +14,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse
 
 from db import db
-from deps import require_admin
+from deps import require_platform_owner
 
 router = APIRouter()
 
@@ -387,7 +387,7 @@ async def _posted_days() -> set:
 
 
 @router.get("/linkedin/today")
-async def linkedin_today(user=Depends(require_admin)):
+async def linkedin_today(user=Depends(require_platform_owner)):
     """Le post du jour = premier jour non encore publié."""
     posted = await _posted_days()
     current = next((p for p in POSTS if p["day"] not in posted), None)
@@ -401,7 +401,7 @@ async def linkedin_today(user=Depends(require_admin)):
 
 
 @router.get("/linkedin/posts")
-async def linkedin_posts(user=Depends(require_admin)):
+async def linkedin_posts(user=Depends(require_platform_owner)):
     posted = await _posted_days()
     return {
         "posts": [
@@ -412,7 +412,7 @@ async def linkedin_posts(user=Depends(require_admin)):
 
 
 @router.post("/linkedin/mark-posted")
-async def mark_posted(payload: dict, user=Depends(require_admin)):
+async def mark_posted(payload: dict, user=Depends(require_platform_owner)):
     day = payload.get("day")
     if not isinstance(day, int) or not 1 <= day <= len(POSTS):
         raise HTTPException(400, "Jour invalide")
@@ -425,7 +425,7 @@ async def mark_posted(payload: dict, user=Depends(require_admin)):
 
 
 @router.post("/linkedin/unmark-posted")
-async def unmark_posted(payload: dict, user=Depends(require_admin)):
+async def unmark_posted(payload: dict, user=Depends(require_platform_owner)):
     """Annule un marquage (mauvaise manip)."""
     day = payload.get("day")
     res = await db.linkedin_progress.delete_one({"day": day})

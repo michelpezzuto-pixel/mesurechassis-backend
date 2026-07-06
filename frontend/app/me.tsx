@@ -141,7 +141,10 @@ export default function MyInfoScreen() {
           {/* 🆕 V3 — Sélecteur de langue (FR/NL/EN) */}
           <LanguagePicker />
 
-          {/* 🆕 Build 9 — Accès au système de parrainage */}
+          {/* 🆕 Build 9 — Accès au système de parrainage
+           * 🍎 Masqué sur iOS (App Store 3.1.1) : les récompenses "mois
+           * offerts" sont des crédits d'abonnement. */}
+          {Platform.OS !== "ios" && (
           <TouchableOpacity
             testID="open-referral-btn"
             onPress={() => router.push("/referral")}
@@ -159,6 +162,7 @@ export default function MyInfoScreen() {
             </View>
             <Ionicons name="chevron-forward" size={22} color={colors.textSecondary} />
           </TouchableOpacity>
+          )}
 
           {/* 🆕 Build 9 — Accès direct au Centre d'aide / FAQ */}
           <TouchableOpacity
@@ -173,7 +177,9 @@ export default function MyInfoScreen() {
             <View style={{ flex: 1 }}>
               <Text style={styles.referralTitle}>Centre d&apos;aide</Text>
               <Text style={styles.referralDesc}>
-                FAQ, guide des formules, parrainage, prise de mesures…
+                {Platform.OS === "ios"
+                  ? "FAQ, prise de mesures, exports, gestion d'équipe…"
+                  : "FAQ, guide des formules, parrainage, prise de mesures…"}
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={22} color={colors.textSecondary} />

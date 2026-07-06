@@ -32,7 +32,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
 from fastapi.responses import HTMLResponse
 
 from db import JWT_SECRET, db
-from deps import require_admin
+from deps import require_platform_owner
 from email_service import send_email
 
 logger = logging.getLogger("mesurechassis.campaign")
@@ -351,7 +351,7 @@ async def weekly_recap_loop() -> None:
 
 
 @router.post("/campaign/recap-now")
-async def recap_now(user=Depends(require_admin)):
+async def recap_now(user=Depends(require_platform_owner)):
     """Envoi immédiat du récap (test / à la demande depuis l'app)."""
     res = await send_weekly_recap()
     return {
@@ -407,7 +407,7 @@ async def seed_prospects_from_csv() -> None:
 
 
 @router.post("/campaign/prospects/import")
-async def import_prospects(payload: dict, user=Depends(require_admin)):
+async def import_prospects(payload: dict, user=Depends(require_platform_owner)):
     """Importe/complète la liste de prospects. Dédoublonne par email."""
     items = payload.get("prospects") or []
     added, skipped = 0, 0
@@ -495,7 +495,7 @@ async def _second_relances_dues() -> list[dict]:
 
 
 @router.get("/campaign/stats")
-async def campaign_stats(user=Depends(require_admin)):
+async def campaign_stats(user=Depends(require_platform_owner)):
     pending = await db.prospects.count_documents({"status": "pending"})
     sent = await db.prospects.count_documents({"status": "sent"})
     failed = await db.prospects.count_documents({"status": "failed"})
@@ -525,7 +525,7 @@ async def campaign_stats(user=Depends(require_admin)):
 
 
 @router.get("/campaign/prospects")
-async def list_prospects(user=Depends(require_admin)):
+async def list_prospects(user=Depends(require_platform_owner)):
     docs = (
         await db.prospects.find({}, {"_id": 0})
         .sort([("status", 1), ("sent_at", -1)])
@@ -609,7 +609,7 @@ async def _send_batch_task(items: list[dict]) -> None:
 async def send_batch(
     background_tasks: BackgroundTasks,
     force_weekend: bool = False,
-    user=Depends(require_admin),
+    user=Depends(require_platform_owner),
 ):
     """Envoie le lot du jour, dans cet ordre de priorité :
       1. Relances J+7 (dernière chance, leads les plus tièdes)
@@ -714,7 +714,7 @@ async def send_batch(
 # === RESET / TABULA RASA — pour relancer une campagne depuis zéro ═══
 # ════════════════════════════════════════════════════════════════════
 @router.post("/campaign/prospects/reset")
-async def reset_prospects(payload: dict, user=Depends(require_admin)):
+async def reset_prospects(payload: dict, user=Depends(require_platform_owner)):
     """Remet tous les prospects (ou un sous-ensemble) en statut "pending".
 
     Utilisation : Michel veut redémarrer une campagne depuis zéro après
@@ -766,7 +766,7 @@ async def reset_prospects(payload: dict, user=Depends(require_admin)):
 @router.post("/campaign/prospects/{prospect_id}/unsubscribe")
 async def admin_unsubscribe_prospect(
     prospect_id: str,
-    user=Depends(require_admin),
+    user=Depends(require_platform_owner),
 ):
     """🚫 Désinscription manuelle d'un prospect par l'admin.
 
@@ -802,7 +802,7 @@ async def admin_unsubscribe_prospect(
 @router.post("/campaign/prospects/{prospect_id}/resubscribe")
 async def admin_resubscribe_prospect(
     prospect_id: str,
-    user=Depends(require_admin),
+    user=Depends(require_platform_owner),
 ):
     """🔄 Réinscription manuelle (cas exceptionnel : erreur de manip).
 

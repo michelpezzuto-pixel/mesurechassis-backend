@@ -53,6 +53,15 @@ export default function ReferralScreen() {
   const [draftCode, setDraftCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  // 🍎 Écran inaccessible sur iOS (App Store 3.1.1) : les récompenses
+  // "mois offerts" sont des crédits d'abonnement.
+  useEffect(() => {
+    if (Platform.OS === "ios") {
+      router.replace("/dashboard");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const load = useCallback(async () => {
     try {
       const { data } = await api.get<ReferralStatus>("/referral/me");

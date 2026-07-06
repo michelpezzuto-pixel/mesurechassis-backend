@@ -33,9 +33,19 @@
     "register": "Registreren",
     "chooseProfile": "Kies uw profiel",
     "profile": {
-      "artisan": { "title": "Solo Vakman", "desc": "Solo-account — zelfstandige, ultra-eenvoudig" },
-      "entreprise": { "title": "Bedrijf", "desc": "Team 3 gebruikers — Admin, verkopers & technici", "badge": "POPULAIR" },
-      "pro": { "title": "Bedrijf Pro", "desc": "Team 6 gebruikers + Bluetooth & geavanceerde functies" },
+      "artisan": {
+        "title": "Solo Vakman",
+        "desc": "Solo-account — zelfstandige, ultra-eenvoudig"
+      },
+      "entreprise": {
+        "title": "Bedrijf",
+        "desc": "Team 3 gebruikers — Admin, verkopers & technici",
+        "badge": "POPULAIR"
+      },
+      "pro": {
+        "title": "Bedrijf Pro",
+        "desc": "Team 6 gebruikers + Bluetooth & geavanceerde functies"
+      },
       "freeTrialPrefix": "✨ 90 dagen gratis dan"
     },
     "fullName": "Uw volledige naam",
@@ -69,8 +79,21 @@
     "search": "Zoek een project…",
     "empty": "Nog geen projecten",
     "createFirst": "Mijn eerste project aanmaken",
-    "filters": { "all": "Alle", "toMeasure": "Te meten", "measured": "Gemeten", "validated": "Gevalideerd", "inProduction": "In productie", "done": "Afgerond" },
-    "status": { "to_measure": "TE METEN", "measured": "GEMETEN", "validated": "GEVALIDEERD", "in_production": "IN PRODUCTIE", "done": "AFGEROND" },
+    "filters": {
+      "all": "Alle",
+      "toMeasure": "Te meten",
+      "measured": "Gemeten",
+      "validated": "Gevalideerd",
+      "inProduction": "In productie",
+      "done": "Afgerond"
+    },
+    "status": {
+      "to_measure": "TE METEN",
+      "measured": "GEMETEN",
+      "validated": "GEVALIDEERD",
+      "in_production": "IN PRODUCTIE",
+      "done": "AFGEROND"
+    },
     "openings": "openingen",
     "updatedAt": "Bijgewerkt",
     "createDialog": {
@@ -91,7 +114,12 @@
       "construction": "Nieuwbouw",
       "renovation": "Renovatie",
       "masonryType": "MUURWERK TYPE *",
-      "masonry": { "bloc_beton": "Betonblok", "bloc_terre_cuite": "Keramisch blok", "brique": "Baksteen", "pierre": "Natuursteen" },
+      "masonry": {
+        "bloc_beton": "Betonblok",
+        "bloc_terre_cuite": "Keramisch blok",
+        "brique": "Baksteen",
+        "pierre": "Natuursteen"
+      },
       "grosOeuvre": "DIKTE RUWBOUW (mm) *",
       "insulation": "ISOLATIE & AFWERKING *",
       "insulNone": "Massieve muur zonder isolatie",
@@ -99,7 +127,12 @@
       "insulIte": "Buitenisolatie (ITE)",
       "itiThickness": "DIKTE BINNENISOLATIE (mm) *",
       "parementType": "TYPE GEVELBEKLEDING *",
-      "parement": { "crepi": "Pleisterwerk", "brique_parement": "Gevelsteen", "pierre_parement": "Natuursteen", "bardage": "Houten gevelbekleding" },
+      "parement": {
+        "crepi": "Pleisterwerk",
+        "brique_parement": "Gevelsteen",
+        "pierre_parement": "Natuursteen",
+        "bardage": "Houten gevelbekleding"
+      },
       "iteInsul": "DIKTE ISOLATIE (mm) *",
       "crepiThickness": "DIKTE PLEISTERWERK (mm) *",
       "coulisseThickness": "DIKTE SPOUW (mm) *",
@@ -220,21 +253,66 @@
       "gallery": "Galerij"
     },
     "shapes": {
-      "rect": { "label": "VIERKANT / RECHTHOEK", "desc": "Standaard rechthoekige baai" },
-      "porte_entree": { "label": "VOORDEUR", "desc": "Met vloerreserve & 1m peilmaat" },
-      "porte_garage": { "label": "GARAGEDEUR", "desc": "Met latei en hoekstukken" },
-      "trapeze": { "label": "TRAPEZIUM", "desc": "Hoogte links ≠ Hoogte rechts" },
-      "triangle": { "label": "DRIEHOEK", "desc": "Driehoekige vorm (basis + hoogte)" },
-      "oeil_de_boeuf": { "label": "RONDRAAM", "desc": "Ronde opening (diameter)" },
-      "coulissant_levant": { "label": "HEFSCHUIFDEUR", "desc": "Hefschuif met vloerreserve" },
-      "plein_cintre": { "label": "VOLLE BOOG", "desc": "Halfcirkelvormige boog bovenaan" },
-      "arc_surbaisse": { "label": "KORFBOOG", "desc": "Afgevlakte boog (pijl < halve breedte)" },
-      "angle_90": { "label": "SCHUINE HOEK", "desc": "Kozijn met schuin afgesneden hoek" },
-      "bow_window": { "label": "BOW-WINDOW", "desc": "Gebogen baai — meerdere panelen" },
-      "pentagone": { "label": "VIJFHOEK", "desc": "Vorm met puntdak (5 zijden)" },
-      "hexagone": { "label": "ZESHOEK", "desc": "Boven + onder schuin (6 zijden)" },
-      "polygone": { "label": "VEELHOEK", "desc": "Veelhoekige vorm (3 tot 8 randen — bewerkbare hoekpunten)" },
-      "ovale": { "label": "OVAAL", "desc": "Ellips (horizontale + verticale as)" }
+      "rect": {
+        "label": "VIERKANT / RECHTHOEK",
+        "desc": "Standaard rechthoekige baai"
+      },
+      "porte_entree": {
+        "label": "VOORDEUR",
+        "desc": "Met vloerreserve & 1m peilmaat"
+      },
+      "porte_garage": {
+        "label": "GARAGEDEUR",
+        "desc": "Met latei en hoekstukken"
+      },
+      "trapeze": {
+        "label": "TRAPEZIUM",
+        "desc": "Hoogte links ≠ Hoogte rechts"
+      },
+      "triangle": {
+        "label": "DRIEHOEK",
+        "desc": "Driehoekige vorm (basis + hoogte)"
+      },
+      "oeil_de_boeuf": {
+        "label": "RONDRAAM",
+        "desc": "Ronde opening (diameter)"
+      },
+      "coulissant_levant": {
+        "label": "HEFSCHUIFDEUR",
+        "desc": "Hefschuif met vloerreserve"
+      },
+      "plein_cintre": {
+        "label": "VOLLE BOOG",
+        "desc": "Halfcirkelvormige boog bovenaan"
+      },
+      "arc_surbaisse": {
+        "label": "KORFBOOG",
+        "desc": "Afgevlakte boog (pijl < halve breedte)"
+      },
+      "angle_90": {
+        "label": "SCHUINE HOEK",
+        "desc": "Kozijn met schuin afgesneden hoek"
+      },
+      "bow_window": {
+        "label": "BOW-WINDOW",
+        "desc": "Gebogen baai — meerdere panelen"
+      },
+      "pentagone": {
+        "label": "VIJFHOEK",
+        "desc": "Vorm met puntdak (5 zijden)"
+      },
+      "hexagone": {
+        "label": "ZESHOEK",
+        "desc": "Boven + onder schuin (6 zijden)"
+      },
+      "polygone": {
+        "label": "VEELHOEK",
+        "desc": "Veelhoekige vorm (3 tot 8 randen — bewerkbare hoekpunten)"
+      },
+      "ovale": {
+        "label": "OVAAL",
+        "desc": "Ellips (horizontale + verticale as)"
+      }
     }
   },
   "closure": {
@@ -807,11 +885,11 @@
   "onboarding": {
     "title": "🚀 Eerste stappen",
     "subtitle": "Stel uw team in om werven te kunnen meten.",
-    "step1Title": "Nodig uw 1ste verkoper uit (gratis)",
-    "step1Desc": "De verkoper neemt de metingen op de werf. ✨ 1 gratis verkoperplaats inbegrepen met uw proefperiode.",
+    "step1Title": "Nodig uw 1ste verkoper uit",
+    "step1Desc": "De verkoper neemt de metingen op de werf.",
     "step1Btn": "Naar Team",
-    "step2Title": "Een technieker uitnodigen (gratis)",
-    "step2Desc": "De technieker valideert de metingen voor de productie. ✨ 1 gratis technieker-plaats inbegrepen. Elke extra plaats = €4,99/maand.",
+    "step2Title": "Een technieker uitnodigen",
+    "step2Desc": "De technieker valideert de metingen voor de productie.",
     "step2Btn": "Een technieker uitnodigen",
     "step3Title": "Maak uw 1ste werf aan",
     "step3Desc": "Wanneer uw team klaar is, verschijnt de knop « + Nieuwe werf » automatisch onderaan het scherm.",

@@ -11,7 +11,7 @@
  * "2 mois offerts" — c'est une mécanique de fidélisation, pas un IAP.
  */
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { api } from "@/src/services/api";
@@ -25,6 +25,10 @@ type ReferralStatusLite = {
 export default function FilleulInviteBanner() {
   const router = useRouter();
   const [shouldShow, setShouldShow] = useState(false);
+
+  // 🍎 Masquée sur iOS (App Store 3.1.1) : "2 mois offerts" = crédit
+  // d'abonnement → aucune mécanique de récompense d'abonnement sur iOS.
+  const isIOS = Platform.OS === "ios";
 
   useEffect(() => {
     let cancelled = false;
@@ -45,7 +49,7 @@ export default function FilleulInviteBanner() {
     };
   }, []);
 
-  if (!shouldShow) return null;
+  if (isIOS || !shouldShow) return null;
 
   return (
     <TouchableOpacity

@@ -4,6 +4,7 @@ Toutes les fonctions partagées par plusieurs routeurs vivent ici.
 """
 from __future__ import annotations
 
+import os
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
@@ -265,6 +266,31 @@ def require_admin(
 ) -> dict:
     if user["role"] != "admin" and not user.get("artisan_mode"):
         raise HTTPException(status_code=403, detail="Admin only")
+    return user
+
+
+# 🔐 Outils internes plateforme (campagne emailing, LinkedIn, testeurs) :
+# réservés au propriétaire de MesureChâssis — PAS aux admins clients.
+# Configurable via env PLATFORM_OWNER_EMAILS (liste séparée par virgules).
+PLATFORM_OWNER_EMAILS = {
+    e.strip().lower()
+    for e in os.environ.get(
+        "PLATFORM_OWNER_EMAILS",
+        "info@mesurechassis.com,michelpezzuto@hotmail.com,michelpezzuto@gmail.com",
+    ).split(",")
+    if e.strip()
+}
+
+
+def require_platform_owner(
+    user: dict = Depends(require_active_subscription),
+) -> dict:
+    email = (user.get("email") or "").lower()
+    if user["role"] != "admin" or email not in PLATFORM_OWNER_EMAILS:
+        raise HTTPException(
+            status_code=403,
+            detail="Réservé au propriétaire de la plateforme",
+        )
     return user
 
 
