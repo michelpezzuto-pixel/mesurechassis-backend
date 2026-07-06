@@ -137,6 +137,7 @@ export default function Dashboard() {
   // admins clients (confidentialité prospects + Apple Review).
   const PLATFORM_OWNER_EMAILS = [
     "info@mesurechassis.com",
+    "artisan@mesurechassis.fr",
     "michelpezzuto@hotmail.com",
     "michelpezzuto@gmail.com",
   ];

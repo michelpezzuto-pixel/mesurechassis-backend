@@ -276,7 +276,7 @@ PLATFORM_OWNER_EMAILS = {
     e.strip().lower()
     for e in os.environ.get(
         "PLATFORM_OWNER_EMAILS",
-        "info@mesurechassis.com,michelpezzuto@hotmail.com,michelpezzuto@gmail.com",
+        "info@mesurechassis.com,artisan@mesurechassis.fr,michelpezzuto@hotmail.com,michelpezzuto@gmail.com",
     ).split(",")
     if e.strip()
 }
