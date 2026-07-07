@@ -49,6 +49,13 @@ export default function SignIn() {
   const [companyName, setCompanyName] = useState("");
   // 🆕 Build 11.3 — Numéro de TVA européen obligatoire (Apple Review)
   const [vatNumber, setVatNumber] = useState("");
+  // Vérification VIES en direct (badge « Validé »)
+  const [vatStatus, setVatStatus] = useState<{
+    valid: boolean;
+    normalized?: string;
+    message?: string;
+  } | null>(null);
+  const [vatChecking, setVatChecking] = useState(false);
   // 🆕 Build 9 — Code parrainage optionnel saisi à l'inscription
   const [referralCode, setReferralCode] = useState("");
   const [referralStatus, setReferralStatus] = useState<{
@@ -568,26 +575,92 @@ export default function SignIn() {
 
               {/* 🆕 Build 11.3 — Numéro de TVA européen OBLIGATOIRE
                * Service B2B exclusivement réservé aux professionnels.
-               * Validé via API VIES officielle. */}
+               * Validé via API VIES officielle (vérification en direct). */}
               <Text style={styles.label}>
-                Numéro de TVA{" "}
+                Numéro de TVA européen{" "}
                 <Text style={{ color: colors.alert }}>*</Text>
               </Text>
-              <TextInput
-                testID="register-vat-input"
-                value={vatNumber}
-                onChangeText={(v) => setVatNumber(v.toUpperCase().replace(/\s/g, ""))}
-                placeholder="ex. BE0123456789"
-                placeholderTextColor={colors.placeholder}
-                autoCapitalize="characters"
-                autoCorrect={false}
-                maxLength={20}
-                style={styles.input}
-              />
-              <Text style={styles.helpHint}>
-                MesureChâssis est un service réservé aux professionnels.
-                Format européen accepté : BE, FR, DE, NL, LU, IT, ES, PT,
-                AT et tous les États membres de l&apos;UE.
+              <View style={styles.referralRow}>
+                <TextInput
+                  testID="register-vat-input"
+                  value={vatNumber}
+                  onChangeText={(v) => {
+                    setVatNumber(v.toUpperCase().replace(/\s/g, ""));
+                    setVatStatus(null);
+                  }}
+                  placeholder="ex. BE0123456789"
+                  placeholderTextColor={colors.placeholder}
+                  autoCapitalize="characters"
+                  autoCorrect={false}
+                  maxLength={20}
+                  style={[
+                    styles.input,
+                    { flex: 1 },
+                    vatStatus?.valid && {
+                      borderColor: colors.success,
+                      backgroundColor: "#0b2a14",
+                    },
+                    vatStatus && !vatStatus.valid && {
+                      borderColor: colors.anomaly,
+                    },
+                  ]}
+                />
+                <TouchableOpacity
+                  testID="validate-vat-btn"
+                  disabled={!vatNumber.trim() || vatChecking}
+                  onPress={async () => {
+                    setVatChecking(true);
+                    try {
+                      const { data } = await api.post<{
+                        valid: boolean;
+                        normalized?: string;
+                        message?: string;
+                      }>("/auth/validate-vat", { vat_number: vatNumber.trim() });
+                      setVatStatus(data);
+                      if (data.valid && data.normalized) {
+                        setVatNumber(data.normalized);
+                      }
+                    } catch {
+                      setVatStatus({ valid: false, message: "Réseau" });
+                    } finally {
+                      setVatChecking(false);
+                    }
+                  }}
+                  style={[
+                    styles.validateBtn,
+                    !vatNumber.trim() && { opacity: 0.4 },
+                  ]}
+                >
+                  {vatChecking ? (
+                    <ActivityIndicator size="small" color={colors.primary} />
+                  ) : (
+                    <Ionicons
+                      name={vatStatus?.valid ? "checkmark-circle" : "shield-checkmark-outline"}
+                      size={20}
+                      color={vatStatus?.valid ? colors.success : colors.primary}
+                    />
+                  )}
+                </TouchableOpacity>
+              </View>
+              {vatStatus?.valid && (
+                <Text style={[styles.helpHint, { color: colors.success }]}>
+                  ✓ <Text style={{ fontWeight: "900" }}>Validé</Text> —
+                  entreprise vérifiée (base VIES)
+                </Text>
+              )}
+              {vatStatus && !vatStatus.valid && vatNumber.trim() !== "" && (
+                <Text style={[styles.helpHint, { color: colors.anomaly }]}>
+                  ✗ {vatStatus.message || "Numéro de TVA invalide"}
+                </Text>
+              )}
+              <Text
+                style={[
+                  styles.helpHint,
+                  { color: "#F2F2F2", fontWeight: "600", fontSize: 13 },
+                ]}
+              >
+                Inscription réservée aux professionnels. Validation
+                automatique via la base de données VIES.
               </Text>
 
               {/* 🆕 Build 9 — Code parrainage (optionnel) */}

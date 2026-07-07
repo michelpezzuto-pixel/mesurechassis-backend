@@ -57,7 +57,7 @@
     "forgotPassword": "Mot de passe oublié ?",
     "forgotPasswordTitle": "Mot de passe oublié",
     "signIn": "Se connecter",
-    "signUp": "Créer le compte",
+    "signUp": "Créer un compte",
     "emailPlaceholder": "prenom.nom@entreprise.fr",
     "acceptCgv": "En créant un compte, vous acceptez les <0>CGV</0> et la <1>Politique de confidentialité</1>.",
     "loginErrors": {

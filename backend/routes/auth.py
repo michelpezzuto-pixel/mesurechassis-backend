@@ -88,6 +88,21 @@ def _device_fingerprint(req: Request) -> str:
 
 
 # --- Master Admin self-signup (création d'une nouvelle société) ---------
+@router.post("/auth/validate-vat")
+async def validate_vat_endpoint(payload: dict):
+    """Pré-validation TVA en direct pour le formulaire d'inscription.
+
+    Publique et sans effet de bord : vérifie le format + l'existence via
+    l'API VIES officielle (fallback souple si VIES est indisponible).
+    """
+    vat_raw = (payload.get("vat_number") or "").strip()
+    if not vat_raw:
+        raise HTTPException(status_code=400, detail="Numéro de TVA requis")
+    from services.vat_validator import validate_vat as _validate_vat
+    ok, normalized, msg = await _validate_vat(vat_raw)
+    return {"valid": ok, "normalized": normalized, "message": msg}
+
+
 @router.post("/auth/register")
 async def register(payload: dict, request: Request):
     """Inscription — Dual-mode :
