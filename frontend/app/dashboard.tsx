@@ -25,7 +25,6 @@ import { subscribeQueueSize, syncQueue, enqueueChantier, isNetworkError } from "
 import { colors, statusMeta, getStatusLabelI18n, READY_FOR_EXPORT_BADGE } from "@/src/theme";
 import { useResponsive } from "@/src/utils/responsive";
 import TrialCountdownBanner from "@/src/components/TrialCountdownBanner";
-import FreebieCountdown from "@/src/components/FreebieCountdown";
 import FilleulInviteBanner from "@/src/components/FilleulInviteBanner";
 import ChatHelp from "@/src/components/ChatHelp";
 import AppointmentPicker from "@/src/components/AppointmentPicker";
@@ -519,8 +518,6 @@ export default function Dashboard() {
           </TouchableOpacity>
         )}
       </View>
-
-      <FreebieCountdown />
 
       {/* 🆕 Build 9 — Incite le filleul à parrainer (disparaît dès 1er parrainage) */}
       <FilleulInviteBanner />

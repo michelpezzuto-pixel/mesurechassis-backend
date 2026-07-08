@@ -86,11 +86,11 @@ FREE_PLAN_MAX_CHANTIERS = 3
 
 # 🚧 BETA GRATUITE : flag global qui force tous les comptes à un état
 # d'abonnement actif et illimité. Mettre à False quand Stripe sera prêt.
-BETA_MODE = True
+BETA_MODE = False
 
 # Durée de la période d'essai (Trial) — exactement 3 mois (90 jours).
 # (Inactif tant que BETA_MODE=True : tous les comptes sont en plan=pro actif.)
-TRIAL_DAYS = 90
+TRIAL_DAYS = 14
 
 # Endpoints accessibles même si l'abonnement est expiré
 SUBSCRIPTION_OPEN_PATHS = {
