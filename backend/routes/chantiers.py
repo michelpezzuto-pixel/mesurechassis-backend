@@ -107,11 +107,25 @@ async def create_chantier(
         and user.get("role") == "admin"
         and not payload.assigned_to
     ):
-        raise HTTPException(
-            400,
-            "En mode Entreprise, l'Admin doit assigner le chantier à un "
-            "Commercial lors de la création (assigned_to obligatoire).",
+        # 🆕 Commercial optionnel pour l'admin SEUL : si l'entreprise n'a
+        # aucun commercial/technicien (artisan travaillant seul en mode
+        # Entreprise), on n'exige plus l'assignation → auto-attribution à
+        # lui-même pour ne pas le bloquer. S'il a une équipe, l'assignation
+        # reste obligatoire (workflow RBAC préservé).
+        team_count = await db.users.count_documents(
+            {
+                "company_id": user.get("company_id", "default"),
+                "role": {"$in": ["commercial", "technician"]},
+            }
         )
+        if team_count > 0:
+            raise HTTPException(
+                400,
+                "En mode Entreprise, l'Admin doit assigner le chantier à un "
+                "Commercial lors de la création (assigned_to obligatoire).",
+            )
+        # Solo → l'admin se voit attribuer son propre chantier.
+        payload.assigned_to = user["id"]
     # Vérifie que le destinataire de l'assignation existe dans la même company
     if payload.assigned_to and not is_artisan_mode_check:
         assignee_check = await db.users.find_one(

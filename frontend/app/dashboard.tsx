@@ -24,7 +24,6 @@ import { useTranslation } from "react-i18next";
 import { subscribeQueueSize, syncQueue, enqueueChantier, isNetworkError } from "@/src/services/offlineQueue";
 import { colors, statusMeta, getStatusLabelI18n, READY_FOR_EXPORT_BADGE } from "@/src/theme";
 import { useResponsive } from "@/src/utils/responsive";
-import TrialCountdownBanner from "@/src/components/TrialCountdownBanner";
 import FilleulInviteBanner from "@/src/components/FilleulInviteBanner";
 import ChatHelp from "@/src/components/ChatHelp";
 import AppointmentPicker from "@/src/components/AppointmentPicker";
@@ -521,10 +520,6 @@ export default function Dashboard() {
 
       {/* 🆕 Build 9 — Incite le filleul à parrainer (disparaît dès 1er parrainage) */}
       <FilleulInviteBanner />
-
-      <View style={{ paddingHorizontal: 16 }}>
-        <TrialCountdownBanner />
-      </View>
 
       <View style={styles.searchWrap}>
         <Ionicons name="search" size={18} color={colors.textSecondary} />

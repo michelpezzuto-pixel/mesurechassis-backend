@@ -1000,3 +1000,24 @@ Citation client : "Bien plus tard, quand on va l'exporter en Italie, en Espagne 
 - Grand nettoyage « zéro paiement » sur iOS + verrouillage des outils internes
   (Campagne/LinkedIn/Testeurs réservés au propriétaire via require_platform_owner).
 - Détails complets : /app/memory/APPLE_RESPONSE_BUILD_116.md
+
+## ✅ PRIORITÉ 1 — Passage production "Service Pro" (08/07/2026)
+Statut : FAIT, en attente validation utilisateur avant P2.
+- (a) Bandeau orange « Accès TOTAL GRATUIT » + pastille verte « feedback » supprimés (dashboard propre).
+- (b) App 100% GRATUITE pour l'instant : BETA_MODE=True (paywall/essai NON actifs). TRIAL_DAYS réglé à 14
+  pour quand l'utilisateur demandera d'activer le payant. Bêta-testeurs existants gardent l'accès.
+  Paiement = modèle Shopify (site web), aucun prix dans l'app.
+- (c) Inscription : 3 types de compte (Artisan / Entreprise / Entreprise Pro « Bientôt disponible »
+  non sélectionnable), AUCUN prix affiché, sur TOUTES plateformes iOS INCLUS.
+  🍎 Inscription RÉACTIVÉE sur iOS (était désactivée) — défense Apple : TVA obligatoire (VIES) =
+  chaque compte est une entreprise → B2B pur, aucun prix. ⚠️ POINT À SURVEILLER à la prochaine review Apple.
+- Commercial OPTIONNEL : un admin Entreprise SEUL (0 commercial/technicien) crée ses chantiers
+  sans blocage (auto-assignation à lui-même). Si équipe présente → assignation obligatoire (RBAC préservé).
+
+### Structure tarifaire FUTURE (à finaliser AVEC l'utilisateur quand il activera le payant)
+- Gratuit : Artisan gratuit + Entreprise gratuit (5 ouvertures, fonctions réduites).
+- Payant : Entreprise, Artisan Pro, Entreprise Pro (+ un tier premium très cher "bientôt dispo" à nommer :
+  mètre laser Bluetooth, photo→mesures auto, Yann illimité, utilisateurs illimités, branding, SSO).
+- Prix affichés UNIQUEMENT sur le site web (jamais dans l'app iOS).
+- 📌 RAPPEL : campagne Café Jeton → emails auto « désormais payant, 14 j gratuits restants, passez à Pro »
+  (l'utilisateur dira quand lancer — cf. roadmap_jeton_cafe_priorite4.md).

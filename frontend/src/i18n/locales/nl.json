@@ -34,7 +34,7 @@
     "chooseProfile": "Kies uw profiel",
     "profile": {
       "artisan": {
-        "title": "Solo Vakman",
+        "title": "Vakman",
         "desc": "Solo-account — zelfstandige, ultra-eenvoudig"
       },
       "entreprise": {
@@ -46,7 +46,8 @@
         "title": "Bedrijf Pro",
         "desc": "Team 6 gebruikers + Bluetooth & geavanceerde functies"
       },
-      "freeTrialPrefix": "✨ 90 dagen gratis dan"
+      "freeTrialPrefix": "✨ 90 dagen gratis dan",
+      "comingSoon": "Binnenkort"
     },
     "fullName": "Uw volledige naam",
     "fullNameAdmin": "Volledige naam (Master Admin)",

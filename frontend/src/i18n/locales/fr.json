@@ -34,7 +34,7 @@
     "chooseProfile": "Choisissez votre profil",
     "profile": {
       "artisan": {
-        "title": "Artisan Solo",
+        "title": "Artisan",
         "desc": "Compte solo — auto-entrepreneur, ultra-simple"
       },
       "entreprise": {
@@ -46,7 +46,8 @@
         "title": "Entreprise Pro",
         "desc": "Équipe 6 utilisateurs + Bluetooth & fonctions avancées"
       },
-      "freeTrialPrefix": "✨ 90 jours gratuits puis"
+      "freeTrialPrefix": "✨ 90 jours gratuits puis",
+      "comingSoon": "Bientôt disponible"
     },
     "fullName": "Votre nom complet",
     "fullNameAdmin": "Nom complet (Master Admin)",

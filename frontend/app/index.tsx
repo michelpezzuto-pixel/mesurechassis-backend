@@ -80,14 +80,9 @@ export default function SignIn() {
   const isIOS = Platform.OS === "ios";
   const [submitting, setSubmitting] = useState(false);
 
-  // 🍎 iOS — App Store Guidelines 3.1.1 & 3.1.3(c) :
-  // Force impérativement le mode "login" sur iOS. Même si un état mode="register"
-  // arrive par hasard (deep link, hot reload…), on le réinitialise.
-  useEffect(() => {
-    if (isIOS && mode === "register") {
-      setMode("login");
-    }
-  }, [isIOS, mode]);
+  // ℹ️ Inscription B2B autorisée sur iOS : service réservé aux professionnels
+  // (numéro de TVA européen obligatoire, vérifié via VIES) et AUCUN prix
+  // affiché dans l'app (paiement géré hors app). Conforme App Store 3.1.3(c).
 
   // 🍎 iOS — App Store Guideline 4 (Design) — Build 107 :
   //   Tout out-link vers un site web externe (Linking.openURL ou
@@ -340,22 +335,18 @@ export default function SignIn() {
                 {t("auth.login")}
               </Text>
             </TouchableOpacity>
-            {/* 🍎 iOS — App Store Guidelines 3.1.1 & 3.1.3(c) :
-             * Pas d'onglet "Inscription" sur iOS. L'app iOS est uniquement
-             * pour les comptes existants. La création de compte se fait
-             * sur le site web (mesurechassis.com) avec validation TVA. */}
-            {!isIOS && (
-              <TouchableOpacity
-                testID="register-tab"
-                onPress={() => setMode("register")}
-                style={[styles.tab, mode === "register" && styles.tabActive]}
-                activeOpacity={0.7}
-              >
-                <Text style={[styles.tabText, mode === "register" && styles.tabTextActive]}>
-                  {t("auth.register")}
-                </Text>
-              </TouchableOpacity>
-            )}
+            {/* ℹ️ Inscription B2B autorisée sur iOS (TVA obligatoire, aucun
+             * prix affiché — conforme App Store 3.1.3(c)). */}
+            <TouchableOpacity
+              testID="register-tab"
+              onPress={() => setMode("register")}
+              style={[styles.tab, mode === "register" && styles.tabActive]}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.tabText, mode === "register" && styles.tabTextActive]}>
+                {t("auth.register")}
+              </Text>
+            </TouchableOpacity>
           </View>
 
           {pendingVerification ? (
@@ -440,14 +431,12 @@ export default function SignIn() {
                   icon: "person" as const,
                   title: t("auth.profile.artisan.title"),
                   desc: t("auth.profile.artisan.desc"),
-                  price: "24,99 €/mois",
                 },
                 {
                   key: "entreprise" as const,
                   icon: "business" as const,
                   title: t("auth.profile.entreprise.title"),
                   desc: t("auth.profile.entreprise.desc"),
-                  price: "59,99 €/mois",
                   badge: t("auth.profile.entreprise.badge"),
                 },
                 {
@@ -455,19 +444,25 @@ export default function SignIn() {
                   icon: "rocket" as const,
                   title: t("auth.profile.pro.title"),
                   desc: t("auth.profile.pro.desc"),
-                  price: "89,99 €/mois",
+                  comingSoon: true,
                 },
               ]).map((opt) => {
                 const active = accountType === opt.key;
+                const disabled = !!opt.comingSoon;
                 return (
                   <TouchableOpacity
                     key={opt.key}
                     testID={`account-type-${opt.key}`}
-                    onPress={() => setAccountType(opt.key)}
+                    disabled={disabled}
+                    onPress={() => {
+                      if (disabled) return;
+                      setAccountType(opt.key);
+                    }}
                     activeOpacity={0.85}
                     style={[
                       styles.profileCard,
                       active && styles.profileCardActive,
+                      disabled && { opacity: 0.55 },
                     ]}
                   >
                     <View
@@ -497,25 +492,33 @@ export default function SignIn() {
                             <Text style={styles.profileBadgeText}>{opt.badge}</Text>
                           </View>
                         )}
+                        {opt.comingSoon && (
+                          <View
+                            style={[
+                              styles.profileBadge,
+                              { backgroundColor: "rgba(255,255,255,0.12)" },
+                            ]}
+                          >
+                            <Text
+                              style={[
+                                styles.profileBadgeText,
+                                { color: colors.textSecondary },
+                              ]}
+                            >
+                              {t("auth.profile.comingSoon")}
+                            </Text>
+                          </View>
+                        )}
                       </View>
                       <Text style={styles.typeDesc}>{opt.desc}</Text>
-                      {/* 🍎 Prix masqués sur iOS (Reader App rule) */}
-                      {!isIOS && (
-                        <Text
-                          style={[
-                            styles.profilePrice,
-                            active && { color: colors.primary },
-                          ]}
-                        >
-                          {t("auth.profile.freeTrialPrefix")} {opt.price}
-                        </Text>
-                      )}
                     </View>
-                    <Ionicons
-                      name={active ? "checkmark-circle" : "ellipse-outline"}
-                      size={22}
-                      color={active ? colors.primary : colors.borderStrong}
-                    />
+                    {!disabled && (
+                      <Ionicons
+                        name={active ? "checkmark-circle" : "ellipse-outline"}
+                        size={22}
+                        color={active ? colors.primary : colors.borderStrong}
+                      />
+                    )}
                   </TouchableOpacity>
                 );
               })}
@@ -736,9 +739,7 @@ export default function SignIn() {
                 </Text>
               )}
 
-              {/* 🍎 iOS — masqué : l'app iOS ne mentionne ni Admin
-               *  ni Entreprise ni Pro (App Store 3.1.1/3.1.3(c)). */}
-              {!isIOS && (
+              {/* Explication du mode choisi (workflow, sans aucun prix). */}
               <View style={styles.infoBox}>
                 <Ionicons
                   name="information-circle"
@@ -767,7 +768,6 @@ export default function SignIn() {
                   )}
                 </Text>
               </View>
-              )}
             </>
           )}
 
