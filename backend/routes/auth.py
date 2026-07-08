@@ -123,6 +123,17 @@ async def register(payload: dict, request: Request):
         raise HTTPException(400, "Champs requis : name, email, password")
     email_lower = str(email).lower()
 
+    # 🔐 SEC-005 : interdire l'auto-inscription avec un email réservé au
+    # propriétaire de la plateforme (sinon un attaquant s'octroierait les
+    # outils internes campagne/LinkedIn/testeurs via require_platform_owner).
+    from deps import PLATFORM_OWNER_EMAILS
+
+    if email_lower in PLATFORM_OWNER_EMAILS:
+        raise HTTPException(
+            status_code=403,
+            detail="Cette adresse est réservée. Contactez le support.",
+        )
+
     existing = await db.users.find_one({"email": email_lower})
     if existing:
         raise HTTPException(400, "Email déjà enregistré")
@@ -643,15 +654,13 @@ async def forgot_password(payload: dict):
 
     delivered = bool(email_result.get("delivered"))
 
-    # 🛟 Sécurité : on n'expose JAMAIS le code en clair si Resend a envoyé.
-    # En revanche, si l'envoi a échoué ET qu'on est en BETA, on retourne
-    # le code pour ne pas bloquer l'utilisateur (clé Resend en cours de
-    # config, domaine pas vérifié, etc.).
-    if not delivered and BETA_MODE:
-        response_payload["beta_reset_code"] = code
-        response_payload["beta_message"] = (
-            "Email non envoyé (mode dégradé). Code = "
-            f"{code} (valable {PASSWORD_RESET_TTL_MINUTES} min)."
+    # 🔐 SEC-003 : on n'expose JAMAIS le code de réinitialisation dans la
+    # réponse API (fuite → prise de contrôle de compte). Le code n'est
+    # transmis QUE par email. Si l'envoi échoue, l'utilisateur réessaie
+    # ou contacte le support.
+    if not delivered:
+        logger.warning(
+            "Password reset email delivery failed for a user (code not exposed)."
         )
 
     return response_payload

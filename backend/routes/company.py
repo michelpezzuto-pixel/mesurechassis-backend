@@ -7,7 +7,12 @@ from typing import Optional
 from fastapi import APIRouter, Depends, Header, HTTPException
 
 from db import BETA_MODE, PLATFORM_ADMIN_TOKEN, VALID_PLANS, db
-from deps import auth_user, ensure_company, require_admin
+from deps import (
+    auth_user,
+    ensure_company,
+    require_admin,
+    require_platform_owner,
+)
 from models import CompanyProfile, CompanyProfileUpdate
 
 router = APIRouter()
@@ -409,22 +414,23 @@ async def platform_set_subscription(
 async def platform_db_cleanup(
     payload: dict,
     x_platform_token: Optional[str] = Header(None),
+    owner: dict = Depends(require_platform_owner),
 ):
     """Efface tous les comptes utilisateur, entreprises et données associées,
     sauf l'utilisateur (et son entreprise) dont l'email est passé dans
     `keep_email`.
 
+    🔐 SEC-001 : double protection — 1) JWT d'un propriétaire de plateforme
+    (require_platform_owner), 2) token plateforme comparé en temps constant.
+    L'ancienne UI HTML publique a été supprimée (server.py).
+
     Body : { "keep_email": "info@mesurechassis.com", "confirm": "DELETE_ALL" }
-
-    Collections nettoyées :
-      - users (sauf keep_email)
-      - companies (sauf celle de keep_email)
-      - chantiers, mesures, feedbacks (sauf company_id de keep_email)
-      - invitations, email_verifications (sauf liées à keep_email)
-
-    Réponse : { ok: true, kept_user, kept_company, deleted_counts: {...} }
     """
-    if x_platform_token != PLATFORM_ADMIN_TOKEN:
+    import hmac as _hmac
+
+    if not x_platform_token or not _hmac.compare_digest(
+        str(x_platform_token), PLATFORM_ADMIN_TOKEN
+    ):
         raise HTTPException(status_code=403, detail="Invalid platform token")
 
     confirm = str(payload.get("confirm") or "").strip()

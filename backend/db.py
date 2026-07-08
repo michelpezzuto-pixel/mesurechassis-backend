@@ -23,12 +23,40 @@ logger = logging.getLogger("mesurechassis")
 
 MONGO_URL = os.environ["MONGO_URL"]
 DB_NAME = os.environ["DB_NAME"]
-JWT_SECRET = os.environ.get(
-    "JWT_SECRET", "change-me-mesurechassis-secret-key-dev-only"
+
+
+def _require_strong_secret(var_name: str, insecure_defaults: set[str]) -> str:
+    """Charge un secret depuis l'env et refuse de démarrer s'il est absent,
+    trop court, ou égal à une valeur par défaut connue (audit SEC-001/002)."""
+    value = os.environ.get(var_name, "")
+    if not value or value.strip() == "":
+        raise RuntimeError(
+            f"[SÉCURITÉ] {var_name} est requis et ne peut pas être vide. "
+            f"Définissez-le dans l'environnement (secret aléatoire fort)."
+        )
+    if value in insecure_defaults:
+        raise RuntimeError(
+            f"[SÉCURITÉ] {var_name} utilise une valeur par défaut non sécurisée. "
+            f"Générez un secret aléatoire (ex: python -c \"import secrets;"
+            f"print(secrets.token_urlsafe(48))\")."
+        )
+    if len(value) < 32:
+        raise RuntimeError(
+            f"[SÉCURITÉ] {var_name} doit faire au moins 32 caractères."
+        )
+    return value
+
+
+JWT_SECRET = _require_strong_secret(
+    "JWT_SECRET",
+    {"change-me-mesurechassis-secret-key-dev-only", "secret", "changeme"},
 )
 JWT_ALGO = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 jours
-PLATFORM_ADMIN_TOKEN = os.getenv("PLATFORM_ADMIN_TOKEN", "mc-platform-2026")
+PLATFORM_ADMIN_TOKEN = _require_strong_secret(
+    "PLATFORM_ADMIN_TOKEN",
+    {"mc-platform-2026", "admin", "changeme", "default"},
+)
 
 client = AsyncIOMotorClient(MONGO_URL)
 db = client[DB_NAME]
