@@ -427,6 +427,25 @@ async def download_screenshots_ipad():
     )
 
 
+@api.get("/_downloads/site-appstore")
+async def download_site_appstore():
+    """
+    ZIP contenant les fichiers du site vitrine mis à jour :
+    - QR Code App Store (4 versions PNG/SVG)
+    - 7 pages HTML refondues (5 plans, section Entreprise MAX, Expertise MAX,
+      Priorité 5 Générateur de devis, QR download page, etc.)
+    À uploader tel quel via FTP à la racine du site.
+    """
+    path = "/app/backend/public_downloads/mesurechassis-site-appstore-v2.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="mesurechassis-site-appstore-v2.zip",
+    )
+
+
 @api.get("/_downloads/feature-graphic/{variant}")
 async def download_feature_graphic_variant(variant: str):
     """Variantes redimensionnées de l'image utilisateur (stretch / fit / cover)."""
