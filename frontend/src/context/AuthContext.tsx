@@ -59,6 +59,7 @@ type AuthCtx = {
     accountType?: "artisan" | "entreprise" | "pro",
     referralCode?: string,
     vatNumber?: string,
+    stationId?: string,
   ) => Promise<{ verification_link?: string; message?: string }>;
   verifyEmail: (token: string) => Promise<void>;
   acceptInvitation: (
@@ -171,6 +172,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     accountType?: "artisan" | "entreprise" | "pro",
     referralCode?: string,
     vatNumber?: string,
+    stationId?: string,
   ): Promise<{ verification_link?: string; message?: string }> => {
     const body: Record<string, unknown> = {
       name,
@@ -187,6 +189,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // 🆕 Build 11.3 — Numéro de TVA européen obligatoire (Apple 3.1.3(c))
     if (vatNumber && vatNumber.trim()) {
       body.vat_number = vatNumber.trim();
+    }
+    // ☕ Priorité 4 — Tag campagne Jeton Café (QR code station partenaire)
+    if (stationId && stationId.trim()) {
+      body.station_id = stationId.trim();
     }
     const res = await api.post("/auth/register", body);
     // Pas de token : compte en pending_verification.

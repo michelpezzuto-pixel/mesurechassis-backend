@@ -1,0 +1,61 @@
+{
+  "summary": "Priorité 3 (Onboarding) + Priorité 4 (Jeton Café) — tests iteration 25. BACKEND: 11/11 pytest OK (public station, owner list/dashboard/RBAC 403, /cafe/me, earn/consume, register avec station_id invalide n'erreure pas). FRONTEND: onboarding s'affiche au premier lancement (redirect auto vers /onboarding OK, images visibles dans cadre téléphone, bouton Passer avec testID onboarding-skip pose le flag mc_onboarding_seen=1 et empêche re-redirect, bouton Suivant a le testID). Badge station QR ?station=<id> s'affiche correctement (`Offre station partenaire Total Wavre TEST activée`). Dashboard admin@ montre 'Mes cafés', dashboard artisan@ montre 'Stations'. Écran /mes-cafes affiche station + historique + carte 'Aucun café en attente' avec compteur (1 pour admin@, 0 pour commercial@). Écran /admin/stations affiche 'Total Wavre TEST' avec progress 1/50 ce mois, PIN 1234, boutons QR code et Relance email. Flux E2E API (earn → PIN faux 400 → PIN 1234 → consumed 200) validé via requests direct. ⚠️ BUG frontend onboarding: le bouton 'Suivant' ne fait PAS avancer au-delà du slide 2 sur web (voir action_items). E2E complet du wizard 3 étapes NON EXÉCUTÉ (chantiers disponibles pour commercial@ tous EN FABRICATION → verrouillés) — main agent doit valider manuellement le pop-up dans un chantier À MESURER.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "OnboardingScreen (FlatList Suivant button)",
+        "issue": "Sur web preview (Expo web), le bouton 'Suivant' ne fait pas avancer au-delà du slide 2. Root cause: après `scrollToIndex({index: i+1, animated: true})`, l'événement `onMomentumScrollEnd` NE se déclenche PAS pour un scroll programmatique sur react-native-web. Résultat: la state `index` reste à 0, les dots ne s'actualisent pas, le label 'ÉTAPE X / 5' reste sur 1, et le bouton reste 'Suivant' au lieu de basculer sur 'Commencer'. L'utilisateur web ne peut donc jamais atteindre le slide 5 ni finir l'onboarding autrement qu'en cliquant Passer. Sur natif iOS/Android ça fonctionnera très probablement — mais à valider. Reference: /app/frontend/app/onboarding.tsx:95-101 (next), :126-129 (onMomentumScrollEnd).",
+        "testID": "onboarding-next",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "dashboard.tsx (barre d'actions admin)",
+        "issues": [
+          "Les libellés des boutons d'action en haut du dashboard sont tronqués à 2 caractères ('S.', 'T.', 'C.', 'L.', 'S.', 'F.', 'P.', 'Me...') sur viewport 390x844 → illisibles. Ex : 'Mes cafés' devient 'Me...'. Envisager icônes + labels raccourcis intelligents ou scroll horizontal. Fichier: /app/frontend/app/dashboard.tsx."
+        ]
+      }
+    ],
+    "react_native_issues": [
+      {
+        "component": "react-native-web shadow* props (multiple)",
+        "issue": "Warning console récurrent: `\"shadow*\" style props are deprecated. Use \"boxShadow\"`. Migration mineure vers boxShadow recommandée. Non-bloquant."
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_25.json",
+    "/app/backend/tests/test_jeton_cafe_iter25.py",
+    "/app/test_reports/pytest/iter25_jeton_cafe.xml"
+  ],
+  "action_items": [
+    "HIGH — Corriger la progression 'Suivant' de l'onboarding sur web : au lieu de dépendre de onMomentumScrollEnd, appeler `setIndex(i+1)` juste avant/après `scrollToIndex`. Ex.: `const target=index+1; setIndex(target); listRef.current?.scrollToIndex({index:target, animated:true})`. Ainsi les dots, la pastille 'ÉTAPE', et le passage à 'Commencer' sont garantis même sur react-native-web.",
+    "MINOR — dashboard.tsx : libellés d'action tronqués sur mobile (Me...) : envisager une icône dédiée + label court/horizontal-scroll pour ne pas casser 'Mes cafés' et 'Stations'.",
+    "MINOR — Migrer les propriétés shadow* vers boxShadow (warnings console web).",
+    "OPTIONAL — Main agent doit compléter le E2E UI du wizard 3 étapes (Rénovation + Bloc béton + Mur plein → Fenêtre standard → dimensions → ENREGISTRER) sur un chantier À MESURER avec le compte commercial@mesurechassis.fr / commercial123 (déjà tagué campagne, jeton du jour supprimé). Le pop-up '☕ Vous avez gagné un café !' devrait s'afficher avec testIDs cafe-validate-btn, cafe-later-btn, cafe-pin-input (4 chiffres), cafe-pin-submit, cafe-success-close. Backend E2E déjà validé via API (earn 200 → PIN 9999 → 400 → PIN 1234 → 200)."
+  ],
+  "critical_code_review_comments": [
+    "routes/jeton_cafe.py:220 daily_limit vérifie earned_at >= day_start UTC — attention si un artisan francophone crée une ouverture juste après minuit locale mais avant minuit UTC, il pourrait paraître 'bloqué à demain'. Non-critique.",
+    "routes/jeton_cafe.py:369 update_station: `model_dump().items() if v is not None` — OK, mais 'active: false' est bien conservé (v=False n'est pas None). ✅",
+    "routes/auth.py:280-286 station_id: implémentation correcte, silence si station introuvable → pas d'exception, user créé sans tag. Aligné avec le brief.",
+    "app/onboarding.tsx:95 dépend uniquement de onMomentumScrollEnd pour mettre à jour l'index — fragile sur web (voir bug ci-dessus)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_jeton_cafe_iter25.py (nouveau)"
+  ],
+  "success_rate": {
+    "backend": "100% (11/11 nouveaux tests jeton café)",
+    "frontend": "85% (7/8 flux OK : onboarding-skip, station-badge, admin dashboard, mes-cafes admin, artisan dashboard, admin/stations, mes-cafes commercial — 1 bug 'Suivant' sur web ; E2E wizard non exécuté)"
+  },
+  "seed_data_creation": "commercial@mesurechassis.fr taggé campaign_station_id=f3ecaca4-a86c-482d-b0ac-21022fef2c8c en DB via script Mongo (comme demandé par le review request). Jeton du jour supprimé pour permettre au main agent de compléter le E2E UI. Le compte admin@ conserve son historique (1 café dégusté).",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "1) Backend jeton café stable → pytest /app/backend/tests/test_jeton_cafe_iter25.py = 11/11 en ~2s. 2) Onboarding: le seul chemin fiable pour terminer l'onboarding sur web est le bouton Passer. Si le fix scrollToIndex est appliqué, retester en tapant 5x 'Suivant' et vérifier que le label devient 'Commencer' + les dots avancent. 3) E2E UI jeton café: utiliser commercial@mesurechassis.fr / commercial123 (déjà tagué campagne, aucun jeton actif ni gagné aujourd'hui). Ouvrir un chantier À MESURER (les 4 premiers chantiers de la démo sont EN FABRICATION donc verrouillés — trouver ou créer un chantier À MESURER). Compléter le wizard 3 étapes → pop-up doit s'afficher. 4) Les tests pytest existants (167 originaux) ont 65 failed / 27 errors mais ces failures sont préexistantes (mot de passe commercial123/tech123 vs admin123, seed data, VAT VIES) — non liées à cette itération.",
+  "rca_of_issue": "BUG onboarding 'Suivant' bloqué sur web — RCA: react-native-web ne propage pas de manière fiable `onMomentumScrollEnd` pour les scrolls programmatiques (`scrollToIndex`). Le composant OnboardingScreen dépend UNIQUEMENT de cet événement pour mettre à jour l'état `index`. Résultat: `setIndex(target)` n'est jamais appelé après un tap sur 'Suivant' en web, `isLast` reste false, le bouton reste 'Suivant'. Reproduction: 1) localStorage.clear() 2) ouvrir / → redirect /onboarding 3) taper 5× 'Suivant' → toujours slide 2, dots inchangés. Mitigation: dans next(), appeler `setIndex(index+1)` explicitement AVANT scrollToIndex, et remplacer/compléter onMomentumScrollEnd par onScroll debouncé ou par le state local uniquement. Alternative: utiliser ScrollView + native ref.scrollTo + gérer le state manuellement."
+}

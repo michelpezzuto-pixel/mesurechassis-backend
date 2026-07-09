@@ -34,7 +34,10 @@ export default function RootLayout() {
             }}
           >
             <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="onboarding" options={{ headerShown: false }} />
             <Stack.Screen name="dashboard" options={{ headerShown: false }} />
+            <Stack.Screen name="mes-cafes" options={{ headerShown: false }} />
+            <Stack.Screen name="admin/stations" options={{ headerShown: false }} />
             <Stack.Screen name="chantier/[id]/index" options={{ title: "CHANTIER" }} />
             <Stack.Screen name="chantier/[id]/new-mesure" options={{ title: "NOUVELLE OUVERTURE" }} />
             <Stack.Screen name="chantier/[id]/closure" options={{ title: "CLÔTURE" }} />

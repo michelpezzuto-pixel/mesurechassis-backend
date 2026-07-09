@@ -274,6 +274,16 @@ async def register(payload: dict, request: Request):
         "signup_fingerprint": fingerprint,
         "created_at": now_iso_reg,
     }
+    # ☕ Priorité 4 — Campagne Jeton Café : si l'inscription vient d'un QR
+    # code de station partenaire (?station=<id>), on tague le compte.
+    # Les comptes SANS ce tag ne voient jamais la fonctionnalité.
+    station_id_raw = str(payload.get("station_id") or "").strip()
+    if station_id_raw:
+        station_doc = await db.cafe_stations.find_one(
+            {"id": station_id_raw, "active": True}, {"_id": 0, "id": 1}
+        )
+        if station_doc:
+            user_doc["campaign_station_id"] = station_id_raw
     await db.users.insert_one(user_doc)
     # 🚧 BETA GRATUITE : les nouveaux comptes naissent directement en
     # `plan=pro` + `subscription_status=active` (pas d'écran de paiement).

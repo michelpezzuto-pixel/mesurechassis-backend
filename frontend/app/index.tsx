@@ -15,12 +15,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useAuth, Role } from "@/src/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { setLanguage, SUPPORTED_LANGUAGES, SupportedLanguage } from "@/src/i18n";
 import { api } from "@/src/services/api";
 import { colors } from "@/src/theme";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const FLAGS: Record<SupportedLanguage, string> = {
   fr: "🇫🇷",
@@ -79,6 +80,44 @@ export default function SignIn() {
   );
   const isIOS = Platform.OS === "ios";
   const [submitting, setSubmitting] = useState(false);
+
+  // ☕ Priorité 4 — Campagne Jeton Café : inscription via QR code station
+  // (?station=<id> dans l'URL). On persiste le tag pour survivre au détour
+  // par l'onboarding, et on affiche un badge sur le formulaire d'inscription.
+  const params = useLocalSearchParams<{ station?: string }>();
+  const [stationInfo, setStationInfo] = useState<{ id: string; name: string } | null>(null);
+  useEffect(() => {
+    (async () => {
+      let sid = typeof params.station === "string" ? params.station : "";
+      if (sid) {
+        await AsyncStorage.setItem("mc_pending_station", sid);
+      } else {
+        sid = (await AsyncStorage.getItem("mc_pending_station")) || "";
+      }
+      if (!sid) return;
+      try {
+        const r = await api.get<{ id: string; name: string }>(
+          `/cafe/stations/${sid}/public`,
+        );
+        setStationInfo({ id: r.data.id, name: r.data.name });
+        setMode("register");
+      } catch {
+        // Station inconnue/inactive → on ignore silencieusement
+        await AsyncStorage.removeItem("mc_pending_station");
+      }
+    })();
+  }, [params.station]);
+
+  // 🚀 Priorité 3 — Onboarding : au premier lancement (jamais vu + non
+  // connecté), on redirige vers les 5 slides de présentation.
+  useEffect(() => {
+    if (loading || user) return;
+    (async () => {
+      const seen = await AsyncStorage.getItem("mc_onboarding_seen");
+      if (!seen) router.replace("/onboarding");
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, user]);
 
   // ℹ️ Inscription B2B autorisée sur iOS : service réservé aux professionnels
   // (numéro de TVA européen obligatoire, vérifié via VIES) et AUCUN prix
@@ -243,7 +282,13 @@ export default function SignIn() {
           referralCode.trim() || undefined,
           // 🆕 Build 11.3 — Numéro de TVA européen
           vatNumber.trim() || undefined,
+          // ☕ Priorité 4 — Tag campagne station partenaire (QR code)
+          stationInfo?.id,
         );
+        // Tag consommé → on nettoie le stockage local
+        if (stationInfo?.id) {
+          AsyncStorage.removeItem("mc_pending_station").catch(() => {});
+        }
         setPendingVerification({
           email: cleanEmail,
           link: res.verification_link,
@@ -409,6 +454,17 @@ export default function SignIn() {
             <>
           {mode === "register" && (
             <>
+              {/* ☕ Priorité 4 — Badge campagne Jeton Café (QR station) */}
+              {stationInfo && (
+                <View style={styles.stationBadge}>
+                  <Text style={{ fontSize: 18 }}>☕</Text>
+                  <Text style={styles.stationBadgeText}>
+                    Offre station partenaire{" "}
+                    <Text style={{ fontWeight: "800" }}>{stationInfo.name}</Text>{" "}
+                    activée — gagnez des cafés offerts à chaque ouverture créée !
+                  </Text>
+                </View>
+              )}
               {/* 🆕 V3 — Sélection du profil avec 3 plans (Artisan / Entreprise / Pro).
                * Les prix sont affichés sur Web/Android mais MASQUÉS sur iOS
                * (App Store 3.1.1 — pas de mention de paiement externe).
@@ -1574,6 +1630,24 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 8,
     alignItems: "center",
+  },
+  // ☕ Priorité 4 — Badge campagne Jeton Café (inscription via QR station)
+  stationBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    backgroundColor: "#10B98115",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#10B98144",
+    padding: 12,
+    marginBottom: 14,
+  },
+  stationBadgeText: {
+    flex: 1,
+    fontSize: 12,
+    lineHeight: 17,
+    color: "#8FD9BE",
   },
   validateBtn: {
     width: 48,

@@ -144,6 +144,20 @@ export default function Dashboard() {
     !!user?.email &&
     PLATFORM_OWNER_EMAILS.includes(user.email.toLowerCase());
 
+  // ☕ Priorité 4 — Bouton « Mes cafés » visible UNIQUEMENT si le compte est
+  // issu d'un QR code de station partenaire (fetch silencieux au montage).
+  const [hasCafeStation, setHasCafeStation] = useState(false);
+  useEffect(() => {
+    (async () => {
+      try {
+        const r = await api.get<{ station: { id: string } | null }>("/cafe/me");
+        setHasCafeStation(!!r.data?.station);
+      } catch {
+        setHasCafeStation(false);
+      }
+    })();
+  }, []);
+
   const fetchData = useCallback(async () => {
     try {
       const params: Record<string, string> = {};
@@ -486,6 +500,30 @@ export default function Dashboard() {
           >
             <Ionicons name="logo-linkedin" size={18} color={colors.primary} />
             <Text style={styles.actionBtnText} numberOfLines={1}>LinkedIn</Text>
+          </TouchableOpacity>
+        )}
+        {/* ☕ Priorité 4 — Pilotage stations Jeton Café (propriétaire uniquement) */}
+        {isPlatformOwner && (
+          <TouchableOpacity
+            testID="admin-stations-button"
+            onPress={() => router.push("/admin/stations" as never)}
+            style={styles.actionBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="cafe-outline" size={18} color={colors.primary} />
+            <Text style={styles.actionBtnText} numberOfLines={1}>Stations</Text>
+          </TouchableOpacity>
+        )}
+        {/* ☕ Priorité 4 — Mes cafés (artisans tagués campagne station) */}
+        {hasCafeStation && (
+          <TouchableOpacity
+            testID="mes-cafes-button"
+            onPress={() => router.push("/mes-cafes" as never)}
+            style={styles.actionBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="cafe" size={18} color="#10B981" />
+            <Text style={styles.actionBtnText} numberOfLines={1}>Mes cafés</Text>
           </TouchableOpacity>
         )}
         {/* Feedback — bouton unique pour tous les rôles (admin/commercial/technicien).

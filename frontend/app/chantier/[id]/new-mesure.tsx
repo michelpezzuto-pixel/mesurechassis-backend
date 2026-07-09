@@ -49,6 +49,7 @@ import {
 import { useResponsive } from "@/src/utils/responsive";
 // 🆕 V3 — Composants refactorisés (séparés du fichier monolithique)
 import { wizardStyles as styles } from "@/src/components/wizard/wizardStyles";
+import CafeJetonModal, { CafeJeton } from "@/src/components/CafeJetonModal";
 import { Step1Config } from "@/src/components/wizard/Step1Config";
 import { Step2Shape } from "@/src/components/wizard/Step2Shape";
 import { Step3Cotes } from "@/src/components/wizard/Step3Cotes";
@@ -83,6 +84,10 @@ export default function NewMesureWizard() {
   const [labelError, setLabelError] = useState(false);
   const [photo, setPhoto] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  // ☕ Priorité 4 — Jeton café gagné après création d'une ouverture
+  // (uniquement pour les comptes issus d'un QR code station partenaire).
+  const [cafeJeton, setCafeJeton] = useState<CafeJeton | null>(null);
+  const [cafeStationName, setCafeStationName] = useState("");
   // Loading initial : édition OU chargement de la wall_config du chantier
   const [loadingInit, setLoadingInit] = useState(true);
   // 🏗️ Si le chantier a déjà une wall_config → on saute l'étape 1
@@ -909,8 +914,26 @@ export default function NewMesureWizard() {
       if (!editingId) {
         await persistWallConfig();
       }
-      if (editingId) await api.patch(`/mesures/${editingId}`, payload);
-      else await api.post("/mesures", payload);
+      if (editingId) {
+        await api.patch(`/mesures/${editingId}`, payload);
+      } else {
+        const created = await api.post("/mesures", payload);
+        // ☕ Priorité 4 — Tentative de gain d'un jeton café (silencieux).
+        // Ne bloque JAMAIS l'enregistrement : en cas d'échec réseau ou de
+        // compte non tagué campagne, on ferme simplement le wizard.
+        try {
+          const r = await api.post("/cafe/earn", {
+            mesure_id: created.data?.id,
+          });
+          if (r.data?.eligible && r.data?.jeton) {
+            setCafeJeton(r.data.jeton);
+            setCafeStationName(r.data.station?.name || "");
+            return; // router.back() différé à la fermeture de la pop-up ☕
+          }
+        } catch {
+          /* silencieux — pas de jeton, flux normal */
+        }
+      }
       router.back();
     } catch (err: any) {
       if (editingId) {
@@ -1238,6 +1261,17 @@ export default function NewMesureWizard() {
           </View>
         </KeyboardAvoidingView>
       </Modal>
+
+      {/* ☕ Priorité 4 — Pop-up « Vous avez gagné un café ! » */}
+      <CafeJetonModal
+        visible={!!cafeJeton}
+        jeton={cafeJeton}
+        stationName={cafeStationName}
+        onClose={() => {
+          setCafeJeton(null);
+          router.back();
+        }}
+      />
     </SafeAreaView>
   );
 }

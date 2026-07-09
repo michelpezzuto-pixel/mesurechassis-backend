@@ -35,6 +35,7 @@ from routes import spec_import as spec_import_routes
 from routes import stripe_routes
 from routes import testers as testers_routes
 from routes import promo as promo_routes
+from routes import jeton_cafe as jeton_cafe_routes
 from seed import seed_data, ensure_apple_review_user
 
 
@@ -113,6 +114,8 @@ api.include_router(linkedin_routes.router)
 
 # 🎬 Vidéos promo Sora 2 (publiques, pour mesurechassis.com + réseaux sociaux)
 api.include_router(promo_routes.router)
+# ☕ Priorité 4 — Système Jeton Café (stations partenaires)
+api.include_router(jeton_cafe_routes.router)
 
 
 # ─────────────────────────────────────────────────────────────────────
