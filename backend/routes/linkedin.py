@@ -371,6 +371,18 @@ Merci de m'avoir suivi. L'aventure ne fait que commencer. 🚀""",
 
 for _p in POSTS:
     _p["text"] = _p["text"].replace("{site}", SITE)
+    # 🎉 Juillet 2026 — Bloc "App Store disponible" ajouté systématiquement
+    # en fin de chaque post pour la campagne 15 jours (LinkedIn + Facebook).
+    # Message clé : "enfin disponible sur l'Apple Store, test gratuit".
+    _appstore_footer = (
+        "\n\n━━━━━━━━━━━━━━━━━\n"
+        "🎉 MesureChâssis est ENFIN disponible sur l'Apple Store !\n"
+        "📲 Télécharger : https://apps.apple.com/fr/app/mesurech%C3%A2ssis/id6776357930\n"
+        "🌐 Ou depuis un ordi : https://mesurechassis.com/telecharger.html\n"
+        "🆓 Test 100 % gratuit — sans carte bancaire\n"
+        "⏳ Version Android bientôt sur le Play Store"
+    )
+    _p["text"] = _p["text"].rstrip() + _appstore_footer
     # Sécurité : retire tout retour à la ligne accidentel dans les hashtags
     _p["hashtags"] = " ".join(_p["hashtags"].split())
     # Version Facebook : même texte, mais 3 hashtags max (codes de la plateforme)

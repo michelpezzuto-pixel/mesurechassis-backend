@@ -40,7 +40,7 @@ logger = logging.getLogger("mesurechassis.campaign")
 router = APIRouter()
 
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
-DAILY_LIMIT = 30
+DAILY_LIMIT = 40
 PAUSE_BETWEEN_SENDS_S = 3
 RELANCE_DELAY_DAYS = 3  # 1ère relance J+3 si pas répondu
 SECOND_RELANCE_DELAY_DAYS = 7  # 2e relance J+7 (dernière chance)
@@ -97,21 +97,23 @@ def _is_weekend_brussels() -> bool:
     return local_now.weekday() >= 5
 
 # === SUJETS (testés pour CTR optimal en B2B menuisiers) ============
+# Refonte juillet 2026 — Lancement App Store : angle "enfin disponible".
 SUBJECTS = {
-    "be": "Question entre menuisiers",
-    "fr": "Question entre menuisiers",
-    "lu": "Question entre menuisiers",
+    "be": "🎉 MesureChâssis est enfin sur l'Apple Store",
+    "fr": "🎉 MesureChâssis est enfin sur l'Apple Store",
+    "lu": "🎉 MesureChâssis est enfin sur l'Apple Store",
 }
-SUBJECT_RELANCE_1 = "📸 Une nouveauté qui change tout sur chantier"
-SUBJECT_RELANCE_2 = "📸 Dernière chance — l'IA qui lit vos bordereaux"
+SUBJECT_RELANCE_1 = "📱 Vous l'avez essayée ? (30 sec)"
+SUBJECT_RELANCE_2 = "🎁 Dernière chance — test 100 % gratuit"
 
-# Lien direct vers la version web de l'app (accès direct sans installation)
-APP_WEB_URL = "https://window-field-app.preview.emergentagent.com"
-# QR code généré dynamiquement via api.qrserver.com (gratuit, illimité)
+# Lien direct App Store (iOS) + version web pour Android / desktop
+APP_STORE_URL = "https://apps.apple.com/fr/app/mesurech%C3%A2ssis/id6776357930"
+APP_WEB_URL = "https://mesurechassis.com/telecharger.html"
+# QR code pointant vers l'App Store (généré via api.qrserver.com, gratuit)
 QR_IMG_URL = (
     "https://api.qrserver.com/v1/create-qr-code/"
     "?size=200x200"
-    "&data=https%3A%2F%2Fwindow-field-app.preview.emergentagent.com"
+    "&data=https%3A%2F%2Fapps.apple.com%2Ffr%2Fapp%2Fmesurech%25C3%25A2ssis%2Fid6776357930"
     "&color=121214&bgcolor=ffffff&qzone=1"
 )
 
@@ -124,79 +126,77 @@ ORIGIN_PHRASES = {
 }
 
 # ═════════════════════════════════════════════════════════════════════
-# === MAIL #2 — Premier contact (court, max 80 mots, QR + lien) ═════
+# === MAIL #1 — Premier contact (COURT, ~80 mots, style Michel) ═════
 # ═════════════════════════════════════════════════════════════════════
+# Refonte juillet 2026 — Lancement App Store validé par Apple.
 BODY_TEMPLATE = """Bonjour,
 
 Je suis Michel, menuisier comme vous.
 
-J'en avais marre des erreurs de cotes sur mes chantiers, alors j'ai créé une app : MesureChâssis.
+🎉 MesureChâssis est enfin disponible sur l'Apple Store — vous pouvez la télécharger et la tester **gratuitement** dès maintenant pour simplifier vos relevés de mesures sur chantier.
 
-3 questions par jour. 0 erreur. Mes châssis rentrent TOUS au premier coup maintenant.
-
-🎁 Je l'offre à tous les menuisiers belges jusqu'au 30 septembre 2026.
-Pas de carte bancaire, juste un test.
-
-Scannez le QR code ci-dessous ou cliquez ici (2 min pour tester) :
-👉 {app_web_url}
+📲 Télécharger sur l'App Store :
+👉 {app_store_url}
 
 [QR_CODE_PLACEHOLDER]
 
-Si vous testez, dites-moi ce que vous en pensez — votre retour vaut de l'or pour moi.
+Vous n'avez pas d'iPhone ? Version Android en route + version web dispo :
+🌐 {app_web_url}
+
+Si vous testez, dites-moi ce que vous en pensez — votre retour vaut de l'or.
 
 Michel Pezzuto — Menuisier · Fondateur MesureChâssis
-📧 info@mesurechassis.com · 🌐 https://mesurechassis.com
+📧 info@mesurechassis.com
 
 —
 Vous recevez cet email car votre entreprise est active dans la menuiserie. Pour ne plus être contacté, répondez simplement STOP."""
 
 # ═════════════════════════════════════════════════════════════════════
-# === MAIL #3 — Relance J+3 (mise en avant feature scan bordereau) ══
+# === MAIL #2 — Relance J+3 (rappel test gratuit App Store) ═════════
 # ═════════════════════════════════════════════════════════════════════
 RELANCE_TEMPLATE = """Bonjour,
 
-Je vous ai écrit il y a quelques jours sur MesureChâssis. Vous êtes débordé, je le sais — vous l'êtes encore plus en ce moment.
+Je vous ai écrit il y a quelques jours à propos de MesureChâssis, notre app de prise de mesures pensée pour les menuisiers.
 
-Justement, je voulais vous parler d'une nouveauté qui peut vous faire gagner 30 minutes par chantier :
+Rapide rappel : elle est disponible **gratuitement** sur l'Apple Store depuis peu.
 
-📸 Vous prenez en photo le bordereau de soumission de votre client (PDF, Excel ou simple photo d'un papier) → MesureChâssis liste AUTOMATIQUEMENT toutes les ouvertures avec leurs dimensions théoriques.
-
-Plus qu'à passer sur place et valider les cotes réelles. Fini la double saisie, fini les oublis.
+En 30 secondes chrono :
+📲 Scannez le QR code ou cliquez : {app_store_url}
+📸 Photographiez un cahier des charges → l'IA liste toutes les ouvertures
+✅ Vous validez les cotes sur place. Fini la double saisie.
 
 [QR_CODE_PLACEHOLDER]
 
-👉 {app_web_url}
+Test gratuit, pas de carte bancaire.
 
-100 % gratuit jusqu'au 30 septembre 2026, sans carte bancaire.
-
-Si vous voulez que je vous montre en visio (10 min), répondez juste à ce mail.
+Si vous voulez une démo visio (10 min), répondez à ce mail — je m'adapte à votre planning.
 
 Bien cordialement,
 Michel Pezzuto — MesureChâssis
+📧 info@mesurechassis.com
 
 —
 Pour ne plus être contacté, répondez simplement STOP."""
 
 # ═════════════════════════════════════════════════════════════════════
-# === MAIL #4 — Relance J+7 (dernier essai, démo concrète feature IA) ═
+# === MAIL #3 — Relance J+7 (dernière chance, angle usage concret) ═══
 # ═════════════════════════════════════════════════════════════════════
 RELANCE_2_TEMPLATE = """Bonjour,
 
 Je vous écris une dernière fois (promis 🙏).
 
-Si vous lisez encore ces lignes, prenez 30 secondes pour imaginer ça :
-
-📋 Votre client vous envoie un cahier des charges PDF avec 12 fenêtres.
-📸 Vous le prenez en photo dans l'app → en 10 secondes, les 12 ouvertures sont créées avec leurs dimensions.
+Imaginez ça :
+📋 Votre client vous envoie un cahier des charges avec 12 fenêtres.
+📸 Vous le prenez en photo dans MesureChâssis → en 10 secondes, les 12 ouvertures sont créées avec leurs dimensions.
 🔍 Sur place, vous validez juste les cotes réelles. Voilà.
 
-C'est ce que MesureChâssis fait depuis cette semaine. Avec une IA qui comprend les plans, les Excel et même les bordereaux manuscrits.
+C'est ce que MesureChâssis fait **depuis votre iPhone** — et c'est gratuit à tester.
+
+📲 App Store : {app_store_url}
 
 [QR_CODE_PLACEHOLDER]
 
-👉 {app_web_url}
-
-Gratuit jusqu'au 30 septembre 2026. Un « oui » ou un « non », ça me va — je ne prends pas mal.
+Un « oui » ou un « non », ça me va — je ne prends pas mal.
 
 Bonne continuation,
 Michel Pezzuto — Fondateur MesureChâssis
@@ -551,12 +551,16 @@ async def _send_batch_task(items: list[dict]) -> None:
         if kind == "relance":
             subject = SUBJECT_RELANCE_1
             body = RELANCE_TEMPLATE.format(
-                company=company, app_web_url=APP_WEB_URL,
+                company=company,
+                app_web_url=APP_WEB_URL,
+                app_store_url=APP_STORE_URL,
             )
         elif kind == "relance2":
             subject = SUBJECT_RELANCE_2
             body = RELANCE_2_TEMPLATE.format(
-                company=company, app_web_url=APP_WEB_URL,
+                company=company,
+                app_web_url=APP_WEB_URL,
+                app_store_url=APP_STORE_URL,
             )
         else:
             subject = SUBJECTS.get(country, SUBJECTS["fr"])
@@ -564,17 +568,19 @@ async def _send_batch_task(items: list[dict]) -> None:
                 company=company,
                 origin=ORIGIN_PHRASES.get(country, ORIGIN_PHRASES["fr"]),
                 app_web_url=APP_WEB_URL,
+                app_store_url=APP_STORE_URL,
             )
         # Insertion du QR code (image HTML inline) à la place du placeholder
         # send_email rend automatiquement le body en HTML — le tag <img> sera
         # préservé. On marque clairement la ligne pour les clients texte aussi.
+        # QR pointe désormais vers l'App Store (lien direct pour iPhone/iPad).
         qr_html_block = (
             f'<div style="text-align:center;margin:20px 0">'
-            f'<img src="{QR_IMG_URL}" alt="QR code MesureChassis" '
+            f'<img src="{QR_IMG_URL}" alt="QR code App Store MesureChassis" '
             f'width="200" height="200" '
             f'style="border:1px solid #ddd;border-radius:8px;padding:8px;background:#fff" />'
             f'<br><span style="font-size:12px;color:#666">'
-            f'(scannez ce QR avec votre téléphone)</span></div>'
+            f'(scannez avec l\'appareil photo de votre iPhone pour ouvrir l\'App Store)</span></div>'
         )
         body = body.replace("[QR_CODE_PLACEHOLDER]", qr_html_block)
 
@@ -616,7 +622,10 @@ async def send_batch(
       2. Relances J+3 (rappel soft)
       3. Nouveaux prospects (premier contact)
 
-    Quota global : 30 emails/jour (toutes catégories confondues).
+    Quota global : 40 emails/jour (toutes catégories confondues).
+    Le mix relances / nouveaux est automatique : le système consomme
+    d'abord les relances dues, puis remplit les slots restants avec des
+    premiers contacts — la campagne ne stagne jamais.
 
     🗓️ FILTRE WEEK-END (Europe/Brussels) :
        Par défaut, l'envoi est BLOQUÉ le samedi et le dimanche. Les emails
