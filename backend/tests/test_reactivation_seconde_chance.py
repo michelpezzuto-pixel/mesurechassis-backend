@@ -291,17 +291,18 @@ class TestAdminOverride:
         )
         assert r.status_code == 200
 
-        # Compteur : notez que `delete_my_account` remet reactivation_count=0
-        # lors du soft-delete (voir routes/auth.py L879). Ceci autorise donc
-        # implicitement une nouvelle réactivation après re-suppression.
-        # ⚠️ Potentielle incohérence à signaler au main agent : l'email de
-        # réactivation dit "unique — vous ne pourrez plus réactiver ce compte".
+        # ✅ Comportement corrigé (juillet 2026) : delete_my_account
+        # PRÉSERVE désormais le compteur `reactivation_count` existant.
+        # Après un cycle delete → réactivation → redelete, le compteur
+        # reste à 1 → le quota "1 réactivation unique par email" est bien
+        # respecté. Un admin doit obligatoirement passer par
+        # /admin/reactivation/override pour permettre une seconde chance
+        # exceptionnelle.
         u = await db.users.find_one({"id": STATE["user_id"]})
         assert u["status"] == "deleted"
         count_before = int(u.get("reactivation_count", 0))
-        # Comportement observé : compteur reset à 0 par delete_my_account
-        assert count_before == 0, (
-            f"reactivation_count après redelete = {count_before} (attendu 0 selon code actuel)"
+        assert count_before == 1, (
+            f"reactivation_count après redelete = {count_before} (attendu 1 — compteur préservé)"
         )
 
         # Override

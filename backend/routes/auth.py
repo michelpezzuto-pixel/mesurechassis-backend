@@ -857,6 +857,13 @@ async def delete_my_account(
         original_email.strip().lower().encode("utf-8")
     ).hexdigest()
 
+    # 🔓 SECONDE CHANCE — On conserve TOUJOURS le hash + l'email d'origine
+    # pour permettre la détection de réinscription. Le compteur
+    # `reactivation_count` n'est PAS reset ici : s'il valait déjà 1 (l'user a
+    # déjà réactivé dans le passé), il doit rester à 1 pour appliquer
+    # correctement le quota "1 réactivation unique par email".
+    existing_count = int(user_doc.get("reactivation_count", 0) or 0)
+
     await db.users.update_one(
         {"id": user["id"]},
         {
@@ -873,10 +880,10 @@ async def delete_my_account(
                 # opt-in marketing — sinon on garde une simple trace
                 # anonymisée pour audit (hash de l'email d'origine).
                 "marketing_email": original_email if marketing_optin else None,
-                # 🔓 Champs "Seconde Chance"
+                # 🔓 Champs "Seconde Chance" — Preserve le compteur existant
                 "original_email": original_email,
                 "original_email_hash": original_email_hash,
-                "reactivation_count": 0,
+                "reactivation_count": existing_count,
             }
         },
     )
