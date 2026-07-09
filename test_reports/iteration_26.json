@@ -1,0 +1,44 @@
+{
+  "summary": "Backend test complet du système 'Seconde Chance' (réactivation compte). 17/17 tests pytest passent (register → delete → 409 CAN_REACTIVATE → reactivation/request → 409 QUOTA_EXHAUSTED → status → verify token → confirm → login nouveau mdp → admin override). ⚠️ Un potentiel bug métier détecté : delete_my_account reset reactivation_count à 0 à chaque suppression, ce qui contredit la promesse email 'réactivation unique'.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "DELETE /api/auth/me",
+        "issue": "delete_my_account (routes/auth.py L879) remet reactivation_count=0 à CHAQUE soft-delete. Après un cycle delete→reactivate→redelete, l'utilisateur peut re-demander une réactivation (count part de 0), ce qui contredit l'email de confirmation qui promet: 'Cette réactivation est unique — vous ne pourrez plus réactiver ce compte après cette fois' (routes/reactivation.py L209-210). Si le comportement voulu est effectivement 'quota par cycle de vie du compte', le message email doit être adouci. Sinon, il faut retirer 'reactivation_count: 0' du $set de delete_my_account."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_reactivation_seconde_chance.py",
+    "/app/test_reports/pytest/iter26_reactivation.xml"
+  ],
+  "action_items": [
+    "Décider du comportement voulu pour reactivation_count sur re-delete : (a) le préserver → retirer `reactivation_count: 0` du $set de delete_my_account dans routes/auth.py L879 ; ou (b) le reset volontairement → adoucir le wording de l'email de confirmation dans routes/reactivation.py L207-210 ('Cette réactivation est unique...').",
+    "Optionnel : ajouter michel@mesurechassis.com à PLATFORM_OWNER_EMAILS dans deps.py L279 ou via env, sinon il ne peut pas déclencher l'admin override malgré son rôle admin (tests utilisent artisan@mesurechassis.fr qui EST platform owner).",
+    "Pas de nettoyage cron mentionné pour les tokens reactivation_tokens expirés/consommés (collection va grossir). Considérer un TTL index MongoDB sur expires_at."
+  ],
+  "critical_code_review_comments": [
+    "routes/reactivation.py : hash_email() bien centralisé, atomicité $inc sur reactivation_count OK.",
+    "routes/auth.py L152-185 : le check ACCOUNT_DELETED_CAN_REACTIVATE / QUOTA_EXHAUSTED est correctement placé AVANT le split legacy/master-admin, donc s'applique aux 2 modes.",
+    "routes/reactivation.py : réponse générique anti-énumération sur /reactivation/request → OK (200 même si email inconnu).",
+    "routes/reactivation.py L308-317 : gestion propre des tokens expirés/déjà utilisés (410 Gone).",
+    "routes/reactivation.py L331-341 : garde contre récupération d'un email repris par un autre compte actif → 409 propre.",
+    "Suggestion : ajouter un rate-limiter sur /auth/reactivation/request (spam de mails Resend potentiel malgré le quota=1 en DB, car quota bloque seulement les 2e+ demandes)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_reactivation_seconde_chance.py (créé, 17 tests)"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "N/A"},
+  "seed_data_creation": "Aucune donnée seed persistante. Les tests créent un user test-reactivation-<timestamp>@mesurechassis-qa.com et le nettoient via fixture module scope (users + companies + reactivation_tokens + reactivation_audit).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Le fichier /app/backend/tests/test_reactivation_seconde_chance.py couvre le flux complet Seconde Chance en 17 tests séquentiels. Utilise mode legacy (role=admin) pour bypasser la validation VIES qui rejette BE0123456789 (VAT fictif). Le platform owner utilisé pour l'admin override est artisan@mesurechassis.fr/artisan123 (michel@mesurechassis.com n'est pas dans PLATFORM_OWNER_EMAILS par défaut).",
+  "rca_of_issue": "N/A - pas de bug de code découvert, seulement une potentielle incohérence business/UX sur le reset du reactivation_count lors du re-delete (documenté ci-dessus)."
+}

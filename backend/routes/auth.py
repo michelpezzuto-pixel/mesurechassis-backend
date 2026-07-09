@@ -138,6 +138,52 @@ async def register(payload: dict, request: Request):
     if existing:
         raise HTTPException(400, "Email déjà enregistré")
 
+    # 🔓 SECONDE CHANCE — Détection d'une réinscription avec un email
+    # précédemment supprimé (via hash SHA-256 de l'email).
+    import hashlib
+    email_hash = hashlib.sha256(email_lower.encode("utf-8")).hexdigest()
+    deleted_match = await db.users.find_one(
+        {
+            "status": "deleted",
+            "original_email_hash": email_hash,
+        },
+        {"_id": 0, "id": 1, "reactivation_count": 1},
+    )
+    if deleted_match:
+        count = int(deleted_match.get("reactivation_count", 0) or 0)
+        if count < 1:
+            # 1re chance possible → l'app pourra proposer un bouton
+            # "Réactiver mon compte" qui appellera /auth/reactivation/request
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "code": "ACCOUNT_DELETED_CAN_REACTIVATE",
+                    "message": (
+                        "Vous avez déjà eu un compte MesureChâssis avec cette "
+                        "adresse. Vous pouvez le réactiver en un tap — vous "
+                        "recevrez un email de confirmation. Attention : la "
+                        "réactivation n'est possible qu'une seule fois par "
+                        "adresse email."
+                    ),
+                    "email": email_lower,
+                },
+            )
+        else:
+            # Quota atteint → refus définitif
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "code": "ACCOUNT_DELETED_QUOTA_EXHAUSTED",
+                    "message": (
+                        "Votre quota de réactivation est atteint. Veuillez "
+                        "utiliser un nouvel identifiant (autre adresse email) "
+                        "pour créer un compte, ou contactez "
+                        "info@mesurechassis.com pour un cas exceptionnel."
+                    ),
+                    "email": email_lower,
+                },
+            )
+
     # 🛡️ Anti-fraude essai gratuit — détecte les inscriptions répétées
     # depuis le même appareil après suppression de compte.
     # Bloque si un user a été soft-deleted ou si une company a été
@@ -800,6 +846,17 @@ async def delete_my_account(
     else:
         new_email = f"deleted_{uuid.uuid4().hex[:12]}@deleted.invalid"
 
+    # 🔓 SECONDE CHANCE — On conserve TOUJOURS le hash SHA-256 de l'email
+    # d'origine + l'email d'origine en clair (dans un champ isolé jamais
+    # exposé via API). Cela permet :
+    # (a) de détecter les tentatives de réinscription avec la même adresse
+    # (b) d'envoyer un email de réactivation si l'utilisateur en fait la demande
+    # Ces données sont purgées après 180 jours par le cron RGPD.
+    import hashlib
+    original_email_hash = hashlib.sha256(
+        original_email.strip().lower().encode("utf-8")
+    ).hexdigest()
+
     await db.users.update_one(
         {"id": user["id"]},
         {
@@ -816,6 +873,10 @@ async def delete_my_account(
                 # opt-in marketing — sinon on garde une simple trace
                 # anonymisée pour audit (hash de l'email d'origine).
                 "marketing_email": original_email if marketing_optin else None,
+                # 🔓 Champs "Seconde Chance"
+                "original_email": original_email,
+                "original_email_hash": original_email_hash,
+                "reactivation_count": 0,
             }
         },
     )

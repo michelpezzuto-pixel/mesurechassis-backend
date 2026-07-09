@@ -4,6 +4,7 @@ import {
   Alert,
   Image,
   KeyboardAvoidingView,
+  Linking,
   Modal,
   Platform,
   ScrollView,
@@ -299,6 +300,76 @@ export default function SignIn() {
       // Email non vérifié → bascule vers l'écran de vérification
       if (e?.response?.status === 403 && detail?.code === "email_not_verified") {
         setPendingVerification({ email: cleanEmail });
+        return;
+      }
+      // 🔓 SECONDE CHANCE — Détection d'une réinscription avec un email supprimé
+      if (
+        e?.response?.status === 409 &&
+        typeof detail === "object" &&
+        detail?.code === "ACCOUNT_DELETED_CAN_REACTIVATE"
+      ) {
+        Alert.alert(
+          "Compte précédemment supprimé",
+          detail.message ||
+            "Vous avez déjà eu un compte MesureChâssis avec cette adresse. Vous pouvez le réactiver en un tap.",
+          [
+            { text: "Annuler", style: "cancel" },
+            {
+              text: "🔄 Réactiver mon compte",
+              onPress: async () => {
+                try {
+                  const res = await api.post<{ ok: boolean; message: string }>(
+                    "/auth/reactivation/request",
+                    { email: cleanEmail },
+                  );
+                  Alert.alert(
+                    "✉️ Email envoyé",
+                    res.data?.message ||
+                      "Un email de réactivation vous a été envoyé. Vérifiez votre boîte de réception (et vos spams). Le lien est valable 24 heures.",
+                  );
+                } catch (err: any) {
+                  const d = err?.response?.data?.detail;
+                  const msg =
+                    typeof d === "object" && d?.message
+                      ? d.message
+                      : typeof d === "string"
+                        ? d
+                        : "Impossible d'envoyer l'email pour le moment. Réessayez plus tard.";
+                  Alert.alert("Erreur", msg);
+                }
+              },
+            },
+          ],
+        );
+        return;
+      }
+      if (
+        e?.response?.status === 409 &&
+        typeof detail === "object" &&
+        detail?.code === "ACCOUNT_DELETED_QUOTA_EXHAUSTED"
+      ) {
+        Alert.alert(
+          "Quota de réactivation atteint",
+          detail.message ||
+            "Votre quota de réactivation est atteint. Veuillez utiliser un nouvel identifiant (autre adresse email) pour créer un compte, ou contactez info@mesurechassis.com pour un cas exceptionnel.",
+          [
+            { text: "OK", style: "cancel" },
+            {
+              text: "📧 Contacter le support",
+              onPress: () => {
+                Linking.openURL(
+                  `mailto:info@mesurechassis.com?subject=${encodeURIComponent(
+                    "Demande de réactivation exceptionnelle - " + cleanEmail,
+                  )}&body=${encodeURIComponent(
+                    "Bonjour,\n\nJe souhaite bénéficier d'une réactivation exceptionnelle de mon compte MesureChâssis. Mon adresse email est : " +
+                      cleanEmail +
+                      "\n\nMerci d'étudier ma demande.\n\nCordialement,",
+                  )}`,
+                ).catch(() => {});
+              },
+            },
+          ],
+        );
         return;
       }
       // 🛡️ Apple Review fix (Build 107) — Erreur traduite selon la langue
