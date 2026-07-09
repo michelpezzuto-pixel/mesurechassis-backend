@@ -60,6 +60,31 @@ type SpecItem = {
   height_mm: number;
   quantity: number;
   notes: string;
+  // 🆕 P2 — Specs techniques exhaustives (extraites du CDC, jamais perdues)
+  reference?: string;
+  location?: string;
+  material?: string;
+  color_ral?: string;
+  glazing?: string;
+  uw?: string;
+  ug?: string;
+  rw?: string;
+  opening_type?: string;
+  opening_direction?: string;
+  security?: string;
+  hardware?: string;
+  accessories?: string;
+  extra?: string;
+};
+
+type ProjectSpecs = {
+  client?: string;
+  address?: string;
+  general_norms?: string;
+  deadlines?: string;
+  warranty?: string;
+  payment?: string;
+  other?: string;
 };
 
 type SpecDraft = {
@@ -69,6 +94,7 @@ type SpecDraft = {
   source: "pdf" | "excel" | "image";
   summary: string;
   items: SpecItem[];
+  project_specs?: ProjectSpecs | null;
   status: "processing" | "pending" | "imported" | "rejected" | "failed";
   created_at: string;
   error_message?: string | null;
@@ -767,6 +793,37 @@ export default function ImportSpecScreen() {
                 <Text style={styles.summaryFile}>📎 {draft.filename}</Text>
               </View>
 
+              {/* 🆕 P2 — Exigences globales du projet (rien n'est perdu) */}
+              {(() => {
+                const ps = draft.project_specs || {};
+                const rows: { label: string; value?: string }[] = [
+                  { label: "Client", value: ps.client },
+                  { label: "Adresse chantier", value: ps.address },
+                  { label: "Normes / labels", value: ps.general_norms },
+                  { label: "Délais / dates", value: ps.deadlines },
+                  { label: "Garantie", value: ps.warranty },
+                  { label: "Paiement", value: ps.payment },
+                  { label: "Autres exigences", value: ps.other },
+                ].filter((r) => !!(r.value && r.value.trim()));
+                if (rows.length === 0) return null;
+                return (
+                  <View style={styles.projectCard}>
+                    <View style={styles.projectHeader}>
+                      <Ionicons name="document-text" size={16} color={C.primary} />
+                      <Text style={styles.projectTitle}>
+                        Exigences du cahier des charges
+                      </Text>
+                    </View>
+                    {rows.map((r) => (
+                      <View key={r.label} style={styles.projectRow}>
+                        <Text style={styles.projectRowLabel}>{r.label}</Text>
+                        <Text style={styles.projectRowValue}>{r.value}</Text>
+                      </View>
+                    ))}
+                  </View>
+                );
+              })()}
+
               {items.map((item, idx) => (
                 <ItemEditor
                   key={`${idx}-${item.label}`}
@@ -954,6 +1011,42 @@ function ItemEditor({
         multiline
         maxLength={300}
       />
+
+      {/* 🆕 P2 — Specs techniques détaillées extraites du CDC (lecture seule) */}
+      {(() => {
+        const specs: { label: string; value?: string }[] = [
+          { label: "Repère", value: item.reference },
+          { label: "Emplacement", value: item.location },
+          { label: "Matériau", value: item.material },
+          { label: "Couleur/RAL", value: item.color_ral },
+          { label: "Vitrage", value: item.glazing },
+          { label: "Uw", value: item.uw },
+          { label: "Ug", value: item.ug },
+          { label: "Rw", value: item.rw },
+          { label: "Ouverture", value: item.opening_type },
+          { label: "Sens", value: item.opening_direction },
+          { label: "Sécurité", value: item.security },
+          { label: "Quincaillerie", value: item.hardware },
+          { label: "Accessoires", value: item.accessories },
+          { label: "Autre", value: item.extra },
+        ].filter((s) => !!(s.value && s.value.trim()));
+        if (specs.length === 0) return null;
+        return (
+          <View style={styles.specDetails}>
+            <Text style={styles.specDetailsTitle}>
+              📋 Spécifications détectées ({specs.length})
+            </Text>
+            <View style={styles.specChipsWrap}>
+              {specs.map((s) => (
+                <View key={s.label} style={styles.specChip}>
+                  <Text style={styles.specChipLabel}>{s.label}</Text>
+                  <Text style={styles.specChipValue}>{s.value}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        );
+      })()}
     </View>
   );
 }
@@ -1192,6 +1285,89 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   summaryFile: { fontSize: 11, color: C.textMuted, marginTop: 6 },
+
+  // 🆕 P2 — Carte "Exigences du cahier des charges" (specs globales projet)
+  projectCard: {
+    backgroundColor: C.cardBg || "#1A1A1A",
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: C.border,
+  },
+  projectHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 10,
+  },
+  projectTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: C.textPrimary,
+    flex: 1,
+  },
+  projectRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+    paddingVertical: 5,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: C.border,
+  },
+  projectRowLabel: {
+    fontSize: 12,
+    color: C.textMuted,
+    fontWeight: "600",
+    width: 110,
+  },
+  projectRowValue: {
+    flex: 1,
+    fontSize: 12,
+    color: C.textSecondary,
+    lineHeight: 17,
+  },
+
+  // 🆕 P2 — Specs techniques par châssis (chips lecture seule)
+  specDetails: {
+    marginTop: 10,
+    paddingTop: 10,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: C.border,
+  },
+  specDetailsTitle: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: C.textSecondary,
+    marginBottom: 8,
+  },
+  specChipsWrap: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 6,
+  },
+  specChip: {
+    backgroundColor: C.bg,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: C.border,
+    maxWidth: "100%",
+  },
+  specChipLabel: {
+    fontSize: 9,
+    color: C.textMuted,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.3,
+  },
+  specChipValue: {
+    fontSize: 12,
+    color: C.textPrimary,
+    fontWeight: "500",
+    marginTop: 1,
+  },
 
   itemCard: {
     backgroundColor: C.cardBg || "#1A1A1A",

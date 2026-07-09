@@ -1021,3 +1021,13 @@ Statut : FAIT, en attente validation utilisateur avant P2.
 - Prix affichés UNIQUEMENT sur le site web (jamais dans l'app iOS).
 - 📌 RAPPEL : campagne Café Jeton → emails auto « désormais payant, 14 j gratuits restants, passez à Pro »
   (l'utilisateur dira quand lancer — cf. roadmap_jeton_cafe_priorite4.md).
+
+## ✅ PRIORITÉ 2 — Intelligence du Cahier des Charges (09/07/2026)
+Statut : FAIT (backend + frontend), en attente validation utilisateur avant P3 (Onboarding slides).
+- Backend : prompt Gemini `spec_parser.py` étendu → extraction exhaustive (vitrage, Uw/Ug/Rw, RAL,
+  matériau, normes, garantie, paiement, délais, sécurité, quincaillerie, accessoires…).
+- Schéma : `project_specs` (dict global projet) + 14 champs techniques par item dans `SpecDraft`.
+  Rien n'est perdu : specs copiées dans `options.spec_details` + `options.spec_notes` des mesures créées.
+- Frontend `import-spec.tsx` : carte « Exigences du cahier des charges » (client, adresse, normes,
+  délais, garantie, paiement, autres) sous le résumé IA + chips « Spécifications détectées » par châssis.
+- Vérifié visuellement (screenshot web mobile 390px) : les 2 blocs s'affichent correctement.

@@ -43,54 +43,73 @@ ALLOWED_BLOCK_TYPES = ["standard", "coulissant", "porte", "trapeze"]
 
 # Prompt système : on est très directif sur le format de sortie.
 # Le but est d'obtenir un JSON parsable sans surcouche.
-SYSTEM_PROMPT = """Tu es un assistant spécialisé dans l'analyse de cahiers des charges de menuiserie (fenêtres, portes, châssis).
+SYSTEM_PROMPT = """Tu es un expert en analyse de cahiers des charges de menuiserie (fenêtres, portes, châssis, volets).
 
-Tu reçois un document (PDF, photo, tableur ou texte) qui décrit des ouvertures à installer chez un client.
+Tu reçois un document (PDF, photo, tableur ou texte) décrivant des ouvertures à installer chez un client.
 
-Ta mission : en extraire la liste des châssis avec leurs caractéristiques.
+Ta mission : extraire de façon EXHAUSTIVE la liste des châssis AVEC TOUTES leurs spécifications techniques, ET les exigences globales du projet. AUCUNE donnée technique ne doit être perdue.
 
 # RÈGLES STRICTES DE SORTIE
 
-Tu DOIS répondre UNIQUEMENT avec un objet JSON valide (pas de markdown, pas de commentaire, pas de texte avant ou après).
+Réponds UNIQUEMENT avec un objet JSON valide (pas de markdown, pas de commentaire, pas de texte avant/après).
 
 Format :
-```
 {
   "items": [
     {
       "label": "string court (ex: 'Fenêtre salon', 'Porte d''entrée')",
+      "reference": "repère/plan si présent (ex: 'F1', 'P3', 'M12'), sinon ''",
       "block_type": "standard" | "coulissant" | "porte" | "trapeze",
-      "width_mm": entier (largeur en millimètres),
-      "height_mm": entier (hauteur en millimètres),
-      "quantity": entier (nombre d'exemplaires identiques, défaut 1),
-      "notes": "texte libre (matériau, couleur, ouvrant, vitrage, etc.)"
+      "width_mm": entier (largeur mm),
+      "height_mm": entier (hauteur mm),
+      "quantity": entier (nb d'exemplaires identiques, défaut 1),
+      "location": "pièce/étage (ex: 'Cuisine RDC', 'Chambre 1 étage'), sinon ''",
+      "material": "matériau (PVC / Aluminium / Bois / Mixte bois-alu), sinon ''",
+      "color_ral": "couleur + code RAL si donné (ex: 'Gris anthracite RAL 7016', 'Blanc'), sinon ''",
+      "glazing": "type de vitrage (ex: 'Double vitrage 4/16/4', 'Triple', 'Acoustique', 'Sécurit feuilleté 44.2', 'Dépoli'), sinon ''",
+      "uw": "coefficient thermique Uw du châssis si donné (ex: '1.3 W/m²K'), sinon ''",
+      "ug": "coefficient Ug du vitrage si donné (ex: '1.1'), sinon ''",
+      "rw": "affaiblissement acoustique Rw si donné (ex: '38 dB'), sinon ''",
+      "opening_type": "type d'ouverture (ex: 'Oscillo-battant', 'Battant', 'Fixe', 'Coulissant', 'Soufflet', 'À galandage'), sinon ''",
+      "opening_direction": "sens/main d'ouverture (ex: 'Tirant gauche', 'Poussant droit', '2 vantaux'), sinon ''",
+      "security": "exigence sécurité/anti-effraction (ex: 'RC2', 'RC3', 'Vitrage retardateur'), sinon ''",
+      "hardware": "quincaillerie (ex: 'Poignée Hoppe alu', 'Serrure 3 points', 'Paumelles renforcées'), sinon ''",
+      "accessories": "accessoires (ex: 'Volet roulant intégré', 'Moustiquaire', 'Seuil PMR', 'Grille de ventilation'), sinon ''",
+      "notes": "toute autre info utile au menuisier",
+      "extra": "TOUTE exigence supplémentaire du document qui n'entre dans AUCUN champ ci-dessus, recopiée mot pour mot. NE RIEN OMETTRE."
     }
   ],
+  "project_specs": {
+    "client": "nom du client / maître d'ouvrage si présent, sinon ''",
+    "address": "adresse du chantier si présente, sinon ''",
+    "general_norms": "normes/labels applicables à tout le projet (ex: 'CE', 'NF', 'Acotherm', 'CEKAL', 'DTU 36.5', 'RGE'), sinon ''",
+    "deadlines": "dates/délais d'exécution, livraison, pose si présents (ex: 'Pose avant le 15/09/2026', 'Délai 6 semaines'), sinon ''",
+    "warranty": "garanties demandées (ex: 'Décennale', 'Garantie 10 ans profilés'), sinon ''",
+    "payment": "modalités de paiement si présentes (ex: '30% acompte, solde à la pose'), sinon ''",
+    "other": "TOUTE autre exigence globale du document non capturée ailleurs, recopiée fidèlement. NE RIEN OMETTRE."
+  },
   "summary": "1 phrase résumant le contenu du document"
 }
-```
 
 # RÈGLES MÉTIER
 
-1. **block_type** : choisis EXACTEMENT une de ces 4 valeurs :
+1. **block_type** : EXACTEMENT une de ces 4 valeurs :
    - "porte" : porte d'entrée, porte-fenêtre, porte de service, porte de garage
-   - "coulissant" : baie coulissante, châssis coulissant, oscillo-coulissant
+   - "coulissant" : baie coulissante, châssis coulissant, oscillo-coulissant, galandage
    - "trapeze" : forme trapézoïdale (côtés non parallèles)
    - "standard" : tout le reste (fenêtre classique, châssis fixe, oscillo-battant…)
 
-2. **Dimensions** : toujours en MILLIMÈTRES (entier). Si le document donne des cm ou des m, convertis. Si une dimension manque, mets 0.
+2. **Dimensions** : toujours en MILLIMÈTRES (entier). Convertis cm/m. Dimension manquante → 0.
 
-3. **Quantity** : si le document dit "3 fenêtres identiques de 1m x 1m20", crée UN seul item avec quantity=3 et width=1000, height=1200. NE répète PAS l'item.
+3. **Quantity** : "3 fenêtres identiques 1m x 1m20" → UN item quantity=3, width=1000, height=1200. NE répète PAS.
 
-4. **Label** : concis et descriptif (max 40 caractères). Inclus la pièce si mentionnée (« Fenêtre cuisine », « Porte chambre 1 »).
+4. **EXHAUSTIVITÉ (CRUCIAL)** : le menuisier doit retrouver dans l'app CHAQUE exigence du cahier des charges. Si une info ne rentre pas dans un champ précis, mets-la dans "extra" (par item) ou "project_specs.other" (global). Recopie fidèlement. NE RÉSUME PAS au point de perdre une exigence (vitrage, coef, norme, RAL, quincaillerie, délai…).
 
-5. **Notes** : capture toute info supplémentaire utile au menuisier (couleur cadre, type de vitrage, sens d'ouverture, RAL, matériau PVC/alu/bois, oscillo-battant, etc.).
+5. **JAMAIS d'inventions** : dimension incertaine → 0 ; type incertain → "standard" ; champ absent → "". Ne devine pas un RAL ou un coefficient non écrit.
 
-6. Si le document NE CONTIENT AUCUNE description de châssis, retourne `{"items": [], "summary": "Aucun châssis détecté dans ce document."}`.
+6. Aucun châssis détecté → {"items": [], "project_specs": {...champs vides...}, "summary": "Aucun châssis détecté dans ce document."}
 
-7. Sois INDULGENT sur le format d'entrée : tableaux mal alignés, photos floues, plans manuscrits — fais de ton mieux pour extraire les ouvertures.
-
-8. JAMAIS d'inventions. Si tu n'es pas sûr d'une dimension, mets 0. Si tu n'es pas sûr du type, mets "standard"."""
+7. Sois INDULGENT sur le format d'entrée (tableaux mal alignés, photos floues, plans manuscrits) — fais de ton mieux."""
 
 
 def _parse_json_response(raw: str) -> dict:
@@ -115,11 +134,24 @@ def _parse_json_response(raw: str) -> dict:
         return {"items": [], "summary": f"Erreur parsing IA: {e}"}
 
 
+# Champs texte détaillés capturés par ouverture (extraction exhaustive CDC).
+_ITEM_TEXT_FIELDS = [
+    "reference", "location", "material", "color_ral", "glazing", "uw", "ug",
+    "rw", "opening_type", "opening_direction", "security", "hardware",
+    "accessories", "extra",
+]
+# Champs des exigences globales du projet.
+_PROJECT_FIELDS = [
+    "client", "address", "general_norms", "deadlines", "warranty",
+    "payment", "other",
+]
+
+
 def _validate_and_clean_items(items_raw: list) -> List[dict]:
     """Nettoie + valide la liste d'items extraite par l'IA.
 
-    On force des types Python natifs (int pour dims, str pour labels)
-    et on filtre les items invalides (ex: label vide, block_type interdit).
+    Préserve TOUS les champs techniques détaillés (vitrage, Uw/Rw, RAL,
+    quincaillerie, normes…) — objectif : ne perdre aucune exigence du CDC.
     """
     cleaned: List[dict] = []
     if not isinstance(items_raw, list):
@@ -142,18 +174,28 @@ def _validate_and_clean_items(items_raw: list) -> List[dict]:
             quantity = max(1, int(raw.get("quantity") or 1))
         except (TypeError, ValueError):
             quantity = 1
-        notes = str(raw.get("notes") or "").strip()[:500]
-        cleaned.append(
-            {
-                "label": label,
-                "block_type": block_type,
-                "width_mm": max(0, width),
-                "height_mm": max(0, height),
-                "quantity": quantity,
-                "notes": notes,
-            }
-        )
+        item = {
+            "label": label,
+            "block_type": block_type,
+            "width_mm": max(0, width),
+            "height_mm": max(0, height),
+            "quantity": quantity,
+            "notes": str(raw.get("notes") or "").strip()[:1000],
+        }
+        # Champs techniques détaillés (chaîne, tronqués mais jamais perdus).
+        for f in _ITEM_TEXT_FIELDS:
+            item[f] = str(raw.get(f) or "").strip()[:600]
+        cleaned.append(item)
     return cleaned
+
+
+def _clean_project_specs(raw: Optional[dict]) -> dict:
+    """Nettoie les exigences globales du projet (délais, normes, garanties…)."""
+    out = {f: "" for f in _PROJECT_FIELDS}
+    if isinstance(raw, dict):
+        for f in _PROJECT_FIELDS:
+            out[f] = str(raw.get(f) or "").strip()[:1500]
+    return out
 
 
 async def _call_gemini(session_id: str, user_text: str, file_path: Optional[str] = None, mime: Optional[str] = None) -> str:
@@ -212,6 +254,7 @@ async def parse_pdf(pdf_bytes: bytes, session_id: str) -> dict:
     parsed = _parse_json_response(raw)
     return {
         "items": _validate_and_clean_items(parsed.get("items") or []),
+        "project_specs": _clean_project_specs(parsed.get("project_specs")),
         "summary": str(parsed.get("summary") or "")[:300],
         "raw_response": raw[:2000],
     }
@@ -245,6 +288,7 @@ async def parse_image(img_bytes: bytes, mime: str, session_id: str) -> dict:
     parsed = _parse_json_response(raw)
     return {
         "items": _validate_and_clean_items(parsed.get("items") or []),
+        "project_specs": _clean_project_specs(parsed.get("project_specs")),
         "summary": str(parsed.get("summary") or "")[:300],
         "raw_response": raw[:2000],
     }
@@ -311,6 +355,7 @@ async def parse_excel(xlsx_bytes: bytes, session_id: str) -> dict:
     parsed = _parse_json_response(raw)
     return {
         "items": _validate_and_clean_items(parsed.get("items") or []),
+        "project_specs": _clean_project_specs(parsed.get("project_specs")),
         "summary": str(parsed.get("summary") or "")[:300],
         "raw_response": raw[:2000],
     }

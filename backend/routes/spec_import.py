@@ -80,6 +80,21 @@ class SpecItem(BaseModel):
     height_mm: int = 0
     quantity: int = 1
     notes: str = ""
+    # 🆕 P2 — Extraction exhaustive du cahier des charges (aucune donnée perdue)
+    reference: str = ""
+    location: str = ""
+    material: str = ""
+    color_ral: str = ""
+    glazing: str = ""
+    uw: str = ""
+    ug: str = ""
+    rw: str = ""
+    opening_type: str = ""
+    opening_direction: str = ""
+    security: str = ""
+    hardware: str = ""
+    accessories: str = ""
+    extra: str = ""
 
 
 class SpecDraft(BaseModel):
@@ -89,6 +104,8 @@ class SpecDraft(BaseModel):
     source: str  # pdf | excel | image
     summary: str = ""
     items: List[SpecItem] = Field(default_factory=list)
+    # 🆕 P2 — Exigences globales du projet (délais, normes, garanties, paiement…)
+    project_specs: Optional[dict] = None
     status: str = "pending"  # processing | pending | imported | rejected | failed
     created_at: str
     created_by: str
@@ -146,6 +163,25 @@ def _detect_source(filename: str, content_type: Optional[str]) -> Optional[str]:
     return None
 
 
+def _format_spec_details(item: dict) -> str:
+    """Construit un récap lisible de TOUTES les specs techniques d'une
+    ouverture (rien ne doit être perdu à la conversion en mesure)."""
+    fields = [
+        ("Repère", "reference"), ("Emplacement", "location"),
+        ("Matériau", "material"), ("Couleur/RAL", "color_ral"),
+        ("Vitrage", "glazing"), ("Uw", "uw"), ("Ug", "ug"), ("Rw", "rw"),
+        ("Ouverture", "opening_type"), ("Sens", "opening_direction"),
+        ("Sécurité", "security"), ("Quincaillerie", "hardware"),
+        ("Accessoires", "accessories"), ("Autre exigence", "extra"),
+    ]
+    lines = []
+    for label, key in fields:
+        val = str(item.get(key) or "").strip()
+        if val:
+            lines.append(f"{label}: {val}")
+    return "\n".join(lines)
+
+
 def _expand_items_for_mesures(items: List[dict]) -> List[dict]:
     """Convertit la liste validée en payloads MesureCreate.
 
@@ -166,6 +202,18 @@ def _expand_items_for_mesures(items: List[dict]) -> List[dict]:
         qty = max(1, int(item.get("quantity") or 1))
         base_label = str(item.get("label") or "Ouverture").strip()[:80]
         notes = str(item.get("notes") or "").strip()
+        # 🆕 P2 — Récap exhaustif des specs + copie structurée (rien perdu).
+        details_text = _format_spec_details(item)
+        full_notes = (notes + ("\n\n" + details_text if details_text else "")).strip()
+        spec_details = {
+            k: str(item.get(k) or "").strip()
+            for k in [
+                "reference", "location", "material", "color_ral", "glazing",
+                "uw", "ug", "rw", "opening_type", "opening_direction",
+                "security", "hardware", "accessories", "extra",
+            ]
+            if str(item.get(k) or "").strip()
+        }
         for n in range(qty):
             label = base_label if qty == 1 else f"{base_label} ({n + 1}/{qty})"
             payloads.append(
@@ -185,7 +233,8 @@ def _expand_items_for_mesures(items: List[dict]) -> List[dict]:
                     "options": {
                         "imported_from_spec": True,
                         "validated_on_site": False,  # Sera basculé à True lors de la validation sur place
-                        "spec_notes": notes,
+                        "spec_notes": full_notes,
+                        "spec_details": spec_details,
                         "theoretical_width_mm": int(width),
                         "theoretical_height_mm": int(height),
                     },
@@ -323,6 +372,7 @@ async def _run_ai_analysis_bg(
                 "$set": {
                     "status": "imported" if items else "failed",
                     "items": items,
+                    "project_specs": ai_result.get("project_specs"),
                     "summary": ai_result.get("summary", ""),
                     "raw_response": ai_result.get("raw_response", ""),
                     "mesures_created": mesures_created,
