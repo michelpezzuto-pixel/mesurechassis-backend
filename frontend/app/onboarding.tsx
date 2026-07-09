@@ -97,7 +97,11 @@ export default function OnboardingScreen() {
       finish();
       return;
     }
-    listRef.current?.scrollToIndex({ index: index + 1, animated: true });
+    // ⚠️ react-native-web : onMomentumScrollEnd ne fire PAS pour un
+    // scrollToIndex programmatique → on met à jour l'index explicitement.
+    const target = index + 1;
+    setIndex(target);
+    listRef.current?.scrollToIndex({ index: target, animated: true });
   };
 
   return (

@@ -1031,3 +1031,26 @@ Statut : FAIT (backend + frontend), en attente validation utilisateur avant P3 (
 - Frontend `import-spec.tsx` : carte « Exigences du cahier des charges » (client, adresse, normes,
   délais, garantie, paiement, autres) sous le résumé IA + chips « Spécifications détectées » par châssis.
 - Vérifié visuellement (screenshot web mobile 390px) : les 2 blocs s'affichent correctement.
+
+## ✅ PRIORITÉ 3 — Onboarding 5 slides (09/07/2026)
+Statut : FAIT + testé (testing agent + E2E).
+- `/app/frontend/app/onboarding.tsx` : 5 slides (Inscription, Chantier, CDC, Ouverture, Parrainage)
+  avec VRAIES captures d'écran FR (assets/images/onboarding/*.jpg) dans un cadre téléphone,
+  boutons « Passer » / « Suivant » / « Commencer », dots animés.
+- Affiché UNE FOIS au premier lancement (flag AsyncStorage `mc_onboarding_seen`), redirect depuis index.tsx.
+- Fix web : setIndex explicite dans next() (onMomentumScrollEnd ne fire pas en programmatique sur RN-web).
+
+## ✅ PRIORITÉ 4 — Système « Jeton Café » (09/07/2026)
+Statut : FAIT + testé (backend script + testing agent + E2E pop-up→PIN→validé).
+- Backend `/app/backend/routes/jeton_cafe.py` : collections `cafe_stations`, `cafe_jetons`, `cafe_relances`.
+  Règles : 1 jeton/jour, 1 actif à la fois, validité 30 j, PIN 4 chiffres, verrouillage 10 min après 5 échecs.
+- Inscription QR : `?station=<id>` → badge vert à l'inscription → `campaign_station_id` sur le user (auth.py).
+  Les comptes sans tag ne voient JAMAIS la fonctionnalité.
+- Pop-up « Vous avez gagné un café ! » après création d'ouverture (new-mesure.tsx → POST /cafe/earn),
+  bouton VERT « VALIDATION POMPISTE » → PIN station → « Café validé ! ». « Plus tard » ne bloque rien.
+- Écran `/mes-cafes` (artisan) : jeton actif validable À TOUT MOMENT (au bureau ou à la pompe), historique.
+- Écran `/admin/stations` (propriétaire uniquement) : création stations (nom, ville, PIN, objectif 50/mois),
+  suivi temps réel cafés liquidés/objectif, QR code imprimable par station, relance email manuelle
+  « Nouveau projet, nouvelle pause ! » (fenêtre J-10 signalée), historique 6 mois.
+- Dashboard : bouton « Mes cafés » (si tagué) + « Stations » (owner). Barre d'actions désormais scrollable.
+- Station de démo : "Total Wavre TEST" (PIN 1234). Owner test : artisan@mesurechassis.fr/artisan123.

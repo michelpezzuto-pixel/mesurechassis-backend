@@ -439,7 +439,14 @@ export default function Dashboard() {
       {/* Boutons en flex:1 pour occuper toute la largeur (pas de zone vide à
           gauche). Sur les comptes Artisan, le bouton "Équipe" est masqué et
           les 3 restants se redistribuent automatiquement. */}
-      <View style={styles.actionsBar}>
+      {/* Barre horizontale scrollable : évite les labels tronqués quand
+          plusieurs boutons (Équipe/Stats/Campagne/Stations/Mes cafés…) */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.actionsBarWrap}
+        contentContainerStyle={styles.actionsBar}
+      >
         {/* L'Équipe n'est dispo que pour les comptes Entreprise. Un Artisan
             solo n'a pas de sous-comptes à gérer. */}
         {user?.role === "admin" && company?.account_type !== "artisan" && (
@@ -554,7 +561,7 @@ export default function Dashboard() {
             <Text style={styles.actionBtnText} numberOfLines={1}>{t("dashboardExtended.profileBtn")}</Text>
           </TouchableOpacity>
         )}
-      </View>
+      </ScrollView>
 
       {/* 🆕 Build 9 — Incite le filleul à parrainer (disparaît dès 1er parrainage) */}
       <FilleulInviteBanner />
@@ -1196,17 +1203,19 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     letterSpacing: 0.4,
   },
+  actionsBarWrap: {
+    flexGrow: 0,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderSubtle,
+  },
   actionsBar: {
     flexDirection: "row",
     alignItems: "stretch",
     gap: 6,
     paddingHorizontal: 16,
     paddingBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderSubtle,
   },
   actionBtn: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
