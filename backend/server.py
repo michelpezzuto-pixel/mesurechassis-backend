@@ -36,6 +36,7 @@ from routes import stripe_routes
 from routes import testers as testers_routes
 from routes import promo as promo_routes
 from routes import jeton_cafe as jeton_cafe_routes
+from routes import google_auth as google_auth_routes
 from seed import seed_data, ensure_apple_review_user
 
 
@@ -116,6 +117,8 @@ api.include_router(linkedin_routes.router)
 api.include_router(promo_routes.router)
 # ☕ Priorité 4 — Système Jeton Café (stations partenaires)
 api.include_router(jeton_cafe_routes.router)
+# 🔑 Google Sign-In (Emergent-managed Google Auth)
+api.include_router(google_auth_routes.router)
 
 
 # ─────────────────────────────────────────────────────────────────────
