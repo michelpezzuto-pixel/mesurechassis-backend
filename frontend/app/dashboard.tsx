@@ -485,6 +485,27 @@ export default function Dashboard() {
             <Text style={styles.actionBtnText} numberOfLines={1}>Testeurs</Text>
           </TouchableOpacity>
         )}
+        {/* 🚦 Validation équipe (Double-Phase) — Le gérant approuve/rejette
+            les ouvriers rattachés à sa structure. Visible pour tous les admins. */}
+        {user?.role === "admin" && (
+          <TouchableOpacity
+            testID="admin-team-validation-button"
+            onPress={() =>
+              router.push("/admin/team-validation" as never)
+            }
+            style={styles.actionBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons
+              name="shield-checkmark-outline"
+              size={18}
+              color={colors.primary}
+            />
+            <Text style={styles.actionBtnText} numberOfLines={1}>
+              Validation équipe
+            </Text>
+          </TouchableOpacity>
+        )}
         {/* Campagne emailing prospection — 🔐 outil interne, visible
             UNIQUEMENT pour le propriétaire de la plateforme. */}
         {isPlatformOwner && (

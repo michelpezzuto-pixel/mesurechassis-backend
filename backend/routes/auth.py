@@ -319,6 +319,12 @@ async def register(payload: dict, request: Request):
         # les recréations de comptes après suppression.
         "signup_fingerprint": fingerprint,
         "created_at": now_iso_reg,
+        # 🚦 Système Double-Phase (kill switch) — Préparation Phase 2
+        # Les comptes créés maintenant sont "unvalidated" par défaut. Comme
+        # ils sont role=admin, ils passeront quand même la règle user_can_access
+        # tant qu'ils gardent ce rôle. Les OUVRIERS rattachés via l'écran
+        # /admin/team seront quant à eux créés avec validation_status="pending".
+        "validation_status": "unvalidated",
     }
     # ☕ Priorité 4 — Campagne Jeton Café : si l'inscription vient d'un QR
     # code de station partenaire (?station=<id>), on tague le compte.

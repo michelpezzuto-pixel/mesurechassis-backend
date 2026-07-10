@@ -1,0 +1,39 @@
+{
+  "summary": "Système Double-Phase (validation par le gérant) testé en profondeur — 19/19 tests pytest passent. Les 5 endpoints REST (validation-status, request-validation, team/pending-validation, team/validate, team/reject) répondent correctement et persistent en DB. La logique métier user_can_access() a été validée sur 8 branches (Phase 1 bypass, admin, artisan account_type, validated, unvalidated blocked, rejected blocked, legacy sans grace bloqué, legacy dans grace autorisé). Le guard require_validated_user renvoie bien un 403 avec le code métier PAYWALL_VALIDATION_REQUIRED. Le script migrate_legacy_users.py est confirmé idempotent (0 modifs au 2e run). Aucun bug fonctionnel détecté.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_double_phase_validation.py",
+    "/app/test_reports/pytest/iter27_double_phase.xml"
+  ],
+  "action_items": [
+    "OPTIONNEL — Nettoyage code : dans routes/validation.py `user_can_access`, la branche `user.get('account_type') == 'artisan'` ne matchera jamais en pratique car `deps.auth_user` ne recopie PAS `account_type` du doc company vers le doc user (seul `artisan_mode` bool est propagé). Pas de bug fonctionnel (les artisans passent quand même via `role=='admin'`), mais code mort à clarifier : soit propager `account_type` dans auth_user, soit tester `user.get('artisan_mode') is True`.",
+    "OPTIONNEL — Considération d'ordre des dépendances : `/api/team/*` utilise `require_roles(['admin'])` → `require_active_subscription` → 402 si expiré, AVANT la logique de validation. En BETA_MODE=True (actuel), sans impact. Mais lors du basculement Phase 2 avec BETA_MODE=False, un gérant dont la souscription a expiré ne pourra plus valider ses ouvriers (paywall 402 avant paywall 403). Comportement à confirmer produit.",
+    "OPTIONNEL — Frontend/UX : quand le kill switch passera à true, il faudra un écran mobile qui gère spécifiquement le code métier 'PAYWALL_VALIDATION_REQUIRED' (403) → afficher 'En attente de validation par votre gérant' + bouton 'Renvoyer la demande' qui appelle POST /api/auth/request-validation."
+  ],
+  "critical_code_review_comments": [
+    "routes/validation.py:94 — La branche `account_type == 'artisan'` est effectivement du code mort si l'appelant utilise le user renvoyé par auth_user (qui ne peuple pas ce champ). Fonctionnellement ok car OR avec role=='admin', mais à clarifier.",
+    "routes/validation.py:307 — Le fallback `(grace_period_end() or '').__str__() if grace_period_end() else None` est un peu tortueux : `grace_period_end()` est appelé deux fois. Une variable temporaire améliorerait la lisibilité. Non bloquant.",
+    "routes/validation.py:200 — reject_member accepte n'importe quel status source (déjà validated / déjà rejected) : c'est intentionnel (le gérant peut changer d'avis) mais mérite une note dans la doc ou une confirmation UI."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_double_phase_validation.py (nouveau)"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "not_tested (backend only per request)"
+  },
+  "seed_data_creation": "2 users technician créés en DB dans la company artisan-test-b14bf0 pour les tests (approve + reject). Cleanup effectué : 0 user résiduel avec email 'test-ouvrier*' en base, 0 user 'pending' résiduel dans la company de test.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Le fichier de tests /app/backend/tests/test_double_phase_validation.py peut être re-exécuté à volonté : les 2 users test sont créés avec un UUID random dans l'email et cleanés systématiquement en fin de module. Pour tester la Phase 2 grandeur nature, il faudra : (a) mettre PAYWALL_ENFORCE_VALIDATION=true dans backend/.env, (b) redémarrer backend via supervisorctl, (c) éventuellement définir PAYWALL_GRACE_PERIOD_START, puis vérifier via /api/auth/validation-status qu'enforcement_active=true, et via un endpoint protégé par require_validated_user qu'un ouvrier unvalidated reçoit bien un 403 avec code=PAYWALL_VALIDATION_REQUIRED. Aujourd'hui les tests unitaires simulent ce comportement via monkeypatch d'env.",
+  "rca_of_issue": "N/A — aucun bug détecté. Le système Double-Phase est correctement implémenté et prêt pour le basculement Phase 2."
+}
