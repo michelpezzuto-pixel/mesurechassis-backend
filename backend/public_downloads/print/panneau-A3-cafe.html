@@ -40,15 +40,13 @@
   /* ═════════ HEADER : Logo XXL + Titre EuroMillions style ═════════ */
   .brand-row { display: flex; align-items: center; gap: 10mm; margin-bottom: 6mm; }
   .brand-logo {
-    width: 38mm; height: 38mm;
-    background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
+    width: 42mm; height: 42mm;
     border-radius: 8mm;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 54pt; font-weight: 900;
-    box-shadow: 0 5mm 15mm rgba(255,107,53,0.5), inset 0 -3mm 6mm rgba(0,0,0,0.2);
-    color: #FFF;
+    overflow: hidden;
+    box-shadow: 0 5mm 15mm rgba(255,107,53,0.5);
     flex-shrink: 0;
   }
+  .brand-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .brand-info { flex: 1; }
   .brand-name {
     font-family: "Impact", "Arial Black", sans-serif;
@@ -242,7 +240,9 @@
 
   <!-- Header : Logo XXL + brand -->
   <div class="brand-row">
-    <div class="brand-logo">↙</div>
+    <div class="brand-logo">
+      <img src="https://customer-assets.emergentagent.com/job_window-field-app/artifacts/fj478v12_Logo_MesureChassis_512x512.png" alt="Logo MesureChâssis">
+    </div>
     <div class="brand-info">
       <div class="brand-name">MESURECHÂSSIS</div>
       <div class="brand-tag">L'app des menuisiers pro</div>
