@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Dossier Campagne Café MesureChâssis — Récap complet</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --orange:#FF5A00;
+    --orange-light:#FF7733;
+    --orange-bg:#FFF7F0;
+    --bg:#FFFFFF;
+    --bg-soft:#F8FAFC;
+    --text:#1A1A1E;
+    --text-mute:#5A5A62;
+    --text-light:#8A8A92;
+    --border:#E5E5E9;
+    --green:#22C55E;
+    --green-bg:#F0FDF4;
+    --purple:#8B5CF6;
+    --blue:#3B82F6;
+    --font-head:"Syne",-apple-system,BlinkMacSystemFont,sans-serif;
+    --font:"Inter",-apple-system,BlinkMacSystemFont,sans-serif;
+  }
+  @page { size: A4; margin: 15mm; }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  html, body {
+    font-family: var(--font);
+    color: var(--text);
+    background: var(--bg);
+    font-size: 11pt;
+    line-height: 1.55;
+  }
+  body { padding: 0; }
+  .page { max-width: 180mm; margin: 0 auto; padding: 8mm 0; page-break-after: always; }
+  .page:last-child { page-break-after: auto; }
+
+  /* ─────── COVER ─────── */
+  .cover {
+    background: linear-gradient(135deg, var(--orange) 0%, var(--orange-light) 100%);
+    color: #fff;
+    padding: 40mm 20mm;
+    border-radius: 12mm;
+    text-align: center;
+    min-height: 240mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    page-break-after: always;
+  }
+  .cover-logo {
+    width: 32mm;
+    height: 32mm;
+    background: #fff;
+    border-radius: 8mm;
+    margin: 0 auto 8mm;
+    padding: 4mm;
+    box-shadow: 0 8mm 20mm rgba(0,0,0,0.25);
+  }
+  .cover-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .cover-tag {
+    font-size: 11pt; font-weight: 700;
+    letter-spacing: 3pt; text-transform: uppercase;
+    opacity: 0.9; margin-bottom: 6mm;
+  }
+  .cover-title {
+    font-family: var(--font-head); font-weight: 800;
+    font-size: 40pt; line-height: 1; letter-spacing: -1pt;
+    margin-bottom: 6mm;
+  }
+  .cover-subtitle {
+    font-size: 16pt; font-weight: 500;
+    margin-bottom: 25mm; opacity: 0.95;
+  }
+  .cover-meta {
+    background: rgba(0,0,0,0.25);
+    border-radius: 6mm; padding: 6mm 10mm;
+    margin: 0 auto; max-width: 100mm;
+    text-align: left; font-size: 10.5pt;
+    line-height: 1.85;
+  }
+  .cover-meta strong { display: inline-block; min-width: 30mm; opacity: 0.85; }
+  .cover-footer {
+    margin-top: 25mm; font-size: 9pt;
+    opacity: 0.85; letter-spacing: 1pt; text-transform: uppercase;
+  }
+
+  /* ─────── TYPO ─────── */
+  h1.page-title {
+    font-family: var(--font-head); font-weight: 800;
+    font-size: 26pt; color: var(--text);
+    letter-spacing: -0.5pt;
+    padding-bottom: 4mm;
+    border-bottom: 3pt solid var(--orange);
+    margin-bottom: 8mm;
+  }
+  h1.page-title .num {
+    display: inline-block; background: var(--orange);
+    color: #fff; padding: 2mm 6mm; border-radius: 20mm;
+    font-size: 13pt; margin-right: 4mm; vertical-align: middle;
+  }
+  h2 {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: 16pt; color: var(--text);
+    margin: 8mm 0 3mm; letter-spacing: -0.3pt;
+  }
+  h3 {
+    font-family: var(--font); font-weight: 700;
+    font-size: 12pt; color: var(--orange);
+    margin: 5mm 0 2mm; text-transform: uppercase;
+    letter-spacing: 0.5pt;
+  }
+  p { margin-bottom: 3mm; }
+  strong { color: var(--text); font-weight: 700; }
+  em { color: var(--text-mute); font-style: italic; }
+
+  /* ─────── COMPOSANTS ─────── */
+  .lead {
+    font-size: 13pt; font-weight: 500;
+    color: var(--text-mute); line-height: 1.6;
+    padding: 5mm 6mm; background: var(--orange-bg);
+    border-left: 4pt solid var(--orange);
+    border-radius: 3mm; margin-bottom: 8mm;
+  }
+  .callout {
+    background: var(--bg-soft);
+    border: 1pt solid var(--border);
+    border-radius: 5mm; padding: 5mm 6mm;
+    margin: 4mm 0;
+  }
+  .callout-title {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: 11pt; color: var(--orange);
+    margin-bottom: 2mm; text-transform: uppercase;
+    letter-spacing: 0.5pt;
+  }
+  .analogy {
+    background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+    border-left: 4pt solid #F59E0B;
+    padding: 5mm 6mm; border-radius: 3mm;
+    margin: 4mm 0; font-size: 10.5pt;
+  }
+  .analogy::before {
+    content: "💡 Analogie simple";
+    display: block; font-weight: 800;
+    color: #92400E; font-size: 9pt;
+    letter-spacing: 1pt; text-transform: uppercase;
+    margin-bottom: 2mm;
+  }
+  .warning {
+    background: #FEF2F2; border-left: 4pt solid #EF4444;
+    padding: 5mm 6mm; border-radius: 3mm;
+    margin: 4mm 0; font-size: 10.5pt;
+  }
+  .success {
+    background: var(--green-bg); border-left: 4pt solid var(--green);
+    padding: 5mm 6mm; border-radius: 3mm;
+    margin: 4mm 0; font-size: 10.5pt;
+  }
+  .success::before {
+    content: "✅ Fait / En place";
+    display: block; font-weight: 800;
+    color: #15803D; font-size: 9pt;
+    letter-spacing: 1pt; text-transform: uppercase;
+    margin-bottom: 2mm;
+  }
+  ul, ol { padding-left: 6mm; margin: 3mm 0; }
+  li { margin-bottom: 1.5mm; }
+
+  /* ─────── TABLEAUX ─────── */
+  table {
+    width: 100%; border-collapse: collapse;
+    margin: 4mm 0; font-size: 10pt;
+  }
+  th, td {
+    padding: 3mm 4mm; text-align: left;
+    border-bottom: 1pt solid var(--border);
+  }
+  th {
+    background: var(--bg-soft);
+    font-weight: 700; text-transform: uppercase;
+    font-size: 9pt; letter-spacing: 0.5pt;
+    color: var(--text-mute);
+  }
+  tr:nth-child(even) td { background: #FAFAFA; }
+
+  /* ─────── ÉTAPES ─────── */
+  .steps { counter-reset: step; margin: 4mm 0; }
+  .step {
+    counter-increment: step;
+    display: flex; gap: 4mm;
+    padding: 4mm 0;
+    border-bottom: 1pt dashed var(--border);
+  }
+  .step:last-child { border-bottom: 0; }
+  .step-num {
+    flex-shrink: 0; width: 10mm; height: 10mm;
+    background: var(--orange); color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 12pt;
+    box-shadow: 0 2mm 6mm rgba(255,90,0,0.3);
+  }
+  .step-body { flex: 1; }
+  .step-title { font-weight: 700; font-size: 12pt; margin-bottom: 1mm; }
+  .step-desc { font-size: 10.5pt; color: var(--text-mute); }
+
+  /* ─────── STATS ─────── */
+  .stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 4mm; margin: 5mm 0;
+  }
+  .stat {
+    background: var(--orange-bg);
+    border: 1pt solid var(--orange-light);
+    border-radius: 4mm; padding: 4mm 3mm;
+    text-align: center;
+  }
+  .stat-value {
+    font-family: var(--font-head); font-weight: 800;
+    font-size: 22pt; color: var(--orange);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 9pt; color: var(--text-mute);
+    margin-top: 2mm; text-transform: uppercase;
+    letter-spacing: 0.5pt;
+  }
+
+  /* ─────── BUDGET BOX ─────── */
+  .budget {
+    background: #0F172A; color: #fff;
+    border-radius: 5mm; padding: 6mm 7mm;
+    margin: 5mm 0; font-family: "Courier New", monospace;
+    font-size: 10.5pt; line-height: 1.7;
+  }
+  .budget-line { display: flex; justify-content: space-between; }
+  .budget-total {
+    border-top: 1pt solid #64748B;
+    padding-top: 2mm; margin-top: 2mm;
+    color: var(--green); font-weight: 700;
+  }
+
+  /* ─────── SIGNATURE ─────── */
+  .signature {
+    background: linear-gradient(180deg, var(--orange-bg) 0%, #fff 100%);
+    border: 1pt solid var(--orange-light);
+    border-radius: 5mm; padding: 6mm 7mm;
+    margin: 8mm 0 4mm; text-align: center;
+  }
+  .signature-name {
+    font-family: var(--font-head); font-weight: 800;
+    font-size: 16pt; color: var(--text);
+  }
+  .signature-role {
+    font-size: 10pt; color: var(--text-mute);
+    margin-bottom: 4mm;
+  }
+  .signature-contact {
+    font-size: 11pt; line-height: 1.9;
+  }
+  .signature-contact a { color: var(--orange); text-decoration: none; }
+
+  .footer {
+    margin-top: 10mm;
+    padding-top: 4mm;
+    border-top: 1pt solid var(--border);
+    font-size: 9pt; color: var(--text-light);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ PAGE 0 : COUVERTURE ═══════════ -->
+<div class="cover">
+  <div class="cover-logo">
+    <img src="https://customer-assets.emergentagent.com/job_window-field-app/artifacts/buk4dyh1_emergent-image-1783632378031.png" alt="Logo MesureChâssis">
+  </div>
+  <div class="cover-tag">Dossier Complet</div>
+  <div class="cover-title">Campagne<br>Café MesureChâssis</div>
+  <div class="cover-subtitle">Le café offert au menuisier — expliqué pas à pas</div>
+
+  <div class="cover-meta">
+    <div><strong>Projet :</strong> MesureChâssis</div>
+    <div><strong>Fondateur :</strong> Michel Pezzuto</div>
+    <div><strong>Date :</strong> 11 juillet 2026</div>
+    <div><strong>Version :</strong> 1.0</div>
+    <div><strong>Pages :</strong> 12</div>
+  </div>
+
+  <div class="cover-footer">Document préparé pour un lecteur non-technique</div>
+</div>
+
+<!-- ═══════════ PAGE 1 : LE MÉTIER ═══════════ -->
+<div class="page">
+  <h1 class="page-title"><span class="num">1</span>Comprendre le métier de menuisier</h1>
+
+  <div class="lead">
+    Avant de comprendre l'app, il faut d'abord comprendre qui l'utilise :
+    <strong>les menuisiers professionnels</strong>. Voici leur quotidien.
+  </div>
+
+  <h2>Qu'est-ce qu'un menuisier « châssis » ?</h2>
+  <p>Un menuisier <em>châssis</em> (en Belgique) ou <em>menuisier PVC/alu</em> (en France) est un artisan spécialisé qui <strong>fabrique et pose des fenêtres, des portes, des vérandas et des baies vitrées</strong>. Il travaille avec 3 matériaux principaux : le PVC (blanc, plastique moderne), l'aluminium (métal léger et fin) et le bois traditionnel.</p>
+
+  <div class="analogy">
+    Imagine un mélange entre un tailleur (qui prend les mesures exactes du client) et un mécanicien (qui assemble des pièces industrielles). Le menuisier prend des mesures ultra-précises chez le client, commande les châssis sur mesure à une usine, puis vient les poser sur place. Si une mesure est mauvaise de 5 mm, le châssis ne rentre pas et il perd 300 € + 3 semaines de délai.
+  </div>
+
+  <h2>Le quotidien type d'un menuisier</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Il reçoit un devis / cahier des charges</div>
+        <div class="step-desc">Souvent un PDF de 5-20 pages avec la liste des châssis à poser (ex: 15 fenêtres pour une maison neuve). Il faut TOUT recopier à la main dans son carnet.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Il va sur le chantier avec un mètre ruban ou un mètre laser</div>
+        <div class="step-desc">Il mesure chaque ouverture (largeur, hauteur, profondeur) en 3 endroits pour vérifier que le mur n'est pas déformé. Il note tout sur un papier ou un carnet.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Il retourne au bureau et retape les mesures dans un ordinateur</div>
+        <div class="step-desc">Il envoie les mesures à l'usine (ou au CAD/CNC) qui va fabriquer les châssis. Ces mesures doivent être PARFAITES sinon on refait tout.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">Il revient poser les châssis</div>
+        <div class="step-desc">3-6 semaines plus tard, il revient sur le chantier avec les châssis fabriqués. Si les mesures étaient bonnes, tout rentre pile-poil. Sinon… on refait.</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Les 3 problèmes majeurs de ce métier</h2>
+  <ol>
+    <li><strong>La saisie manuelle</strong> — le menuisier recopie les mesures 3 fois (cahier des charges → carnet chantier → ordinateur). À chaque recopie, risque d'erreur.</li>
+    <li><strong>Le papier perdu</strong> — un carnet oublié, taché, mouillé, et c'est le chantier qui prend du retard.</li>
+    <li><strong>Les litiges avec le client</strong> — « je vous avais dit blanc et pas beige ! » → sans photo horodatée, impossible de prouver.</li>
+  </ol>
+
+  <div class="callout">
+    <div class="callout-title">🎯 C'est ici que MesureChâssis intervient</div>
+    <p style="margin:0;">L'app <strong>numérise entièrement</strong> ce processus. Le menuisier prend son iPhone au lieu de son carnet. Il gagne 2-3 heures par chantier, ne perd plus rien, et se protège des litiges grâce aux photos horodatées.</p>
+  </div>
+</div>
+
+<!-- ═══════════ PAGE 2 : L'APP ═══════════ -->
+<div class="page">
+  <h1 class="page-title"><span class="num">2</span>L'application MesureChâssis</h1>
+
+  <div class="lead">
+    <strong>MesureChâssis</strong> est une application pour iPhone (et bientôt Android)
+    qui remplace le carnet papier du menuisier. Elle est <strong>disponible gratuitement</strong>
+    sur l'Apple App Store depuis juin 2026.
+  </div>
+
+  <h2>Ce que l'app fait, en 6 fonctions clés</h2>
+
+  <h3>📸 1. Import intelligent du cahier des charges</h3>
+  <p>Le menuisier photographie les pages du cahier des charges. Une <strong>intelligence artificielle (IA)</strong> reconnaît automatiquement la liste des châssis, leurs dimensions et types.</p>
+  <div class="analogy">
+    C'est comme quand tu prends en photo une carte de visite avec ton téléphone et qu'il propose automatiquement d'ajouter le contact. Sauf que là, l'IA reconnaît des dimensions techniques dans un tableau PDF.
+  </div>
+
+  <h3>📐 2. Mesures précises assistées</h3>
+  <p>Sur le chantier, le menuisier suit un <em>« assistant pas-à-pas »</em> qui l'oblige à mesurer les diagonales, l'équerrage, les cotes en 3 points. Impossible d'oublier une mesure.</p>
+
+  <h3>✅ 3. Validation en 1 tap</h3>
+  <p>Chaque châssis passe par 4 statuts : « à mesurer » → « mesuré » → « validé » → « en fabrication » → « posé ». Fini les post-it et les tableurs.</p>
+
+  <h3>📄 4. Export PDF / Excel</h3>
+  <p>Le rapport prêt à envoyer à l'usine est généré en 2 clics. Format professionnel avec tampon, logo, photos.</p>
+
+  <h3>👥 5. Travail en équipe</h3>
+  <p>Un patron peut partager ses chantiers avec ses commerciaux, techniciens et ouvriers. Chacun voit ce qui le concerne selon son rôle (le stagiaire ne voit pas les prix, par exemple).</p>
+
+  <h3>🤖 6. Yann, l'assistant IA</h3>
+  <p>Un chatbot spécialisé menuiserie. « Quelle est la cote standard pour une porte-fenêtre PVC ? » → réponse en 3 secondes. 24h/24, sans facture.</p>
+
+  <div class="callout">
+    <div class="callout-title">💰 Modèle économique</div>
+    <p style="margin:0;">L'app propose <strong>2 plans gratuits à vie</strong> (Artisan solo + Entreprise 3 personnes) et 3 plans payants (Artisan Pro 19 €/mois, Entreprise Pro 59 €/mois, Entreprise MAX 249 €/mois avec auto-devis).</p>
+  </div>
+</div>
+
+<!-- ═══════════ PAGE 3 : LA CAMPAGNE CAFÉ ═══════════ -->
+<div class="page">
+  <h1 class="page-title"><span class="num">3</span>La campagne « Café MesureChâssis »</h1>
+
+  <div class="lead">
+    L'app est prête, mais comment la faire connaître ? Pas facile de toucher
+    les menuisiers pros — ils ne lisent pas les blogs, ne regardent pas la télé.
+    Ils sont sur les chantiers ou… à la <strong>pompe à essence</strong> pour leur camionnette.
+  </div>
+
+  <h2>Le concept en une phrase</h2>
+  <div class="analogy" style="font-size:12pt;">
+    <strong>Un menuisier qui télécharge l'app gagne un CAFÉ GRATUIT à la pompe.</strong>
+  </div>
+
+  <h2>Le principe détaillé</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Une affiche A3 est déposée dans une pompe à essence partenaire</div>
+        <div class="step-desc">Format grand : 30×42 cm. Design orange/noir MesureChâssis. Contient un QR code à scanner. On a commandé <strong>100 affiches</strong> à imprimer.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Un menuisier fait le plein → il voit l'affiche → il scanne le QR code</div>
+        <div class="step-desc">Le QR code envoie sur l'App Store. Il télécharge l'app.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Il crée son compte et fait sa première prise de mesures</div>
+        <div class="step-desc">L'app détecte que c'est sa première ouverture → elle <strong>lui offre un jeton café</strong> (valide 15 jours).</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="step-title">Il retourne à N'IMPORTE quelle pompe partenaire pour son café</div>
+        <div class="step-desc">Il montre son écran au pompiste. Il y a un gros bouton vert « VALIDATION POMPISTE ».</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <div class="step-title">Le pompiste tape un code PIN à 4 chiffres → café offert !</div>
+        <div class="step-desc">Le pompiste connaît le code de sa station (ex: 1234). Il tape → l'app confirme → café gratuit ☕</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Pourquoi c'est génial ?</h2>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value">100</div>
+      <div class="stat-label">Affiches physiques</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">2,6M</div>
+      <div class="stat-label">Vues estimées / an</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">2 €</div>
+      <div class="stat-label">Coût par café</div>
+    </div>
+  </div>
+
+  <ul>
+    <li>Un menuisier passe <strong>2 à 3 fois par semaine</strong> dans une station-service pour son diesel de camionnette</li>
+    <li>Il regarde ses affiches en attendant le passage à la caisse (5-10 secondes de visibilité pure)</li>
+    <li>Le « café gratuit » est un déclencheur puissant : c'est une petite récompense sympa, humaine, palpable</li>
+    <li>Le menuisier <strong>revient</strong> ensuite chercher son café (2ᵉ visite au partenaire) → publicité renforcée</li>
+  </ul>
+</div>
+
+<!-- ═══════════ PAGE 4 : LES 3 ACTEURS ═══════════ -->
+<div class="page">
+  <h1 class="page-title"><span class="num">4</span>Les 3 acteurs de la campagne</h1>
+
+  <div class="lead">
+    Pour que ça marche, il faut orchestrer <strong>3 personnes différentes</strong>.
+    Voici qui fait quoi.
+  </div>
+
+  <h2>🧑‍🔧 Acteur 1 : Le menuisier (le client final)</h2>
+  <p><strong>Ce qu'il gagne :</strong></p>
+  <ul>
+    <li>Une app gratuite qui lui fait gagner 2-3 heures par chantier</li>
+    <li>Un café gratuit à chaque nouvelle prise de mesures (max 1/jour)</li>
+    <li>Une communauté de collègues menuisiers</li>
+  </ul>
+  <p><strong>Ce qu'il donne :</strong> son adresse email + il crée un compte. Rien d'autre.</p>
+
+  <h2>⛽ Acteur 2 : Le pompiste / gérant de station</h2>
+  <p><strong>Ce qu'il gagne :</strong></p>
+  <ul>
+    <li>Des menuisiers viennent régulièrement dans sa station (ils achètent aussi du diesel, des sandwiches, du café...)</li>
+    <li>Une visibilité de sa marque de station dans l'app MesureChâssis</li>
+    <li>Un affichage A3 fourni GRATUITEMENT et déjà imprimé</li>
+  </ul>
+  <p><strong>Ce qu'il donne :</strong> le café (~2 €) au menuisier. Il tape un code PIN sur l'écran du menuisier pour valider. C'est refacturé à Michel en fin de mois.</p>
+
+  <h2>🏭 Acteur 3 : Le sponsor fournisseur (Deceuninck, Reynaers…)</h2>
+  <p><strong>Ce qu'il gagne :</strong></p>
+  <ul>
+    <li>Son logo sur les 100 affiches A3 dans les stations-service (visibilité pro)</li>
+    <li>Son logo dans l'app MesureChâssis (écran « Mes Cafés »)</li>
+    <li>Un article de présentation dédié sur mesurechassis.com</li>
+    <li>Une bannière dans la newsletter mensuelle</li>
+  </ul>
+  <p><strong>Ce qu'il donne :</strong> 500 €/an (soit 125 €/trimestre). C'est ce qui va financer l'ensemble.</p>
+
+  <div class="callout">
+    <div class="callout-title">🎯 Le rôle-clé de Michel</div>
+    <p style="margin:0;">Michel Pezzuto (le créateur de l'app) est le chef d'orchestre : il visite les stations pour convaincre les gérants, il prospecte les sponsors, il fait la comptabilité mensuelle (refacturer les stations, encaisser les sponsors) et il assure le support technique.</p>
+  </div>
+</div>
+
+<!-- ═══════════ PAGE 5 : LE MODÈLE FINANCIER ═══════════ -->
+<div class="page">
+  <h1 class="page-title"><span class="num">5</span>Le modèle financier</h1>
+
+  <div class="lead">
+    <strong>Le défi :</strong> Michel n'a pas de trésorerie personnelle disponible.
+    L'objectif est donc de bâtir un système <strong>auto-financé</strong> où le
+    sponsor paye les cafés.
+  </div>
+
+  <h2>Le calcul en clair</h2>
+  <div class="budget">
+    <div class="budget-line"><span>💰 Revenu sponsor (1 par an) :</span><span>+ 500 € / an</span></div>
+    <div class="budget-line"><span>☕ Coût cafés (20/mois × 12 × 2 €) :</span><span>- 480 € / an</span></div>
+    <div class="budget-total budget-line"><span>SOLDE NET pour Michel :</span><span>0 €</span></div>
+  </div>
+
+  <div class="success">
+    Michel ne débourse RIEN de sa poche, la campagne est autofinancée par le sponsor. Et en bonus il gagne : une communauté de menuisiers, 100 affiches financées, une visibilité massive.
+  </div>
+
+  <h2>Plan B (si aucun sponsor ne répond)</h2>
+  <p>3 stratégies de repli en cascade :</p>
+  <table>
+    <thead><tr><th>Plan</th><th>Principe</th><th>Risque</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Troc marketing</strong></td>
+        <td>Négocier avec le gérant : visibilité EXCLUSIVE de sa marque de station dans l'app en échange des cafés (zéro cash)</td>
+        <td>Faible</td>
+      </tr>
+      <tr>
+        <td><strong>Différé 90 jours</strong></td>
+        <td>Facture trimestrielle payée à 90 jours (délai standard B2B)</td>
+        <td>Moyen : il faut trouver ~120 €/trimestre</td>
+      </tr>
+      <tr>
+        <td><strong>Cap financier</strong></td>
+        <td>Plafond dur mensuel programmé dans l'app (ex : 40 €/mois max)</td>
+        <td>Nul, mais moins d'utilisateurs bénéficient du café</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Projection à long terme</h2>
+  <p>Une fois que les premiers abonnements payants de l'app se déclencheront (plans Pro à 19 €/mois et Entreprise Pro à 59 €/mois), Michel pourra <strong>flécher 10 % de son chiffre d'affaires</strong> vers le budget café, en autopilote. Concrètement : 30 abonnés Pro = 570 €/mois de MRR = 57 €/mois pour financer les cafés = campagne autonome sans sponsor.</p>
+</div>
+
+<!-- ═══════════ PAGE 6 : LES E-MAILS ENVOYÉS ═══════════ -->
+<div class="page">
+  <h1 class="page-title"><span class="num">6</span>Les 8 e-mails envoyés le 11 juillet</h1>
+
+  <div class="lead">
+    Aujourd'hui, 8 e-mails de prospection professionnels ont été envoyés
+    automatiquement depuis <strong>info@mesurechassis.com</strong>. Voici la liste
+    complète et les prochaines étapes.
+  </div>
+
+  <h2>📨 Bloc 1 — 5 stations-service (partenaires terrain)</h2>
+  <table>
+    <thead><tr><th>#</th><th>Marque</th><th>Destinataire</th><th>Envoi</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><strong>TotalEnergies</strong></td><td>service.communication@totalenergies.com</td><td>✅ 11/07 immédiat</td></tr>
+      <tr><td>2</td><td><strong>Q8 Belgium</strong></td><td>info@q8.be</td><td>✅ 11/07 immédiat</td></tr>
+      <tr><td>3</td><td><strong>Octa+ (belge)</strong></td><td>info@octaplus.be</td><td>✅ 11/07 immédiat</td></tr>
+      <tr><td>4</td><td><strong>Shell Belgium</strong></td><td>be-communication@shell.com</td><td>⏰ 12/07 à 12h00</td></tr>
+      <tr><td>5</td><td><strong>Esso (ExxonMobil)</strong></td><td>customer.service.be@exxonmobil.com</td><td>⏰ 12/07 à 12h00</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Objet type :</strong> <em>« Partenariat gratuit — Ramener 400+ menuisiers pros dans les stations [MARQUE] chaque mois »</em></p>
+
+  <h2>🏭 Bloc 2 — 3 sponsors fournisseurs (financement)</h2>
+  <table>
+    <thead><tr><th>#</th><th>Sponsor</th><th>Destinataire</th><th>Envoi</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><strong>Deceuninck</strong> (leader PVC belge)</td><td>info@deceuninck.be</td><td>✅ 11/07 immédiat</td></tr>
+      <tr><td>2</td><td><strong>Reynaers Aluminium</strong></td><td>info@reynaers.com</td><td>✅ 11/07 immédiat</td></tr>
+      <tr><td>3</td><td><strong>Aliplast</strong> (belge)</td><td>info@aliplast.com</td><td>✅ 11/07 immédiat</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Objet type :</strong> <em>« [MARQUE] × MesureChâssis — 500 € pour toucher 2 000 menuisiers pros chaque jour »</em></p>
+
+  <div class="callout">
+    <div class="callout-title">📊 Comment suivre les réponses</div>
+    <ul style="margin:0;">
+      <li><strong>Réponses directes</strong> → arrivent sur <em>info@mesurechassis.com</em></li>
+      <li><strong>Statistiques Resend</strong> → dashboard sur https://resend.com/emails (ouvertures, clics, bounces)</li>
+      <li><strong>Base de données</strong> → collection <em>prospection_logs</em> conserve la trace des 8 envois</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════ PAGE 7 : QUE FAIT-ON QUAND UN OUI ARRIVE ? ═══════════ -->
+<div class="page">
+  <h1 class="page-title"><span class="num">7</span>Que se passe-t-il quand un OUI arrive ?</h1>
+
+  <div class="lead">
+    3 scénarios possibles selon qui répond en premier. Chaque cas est
+    <strong>préparé et anticipé</strong>.
+  </div>
+
+  <h2>🎯 Cas 1 — Un SPONSOR répond OK (Deceuninck, Reynaers ou Aliplast)</h2>
+  <p><strong>Ce que Michel dit :</strong> « Deceuninck a accepté. »</p>
+  <p><strong>Ce que le développeur fait immédiatement (~30 min) :</strong></p>
+  <ol>
+    <li>Ajoute le <strong>logo Deceuninck</strong> sur les 100 affiches A3 (bandeau bas)</li>
+    <li>Ajoute le <strong>logo Deceuninck</strong> sur les fiches A5 pompiste</li>
+    <li>Ajoute un <strong>bandeau Deceuninck</strong> dans l'app iOS (écran « Mes Cafés »)</li>
+    <li>Ajoute une <strong>bannière Deceuninck</strong> dans les newsletters</li>
+    <li>Rédige un <strong>article blog</strong> sur mesurechassis.com/blog/deceuninck</li>
+    <li>Génère une <strong>facture proforma</strong> PDF (125 €/trimestre)</li>
+    <li>Prépare un <strong>contrat de partenariat</strong> 1 page A4 prêt à signer</li>
+  </ol>
+
+  <h2>⛽ Cas 2 — Une STATION répond OK (Total, Q8, Shell...)</h2>
+  <p><strong>Ce que Michel dit :</strong> « Q8 accepte, on démarre avec une station à Waterloo. »</p>
+  <p><strong>Ce que le développeur fait immédiatement (~15 min) :</strong></p>
+  <ol>
+    <li>Crée le réseau <em>q8-be</em> dans la base de données</li>
+    <li>Ajoute la 1ère station <em>Q8 Waterloo</em> avec un PIN unique 4 chiffres</li>
+    <li>Génère la fiche A5 pompiste personnalisée (nom station + PIN)</li>
+    <li>Fournit un lien de téléchargement PDF prêt à imprimer</li>
+    <li>La station apparaît <strong>automatiquement</strong> dans l'app pour tous les utilisateurs</li>
+  </ol>
+
+  <h2>😐 Cas 3 — Aucune réponse sous 15 jours</h2>
+  <p><strong>Plan de repli :</strong></p>
+  <ul>
+    <li>Prospecter les gérants franchisés indépendants en <strong>visite physique</strong></li>
+    <li>Cibler des marques belges plus petites (Lukoil, Gulf, indépendants)</li>
+    <li>Approcher d'autres fournisseurs (Rehau, Schuco, K-Line, Bosch Pro)</li>
+    <li>Envoyer une <strong>relance automatique J+14</strong> aux non-répondants</li>
+  </ul>
+
+  <div class="warning">
+    ⚠️ <strong>Attention aux « faux non »</strong> — Beaucoup d'entreprises ne répondent pas au 1er mail mais répondent au 2ᵉ après 15 jours. Ne pas se décourager si les 8 mails restent sans réponse la 1ʳᵉ semaine.
+  </div>
+</div>
+
+<!-- ═══════════ PAGE 8 : L'ÉTAT ACTUEL TECHNIQUE ═══════════ -->
+<div class="page">
+  <h1 class="page-title"><span class="num">8</span>L'état actuel technique (ce qui EST prêt)</h1>
+
+  <div class="lead">
+    Voici tout ce qui a été construit ce mois-ci et qui fonctionne actuellement.
+    Ton ami peut vérifier chaque point.
+  </div>
+
+  <div class="success">
+    <strong>Base de données MongoDB :</strong> collections « cafe_networks », « cafe_stations », « cafe_jetons » et « prospection_logs » sont créées et remplies.
+  </div>
+
+  <div class="success">
+    <strong>Réseau Total-BE créé</strong> avec 1 station de test (« Total Wavre TEST », PIN 1234).
+  </div>
+
+  <div class="success">
+    <strong>32 utilisateurs</strong> existants rétroactivement rattachés au réseau Total. Chaque nouvel inscrit sera automatiquement tagué Total-BE.
+  </div>
+
+  <div class="success">
+    <strong>Affiche A3 imprimable</strong> disponible à cette URL : window-field-app.preview.emergentagent.com/api/_downloads/panneau-cafe-a3/preview (peut être exportée en PDF via l'impression du navigateur).
+  </div>
+
+  <div class="success">
+    <strong>Fiche A5 pompiste imprimable</strong> disponible à /api/_downloads/fiche-pompiste-a5/preview.
+  </div>
+
+  <div class="success">
+    <strong>Écran « Mes Cafés »</strong> dans l'app iOS : bandeau réseau, liste des stations participantes, bouton géant « VALIDATION POMPISTE », compte à rebours J-15.
+  </div>
+
+  <div class="success">
+    <strong>8 e-mails de prospection</strong> envoyés le 11/07/2026 (6 immédiats, 2 programmés pour le 12/07 à 12h).
+  </div>
+
+  <div class="success">
+    <strong>Charte visuelle</strong> alignée sur le site mesurechassis.com : orange officiel #FF5A00, typographie Syne + Inter, fond noir profond.
+  </div>
+
+  <h2>Endpoints API disponibles</h2>
+  <table>
+    <thead><tr><th>URL</th><th>Utilité</th></tr></thead>
+    <tbody>
+      <tr><td>/api/cafe/earn</td><td>Gagne un café à chaque prise de mesures</td></tr>
+      <tr><td>/api/cafe/me</td><td>Retourne l'état du café + liste des stations participantes</td></tr>
+      <tr><td>/api/cafe/jetons/{id}/consume</td><td>Le pompiste valide le café avec son PIN</td></tr>
+      <tr><td>/api/cafe/networks</td><td>Liste tous les réseaux (Total, Q8...)</td></tr>
+      <tr><td>/api/cafe/stations</td><td>Ajoute / modifie une station</td></tr>
+      <tr><td>/api/cafe/dashboard</td><td>Tableau de bord admin (Michel)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════ PAGE 9 : LA TIMELINE ═══════════ -->
+<div class="page">
+  <h1 class="page-title"><span class="num">9</span>La timeline prévue</h1>
+
+  <div class="lead">
+    Voici le calendrier prévu semaine par semaine à partir de l'envoi des 8 mails.
+  </div>
+
+  <table>
+    <thead><tr><th>Date</th><th>Action attendue</th><th>Statut</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>11/07/2026</strong></td>
+        <td>Envoi des 6 mails immédiats (3 sponsors + 3 stations)</td>
+        <td>✅ Fait</td>
+      </tr>
+      <tr>
+        <td><strong>12/07/2026 12h</strong></td>
+        <td>Envoi automatique des 2 mails Shell + Esso</td>
+        <td>⏰ Programmé</td>
+      </tr>
+      <tr>
+        <td><strong>14-15/07</strong></td>
+        <td>Premiers taux d'ouverture visibles sur Resend</td>
+        <td>⏳ En attente</td>
+      </tr>
+      <tr>
+        <td><strong>18/07</strong></td>
+        <td>Relance manuelle des non-répondants (mail court J+7)</td>
+        <td>📝 À faire</td>
+      </tr>
+      <tr>
+        <td><strong>25/07</strong></td>
+        <td>Nouvelle relance J+14 avec appel de suivi</td>
+        <td>📝 À faire</td>
+      </tr>
+      <tr>
+        <td><strong>Août 2026</strong></td>
+        <td>Signature idéale d'1 sponsor et/ou 1 station-service</td>
+        <td>🎯 Objectif</td>
+      </tr>
+      <tr>
+        <td><strong>Septembre 2026</strong></td>
+        <td>Lancement officiel de la campagne (1ʳᵉ station active)</td>
+        <td>🚀 Cible</td>
+      </tr>
+      <tr>
+        <td><strong>Octobre 2026</strong></td>
+        <td>Bilan mois 1 (nb cafés servis, nouveaux inscrits)</td>
+        <td>📊 Reporting</td>
+      </tr>
+      <tr>
+        <td><strong>Fin décembre 2026</strong></td>
+        <td>Bilan trimestre 1 avec sponsor → décision de continuer / étendre</td>
+        <td>🎯 Objectif</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Objectifs chiffrés à fin décembre 2026</h2>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value">300</div>
+      <div class="stat-label">Nouveaux inscrits</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">60</div>
+      <div class="stat-label">Cafés servis</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">3</div>
+      <div class="stat-label">Stations actives</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ PAGE 10 : GLOSSAIRE ═══════════ -->
+<div class="page">
+  <h1 class="page-title"><span class="num">10</span>Glossaire — Les mots à connaître</h1>
+
+  <div class="lead">
+    Un mini-dictionnaire pour comprendre tous les mots techniques ou du métier
+    utilisés dans ce dossier.
+  </div>
+
+  <table>
+    <thead><tr><th style="width:35mm;">Terme</th><th>Explication simple</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Châssis</strong></td><td>Un cadre de fenêtre ou de porte, en PVC, alu ou bois</td></tr>
+      <tr><td><strong>Menuisier pro</strong></td><td>Artisan qui fabrique et pose des fenêtres/portes pour des particuliers et des entreprises</td></tr>
+      <tr><td><strong>App / Application</strong></td><td>Un logiciel installé sur un téléphone (iPhone dans notre cas)</td></tr>
+      <tr><td><strong>App Store</strong></td><td>Boutique officielle d'Apple pour télécharger des apps</td></tr>
+      <tr><td><strong>iOS</strong></td><td>Le système d'exploitation des iPhones et iPads (fait par Apple)</td></tr>
+      <tr><td><strong>Backend</strong></td><td>La partie « serveur » de l'app — invisible pour l'utilisateur, elle stocke les données et fait les calculs</td></tr>
+      <tr><td><strong>Frontend</strong></td><td>Ce que le menuisier voit sur son écran (boutons, textes, images)</td></tr>
+      <tr><td><strong>Base de données</strong></td><td>Un gros classeur numérique qui stocke tout (comptes, chantiers, cafés...)</td></tr>
+      <tr><td><strong>MongoDB</strong></td><td>Le type de base de données qu'on utilise</td></tr>
+      <tr><td><strong>API</strong></td><td>Une « prise de courant » technique qui permet au téléphone de parler au serveur</td></tr>
+      <tr><td><strong>Endpoint</strong></td><td>Une adresse précise dans l'API (ex : /api/cafe/earn)</td></tr>
+      <tr><td><strong>PIN</strong></td><td>Code à 4 chiffres qu'utilise le pompiste pour valider le café</td></tr>
+      <tr><td><strong>QR code</strong></td><td>Le petit carré noir et blanc à scanner avec l'appareil photo du téléphone</td></tr>
+      <tr><td><strong>URL / Lien</strong></td><td>Une adresse web (ex : mesurechassis.com)</td></tr>
+      <tr><td><strong>Resend</strong></td><td>Un service professionnel qui envoie automatiquement les e-mails</td></tr>
+      <tr><td><strong>SPF / DKIM</strong></td><td>Sécurité de l'email pour prouver qu'il vient bien de MesureChâssis (anti-spam)</td></tr>
+      <tr><td><strong>RGPD</strong></td><td>La loi européenne sur la protection des données personnelles</td></tr>
+      <tr><td><strong>Prospection B2B</strong></td><td>Démarcher des entreprises pour leur proposer un service</td></tr>
+      <tr><td><strong>MRR</strong></td><td>« Monthly Recurring Revenue » — le chiffre d'affaires récurrent chaque mois (abonnements)</td></tr>
+      <tr><td><strong>Bounce</strong></td><td>Quand un mail revient parce que l'adresse n'existe pas</td></tr>
+      <tr><td><strong>Sponsor</strong></td><td>Une entreprise qui paye pour être visible (comme sur un maillot de foot)</td></tr>
+      <tr><td><strong>Station partenaire</strong></td><td>Une pompe à essence qui accepte le programme (Total, Q8, Shell...)</td></tr>
+      <tr><td><strong>Jeton café</strong></td><td>Le « ticket » gagné dans l'app pour boire un café gratuit</td></tr>
+      <tr><td><strong>Network / Réseau</strong></td><td>Groupe de stations d'une même marque (ex : toutes les Total)</td></tr>
+      <tr><td><strong>Pompiste</strong></td><td>La personne qui travaille à la caisse de la station-service</td></tr>
+      <tr><td><strong>Expo Go</strong></td><td>Outil technique pour prévisualiser l'app pendant le développement</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════ PAGE 11 : LE RÉSUMÉ ULTRA-COURT ═══════════ -->
+<div class="page">
+  <h1 class="page-title"><span class="num">11</span>Le résumé en 3 phrases</h1>
+
+  <div class="lead" style="font-size:14pt;padding:8mm 10mm;">
+    Si tu ne dois retenir <strong>QUE 3 phrases</strong> de ce dossier, voici lesquelles.
+  </div>
+
+  <div class="callout" style="background:linear-gradient(135deg,#FFF7F0 0%,#FFE6D5 100%);border-left:6pt solid var(--orange);padding:8mm 10mm;font-size:12pt;line-height:1.75;">
+    <p><strong>1.</strong> Michel Pezzuto a créé <strong>MesureChâssis</strong>, une application iPhone pour les menuisiers pros qui remplace le carnet papier par la prise de mesures numérique, avec export automatique en PDF pour l'usine.</p>
+    <p><strong>2.</strong> Pour faire connaître son app, il lance la campagne <strong>« Café MesureChâssis »</strong> : 100 affiches A3 déposées dans des stations-service Total (ou Q8/Shell/Octa+), qui offrent un café gratuit à chaque menuisier qui télécharge et utilise l'app.</p>
+    <p><strong>3.</strong> Pour financer les cafés sans sortir un centime de sa poche, il cherche <strong>un sponsor fournisseur</strong> de menuiserie (Deceuninck, Reynaers, Aliplast) qui paierait 500 €/an pour avoir son logo sur les 100 affiches physiques + dans l'app + dans la newsletter mensuelle. <strong>8 mails de prospection ont été envoyés le 11 juillet 2026, on attend les retours.</strong></p>
+  </div>
+
+  <h2>Ce qu'il faut faire maintenant</h2>
+  <ol style="font-size:12pt;line-height:1.8;">
+    <li><strong>Attendre 5-7 jours</strong> et vérifier les stats d'ouverture des mails sur Resend</li>
+    <li><strong>Relancer les non-répondants</strong> par un mail court le 18/07 puis appel téléphonique le 22/07</li>
+    <li><strong>Dès qu'UN oui arrive</strong>, prévenir immédiatement l'équipe technique pour intégration en 30 min</li>
+    <li>Si aucune réponse positive après 15 jours → <strong>visites physiques</strong> des gérants indépendants de stations belges</li>
+  </ol>
+</div>
+
+<!-- ═══════════ PAGE 12 : COORDONNÉES ═══════════ -->
+<div class="page">
+  <h1 class="page-title"><span class="num">12</span>Coordonnées & accès</h1>
+
+  <div class="signature">
+    <div class="signature-name">Michel Pezzuto</div>
+    <div class="signature-role">Fondateur MesureChâssis</div>
+    <div class="signature-contact">
+      📱 <a href="tel:+32496650032">+32 496 65 00 32</a><br>
+      📧 <a href="mailto:info@mesurechassis.com">info@mesurechassis.com</a><br>
+      🌐 <a href="https://mesurechassis.com">mesurechassis.com</a><br>
+      📲 <a href="https://apps.apple.com/fr/app/mesurechâssis/id6776357930">App Store — MesureChâssis</a>
+    </div>
+  </div>
+
+  <h2>Comptes techniques (à ne pas partager publiquement)</h2>
+  <table>
+    <thead><tr><th>Compte</th><th>Rôle</th></tr></thead>
+    <tbody>
+      <tr><td>michelpezzuto@hotmail.com</td><td>Super admin (accès complet à l'app et au back-office)</td></tr>
+      <tr><td>artisan@mesurechassis.fr</td><td>Compte de test / démo (ARTISAN-TEST-B14BF0)</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Liens utiles</h2>
+  <table>
+    <thead><tr><th>Ressource</th><th>URL</th></tr></thead>
+    <tbody>
+      <tr><td>Dashboard Resend</td><td>https://resend.com/emails</td></tr>
+      <tr><td>App Store Connect</td><td>appstoreconnect.apple.com (accès Michel)</td></tr>
+      <tr><td>Aperçu affiche A3</td><td>/api/_downloads/panneau-cafe-a3/preview</td></tr>
+      <tr><td>Aperçu fiche A5 pompiste</td><td>/api/_downloads/fiche-pompiste-a5/preview</td></tr>
+      <tr><td>Site public</td><td>mesurechassis.com</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout" style="margin-top:12mm;">
+    <div class="callout-title">📄 Pour transmettre ce document</div>
+    <p style="margin:0;">Ce dossier peut être imprimé (12 pages A4), exporté en PDF (Cmd/Ctrl + P dans le navigateur → « Enregistrer au format PDF ») ou envoyé par mail. Il contient tout ce qu'il faut savoir pour comprendre le projet et le suivre.</p>
+  </div>
+
+  <div class="footer">
+    Dossier généré le 11 juillet 2026 · Version 1.0 · MesureChâssis — Belgique<br>
+    Confidentiel — À usage interne. Ne pas diffuser publiquement les codes d'accès et adresses email des contacts commerciaux.
+  </div>
+</div>
+
+</body>
+</html>

@@ -489,6 +489,25 @@ async def preview_fiche_pompiste_a5():
         return HTMLResponse(f.read())
 
 
+@api.get("/_downloads/dossier-cafe")
+async def download_dossier_cafe():
+    """Dossier complet 12 pages — À imprimer via le navigateur (Cmd/Ctrl+P → PDF)."""
+    path = "/app/backend/public_downloads/print/dossier-cafe-complet.html"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Fichier introuvable")
+    return FileResponse(path, media_type="text/html", filename="dossier-cafe-mesurechassis.html")
+
+
+@api.get("/_downloads/dossier-cafe/preview", response_class=HTMLResponse)
+async def preview_dossier_cafe():
+    """Aperçu direct du dossier 12 pages (impression → PDF)."""
+    path = "/app/backend/public_downloads/print/dossier-cafe-complet.html"
+    if not os.path.isfile(path):
+        raise HTTPException(404, "Fichier introuvable")
+    with open(path, "r", encoding="utf-8") as f:
+        return HTMLResponse(f.read())
+
+
 @api.get("/_downloads/feature-graphic/{variant}")
 async def download_feature_graphic_variant(variant: str):
     """Variantes redimensionnées de l'image utilisateur (stretch / fit / cover)."""
