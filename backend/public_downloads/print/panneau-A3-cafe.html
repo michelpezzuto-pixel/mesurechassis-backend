@@ -37,19 +37,59 @@
     line-height: 60mm;
     pointer-events: none;
   }
-  /* ═════════ HEADER : Logo + Titre EuroMillions style ═════════ */
-  .brand-row { display: flex; align-items: center; gap: 8mm; margin-bottom: 8mm; }
+  /* ═════════ HEADER : Logo XXL + Titre EuroMillions style ═════════ */
+  .brand-row { display: flex; align-items: center; gap: 10mm; margin-bottom: 6mm; }
   .brand-logo {
-    width: 22mm; height: 22mm;
+    width: 38mm; height: 38mm;
     background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
-    border-radius: 5mm;
+    border-radius: 8mm;
     display: flex; align-items: center; justify-content: center;
-    font-size: 30pt; font-weight: 900;
-    box-shadow: 0 4mm 12mm rgba(255,107,53,0.4);
+    font-size: 54pt; font-weight: 900;
+    box-shadow: 0 5mm 15mm rgba(255,107,53,0.5), inset 0 -3mm 6mm rgba(0,0,0,0.2);
+    color: #FFF;
+    flex-shrink: 0;
   }
   .brand-info { flex: 1; }
-  .brand-name { font-family: "Impact", "Arial Black", sans-serif; font-size: 26pt; letter-spacing: 1pt; }
-  .brand-tag { font-size: 10pt; color: #A8A8B0; margin-top: 1mm; letter-spacing: 2pt; text-transform: uppercase; }
+  .brand-name {
+    font-family: "Impact", "Arial Black", sans-serif;
+    font-size: 42pt;
+    letter-spacing: 1pt;
+    line-height: 1;
+    background: linear-gradient(180deg, #FFF 0%, #FFD700 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .brand-tag {
+    font-size: 15pt;
+    color: #FFA500;
+    margin-top: 2mm;
+    letter-spacing: 1pt;
+    font-weight: 700;
+    font-style: italic;
+  }
+  .brand-badges {
+    display: flex;
+    gap: 3mm;
+    margin-top: 3mm;
+    flex-wrap: wrap;
+  }
+  .brand-badge {
+    display: inline-block;
+    background: #EF4444;
+    color: #FFF;
+    padding: 2mm 5mm;
+    border-radius: 20mm;
+    font-size: 10pt;
+    font-weight: 900;
+    letter-spacing: 1.5pt;
+    text-transform: uppercase;
+    box-shadow: 0 2mm 6mm rgba(239,68,68,0.4);
+  }
+  .brand-badge-free {
+    background: linear-gradient(90deg, #22C55E, #16A34A);
+    box-shadow: 0 2mm 6mm rgba(34,197,94,0.5);
+  }
 
   .headline-badge {
     background: linear-gradient(90deg, #FFD700, #FFA500);
@@ -200,12 +240,16 @@
 <body>
 <div class="panel">
 
-  <!-- Header : Logo brand + tag EuroMillions -->
+  <!-- Header : Logo XXL + brand -->
   <div class="brand-row">
     <div class="brand-logo">↙</div>
     <div class="brand-info">
       <div class="brand-name">MESURECHÂSSIS</div>
-      <div class="brand-tag">L'app des menuisiers pros</div>
+      <div class="brand-tag">L'app des menuisiers pro</div>
+      <div class="brand-badges">
+        <span class="brand-badge">🔒 Réservé aux menuisiers pro</span>
+        <span class="brand-badge brand-badge-free">🎁 100% Gratuit</span>
+      </div>
     </div>
   </div>
 
@@ -226,7 +270,7 @@
     <div class="qr-text">
       <div class="qr-cta">SCANNEZ POUR<br>TÉLÉCHARGER</div>
       <div class="qr-hint">Ouvrez l'appareil photo de votre iPhone,<br>visez le QR code, tapez sur le lien.<br><strong>Installation en 30 secondes.</strong></div>
-      <div class="qr-badge">🔒 RÉSERVÉ AUX PROS</div>
+      <div class="qr-badge">🎁 100 % GRATUIT · SANS CARTE BANCAIRE</div>
     </div>
   </div>
 
