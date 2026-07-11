@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>MesureChâssis — Guide Débutant complet</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--orange:#FF5A00;--orange-light:#FF7733;--orange-bg:#FFF7F0;--bg:#FFFFFF;--bg-soft:#F8FAFC;--text:#1A1A1E;--text-mute:#5A5A62;--text-light:#8A8A92;--border:#E5E5E9;--green:#22C55E;--green-bg:#F0FDF4;--purple:#8B5CF6;--blue:#3B82F6;--font-head:"Syne",-apple-system,BlinkMacSystemFont,sans-serif;--font:"Inter",-apple-system,BlinkMacSystemFont,sans-serif}
+@page{size:A4;margin:15mm}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+html,body{font-family:var(--font);color:var(--text);background:var(--bg);font-size:11pt;line-height:1.55}
+.page{max-width:180mm;margin:0 auto;padding:8mm 0;page-break-after:always}
+.page:last-child{page-break-after:auto}
+.cover{background:linear-gradient(135deg,#22C55E 0%,#10B981 100%);color:#fff;padding:40mm 20mm;border-radius:12mm;text-align:center;min-height:240mm;display:flex;flex-direction:column;justify-content:center;page-break-after:always}
+.cover-logo{width:32mm;height:32mm;background:#fff;border-radius:8mm;margin:0 auto 8mm;padding:4mm;box-shadow:0 8mm 20mm rgba(0,0,0,0.25)}
+.cover-logo img{width:100%;height:100%;object-fit:contain;display:block}
+.cover-tag{font-size:11pt;font-weight:700;letter-spacing:3pt;text-transform:uppercase;opacity:0.9;margin-bottom:6mm}
+.cover-title{font-family:var(--font-head);font-weight:800;font-size:40pt;line-height:1;letter-spacing:-1pt;margin-bottom:6mm}
+.cover-subtitle{font-size:16pt;font-weight:500;margin-bottom:25mm;opacity:0.95}
+.cover-meta{background:rgba(0,0,0,0.25);border-radius:6mm;padding:6mm 10mm;margin:0 auto;max-width:100mm;text-align:left;font-size:10.5pt;line-height:1.85}
+.cover-meta strong{display:inline-block;min-width:30mm;opacity:0.85}
+.cover-footer{margin-top:25mm;font-size:9pt;opacity:0.85;letter-spacing:1pt;text-transform:uppercase}
+h1.page-title{font-family:var(--font-head);font-weight:800;font-size:24pt;color:var(--text);letter-spacing:-0.5pt;padding-bottom:4mm;border-bottom:3pt solid var(--green);margin-bottom:8mm}
+h1.page-title .num{display:inline-block;background:var(--green);color:#fff;padding:2mm 6mm;border-radius:20mm;font-size:12pt;margin-right:4mm;vertical-align:middle}
+h2{font-family:var(--font-head);font-weight:700;font-size:15pt;color:var(--text);margin:6mm 0 3mm;letter-spacing:-0.3pt}
+h3{font-family:var(--font);font-weight:700;font-size:11.5pt;color:var(--green);margin:5mm 0 2mm;text-transform:uppercase;letter-spacing:0.5pt}
+p{margin-bottom:3mm}
+strong{color:var(--text);font-weight:700}
+em{color:var(--text-mute);font-style:italic}
+.lead{font-size:13pt;font-weight:500;color:var(--text-mute);line-height:1.6;padding:5mm 6mm;background:var(--green-bg);border-left:4pt solid var(--green);border-radius:3mm;margin-bottom:8mm}
+.callout{background:var(--bg-soft);border:1pt solid var(--border);border-radius:5mm;padding:5mm 6mm;margin:4mm 0}
+.callout-title{font-family:var(--font-head);font-weight:700;font-size:11pt;color:var(--green);margin-bottom:2mm;text-transform:uppercase;letter-spacing:0.5pt}
+.tip{background:#FEF3C7;border-left:4pt solid #F59E0B;padding:4mm 6mm;border-radius:3mm;margin:4mm 0;font-size:10.5pt}
+.tip::before{content:"💡 Astuce";display:block;font-weight:800;color:#92400E;font-size:9pt;letter-spacing:1pt;text-transform:uppercase;margin-bottom:2mm}
+.warning{background:#FEF2F2;border-left:4pt solid #EF4444;padding:4mm 6mm;border-radius:3mm;margin:4mm 0;font-size:10.5pt}
+.warning::before{content:"⚠️ Attention";display:block;font-weight:800;color:#B91C1C;font-size:9pt;letter-spacing:1pt;text-transform:uppercase;margin-bottom:2mm}
+.definition{background:linear-gradient(135deg,#EFF6FF 0%,#DBEAFE 100%);border-left:4pt solid var(--blue);padding:4mm 6mm;border-radius:3mm;margin:4mm 0;font-size:10.5pt}
+.definition::before{content:"📖 Définition";display:block;font-weight:800;color:#1D4ED8;font-size:9pt;letter-spacing:1pt;text-transform:uppercase;margin-bottom:2mm}
+ul,ol{padding-left:6mm;margin:3mm 0}
+li{margin-bottom:1.5mm}
+table{width:100%;border-collapse:collapse;margin:4mm 0;font-size:10pt}
+th,td{padding:3mm 4mm;text-align:left;border-bottom:1pt solid var(--border);vertical-align:top}
+th{background:var(--bg-soft);font-weight:700;text-transform:uppercase;font-size:9pt;letter-spacing:0.5pt;color:var(--text-mute)}
+tr:nth-child(even) td{background:#FAFAFA}
+.steps{counter-reset:step;margin:4mm 0}
+.step{counter-increment:step;display:flex;gap:4mm;padding:4mm 0;border-bottom:1pt dashed var(--border)}
+.step:last-child{border-bottom:0}
+.step-num{flex-shrink:0;width:10mm;height:10mm;background:var(--green);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12pt;box-shadow:0 2mm 6mm rgba(34,197,94,0.3)}
+.step-body{flex:1}
+.step-title{font-weight:700;font-size:11.5pt;margin-bottom:1mm}
+.step-desc{font-size:10.5pt;color:var(--text-mute)}
+.diagram{background:#F9FAFB;border:2pt dashed var(--border);border-radius:5mm;padding:8mm;margin:5mm 0;text-align:center;font-family:"Courier New",monospace;font-size:9.5pt;line-height:1.4;white-space:pre;color:#374151}
+.badge{display:inline-block;padding:1mm 4mm;border-radius:10mm;font-size:8.5pt;font-weight:700;letter-spacing:0.5pt;text-transform:uppercase}
+.badge-easy{background:var(--green-bg);color:#15803D}
+.badge-medium{background:#FEF3C7;color:#92400E}
+.badge-hard{background:#FEE2E2;color:#B91C1C}
+.footer{margin-top:10mm;padding-top:4mm;border-top:1pt solid var(--border);font-size:9pt;color:var(--text-light);text-align:center}
+.checklist{list-style:none;padding-left:0}
+.checklist li{padding:2mm 0 2mm 8mm;position:relative}
+.checklist li::before{content:"☐";position:absolute;left:0;color:var(--green);font-weight:800;font-size:12pt}
+</style>
+</head>
+<body>
+
+<div class="cover">
+<div class="cover-logo"><img src="https://customer-assets.emergentagent.com/job_window-field-app/artifacts/buk4dyh1_emergent-image-1783632378031.png" alt="MesureChâssis"></div>
+<div class="cover-tag">Guide Débutant</div>
+<div class="cover-title">MesureChâssis<br>de A à Z</div>
+<div class="cover-subtitle">Comprendre les fenêtres et prendre ses premières mesures</div>
+<div class="cover-meta">
+<div><strong>Pour :</strong> Débutant total</div>
+<div><strong>Niveau requis :</strong> Aucun</div>
+<div><strong>Temps de lecture :</strong> 30 min</div>
+<div><strong>Pages :</strong> 12</div>
+<div><strong>Version :</strong> 1.0 — juillet 2026</div>
+</div>
+<div class="cover-footer">Aucune connaissance préalable requise</div>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">1</span>Qu'est-ce qu'une fenêtre ?</h1>
+<div class="lead">Avant de mesurer, il faut comprendre les mots que les menuisiers utilisent tous les jours. Prenons le temps d'apprendre l'anatomie d'une fenêtre <strong>comme on apprendrait l'anatomie du corps humain</strong>.</div>
+
+<h2>Les 6 pièces qui composent une fenêtre</h2>
+<div class="diagram">┌───────────────── LINTEAU (haut du trou) ─────────────────┐
+│                                                          │
+│        ┌────────── DORMANT (cadre fixé au mur) ────────┐  │
+│        │  ┌────── OUVRANT (partie qui bouge) ───────┐  │  │
+│        │  │                                          │  │  │
+│  T  T  │  │                                          │  │  T  T
+│  A  A  │  │           VITRAGE                        │  │  A  A
+│  B  B  │  │        (parties transparentes)           │  │  B  B
+│  L  L  │  │                                          │  │  L  L
+│  E  E  │  │                                          │  │  E  E
+│  A  A  │  │                                          │  │  A  A
+│  U  U  │  └──────────────────────────────────────────┘  │  U  U
+│        │                                                │  │
+│        └────────────────────────────────────────────────┘  │
+│                                                          │
+└──────── APPUI (bas du trou / seuil) ────────────────────┘</div>
+
+<div class="definition"><strong>Baie</strong> = le trou dans le mur où l'on met la fenêtre. C'est ce qu'on mesure d'abord. La fenêtre est ensuite fabriquée légèrement plus petite pour pouvoir la glisser dedans avec un peu de jeu (5-10 mm de chaque côté).</div>
+
+<h3>Vocabulaire essentiel</h3>
+<table>
+<thead><tr><th style="width:35mm">Mot</th><th>Ce que ça veut dire (simplement)</th></tr></thead>
+<tbody>
+<tr><td><strong>Baie</strong></td><td>Le trou dans le mur où va rentrer la fenêtre</td></tr>
+<tr><td><strong>Dormant</strong></td><td>Le cadre fixé au mur — il ne bouge JAMAIS</td></tr>
+<tr><td><strong>Ouvrant / Vantail</strong></td><td>La partie qui s'ouvre (une porte ou une aile)</td></tr>
+<tr><td><strong>Linteau</strong></td><td>Le bord du HAUT de la baie</td></tr>
+<tr><td><strong>Appui / Seuil</strong></td><td>Le bord du BAS de la baie</td></tr>
+<tr><td><strong>Tableau</strong></td><td>Les côtés GAUCHE et DROIT de la baie</td></tr>
+<tr><td><strong>Feuillure</strong></td><td>Petit décrochement dans le mur pour caler la fenêtre</td></tr>
+<tr><td><strong>Allège</strong></td><td>Le morceau de mur SOUS la fenêtre (entre le sol et la fenêtre)</td></tr>
+<tr><td><strong>Vitrage</strong></td><td>La ou les vitres. Simple, double ou triple selon les épaisseurs</td></tr>
+</tbody>
+</table>
+
+<div class="tip">Retiens en priorité 4 mots : <strong>baie, dormant, ouvrant, vitrage</strong>. Avec ces 4 mots tu peux déjà comprendre 80% des discussions entre menuisiers.</div>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">2</span>Les types de fenêtres</h1>
+<div class="lead">Il existe une dizaine de manières d'ouvrir une fenêtre. Ton app <strong>MesureChâssis</strong> gère les 14 formes principales. Voici les 6 les plus courantes.</div>
+
+<h3>1. Fenêtre fixe <span class="badge badge-easy">Facile</span></h3>
+<p>Ne s'ouvre PAS. C'est juste un vitrage collé au dormant. Utilisée pour laisser passer la lumière sans aération. La plus simple à mesurer.</p>
+
+<h3>2. Ouvrant à la française <span class="badge badge-easy">Facile</span></h3>
+<p>La fenêtre classique française. S'ouvre vers l'intérieur avec des charnières à gauche OU à droite. 1 ou 2 vantaux.</p>
+
+<h3>3. Oscillo-battant <span class="badge badge-medium">Moyen</span></h3>
+<p>Le must moderne : s'ouvre en battant (comme un ouvrant classique) OU en oscillant (juste le haut qui bascule vers l'intérieur pour aérer sans grand vent). Une seule poignée gère les deux modes.</p>
+
+<h3>4. Coulissant <span class="badge badge-medium">Moyen</span></h3>
+<p>2 ou 4 vantaux qui glissent latéralement l'un devant l'autre. Utilisé pour les grandes baies vitrées (terrasses, vérandas). Économise l'espace au sol.</p>
+
+<h3>5. Cintré (plein cintre ou anse de panier) <span class="badge badge-hard">Difficile</span></h3>
+<p>Le haut de la fenêtre est courbé en arc de cercle. Nécessite de mesurer le rayon de l'arc en plus des dimensions classiques.</p>
+
+<h3>6. Trapèze / triangle <span class="badge badge-hard">Difficile</span></h3>
+<p>Formes des combles où le mur est incliné. Il faut mesurer la hauteur GAUCHE et DROITE séparément (elles sont différentes).</p>
+
+<div class="callout">
+<div class="callout-title">📱 Dans MesureChâssis</div>
+<p style="margin:0">Quand tu crées une ouverture, l'app te demande le type. Choisis dans la liste — il y a un dessin illustré à côté de chaque type pour t'aider.</p>
+</div>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">3</span>Les 3 matériaux (bois / alu / PVC)</h1>
+<div class="lead">Le choix du matériau change tout : le prix, la durée de vie, l'isolation, l'entretien. Voici ce que tu dois savoir pour chacun.</div>
+
+<h3>🌳 Le bois</h3>
+<table>
+<tr><td style="width:30mm"><strong>Avantages</strong></td><td>Chaleureux, écologique, isolant naturel, personnalisable (peinture)</td></tr>
+<tr><td><strong>Inconvénients</strong></td><td>Nécessite entretien tous les 5-8 ans (lasure, peinture). Sensible à l'humidité.</td></tr>
+<tr><td><strong>Prix indicatif</strong></td><td>800-1500 €/m² (haut de gamme)</td></tr>
+<tr><td><strong>Durée de vie</strong></td><td>50-80 ans avec entretien</td></tr>
+</table>
+
+<h3>🔧 L'aluminium</h3>
+<table>
+<tr><td style="width:30mm"><strong>Avantages</strong></td><td>Solide, fin, moderne, aucun entretien, permet de grandes surfaces vitrées</td></tr>
+<tr><td><strong>Inconvénients</strong></td><td>Conducteur thermique → nécessite obligatoirement une « rupture de pont thermique »</td></tr>
+<tr><td><strong>Prix indicatif</strong></td><td>600-1200 €/m²</td></tr>
+<tr><td><strong>Durée de vie</strong></td><td>50+ ans sans entretien</td></tr>
+</table>
+
+<div class="definition"><strong>Rupture de pont thermique</strong> = une bande de plastique isolante insérée dans le cadre alu pour éviter que le froid extérieur ne traverse le métal jusqu'à l'intérieur. Sans ça, l'alu forme de la condensation en hiver.</div>
+
+<h3>⚪ Le PVC</h3>
+<table>
+<tr><td style="width:30mm"><strong>Avantages</strong></td><td>Bon marché, très bon isolant, aucun entretien, disponible en couleurs</td></tr>
+<tr><td><strong>Inconvénients</strong></td><td>Profils plus épais (moins de vitrage), aspect moins « noble » que bois ou alu</td></tr>
+<tr><td><strong>Prix indicatif</strong></td><td>300-800 €/m² (le meilleur rapport qualité/prix)</td></tr>
+<tr><td><strong>Durée de vie</strong></td><td>30-40 ans</td></tr>
+</table>
+
+<h3>Comment choisir ? Le tableau de synthèse</h3>
+<table>
+<thead><tr><th>Besoin</th><th>Meilleur choix</th></tr></thead>
+<tbody>
+<tr><td>Petit budget, bon isolant</td><td>PVC</td></tr>
+<tr><td>Grandes baies modernes</td><td>Aluminium</td></tr>
+<tr><td>Maison ancienne, cachet</td><td>Bois</td></tr>
+<tr><td>Environnement salin (bord de mer)</td><td>Aluminium (résiste)</td></tr>
+<tr><td>Rénovation lourde d'un château/mairie</td><td>Bois (obligatoire)</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">4</span>Comment mesurer une fenêtre — Les bases</h1>
+<div class="lead">C'est LA compétence de base du menuisier. Une mesure ratée = un châssis à refaire = 3 semaines de retard et 500 € de perte. Voici la méthode pas-à-pas.</div>
+
+<h2>Le matériel nécessaire</h2>
+<ul>
+<li><strong>1 mètre ruban rigide</strong> de 5 m (le classique) — pour les mesures &lt; 5 m</li>
+<li><strong>1 mètre laser</strong> — pour les grandes baies et pour les diagonales (bien plus précis à distance)</li>
+<li><strong>Ton iPhone avec l'app MesureChâssis</strong> installée — pour tout noter en direct</li>
+<li><strong>1 crayon</strong> — même à l'ère du numérique on marque encore parfois au crayon sur le mur</li>
+</ul>
+
+<h2>Les 3 mesures obligatoires</h2>
+<div class="steps">
+<div class="step">
+<div class="step-num">1</div>
+<div class="step-body">
+<div class="step-title">La LARGEUR (L)</div>
+<div class="step-desc">Mesure horizontalement, du bord gauche au bord droit de la baie. <strong>MESURE EN 3 ENDROITS</strong> : en haut, au milieu, en bas. Les 3 valeurs peuvent être différentes ! Note la <strong>plus petite</strong> (c'est là que le châssis doit rentrer).</div>
+</div>
+</div>
+<div class="step">
+<div class="step-num">2</div>
+<div class="step-body">
+<div class="step-title">La HAUTEUR (H)</div>
+<div class="step-desc">Mesure verticalement, du seuil (bas) au linteau (haut). Là aussi, mesure en 3 endroits : à gauche, au milieu, à droite. Prends la valeur la <strong>plus petite</strong>.</div>
+</div>
+</div>
+<div class="step">
+<div class="step-num">3</div>
+<div class="step-body">
+<div class="step-title">Les DIAGONALES (D1 et D2)</div>
+<div class="step-desc">Mesure les 2 diagonales du rectangle : du coin haut-gauche au coin bas-droit, puis du coin haut-droit au coin bas-gauche. <strong>Elles doivent être ÉGALES</strong> (à 2-3 mm près). Si elles diffèrent de plus de 5 mm, ton mur est de travers.</div>
+</div>
+</div>
+</div>
+
+<div class="warning">Si les 2 diagonales sont différentes de plus de 5 mm, tu dois <strong>alerter ton client</strong> : le châssis ne rentrera pas parfaitement. Il faudra soit un châssis sur-mesure trapézoïdal (coûteux), soit rectifier le mur.</div>
+
+<h2>Le schéma à retenir</h2>
+<div class="diagram">      ← ────  L (haut)  ──── →
+     ┌────────────────────────┐
+     │╲                      ╱│
+     │ ╲       D2         ╱  │
+     │  ╲              ╱     │
+  H  │   ╲         ╱        │  H (gauche vs droite)
+(g)  │    ╲     ╱           │(d)
+     │     ╲ ╱   ← D1       │
+     │    ╱  ╲              │
+     │  ╱     ╲             │
+     │╱        ╲            │
+     └────────────────────────┘
+      ← ────  L (bas)  ───── →</div>
+
+<div class="tip">Retiens : « 3 largeurs, 3 hauteurs, 2 diagonales = 8 mesures ». C'est le minimum syndical. En-dessous tu es en danger.</div>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">5</span>Installer et connecter MesureChâssis</h1>
+<div class="lead">On passe au concret. Voici comment installer l'app sur ton iPhone et créer ton compte en 3 minutes.</div>
+
+<h2>Étape 1 · Télécharger depuis l'App Store</h2>
+<div class="steps">
+<div class="step">
+<div class="step-num">1</div>
+<div class="step-body">
+<div class="step-title">Ouvre l'App Store (icône bleue avec un « A » blanc)</div>
+<div class="step-desc">Sur ton iPhone ou ton iPad. Réservé à iOS pour l'instant (Android bientôt disponible).</div>
+</div>
+</div>
+<div class="step">
+<div class="step-num">2</div>
+<div class="step-body">
+<div class="step-title">Cherche « MesureChâssis »</div>
+<div class="step-desc">Dans la barre de recherche en haut. Tu verras l'icône orange avec la double flèche noire. Auteur : Michel Pezzuto.</div>
+</div>
+</div>
+<div class="step">
+<div class="step-num">3</div>
+<div class="step-body">
+<div class="step-title">Appuie sur « Obtenir » puis Face ID / mot de passe</div>
+<div class="step-desc">L'app est <strong>gratuite</strong>. Le téléchargement prend 20-30 secondes.</div>
+</div>
+</div>
+</div>
+
+<h2>Étape 2 · Créer ton compte</h2>
+<div class="steps">
+<div class="step">
+<div class="step-num">1</div>
+<div class="step-body">
+<div class="step-title">Appuie sur « Créer un compte »</div>
+</div>
+</div>
+<div class="step">
+<div class="step-num">2</div>
+<div class="step-body">
+<div class="step-title">Remplis 4 champs</div>
+<div class="step-desc">Nom + Prénom + Email professionnel + Mot de passe (8 caractères minimum).</div>
+</div>
+</div>
+<div class="step">
+<div class="step-num">3</div>
+<div class="step-body">
+<div class="step-title">Confirme ton email</div>
+<div class="step-desc">Un mail arrive dans ta boîte, clique sur le lien « Activer mon compte ».</div>
+</div>
+</div>
+<div class="step">
+<div class="step-num">4</div>
+<div class="step-body">
+<div class="step-title">Suis le tutoriel de 5 étapes</div>
+<div class="step-desc">L'app t'apprend en 3 minutes à créer ton premier chantier et ta première ouverture. Prends le temps.</div>
+</div>
+</div>
+</div>
+
+<h2>Étape 3 · Autoriser les permissions</h2>
+<p>L'app te demandera 3 autorisations :</p>
+<ul>
+<li><strong>Caméra</strong> — pour photographier le cahier des charges et les ouvertures anti-litige</li>
+<li><strong>Photos</strong> — pour attacher des photos existantes de la galerie</li>
+<li><strong>Bluetooth</strong> (optionnel) — pour connecter ton mètre laser (Bosch, Leica, Stanley…)</li>
+</ul>
+
+<div class="tip">Accepte les 3 permissions dès le début. Tu peux toujours les changer plus tard dans Réglages → MesureChâssis.</div>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">6</span>Créer ton premier chantier</h1>
+<div class="lead">Un « chantier » dans l'app = une adresse client. Une maison entière peut avoir 20 fenêtres, elles seront toutes regroupées dans le même chantier.</div>
+
+<h2>Depuis l'écran d'accueil</h2>
+<div class="steps">
+<div class="step">
+<div class="step-num">1</div>
+<div class="step-body">
+<div class="step-title">Appuie sur le gros bouton « + Nouveau chantier »</div>
+<div class="step-desc">Il se trouve en bas au centre de l'écran.</div>
+</div>
+</div>
+<div class="step">
+<div class="step-num">2</div>
+<div class="step-body">
+<div class="step-title">Remplis les infos du client</div>
+<div class="step-desc">Nom du chantier (ex: « Maison Dupont Waterloo »), adresse complète, téléphone, email. Tout est facultatif sauf le nom.</div>
+</div>
+</div>
+<div class="step">
+<div class="step-num">3</div>
+<div class="step-body">
+<div class="step-title">Choisis le type de projet</div>
+<div class="step-desc">Neuf / Rénovation / Extension. Ça change les tolérances de mesure appliquées (5 mm pour du neuf, 10 mm pour de la rénovation).</div>
+</div>
+</div>
+<div class="step">
+<div class="step-num">4</div>
+<div class="step-body">
+<div class="step-title">Valide → « Chantier créé »</div>
+<div class="step-desc">Tu tombes directement sur le tableau de bord du chantier, vide au début.</div>
+</div>
+</div>
+</div>
+
+<h2>Le tableau de bord du chantier</h2>
+<p>Tu y trouves 4 informations principales :</p>
+<ul>
+<li>Le <strong>nombre d'ouvertures</strong> à mesurer / mesurées / validées</li>
+<li>Un <strong>filtre</strong> « Tous / À mesurer / Validés / En fabrication »</li>
+<li>Une <strong>barre de recherche</strong> pour trouver une ouverture particulière</li>
+<li>Un <strong>bouton géant orange</strong> « + Ajouter une ouverture »</li>
+</ul>
+
+<div class="callout">
+<div class="callout-title">🚀 Raccourci : import IA</div>
+<p style="margin:0">Si tu as un cahier des charges PDF ou papier, appuie plutôt sur le bouton « 📸 Importer un CDC » — l'IA lira les 20 fenêtres et les créera automatiquement. Tu gagnes 30 minutes.</p>
+</div>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">7</span>Ajouter et mesurer une ouverture</h1>
+<div class="lead">C'est le cœur de l'app. Voici la procédure complète, écran par écran.</div>
+
+<h2>Étape 1 · Choisir la forme</h2>
+<p>Appuie sur « + Ajouter une ouverture ». Un écran te montre les 14 formes disponibles avec un petit dessin.</p>
+<ul>
+<li><strong>Rectangle</strong> (fenêtre standard)</li>
+<li><strong>Carré</strong> (impasse, WC)</li>
+<li><strong>Trapèze</strong> (comble)</li>
+<li><strong>Cintré plein</strong> (arc parfait au-dessus)</li>
+<li><strong>Anse de panier</strong> (arc surbaissé)</li>
+<li><strong>Triangle</strong> (comble)</li>
+<li><strong>Œil-de-bœuf</strong> (rond)</li>
+<li>... et 7 autres formes spéciales</li>
+</ul>
+
+<h2>Étape 2 · Nommer l'ouverture</h2>
+<p>Donne un nom clair, ex: « Séjour vue jardin », « Chambre parents nord », « SDB WC »… Le nom apparaîtra sur ton rapport PDF final.</p>
+
+<h2>Étape 3 · Saisir les mesures</h2>
+<p>L'app te demande les mesures dans l'ordre logique :</p>
+<ol>
+<li><strong>Largeur haut / milieu / bas</strong> (3 valeurs)</li>
+<li><strong>Hauteur gauche / milieu / droite</strong> (3 valeurs)</li>
+<li><strong>Diagonale 1 et Diagonale 2</strong> (2 valeurs)</li>
+<li><strong>Profondeur du tableau</strong> (épaisseur du mur au niveau de la baie)</li>
+</ol>
+
+<div class="tip">Tu peux mesurer avec ton laser Bluetooth connecté : l'app remplit automatiquement les cases. Sinon, tape à la main sur le clavier numérique.</div>
+
+<h2>Étape 4 · Choisir le type d'ouverture</h2>
+<p>Ouvrant à la française gauche / droite ? Oscillo-battant ? Coulissant 2 vantaux ? Fixe ? L'app te propose une liste illustrée.</p>
+
+<h2>Étape 5 · Choisir le matériau</h2>
+<p>Bois / PVC / Aluminium — un simple sélecteur.</p>
+
+<h2>Étape 6 · Photos anti-litige</h2>
+<p>Prends 2 à 4 photos de l'ouverture : vue générale, détail des angles, vue extérieure si possible. Elles sont horodatées et te protègent en cas de litige.</p>
+
+<h2>Étape 7 · Valider</h2>
+<p>Appuie sur « ✅ Valider l'ouverture ». Elle passe en statut « Mesuré ». Tu peux la modifier plus tard si besoin.</p>
+
+<div class="callout">
+<div class="callout-title">🎁 Café gagné !</div>
+<p style="margin:0">Si tu es inscrit dans une campagne partenaire (Total, Q8...), tu verras un pop-up : <strong>« ☕ Café gagné ! »</strong>. Rends-toi dans une station partenaire pour le récupérer sous 15 jours.</p>
+</div>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">8</span>Exporter et envoyer le rapport</h1>
+<div class="lead">Une fois toutes tes ouvertures mesurées et validées, tu génères un rapport PDF ou Excel en 2 clics.</div>
+
+<h2>Exporter en PDF</h2>
+<div class="steps">
+<div class="step">
+<div class="step-num">1</div>
+<div class="step-body">
+<div class="step-title">Va sur le tableau de bord du chantier</div>
+</div>
+</div>
+<div class="step">
+<div class="step-num">2</div>
+<div class="step-body">
+<div class="step-title">Appuie sur le bouton « Exporter »</div>
+<div class="step-desc">En haut à droite, l'icône représente une flèche vers le bas.</div>
+</div>
+</div>
+<div class="step">
+<div class="step-num">3</div>
+<div class="step-body">
+<div class="step-title">Choisis le format</div>
+<div class="step-desc">PDF (pour envoyer par mail au client ou au bureau d'études) ou Excel/CSV (pour l'usine de fabrication).</div>
+</div>
+</div>
+<div class="step">
+<div class="step-num">4</div>
+<div class="step-body">
+<div class="step-title">Le fichier se génère (5 secondes)</div>
+<div class="step-desc">Il inclut : logo de ton entreprise, coordonnées client, liste complète des ouvertures avec toutes les mesures, photos.</div>
+</div>
+</div>
+<div class="step">
+<div class="step-num">5</div>
+<div class="step-body">
+<div class="step-title">Partager</div>
+<div class="step-desc">Envoie-le par mail, WhatsApp, AirDrop, ou télécharge-le sur ton PC.</div>
+</div>
+</div>
+</div>
+
+<h2>À quoi ressemble le PDF ?</h2>
+<p>Chaque ouverture a sa propre fiche A4 avec :</p>
+<ul>
+<li>Nom + numéro d'ouverture</li>
+<li>Schéma coté (dessin technique)</li>
+<li>Toutes les mesures + tolérances</li>
+<li>Type d'ouvrant, matériau, vitrage</li>
+<li>Photos horodatées</li>
+<li>Commentaires libres</li>
+</ul>
+
+<div class="tip">Le PDF est signé numériquement avec ton nom et la date. Il peut être opposé en cas de litige (valeur juridique proche d'un devis signé).</div>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">9</span>Yann, l'assistant IA</h1>
+<div class="lead">Yann est un chatbot spécialisé menuiserie disponible 24h/24 dans l'app. Il répond à tes questions techniques en 3 secondes.</div>
+
+<h2>À quoi ça sert ?</h2>
+<p>Yann connaît :</p>
+<ul>
+<li>Les <strong>normes</strong> (Uw, Uf, Ug, Rt2020, etc.)</li>
+<li>Les <strong>calculs</strong> (surface, périmètre, coefficient d'isolation)</li>
+<li>Le <strong>vocabulaire</strong> technique complet</li>
+<li>Les <strong>bonnes pratiques</strong> de pose selon le matériau</li>
+<li>Les <strong>tolérances</strong> par type de mesure</li>
+</ul>
+
+<h2>Comment lui parler ?</h2>
+<p>Appuie sur l'icône 🤖 en bas à droite dans l'app. Tape ta question en langage naturel.</p>
+
+<h3>Exemples de questions à essayer</h3>
+<div class="callout"><div class="callout-title">💬 Exemples réels</div>
+<p style="margin-bottom:2mm">• « <em>Quelle est la cote standard d'une porte-fenêtre PVC ?</em> »</p>
+<p style="margin-bottom:2mm">• « <em>Comment mesurer un cintre plein ?</em> »</p>
+<p style="margin-bottom:2mm">• « <em>Uw = 1.4 est-il conforme RT2020 ?</em> »</p>
+<p style="margin-bottom:2mm">• « <em>Différence entre pose en tunnel et en applique ?</em> »</p>
+<p style="margin:0">• « <em>J'ai une baie de 240 × 210, quel type d'ouvrant conseiller ?</em> »</p>
+</div>
+
+<h2>Ce que Yann ne fait PAS</h2>
+<ul>
+<li>Il ne remplace pas ton bureau d'études pour les calculs complexes de structure</li>
+<li>Il ne donne pas de prix garantis (juste des fourchettes indicatives)</li>
+<li>Il n'est pas juridique — pour un litige, consulte un avocat</li>
+</ul>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">10</span>Les erreurs classiques du débutant</h1>
+<div class="lead">Voici les 10 erreurs que TOUS les débutants font. Les connaître = les éviter.</div>
+
+<h3>Erreur 1 · Mesurer les cotes de la fenêtre existante au lieu de la baie</h3>
+<p>La fenêtre existante est plus petite que la baie ! Il faut TOUJOURS mesurer le trou dans le mur, pas l'ancienne fenêtre.</p>
+
+<h3>Erreur 2 · Une seule mesure par cote</h3>
+<p>Si tu ne mesures qu'à un seul endroit, tu rates les irrégularités du mur. Toujours 3 points minimum.</p>
+
+<h3>Erreur 3 · Oublier les diagonales</h3>
+<p>Sans diagonale, impossible de savoir si ton mur est d'équerre. Résultat : châssis à refaire.</p>
+
+<h3>Erreur 4 · Confondre gauche et droite</h3>
+<p>« Gauche » et « droite » se disent toujours vu de l'INTÉRIEUR de la pièce (regardant vers l'extérieur).</p>
+
+<h3>Erreur 5 · Oublier de mesurer l'épaisseur du mur</h3>
+<p>La profondeur du tableau détermine si la pose sera en tunnel, en applique, ou en feuillure. C'est CRUCIAL.</p>
+
+<h3>Erreur 6 · Prendre la mesure au ras du sol</h3>
+<p>Le sol n'est pas toujours de niveau. Toujours mesurer à quelques cm au-dessus.</p>
+
+<h3>Erreur 7 · Ne pas prendre de photos</h3>
+<p>Sans photos horodatées, tu es sans défense en cas de litige (« vous m'aviez dit blanc pas gris »).</p>
+
+<h3>Erreur 8 · Mélanger les unités (cm / mm)</h3>
+<p>L'app est en <strong>millimètres</strong> par défaut. Ne tape jamais 240 pour dire « 2m40 » : c'est 24 cm ! Tape 2400.</p>
+
+<h3>Erreur 9 · Valider trop vite</h3>
+<p>Relis toujours toutes les mesures avant de valider. Une mesure fausse = une ouverture refaite.</p>
+
+<h3>Erreur 10 · Ne pas synchroniser</h3>
+<p>Vérifie que tu as bien du réseau à la fin du chantier pour que tes mesures se synchronisent sur ton compte cloud.</p>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">11</span>Checklist du premier chantier</h1>
+<div class="lead">Imprime cette checklist et coche au fur et à mesure. Ne saute AUCUN élément lors de tes 5 premiers chantiers.</div>
+
+<h3>Avant de partir en chantier</h3>
+<ul class="checklist">
+<li>iPhone chargé à 100 % (ou power bank dans la poche)</li>
+<li>App MesureChâssis installée et à jour</li>
+<li>Compte connecté (vérifier en ouvrant l'app)</li>
+<li>Mètre ruban 5 m + mètre laser (avec piles)</li>
+<li>Crayon + carnet de secours (au cas où)</li>
+<li>Adresse du chantier notée + GPS activé</li>
+</ul>
+
+<h3>Sur place, à l'arrivée</h3>
+<ul class="checklist">
+<li>Saluer le client, se présenter</li>
+<li>Créer le chantier dans l'app (nom, adresse)</li>
+<li>Compter les ouvertures : combien de fenêtres, portes, baies ?</li>
+<li>Choisir un ordre de mesure (pièce par pièce)</li>
+</ul>
+
+<h3>Pour chaque ouverture</h3>
+<ul class="checklist">
+<li>Prendre 2 photos avant de mesurer (vue générale + détail)</li>
+<li>Mesurer 3 largeurs (haut, milieu, bas)</li>
+<li>Mesurer 3 hauteurs (gauche, milieu, droite)</li>
+<li>Mesurer 2 diagonales</li>
+<li>Vérifier que |D1 - D2| &lt; 5 mm (sinon alerter le client)</li>
+<li>Mesurer la profondeur du tableau</li>
+<li>Choisir le type d'ouvrant + le matériau souhaité</li>
+<li>Ajouter un commentaire si particularité (fissure, humidité...)</li>
+<li>Valider l'ouverture</li>
+</ul>
+
+<h3>Avant de partir</h3>
+<ul class="checklist">
+<li>Vérifier que TOUTES les ouvertures ont un statut « Validé »</li>
+<li>Vérifier la synchronisation cloud (icône verte dans l'app)</li>
+<li>Générer le PDF et l'envoyer au client par mail depuis l'app</li>
+<li>Confirmer avec le client la date de retour pour la pose</li>
+<li>Récupérer un acompte si prévu</li>
+</ul>
+
+<h3>De retour au bureau</h3>
+<ul class="checklist">
+<li>Exporter le CSV pour l'envoyer à l'usine</li>
+<li>Vérifier une dernière fois les mesures avant transmission</li>
+<li>Archiver le chantier avec un statut « Envoyé à fabrication »</li>
+</ul>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">12</span>Aide, support et communauté</h1>
+<div class="lead">Tu es bloqué ? Voici où trouver de l'aide, dans l'ordre de priorité.</div>
+
+<h3>1. Yann, l'assistant IA (24h/24)</h3>
+<p>Le plus rapide. Yann connaît 90 % des cas. Icône 🤖 en bas à droite de l'app.</p>
+
+<h3>2. Le centre d'aide en ligne</h3>
+<p>Sur <strong>mesurechassis.com/aide</strong> — articles, vidéos, tutoriels illustrés.</p>
+
+<h3>3. Le support par email</h3>
+<p>Écris à <strong>info@mesurechassis.com</strong>. Réponse sous 24-48h ouvrées.</p>
+
+<h3>4. Le téléphone (support prioritaire)</h3>
+<p>Michel Pezzuto : <strong>+32 496 65 00 32</strong> (bureaux du lundi au vendredi, 9h-18h).</p>
+
+<h3>5. La communauté menuisiers</h3>
+<p>Le groupe Facebook privé « MesureChâssis Pro » — demande d'accès depuis l'app dans Réglages → Communauté.</p>
+
+<h2>Foire aux questions rapides</h2>
+<table>
+<thead><tr><th>Question</th><th>Réponse</th></tr></thead>
+<tbody>
+<tr><td>Ça marche hors-ligne ?</td><td>Oui, tu peux mesurer sans réseau. Synchro auto quand tu reviens en 4G/WiFi.</td></tr>
+<tr><td>Combien coûte l'app ?</td><td>Gratuit à vie pour l'usage solo basique. Plans payants pour l'équipe et fonctions avancées (à partir de 19 € HT/mois).</td></tr>
+<tr><td>Mes mesures sont-elles privées ?</td><td>Oui, chiffrées HTTPS+AES. Serveurs en Europe (RGPD).</td></tr>
+<tr><td>Je peux exporter ailleurs ?</td><td>Oui, PDF + Excel + CSV. Tu es propriétaire de tes données.</td></tr>
+<tr><td>Ça marche sur iPad ?</td><td>Oui, l'app est universelle (iPhone + iPad).</td></tr>
+<tr><td>Android ?</td><td>Bientôt disponible sur Google Play Store.</td></tr>
+</tbody>
+</table>
+
+<div class="footer">Guide Débutant v1.0 · MesureChâssis · Michel Pezzuto · +32 496 65 00 32 · info@mesurechassis.com</div>
+</div>
+
+</body>
+</html>

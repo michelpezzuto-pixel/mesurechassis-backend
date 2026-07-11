@@ -508,6 +508,55 @@ async def preview_dossier_cafe():
         return HTMLResponse(f.read())
 
 
+# ------------------------------------------------------------------
+# Guides mode d'emploi : Débutant & Professionnel
+# ------------------------------------------------------------------
+@api.get("/_downloads/guide-debutant")
+async def download_guide_debutant():
+    """Mode d'emploi pour novices : découverte de la fenêtre et prise de mesure pas-à-pas."""
+    path = "/app/backend/public_downloads/print/guide-debutant.html"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Fichier introuvable")
+    return FileResponse(
+        path,
+        media_type="text/html",
+        filename="mesurechassis-guide-debutant.html",
+    )
+
+
+@api.get("/_downloads/guide-debutant/preview", response_class=HTMLResponse)
+async def preview_guide_debutant():
+    """Aperçu direct du guide débutant (impression → PDF via Cmd/Ctrl+P)."""
+    path = "/app/backend/public_downloads/print/guide-debutant.html"
+    if not os.path.isfile(path):
+        raise HTTPException(404, "Fichier introuvable")
+    with open(path, "r", encoding="utf-8") as f:
+        return HTMLResponse(f.read())
+
+
+@api.get("/_downloads/guide-pro")
+async def download_guide_pro():
+    """Mode d'emploi pour professionnels de la menuiserie bois / alu / PVC."""
+    path = "/app/backend/public_downloads/print/guide-pro.html"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Fichier introuvable")
+    return FileResponse(
+        path,
+        media_type="text/html",
+        filename="mesurechassis-guide-pro.html",
+    )
+
+
+@api.get("/_downloads/guide-pro/preview", response_class=HTMLResponse)
+async def preview_guide_pro():
+    """Aperçu direct du guide professionnel (impression → PDF via Cmd/Ctrl+P)."""
+    path = "/app/backend/public_downloads/print/guide-pro.html"
+    if not os.path.isfile(path):
+        raise HTTPException(404, "Fichier introuvable")
+    with open(path, "r", encoding="utf-8") as f:
+        return HTMLResponse(f.read())
+
+
 @api.get("/_downloads/feature-graphic/{variant}")
 async def download_feature_graphic_variant(variant: str):
     """Variantes redimensionnées de l'image utilisateur (stretch / fit / cover)."""

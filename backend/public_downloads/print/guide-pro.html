@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><title>MesureChâssis — Guide Pro Bois/Alu/PVC</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--orange:#FF5A00;--orange-light:#FF7733;--orange-bg:#FFF7F0;--bg:#FFFFFF;--bg-soft:#F8FAFC;--text:#1A1A1E;--text-mute:#5A5A62;--border:#E5E5E9;--green:#22C55E;--red:#EF4444;--wood:#8B4513;--alu:#64748B;--pvc:#0EA5E9;--font-head:"Syne",-apple-system,BlinkMacSystemFont,sans-serif;--font:"Inter",-apple-system,BlinkMacSystemFont,sans-serif}
+@page{size:A4;margin:15mm}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+html,body{font-family:var(--font);color:var(--text);background:var(--bg);font-size:10.5pt;line-height:1.55}
+.page{max-width:180mm;margin:0 auto;padding:8mm 0;page-break-after:always}
+.page:last-child{page-break-after:auto}
+.cover{background:linear-gradient(135deg,#1A1A1E 0%,#FF5A00 100%);color:#fff;padding:40mm 20mm;border-radius:12mm;text-align:center;min-height:240mm;display:flex;flex-direction:column;justify-content:center;page-break-after:always}
+.cover-logo{width:32mm;height:32mm;background:#fff;border-radius:8mm;margin:0 auto 8mm;padding:4mm;box-shadow:0 8mm 20mm rgba(0,0,0,0.35)}
+.cover-logo img{width:100%;height:100%;object-fit:contain;display:block}
+.cover-tag{font-size:11pt;font-weight:700;letter-spacing:3pt;text-transform:uppercase;opacity:.9;margin-bottom:6mm}
+.cover-title{font-family:var(--font-head);font-weight:800;font-size:38pt;line-height:1;letter-spacing:-1pt;margin-bottom:6mm}
+.cover-subtitle{font-size:15pt;font-weight:500;margin-bottom:25mm;opacity:.95}
+.cover-meta{background:rgba(0,0,0,.4);border-radius:6mm;padding:6mm 10mm;margin:0 auto;max-width:110mm;text-align:left;font-size:10.5pt;line-height:1.85}
+.cover-meta strong{display:inline-block;min-width:35mm;opacity:.85}
+.cover-footer{margin-top:20mm;font-size:9pt;opacity:.85;letter-spacing:1pt;text-transform:uppercase}
+h1.page-title{font-family:var(--font-head);font-weight:800;font-size:22pt;color:var(--text);letter-spacing:-.5pt;padding-bottom:4mm;border-bottom:3pt solid var(--orange);margin-bottom:6mm}
+h1.page-title .num{display:inline-block;background:var(--orange);color:#fff;padding:2mm 6mm;border-radius:20mm;font-size:11pt;margin-right:4mm;vertical-align:middle}
+h2{font-family:var(--font-head);font-weight:700;font-size:14pt;margin:6mm 0 3mm}
+h3{font-weight:700;font-size:11pt;color:var(--orange);margin:5mm 0 2mm;text-transform:uppercase;letter-spacing:.5pt}
+p{margin-bottom:2.5mm}
+strong{font-weight:700}
+.lead{font-size:12pt;font-weight:500;color:var(--text-mute);padding:5mm 6mm;background:var(--orange-bg);border-left:4pt solid var(--orange);border-radius:3mm;margin-bottom:6mm}
+.card{border-radius:6mm;padding:5mm 6mm;margin:4mm 0}
+.card-wood{background:linear-gradient(135deg,#FEF3C7,#FDE68A);border-left:6pt solid var(--wood)}
+.card-alu{background:linear-gradient(135deg,#F1F5F9,#E2E8F0);border-left:6pt solid var(--alu)}
+.card-pvc{background:linear-gradient(135deg,#E0F2FE,#BAE6FD);border-left:6pt solid var(--pvc)}
+.pro-tip{background:#F0FDF4;border-left:4pt solid var(--green);padding:4mm 6mm;border-radius:3mm;margin:3mm 0;font-size:10pt}
+.pro-tip::before{content:"🔧 Astuce Pro";display:block;font-weight:800;color:#15803D;font-size:9pt;letter-spacing:1pt;text-transform:uppercase;margin-bottom:2mm}
+.warning{background:#FEF2F2;border-left:4pt solid var(--red);padding:4mm 6mm;border-radius:3mm;margin:3mm 0;font-size:10pt}
+.warning::before{content:"⚠️ Attention";display:block;font-weight:800;color:#B91C1C;font-size:9pt;letter-spacing:1pt;text-transform:uppercase;margin-bottom:2mm}
+ul,ol{padding-left:6mm;margin:2mm 0}
+li{margin-bottom:1mm}
+table{width:100%;border-collapse:collapse;margin:3mm 0;font-size:9.5pt}
+th,td{padding:2mm 3mm;text-align:left;border-bottom:1pt solid var(--border);vertical-align:top}
+th{background:var(--bg-soft);font-weight:700;text-transform:uppercase;font-size:9pt;letter-spacing:.5pt;color:var(--text-mute)}
+tr:nth-child(even) td{background:#FAFAFA}
+.norm{background:#0F172A;color:#E2E8F0;font-family:"Courier New",monospace;font-size:9.5pt;padding:3mm 5mm;border-radius:3mm;margin:2mm 0}
+.footer{margin-top:8mm;padding-top:3mm;border-top:1pt solid var(--border);font-size:9pt;color:#8A8A92;text-align:center}
+</style></head><body>
+
+<div class="cover">
+<div class="cover-logo"><img src="https://customer-assets.emergentagent.com/job_window-field-app/artifacts/buk4dyh1_emergent-image-1783632378031.png"></div>
+<div class="cover-tag">Guide Professionnel</div>
+<div class="cover-title">Manuel Pro<br>Bois / Alu / PVC</div>
+<div class="cover-subtitle">Techniques avancées, tolérances, normes, workflow équipe</div>
+<div class="cover-meta">
+<div><strong>Pour :</strong> Menuisier confirmé</div>
+<div><strong>Niveau requis :</strong> Maîtrise des bases</div>
+<div><strong>Pages :</strong> 12</div>
+<div><strong>Version :</strong> 1.0 — juillet 2026</div>
+</div>
+<div class="cover-footer">Normes RT2020 · EN 14351 · CE marking</div>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">1</span>Configuration pro de l'app</h1>
+<div class="lead">Avant ton 1er chantier pro, prends 20 minutes pour configurer l'app aux normes de ton entreprise. Ça t'évitera 100 heures de correction sur 3 ans.</div>
+
+<h2>Paramètres entreprise (une seule fois)</h2>
+<ol>
+<li><strong>Logo HD</strong> — Réglages → Entreprise → Logo. Format PNG transparent 512×512 min.</li>
+<li><strong>Coordonnées fiscales</strong> — Nom société, TVA BE/FR, RC, IBAN.</li>
+<li><strong>Tolérances par défaut</strong> — Neuf ±5mm · Rénovation ±10mm · Monopiece PVC ±3mm.</li>
+<li><strong>Gammes de vitrage type</strong> — Standard (4/16/4 Uw=1.4), Renforcé (triple Uw=0.9).</li>
+</ol>
+
+<h2>Configuration RBAC (rôles équipe)</h2>
+<table>
+<thead><tr><th>Rôle</th><th>Permissions</th><th>Usage</th></tr></thead>
+<tbody>
+<tr><td><strong>Owner</strong></td><td>Tout inclus facturation</td><td>Patron</td></tr>
+<tr><td><strong>Admin</strong></td><td>Créer/valider chantiers, exporter</td><td>Chef chantier</td></tr>
+<tr><td><strong>Commercial</strong></td><td>Voir tarifs, devis, clients</td><td>Vendeur</td></tr>
+<tr><td><strong>Technicien</strong></td><td>Mesurer, PAS de tarifs visibles</td><td>Opérateur terrain</td></tr>
+<tr><td><strong>Ouvrier</strong></td><td>Consulter, marquer pose faite</td><td>Poseur</td></tr>
+</tbody>
+</table>
+<div class="pro-tip">Crée un compte "Technicien" pour tes stagiaires. Ils ne verront jamais les prix. Zéro risque de fuite tarifaire.</div>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">2</span>Spécificités BOIS 🌳</h1>
+<div class="lead">Le bois <em>vit</em>. Il gonfle en été, se rétracte en hiver. Les tolérances et jeux de dilatation ne sont PAS les mêmes qu'en alu ou PVC.</div>
+<div class="card card-wood"><h3>Fenêtres bois — le détail</h3><p style="margin:0">Essences : chêne massif, pin sylvestre lamellé-collé, mélèze, moabi (tropical). Chaque essence a ses coefficients de dilatation.</p></div>
+
+<h2>Tolérances de pose bois</h2>
+<table><thead><tr><th>Zone</th><th>Jeu extérieur</th><th>Jeu intérieur</th></tr></thead><tbody>
+<tr><td>Fixe &lt; 1.5m</td><td>5mm par côté</td><td>3mm</td></tr>
+<tr><td>Ouvrant standard</td><td>8mm par côté</td><td>5mm</td></tr>
+<tr><td>Grande baie &gt; 2.5m</td><td>12mm par côté</td><td>8mm</td></tr>
+<tr><td>Porte-fenêtre</td><td>10mm périmètre</td><td>5mm haut/côtés</td></tr>
+</tbody></table>
+
+<h2>Points clés spécifiques bois</h2>
+<ol>
+<li><strong>Feuillure existante</strong> — mesure profondeur ET largeur (le bois se pose souvent en feuillure).</li>
+<li><strong>Sens du fil</strong> — dormants toujours fil vertical.</li>
+<li><strong>Humidité mur</strong> — au-dessus de 18%, le bois travaillera trop. Alerte le client.</li>
+<li><strong>Compatibilité enduit</strong> — chaux-chanvre incompatible avec bois vernis marin.</li>
+</ol>
+
+<h2>Champs bois spécifiques dans l'app</h2>
+<ul>
+<li><strong>Essence</strong> (chêne / pin / mélèze / moabi / autre)</li>
+<li><strong>Finition</strong> (lasure microporeuse / peinture / vernis / brut)</li>
+<li><strong>Certification</strong> (FSC / PEFC / autre / non certifié)</li>
+<li><strong>Épaisseur profil dormant</strong> (min 68mm pour Uw = 1.4)</li>
+</ul>
+<div class="warning">Pour bois exotique, exige un <strong>certificat CITES</strong>. Obligatoire légalement en BE et FR depuis 2023.</div>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">3</span>Spécificités ALUMINIUM 🔧</h1>
+<div class="lead">L'alu est le matériau roi des grandes baies modernes. Attention aux ponts thermiques : sans rupture, tu crées un vrai frigo.</div>
+<div class="card card-alu"><h3>Fenêtres alu — le détail</h3><p style="margin:0">Alliage AA-6060 T5 anodisé ou thermolaqué. Épaisseur profil min 65mm pour RT2020. Leaders : Reynaers, Schüco, Aliplast, Technal.</p></div>
+
+<h2>Tolérances alu (plus strictes que bois)</h2>
+<table><thead><tr><th>Zone</th><th>Jeu périmètre</th><th>Coef. dilatation</th></tr></thead><tbody>
+<tr><td>Fixe standard</td><td>3-5mm</td><td>23 µm/m/°C</td></tr>
+<tr><td>Ouvrant coulissant</td><td>5mm haut/bas · 3mm côtés</td><td>23 µm/m/°C</td></tr>
+<tr><td>Coulissant &gt; 3m</td><td>8mm</td><td>23 µm/m/°C</td></tr>
+<tr><td>Coulissant XXL &gt; 5m</td><td>12mm + guide compensateur</td><td>23 µm/m/°C</td></tr>
+</tbody></table>
+
+<h2>Rupture de pont thermique (obligatoire)</h2>
+<ol>
+<li><strong>RPT polyamide</strong> — standard, Uf 2.0-2.5</li>
+<li><strong>RPT polyuréthane</strong> — haut gamme, Uf 1.4-1.8</li>
+<li><strong>RPT céramique</strong> — luxe, Uf 0.9-1.2</li>
+</ol>
+
+<h2>Points clés alu</h2>
+<ol>
+<li><strong>Dilatation linéaire</strong> — baie 6m sud = 8-10mm de dilatation cumulée.</li>
+<li><strong>Corrosion galvanique</strong> — jamais alu direct sur acier. Chevilles inox obligatoires.</li>
+<li><strong>Bord de mer</strong> — anodisage AA20 (25 microns) ou QUALICOAT/QUALIMARINE.</li>
+<li><strong>Coulissant lourd</strong> — &gt; 200 kg/vantail = galet motorisé ou lift-and-slide.</li>
+</ol>
+
+<h2>Normes alu</h2>
+<div class="norm">EN 14351-1 → fenêtres/portes extérieures
+EN 12608 → profilés alu extrudés
+EN 1279 → vitrage isolant
+AEV min : 4/9A/C4 en climat continental</div>
+<div class="pro-tip">Pour baie coulissante &gt; 3m, prévois 12mm de jeu en bas pour dilatation été. Sinon le rail se voile.</div>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">4</span>Spécificités PVC ⚪</h1>
+<div class="lead">Le PVC est le champion du rapport qualité/prix. Mais il dilate 3× plus que l'alu et 8× plus que le bois. Il faut prévoir de gros jeux.</div>
+<div class="card card-pvc"><h3>Fenêtres PVC — le détail</h3><p style="margin:0">Marques BE : Deceuninck (leader), Rehau, Kömmerling, Aluplast, Profine. Renfort acier obligatoire sur profils &gt; 1.2m.</p></div>
+
+<h2>Tolérances PVC (les plus larges)</h2>
+<table><thead><tr><th>Zone</th><th>Jeu périmètre</th><th>Coef. dilatation</th></tr></thead><tbody>
+<tr><td>Fixe PVC blanc</td><td>8mm par côté</td><td>70 µm/m/°C</td></tr>
+<tr><td>Fixe PVC teinté foncé</td><td>12mm par côté</td><td>90 µm/m/°C</td></tr>
+<tr><td>Ouvrant standard</td><td>10mm côtés / 15mm haut</td><td>70 µm/m/°C</td></tr>
+<tr><td>Porte-fenêtre 2 vantaux</td><td>15mm haut / 10mm bas</td><td>Renfort acier 2mm min</td></tr>
+</tbody></table>
+
+<h2>Points clés PVC</h2>
+<ol>
+<li><strong>Renfort acier</strong> — vérifie épaisseur (1.5-2mm) sur profils longs. Sans lui, ça flambe.</li>
+<li><strong>Couleur foncée = +jeu</strong> — anthracite au soleil = 70°C, dilate +30%. Prévois 12-15mm.</li>
+<li><strong>Pose en applique tunnel</strong> — évite pose au tableau (ponts thermiques).</li>
+<li><strong>Recyclabilité</strong> — certifications VinylPlus obligatoires en marché public.</li>
+</ol>
+
+<h2>Nombre de chambres = performance</h2>
+<table><thead><tr><th>Chambres</th><th>Uw obtenu</th><th>Usage</th></tr></thead><tbody>
+<tr><td>2 chambres (60mm)</td><td>1.8 W/m²K</td><td>Interdit RT2020</td></tr>
+<tr><td>3 chambres (70mm)</td><td>1.4 W/m²K</td><td>Standard RT2020</td></tr>
+<tr><td>5 chambres (76mm)</td><td>1.1 W/m²K</td><td>Haute performance</td></tr>
+<tr><td>6-7 chambres (82-88mm)</td><td>0.9 W/m²K</td><td>Passif / BBC</td></tr>
+</tbody></table>
+<div class="pro-tip">Note le nombre de chambres dans l'app. Ça justifie ta cotation face aux devis low-cost 2 chambres.</div>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">5</span>Import IA du cahier des charges</h1>
+<div class="lead">Ta plus grosse économie de temps : CDC de 15 fenêtres importé en 45s au lieu de 30 min.</div>
+
+<h2>Types de CDC supportés</h2>
+<ul>
+<li>PDF généré (Word/Excel) → 99% précision</li>
+<li>PDF scanné → OCR 92-96%</li>
+<li>Photo tableau manuscrit → IA vision 85%</li>
+<li>Excel / CSV → 100% parsing direct</li>
+</ul>
+
+<h2>Workflow d'import (5 étapes)</h2>
+<ol>
+<li>Chantier → Bouton "📸 Importer CDC"</li>
+<li>Choisir source (fichier local, photo, cloud)</li>
+<li>L'IA scanne (15-60s selon taille)</li>
+<li>Révision manuelle des lignes &lt; 80% confiance</li>
+<li>Validation création en masse</li>
+</ol>
+<div class="warning">Vérifie toujours les dimensions extrêmes (&lt; 50×50 cm ou &gt; 3×3 m). C'est là que l'IA se trompe le plus.</div>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">6</span>Le wizard dynamique avancé</h1>
+<div class="lead">Le wizard te guide sur les 14 formes de baies. Voici comment l'exploiter à fond.</div>
+
+<h2>Les 14 formes disponibles</h2>
+<table><thead><tr><th>Forme</th><th>Cotes obligatoires</th></tr></thead><tbody>
+<tr><td>Rectangle</td><td>L, H, D1, D2</td></tr>
+<tr><td>Trapèze</td><td>L_haut, L_bas, H_g, H_d</td></tr>
+<tr><td>Cintre plein</td><td>L, H, rayon</td></tr>
+<tr><td>Anse de panier</td><td>L, H, rayon1, rayon2, x1</td></tr>
+<tr><td>Triangle</td><td>base, H, angle_apex</td></tr>
+<tr><td>Œil-de-bœuf</td><td>diamètre unique</td></tr>
+<tr><td>Rectangle + arc</td><td>L, H_rect, H_arc</td></tr>
+<tr><td>Hexagone/Pentagone/Octogone</td><td>points polygonaux</td></tr>
+<tr><td>Baie fantaisie</td><td>Import photo + tracé libre IA</td></tr>
+</tbody></table>
+
+<h2>Fonctions avancées</h2>
+<ul>
+<li><strong>Contrôle équerrage auto</strong> — alerte si |D1-D2| &gt; tolérance</li>
+<li><strong>Complétion prédictive</strong> — lotissement = pré-remplissage automatique</li>
+<li><strong>Historique coté</strong> — chaque modification tracée avec auteur/date</li>
+</ul>
+
+<h2>Cas particuliers</h2>
+<h3>Cintre plein</h3>
+<p>Laser distance-to-arc : positionne au centre, vise 3 points (extrémités + sommet). L'app calcule le rayon exact.</p>
+<h3>Trapèze de comble</h3>
+<p>Hauteur panne faîtière (H_max) + hauteur chevron (H_min) + angle rampant (35-45°).</p>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">7</span>Laser Bluetooth</h1>
+<div class="lead">Productivité X3. Chantier mesuré en 15 min au lieu de 45 avec mètre ruban.</div>
+
+<h2>Lasers compatibles testés 2026</h2>
+<table><thead><tr><th>Modèle</th><th>Portée</th><th>Prix</th></tr></thead><tbody>
+<tr><td>Bosch GLM 50-27 CG</td><td>50m</td><td>230€ ⭐</td></tr>
+<tr><td>Bosch GLM 100 C</td><td>100m</td><td>320€</td></tr>
+<tr><td>Leica Disto D2 BT</td><td>100m</td><td>380€</td></tr>
+<tr><td>Leica Disto D5</td><td>200m</td><td>580€</td></tr>
+<tr><td>Stanley TLM99si</td><td>30m</td><td>140€</td></tr>
+<tr><td>Hilti PD-C 100</td><td>100m</td><td>420€</td></tr>
+</tbody></table>
+
+<h2>Connexion (5 étapes)</h2>
+<ol>
+<li>Activer Bluetooth iPhone + laser</li>
+<li>MesureChâssis → Réglages → Périphériques → Ajouter</li>
+<li>Sélectionner ton modèle (ou "HID keyboard générique")</li>
+<li>Appairage code 0000 ou 1234</li>
+<li>Test : appuie "MESURE" → valeur s'inscrit auto</li>
+</ol>
+<div class="pro-tip">Active "minimum tracking" du laser sur grandes baies : enregistre la plus petite valeur pendant balayage.</div>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">8</span>Workflow équipe</h1>
+<div class="lead">L'app orchestre 3-10 personnes sur chantiers parallèles avec des rôles distincts.</div>
+
+<h2>Le workflow-type</h2>
+<ol>
+<li><strong>Patron (Owner)</strong> crée le chantier + configure tolérances</li>
+<li><strong>Technicien</strong> mesure sur place (sans voir les prix)</li>
+<li><strong>Commercial</strong> ajoute options + génère devis</li>
+<li><strong>Chef chantier (Admin)</strong> contrôle + exporte CSV usine</li>
+<li><strong>Ouvrier</strong> pose et marque "Fait"</li>
+</ol>
+
+<h2>Tableau de bord équipe</h2>
+<ul>
+<li>Voir en temps réel qui travaille sur quoi</li>
+<li>Nb ouvertures mesurées / jour / personne</li>
+<li>Taux d'erreur par technicien (identifier besoins formation)</li>
+</ul>
+
+<h2>Notifications push</h2>
+<ul>
+<li>Nouvelle ouverture → tous les membres du chantier</li>
+<li>Ouverture validée → Admin uniquement</li>
+<li>Blocage tolérance → Owner + Admin</li>
+<li>Commentaire client → Commercial assigné</li>
+</ul>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">9</span>Yann IA — usage expert</h1>
+<div class="lead">Yann est propulsé par Claude Sonnet 4.5. Il connaît 15 000 pages de doc menuiserie. Parle-lui comme à un ingénieur.</div>
+
+<h2>Prompts efficaces</h2>
+<h3>Calculs</h3>
+<div class="norm">« Baie coulissante alu 2 vantaux 4200×2400 vitrage 4/16/4 argon → Uw obtenu ? Poids/vantail ? Renfort acier requis ? »</div>
+<h3>Conformité</h3>
+<div class="norm">« Client demande oscillo-battantes PVC blanc en Wallonie pour logement social neuf. Normes RT2020 / PEB à appliquer ? »</div>
+<h3>Dépannage</h3>
+<div class="norm">« Ma fenêtre alu ne ferme plus depuis 3 jours de canicule. Le vantail cale en haut à gauche. Solution ? »</div>
+
+<h2>Fonctions cachées</h2>
+<ul>
+<li><strong>Import photo</strong> → identifie une pièce de quincaillerie inconnue</li>
+<li><strong>Économie énergétique</strong> → « Uw 1.4 vs 0.9 sur 150m², gain annuel ? »</li>
+<li><strong>Traduction technique</strong> → fiches techniques anglais/allemand</li>
+<li><strong>Génération descriptif devis</strong> → paragraphe pro pour ton devis</li>
+</ul>
+<div class="pro-tip">Sauvegarde tes meilleurs prompts dans Favoris (❤️). Réutilisation en 1 clic.</div>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">10</span>Exports & intégrations</h1>
+<div class="lead">L'app s'intègre avec ton ERP, ta CNC, ton logiciel de devis.</div>
+
+<h2>Formats d'export</h2>
+<table><thead><tr><th>Format</th><th>Destination</th><th>Contenu</th></tr></thead><tbody>
+<tr><td><strong>PDF</strong></td><td>Client, BE</td><td>Rapport visuel + photos</td></tr>
+<tr><td><strong>Excel</strong></td><td>Comptabilité</td><td>Cotes en tableau</td></tr>
+<tr><td><strong>CSV</strong></td><td>Usine, CNC</td><td>Format brut standardisé</td></tr>
+<tr><td><strong>DXF</strong> (Q3 2026)</td><td>AutoCAD</td><td>Schémas vectoriels</td></tr>
+<tr><td><strong>Odoo</strong> (à venir)</td><td>ERP Odoo</td><td>API JSON + devis auto</td></tr>
+<tr><td>Sage/Ciel</td><td>Compta belge</td><td>Écriture facture</td></tr>
+</tbody></table>
+
+<h2>Configuration Odoo (Plan MAX)</h2>
+<ol>
+<li>Réglages → Intégrations → Odoo</li>
+<li>URL instance (ex: https://ma-societe.odoo.com)</li>
+<li>Clé API générée côté Odoo (Paramètres → Développeur)</li>
+<li>Mapping des champs (référence produit interne)</li>
+<li>Test création devis</li>
+</ol>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">11</span>Qualité et anti-litige</h1>
+<div class="lead">Le béton juridique. Comment l'app te protège en cas de litige client.</div>
+
+<h2>Photos anti-litige (min 3)</h2>
+<ol>
+<li><strong>Vue générale</strong> — baie + mur environnant + règle échelle</li>
+<li><strong>Détails 4 angles</strong> — état feuillures</li>
+<li><strong>Vue extérieure</strong> — état mur avant intervention</li>
+</ol>
+<p>Chaque photo <strong>horodatée + GPS + SHA-256</strong>. Opposable devant tribunal belge/français.</p>
+
+<h2>Registre modifications</h2>
+<div class="norm">14/07/2026 15:32 — [Michel Pezzuto] modifie L: 1200 → 1205mm
+14/07/2026 15:35 — [Michel Pezzuto] valide (statut: mesuré)
+15/07/2026 09:12 — [Client Dupont] commente : "OK couleur"</div>
+
+<h2>Signature client intégrée</h2>
+<p>Faire signer directement dans l'app (comme livraison colis). Nom + signature tactile. Le PDF final porte "Bon pour accord signé le [date]" + hash.</p>
+<div class="pro-tip">Fais TOUJOURS signer le PDF au client après mesures. 2 min de plus = protection 100% en cas de contestation.</div>
+</div>
+
+<div class="page">
+<h1 class="page-title"><span class="num">12</span>Support & communauté pro</h1>
+<div class="lead">Support dédié pour Plans Pro et Entreprise. Communauté pro belge/francophone.</div>
+
+<h2>Niveaux de support</h2>
+<table><thead><tr><th>Plan</th><th>Support</th><th>SLA</th></tr></thead><tbody>
+<tr><td>Gratuit</td><td>Yann IA + centre aide</td><td>—</td></tr>
+<tr><td>Artisan Pro (19€)</td><td>Email prioritaire</td><td>24h ouvrées</td></tr>
+<tr><td>Entreprise Pro (59€)</td><td>Email + téléphone</td><td>8h ouvrées</td></tr>
+<tr><td>Entreprise MAX (249€)</td><td>Account Manager + Slack</td><td>2h ouvrées</td></tr>
+</tbody></table>
+
+<h2>Formations</h2>
+<ul>
+<li>Webinaire découverte — 1h gratuit mensuel</li>
+<li>Formation avancée — 3h, 149€ HT, visio individuelle</li>
+<li>Certification Pro — 1 jour présentiel, 499€ HT (diplôme UPA)</li>
+<li>Formation équipe sur site — dès 890€ HT, 4 pers. max</li>
+</ul>
+
+<h2>Ressources continues</h2>
+<ul>
+<li>Blog : <strong>mesurechassis.com/blog</strong> — articles techniques mensuels</li>
+<li>YouTube : chaîne "MesureChâssis Pro"</li>
+<li>LinkedIn : "MesureChâssis Officiel"</li>
+<li>Newsletter mensuelle (Réglages → Notifications)</li>
+</ul>
+
+<h2>Contact direct fondateur</h2>
+<p><strong>Michel Pezzuto</strong> — Fondateur MesureChâssis</p>
+<ul>
+<li>📱 <strong>+32 496 65 00 32</strong> (support pro Plans Entreprise+)</li>
+<li>📧 <strong>info@mesurechassis.com</strong></li>
+<li>🌐 <strong>mesurechassis.com</strong></li>
+</ul>
+<div class="footer">Guide Pro v1.0 · MesureChâssis · Michel Pezzuto · Bois / Alu / PVC · Juillet 2026</div>
+</div>
+
+</body></html>
