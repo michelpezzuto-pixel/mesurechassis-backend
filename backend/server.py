@@ -557,6 +557,29 @@ async def preview_guide_pro():
         return HTMLResponse(f.read())
 
 
+@api.get("/_downloads/guide-artisan-pro")
+async def download_guide_artisan_pro():
+    """Mode d'emploi Artisan solo & Entreprise Pro — RBAC, workflow équipe, exports."""
+    path = "/app/backend/public_downloads/print/guide-artisan-pro.html"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Fichier introuvable")
+    return FileResponse(
+        path,
+        media_type="text/html",
+        filename="mesurechassis-guide-artisan-pro.html",
+    )
+
+
+@api.get("/_downloads/guide-artisan-pro/preview", response_class=HTMLResponse)
+async def preview_guide_artisan_pro():
+    """Aperçu direct du guide Artisan & Entreprise Pro."""
+    path = "/app/backend/public_downloads/print/guide-artisan-pro.html"
+    if not os.path.isfile(path):
+        raise HTTPException(404, "Fichier introuvable")
+    with open(path, "r", encoding="utf-8") as f:
+        return HTMLResponse(f.read())
+
+
 @api.get("/_downloads/feature-graphic/{variant}")
 async def download_feature_graphic_variant(variant: str):
     """Variantes redimensionnées de l'image utilisateur (stretch / fit / cover)."""

@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><title>MesureChâssis — Guide Artisan & Entreprise Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--orange:#FF5A00;--bg:#FFFFFF;--bg-soft:#F8FAFC;--text:#1A1A1E;--text-mute:#5A5A62;--text-light:#8A8A92;--border:#E5E5E9;--blue:#3B82F6;--blue-bg:#EFF6FF;--blue-dark:#1D4ED8;--purple:#8B5CF6;--purple-bg:#F5F3FF;--green:#22C55E;--red:#EF4444;--yellow:#F59E0B;--font-head:"Syne",-apple-system,BlinkMacSystemFont,sans-serif;--font:"Inter",-apple-system,BlinkMacSystemFont,sans-serif}
+@page{size:A4;margin:15mm}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+html,body{font-family:var(--font);color:var(--text);background:var(--bg);font-size:10.5pt;line-height:1.55}
+.page{max-width:180mm;margin:0 auto;padding:8mm 0;page-break-after:always}
+.page:last-child{page-break-after:auto}
+.cover{background:linear-gradient(135deg,#1D4ED8 0%,#8B5CF6 100%);color:#fff;padding:40mm 20mm;border-radius:12mm;text-align:center;min-height:240mm;display:flex;flex-direction:column;justify-content:center;page-break-after:always}
+.cover-logo{width:32mm;height:32mm;background:#fff;border-radius:8mm;margin:0 auto 8mm;padding:4mm;box-shadow:0 8mm 20mm rgba(0,0,0,.35)}
+.cover-logo img{width:100%;height:100%;object-fit:contain;display:block}
+.cover-tag{font-size:11pt;font-weight:700;letter-spacing:3pt;text-transform:uppercase;opacity:.9;margin-bottom:6mm}
+.cover-title{font-family:var(--font-head);font-weight:800;font-size:38pt;line-height:1;letter-spacing:-1pt;margin-bottom:6mm}
+.cover-subtitle{font-size:15pt;font-weight:500;margin-bottom:25mm;opacity:.95}
+.cover-meta{background:rgba(0,0,0,.35);border-radius:6mm;padding:6mm 10mm;margin:0 auto;max-width:110mm;text-align:left;font-size:10.5pt;line-height:1.85}
+.cover-meta strong{display:inline-block;min-width:38mm;opacity:.85}
+.cover-footer{margin-top:20mm;font-size:9pt;opacity:.85;letter-spacing:1pt;text-transform:uppercase}
+h1.page-title{font-family:var(--font-head);font-weight:800;font-size:22pt;color:var(--text);letter-spacing:-.5pt;padding-bottom:4mm;border-bottom:3pt solid var(--blue);margin-bottom:6mm}
+h1.page-title .num{display:inline-block;background:var(--blue);color:#fff;padding:2mm 6mm;border-radius:20mm;font-size:11.5pt;margin-right:4mm;vertical-align:middle}
+h2{font-family:var(--font-head);font-weight:700;font-size:14pt;color:var(--text);margin:5mm 0 3mm;letter-spacing:-.3pt}
+h3{font-family:var(--font);font-weight:700;font-size:11pt;color:var(--blue);margin:4mm 0 2mm;text-transform:uppercase;letter-spacing:.5pt}
+p{margin-bottom:3mm}
+strong{color:var(--text);font-weight:700}
+em{color:var(--text-mute);font-style:italic}
+.lead{font-size:12pt;font-weight:500;color:var(--text-mute);line-height:1.6;padding:5mm 6mm;background:var(--blue-bg);border-left:4pt solid var(--blue);border-radius:3mm;margin-bottom:6mm}
+.callout{background:var(--bg-soft);border:1pt solid var(--border);border-radius:5mm;padding:4mm 6mm;margin:4mm 0}
+.callout-title{font-family:var(--font-head);font-weight:700;font-size:10.5pt;color:var(--blue);margin-bottom:2mm;text-transform:uppercase;letter-spacing:.5pt}
+.tip{background:#FEF3C7;border-left:4pt solid #F59E0B;padding:3.5mm 6mm;border-radius:3mm;margin:3mm 0;font-size:10pt}
+.tip::before{content:"💡 Astuce pro";display:block;font-weight:800;color:#92400E;font-size:8.5pt;letter-spacing:1pt;text-transform:uppercase;margin-bottom:2mm}
+.warning{background:#FEF2F2;border-left:4pt solid #EF4444;padding:3.5mm 6mm;border-radius:3mm;margin:3mm 0;font-size:10pt}
+.warning::before{content:"⚠️ Attention";display:block;font-weight:800;color:#B91C1C;font-size:8.5pt;letter-spacing:1pt;text-transform:uppercase;margin-bottom:2mm}
+ul,ol{padding-left:6mm;margin:2mm 0}
+li{margin-bottom:1.5mm}
+.role-card{border:1.5pt solid var(--border);border-radius:5mm;padding:5mm 6mm;margin:3mm 0;background:#fff}
+.role-card.admin{border-color:var(--purple);background:var(--purple-bg)}
+.role-card.commercial{border-color:var(--blue);background:var(--blue-bg)}
+.role-card.tech{border-color:var(--green);background:#F0FDF4}
+.role-card.reader{border-color:var(--text-light);background:var(--bg-soft)}
+.role-title{font-family:var(--font-head);font-weight:800;font-size:14pt;margin-bottom:2mm}
+.role-title.admin{color:var(--purple)}
+.role-title.commercial{color:var(--blue)}
+.role-title.tech{color:var(--green)}
+.role-title.reader{color:var(--text-mute)}
+.role-subtitle{font-size:9.5pt;color:var(--text-mute);text-transform:uppercase;letter-spacing:.8pt;margin-bottom:3mm}
+.role-list{font-size:10pt;line-height:1.6}
+.role-list li{margin-bottom:1mm}
+.status-flow{display:flex;flex-wrap:wrap;align-items:center;gap:2mm;margin:4mm 0;font-size:9pt}
+.status-badge{padding:2mm 4mm;border-radius:15mm;font-weight:700;color:#fff;font-size:8.5pt;letter-spacing:.3pt;text-transform:uppercase}
+.status-badge.grey{background:#94A3B8}
+.status-badge.orange{background:var(--orange)}
+.status-badge.blue{background:var(--blue)}
+.status-badge.yellow{background:var(--yellow)}
+.status-badge.green{background:var(--green)}
+.status-arrow{color:var(--text-light);font-size:11pt;font-weight:800}
+.plan-card{border:1.5pt solid var(--border);border-radius:5mm;padding:4mm 5mm;margin:3mm 0;background:#fff;display:flex;justify-content:space-between;align-items:flex-start;gap:5mm}
+.plan-card.highlight{border-color:var(--blue);background:linear-gradient(135deg,var(--blue-bg) 0%,#fff 100%)}
+.plan-name{font-family:var(--font-head);font-weight:800;font-size:13pt;color:var(--text);letter-spacing:-.3pt}
+.plan-name.pro{color:var(--blue)}
+.plan-desc{font-size:9.5pt;color:var(--text-mute);margin-top:1mm}
+.plan-price{font-family:var(--font-head);font-weight:800;font-size:15pt;color:var(--text);text-align:right;white-space:nowrap}
+.plan-price small{display:block;font-size:9pt;color:var(--text-mute);font-weight:500;margin-top:1mm}
+.plan-price.free{color:var(--green)}
+.plan-price.pro{color:var(--blue)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin:3mm 0}
+.mini-card{border:1pt solid var(--border);border-radius:4mm;padding:4mm 5mm;background:#fff}
+.mini-card-title{font-family:var(--font-head);font-weight:700;font-size:10.5pt;color:var(--text);margin-bottom:2mm}
+.mini-card-desc{font-size:9.5pt;color:var(--text-mute);line-height:1.5}
+.checklist{list-style:none;padding-left:0;font-size:10pt}
+.checklist li{padding-left:8mm;position:relative;margin-bottom:2mm;line-height:1.5}
+.checklist li::before{content:"☐";position:absolute;left:0;top:-1mm;font-size:14pt;color:var(--blue);font-weight:700}
+.emphasis-box{background:linear-gradient(135deg,#EFF6FF 0%,#F5F3FF 100%);border:1.5pt solid var(--blue);border-radius:5mm;padding:5mm 6mm;margin:4mm 0}
+.emphasis-title{font-family:var(--font-head);font-weight:800;font-size:12pt;color:var(--blue-dark);margin-bottom:3mm}
+.workflow-step{background:var(--bg-soft);border-left:4pt solid var(--blue);padding:3mm 5mm;margin:2mm 0;border-radius:3mm}
+.workflow-step strong{color:var(--blue-dark)}
+table{width:100%;border-collapse:collapse;font-size:9.5pt;margin:3mm 0}
+table th{background:var(--blue);color:#fff;padding:2.5mm 3mm;text-align:left;font-weight:700;font-size:9pt;letter-spacing:.3pt;text-transform:uppercase}
+table td{padding:2.5mm 3mm;border-bottom:1pt solid var(--border);vertical-align:top}
+table tr:last-child td{border-bottom:0}
+table tr:nth-child(odd) td{background:var(--bg-soft)}
+</style></head>
+
+<body>
+<!-- COUVERTURE -->
+<div class="cover">
+<div class="cover-logo"><img src="https://mesurechassis.com/logo512.png" alt="MesureChâssis" onerror="this.style.display='none'"></div>
+<div class="cover-tag">Guide Artisan &amp; Entreprise Pro</div>
+<div class="cover-title">Organiser<br>ton équipe</div>
+<div class="cover-subtitle">Rôles, workflow, chantiers, exports — le manuel complet</div>
+<div class="cover-meta">
+<div><strong>Pour :</strong> Artisan solo &amp; Entreprise Pro</div>
+<div><strong>Niveau requis :</strong> Maîtrise des mesures</div>
+<div><strong>Plans :</strong> Freemium, Standard, Team, Pro</div>
+<div><strong>Pages :</strong> 12</div>
+<div><strong>Version :</strong> 1.0 — juillet 2026</div>
+</div>
+<div class="cover-footer">Sans Entreprise MAX · Odoo &amp; Auto-devis à venir</div>
+</div>
+
+<!-- PAGE 1 -->
+<div class="page">
+<h1 class="page-title"><span class="num">1</span>Choisir son mode : Solo ou Entreprise</h1>
+<div class="lead">MesureChâssis s'adapte à ta réalité. Que tu sois artisan seul dans ton camion ou entreprise à 15 collaborateurs, l'app se configure en 2 clics.</div>
+
+<div class="grid-2">
+<div class="mini-card" style="border-color:var(--green)">
+<div class="mini-card-title" style="color:var(--green)">🧑‍🔧 Solo Artisan</div>
+<div class="mini-card-desc">Tu travailles seul. Aucune séparation des rôles. Tu es à la fois commercial ET technicien. L'app t'évite les frictions RBAC.</div>
+</div>
+<div class="mini-card" style="border-color:var(--blue)">
+<div class="mini-card-title" style="color:var(--blue)">🏢 Entreprise Pro</div>
+<div class="mini-card-desc">Tu as une équipe (Admin, Commerciaux, Métreurs). Chacun a son écran, ses permissions, ses notifications.</div>
+</div>
+</div>
+
+<h2>Comment basculer ?</h2>
+<div class="workflow-step">
+<strong>1.</strong> Va dans <strong>Profil → Mon entreprise</strong>
+</div>
+<div class="workflow-step">
+<strong>2.</strong> Bascule « <strong>Mode Artisan</strong> » sur ON (solo) ou OFF (entreprise)
+</div>
+<div class="workflow-step">
+<strong>3.</strong> Renseigne le <strong>type de compte</strong> : Artisan / Entreprise
+</div>
+
+<div class="tip">Tu peux commencer en Solo, puis passer en Entreprise quand tu embauches ton premier commercial. La bascule prend 30 secondes et ne casse pas les chantiers existants.</div>
+
+<h2>Différences clés en une ligne</h2>
+<table>
+<tr><th>Aspect</th><th>Solo Artisan</th><th>Entreprise Pro</th></tr>
+<tr><td>Création chantier</td><td>Toi seul</td><td>Admin (avec assignation Commercial)</td></tr>
+<tr><td>Prise de mesures</td><td>Toi</td><td>Commercial + Technicien</td></tr>
+<tr><td>Statut initial</td><td>« À mesurer »</td><td>« Devis à faire »</td></tr>
+<tr><td>Validation</td><td>Auto</td><td>Workflow Commercial → Technicien</td></tr>
+<tr><td>Notifications</td><td>Aucune (tu es seul)</td><td>Push + email à chaque étape</td></tr>
+</table>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page">
+<h1 class="page-title"><span class="num">2</span>Les 4 rôles RBAC</h1>
+<div class="lead">Chaque rôle voit uniquement ce dont il a besoin. Fini les collaborateurs qui suppriment des chantiers par erreur ou modifient un devis validé.</div>
+
+<div class="role-card admin">
+<div class="role-title admin">👑 Admin</div>
+<div class="role-subtitle">Le chef d'orchestre</div>
+<ul class="role-list">
+<li>Crée les chantiers et les assigne aux Commerciaux</li>
+<li>Gère l'équipe : invitations, désactivation, rôles</li>
+<li>Voit tous les chantiers de l'entreprise (lecture seule sur mesures)</li>
+<li>Clôture les chantiers en fabrication</li>
+<li>Configure l'entreprise, la marque, les exports</li>
+</ul>
+</div>
+
+<div class="role-card commercial">
+<div class="role-title commercial">💼 Commercial</div>
+<div class="role-subtitle">Le prospecteur & métreur devis</div>
+<ul class="role-list">
+<li>Prend les rendez-vous chez le client (téléphone, email envoyé)</li>
+<li>Effectue la <strong>prise de mesures initiale</strong> chez le client</li>
+<li>Passe le chantier de « À mesurer » → « À vérifier »</li>
+<li>Peut demander une modification à un Technicien via <strong>Mod-Request</strong></li>
+<li>Ne peut plus modifier une fois le chantier « En fabrication »</li>
+</ul>
+</div>
+
+<div class="role-card tech">
+<div class="role-title tech">🔧 Technicien / Métreur</div>
+<div class="role-subtitle">Le contrôleur qualité</div>
+<ul class="role-list">
+<li><strong>Vérifie et valide</strong> les mesures prises par le Commercial</li>
+<li>Peut renvoyer un chantier « À vérifier → À mesurer » avec un motif</li>
+<li>Bascule le chantier « À vérifier » → « En fabrication »</li>
+<li>Répond aux <strong>Mod-Requests</strong> du Commercial (Accepter / Refuser)</li>
+<li>Peut clôturer les chantiers en fabrication</li>
+</ul>
+</div>
+
+<div class="role-card reader">
+<div class="role-title reader">👁️ Lecture seule</div>
+<div class="role-subtitle">Comptable, associé, client final invité</div>
+<ul class="role-list">
+<li>Voit les chantiers, les mesures, les exports</li>
+<li>Ne peut RIEN modifier, ni créer, ni supprimer</li>
+<li>Idéal pour donner accès à ton comptable ou à un client sponsorisé</li>
+</ul>
+</div>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page">
+<h1 class="page-title"><span class="num">3</span>Créer et gérer ton équipe</h1>
+<div class="lead">Inviter un collaborateur prend 10 secondes. Il reçoit un email, choisit son mot de passe, et il est opérationnel.</div>
+
+<h2>Inviter un membre</h2>
+<div class="workflow-step">
+<strong>1.</strong> Va dans <strong>Profil → Mon équipe → « + Inviter »</strong>
+</div>
+<div class="workflow-step">
+<strong>2.</strong> Renseigne <strong>Email</strong> + <strong>Rôle</strong> (Commercial / Technicien / Lecture)
+</div>
+<div class="workflow-step">
+<strong>3.</strong> Le collaborateur reçoit un email d'invitation avec un <strong>lien magique</strong>
+</div>
+<div class="workflow-step">
+<strong>4.</strong> Il clique, définit son nom, prénom, mot de passe → compte activé
+</div>
+<div class="workflow-step">
+<strong>5.</strong> Il apparaît immédiatement dans ta liste d'équipe, prêt à recevoir des chantiers
+</div>
+
+<div class="tip">L'invitation est valable <strong>7 jours</strong>. Passé ce délai, tu dois la réémettre. Aucune limite au nombre d'invitations que tu peux envoyer.</div>
+
+<h2>Désactiver / Supprimer un membre</h2>
+<p>Cas typiques : départ d'un salarié, changement de rôle, période d'essai non concluante.</p>
+<ul>
+<li><strong>Désactiver</strong> = le compte reste en DB (historique préservé) mais il ne peut plus se connecter. Recommandé.</li>
+<li><strong>Supprimer</strong> = uniquement si tu es sûr. L'utilisateur reste dans l'historique des chantiers (auteur, mesures), mais ne peut plus être réactivé sans support.</li>
+</ul>
+
+<div class="warning">Ne supprime <strong>jamais</strong> un membre qui a des chantiers en cours. Réassigne d'abord ses chantiers à un autre collaborateur (menu ⋯ sur la fiche chantier → « Réaffecter »).</div>
+
+<h2>Changer le rôle d'un membre</h2>
+<p>Depuis la fiche membre, tu peux basculer un Commercial en Technicien ou l'inverse. Utile quand un métreur devient responsable des rendez-vous ou quand un commercial part sur le terrain.</p>
+
+<div class="callout">
+<div class="callout-title">🎯 Bonnes pratiques équipe</div>
+<p style="margin:0">
+1. <strong>1 Admin par entreprise</strong> (pas plus, pour éviter les conflits d'assignation).<br>
+2. <strong>Ratio 1 Technicien pour 3 Commerciaux</strong> (le tech est le goulot d'étranglement).<br>
+3. <strong>Donne accès Lecture</strong> à ton comptable — il verra tous les devis sans risquer de casser quoi que ce soit.</p>
+</div>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page">
+<h1 class="page-title"><span class="num">4</span>Le workflow des statuts</h1>
+<div class="lead">Chaque chantier passe par 5 statuts. Chaque transition est protégée par les rôles RBAC — impossible de casser l'ordre.</div>
+
+<div class="status-flow">
+<span class="status-badge grey">Devis à faire</span>
+<span class="status-arrow">→</span>
+<span class="status-badge orange">À mesurer</span>
+<span class="status-arrow">→</span>
+<span class="status-badge blue">À vérifier</span>
+<span class="status-arrow">→</span>
+<span class="status-badge yellow">En fabrication</span>
+<span class="status-arrow">→</span>
+<span class="status-badge green">Clôturé</span>
+</div>
+
+<h2>1. Devis à faire ⚪</h2>
+<p>État initial (Entreprise uniquement). Le chantier vient d'être créé par l'Admin, l'assignation à un Commercial est faite.<br>
+<strong>Qui peut le faire avancer ?</strong> Admin (envoie au commercial) ou le Commercial assigné (accepte le chantier).</p>
+
+<h2>2. À mesurer 🟠</h2>
+<p>Le Commercial se déplace chez le client, prend les mesures des châssis (ou importe un cahier des charges), photographie l'état existant.<br>
+<strong>Qui peut le faire avancer ?</strong> Commercial (bouton « Clôturer la prise de cotes »).</p>
+
+<h2>3. À vérifier 🔵</h2>
+<p>Le Commercial a terminé. Le Technicien reçoit une notification push : « <em>Chantier Dupont à vérifier</em> ». Il ouvre chaque mesure, contrôle, corrige.<br>
+<strong>Qui peut le faire avancer ?</strong> Technicien (Valider → En fabrication) ou renvoyer au Commercial (Modification requise).</p>
+
+<h2>4. En fabrication 🟡</h2>
+<p>Les mesures sont validées. Le devis est signé par le client (ou en cours). L'atelier produit les châssis.<br>
+<strong>Qui peut le faire avancer ?</strong> Technicien ou Admin (bouton « Clôturer »).</p>
+
+<h2>5. Clôturé 🟢</h2>
+<p>La pose a été faite. Le client a signé sur place. <strong>Verrouillage total</strong> : plus aucune modification n'est possible, seuls les exports restent accessibles.</p>
+
+<div class="emphasis-box">
+<div class="emphasis-title">🔒 Sécurité RBAC intégrée</div>
+<p style="margin:0">Chaque transition est vérifiée côté serveur : si un Commercial essaie de forcer « À vérifier → En fabrication » (uniquement autorisé au Technicien), l'API renvoie une erreur 403 explicite. Impossible de tricher, même depuis un client tiers.</p>
+</div>
+</div>
+
+<!-- PAGE 5 -->
+<div class="page">
+<h1 class="page-title"><span class="num">5</span>Assigner un chantier &amp; notifications</h1>
+<div class="lead">Un chantier assigné = un collaborateur qui reçoit immédiatement une notification push + un email interne. Zéro friction, zéro oubli.</div>
+
+<h2>Assigner à la création</h2>
+<p>Quand tu crées un chantier en mode Entreprise, le champ <strong>« Assigner à »</strong> est obligatoire. Choisis dans la liste déroulante ton Commercial (le champ ne montre que les rôles éligibles).</p>
+
+<h2>Réaffecter en cours de route</h2>
+<p>Cas courant : le Commercial est en congés, il faut passer le chantier à quelqu'un d'autre. Depuis la fiche chantier, tape sur le bouton <strong>« Réaffecter »</strong> en haut à droite.</p>
+
+<div class="workflow-step">
+<strong>1.</strong> La liste des collaborateurs éligibles s'affiche
+</div>
+<div class="workflow-step">
+<strong>2.</strong> Tape sur le nom → confirmation
+</div>
+<div class="workflow-step">
+<strong>3.</strong> Notification push immédiate au nouveau responsable
+</div>
+
+<h2>Notifications automatiques</h2>
+<table>
+<tr><th>Événement</th><th>Notifié</th><th>Canal</th></tr>
+<tr><td>Chantier assigné</td><td>Le collaborateur</td><td>Push + Email</td></tr>
+<tr><td>Statut « À vérifier »</td><td>Tous les Techniciens</td><td>Push + Email</td></tr>
+<tr><td>Modification requise</td><td>Le Technicien concerné</td><td>Push + Email</td></tr>
+<tr><td>Refus de modif</td><td>Le Commercial demandeur</td><td>Push + Email</td></tr>
+<tr><td>Chantier clôturé</td><td>L'Admin</td><td>Email récap</td></tr>
+</table>
+
+<div class="tip">Tu peux désactiver les notifications par email dans <strong>Profil → Notifications</strong>. Les notifications push restent, elles sont essentielles au workflow terrain.</div>
+
+<h2>Emails internes</h2>
+<p>Les emails d'assignation arrivent depuis <em>no-reply@mesurechassis.com</em>. Ils contiennent :</p>
+<ul>
+<li>Le nom du chantier + adresse complète</li>
+<li>Un lien deep-link qui ouvre directement l'app sur la fiche</li>
+<li>La signature de la personne qui a créé/assigné</li>
+</ul>
+</div>
+
+<!-- PAGE 6 -->
+<div class="page">
+<h1 class="page-title"><span class="num">6</span>Le workflow « Modification requise »</h1>
+<div class="lead">Quand le Technicien détecte une incohérence, il ne modifie pas lui-même — il renvoie le chantier au Commercial avec un motif. Traçabilité totale.</div>
+
+<h2>Quand utiliser une Mod-Request ?</h2>
+<ul>
+<li>Diagonale D1 ≠ D2 de plus de 10 mm (mur pas d'aplomb → à confirmer)</li>
+<li>Feuillure manquante sur une brique (le Commercial a oublié de la mesurer)</li>
+<li>Photo floue ou absente sur une ouverture critique</li>
+<li>Doute sur le sens d'ouverture ou le matériau saisi</li>
+</ul>
+
+<h2>Côté Technicien — Envoyer une Mod-Request</h2>
+<div class="workflow-step">
+<strong>1.</strong> Ouvre la fiche chantier « À vérifier »
+</div>
+<div class="workflow-step">
+<strong>2.</strong> Bouton <strong>« Demander une modification »</strong> (bandeau bleu en haut)
+</div>
+<div class="workflow-step">
+<strong>3.</strong> Écris un motif clair (ex: « Photo manquante sur F3, refaire »)
+</div>
+<div class="workflow-step">
+<strong>4.</strong> Valide → statut passe à « <strong>Modification requise</strong> » et notification au Commercial
+</div>
+
+<h2>Côté Commercial — Répondre à la demande</h2>
+<div class="workflow-step">
+<strong>1.</strong> Notification reçue → ouvre la fiche
+</div>
+<div class="workflow-step">
+<strong>2.</strong> Bandeau bleu : « <strong>Le technicien X demande : &laquo; motif &raquo;</strong> »
+</div>
+<div class="workflow-step">
+<strong>3.</strong> Deux choix :
+<ul style="margin-top:1mm">
+<li><strong>Accepter</strong> → retour à « À mesurer », correction sur place</li>
+<li><strong>Refuser</strong> avec un commentaire (ex: « Photo suffisante, angle réel »)</li>
+</ul>
+</div>
+
+<div class="callout">
+<div class="callout-title">📜 Historique complet</div>
+<p style="margin:0">Chaque Mod-Request est <strong>tracée dans l'historique</strong> du chantier avec : qui a demandé, quand, pourquoi, qui a répondu, réponse. Idéal pour les audits qualité et les réunions d'équipe.</p>
+</div>
+
+<div class="warning">Le Commercial ne peut pas <strong>ignorer</strong> une Mod-Request. Tant qu'il n'a pas répondu (Accepter ou Refuser), le chantier reste bloqué en « Modification requise ». Le workflow avance uniquement quand tout le monde s'aligne.</div>
+</div>
+
+<!-- PAGE 7 -->
+<div class="page">
+<h1 class="page-title"><span class="num">7</span>Import IA cahier des charges</h1>
+<div class="lead">Ton client t'envoie un PDF avec 22 fenêtres, 4 portes-fenêtres, 3 baies coulissantes ? L'IA les importe en 45 secondes.</div>
+
+<h2>Comment ça marche</h2>
+<div class="workflow-step">
+<strong>1.</strong> Depuis la fiche chantier, tape sur <strong>« 📸 Importer un CDC »</strong>
+</div>
+<div class="workflow-step">
+<strong>2.</strong> Choisis : PDF, Excel, ou photo (JPG/PNG)
+</div>
+<div class="workflow-step">
+<strong>3.</strong> L'IA analyse le document en arrière-plan (30-90 secondes selon la taille)
+</div>
+<div class="workflow-step">
+<strong>4.</strong> Les mesures sont créées automatiquement avec un <strong>badge orange « À VALIDER »</strong>
+</div>
+<div class="workflow-step">
+<strong>5.</strong> Le Commercial vérifie chaque mesure sur place et clique « Valider » pour confirmer
+</div>
+
+<h2>Ce que l'IA extrait automatiquement</h2>
+<div class="grid-2">
+<div class="mini-card">
+<div class="mini-card-title">📐 Par ouverture</div>
+<div class="mini-card-desc">Largeur, hauteur, quantité, type (rectangle/porte/coulissant), matériau, RAL, vitrage, Uw, quincaillerie, ouverture, sens…</div>
+</div>
+<div class="mini-card">
+<div class="mini-card-title">📋 Projet global</div>
+<div class="mini-card-desc">Coordonnées client (nom, adresse, téléphone, email), délais, normes (CE, NF, DTU), garanties, modalités de paiement.</div>
+</div>
+</div>
+
+<div class="tip">🆕 <strong>Juin 2026</strong> — L'IA extrait maintenant aussi la <strong>structure du mur</strong> (brique, béton, ITI/ITE, épaisseurs) si elle est mentionnée dans le CDC. La fiche chantier se remplit toute seule.</div>
+
+<h2>Gestion des gros fichiers</h2>
+<p>Pour les PDF de plus de 2 Mo, l'app utilise un <strong>upload en chunks</strong> (découpage automatique en morceaux de 1 Mo) pour éviter les timeouts réseau. Tout est géré en arrière-plan, tu ne vois qu'une barre de progression.</p>
+
+<div class="warning">L'IA fait un excellent travail sur 95% des documents, mais elle n'est pas infaillible. <strong>Toujours vérifier</strong> les cotes critiques sur place avant de valider.</div>
+
+<h2>Coût</h2>
+<p>L'import IA est inclus dans les plans <strong>Standard</strong>, <strong>Team</strong> et <strong>Pro</strong>. Pas de facturation à l'usage, pas de quota par mois.</p>
+</div>
+
+<!-- PAGE 8 -->
+<div class="page">
+<h1 class="page-title"><span class="num">8</span>Photos anti-litige &amp; signature</h1>
+<div class="lead">Le litige, c'est 80% des marges perdues chez le menuisier. MesureChâssis enregistre <strong>2 preuves</strong> horodatées : les photos et la signature sur place.</div>
+
+<h2>Photos horodatées</h2>
+<p>À chaque prise de mesure, tu peux ajouter jusqu'à <strong>6 photos par ouverture</strong>. Elles sont :</p>
+<ul>
+<li>Horodatées avec la date/heure GMT du serveur (non-modifiable)</li>
+<li>Géolocalisées si tu autorises la position GPS</li>
+<li>Stockées en base64 dans la mesure (jamais perdues)</li>
+<li>Exportées automatiquement dans le PDF final</li>
+</ul>
+
+<h2>Photos de contexte "Site"</h2>
+<p>En plus des photos par ouverture, tu peux ajouter jusqu'à <strong>6 photos globales du site</strong> (façade, état existant, points litigieux) directement depuis la fiche chantier. Chaque photo peut avoir une <strong>légende</strong>.</p>
+
+<div class="tip">Prends toujours 1 photo de la façade complète, 1 vue générale de chaque pièce, et 1 gros plan sur tout dommage existant (fissure, humidité, tag). C'est ton meilleur bouclier en cas de contestation post-pose.</div>
+
+<h2>Signature client</h2>
+<p>À la fin de la visite, le client signe sur ton écran (mode « tablette ») :</p>
+<div class="workflow-step">
+<strong>1.</strong> Depuis la fiche chantier, tape sur <strong>« 🖊️ Faire signer »</strong>
+</div>
+<div class="workflow-step">
+<strong>2.</strong> Passe la tablette au client
+</div>
+<div class="workflow-step">
+<strong>3.</strong> Il signe avec son doigt ou un stylet
+</div>
+<div class="workflow-step">
+<strong>4.</strong> La signature est <strong>horodatée + stockée</strong> avec toutes les mesures
+</div>
+
+<div class="emphasis-box">
+<div class="emphasis-title">⚖️ Valeur juridique</div>
+<p style="margin:0">La signature électronique + horodatage + géolocalisation ont <strong>valeur de preuve devant un tribunal français ou belge</strong> (article 1367 du Code civil FR / loi du 9 juillet 2001 en Belgique). Idéal si tu dois défendre ta prise de mesure vs des accusations client.</p>
+</div>
+
+<h2>Où retrouver les preuves ?</h2>
+<p>Sur le PDF final de rapport, tu trouveras en fin de document :</p>
+<ul>
+<li>Une <strong>page dédiée « Preuves visuelles »</strong> avec toutes les photos horodatées</li>
+<li>La <strong>signature du client</strong> avec date et coordonnées GPS</li>
+<li>L'<strong>identité du métreur</strong> (nom, rôle, entreprise)</li>
+</ul>
+</div>
+
+<!-- PAGE 9 -->
+<div class="page">
+<h1 class="page-title"><span class="num">9</span>Exports pros : PDF / Excel / CSV / JSON</h1>
+<div class="lead">4 formats pour 4 usages différents. Génère l'export qui va dans ton logiciel comptable, ton devis Word ou ton ERP.</div>
+
+<h2>📄 PDF — Le rapport client</h2>
+<p>Format A4, joli à imprimer, brandé aux couleurs de ton entreprise (logo, couleurs, coordonnées). Inclut :</p>
+<ul>
+<li>Page de garde avec les infos client</li>
+<li>1 page par ouverture (cotes, schéma, photos, notes)</li>
+<li>Récap des tolérances (5 mm neuf / 10 mm rénovation)</li>
+<li>Signature client + métreur en fin de document</li>
+</ul>
+<p><em>À envoyer au client par email juste après la visite.</em></p>
+
+<h2>📊 Excel (.xlsx) — Pour ton devis</h2>
+<p>Un tableau structuré avec toutes les mesures, prêt à être copié-collé dans ton template de devis Excel ou Word. Colonnes : Repère, Largeur, Hauteur, Type, Matériau, RAL, Vitrage, Uw, Notes.</p>
+<p><em>Idéal si tu chiffres tes devis dans Excel avec des formules maison.</em></p>
+
+<h2>📋 CSV — Pour ton ERP / logiciel de fabrication</h2>
+<p>Format universel, sans mise en forme, compatible avec 100% des ERP menuiserie (Progiferm, Winpro, Kadence, Winnove…). Séparateur point-virgule, encoding UTF-8.</p>
+<p><em>Import direct sans transformation.</em></p>
+
+<h2>💻 JSON — Pour tes intégrations custom</h2>
+<p>Format structuré complet avec 100% des champs (y compris feuillures, options, photos base64, wall_config, project_specs IA). Utile si tu développes un lien vers ton propre logiciel.</p>
+<p><em>Documentation API sur mesurechassis.com/api</em></p>
+
+<div class="callout">
+<div class="callout-title">🎨 Personnaliser tes exports</div>
+<p style="margin:0">Depuis <strong>Profil → Marque &amp; Documents</strong>, tu peux uploader ton logo, définir tes couleurs principales, personnaliser les mentions légales (SIRET, N° TVA, garantie décennale). Les 4 formats sont brandés automatiquement.</p>
+</div>
+
+<h2>Où trouver les exports ?</h2>
+<p>Depuis la fiche chantier, tape sur le bouton <strong>« ⬇️ Exporter »</strong> en haut à droite. Choisis le format, l'export est généré en 2 secondes.</p>
+
+<div class="tip">Le PDF s'ouvre directement dans le viewer natif iOS / Android — tu peux l'envoyer par email, AirDrop, WhatsApp, etc. Les autres formats se téléchargent dans « Fichiers ».</div>
+</div>
+
+<!-- PAGE 10 -->
+<div class="page">
+<h1 class="page-title"><span class="num">10</span>Les plans Freemium / Standard / Team / Pro</h1>
+<div class="lead">4 formules pensées pour toutes les tailles d'entreprise. Sans engagement, résiliation en 1 clic, bascule instantanée.</div>
+
+<div class="plan-card">
+<div>
+<div class="plan-name">🆓 Freemium</div>
+<div class="plan-desc">3 chantiers max (à vie). Pour découvrir l'app. Pas d'import IA, pas d'exports avancés, pas d'équipe.</div>
+</div>
+<div class="plan-price free">0 €<small>/mois</small></div>
+</div>
+
+<div class="plan-card">
+<div>
+<div class="plan-name">📦 Standard</div>
+<div class="plan-desc">Chantiers illimités, tous les exports (PDF, Excel, CSV, JSON), import IA CDC, photos horodatées. Solo ou 1 admin.</div>
+</div>
+<div class="plan-price">19,99 €<small>HTVA / mois</small></div>
+</div>
+
+<div class="plan-card highlight">
+<div>
+<div class="plan-name pro">👥 Team <em style="font-size:9pt;color:var(--text-mute);font-weight:500">— le plus choisi</em></div>
+<div class="plan-desc">Tout Standard + <strong>5 utilisateurs</strong> (Admin + 4 rôles). Workflow RBAC complet, Mod-Requests, notifications push+email, gestion d'équipe.</div>
+</div>
+<div class="plan-price pro">49,99 €<small>HTVA / mois</small></div>
+</div>
+
+<div class="plan-card">
+<div>
+<div class="plan-name pro">🚀 Pro</div>
+<div class="plan-desc">Tout Team + <strong>utilisateurs illimités</strong> + Yann IA expert + API tokens custom + support prioritaire &lt;24h + branding avancé.</div>
+</div>
+<div class="plan-price pro">99,99 €<small>HTVA / mois</small></div>
+</div>
+
+<div class="tip">14 jours d'essai gratuit sur <strong>Standard</strong>, <strong>Team</strong> et <strong>Pro</strong>. Aucune carte demandée à l'inscription. Tu passes à la caisse uniquement si tu es convaincu.</div>
+
+<h2>Comment upgrader ?</h2>
+<div class="workflow-step">
+<strong>1.</strong> Profil → <strong>Abonnement</strong>
+</div>
+<div class="workflow-step">
+<strong>2.</strong> Choisis le plan, saisis ta carte (Stripe sécurisé, 3D Secure obligatoire)
+</div>
+<div class="workflow-step">
+<strong>3.</strong> Bascule immédiate, prorata du mois en cours calculé automatiquement
+</div>
+
+<h2>Résilier</h2>
+<p>Depuis <strong>Profil → Abonnement</strong>, un bouton « Résilier ». Prise d'effet à la fin du mois en cours. Aucune pénalité, aucune justification. Tu peux revenir quand tu veux.</p>
+
+<div class="warning">Si tu résilies, tes chantiers sont conservés en <strong>lecture seule</strong> pendant 12 mois. Passé ce délai, ils passent en archive froide (récupérables sur demande support).</div>
+</div>
+
+<!-- PAGE 11 -->
+<div class="page">
+<h1 class="page-title"><span class="num">11</span>Checklist qualité chantier</h1>
+<div class="lead">La check-list qu'on utilise en interne chez MesureChâssis. Imprime-la, colle-la dans ton camion, coche à chaque chantier.</div>
+
+<h2>Avant la visite</h2>
+<ul class="checklist">
+<li>Chantier créé dans l'app avec adresse complète</li>
+<li>Rendez-vous confirmé par SMS/email au client</li>
+<li>Batterie tablette/téléphone chargée à 100%</li>
+<li>Laser Bluetooth calibré (précision ≤ 1 mm à 10 m)</li>
+<li>Mètre ruban 5 m de secours dans le sac</li>
+<li>Cahier des charges du client téléchargé pour scan IA</li>
+<li>Version app à jour (Profil → À propos)</li>
+</ul>
+
+<h2>Pendant la visite</h2>
+<ul class="checklist">
+<li>Photo de la façade complète (vue extérieure)</li>
+<li>Photo de chaque pièce avant démontage éventuel</li>
+<li>Photo des dommages existants (fissures, humidité, moisissures)</li>
+<li>Type de mur renseigné (brique, béton, pierre, isolation)</li>
+<li>Toutes les ouvertures mesurées (rectangle, portes, coulissants, œil-de-bœuf)</li>
+<li>3 largeurs + 3 hauteurs + 2 diagonales par ouverture</li>
+<li>Sens d'ouverture (tirant/poussant, gauche/droit) validé sur place</li>
+<li>Matériau (Bois / Alu / PVC) précisé pour chaque ouverture</li>
+<li>Couleur / RAL confirmé (montrer le nuancier au client)</li>
+<li>Photos anti-litige : 2 minimum par ouverture</li>
+<li>Notes libres : particularités, contraintes d'accès, présence d'un locataire</li>
+</ul>
+
+<h2>Avant de partir</h2>
+<ul class="checklist">
+<li>Récap oral au client : « J'ai mesuré X ouvertures, coût estimé XXX €… »</li>
+<li>Client signe la fiche mesure sur ta tablette</li>
+<li>Deadline devis annoncée (« Vous recevrez le devis d'ici Y jours »)</li>
+<li>PDF récap envoyé par email au client sur place (pour transparence)</li>
+<li>Chantier basculé à « À vérifier » (mode Entreprise) ou « En fabrication » (Solo)</li>
+</ul>
+
+<div class="callout">
+<div class="callout-title">🎯 Le bon geste terrain</div>
+<p style="margin:0">Envoie <strong>toujours</strong> le PDF récap au client depuis chez lui, avant de partir. Ça élimine 90% des litiges post-livraison (« Je n'avais pas commandé de coulissant »), démontre ton sérieux et te donne un avantage concurrentiel énorme vs les métreurs qui griffonnent sur un carnet.</p>
+</div>
+</div>
+
+<!-- PAGE 12 -->
+<div class="page">
+<h1 class="page-title"><span class="num">12</span>Support &amp; communauté pro</h1>
+<div class="lead">Tu n'es pas seul. Il y a une équipe et une communauté de menuisiers pros derrière toi.</div>
+
+<h2>📧 Contacts directs</h2>
+<table>
+<tr><th>Sujet</th><th>Email / Contact</th><th>Délai de réponse</th></tr>
+<tr><td>Bug technique</td><td>bugs@mesurechassis.com</td><td>&lt;24h ouvrées</td></tr>
+<tr><td>Question métier</td><td>info@mesurechassis.com</td><td>&lt;48h</td></tr>
+<tr><td>Facturation / TVA</td><td>compta@mesurechassis.com</td><td>&lt;48h</td></tr>
+<tr><td>Partenariat / franchise</td><td>partners@mesurechassis.com</td><td>&lt;72h</td></tr>
+<tr><td>Support Pro (plan Pro)</td><td>ligne dédiée dans l'app</td><td>&lt;12h</td></tr>
+</table>
+
+<h2>🤖 Yann — L'assistant IA pro</h2>
+<p>Yann est intégré dans l'app (icône chat en bas à droite). Il connaît :</p>
+<ul>
+<li>Toute la doc technique MesureChâssis</li>
+<li>Les normes menuiserie (RT 2020, EN 14351, CE marking)</li>
+<li>Les DTU (36.5 fenêtres, 44.1 vitrages)</li>
+<li>Les tolérances par pays (FR, BE, LU, CH)</li>
+<li>Les astuces terrain remontées par la communauté</li>
+</ul>
+
+<div class="tip">Yann est ton copilote. Demande-lui « Quelle est la tolérance sur un châssis alu en rénovation en Belgique ? » ou « Comment mesurer un œil-de-bœuf en pierre ? » — réponse en 5 secondes avec source.</div>
+
+<h2>👥 Communauté MesureChâssis</h2>
+<p>Rejoins la communauté privée des menuisiers pros qui utilisent l'app :</p>
+<ul>
+<li><strong>Discord</strong> — 800+ pros, canaux thématiques (alu, PVC, bois, coulissants, formation)</li>
+<li><strong>WhatsApp entraide</strong> — groupe régional pour partage de bonnes pratiques</li>
+<li><strong>Webinaires mensuels</strong> — nouveautés app, cas clients, techniques métier</li>
+<li><strong>Journées portes ouvertes</strong> — atelier à Bruxelles 4x/an, échanges avec l'équipe produit</li>
+</ul>
+
+<h2>📚 Ressources pro</h2>
+<ul>
+<li><strong>Guide Débutant</strong> — Découverte de l'app (pour former un nouveau collaborateur)</li>
+<li><strong>Guide Pro Bois/Alu/PVC</strong> — Spécificités matériaux avancées</li>
+<li><strong>Ce Guide Artisan &amp; Entreprise Pro</strong> — Organisation d'équipe (celui que tu lis)</li>
+<li><strong>Vidéos YouTube</strong> — Chaîne officielle avec 30+ tutos courts (2-5 min)</li>
+</ul>
+
+<div class="emphasis-box">
+<div class="emphasis-title">🚀 En route vers la Version Entreprise MAX</div>
+<p style="margin:0">Bientôt disponible : intégration <strong>Odoo</strong> (compta, ERP), <strong>génération automatique de devis</strong>, télémètre laser Bluetooth avancé, mode hors-ligne synchronisé. Réservé aux clients Pro (bêta test). Fais-toi connaître à <em>info@mesurechassis.com</em>.</p>
+</div>
+
+<div style="text-align:center;margin-top:15mm;font-size:11pt;color:var(--text-mute)">
+<strong>MesureChâssis SRL</strong> — Namur, Belgique<br>
+<em>Mesures terrain · Menuiseries pro · Fait avec ❤️ par des menuisiers, pour des menuisiers</em>
+</div>
+</div>
+
+</body></html>
