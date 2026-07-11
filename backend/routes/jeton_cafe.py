@@ -34,7 +34,7 @@ from deps import require_active_subscription, require_platform_owner
 logger = logging.getLogger("mesurechassis.jeton_cafe")
 router = APIRouter()
 
-JETON_VALIDITY_DAYS = 30
+JETON_VALIDITY_DAYS = 15
 MAX_PIN_ATTEMPTS = 5
 PIN_LOCK_MINUTES = 10
 DEFAULT_MONTHLY_OBJECTIVE = 50

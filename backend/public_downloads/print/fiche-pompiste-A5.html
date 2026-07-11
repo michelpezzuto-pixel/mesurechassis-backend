@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Fiche Pompiste — MesureChâssis Café</title>
+<style>
+  @page { size: A5 portrait; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body {
+    width: 148mm; height: 210mm;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+    background: #FFF;
+    color: #111;
+  }
+  .page {
+    width: 148mm; height: 210mm;
+    padding: 12mm 10mm;
+    display: flex; flex-direction: column;
+  }
+  /* ══════ HEADER ══════ */
+  .header {
+    display: flex; align-items: center; gap: 4mm;
+    padding-bottom: 4mm;
+    border-bottom: 2pt solid #FF6B35;
+    margin-bottom: 6mm;
+  }
+  .logo {
+    width: 14mm; height: 14mm;
+    background: linear-gradient(135deg, #FF6B35, #FF8C42);
+    color: #FFF;
+    border-radius: 3mm;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20pt; font-weight: 900;
+  }
+  .header-text h1 { font-size: 16pt; font-weight: 900; letter-spacing: 0.5pt; }
+  .header-text p { font-size: 9pt; color: #666; margin-top: 1mm; }
+
+  .title-block { text-align: center; margin-bottom: 6mm; }
+  .title-emoji { font-size: 32pt; }
+  .title-block h2 {
+    font-size: 20pt;
+    color: #22C55E;
+    font-weight: 900;
+    letter-spacing: 0.5pt;
+    text-transform: uppercase;
+    margin-top: 2mm;
+  }
+  .title-block p {
+    font-size: 10pt;
+    color: #555;
+    margin-top: 2mm;
+    font-style: italic;
+  }
+
+  /* ══════ RÈGLE PRINCIPALE ══════ */
+  .rule-box {
+    background: linear-gradient(135deg, #DCFCE7, #BBF7D0);
+    border: 2pt solid #22C55E;
+    border-radius: 4mm;
+    padding: 5mm;
+    margin-bottom: 5mm;
+  }
+  .rule-title {
+    font-size: 11pt;
+    font-weight: 900;
+    color: #14532D;
+    text-transform: uppercase;
+    letter-spacing: 1pt;
+    margin-bottom: 3mm;
+    text-align: center;
+  }
+  .rule-body {
+    font-size: 13pt;
+    text-align: center;
+    color: #14532D;
+    line-height: 1.4;
+    font-weight: 600;
+  }
+  .rule-body strong { font-weight: 900; }
+
+  /* ══════ ÉTAPES ══════ */
+  .steps-title {
+    font-size: 12pt;
+    font-weight: 900;
+    color: #111;
+    margin-bottom: 3mm;
+    text-transform: uppercase;
+    letter-spacing: 0.5pt;
+  }
+  .step {
+    display: flex; gap: 3mm;
+    padding: 3mm 3mm 3mm 4mm;
+    border-left: 3pt solid #FF6B35;
+    background: #FFF7ED;
+    margin-bottom: 2mm;
+    border-radius: 0 3mm 3mm 0;
+  }
+  .step-num {
+    width: 8mm; height: 8mm;
+    background: #FF6B35;
+    color: #FFF;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11pt; font-weight: 900;
+    flex-shrink: 0;
+  }
+  .step-content { flex: 1; }
+  .step-title { font-size: 11pt; font-weight: 800; margin-bottom: 1mm; }
+  .step-desc { font-size: 9pt; color: #555; line-height: 1.3; }
+
+  /* ══════ CHECKS VALIDES ══════ */
+  .checks-title {
+    font-size: 11pt;
+    font-weight: 900;
+    color: #111;
+    margin-top: 4mm;
+    margin-bottom: 2mm;
+    text-transform: uppercase;
+    letter-spacing: 0.5pt;
+    padding-bottom: 1mm;
+    border-bottom: 1pt dashed #999;
+  }
+  .checks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3mm;
+    margin-bottom: 4mm;
+  }
+  .check-item {
+    padding: 3mm;
+    border-radius: 3mm;
+    text-align: center;
+    font-size: 9pt;
+    line-height: 1.3;
+  }
+  .check-ok {
+    background: #DCFCE7;
+    border: 1.5pt solid #22C55E;
+    color: #14532D;
+  }
+  .check-ko {
+    background: #FEE2E2;
+    border: 1.5pt solid #EF4444;
+    color: #991B1B;
+  }
+  .check-icon { font-size: 18pt; display: block; margin-bottom: 1mm; }
+  .check-item strong { display: block; font-size: 10pt; margin-bottom: 1mm; }
+
+  /* ══════ CONTACT ══════ */
+  .footer {
+    margin-top: auto;
+    background: #111;
+    color: #FFF;
+    padding: 4mm;
+    border-radius: 3mm;
+    text-align: center;
+    font-size: 9pt;
+    line-height: 1.5;
+  }
+  .footer strong { color: #FFD700; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header brand -->
+  <div class="header">
+    <div class="logo">↙</div>
+    <div class="header-text">
+      <h1>MESURECHÂSSIS ☕ CAFÉ OFFERT</h1>
+      <p>Guide pompiste — Campagne partenaire menuisiers</p>
+    </div>
+  </div>
+
+  <!-- Titre -->
+  <div class="title-block">
+    <div class="title-emoji">👀</div>
+    <h2>Validation en 5 secondes</h2>
+    <p>Aucun logiciel · Aucun code · Preuve visuelle immédiate</p>
+  </div>
+
+  <!-- Règle principale -->
+  <div class="rule-box">
+    <div class="rule-title">La règle en 1 phrase</div>
+    <div class="rule-body">
+      Si l'écran de l'app est <strong>VERT</strong> et affiche un <strong>compte à rebours "J-X" positif</strong>,
+      offrez le café.
+    </div>
+  </div>
+
+  <!-- Étapes -->
+  <div class="steps-title">📋 Procédure de validation</div>
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <div class="step-title">Le client vous présente son écran</div>
+      <div class="step-desc">Il ouvre l'app MesureChâssis et tape sur "Mes cafés". Un écran vert apparaît avec la mention "1 café vous attend !"</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <div class="step-title">Vérifiez le compte à rebours "J-X"</div>
+      <div class="step-desc">Le badge vert affiche <strong>J-1 à J-15</strong>. Si le nombre est ≥ 1, la validité est OK. Si J-0 ou "Expiré", refusez poliment.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <div class="step-title">Servez le café ☕</div>
+      <div class="step-desc">Le client tape le bouton "VALIDATION POMPISTE" — vous saisissez le code PIN de la station (fourni à part). Le jeton est consommé, plus de fraude possible.</div>
+    </div>
+  </div>
+
+  <!-- Checks OK/KO -->
+  <div class="checks-title">✅ / ❌ Comment reconnaître un jeton valide</div>
+  <div class="checks">
+    <div class="check-item check-ok">
+      <span class="check-icon">✅</span>
+      <strong>ACCEPTEZ</strong>
+      Écran VERT + badge "J-1" à "J-15" + logo MesureChâssis
+    </div>
+    <div class="check-item check-ko">
+      <span class="check-icon">❌</span>
+      <strong>REFUSEZ</strong>
+      Écran gris, badge "Expiré" ou "J-0", capture d'écran (photo)
+    </div>
+  </div>
+
+  <!-- Footer contact -->
+  <div class="footer">
+    ❓ <strong>Un doute ? Une question ?</strong><br>
+    Contactez le support MesureChâssis : <strong>info@mesurechassis.com</strong><br>
+    Réponse sous 4h en semaine — Merci pour votre partenariat !
+  </div>
+
+</div>
+</body>
+</html>

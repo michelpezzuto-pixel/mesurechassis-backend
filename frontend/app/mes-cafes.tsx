@@ -136,6 +136,33 @@ export default function MesCafesScreen() {
             <View style={styles.activeCard}>
               <Text style={styles.activeEmoji}>☕</Text>
               <Text style={styles.activeTitle}>1 café vous attend !</Text>
+
+              {/* 🕒 Compte à rebours en JOURS restants (visible pompiste) */}
+              {(() => {
+                const daysLeft = Math.max(
+                  0,
+                  Math.ceil(
+                    (new Date(active.expires_at).getTime() - Date.now()) /
+                      (1000 * 60 * 60 * 24),
+                  ),
+                );
+                return (
+                  <View style={styles.countdownBadge}>
+                    <Text style={styles.countdownLabel}>Validité</Text>
+                    <Text style={styles.countdownValue}>
+                      J-{daysLeft}
+                    </Text>
+                    <Text style={styles.countdownSub}>
+                      {daysLeft > 1
+                        ? `${daysLeft} jours restants`
+                        : daysLeft === 1
+                          ? "Dernier jour !"
+                          : "Expire aujourd’hui"}
+                    </Text>
+                  </View>
+                );
+              })()}
+
               <Text style={styles.activeSub}>
                 Valable jusqu’au {fmtDate(active.expires_at)}. Présentez cet
                 écran au pompiste de la station.
@@ -262,6 +289,40 @@ const styles = StyleSheet.create({
   },
   activeEmoji: { fontSize: 44, marginBottom: 6 },
   activeTitle: { fontSize: 19, fontWeight: "800", color: "#FFF", marginBottom: 6 },
+  countdownBadge: {
+    backgroundColor: GREEN,
+    borderRadius: 14,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginVertical: 12,
+    alignItems: "center",
+    minWidth: 180,
+    shadowColor: GREEN,
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
+  },
+  countdownLabel: {
+    fontSize: 10,
+    color: "#DCFCE7",
+    fontWeight: "700",
+    letterSpacing: 1,
+    textTransform: "uppercase",
+  },
+  countdownValue: {
+    fontSize: 36,
+    fontWeight: "900",
+    color: "#FFF",
+    letterSpacing: 1,
+    marginTop: -2,
+  },
+  countdownSub: {
+    fontSize: 12,
+    color: "#DCFCE7",
+    fontWeight: "600",
+    marginTop: 2,
+  },
   activeSub: {
     fontSize: 13,
     color: "#A6A6AD",

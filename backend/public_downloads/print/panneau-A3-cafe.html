@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Panneau A3 — MesureChâssis Café</title>
+<style>
+  /* ═══════════ FORMAT A3 PORTRAIT (297 × 420 mm) ═══════════ */
+  @page { size: A3 portrait; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body {
+    width: 297mm; height: 420mm;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+    background: #000;
+    color: #FFF;
+    overflow: hidden;
+  }
+  .panel {
+    width: 297mm; height: 420mm;
+    background:
+      radial-gradient(circle at 15% 15%, rgba(255,107,53,0.35) 0%, transparent 40%),
+      radial-gradient(circle at 85% 85%, rgba(34,197,94,0.25) 0%, transparent 45%),
+      linear-gradient(160deg, #0C0C0E 0%, #1A1A1E 50%, #0C0C0E 100%);
+    padding: 20mm 15mm;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Étoiles/paillettes en fond (style EuroMillions) */
+  .panel::before {
+    content: '★ ✦ ✧ ★ ✦ ✧ ★ ✦ ✧ ★ ✦ ✧ ★ ✦ ✧ ★ ✦ ✧ ★ ✦ ✧';
+    position: absolute;
+    font-size: 24pt;
+    color: rgba(255, 215, 0, 0.08);
+    top: 45mm; left: 10mm; right: 10mm;
+    letter-spacing: 8mm;
+    line-height: 60mm;
+    pointer-events: none;
+  }
+  /* ═════════ HEADER : Logo + Titre EuroMillions style ═════════ */
+  .brand-row { display: flex; align-items: center; gap: 8mm; margin-bottom: 8mm; }
+  .brand-logo {
+    width: 22mm; height: 22mm;
+    background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
+    border-radius: 5mm;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30pt; font-weight: 900;
+    box-shadow: 0 4mm 12mm rgba(255,107,53,0.4);
+  }
+  .brand-info { flex: 1; }
+  .brand-name { font-family: "Impact", "Arial Black", sans-serif; font-size: 26pt; letter-spacing: 1pt; }
+  .brand-tag { font-size: 10pt; color: #A8A8B0; margin-top: 1mm; letter-spacing: 2pt; text-transform: uppercase; }
+
+  .headline-badge {
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+    color: #000;
+    padding: 3mm 6mm;
+    border-radius: 30mm;
+    font-size: 10pt;
+    font-weight: 900;
+    letter-spacing: 1pt;
+    align-self: flex-start;
+    margin-bottom: 5mm;
+    box-shadow: 0 2mm 8mm rgba(255,215,0,0.4);
+  }
+
+  /* ═════════ ACCROCHE PRINCIPALE ═════════ */
+  h1.headline {
+    font-family: "Impact", "Arial Black", sans-serif;
+    font-size: 60pt;
+    line-height: 0.95;
+    letter-spacing: 1pt;
+    margin-bottom: 4mm;
+    background: linear-gradient(180deg, #FFD700 0%, #FFA500 60%, #FF6B35 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 2mm 6mm rgba(255,215,0,0.15);
+    text-transform: uppercase;
+  }
+  h1.headline em {
+    display: block;
+    font-style: normal;
+    font-size: 44pt;
+    background: linear-gradient(180deg, #22C55E 0%, #16A34A 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-top: 2mm;
+  }
+
+  .pitch {
+    font-size: 20pt;
+    font-weight: 700;
+    color: #FFF;
+    margin-bottom: 6mm;
+    line-height: 1.15;
+  }
+  .pitch strong { color: #FFD700; }
+
+  /* ═════════ ZONE QR CODE (au centre, massive) ═════════ */
+  .qr-block {
+    background: #FFF;
+    border-radius: 8mm;
+    padding: 8mm;
+    display: flex;
+    align-items: center;
+    gap: 8mm;
+    margin: 4mm 0 6mm;
+    box-shadow: 0 6mm 18mm rgba(255,215,0,0.25), 0 0 0 3mm rgba(255,215,0,0.15);
+    border: 2mm solid #FFD700;
+  }
+  .qr-img { width: 70mm; height: 70mm; flex-shrink: 0; }
+  .qr-text { flex: 1; color: #111; }
+  .qr-cta { font-family: "Impact", sans-serif; font-size: 28pt; line-height: 1; margin-bottom: 3mm; color: #FF6B35; }
+  .qr-hint { font-size: 11pt; color: #555; line-height: 1.4; }
+  .qr-badge {
+    display: inline-block;
+    background: #111;
+    color: #FFD700;
+    font-size: 9pt;
+    font-weight: 800;
+    padding: 2mm 4mm;
+    border-radius: 20mm;
+    margin-top: 3mm;
+    letter-spacing: 1pt;
+  }
+
+  /* ═════════ ARGUMENTS TECHNIQUES ═════════ */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3mm 5mm;
+    background: rgba(255,255,255,0.05);
+    border: 1pt solid rgba(255,215,0,0.3);
+    border-radius: 6mm;
+    padding: 6mm;
+    margin-bottom: 6mm;
+  }
+  .feature { display: flex; align-items: center; gap: 3mm; }
+  .feature-emoji { font-size: 20pt; }
+  .feature-text { font-size: 11pt; line-height: 1.2; }
+  .feature-text strong { display: block; font-size: 13pt; color: #FFD700; }
+
+  /* ═════════ MÉCANISME (Étapes 1-2-3) ═════════ */
+  .mechanism-title {
+    font-family: "Impact", sans-serif;
+    font-size: 22pt;
+    color: #22C55E;
+    margin-bottom: 4mm;
+    text-align: center;
+    letter-spacing: 1pt;
+    text-transform: uppercase;
+  }
+  .mechanism {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4mm;
+    margin-bottom: 4mm;
+  }
+  .step {
+    background: linear-gradient(180deg, rgba(34,197,94,0.15) 0%, rgba(34,197,94,0.05) 100%);
+    border: 2pt solid rgba(34,197,94,0.5);
+    border-radius: 5mm;
+    padding: 4mm 3mm;
+    text-align: center;
+    position: relative;
+  }
+  .step-num {
+    position: absolute;
+    top: -6mm; left: 50%; transform: translateX(-50%);
+    width: 12mm; height: 12mm;
+    background: #22C55E;
+    color: #000;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18pt; font-weight: 900;
+    box-shadow: 0 2mm 6mm rgba(34,197,94,0.5);
+  }
+  .step-emoji { font-size: 28pt; margin-top: 6mm; margin-bottom: 2mm; }
+  .step-text { font-size: 11pt; font-weight: 700; color: #FFF; line-height: 1.2; }
+
+  /* ═════════ FOOTER ═════════ */
+  .footer {
+    margin-top: auto;
+    background: linear-gradient(90deg, #FF6B35, #FFA500);
+    color: #000;
+    padding: 4mm 6mm;
+    border-radius: 4mm;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 900;
+  }
+  .footer-cta { font-size: 14pt; }
+  .footer-site { font-size: 11pt; }
+  .footer-emoji { font-size: 22pt; }
+</style>
+</head>
+<body>
+<div class="panel">
+
+  <!-- Header : Logo brand + tag EuroMillions -->
+  <div class="brand-row">
+    <div class="brand-logo">↙</div>
+    <div class="brand-info">
+      <div class="brand-name">MESURECHÂSSIS</div>
+      <div class="brand-tag">L'app des menuisiers pros</div>
+    </div>
+  </div>
+
+  <div class="headline-badge">⭐ JEU-CONCOURS PARTENAIRE ⭐</div>
+
+  <!-- Accroche principale -->
+  <h1 class="headline">
+    Gagnez à tous
+    <em>les coups !</em>
+  </h1>
+  <div class="pitch">Scannez, créez une ouverture, <strong>gagnez votre café ☕</strong></div>
+
+  <!-- QR Code massif -->
+  <div class="qr-block">
+    <img class="qr-img"
+         src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=https%3A%2F%2Fapps.apple.com%2Ffr%2Fapp%2Fmesurech%25C3%25A2ssis%2Fid6776357930&color=111111&bgcolor=ffffff&qzone=1"
+         alt="QR Code MesureChassis App Store">
+    <div class="qr-text">
+      <div class="qr-cta">SCANNEZ POUR<br>TÉLÉCHARGER</div>
+      <div class="qr-hint">Ouvrez l'appareil photo de votre iPhone,<br>visez le QR code, tapez sur le lien.<br><strong>Installation en 30 secondes.</strong></div>
+      <div class="qr-badge">🔒 RÉSERVÉ AUX PROS</div>
+    </div>
+  </div>
+
+  <!-- Arguments techniques -->
+  <div class="features">
+    <div class="feature">
+      <div class="feature-emoji">📐</div>
+      <div class="feature-text"><strong>14 formes gérées</strong>fenêtres, portes, cintres…</div>
+    </div>
+    <div class="feature">
+      <div class="feature-emoji">📄</div>
+      <div class="feature-text"><strong>Export PDF/CSV</strong>en 1 clic</div>
+    </div>
+    <div class="feature">
+      <div class="feature-emoji">📶</div>
+      <div class="feature-text"><strong>Mode hors-ligne</strong>idéal chantier</div>
+    </div>
+    <div class="feature">
+      <div class="feature-emoji">📸</div>
+      <div class="feature-text"><strong>Photos anti-litige</strong>incluses</div>
+    </div>
+  </div>
+
+  <!-- Mécanisme en 3 étapes -->
+  <div class="mechanism-title">Comment ça marche ?</div>
+  <div class="mechanism">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-emoji">📲</div>
+      <div class="step-text">Scannez le<br>QR code</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-emoji">📐</div>
+      <div class="step-text">Créez une<br>ouverture</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-emoji">☕</div>
+      <div class="step-text">Café offert<br>à la pompe !</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-emoji">🎁</div>
+    <div class="footer-cta">Café OFFERT à tout menuisier pro qui teste l'app</div>
+    <div class="footer-site">mesurechassis.com</div>
+  </div>
+
+</div>
+</body>
+</html>

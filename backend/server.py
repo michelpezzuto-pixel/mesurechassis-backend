@@ -12,7 +12,7 @@ from contextlib import asynccontextmanager
 from fastapi import APIRouter, FastAPI, HTTPException, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from starlette.middleware.cors import CORSMiddleware
 import logging
 import os
@@ -448,6 +448,45 @@ async def download_site_appstore():
         media_type="application/zip",
         filename="mesurechassis-site-appstore-v2.zip",
     )
+
+
+@api.get("/_downloads/panneau-cafe-a3")
+async def download_panneau_cafe_a3():
+    """Panneau A3 (chevalet de comptoir) — Campagne Café en station-service.
+    HTML → à ouvrir puis Fichier → Imprimer → PDF (format A3)."""
+    path = "/app/backend/public_downloads/print/panneau-A3-cafe.html"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Fichier introuvable")
+    return FileResponse(path, media_type="text/html", filename="panneau-A3-cafe.html")
+
+
+@api.get("/_downloads/panneau-cafe-a3/preview", response_class=HTMLResponse)
+async def preview_panneau_cafe_a3():
+    """Aperçu direct du panneau (sans download)."""
+    path = "/app/backend/public_downloads/print/panneau-A3-cafe.html"
+    if not os.path.isfile(path):
+        raise HTTPException(404, "Fichier introuvable")
+    with open(path, "r", encoding="utf-8") as f:
+        return HTMLResponse(f.read())
+
+
+@api.get("/_downloads/fiche-pompiste-a5")
+async def download_fiche_pompiste_a5():
+    """Fiche pompiste A5 — Guide simple pour valider le café offert."""
+    path = "/app/backend/public_downloads/print/fiche-pompiste-A5.html"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Fichier introuvable")
+    return FileResponse(path, media_type="text/html", filename="fiche-pompiste-A5.html")
+
+
+@api.get("/_downloads/fiche-pompiste-a5/preview", response_class=HTMLResponse)
+async def preview_fiche_pompiste_a5():
+    """Aperçu direct de la fiche pompiste."""
+    path = "/app/backend/public_downloads/print/fiche-pompiste-A5.html"
+    if not os.path.isfile(path):
+        raise HTTPException(404, "Fichier introuvable")
+    with open(path, "r", encoding="utf-8") as f:
+        return HTMLResponse(f.read())
 
 
 @api.get("/_downloads/feature-graphic/{variant}")
