@@ -1819,8 +1819,15 @@ export default function ChantierDetail() {
           //    ligne pour libérer la liste d'ouvertures au-dessus.
           const showClose = canCloseStep;
           const showAdd = canEditMesures;
-          const showEditWall =
-            canEditMesures && !!chantier?.wall_config?.masonry_type;
+          // 🆕 (juin 2026) Wall config OPTIONNELLE : le bouton est TOUJOURS
+          // visible (même sans wall_config). Le libellé s'adapte :
+          //   • wall_config déjà rempli → "Modifier les murs"
+          //   • wall_config vide       → "Dimensions des murs (optionnel)"
+          const hasWallConfig = !!chantier?.wall_config?.masonry_type;
+          const showEditWall = canEditMesures;
+          const wallBtnLabel = hasWallConfig
+            ? t("chantierDetail.footer.wall")
+            : "Dimensions des murs";
           if (!showClose && !showAdd && !showEditWall) return null;
           return (
             <View style={styles.actionGrid}>
@@ -1871,15 +1878,36 @@ export default function ChantierDetail() {
                   style={[styles.gridBtn, styles.gridBtnSecondary]}
                   activeOpacity={0.85}
                 >
-                  <Ionicons name="construct-outline" size={20} color={colors.primary} />
+                  <Ionicons
+                    name={hasWallConfig ? "construct-outline" : "cube-outline"}
+                    size={20}
+                    color={colors.primary}
+                  />
                   <Text
                     style={[styles.gridBtnTextSecondary, { color: colors.primary }]}
                     numberOfLines={1}
                     adjustsFontSizeToFit
                     minimumFontScale={0.8}
                   >
-                    {t("chantierDetail.footer.wall")}
+                    {wallBtnLabel}
                   </Text>
+                  {!hasWallConfig && (
+                    <View
+                      style={{
+                        position: "absolute",
+                        top: 4,
+                        right: 6,
+                        backgroundColor: colors.textSecondary,
+                        borderRadius: 8,
+                        paddingHorizontal: 5,
+                        paddingVertical: 1,
+                      }}
+                    >
+                      <Text style={{ color: "#fff", fontSize: 8, fontWeight: "700", letterSpacing: 0.5 }}>
+                        OPT
+                      </Text>
+                    </View>
+                  )}
                 </TouchableOpacity>
               )}
             </View>

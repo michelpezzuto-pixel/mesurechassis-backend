@@ -82,6 +82,15 @@ Format :
   "project_specs": {
     "client": "nom du client / maître d'ouvrage si présent, sinon ''",
     "address": "adresse du chantier si présente, sinon ''",
+    "phone": "téléphone du client si présent (format libre : '+32 496 65 00 32', '0496...'), sinon ''",
+    "email": "email du client si présent (ex: 'jean.dupont@example.com'), sinon ''",
+    "wall_config": {
+      "masonry_type": "type de maçonnerie détecté PARMI: 'brique'|'pierre'|'bloc_beton'|'bloc_terre_cuite'. Sinon ''",
+      "gros_oeuvre_mm": "épaisseur du gros-œuvre (mur porteur) en MILLIMÈTRES (entier). Ex: '20 cm brique' → 200. Sinon 0",
+      "insulation_mode": "mode d'isolation détecté : 'iti' (isolation par l'intérieur), 'ite' (par l'extérieur), 'aucune'. Sinon ''",
+      "iti_thickness_mm": "si insulation_mode=iti, épaisseur d'isolant intérieur en mm (ex: '10 cm laine' → 100). Sinon 0",
+      "ite_insul_thickness_mm": "si insulation_mode=ite, épaisseur d'isolant extérieur en mm. Sinon 0"
+    },
     "general_norms": "normes/labels applicables à tout le projet (ex: 'CE', 'NF', 'Acotherm', 'CEKAL', 'DTU 36.5', 'RGE'), sinon ''",
     "deadlines": "dates/délais d'exécution, livraison, pose si présents (ex: 'Pose avant le 15/09/2026', 'Délai 6 semaines'), sinon ''",
     "warranty": "garanties demandées (ex: 'Décennale', 'Garantie 10 ans profilés'), sinon ''",
@@ -142,9 +151,16 @@ _ITEM_TEXT_FIELDS = [
 ]
 # Champs des exigences globales du projet.
 _PROJECT_FIELDS = [
-    "client", "address", "general_norms", "deadlines", "warranty",
-    "payment", "other",
+    "client", "address", "phone", "email", "general_norms", "deadlines",
+    "warranty", "payment", "other",
 ]
+# Sous-objet wall_config (extrait auto par IA) — écrase le wall_config du chantier.
+_WALL_CONFIG_FIELDS = [
+    "masonry_type", "gros_oeuvre_mm", "insulation_mode",
+    "iti_thickness_mm", "ite_insul_thickness_mm",
+]
+_VALID_MASONRIES = {"brique", "pierre", "bloc_beton", "bloc_terre_cuite"}
+_VALID_INSULATIONS = {"iti", "ite", "aucune"}
 
 
 def _validate_and_clean_items(items_raw: list) -> List[dict]:
@@ -190,11 +206,40 @@ def _validate_and_clean_items(items_raw: list) -> List[dict]:
 
 
 def _clean_project_specs(raw: Optional[dict]) -> dict:
-    """Nettoie les exigences globales du projet (délais, normes, garanties…)."""
-    out = {f: "" for f in _PROJECT_FIELDS}
+    """Nettoie les exigences globales du projet (délais, normes, garanties…).
+
+    🆕 (juin 2026) Extrait également ``wall_config`` (structure du mur) et les
+    coordonnées client (phone, email) — permet d'auto-remplir la fiche
+    chantier après un scan CDC IA.
+    """
+    out: dict = {f: "" for f in _PROJECT_FIELDS}
+    out["wall_config"] = {}
     if isinstance(raw, dict):
         for f in _PROJECT_FIELDS:
             out[f] = str(raw.get(f) or "").strip()[:1500]
+        wc_raw = raw.get("wall_config")
+        if isinstance(wc_raw, dict):
+            wc: dict = {}
+            masonry = str(wc_raw.get("masonry_type") or "").strip().lower()
+            if masonry in _VALID_MASONRIES:
+                wc["masonry_type"] = masonry
+            try:
+                gm = int(float(wc_raw.get("gros_oeuvre_mm") or 0))
+                if gm > 0:
+                    wc["gros_oeuvre_mm"] = gm
+            except (TypeError, ValueError):
+                pass
+            mode = str(wc_raw.get("insulation_mode") or "").strip().lower()
+            if mode in _VALID_INSULATIONS:
+                wc["insulation_mode"] = mode
+            for k in ("iti_thickness_mm", "ite_insul_thickness_mm"):
+                try:
+                    v = int(float(wc_raw.get(k) or 0))
+                    if v > 0:
+                        wc[k] = v
+                except (TypeError, ValueError):
+                    pass
+            out["wall_config"] = wc
     return out
 
 

@@ -72,7 +72,7 @@ tr:nth-child(even) td{background:#FAFAFA}
 <div><strong>Niveau requis :</strong> Aucun</div>
 <div><strong>Temps de lecture :</strong> 30 min</div>
 <div><strong>Pages :</strong> 12</div>
-<div><strong>Version :</strong> 1.0 — juillet 2026</div>
+<div><strong>Version :</strong> 1.1 — juillet 2026 · Wall Config Optionnelle</div>
 </div>
 <div class="cover-footer">Aucune connaissance préalable requise</div>
 </div>
@@ -335,15 +335,15 @@ tr:nth-child(even) td{background:#FAFAFA}
 <div class="step">
 <div class="step-num">2</div>
 <div class="step-body">
-<div class="step-title">Remplis les infos du client</div>
-<div class="step-desc">Nom du chantier (ex: « Maison Dupont Waterloo »), adresse complète, téléphone, email. Tout est facultatif sauf le nom.</div>
+<div class="step-title">Remplis les infos client (4 champs obligatoires)</div>
+<div class="step-desc"><strong>Nom du client</strong> + <strong>Adresse</strong> + <strong>Téléphone</strong> + <strong>Email</strong>. Ces 4 champs sont obligatoires pour pouvoir renvoyer le devis, le rapport et les factures. Prénom, CP, ville sont facultatifs (mais recommandés).</div>
 </div>
 </div>
 <div class="step">
 <div class="step-num">3</div>
 <div class="step-body">
-<div class="step-title">Choisis le type de projet</div>
-<div class="step-desc">Neuf / Rénovation / Extension. Ça change les tolérances de mesure appliquées (5 mm pour du neuf, 10 mm pour de la rénovation).</div>
+<div class="step-title">🪄 Bonus IA — Si tu as un cahier des charges</div>
+<div class="step-desc">Après avoir créé le chantier, tu peux importer un CDC (PDF, Excel, photo). L'IA détecte automatiquement le <strong>téléphone, l'email, l'adresse et même la structure des murs</strong> — et remplace les valeurs saisies. Tu gagnes 5 minutes par chantier.</div>
 </div>
 </div>
 <div class="step">
@@ -355,18 +355,19 @@ tr:nth-child(even) td{background:#FAFAFA}
 </div>
 </div>
 
+<div class="tip">Pas encore de téléphone ? Mets <strong>+32 000 000 000</strong> comme place-holder — tu pourras le corriger plus tard (ou l'IA le fera pour toi si tu scannes un CDC).</div>
+
 <h2>Le tableau de bord du chantier</h2>
-<p>Tu y trouves 4 informations principales :</p>
+<p>Tu y trouves <strong>3 boutons d'action</strong> en bas de l'écran :</p>
 <ul>
-<li>Le <strong>nombre d'ouvertures</strong> à mesurer / mesurées / validées</li>
-<li>Un <strong>filtre</strong> « Tous / À mesurer / Validés / En fabrication »</li>
-<li>Une <strong>barre de recherche</strong> pour trouver une ouverture particulière</li>
-<li>Un <strong>bouton géant orange</strong> « + Ajouter une ouverture »</li>
+<li>🏳️ <strong>Clôturer</strong> — quand toutes tes mesures sont finies</li>
+<li>➕ <strong>Ajouter une ouverture</strong> (bouton principal orange)</li>
+<li>📐 <strong>Dimensions des murs</strong> <em>(badge OPT = optionnel)</em> — à renseigner quand tu veux</li>
 </ul>
 
 <div class="callout">
-<div class="callout-title">🚀 Raccourci : import IA</div>
-<p style="margin:0">Si tu as un cahier des charges PDF ou papier, appuie plutôt sur le bouton « 📸 Importer un CDC » — l'IA lira les 20 fenêtres et les créera automatiquement. Tu gagnes 30 minutes.</p>
+<div class="callout-title">🆕 Nouveau (juin 2026) — Murs = OPTIONNEL</div>
+<p style="margin:0">Tu n'es <strong>plus obligé</strong> de saisir les dimensions du mur avant de mesurer ta première ouverture. Tu peux mesurer les fenêtres tout de suite et renseigner les murs plus tard, ou jamais si ce n'est pas utile pour ton devis.</p>
 </div>
 </div>
 
@@ -374,8 +375,18 @@ tr:nth-child(even) td{background:#FAFAFA}
 <h1 class="page-title"><span class="num">7</span>Ajouter et mesurer une ouverture</h1>
 <div class="lead">C'est le cœur de l'app. Voici la procédure complète, écran par écran.</div>
 
-<h2>Étape 1 · Choisir la forme</h2>
-<p>Appuie sur « + Ajouter une ouverture ». Un écran te montre les 14 formes disponibles avec un petit dessin.</p>
+<h2>Étape 1 · Configuration du mur (optionnel)</h2>
+<p>Le premier écran te propose de renseigner la structure du mur (brique, pierre, béton, isolation intérieure/extérieure). C'est utile pour <strong>calculer précisément les feuillures</strong>, mais tu as 3 options :</p>
+<ul>
+<li>✅ <strong>Remplir maintenant</strong> — tape SUIVANT quand c'est fait</li>
+<li>⏭️ <strong>Passer</strong> — appuie sur le bouton PASSER, tu iras directement à l'étape 2</li>
+<li>🕒 <strong>Faire plus tard</strong> — depuis la fiche chantier, bouton « 📐 Dimensions des murs »</li>
+</ul>
+
+<div class="tip">Si tu passes sans configurer le mur, les feuillures (rebattements gauche/droite/haut) restent proposées à l'étape 3 mais ne sont plus obligatoires — tape 0 ou laisse vide.</div>
+
+<h2>Étape 2 · Choisir la forme</h2>
+<p>Un écran te montre les 14 formes disponibles avec un petit dessin.</p>
 <ul>
 <li><strong>Rectangle</strong> (fenêtre standard)</li>
 <li><strong>Carré</strong> (impasse, WC)</li>
@@ -387,31 +398,21 @@ tr:nth-child(even) td{background:#FAFAFA}
 <li>... et 7 autres formes spéciales</li>
 </ul>
 
-<h2>Étape 2 · Nommer l'ouverture</h2>
-<p>Donne un nom clair, ex: « Séjour vue jardin », « Chambre parents nord », « SDB WC »… Le nom apparaîtra sur ton rapport PDF final.</p>
-
 <h2>Étape 3 · Saisir les mesures</h2>
 <p>L'app te demande les mesures dans l'ordre logique :</p>
 <ol>
+<li><strong>Libellé de l'ouverture</strong> (ex: « Séjour vue jardin »)</li>
 <li><strong>Largeur haut / milieu / bas</strong> (3 valeurs)</li>
 <li><strong>Hauteur gauche / milieu / droite</strong> (3 valeurs)</li>
 <li><strong>Diagonale 1 et Diagonale 2</strong> (2 valeurs)</li>
-<li><strong>Profondeur du tableau</strong> (épaisseur du mur au niveau de la baie)</li>
+<li><strong>Feuillures</strong> gauche / droite / haut (optionnel — si tu n'as pas rempli le mur)</li>
+<li><strong>Photos anti-litige</strong> (2 à 4 photos horodatées)</li>
 </ol>
 
 <div class="tip">Tu peux mesurer avec ton laser Bluetooth connecté : l'app remplit automatiquement les cases. Sinon, tape à la main sur le clavier numérique.</div>
 
-<h2>Étape 4 · Choisir le type d'ouverture</h2>
-<p>Ouvrant à la française gauche / droite ? Oscillo-battant ? Coulissant 2 vantaux ? Fixe ? L'app te propose une liste illustrée.</p>
-
-<h2>Étape 5 · Choisir le matériau</h2>
-<p>Bois / PVC / Aluminium — un simple sélecteur.</p>
-
-<h2>Étape 6 · Photos anti-litige</h2>
-<p>Prends 2 à 4 photos de l'ouverture : vue générale, détail des angles, vue extérieure si possible. Elles sont horodatées et te protègent en cas de litige.</p>
-
-<h2>Étape 7 · Valider</h2>
-<p>Appuie sur « ✅ Valider l'ouverture ». Elle passe en statut « Mesuré ». Tu peux la modifier plus tard si besoin.</p>
+<h2>Étape 4 · Valider</h2>
+<p>Appuie sur « ✅ Enregistrer ». L'ouverture passe en statut « Mesuré ». Tu peux la modifier plus tard si besoin.</p>
 
 <div class="callout">
 <div class="callout-title">🎁 Café gagné !</div>

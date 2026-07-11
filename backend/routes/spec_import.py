@@ -350,6 +350,42 @@ async def _run_ai_analysis_bg(
         draft = await db.spec_drafts.find_one({"id": draft_id})
         chantier_id = draft["chantier_id"] if draft else None
         mesures_created = 0
+
+        # 🆕 (juin 2026) Auto-remplissage de la fiche chantier avec les
+        # coordonnées client + wall_config extraits par l'IA.
+        # Écrase les champs actuels si l'IA a détecté quelque chose de non-vide.
+        project_specs = ai_result.get("project_specs") or {}
+        if chantier_id and isinstance(project_specs, dict):
+            chantier_patch: dict = {}
+            client_name_ai = str(project_specs.get("client") or "").strip()
+            addr_ai = str(project_specs.get("address") or "").strip()
+            phone_ai = str(project_specs.get("phone") or "").strip()
+            email_ai = str(project_specs.get("email") or "").strip()
+            wc_ai = project_specs.get("wall_config") or {}
+            if client_name_ai:
+                chantier_patch["client_name"] = client_name_ai[:120]
+            if addr_ai:
+                chantier_patch["address"] = addr_ai[:250]
+            if phone_ai:
+                chantier_patch["client_phone"] = phone_ai[:40]
+            if email_ai:
+                chantier_patch["client_email"] = email_ai[:120]
+            # wall_config : on écrase seulement si l'IA a détecté un
+            # masonry_type ET une insulation_mode (sinon incomplet, on ignore).
+            if isinstance(wc_ai, dict) and wc_ai.get("masonry_type") and wc_ai.get("insulation_mode"):
+                chantier_patch["wall_config"] = wc_ai
+            if chantier_patch:
+                chantier_patch["cdc_autofilled_at"] = datetime.now(timezone.utc).isoformat()
+                await db.chantiers.update_one(
+                    {"id": chantier_id},
+                    {"$set": chantier_patch},
+                )
+                logger.info(
+                    "📝 CDC auto-remplit chantier=%s keys=%s",
+                    chantier_id,
+                    list(chantier_patch.keys()),
+                )
+
         if items and chantier_id:
             mesure_payloads = _expand_items_for_mesures(items)
             now_iso = datetime.now(timezone.utc).isoformat()

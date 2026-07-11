@@ -93,6 +93,11 @@ class ChantierCreate(BaseModel):
     address: str
     postal_code: Optional[str] = None
     city: Optional[str] = None
+    # 📞 Coordonnées client (téléphone + email) — Requis à la création
+    # manuelle (validation front). Peuvent être écrasés par un scan CDC IA
+    # qui détecte les coordonnées dans le document (voir spec_parser.py).
+    client_phone: Optional[str] = None
+    client_email: Optional[str] = None
     status: str = "devis_a_faire"
     assigned_to: Optional[str] = None
     appointment_at: Optional[str] = None
@@ -107,6 +112,9 @@ class ChantierUpdate(BaseModel):
     address: Optional[str] = None
     postal_code: Optional[str] = None
     city: Optional[str] = None
+    # 📞 Coordonnées client — modifiables à tout moment ou auto-remplies par CDC IA.
+    client_phone: Optional[str] = None
+    client_email: Optional[str] = None
     status: Optional[str] = None
     assigned_to: Optional[str] = None
     appointment_at: Optional[str] = None
@@ -127,6 +135,9 @@ class Chantier(BaseModel):
     address: str
     postal_code: Optional[str] = None
     city: Optional[str] = None
+    # 📞 Coordonnées client (obligatoires à la création côté front, auto-remplis par CDC IA).
+    client_phone: Optional[str] = None
+    client_email: Optional[str] = None
     status: str
     created_by: str
     assigned_to: Optional[str] = None

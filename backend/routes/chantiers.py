@@ -147,6 +147,9 @@ async def create_chantier(
         "address": payload.address,
         "postal_code": payload.postal_code,
         "city": payload.city,
+        # 📞 (juin 2026) Coordonnées client — persistées à la création.
+        "client_phone": (payload.client_phone or "").strip() or None,
+        "client_email": (payload.client_email or "").strip() or None,
         "status": initial_status,
         "created_by": user["id"],
         "assigned_to": payload.assigned_to,

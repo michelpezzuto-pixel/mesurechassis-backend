@@ -76,16 +76,19 @@ export function Step3Cotes({
     shape === "porte_garage" ||
     shape === "coulissant_levant";
   const show1mLevel = shape === "porte_entree" || shape === "coulissant_levant";
-  // Feuillures : masquage si "coupe horizontale" est OFF dans Step 1
-  // (en plus de la maçonnerie qui doit avoir des feuillures).
-  // 🚪 Sur une porte de garage / coulissant levant, les feuillures n'ont
-  // PAS de sens (pose en applique ou sous linteau, pas en feuillure), donc
-  // on masque la section même si la maçonnerie en a habituellement.
-  // 🚧 Bow-window : formulaire désactivé tant que le module n'est pas livré.
+  // Feuillures : logique conditionnelle selon la config du mur.
+  // 🆕 (juin 2026) — Si wall_config OPTIONNELLE (option 1.B utilisateur) :
+  //   • Cas A : masonry_type renseigné → comportement historique
+  //     (dépend de masonryHasFeuillures + has_horizontal_cut).
+  //   • Cas B : masonry_type == null (mur non renseigné) → on affiche
+  //     TOUJOURS les feuillures en champs optionnels — l'utilisateur peut
+  //     les saisir ou laisser vide.
+  // 🚪 Sur porte de garage / coulissant levant / bow-window, on masque
+  //   les feuillures (pas de sens métier).
   const router = useRouter();
+  const wallConfigMissing = !s1MasonryType;
   const showFeuillures =
-    masonryHasFeuillures(s1MasonryType) &&
-    !!s1HasHorizontalCut &&
+    (wallConfigMissing || (masonryHasFeuillures(s1MasonryType) && !!s1HasHorizontalCut)) &&
     shape !== "porte_garage" &&
     shape !== "coulissant_levant" &&
     shape !== "bow_window";

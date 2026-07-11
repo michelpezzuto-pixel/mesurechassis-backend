@@ -67,6 +67,10 @@ export default function Dashboard() {
   const [newAddr, setNewAddr] = useState("");
   const [newPostal, setNewPostal] = useState("");
   const [newCity, setNewCity] = useState("");
+  // 📞 (juin 2026) Coordonnées client — obligatoires à la création manuelle.
+  //   Un scan CDC ultérieur peut écraser ces valeurs (auto-remplissage IA).
+  const [newPhone, setNewPhone] = useState("");
+  const [newEmail, setNewEmail] = useState("");
   const [newAppt, setNewAppt] = useState<string>(""); // raw datetime-local string e.g. "2026-06-25T14:30"
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [newNotes, setNewNotes] = useState("");
@@ -247,6 +251,20 @@ export default function Dashboard() {
       Alert.alert("Champs requis", "Nom du client et adresse sont obligatoires.");
       return;
     }
+    // 📞 (juin 2026) Téléphone + email désormais OBLIGATOIRES à la création manuelle.
+    // Ils pourront être écrasés automatiquement plus tard par un scan CDC IA.
+    if (!newPhone.trim() || !newEmail.trim()) {
+      Alert.alert(
+        "Coordonnées requises",
+        "Le téléphone et l'email du client sont obligatoires. Ils pourront être mis à jour automatiquement plus tard si vous scannez un cahier des charges.",
+      );
+      return;
+    }
+    // Validation email basique
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail.trim())) {
+      Alert.alert("Email invalide", "Merci de renseigner une adresse email valide (ex. jean.dupont@example.com).");
+      return;
+    }
     // 🔒 RBAC : Admin Entreprise DOIT assigner à un Commercial
     if (mustAssignToCommercial && !newAssignedTo) {
       Alert.alert(
@@ -262,6 +280,8 @@ export default function Dashboard() {
       address: newAddr.trim(),
       postal_code: newPostal.trim() || undefined,
       city: newCity.trim() || undefined,
+      client_phone: newPhone.trim(),
+      client_email: newEmail.trim(),
       appointment_at: newAppt ? new Date(newAppt).toISOString() : undefined,
       notes: newNotes.trim() || undefined,
     };
@@ -275,6 +295,8 @@ export default function Dashboard() {
       setNewAddr("");
       setNewPostal("");
       setNewCity("");
+      setNewPhone("");
+      setNewEmail("");
       setNewAppt("");
       setNewNotes("");
       setNewAssignedTo("");
@@ -830,6 +852,58 @@ export default function Dashboard() {
                     style={styles.input}
                   />
                 </View>
+              </View>
+
+              {/* 📞 (juin 2026) Coordonnées client — obligatoires à la création,
+                  écrasées par scan CDC IA le cas échéant. */}
+              <View style={styles.row2}>
+                <View style={styles.col2}>
+                  <Text style={styles.label}>Téléphone client *</Text>
+                  <TextInput
+                    testID="new-phone-input"
+                    value={newPhone}
+                    onChangeText={setNewPhone}
+                    keyboardType="phone-pad"
+                    placeholder="+32 496 65 00 32"
+                    placeholderTextColor={colors.placeholder}
+                    style={[
+                      styles.input,
+                      !newPhone.trim() && { borderColor: "#ef4444", borderWidth: 1.5 },
+                    ]}
+                  />
+                  {!newPhone.trim() && (
+                    <Text style={{ color: "#ef4444", fontSize: 11, marginTop: 2 }}>
+                      Téléphone requis
+                    </Text>
+                  )}
+                </View>
+                <View style={styles.col2}>
+                  <Text style={styles.label}>Email client *</Text>
+                  <TextInput
+                    testID="new-email-input"
+                    value={newEmail}
+                    onChangeText={setNewEmail}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    placeholder="jean.dupont@example.com"
+                    placeholderTextColor={colors.placeholder}
+                    style={[
+                      styles.input,
+                      !newEmail.trim() && { borderColor: "#ef4444", borderWidth: 1.5 },
+                    ]}
+                  />
+                  {!newEmail.trim() && (
+                    <Text style={{ color: "#ef4444", fontSize: 11, marginTop: 2 }}>
+                      Email requis
+                    </Text>
+                  )}
+                </View>
+              </View>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4, marginBottom: 4 }}>
+                <Ionicons name="sparkles-outline" size={12} color={colors.textSecondary} />
+                <Text style={{ color: colors.textSecondary, fontSize: 11, flex: 1 }}>
+                  Si vous scannez un cahier des charges plus tard, les coordonnées seront mises à jour automatiquement.
+                </Text>
               </View>
 
               <Text style={styles.label}>{t("dashboardExtended.modal.apptLabel")}</Text>

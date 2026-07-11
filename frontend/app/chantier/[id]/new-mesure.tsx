@@ -348,12 +348,34 @@ export default function NewMesureWizard() {
   ]);
 
   // ────── Validations ────────────────────────────────────────────────
+  /**
+   * 🆕 (juin 2026) Wall Config OPTIONNELLE.
+   *
+   * L'utilisateur peut :
+   *   • Remplir la config du mur (comme avant) → validation stricte
+   *   • Passer complètement (tous les champs vides) → OK, on saute directement
+   *   • Remplir partiellement → OK aussi (chaque champ manquant reste vide côté DB)
+   *
+   * Seuls les champs REMPLIS sont validés (cohérence ITI/ITE dépendances).
+   * Aucune erreur si tout est vide.
+   */
   const validateStep1 = (): boolean => {
     const err: Record<string, boolean> = {};
-    if (!s1.masonry_type) err.masonry_type = true;
-    if (!parseNum(s1.gros_oeuvre_mm)) err.gros_oeuvre_mm = true;
-    if (!s1.insulation_mode) err.insulation_mode = true;
-    if (s1.insulation_mode === "iti" && !parseNum(s1.iti_thickness_mm)) err.iti_thickness_mm = true;
+    // On considère l'utilisateur "engagé" à remplir dès qu'il touche au moins
+    // 1 des champs clés — sinon on saute tout (aucune erreur).
+    const hasAnything =
+      !!s1.masonry_type ||
+      !!parseNum(s1.gros_oeuvre_mm) ||
+      !!s1.insulation_mode ||
+      s1.sill_already_installed != null;
+    if (!hasAnything) {
+      // Tout est vide → wall_config sera skippé côté persistWallConfig.
+      setS1Err({});
+      return true;
+    }
+    // Validation stricte de la cohérence UNIQUEMENT sur les blocs choisis.
+    if (s1.insulation_mode === "iti" && !parseNum(s1.iti_thickness_mm))
+      err.iti_thickness_mm = true;
     if (s1.insulation_mode === "ite") {
       if (!s1.parement_type) err.parement_type = true;
       if (!parseNum(s1.ite_insul_thickness_mm)) err.ite_insul_thickness_mm = true;
@@ -369,11 +391,6 @@ export default function NewMesureWizard() {
       if (s1.parement_type === "bardage" && !parseNum(s1.structure_lame_air_mm))
         err.structure_lame_air_mm = true;
     }
-    if (s1.sill_already_installed == null) err.sill_already_installed = true;
-    // C6 FIX : si seuil "non posé", on accepte une valeur vide (= pas de seuil,
-    // épaisseur = 0). Cela débloque les châssis sans seuil (porte de garage,
-    // certains coulissants, etc.) ou les rénovations où le menuisier ne pose
-    // pas de seuil.
     setS1Err(err);
     return Object.keys(err).length === 0;
   };
@@ -1003,13 +1020,22 @@ export default function NewMesureWizard() {
     has_horizontal_cut: s1.has_horizontal_cut,
   });
 
-  /** Sauvegarde silencieuse du wall_config (idempotent). Renvoie true si OK. */
+  /** Sauvegarde silencieuse du wall_config (idempotent). Renvoie true si OK.
+   *  🆕 (juin 2026) — Si aucun champ significatif n'est renseigné (masonry_type
+   *  ET gros_oeuvre_mm ET insulation_mode tous vides), on saute la persistance
+   *  (feature "wall_config optionnelle"). */
   const persistWallConfig = async (): Promise<boolean> => {
+    const payload = buildWallConfigPayload();
+    const isEmpty =
+      !payload.masonry_type &&
+      !payload.gros_oeuvre_mm &&
+      !payload.insulation_mode;
+    if (isEmpty) {
+      // 🆕 Wall config optionnelle → on ne persiste rien mais on retourne OK.
+      return true;
+    }
     try {
-      await api.patch(
-        `/chantiers/${id}/wall-config`,
-        buildWallConfigPayload()
-      );
+      await api.patch(`/chantiers/${id}/wall-config`, payload);
       setWallConfigLocked(true);
       return true;
     } catch (e) {
@@ -1019,10 +1045,8 @@ export default function NewMesureWizard() {
 
   const goNextFromStep1 = async () => {
     if (!validateStep1()) return;
-    // 🏗️ Sauvegarde la wall_config sur le chantier (1 seule fois pour
-    // tout le chantier). Si la sauvegarde échoue, on AVERTIT l'utilisateur
-    // (mais on continue pour ne pas bloquer le métreur). Le submit final
-    // retentera également la sauvegarde (idempotent).
+    // 🏗️ Sauvegarde la wall_config si l'utilisateur a rempli quelque chose.
+    // Sinon (tout vide) → persistWallConfig est un no-op et retourne true.
     const ok = await persistWallConfig();
     if (!ok) {
       Alert.alert(
@@ -1041,6 +1065,14 @@ export default function NewMesureWizard() {
       );
       return;
     }
+    setStep(1);
+  };
+
+  /** 🆕 (juin 2026) Bouton "Passer" — Skip explicite de l'étape Wall Config.
+   *  L'utilisateur peut renseigner les dimensions des murs plus tard depuis
+   *  la fiche chantier. Aucune donnée n'est persistée ici. */
+  const skipStep1 = () => {
+    setS1Err({});
     setStep(1);
   };
   const onPickShape = (sh: Shape) => {
@@ -1168,15 +1200,29 @@ export default function NewMesureWizard() {
             <Text style={styles.btnSecondaryText}>RETOUR</Text>
           </TouchableOpacity>
           {step === 0 && (
-            <TouchableOpacity
-              testID="wizard-next-to-step2"
-              onPress={goNextFromStep1}
-              style={[styles.btn, styles.btnPrimary]}
-              activeOpacity={0.85}
-            >
-              <Text style={styles.btnPrimaryText}>SUIVANT</Text>
-              <Ionicons name="arrow-forward" size={20} color="#000" />
-            </TouchableOpacity>
+            <>
+              {/* 🆕 (juin 2026) Wall Config optionnelle — bouton "Passer" */}
+              {!wallEditOnly && (
+                <TouchableOpacity
+                  testID="wizard-skip-step1"
+                  onPress={skipStep1}
+                  style={[styles.btn, styles.btnSecondary, { flex: 0.7 }]}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="play-skip-forward-outline" size={18} color={colors.textPrimary} />
+                  <Text style={styles.btnSecondaryText}>PASSER</Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity
+                testID="wizard-next-to-step2"
+                onPress={goNextFromStep1}
+                style={[styles.btn, styles.btnPrimary]}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.btnPrimaryText}>{wallEditOnly ? "ENREGISTRER" : "SUIVANT"}</Text>
+                <Ionicons name={wallEditOnly ? "checkmark" : "arrow-forward"} size={20} color="#000" />
+              </TouchableOpacity>
+            </>
           )}
           {step === 2 && (
             <TouchableOpacity
