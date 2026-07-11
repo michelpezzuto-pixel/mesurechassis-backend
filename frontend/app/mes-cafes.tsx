@@ -26,9 +26,12 @@ import { colors } from "@/src/theme";
 
 const GREEN = "#10B981";
 
-type Station = { id: string; name: string; city?: string };
+type Station = { id: string; name: string; city?: string; address?: string };
+type Network = { id: string; name: string; logo_url?: string; country?: string };
 type CafeMe = {
   station: Station | null;
+  network: Network | null;
+  network_stations: Station[];
   active_jeton: CafeJeton | null;
   jetons: CafeJeton[];
   consumed_total?: number;
@@ -78,6 +81,9 @@ export default function MesCafesScreen() {
 
   const active = data?.active_jeton || null;
   const station = data?.station || null;
+  const network = data?.network || null;
+  const networkStations = data?.network_stations || [];
+  const hasCampaign = !!station || !!network;
   const history = (data?.jetons || []).filter((j) => j.status !== "earned");
 
   return (
@@ -95,13 +101,13 @@ export default function MesCafesScreen() {
         <View style={styles.center}>
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
-      ) : !station ? (
+      ) : !hasCampaign ? (
         <View style={styles.center}>
           <Text style={{ fontSize: 40, marginBottom: 10 }}>☕</Text>
           <Text style={styles.emptyTitle}>Offre non activée</Text>
           <Text style={styles.emptyText}>
-            Les cafés offerts sont réservés aux comptes créés via le QR code
-            d’une station partenaire.
+            Les cafés offerts sont réservés aux comptes créés pendant une
+            campagne active.
           </Text>
         </View>
       ) : (
@@ -115,21 +121,42 @@ export default function MesCafesScreen() {
             />
           }
         >
-          {/* Station partenaire */}
-          <View style={styles.stationCard}>
-            <Ionicons name="location" size={18} color={colors.primary} />
-            <View style={{ flex: 1 }}>
-              <Text style={styles.stationName}>{station.name}</Text>
-              {!!station.city && (
-                <Text style={styles.stationCity}>{station.city}</Text>
-              )}
-            </View>
-            <View style={styles.counterBadge}>
-              <Text style={styles.counterText}>
-                {data?.consumed_total ?? 0} ☕
+          {/* Bandeau réseau (ex: Total) ou station simple */}
+          {network ? (
+            <View style={styles.networkCard}>
+              <View style={styles.networkBadge}>
+                <Text style={styles.networkBadgeText}>Réseau partenaire</Text>
+              </View>
+              <Text style={styles.networkName}>☕ {network.name}</Text>
+              <Text style={styles.networkSub}>
+                Valable dans {networkStations.length} station
+                {networkStations.length > 1 ? "s" : ""} participante
+                {networkStations.length > 1 ? "s" : ""}
               </Text>
+              <View style={styles.counterBadgeRow}>
+                <Text style={styles.counterText}>
+                  {data?.consumed_total ?? 0} café
+                  {(data?.consumed_total ?? 0) > 1 ? "s" : ""} dégusté
+                  {(data?.consumed_total ?? 0) > 1 ? "s" : ""}
+                </Text>
+              </View>
             </View>
-          </View>
+          ) : station ? (
+            <View style={styles.stationCard}>
+              <Ionicons name="location" size={18} color={colors.primary} />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.stationName}>{station.name}</Text>
+                {!!station.city && (
+                  <Text style={styles.stationCity}>{station.city}</Text>
+                )}
+              </View>
+              <View style={styles.counterBadge}>
+                <Text style={styles.counterText}>
+                  {data?.consumed_total ?? 0} ☕
+                </Text>
+              </View>
+            </View>
+          ) : null}
 
           {/* Jeton actif */}
           {active ? (
@@ -189,6 +216,29 @@ export default function MesCafesScreen() {
                 prochain café offert (1 max par jour).
               </Text>
             </View>
+          )}
+
+          {/* 🆕 Liste des stations participantes du réseau */}
+          {network && networkStations.length > 0 && (
+            <>
+              <Text style={styles.sectionLabel}>
+                Où utiliser mon café ({networkStations.length})
+              </Text>
+              {networkStations.map((s) => (
+                <View key={s.id} style={styles.networkStationRow}>
+                  <View style={styles.stationDot} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.historyLabel}>{s.name}</Text>
+                    {(s.address || s.city) && (
+                      <Text style={styles.historyDate}>
+                        {s.address || s.city}
+                      </Text>
+                    )}
+                  </View>
+                  <Ionicons name="chevron-forward" size={18} color="#5A5A62" />
+                </View>
+              ))}
+            </>
           )}
 
           {/* Historique */}
@@ -268,6 +318,58 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#26262B",
     marginBottom: 14,
+  },
+  networkCard: {
+    backgroundColor: "#1A1A1E",
+    borderRadius: 14,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: colors.primary + "44",
+    marginBottom: 14,
+  },
+  networkBadge: {
+    alignSelf: "flex-start",
+    backgroundColor: colors.primary + "22",
+    borderColor: colors.primary + "55",
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginBottom: 8,
+  },
+  networkBadgeText: {
+    color: colors.primary,
+    fontSize: 10,
+    fontWeight: "800",
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+  },
+  networkName: { fontSize: 22, fontWeight: "800", color: "#FFF" },
+  networkSub: { fontSize: 13, color: "#A8A8B0", marginTop: 4 },
+  counterBadgeRow: {
+    marginTop: 10,
+    alignSelf: "flex-start",
+    backgroundColor: GREEN + "22",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  networkStationRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    backgroundColor: "#1A1A1E",
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "#26262B",
+    marginBottom: 8,
+  },
+  stationDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.primary,
   },
   stationName: { fontSize: 15, fontWeight: "700", color: "#FFF" },
   stationCity: { fontSize: 12, color: "#8A8A92", marginTop: 2 },

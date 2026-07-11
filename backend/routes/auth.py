@@ -332,10 +332,26 @@ async def register(payload: dict, request: Request):
     station_id_raw = str(payload.get("station_id") or "").strip()
     if station_id_raw:
         station_doc = await db.cafe_stations.find_one(
-            {"id": station_id_raw, "active": True}, {"_id": 0, "id": 1}
+            {"id": station_id_raw, "active": True}, {"_id": 0, "id": 1, "network_id": 1}
         )
         if station_doc:
             user_doc["campaign_station_id"] = station_id_raw
+            # 🆕 Si la station appartient à un réseau, on tag AUSSI le réseau
+            # pour que le café soit consommable dans toutes les stations du réseau.
+            if station_doc.get("network_id"):
+                user_doc["campaign_network_id"] = station_doc["network_id"]
+
+    # 🆕 Priorité 5 (juillet 2026) — Auto-tag réseau actif (ex: Total-BE).
+    # Tout nouveau compte (sans station_id) est rattaché au réseau courant
+    # défini par la variable d'environnement ACTIVE_CAMPAIGN_NETWORK.
+    if not user_doc.get("campaign_network_id"):
+        active_net_env = os.getenv("ACTIVE_CAMPAIGN_NETWORK", "").strip()
+        if active_net_env:
+            active_net = await db.cafe_networks.find_one(
+                {"id": active_net_env, "active": True}, {"_id": 0, "id": 1}
+            )
+            if active_net:
+                user_doc["campaign_network_id"] = active_net_env
     await db.users.insert_one(user_doc)
     # 🚧 BETA GRATUITE : les nouveaux comptes naissent directement en
     # `plan=pro` + `subscription_status=active` (pas d'écran de paiement).
