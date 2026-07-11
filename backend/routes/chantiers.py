@@ -52,6 +52,12 @@ async def create_chantier(
     # --- Anti-fraud Freemium lifetime limit -------------------------------
     # 🚧 BETA GRATUITE : limite désactivée (BETA_MODE=True). Le bloc reste
     # en place pour réactivation simple une fois Stripe en ligne.
+    #
+    # 💡 Règle métier CRITIQUE (juillet 2026) :
+    # Le compteur `chantiers_lifetime_count` s'incrémente à la CRÉATION mais
+    # ne se décrémente JAMAIS à la SUPPRESSION. Un Freemium ne peut donc
+    # pas "faire du ménage" pour recycler ses 3 crédits gratuits — il doit
+    # passer au plan Standard (19,99 €/mois) pour créer un 4e chantier.
     if (
         not BETA_MODE
         and (user.get("plan") == "free")
@@ -64,12 +70,16 @@ async def create_chantier(
                 detail={
                     "code": "free_plan_limit",
                     "message": (
-                        f"Limite Freemium atteinte ({FREE_PLAN_MAX_CHANTIERS} "
-                        "chantiers maximum sur la durée de vie du compte). "
-                        "Passez en Pro pour créer des chantiers illimités."
+                        f"Limite Freemium atteinte : tu as créé "
+                        f"{used}/{FREE_PLAN_MAX_CHANTIERS} chantiers À VIE. "
+                        "Supprimer un chantier ne libère pas de crédit "
+                        "(règle anti-abus). Passe au plan Standard "
+                        "(19,99 €/mois) pour créer des chantiers illimités."
                     ),
                     "limit": FREE_PLAN_MAX_CHANTIERS,
                     "used": used,
+                    "upgrade_plan": "standard",
+                    "upgrade_price_eur": 19.99,
                 },
             )
     client_name = payload.client_name

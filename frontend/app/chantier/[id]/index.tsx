@@ -25,6 +25,7 @@ import { useResponsive } from "@/src/utils/responsive";
 import { ShapeIcon, blockTypeToShape } from "@/src/components/ShapeIcon";
 import AppointmentPicker from "@/src/components/AppointmentPicker";
 import { useAuth } from "@/src/context/AuthContext";
+import { isInFreemiumTrial } from "@/src/lib/freemium";
 import { colors, statusMeta, getStatusLabel, getStatusLabelI18n, blockMeta, shapeMeta } from "@/src/theme";
 import { useTranslation } from "react-i18next";
 
@@ -423,7 +424,25 @@ export default function ChantierDetail() {
       );
       return;
     }
-    const msg = t("chantierDetail.deleteConfirm.msg", { name: chantier.client_name });
+    // 🔒 (juillet 2026) Anti-abus Freemium : le compteur lifetime ne se
+    // décrémente PAS à la suppression. On préviens l'utilisateur avec un
+    // message pédagogique pour éviter la frustration ("j'ai supprimé,
+    // pourquoi je ne peux plus en créer ?").
+    const isFreemium =
+      (company?.plan || "").toLowerCase() === "free" &&
+      !company?.beta_mode &&
+      !isInFreemiumTrial(company);
+    const used = company?.chantiers_lifetime_count ?? 0;
+    const cap = 3; // FREE_PLAN_MAX_CHANTIERS côté backend
+    const freemiumWarning = isFreemium
+      ? `\n\n⚠️ ATTENTION FREEMIUM : Tu as utilisé ${used}/${cap} chantiers À VIE. ` +
+        `Supprimer ce chantier ne te rendra AUCUN crédit gratuit ` +
+        `(règle anti-abus). Pour créer un nouveau chantier, tu devras ` +
+        `passer au plan Standard (19,99 €/mois).`
+      : "";
+    const msg =
+      t("chantierDetail.deleteConfirm.msg", { name: chantier.client_name }) +
+      freemiumWarning;
     const doDelete = async () => {
       try {
         await api.delete(`/chantiers/${id}`);
