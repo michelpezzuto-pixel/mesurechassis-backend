@@ -49,6 +49,21 @@ export function onSubscriptionState(cb: (s: SubscriptionState) => void) {
   return () => subscriptionListeners.delete(cb);
 }
 
+// 🔒 PAYWALL_VALIDATION_REQUIRED (403) — event bus dédié.
+// Cas où l'abonnement de la société est OK, mais le compte individuel de
+// l'utilisateur n'est pas (encore) validé par son gérant (Phase 2 —
+// double-validation Freemium/Team). Différent de subscription_expired (402).
+type ValidationState = {
+  required: boolean;
+  message?: string;
+  reason?: string;
+};
+const validationListeners = new Set<(s: ValidationState) => void>();
+export function onValidationRequired(cb: (s: ValidationState) => void) {
+  validationListeners.add(cb);
+  return () => validationListeners.delete(cb);
+}
+
 // Session-expired event bus — souscrit par AuthContext pour forcer la
 // déconnexion propre quand le JWT est expiré/invalide (401).
 const authExpiredListeners = new Set<() => void>();
@@ -74,6 +89,21 @@ api.interceptors.response.use(
             expired: true,
             status: d.subscription_status,
             expires_at: d.subscription_expires_at,
+          })
+        );
+      }
+    }
+    // 🔒 403 PAYWALL_VALIDATION_REQUIRED — le compte utilisateur nécessite
+    // une approbation par le gérant/admin de son organisation avant de
+    // pouvoir continuer à utiliser l'app (Phase 2).
+    if (err?.response?.status === 403) {
+      const d = err.response.data?.detail ?? {};
+      if (d?.code === "PAYWALL_VALIDATION_REQUIRED") {
+        validationListeners.forEach((cb) =>
+          cb({
+            required: true,
+            message: d.message,
+            reason: d.reason,
           })
         );
       }

@@ -452,6 +452,28 @@ async def download_site_appstore():
     )
 
 
+@api.get("/_downloads/site-v2-4tiers")
+async def download_site_v2_4tiers():
+    """🆕 Site vitrine mesurechassis.com — refonte 4 tiers + Enterprise MAX (juil. 2026).
+
+    Contient l'intégralité du répertoire /site_mesurechassis_final avec la
+    nouvelle section tarifs alignée sur le backend :
+      • Freemium (0 €)  • Standard (19,99 €)  • Team (49,99 €)
+      • Pro (99,99 €)   • Enterprise MAX (Sur devis · Bientôt)
+
+    À uploader tel quel via FTP à la racine du site (remplace les anciens
+    fichiers, garde les mêmes URLs).
+    """
+    path = "/app/backend/public_downloads/site_v2_4tiers.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="mesurechassis-site-v2-4tiers.zip",
+    )
+
+
 @api.get("/_downloads/panneau-cafe-a3")
 async def download_panneau_cafe_a3():
     """Panneau A3 (chevalet de comptoir) — Campagne Café en station-service.

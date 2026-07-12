@@ -678,11 +678,21 @@
   }
 
   .plans-grid {
-    max-width: 1100px;
+    max-width: 1400px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.2rem;
+  }
+
+  @media (max-width: 1200px) {
+    .plans-grid { grid-template-columns: repeat(3, 1fr); }
+    .plans-grid > *:nth-child(4),
+    .plans-grid > *:nth-child(5) { grid-column: span 1; }
+  }
+
+  @media (max-width: 900px) {
+    .plans-grid { grid-template-columns: repeat(2, 1fr); }
   }
 
   .plan-card {
@@ -828,6 +838,48 @@
   }
 
   .plan-cta.solid:hover { background: #e85d2a; }
+
+  /* Plan "coming soon" MAX — style teaser */
+  .plan-card.coming-soon {
+    border-color: rgba(147, 197, 253, 0.25);
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.03), transparent 60%);
+    position: relative;
+  }
+  .plan-card.coming-soon .plan-header { background: rgba(59, 130, 246, 0.04); }
+  .plan-badge-soon {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    color: #93C5FD;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .plan-card.coming-soon .plan-cta {
+    background: rgba(59, 130, 246, 0.1);
+    color: #93C5FD;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    cursor: default;
+  }
+  .plan-card.coming-soon .plan-cta:hover { background: rgba(59, 130, 246, 0.15); }
+  /* Prix : version compacte pour tenir en 5 colonnes */
+  .plan-price {
+    font-family: var(--font-head);
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #FF6B35;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .plan-price.free { color: #4CAF50; }
+  .plan-price.soon { color: #93C5FD; font-size: 1.4rem; }
+  .plan-price-suffix { font-size: 0.75rem; color: #9ca3af; margin-left: 4px; white-space: nowrap; }
 
   /* ═══════════════════════ EXPORTS ═══════════════════════ */
   #exports {
@@ -1585,145 +1637,302 @@ nav a:not(.btn-primary):hover::after { width:100% }
   </div>
 </section>
 
-<!-- ═══════════ COMPARATIF ═══════════ -->
+<!-- ═══════════ TARIFS (5 plans : Freemium / Standard / Team / Pro / MAX bientôt) ═══════════ -->
 <section id="comparatif">
+  <a id="tarifs" style="display:block;position:relative;top:-70px;visibility:hidden"></a>
   <div class="comparatif-header">
-    <span class="section-tag">Une application, deux façons de travailler</span>
-    <h2>Choisissez votre <em>mode de travail</em></h2>
-    <p class="section-lead" style="margin:0 auto;text-align:center">Artisan ou grande structure, MesureChâssis s'adapte à votre organisation avec des protections métier intégrées.</p>
+    <span class="section-tag">Tarifs 2026 — TVA incluse</span>
+    <h2>Un plan pour <em>chaque taille</em> d'entreprise</h2>
+    <p class="section-lead" style="margin:0 auto;text-align:center">Du menuisier solo qui teste, jusqu'à la grande structure avec auto-devis Odoo — MesureChâssis vous accompagne.</p>
   </div>
 
   <div class="plans-grid">
 
-    <!-- ARTISAN -->
+    <!-- 1. FREEMIUM (gratuit à vie, 3 chantiers) -->
     <div class="plan-card">
       <div class="plan-header">
-        <span class="plan-icon">🛠️</span>
-        <div class="plan-title">Artisan Solo</div>
-        <div class="plan-subtitle">Rapidité & Autonomie totale</div>
-        <div style="margin-top:1.1rem;display:flex;align-items:baseline;gap:6px;flex-wrap:wrap">
-          <span style="font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;color:#FF6B35;line-height:1">24,99 €</span>
-          <span style="font-size:.85rem;color:#9ca3af">/ mois · 1 utilisateur</span>
+        <span class="plan-icon">🌱</span>
+        <div class="plan-title">Freemium</div>
+        <div class="plan-subtitle">Testez sans risque</div>
+        <div style="margin-top:1.1rem;display:flex;align-items:baseline;flex-wrap:wrap">
+          <span class="plan-price free">0 €</span>
+          <span class="plan-price-suffix">/ à vie</span>
         </div>
         <div style="margin-top:.5rem">
-          <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.25);color:#4CAF50;font-size:.72rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em">
-            ✦ Bêta gratuite — accès complet
+          <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.25);color:#4CAF50;font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em">
+            Sans carte bancaire
           </span>
         </div>
       </div>
       <div class="plan-features">
         <div class="feature-item">
           <div class="feature-icon orange">
-            <svg viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
           <div class="feature-content">
-            <div class="feature-title">Mode Libre (Bypass)</div>
-            <div class="feature-desc">L'application sait que vous êtes seul. Pas de blocage inutile — vous avez tous les droits pour enchaîner les chantiers et modifier à la volée.</div>
+            <div class="feature-title">3 chantiers à vie</div>
+            <div class="feature-desc">Créez jusqu'à 3 chantiers pour valider que l'app correspond à votre métier.</div>
           </div>
         </div>
         <div class="feature-item">
           <div class="feature-icon orange">
-            <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
           <div class="feature-content">
-            <div class="feature-title">Le bureau dans la poche</div>
-            <div class="feature-desc">Plus de paperasse dans la camionnette. Vos mesures et photos "anti-litige" centralisées au même endroit.</div>
+            <div class="feature-title">14 formes de châssis</div>
+            <div class="feature-desc">Rectangle, cintré, triangle, œil-de-bœuf, coulissant, porte…</div>
           </div>
         </div>
         <div class="feature-item">
           <div class="feature-icon orange">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
           <div class="feature-content">
-            <div class="feature-title">Prêt en 2 minutes</div>
-            <div class="feature-desc">Pas de configuration technique complexe. Vous téléchargez l'appli et vous mesurez direct.</div>
+            <div class="feature-title">Exports PDF / Excel</div>
+            <div class="feature-desc">Format client + fiche atelier générés à la volée.</div>
           </div>
         </div>
         <div class="feature-item">
           <div class="feature-icon orange">
-            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
           <div class="feature-content">
-            <div class="feature-title">Export instantané</div>
-            <div class="feature-desc">Générez et envoyez vos fichiers PDF, Excel et CSV en un seul tap, depuis le chantier.</div>
+            <div class="feature-title">1 utilisateur</div>
+            <div class="feature-desc">Compte solo, sans workflow d'équipe.</div>
           </div>
         </div>
       </div>
       <div class="plan-footer">
-        <a href="beta.html" class="plan-cta outline">Essayer gratuitement →</a>
+        <a href="telecharger.html" class="plan-cta outline">Commencer gratuitement →</a>
       </div>
     </div>
 
-    <!-- SOCIÉTÉ -->
-    <div class="plan-card featured">
+    <!-- 2. STANDARD (19,99 €/mois) -->
+    <div class="plan-card">
       <div class="plan-header">
-        <div class="plan-badge-top">⭐ Recommandé</div>
-        <span class="plan-icon">🏢</span>
-        <div class="plan-title">Société & Équipe</div>
-        <div class="plan-subtitle">Bureau sécurisé + Terrain maîtrisé</div>
-        <div style="margin-top:1.1rem;display:flex;align-items:baseline;gap:6px;flex-wrap:wrap">
-          <span style="font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;color:#FF6B35;line-height:1">54,99 €</span>
-          <span style="font-size:.85rem;color:#9ca3af">/ mois · 3 utilisateurs inclus</span>
+        <span class="plan-icon">🛠️</span>
+        <div class="plan-title">Standard</div>
+        <div class="plan-subtitle">Menuisier solo, illimité</div>
+        <div style="margin-top:1.1rem;display:flex;align-items:baseline;flex-wrap:wrap">
+          <span class="plan-price">19,99 €</span>
+          <span class="plan-price-suffix">/ mois HTVA</span>
         </div>
-        <div style="margin-top:.4rem;font-size:.8rem;color:#9ca3af">+ 4,99 € / utilisateur supplémentaire</div>
-        <div style="margin-top:.5rem">
-          <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.25);color:#4CAF50;font-size:.72rem;font-weight:600;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em">
-            ✦ Bêta gratuite — accès complet
-          </span>
-        </div>
+        <div style="margin-top:.4rem;font-size:.75rem;color:#9ca3af">soit ~24,19 € TTC · 1 utilisateur</div>
       </div>
       <div class="plan-features">
         <div class="feature-item">
-          <div class="feature-icon green">
-            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <div class="feature-icon orange">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
           <div class="feature-content">
-            <div class="feature-title">Workflow Anti-Bourdes</div>
-            <div class="feature-desc">Vos commerciaux encodent sur le terrain, mais le chantier reste bloqué en "À vérifier". Votre technicien ou chef d'atelier valide techniquement les cotes.</div>
+            <div class="feature-title">Chantiers illimités</div>
+            <div class="feature-desc">Zéro limite. Mesurez autant que vous voulez.</div>
           </div>
         </div>
         <div class="feature-item">
-          <div class="feature-icon green">
-            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <div class="feature-icon orange">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
           <div class="feature-content">
-            <div class="feature-title">Le Verrou de Fabrication</div>
-            <div class="feature-desc">Dès que le chantier passe "En Fabrication", les modifications sont bloquées pour les commerciaux.</div>
-            <div class="lock-badge">
-              <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              Verrou actif pendant la découpe CNC
-            </div>
+            <div class="feature-title">IA lecture cahier des charges</div>
+            <div class="feature-desc">PDF client scanné → toutes les ouvertures extraites en 45 sec.</div>
           </div>
         </div>
         <div class="feature-item">
-          <div class="feature-icon green">
-            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <div class="feature-icon orange">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
           <div class="feature-content">
-            <div class="feature-title">Gestion des Droits (RBAC)</div>
-            <div class="feature-desc">Un commercial ne peut pas supprimer un chantier en cours par erreur. La poubelle rouge disparaît de son interface. Chacun reste dans son rôle.</div>
-            <div class="lock-badge">
-              <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              Permissions par rôle
-            </div>
+            <div class="feature-title">Photos anti-litige</div>
+            <div class="feature-desc">6 photos par ouverture, signature client, GPS + horodatage.</div>
           </div>
         </div>
         <div class="feature-item">
-          <div class="feature-icon green">
-            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <div class="feature-icon orange">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
           <div class="feature-content">
-            <div class="feature-title">Tous les outils Solo inclus</div>
-            <div class="feature-desc">Mode hors-ligne, photos anti-litige, exports PDF/Excel/CSV/JSON, synchronisation automatique.</div>
+            <div class="feature-title">4 formats d'export</div>
+            <div class="feature-desc">PDF · Excel · CSV ERP · JSON API.</div>
           </div>
         </div>
       </div>
       <div class="plan-footer">
-        <a href="beta.html" class="plan-cta solid">Essayer gratuitement →</a>
+        <a href="beta.html" class="plan-cta outline">Choisir Standard →</a>
+      </div>
+    </div>
+
+    <!-- 3. TEAM (49,99 €/mois) — FEATURED -->
+    <div class="plan-card featured">
+      <div class="plan-header">
+        <div class="plan-badge-top">⭐ Populaire</div>
+        <span class="plan-icon">🏢</span>
+        <div class="plan-title">Team</div>
+        <div class="plan-subtitle">Équipe 2-5 personnes</div>
+        <div style="margin-top:1.1rem;display:flex;align-items:baseline;flex-wrap:wrap">
+          <span class="plan-price">49,99 €</span>
+          <span class="plan-price-suffix">/ mois HTVA</span>
+        </div>
+        <div style="margin-top:.4rem;font-size:.75rem;color:#9ca3af">soit ~60,49 € TTC · 5 utilisateurs</div>
+      </div>
+      <div class="plan-features">
+        <div class="feature-item">
+          <div class="feature-icon green">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="feature-content">
+            <div class="feature-title">Tout le plan Standard</div>
+            <div class="feature-desc">Chantiers illimités, IA, photos anti-litige, exports.</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon green">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="feature-content">
+            <div class="feature-title">Workflow Anti-Bourdes</div>
+            <div class="feature-desc">Commerciaux ↔ Techniciens ↔ Fabrication : chacun son rôle.</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon green">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="feature-content">
+            <div class="feature-title">Verrou de Fabrication</div>
+            <div class="feature-desc">Dès la CNC lancée, plus aucune modification possible.</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon green">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="feature-content">
+            <div class="feature-title">4 rôles RBAC</div>
+            <div class="feature-desc">Admin, Commercial, Technicien, Lecture — permissions strictes.</div>
+          </div>
+        </div>
+      </div>
+      <div class="plan-footer">
+        <a href="beta.html" class="plan-cta solid">Choisir Team →</a>
+      </div>
+    </div>
+
+    <!-- 4. PRO (99,99 €/mois) -->
+    <div class="plan-card">
+      <div class="plan-header">
+        <span class="plan-icon">🚀</span>
+        <div class="plan-title">Pro</div>
+        <div class="plan-subtitle">Grande structure 6-20 pers.</div>
+        <div style="margin-top:1.1rem;display:flex;align-items:baseline;flex-wrap:wrap">
+          <span class="plan-price">99,99 €</span>
+          <span class="plan-price-suffix">/ mois HTVA</span>
+        </div>
+        <div style="margin-top:.4rem;font-size:.75rem;color:#9ca3af">soit ~120,99 € TTC · 20 utilisateurs</div>
+      </div>
+      <div class="plan-features">
+        <div class="feature-item">
+          <div class="feature-icon orange">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="feature-content">
+            <div class="feature-title">Tout le plan Team</div>
+            <div class="feature-desc">Workflow, verrous, RBAC, IA, tous les exports.</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon orange">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="feature-content">
+            <div class="feature-title">Copilote IA Yann inclus</div>
+            <div class="feature-desc">Chat métier : DTU, EN 14351, tolérances… en 5 sec, sources citées.</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon orange">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="feature-content">
+            <div class="feature-title">Priorité support</div>
+            <div class="feature-desc">Réponse sous 24 h ouvrées + accès direct au fondateur.</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon orange">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="feature-content">
+            <div class="feature-title">Stats atelier avancées</div>
+            <div class="feature-desc">Taux d'erreurs, temps moyen par chantier, KPIs équipe.</div>
+          </div>
+        </div>
+      </div>
+      <div class="plan-footer">
+        <a href="beta.html" class="plan-cta outline">Choisir Pro →</a>
+      </div>
+    </div>
+
+    <!-- 5. ENTERPRISE MAX (bientôt) -->
+    <div class="plan-card coming-soon">
+      <div class="plan-header">
+        <div class="plan-badge-soon">Bientôt</div>
+        <span class="plan-icon">🏛️</span>
+        <div class="plan-title">Enterprise MAX</div>
+        <div class="plan-subtitle">Multi-sites & Odoo</div>
+        <div style="margin-top:1.1rem;display:flex;align-items:baseline;flex-wrap:wrap">
+          <span class="plan-price soon">Sur devis</span>
+        </div>
+        <div style="margin-top:.4rem;font-size:.75rem;color:#93C5FD">Disponible fin 2026</div>
+      </div>
+      <div class="plan-features">
+        <div class="feature-item">
+          <div class="feature-icon orange">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="feature-content">
+            <div class="feature-title">Intégration Odoo</div>
+            <div class="feature-desc">Auto-devis + sync clients directement depuis votre ERP Odoo.</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon orange">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="feature-content">
+            <div class="feature-title">Télémètre laser Bluetooth</div>
+            <div class="feature-desc">Leica DISTO / Bosch GLM → mesures injectées auto dans l'app.</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon orange">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="feature-content">
+            <div class="feature-title">Utilisateurs illimités</div>
+            <div class="feature-desc">Multi-sites, multi-ateliers, partage cross-équipes.</div>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon orange">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="feature-content">
+            <div class="feature-title">SLA 4 h + audit RGPD</div>
+            <div class="feature-desc">Contrat de service dédié, rapport de conformité annuel.</div>
+          </div>
+        </div>
+      </div>
+      <div class="plan-footer">
+        <a href="contact.html" class="plan-cta">Nous contacter →</a>
       </div>
     </div>
 
   </div>
+
+  <p style="text-align:center;margin-top:1.6rem;font-size:.85rem;color:#a8a8b0;padding:0 1rem">
+    Tous les plans payants incluent : mises à jour illimitées, données hébergées en Belgique/France (RGPD strict), résiliation sans engagement.
+  </p>
 </section>
 
 <!-- ═══════════ EXPORTS ═══════════ -->

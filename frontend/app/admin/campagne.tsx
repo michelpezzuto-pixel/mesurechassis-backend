@@ -28,6 +28,17 @@ type Stats = {
   unsubscribed?: number;
 };
 
+// 🆕 État du scheduler d'envoi automatique (16h30 belge)
+type AutoSend = {
+  enabled: boolean;
+  schedule: string;
+  next_run_iso: string;
+  last_run_date: string | null;
+  last_result: string | null;
+  last_scheduled: number | null;
+  last_started_at: string | null;
+};
+
 type Prospect = {
   id: string;
   email: string;
@@ -91,6 +102,7 @@ function displayName(p: { company?: string; email: string }): string {
 export default function AdminCampagne() {
   const router = useRouter();
   const [stats, setStats] = useState<Stats | null>(null);
+  const [autoSend, setAutoSend] = useState<AutoSend | null>(null);
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [loading, setLoading] = useState(true);
   const [launching, setLaunching] = useState(false);
@@ -99,12 +111,14 @@ export default function AdminCampagne() {
 
   const fetchAll = useCallback(async () => {
     try {
-      const [s, p] = await Promise.all([
+      const [s, p, a] = await Promise.all([
         api.get<Stats>("/campaign/stats"),
         api.get<{ prospects: Prospect[] }>("/campaign/prospects"),
+        api.get<AutoSend>("/campaign/auto-send/status").catch(() => null),
       ]);
       setStats(s.data);
       setProspects(p.data.prospects);
+      setAutoSend(a?.data ?? null);
       // Poll tant que des envois sont en cours
       if (s.data.sending > 0 && !pollRef.current) {
         pollRef.current = setInterval(() => void fetchAll(), 4000);
@@ -237,6 +251,9 @@ export default function AdminCampagne() {
         <ActivityIndicator color={colors.primary} style={{ marginTop: 40 }} />
       ) : (
         <>
+          {/* 🆕 Widget "Prochain envoi automatique" — visible en tête de page */}
+          {autoSend && <AutoSendWidget data={autoSend} />}
+
           <View style={styles.statsRow}>
             <View style={styles.statBox} testID="campagne-pending-box">
               <Text style={styles.statValue}>{stats.pending}</Text>
@@ -535,4 +552,126 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "700",
   },
+
+  // 🆕 Widget "Prochain envoi automatique"
+  autoWidget: {
+    marginHorizontal: 16,
+    marginTop: 12,
+    marginBottom: 4,
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    padding: 12,
+  },
+  autoHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 8,
+  },
+  autoTitle: {
+    color: colors.textPrimary,
+    fontSize: 12,
+    fontWeight: "800",
+    letterSpacing: 0.8,
+    flex: 1,
+  },
+  autoBadgeOn: {
+    backgroundColor: "#22C55E22",
+    borderColor: "#22C55E",
+    borderWidth: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  autoBadgeText: {
+    color: "#22C55E",
+    fontSize: 10,
+    fontWeight: "900",
+    letterSpacing: 0.3,
+  },
+  autoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginTop: 4,
+  },
+  autoLabel: {
+    color: colors.textSecondary,
+    fontSize: 11.5,
+    width: 90,
+  },
+  autoValue: {
+    color: colors.textPrimary,
+    fontSize: 12.5,
+    fontWeight: "600",
+    flex: 1,
+  },
+  autoValueMuted: {
+    color: colors.textSecondary,
+    fontSize: 12.5,
+    fontStyle: "italic",
+    flex: 1,
+  },
 });
+
+/** Widget compact affichant l'état du scheduler d'envoi automatique
+ *  (16h30 Europe/Brussels, Lun-Ven, lot de 40 emails/jour). */
+function AutoSendWidget({ data }: { data: AutoSend }) {
+  const nextRun = React.useMemo(() => {
+    if (!data.next_run_iso) return "—";
+    try {
+      const d = new Date(data.next_run_iso);
+      return d.toLocaleDateString("fr-FR", {
+        weekday: "short",
+        day: "2-digit",
+        month: "short",
+      }) + " · 16h30";
+    } catch {
+      return data.next_run_iso;
+    }
+  }, [data.next_run_iso]);
+
+  const lastLabel = React.useMemo(() => {
+    if (!data.last_run_date) return "aucun envoi précédent";
+    const map: Record<string, string> = {
+      started: `✅ ${data.last_scheduled ?? "?"} envoyés`,
+      quota_full: "⏭️  quota déjà atteint",
+      empty: "⏭️  aucun prospect en attente",
+    };
+    const label = data.last_result ? (map[data.last_result] ?? data.last_result) : "";
+    try {
+      const d = new Date(data.last_run_date);
+      return `${d.toLocaleDateString("fr-FR", { weekday: "short", day: "2-digit", month: "short" })} — ${label}`;
+    } catch {
+      return `${data.last_run_date} — ${label}`;
+    }
+  }, [data.last_run_date, data.last_result, data.last_scheduled]);
+
+  return (
+    <View style={styles.autoWidget} testID="auto-send-widget">
+      <View style={styles.autoHeader}>
+        <Ionicons name="timer-outline" size={16} color={colors.primary} />
+        <Text style={styles.autoTitle}>ENVOI AUTOMATIQUE</Text>
+        <View style={styles.autoBadgeOn}>
+          <Text style={styles.autoBadgeText}>ACTIF</Text>
+        </View>
+      </View>
+      <View style={styles.autoRow}>
+        <Text style={styles.autoLabel}>Prochain</Text>
+        <Text style={styles.autoValue}>{nextRun}</Text>
+      </View>
+      <View style={styles.autoRow}>
+        <Text style={styles.autoLabel}>Dernier</Text>
+        <Text style={data.last_run_date ? styles.autoValue : styles.autoValueMuted}>
+          {lastLabel}
+        </Text>
+      </View>
+      <View style={styles.autoRow}>
+        <Text style={styles.autoLabel}>Cadence</Text>
+        <Text style={styles.autoValue}>{data.schedule}</Text>
+      </View>
+    </View>
+  );
+}

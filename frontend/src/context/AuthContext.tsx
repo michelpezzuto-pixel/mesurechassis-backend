@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useEffect, useRef, useState, ReactNode, useCallback } from "react";
 import { Alert } from "react-native";
 import { useRouter } from "expo-router";
-import { api, clearToken, getToken, onAuthExpired, onSubscriptionState, saveToken } from "@/src/services/api";
+import { api, clearToken, getToken, onAuthExpired, onSubscriptionState, onValidationRequired, saveToken } from "@/src/services/api";
 import { registerPushTokenWithBackend } from "@/src/services/notifications";
 import PaywallScreen from "@/src/components/PaywallScreen";
+import ValidationRequiredScreen from "@/src/components/ValidationRequiredScreen";
 import i18n, { setArtisanMode as setI18nArtisanMode } from "@/src/i18n";
 
 export type Role = "admin" | "commercial" | "technician";
@@ -85,10 +86,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [company, setCompany] = useState<CompanyProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [lock, setLock] = useState<SubscriptionLock>({ expired: false });
+  // 🔒 Validation-required lock (403 PAYWALL_VALIDATION_REQUIRED — Phase 2)
+  const [validationLock, setValidationLock] = useState<{
+    required: boolean;
+    message?: string;
+    reason?: string;
+  }>({ required: false });
 
   // Subscribe to subscription lock events from the axios response interceptor.
   useEffect(() => {
     const off = onSubscriptionState((s) => setLock(s));
+    return () => { off(); };
+  }, []);
+
+  // 🔒 Écoute des events 403 PAYWALL_VALIDATION_REQUIRED
+  useEffect(() => {
+    const off = onValidationRequired((s) => setValidationLock(s));
     return () => { off(); };
   }, []);
 
@@ -239,6 +252,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setCompany(null);
     setLock({ expired: false });
+    setValidationLock({ required: false });
     // 3) On revient FORCÉMENT à l'écran de connexion. `replace` détruit
     //    la pile de navigation : ainsi les écrans protégés (dashboard,
     //    chantier/[id]…) qui étaient encore montés sont démontés et ne
@@ -313,6 +327,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
           }}
           onLogout={signOut}
+        />
+      ) : user && validationLock.required ? (
+        /* 🔒 403 PAYWALL_VALIDATION_REQUIRED — compte en attente de validation
+            par le gérant. Verrouille l'app en plein écran. */
+        <ValidationRequiredScreen
+          message={validationLock.message}
+          reason={validationLock.reason}
+          onLogout={signOut}
+          onRefresh={async () => {
+            try {
+              // Tente un /auth/me pour vérifier si le compte est validé.
+              // Si succès → on lève le verrou. Sinon l'interceptor le
+              // remontera automatiquement via onValidationRequired.
+              const res = await api.get<User>("/auth/me");
+              setUser(res.data);
+              setValidationLock({ required: false });
+            } catch {
+              // Rien de plus à faire : le verrou reste actif.
+            }
+          }}
         />
       ) : (
         children
