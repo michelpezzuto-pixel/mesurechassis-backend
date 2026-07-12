@@ -580,6 +580,37 @@ async def preview_guide_artisan_pro():
         return HTMLResponse(f.read())
 
 
+@api.get("/_downloads/email-launch/preview", response_class=HTMLResponse)
+async def preview_email_launch():
+    """Aperçu du template email 'Lancement App Store'.
+
+    Génère un email de démo avec Marc Dubois / Menuiserie Dubois comme
+    destinataire fictif, pour valider visuellement le rendu avant envoi
+    réel. Le prospect fictif est créé puis supprimé pour ne pas polluer
+    la DB.
+    """
+    import sys
+    sys.path.insert(0, "/app/backend")
+    from db import db as pdb
+    from services.prospection_utils import upsert_prospect
+    from send_launch_appstore import render_email
+    p = await upsert_prospect(
+        "preview.demo@mesurechassis.fr",
+        first_name="Marc",
+        company="Menuiserie Dubois",
+        source="preview_only",
+    )
+    _, body = render_email(
+        first_name="Marc",
+        company="Menuiserie Dubois",
+        prospect_id=p["id"],
+        email=p["email"],
+    )
+    # Cleanup — on ne garde pas le prospect fictif en DB
+    await pdb.prospects.delete_many({"email": "preview.demo@mesurechassis.fr"})
+    return HTMLResponse(body)
+
+
 @api.get("/_downloads/feature-graphic/{variant}")
 async def download_feature_graphic_variant(variant: str):
     """Variantes redimensionnées de l'image utilisateur (stretch / fit / cover)."""
