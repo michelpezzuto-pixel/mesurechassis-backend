@@ -623,6 +623,26 @@ async def download_appstore_screenshots_6_5():
                         filename="mesurechassis-appstore-6_5-v114.zip")
 
 
+@api.get("/_downloads/appstore-screenshots-ipad-12_9-v114")
+async def download_appstore_screenshots_ipad_12_9():
+    """ZIP iPad Pro 12.9\" — 2048x2732."""
+    path = "/app/backend/public_downloads/appstore_screenshots_ipad_12_9_v114.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(404, "ZIP introuvable")
+    return FileResponse(path, media_type="application/zip",
+                        filename="mesurechassis-appstore-ipad-12_9-v114.zip")
+
+
+@api.get("/_downloads/appstore-screenshots-ipad-13-v114")
+async def download_appstore_screenshots_ipad_13():
+    """ZIP iPad Pro 13\" (M4) — 2064x2752."""
+    path = "/app/backend/public_downloads/appstore_screenshots_ipad_13_v114.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(404, "ZIP introuvable")
+    return FileResponse(path, media_type="application/zip",
+                        filename="mesurechassis-appstore-ipad-13-v114.zip")
+
+
 @api.get("/_downloads/appstore-screenshots/preview", response_class=HTMLResponse)
 async def preview_appstore_screenshots():
     """Page d'aperçu des 5 screenshots App Store."""

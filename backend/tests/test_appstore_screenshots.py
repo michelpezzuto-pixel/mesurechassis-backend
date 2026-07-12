@@ -15,7 +15,10 @@ import pytest
 import requests
 from PIL import Image
 
-BASE_URL = os.environ.get("EXPO_PUBLIC_BACKEND_URL", "https://window-field-app.preview.emergentagent.com").rstrip("/")
+BASE_URL = os.environ.get(
+    "EXPO_PUBLIC_BACKEND_URL",
+    os.environ.get("EXPO_BACKEND_URL", "https://window-field-app.preview.emergentagent.com"),
+).rstrip("/")
 
 EXPECTED_FILENAMES = {
     "01_login.png",
@@ -31,6 +34,9 @@ ENDPOINTS = [
     ("/api/_downloads/appstore-screenshots-6_9-v114", (1320, 2868)),
     ("/api/_downloads/appstore-screenshots-6_7-v114", (1290, 2796)),
     ("/api/_downloads/appstore-screenshots-6_5-v114", (1242, 2688)),
+    # New iPad endpoints (bug fix "il manque tablette")
+    ("/api/_downloads/appstore-screenshots-ipad-12_9-v114", (2048, 2732)),
+    ("/api/_downloads/appstore-screenshots-ipad-13-v114", (2064, 2752)),
 ]
 
 
