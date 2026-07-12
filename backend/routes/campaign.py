@@ -831,6 +831,100 @@ async def admin_resubscribe_prospect(
     return {"ok": True, "prospect_id": prospect_id, "email": doc.get("email")}
 
 
+# ════════════════════════════════════════════════════════════════════
+# 🆕 CAMPAGNE COUNTDOWN 30 JOURS — Visuels + captions social media
+# ════════════════════════════════════════════════════════════════════
+# Fichiers générés par /app/backend/build_countdown_campaign.py :
+#   /app/backend/public_downloads/countdown/day_XX.png   (31 visuels)
+#   /app/backend/public_downloads/countdown/captions.json
+#   /app/backend/public_downloads/countdown_v1.zip
+# ────────────────────────────────────────────────────────────────────
+from datetime import date as _date_type  # noqa: E402
+from fastapi.responses import FileResponse  # noqa: E402
+import json as _json  # noqa: E402
+import os  # noqa: E402
+
+_COUNTDOWN_DIR = "/app/backend/public_downloads/countdown"
+_COUNTDOWN_ZIP = "/app/backend/public_downloads/countdown_v1.zip"
+_COUNTDOWN_CAPTIONS = f"{_COUNTDOWN_DIR}/captions.json"
+
+
+def _load_countdown() -> dict:
+    """Charge le fichier captions.json généré par le script Python.
+    Lève 503 s'il n'a pas encore été généré.
+    """
+    if not os.path.isfile(_COUNTDOWN_CAPTIONS):
+        raise HTTPException(
+            503,
+            "Campagne countdown non générée. Lancez "
+            "`python /app/backend/build_countdown_campaign.py` puis rechargez.",
+        )
+    with open(_COUNTDOWN_CAPTIONS, encoding="utf-8") as f:
+        return _json.load(f)
+
+
+@router.get("/campaign/countdown/list")
+async def countdown_list(user=Depends(require_platform_owner)):
+    """Liste les 31 jours de la campagne avec captions + statut (past / today / future).
+
+    Retourne également `today_day` = numéro (0..30) du J-XX à publier aujourd'hui
+    (ou `null` si on est hors fenêtre : avant J-30 ou après le Jour J).
+    """
+    data = _load_countdown()
+    j_zero = _date_type.fromisoformat(data["j_zero_date"])
+    today = datetime.now(_BRUSSELS_TZ).date()
+    delta = (j_zero - today).days  # positif si aujourd'hui < J0
+
+    today_day = delta if 0 <= delta <= 30 else None
+
+    days = []
+    for d in data["days"]:
+        pub = _date_type.fromisoformat(d["publish_date"])
+        if pub < today:
+            status = "past"
+        elif pub == today:
+            status = "today"
+        else:
+            status = "future"
+        days.append({
+            **d,
+            "status": status,
+            "days_until_publish": (pub - today).days,
+        })
+
+    return {
+        "j_zero_date": data["j_zero_date"],
+        "today": today.isoformat(),
+        "today_day": today_day,
+        "campaign_active": today_day is not None,
+        "days": days,
+    }
+
+
+@router.get("/campaign/countdown/visual/{n}")
+async def countdown_visual(n: int):
+    """Sert le PNG 1080×1080 du jour J-{n}. Endpoint PUBLIC (utilisé
+    directement depuis les balises <Image> Expo — pas de header auth possible)."""
+    if not (0 <= n <= 30):
+        raise HTTPException(404, "Numéro invalide (0..30)")
+    path = f"{_COUNTDOWN_DIR}/day_{n:02d}.png"
+    if not os.path.isfile(path):
+        raise HTTPException(404, "Visuel introuvable")
+    return FileResponse(path, media_type="image/png", filename=f"jetoncafe_J-{n:02d}.png")
+
+
+@router.get("/campaign/countdown/zip")
+async def countdown_zip(user=Depends(require_platform_owner)):
+    """Télécharge le ZIP complet (31 PNG + captions.json)."""
+    if not os.path.isfile(_COUNTDOWN_ZIP):
+        raise HTTPException(503, "ZIP non généré (lancez build_countdown_campaign.py)")
+    return FileResponse(
+        _COUNTDOWN_ZIP,
+        media_type="application/zip",
+        filename="jetoncafe-countdown-v1.zip",
+    )
+
+
 # ────────────────────────────────────────────────────────────────────
 # Route PUBLIQUE — Pas de require_admin. Accessible via lien JWT signé.
 # ────────────────────────────────────────────────────────────────────

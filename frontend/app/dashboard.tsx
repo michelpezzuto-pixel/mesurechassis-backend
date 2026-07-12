@@ -552,6 +552,18 @@ export default function Dashboard() {
             <Text style={styles.actionBtnText} numberOfLines={1}>LinkedIn</Text>
           </TouchableOpacity>
         )}
+        {/* ☕ Campagne Jeton Café 30 jours (countdown J-30 → Jour J, propriétaire) */}
+        {isPlatformOwner && (
+          <TouchableOpacity
+            testID="admin-countdown-button"
+            onPress={() => router.push("/admin/countdown" as never)}
+            style={styles.actionBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="hourglass-outline" size={18} color={colors.primary} />
+            <Text style={styles.actionBtnText} numberOfLines={1}>Countdown</Text>
+          </TouchableOpacity>
+        )}
         {/* ☕ Priorité 4 — Pilotage stations Jeton Café (propriétaire uniquement) */}
         {isPlatformOwner && (
           <TouchableOpacity
