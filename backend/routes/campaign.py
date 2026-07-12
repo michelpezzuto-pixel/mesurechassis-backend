@@ -530,7 +530,7 @@ async def auto_send_status(user=Depends(require_platform_owner)):
         target_today = target_today + timedelta(days=1)
     return {
         "enabled": True,
-        "schedule": "16h30 Europe/Brussels (Mar-Ven)",
+        "schedule": "16h30 Europe/Brussels (Lun-Ven)",
         "next_run_iso": target_today.isoformat(),
         "last_run_date": marker.get("last_run_date"),
         "last_result": marker.get("last_result"),
