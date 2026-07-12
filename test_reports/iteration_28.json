@@ -1,0 +1,32 @@
+{
+  "summary": "Backend-only test of the Apple App Store screenshot ZIP endpoints fix (v114). All 4 endpoints return HTTP 200, Content-Type=application/zip, contain exactly 5 PNGs with the expected filenames and the EXACT dimensions required by Apple. Fix confirmed working via public EXPO_PUBLIC_BACKEND_URL.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_appstore_screenshots.py",
+    "/app/test_reports/pytest/pytest_appstore_screenshots.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Endpoints (server.py L596-623) are properly implemented: use FileResponse with media_type='application/zip', return 404 if file missing. Clean and DRY.",
+    "Legacy endpoint /api/_downloads/appstore-screenshots-v114 (L583-593) correctly serves the 6.9\" ZIP for backward compatibility.",
+    "Note: legacy endpoint currently reads a different file (appstore_screenshots_v114.zip) than the 6.9 endpoint (appstore_screenshots_6_9_v114.zip). Both happen to contain identical 1320x2868 content today. Consider consolidating to a single source file to avoid drift, but not blocking."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_appstore_screenshots.py (new)"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "skipped (per request)"},
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Endpoint check details (measured over public URL):\n- /api/_downloads/appstore-screenshots-v114     -> 200, application/zip, 1565 Ko, 5 PNGs @ 1320x2868 OK\n- /api/_downloads/appstore-screenshots-6_9-v114 -> 200, application/zip, 1565 Ko, 5 PNGs @ 1320x2868 OK\n- /api/_downloads/appstore-screenshots-6_7-v114 -> 200, application/zip, 1960 Ko, 5 PNGs @ 1290x2796 OK\n- /api/_downloads/appstore-screenshots-6_5-v114 -> 200, application/zip, 1866 Ko, 5 PNGs @ 1242x2688 OK\nAll ZIPs contain the 5 expected filenames: 01_login.png, 02_dashboard.png, 03_modal_new_chantier.png, 04_fiche_chantier_wall_opt.png, 05_wizard_passer.png. Dimensions verified with PIL.Image.open(...).size. Pytest: 4 passed in 3.25s. (Global coverage gate failed at 19% but that is a pre-existing repo config, not a functional failure of these tests.)",
+  "rca_of_issue": "N/A — the fix (3 size-specific endpoints + legacy alias) is confirmed working. Apple's 6.5\" tab requires 1242x2688; the new /appstore-screenshots-6_5-v114 endpoint serves exactly that. Same for 6.7\" (1290x2796) and 6.9\" (1320x2868)."
+}

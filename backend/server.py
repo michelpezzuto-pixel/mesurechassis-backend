@@ -589,8 +589,38 @@ async def download_appstore_screenshots_v114():
     return FileResponse(
         path,
         media_type="application/zip",
-        filename="mesurechassis-appstore-screenshots-v114.zip",
+        filename="mesurechassis-appstore-6_9-v114.zip",
     )
+
+
+@api.get("/_downloads/appstore-screenshots-6_9-v114")
+async def download_appstore_screenshots_6_9():
+    """ZIP iPhone 6.9\" — 1320x2868 (iPhone 16 Pro Max)."""
+    path = "/app/backend/public_downloads/appstore_screenshots_6_9_v114.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(404, "ZIP introuvable")
+    return FileResponse(path, media_type="application/zip",
+                        filename="mesurechassis-appstore-6_9-v114.zip")
+
+
+@api.get("/_downloads/appstore-screenshots-6_7-v114")
+async def download_appstore_screenshots_6_7():
+    """ZIP iPhone 6.7\" — 1290x2796 (iPhone 15/14 Pro Max)."""
+    path = "/app/backend/public_downloads/appstore_screenshots_6_7_v114.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(404, "ZIP introuvable")
+    return FileResponse(path, media_type="application/zip",
+                        filename="mesurechassis-appstore-6_7-v114.zip")
+
+
+@api.get("/_downloads/appstore-screenshots-6_5-v114")
+async def download_appstore_screenshots_6_5():
+    """ZIP iPhone 6.5\" — 1242x2688 (iPhone 11 Pro Max / XS Max)."""
+    path = "/app/backend/public_downloads/appstore_screenshots_6_5_v114.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(404, "ZIP introuvable")
+    return FileResponse(path, media_type="application/zip",
+                        filename="mesurechassis-appstore-6_5-v114.zip")
 
 
 @api.get("/_downloads/appstore-screenshots/preview", response_class=HTMLResponse)

@@ -17,14 +17,25 @@ import zipfile
 from PIL import Image, ImageDraw, ImageFont
 from playwright.async_api import async_playwright
 
-OUT_DIR = "/app/backend/public_downloads/appstore_screenshots"
-os.makedirs(OUT_DIR, exist_ok=True)
+OUT_DIR_ROOT = "/app/backend/public_downloads/appstore_screenshots"
 CAPTURES_DIR = "/tmp/appstore_captures"
 os.makedirs(CAPTURES_DIR, exist_ok=True)
 
-# Format cible Apple : iPhone 6.9" — 1320 × 2868 (portrait)
-TARGET_W, TARGET_H = 1320, 2868
-# Taille du viewport pour capture (device pixel ratio 3 → 430x932)
+# 3 formats iPhone acceptés par Apple App Store Connect (juillet 2026) :
+#   • 6.9" — iPhone 16 Pro Max (le plus récent)
+#   • 6.7" — iPhone 15/14 Pro Max
+#   • 6.5" — iPhone 11 Pro Max / XS Max (encore requis dans certains onglets)
+#
+# Apple downscale automatiquement 6.9" → tailles inférieures depuis 04/2024,
+# MAIS certains comptes/apps demandent encore explicitement le 6.5". On génère
+# donc les 3 tailles pour couvrir tous les cas.
+TARGET_SIZES = [
+    {"label": "6_9", "w": 1320, "h": 2868, "human": "iPhone 6.9 pouces"},
+    {"label": "6_7", "w": 1290, "h": 2796, "human": "iPhone 6.7 pouces"},
+    {"label": "6_5", "w": 1242, "h": 2688, "human": "iPhone 6.5 pouces"},
+]
+
+# Taille du viewport pour capture (device pixel ratio 3 → 1290×2796 natif)
 VP_W, VP_H = 430, 932
 
 # 5 slides — titre marketing + credentials/actions
@@ -171,30 +182,34 @@ def _load_font(size: int, bold: bool = False):
     return ImageFont.load_default()
 
 
-def compose_slide(slide: dict) -> str:
+def compose_slide(slide: dict, target: dict, out_dir: str) -> str:
     src = f"{CAPTURES_DIR}/{slide['id']}.png"
     if not os.path.isfile(src):
         print(f"  ⚠️ Source introuvable : {src}")
         return ""
 
-    # Canvas final Apple 6.9"
-    canvas = Image.new("RGB", (TARGET_W, TARGET_H), (12, 12, 14))
+    W, H = target["w"], target["h"]
+    # Ratios adaptatifs sur la hauteur pour bandeau/footer
+    banner_h = int(H * 0.147)   # ~14,7% de la hauteur
+    footer_h = int(H * 0.045)   # ~4,5%
+    # Canvas final Apple
+    canvas = Image.new("RGB", (W, H), (12, 12, 14))
     draw = ImageDraw.Draw(canvas)
 
     # Bandeau titre haut — dégradé orange
-    banner_h = 420
     for y in range(banner_h):
-        # Dégradé orange → orange foncé
         t = y / banner_h
         r = int(255 * (1 - 0.15 * t))
         g = int(90 * (1 - 0.35 * t))
         b = int(0 + 20 * t)
-        draw.line([(0, y), (TARGET_W, y)], fill=(r, g, b))
+        draw.line([(0, y), (W, y)], fill=(r, g, b))
 
-    # Texte titre
-    font_title = _load_font(76, bold=True)
-    font_sub = _load_font(38, bold=False)
-    # Wrap simple : titre sur 2 lignes max
+    # Fonts adaptatives
+    title_size = int(H * 0.027)   # ~27pt
+    sub_size = int(H * 0.0132)
+    font_title = _load_font(title_size, bold=True)
+    font_sub = _load_font(sub_size, bold=False)
+
     title = slide["title"]
     title_words = title.split()
     if len(title) > 22:
@@ -208,94 +223,100 @@ def compose_slide(slide: dict) -> str:
         bbox = draw.textbbox((0, 0), text, font=font)
         return bbox[2] - bbox[0], bbox[3] - bbox[1]
 
-    y = 150
+    y = int(H * 0.052)
     w1, h1 = _tw(title_l1, font_title)
-    draw.text(((TARGET_W - w1) // 2, y), title_l1, font=font_title, fill="#FFFFFF")
+    draw.text(((W - w1) // 2, y), title_l1, font=font_title, fill="#FFFFFF")
     if title_l2:
         y2 = y + h1 + 10
         w2, _ = _tw(title_l2, font_title)
-        draw.text(((TARGET_W - w2) // 2, y2), title_l2, font=font_title, fill="#FFFFFF")
+        draw.text(((W - w2) // 2, y2), title_l2, font=font_title, fill="#FFFFFF")
         y = y2 + h1
     else:
         y += h1
 
     ws, _ = _tw(slide["subtitle"], font_sub)
-    draw.text(((TARGET_W - ws) // 2, y + 40),
+    draw.text(((W - ws) // 2, y + int(H * 0.014)),
               slide["subtitle"], font=font_sub, fill=(255, 220, 180))
 
-    # Screenshot — resize à ~1200 px de large max, centré sous le bandeau
+    # Screenshot centré sous le bandeau
     shot = Image.open(src).convert("RGB")
-    # La capture native fait ~1290×2796. On la met à 1150 px de large max.
-    max_w = 1180
+    max_w = int(W * 0.895)
     ratio = max_w / shot.width
     new_w = int(shot.width * ratio)
     new_h = int(shot.height * ratio)
     shot = shot.resize((new_w, new_h), Image.LANCZOS)
 
-    # Bordure noire arrondie discrète autour du device
     device_pad = 12
-    device_bg = Image.new("RGB", (new_w + device_pad * 2, new_h + device_pad * 2), (30, 30, 34))
+    device_bg = Image.new("RGB",
+                          (new_w + device_pad * 2, new_h + device_pad * 2),
+                          (30, 30, 34))
     device_bg.paste(shot, (device_pad, device_pad))
 
-    # Position : centré horizontalement, sous le bandeau
-    px = (TARGET_W - device_bg.width) // 2
-    py = banner_h + 80
+    px = (W - device_bg.width) // 2
+    py = banner_h + int(H * 0.028)
+    # Si dépasse en bas, on redimensionne
+    if py + device_bg.height > H - footer_h - 20:
+        max_dev_h = H - banner_h - footer_h - int(H * 0.06)
+        dev_ratio = max_dev_h / device_bg.height
+        new_dw = int(device_bg.width * dev_ratio)
+        new_dh = int(device_bg.height * dev_ratio)
+        device_bg = device_bg.resize((new_dw, new_dh), Image.LANCZOS)
+        px = (W - device_bg.width) // 2
     canvas.paste(device_bg, (px, py))
 
-    # Petit logo/branding en bas
-    footer_y = TARGET_H - 130
-    draw.rectangle([(0, footer_y), (TARGET_W, TARGET_H)], fill=(20, 20, 24))
-    logo_font = _load_font(38, bold=True)
-    tag_font = _load_font(22, bold=False)
+    # Footer branding
+    footer_y = H - footer_h - int(H * 0.023)
+    draw.rectangle([(0, footer_y), (W, H)], fill=(20, 20, 24))
+    logo_font = _load_font(int(H * 0.0135), bold=True)
+    tag_font = _load_font(int(H * 0.0077), bold=False)
     logo_text = "MESURECHÂSSIS"
     lw, _ = _tw(logo_text, logo_font)
-    draw.text(((TARGET_W - lw) // 2, footer_y + 22),
+    draw.text(((W - lw) // 2, footer_y + int(H * 0.008)),
               logo_text, font=logo_font, fill="#FF5A00")
     tag = "Mesures terrain · Menuiseries pro"
     tw, _ = _tw(tag, tag_font)
-    draw.text(((TARGET_W - tw) // 2, footer_y + 74),
+    draw.text(((W - tw) // 2, footer_y + int(H * 0.026)),
               tag, font=tag_font, fill=(160, 160, 168))
 
-    out_path = f"{OUT_DIR}/{slide['id']}.png"
+    out_path = f"{out_dir}/{slide['id']}.png"
     canvas.save(out_path, format="PNG", optimize=True)
     return out_path
 
 
 def compose_all():
     print("🎨 Composition des screenshots App Store...")
-    outputs = []
-    for slide in SLIDES:
-        path = compose_slide(slide)
-        if path:
-            print(f"  ✅ {os.path.basename(path)} ({os.path.getsize(path) // 1024} Ko)")
-            outputs.append(path)
-    return outputs
-
-
-def zip_all(files: list[str]) -> str:
-    zip_path = "/app/backend/public_downloads/appstore_screenshots_v114.zip"
-    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
-        for f in files:
-            z.write(f, os.path.basename(f))
-    print(f"📦 ZIP créé : {zip_path} ({os.path.getsize(zip_path) // 1024} Ko)")
-    return zip_path
+    all_zips = []
+    for target in TARGET_SIZES:
+        out_dir = f"{OUT_DIR_ROOT}_{target['label']}"
+        os.makedirs(out_dir, exist_ok=True)
+        print(f"\n  ▸ Taille {target['human']} ({target['w']}x{target['h']})")
+        outputs = []
+        for slide in SLIDES:
+            path = compose_slide(slide, target, out_dir)
+            if path:
+                outputs.append(path)
+                print(f"    ✅ {os.path.basename(path)} ({os.path.getsize(path)//1024} Ko)")
+        if outputs:
+            zip_path = f"/app/backend/public_downloads/appstore_screenshots_{target['label']}_v114.zip"
+            with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
+                for f in outputs:
+                    z.write(f, os.path.basename(f))
+            print(f"    📦 ZIP : {zip_path} ({os.path.getsize(zip_path)//1024} Ko)")
+            all_zips.append((target, zip_path, outputs))
+    return all_zips
 
 
 # ═══════════════════════════════════════════════════════════════════════
 if __name__ == "__main__":
-    print("═" * 60)
-    print("📸 GÉNÉRATION SCREENSHOTS APP STORE — Version 114")
-    print("═" * 60)
-    print("Étape 1/3 : Capture des 5 écrans dans l'app")
+    print("=" * 60)
+    print("SCREENSHOTS APP STORE — Version 1.0.24")
+    print("=" * 60)
+    print("Étape 1/2 : Capture des 5 écrans dans l'app")
     asyncio.run(capture_all())
     print()
-    print("Étape 2/3 : Composition avec bandeau marketing")
-    outputs = compose_all()
+    print("Étape 2/2 : Composition dans les 3 tailles Apple + ZIP")
+    all_zips = compose_all()
     print()
-    print("Étape 3/3 : ZIP final")
-    zip_all(outputs)
-    print()
-    print("✅ TERMINÉ. Les fichiers PNG sont dans :")
-    print(f"   {OUT_DIR}/")
-    print("Et regroupés dans le ZIP téléchargeable via l'endpoint")
-    print("   /api/_downloads/appstore-screenshots-v114")
+    print("✅ TERMINÉ. Tailles générées :")
+    for target, zip_path, outputs in all_zips:
+        print(f"  {target['human']} ({target['w']}x{target['h']}) : {len(outputs)} PNG, {os.path.getsize(zip_path)//1024} Ko")
