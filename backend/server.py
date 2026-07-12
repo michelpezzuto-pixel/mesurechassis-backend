@@ -474,6 +474,28 @@ async def download_site_v2_4tiers():
     )
 
 
+@api.get("/_downloads/site-index-html")
+async def download_site_index_html():
+    """🆕 Fichier index.html modifié cette session (juil. 2026).
+
+    Seul fichier ayant changé : la section tarifs est passée de 2 plans
+    (Artisan Solo 24,99 € / Société 54,99 €) à 5 cartes (Freemium 0 € ·
+    Standard 19,99 € · Team 49,99 € populaire · Pro 99,99 € · Enterprise
+    MAX Bientôt), alignée sur `backend/seats.py`.
+
+    À uploader tel quel via FTP à la racine de mesurechassis.com pour
+    écraser l'ancien index.html — les autres pages n'ont pas changé.
+    """
+    path = "/app/site_mesurechassis_final/index.html"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="index.html introuvable")
+    return FileResponse(
+        path,
+        media_type="text/html; charset=utf-8",
+        filename="index.html",
+    )
+
+
 @api.get("/_downloads/panneau-cafe-a3")
 async def download_panneau_cafe_a3():
     """Panneau A3 (chevalet de comptoir) — Campagne Café en station-service.
