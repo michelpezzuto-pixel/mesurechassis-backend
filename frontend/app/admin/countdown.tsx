@@ -48,7 +48,7 @@ type ListResponse = {
   days: Day[];
 };
 
-type Platform = "linkedin" | "facebook" | "instagram";
+type Platform = "linkedin" | "facebook";
 
 const PLATFORM_META: Record<
   Platform,
@@ -56,7 +56,6 @@ const PLATFORM_META: Record<
 > = {
   linkedin: { label: "COPIER POUR LINKEDIN", icon: "logo-linkedin", color: "#0A66C2", short: "LinkedIn" },
   facebook: { label: "COPIER POUR FACEBOOK", icon: "logo-facebook", color: "#1877F2", short: "Facebook" },
-  instagram: { label: "COPIER POUR INSTAGRAM", icon: "logo-instagram", color: "#E1306C", short: "Instagram" },
 };
 
 /** Format court FR : « lun. 13 juil. » */
@@ -261,7 +260,7 @@ export default function AdminCountdown() {
               </Text>
 
               {/* Boutons plateformes */}
-              {(["linkedin", "facebook", "instagram"] as Platform[]).map((p) => {
+              {(["linkedin", "facebook"] as Platform[]).map((p) => {
                 const meta = PLATFORM_META[p];
                 const isCopied = copied === p;
                 return (

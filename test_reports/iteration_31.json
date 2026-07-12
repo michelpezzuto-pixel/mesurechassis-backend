@@ -1,0 +1,42 @@
+{
+  "summary": "Tested the new auto-send scheduler (16h30 Europe/Brussels weekdays) and verified DB state after Excel imports. All 15 tests pass. /api/campaign/auto-send/status works correctly (401 without auth, 200 with owner, returns enabled=true, schedule='16h30 Europe/Brussels (Mar-Ven)', valid next_run_iso pointing to next weekday 16h30 Brussels tz, and null values for last_* fields before first run). DB state matches spec exactly: 296 total prospects (260 sent + 36 pending + others), 35 new prospects tagged source='excel_import_2026_07' country='be' status='pending'. Stats endpoint returns daily_limit=40 (matches new DAILY_LIMIT constant). Regression on countdown endpoints (list/visual/zip) still passes. send-batch not triggered (as requested — Resend cost). Actual response sample: {enabled:true, schedule:'16h30 Europe/Brussels (Mar-Ven)', next_run_iso:'2026-07-13T16:30:00+02:00', last_run_date:null, last_result:null, last_scheduled:null, last_started_at:null}. Today is Sunday 2026-07-12 → next run is Monday 2026-07-13 16h30, offset +02:00 (summer BST) — correct.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "/api/campaign/auto-send/status",
+        "issue": "Schedule label says 'Mar-Ven' (Tuesday-Friday in French) but the actual `auto_send_daily_loop` code allows any weekday (Mon-Fri) — `if now_be.weekday() >= 5: skip`. So Monday is also a valid execution day. Either the label should read 'Lun-Ven' or the code should skip Monday too. The review request also mixes both ('Mar-Ven' in schedule vs 'Mon-Fri' in description). Reference: /app/backend/routes/campaign.py:435 (weekday check) vs line 533 (schedule string)."
+      },
+      {
+        "endpoint": "GET /api/campaign/auto-send/status",
+        "issue": "next_run_iso computation may return a stale value at exactly 16:30:00 boundary because it uses `now_be >= target_today` then adds 1 day, but the loop only checks target every 5 min — for ~5 min after 16h30 status will show 'tomorrow' even though today's run may still be pending. Not blocking; cosmetic."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iter31_auto_send.py",
+    "/app/test_reports/pytest/iter31_auto_send.xml"
+  ],
+  "action_items": [
+    "OPTIONAL: Fix label inconsistency — either change schedule string to 'Lun-Ven (Mon-Fri)' OR add `if now_be.weekday() == 0: skip` if Monday should truly be excluded. Current test test_campaign.py::test_limite_quotidienne_anti_spam still asserts DAILY_LIMIT==15 — this is now STALE (limit is 40). Update /app/backend/tests/test_campaign.py accordingly.",
+    "Consider adding a `next_run_iso` >= now check inside the endpoint to always project to the next actual pending slot (edge case only)."
+  ],
+  "critical_code_review_comments": [
+    "routes/campaign.py is 1207 lines — exceeds the 700-line guideline. Consider splitting: campaign_send.py (send/batch/auto-send), campaign_rgpd.py (unsubscribe/JWT), campaign_countdown.py, campaign_seed.py.",
+    "_collect_batch_items() is a straight code-duplicate of the send_batch() body (lines 363-416 vs 838-884). Since the helper now exists, send_batch() should be refactored to call it (DRY). Currently the manual button and auto-send have two copies of the same priorization logic — future bug risk if only one is updated.",
+    "auto_send_daily_loop sleeps 6h after firing (line 509). If the fire-and-forget _send_batch_task crashes silently, the marker still shows last_result='started' forever. Would benefit from a try/finally that updates last_result to 'ok'/'failed' after task completion."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100%", "frontend": "n/a"},
+  "seed_data_creation": "None — used existing DB state (296 prospects, 35 tagged excel_import_2026_07).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Auto-send scheduler wired successfully — start-up task confirmed via server.py:69. Endpoint /api/campaign/auto-send/status returns correct payload shape. Marker document db.campaign_meta{key:'auto_send'} was empty at test time (never fired yet). daily_limit is now 40 (not 15 as old test_campaign.py still asserts). test_campaign.py has stale assertions (DAILY_LIMIT==15, tester URL, RELANCE_DELAY_DAYS==5) — those templates were rewritten for App Store launch; that test file needs updating too but was NOT part of this review scope.",
+  "rca_of_issue": "N/A — no bugs found; feature works as designed. Only minor label/cosmetic notes above."
+}

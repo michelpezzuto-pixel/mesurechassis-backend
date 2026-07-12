@@ -65,6 +65,8 @@ async def lifespan(_app: FastAPI):
     # 🆕 Récap hebdo campagne (lundi ≈ 9h belge) — tâche de fond annulée au shutdown
     import asyncio as _asyncio
     _recap_task = _asyncio.create_task(campaign_routes.weekly_recap_loop())
+    # 🆕 Auto-send quotidien 16h30 belge (Mar-Ven, lot de 40)
+    _auto_send_task = _asyncio.create_task(campaign_routes.auto_send_daily_loop())
     # 🆕 Build 9 — Index unique sur referral_code (anti-collision concurrente).
     # `sparse=True` permet aux documents sans champ d'exister sans violer
     # l'unicité (migration progressive depuis les comptes pré-existants).

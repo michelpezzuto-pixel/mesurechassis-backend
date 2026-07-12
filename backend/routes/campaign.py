@@ -350,6 +350,195 @@ async def weekly_recap_loop() -> None:
         await asyncio.sleep(3600)
 
 
+# ════════════════════════════════════════════════════════════════════
+# 🆕 AUTO-SEND QUOTIDIEN — 16h30 Europe/Brussels, jours ouvrés uniquement
+# ════════════════════════════════════════════════════════════════════
+# Automatise complètement l'envoi : plus besoin de cliquer chaque jour
+# sur « Envoyer le lot du jour ». Idempotent (1 envoi max/jour, tracké
+# via db.campaign_meta.auto_send).
+AUTO_SEND_HOUR_BRUSSELS = 16
+AUTO_SEND_MINUTE_BRUSSELS = 30
+
+
+async def _collect_batch_items(remaining: int) -> list[dict]:
+    """Réplique la logique de priorisation de `send_batch` (extract réutilisable).
+
+    Ordre : relances J+7 → J+3 → nouveaux. Marque "sending" les nouveaux
+    et pose le timestamp de relance sur les relances (idempotent).
+    """
+    now_iso = datetime.now(timezone.utc).isoformat()
+    items: list[dict] = []
+
+    # 1) Relances J+7
+    second_relances = (await _second_relances_dues())[:remaining]
+    if second_relances:
+        await db.prospects.update_many(
+            {"id": {"$in": [d["id"] for d in second_relances]}},
+            {"$set": {"relance_2_sent_at": now_iso}},
+        )
+        items += [{"id": d["id"], "kind": "relance2"} for d in second_relances]
+
+    # 2) Relances J+3
+    slots = remaining - len(items)
+    if slots > 0:
+        relances = (await _relances_dues())[:slots]
+        if relances:
+            await db.prospects.update_many(
+                {"id": {"$in": [d["id"] for d in relances]}},
+                {"$set": {"relance_sent_at": now_iso}},
+            )
+            items += [{"id": d["id"], "kind": "relance"} for d in relances]
+
+    # 3) Nouveaux prospects (excluant désinscrits)
+    slots = remaining - len(items)
+    if slots > 0:
+        batch = (
+            await db.prospects.find(
+                {
+                    "status": "pending",
+                    "$or": [
+                        {"unsubscribed": {"$exists": False}},
+                        {"unsubscribed": False},
+                    ],
+                },
+                {"_id": 0, "id": 1},
+            )
+            .limit(slots)
+            .to_list(slots)
+        )
+        ids = [b["id"] for b in batch]
+        if ids:
+            await db.prospects.update_many(
+                {"id": {"$in": ids}}, {"$set": {"status": "sending"}}
+            )
+        items += [{"id": i, "kind": "new"} for i in ids]
+
+    return items
+
+
+async def auto_send_daily_loop() -> None:
+    """Boucle background : envoie 40 emails/jour à 16h30 heure belge (Mar-Ven).
+
+    Idempotent : consigne la date dans `db.campaign_meta.auto_send.last_run_date`
+    (format YYYY-MM-DD Europe/Brussels). Ne redéclenche pas si déjà lancé
+    aujourd'hui, même après redémarrage du backend.
+
+    Le samedi/dimanche l'envoi est bypassé (comportement identique au
+    bouton manuel `send_batch`).
+    """
+    while True:
+        try:
+            now_be = datetime.now(_BRUSSELS_TZ)
+            today_be = now_be.date().isoformat()
+
+            # Skip week-end
+            if now_be.weekday() >= 5:
+                await asyncio.sleep(1800)  # check à nouveau dans 30 min
+                continue
+
+            # Vérifie si l'heure de déclenchement est atteinte
+            target_reached = (
+                now_be.hour > AUTO_SEND_HOUR_BRUSSELS
+                or (
+                    now_be.hour == AUTO_SEND_HOUR_BRUSSELS
+                    and now_be.minute >= AUTO_SEND_MINUTE_BRUSSELS
+                )
+            )
+            if not target_reached:
+                # Attendre jusqu'au prochain quart d'heure
+                await asyncio.sleep(300)
+                continue
+
+            marker = await db.campaign_meta.find_one({"key": "auto_send"})
+            if marker and marker.get("last_run_date") == today_be:
+                # Déjà lancé aujourd'hui — dormir 1h et recheck
+                await asyncio.sleep(3600)
+                continue
+
+            # ── Trigger the batch ─────────────────────────────────────
+            remaining = DAILY_LIMIT - await _quota_used_today()
+            if remaining <= 0:
+                logger.info(
+                    "⏭️  Auto-send %s : quota déjà atteint (%s), skip.",
+                    today_be, DAILY_LIMIT,
+                )
+                await db.campaign_meta.update_one(
+                    {"key": "auto_send"},
+                    {"$set": {"last_run_date": today_be, "last_result": "quota_full"}},
+                    upsert=True,
+                )
+                await asyncio.sleep(3600)
+                continue
+
+            items = await _collect_batch_items(remaining)
+            if not items:
+                logger.info("⏭️  Auto-send %s : aucun prospect à contacter.", today_be)
+                await db.campaign_meta.update_one(
+                    {"key": "auto_send"},
+                    {"$set": {"last_run_date": today_be, "last_result": "empty"}},
+                    upsert=True,
+                )
+                await asyncio.sleep(3600)
+                continue
+
+            n_new = sum(1 for x in items if x["kind"] == "new")
+            n_rel = sum(1 for x in items if x["kind"] == "relance")
+            n_rel2 = sum(1 for x in items if x["kind"] == "relance2")
+            logger.info(
+                "🚀 Auto-send %s 16h30 belge : %s emails "
+                "(nouveaux=%s, J+3=%s, J+7=%s)",
+                today_be, len(items), n_new, n_rel, n_rel2,
+            )
+
+            # Marquer AVANT le lancement (au cas où le backend redémarre en cours)
+            await db.campaign_meta.update_one(
+                {"key": "auto_send"},
+                {"$set": {
+                    "last_run_date": today_be,
+                    "last_result": "started",
+                    "last_scheduled": len(items),
+                    "last_started_at": now_be.isoformat(),
+                }},
+                upsert=True,
+            )
+
+            # Send : task fire-and-forget pour ne pas bloquer la boucle
+            asyncio.create_task(_send_batch_task(items))
+
+            # Dormir 6h avant de recheck (assez pour finir l'envoi)
+            await asyncio.sleep(6 * 3600)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("Auto-send loop en erreur (retry 30min) : %s", exc)
+            await asyncio.sleep(1800)
+
+
+@router.get("/campaign/auto-send/status")
+async def auto_send_status(user=Depends(require_platform_owner)):
+    """État du scheduler auto-send : dernière exécution + prochaine."""
+    marker = await db.campaign_meta.find_one({"key": "auto_send"}) or {}
+    now_be = datetime.now(_BRUSSELS_TZ)
+    # Prochaine exécution : aujourd'hui 16h30 si pas encore passé, sinon demain
+    target_today = now_be.replace(
+        hour=AUTO_SEND_HOUR_BRUSSELS,
+        minute=AUTO_SEND_MINUTE_BRUSSELS,
+        second=0, microsecond=0,
+    )
+    if now_be >= target_today:
+        target_today = target_today + timedelta(days=1)
+    # Skip week-end
+    while target_today.weekday() >= 5:
+        target_today = target_today + timedelta(days=1)
+    return {
+        "enabled": True,
+        "schedule": "16h30 Europe/Brussels (Mar-Ven)",
+        "next_run_iso": target_today.isoformat(),
+        "last_run_date": marker.get("last_run_date"),
+        "last_result": marker.get("last_result"),
+        "last_scheduled": marker.get("last_scheduled"),
+        "last_started_at": marker.get("last_started_at"),
+    }
+
+
 @router.post("/campaign/recap-now")
 async def recap_now(user=Depends(require_platform_owner)):
     """Envoi immédiat du récap (test / à la demande depuis l'app)."""
