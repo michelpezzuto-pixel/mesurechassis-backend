@@ -580,6 +580,78 @@ async def preview_guide_artisan_pro():
         return HTMLResponse(f.read())
 
 
+@api.get("/_downloads/appstore-screenshots-v114")
+async def download_appstore_screenshots_v114():
+    """ZIP des 5 screenshots App Store format iPhone 6.9" (1320x2868)."""
+    path = "/app/backend/public_downloads/appstore_screenshots_v114.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(404, "ZIP introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="mesurechassis-appstore-screenshots-v114.zip",
+    )
+
+
+@api.get("/_downloads/appstore-screenshots/preview", response_class=HTMLResponse)
+async def preview_appstore_screenshots():
+    """Page d'aperçu des 5 screenshots App Store."""
+    import base64
+    slides = [
+        (1, "01_login.png", "1. Login FR/NL/EN"),
+        (2, "02_dashboard.png", "2. Dashboard"),
+        (3, "03_modal_new_chantier.png", "3. Nouveau chantier (tel/email)"),
+        (4, "04_fiche_chantier_wall_opt.png", "4. Fiche chantier + Wall OPT"),
+        (5, "05_wizard_passer.png", "5. Wizard + bouton PASSER"),
+    ]
+    imgs_html = ""
+    for num, fname, caption in slides:
+        p = f"/app/backend/public_downloads/appstore_screenshots/{fname}"
+        if os.path.isfile(p):
+            with open(p, "rb") as f:
+                b64 = base64.b64encode(f.read()).decode()
+            size_kb = os.path.getsize(p) // 1024
+            imgs_html += (
+                f'<figure style="margin:0;text-align:center">'
+                f'<img src="data:image/png;base64,{b64}" '
+                f'style="width:280px;height:auto;border-radius:20px;box-shadow:0 8px 20px rgba(0,0,0,.3)">'
+                f'<figcaption style="color:#fff;font-family:-apple-system,sans-serif;'
+                f'padding:12px 0;font-size:14px;font-weight:600">{caption}<br>'
+                f'<small style="color:#a1a1aa;font-size:11px">1320x2868 px · {size_kb} Ko</small>'
+                f'</figcaption></figure>'
+            )
+    html = f"""<!DOCTYPE html><html><head><meta charset="utf-8">
+<title>Screenshots App Store — v114</title>
+<style>body{{margin:0;padding:40px 20px;background:#0C0C0E;font-family:-apple-system,sans-serif}}
+.grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:32px;max-width:1600px;margin:0 auto}}
+h1{{color:#fff;text-align:center;margin:0 0 24px;font-size:26px}}
+.dl{{display:block;background:#FF5A00;color:#fff;text-align:center;padding:14px 24px;border-radius:12px;text-decoration:none;font-weight:700;max-width:400px;margin:0 auto 40px}}
+</style></head><body>
+<h1>📱 Screenshots App Store — MesureChâssis v114</h1>
+<a href="/api/_downloads/appstore-screenshots-v114" class="dl">📦 Télécharger le ZIP (5 PNG · 1320×2868)</a>
+<div class="grid">{imgs_html}</div>
+</body></html>"""
+    return HTMLResponse(html)
+
+
+@api.get("/_downloads/appstore-screenshot/{num}")
+async def download_appstore_screenshot(num: int):
+    """PNG individuel App Store (1 a 5)."""
+    mapping = {
+        1: "01_login.png",
+        2: "02_dashboard.png",
+        3: "03_modal_new_chantier.png",
+        4: "04_fiche_chantier_wall_opt.png",
+        5: "05_wizard_passer.png",
+    }
+    if num not in mapping:
+        raise HTTPException(404, "Numero invalide (1-5)")
+    path = f"/app/backend/public_downloads/appstore_screenshots/{mapping[num]}"
+    if not os.path.isfile(path):
+        raise HTTPException(404, "Fichier introuvable")
+    return FileResponse(path, media_type="image/png", filename=mapping[num])
+
+
 @api.get("/_downloads/email-launch/preview", response_class=HTMLResponse)
 async def preview_email_launch():
     """Aperçu du template email 'Lancement App Store'.
