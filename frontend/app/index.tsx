@@ -23,6 +23,10 @@ import { setLanguage, SUPPORTED_LANGUAGES, SupportedLanguage } from "@/src/i18n"
 import { api } from "@/src/services/api";
 import { colors } from "@/src/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  consumeInitialSessionId,
+  openGoogleAuth,
+} from "@/src/services/googleAuth";
 
 const FLAGS: Record<SupportedLanguage, string> = {
   fr: "🇫🇷",
@@ -37,13 +41,15 @@ const ROLES: { value: Role; label: string; icon: keyof typeof Ionicons.glyphMap;
 ];
 
 export default function SignIn() {
-  const { user, loading, signIn, signUp } = useAuth();
+  const { user, loading, signIn, signUp, signInWithGoogle } = useAuth();
   const router = useRouter();
   const { t, i18n } = useTranslation();
   const currentLang = (i18n.language?.split("-")[0] || "fr") as SupportedLanguage;
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  // 🔑 Google Sign-In state
+  const [googleLoading, setGoogleLoading] = useState(false);
   // Œil show/hide pour les mots de passe (login, register, reset)
   const [showPassword, setShowPassword] = useState(false);
   const [showResetPassword, setShowResetPassword] = useState(false);
@@ -226,6 +232,62 @@ export default function SignIn() {
   useEffect(() => {
     if (!loading && user) router.replace("/dashboard");
   }, [user, loading, router]);
+
+  // 🔑 Google Sign-In — traitement d'un session_id éventuellement présent
+  //    dans l'URL (cas web : retour du redirect Emergent) OU d'un deep-link
+  //    cold-start (mobile). Doit être fait AVANT toute autre action pour
+  //    éviter des race conditions.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const sid = await consumeInitialSessionId();
+        if (!sid || cancelled) return;
+        setGoogleLoading(true);
+        try {
+          await signInWithGoogle(sid, stationInfo?.id);
+          if (!cancelled) router.replace("/dashboard");
+        } catch (e: any) {
+          const msg =
+            e?.response?.data?.detail ||
+            "Impossible de finaliser la connexion Google. Réessayez.";
+          Alert.alert("Connexion Google", String(msg));
+        } finally {
+          if (!cancelled) setGoogleLoading(false);
+        }
+      } catch {
+        /* noop */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const onGoogleSignIn = async () => {
+    if (googleLoading) return;
+    setGoogleLoading(true);
+    try {
+      const sid = await openGoogleAuth();
+      // Sur mobile : sid contient déjà le session_id.
+      // Sur web : la page a été redirigée → on ne revient pas ici,
+      //   openGoogleAuth() a retourné null, et le useEffect ci-dessus
+      //   traitera le session_id au prochain mount.
+      if (sid) {
+        await signInWithGoogle(sid, stationInfo?.id);
+        router.replace("/dashboard");
+      }
+    } catch (e: any) {
+      const msg =
+        e?.response?.data?.detail ||
+        e?.message ||
+        "Impossible d'ouvrir la connexion Google. Réessayez.";
+      Alert.alert("Connexion Google", String(msg));
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
 
   const onSubmit = async () => {
     // 🛡️ Apple Review fix (Build 107) — Sanitize email & password.
@@ -963,6 +1025,37 @@ export default function SignIn() {
             )}
           </TouchableOpacity>
 
+          {/* 🔑 Séparateur "ou" + bouton Google Sign-In (Emergent-managed).
+              Disponible en login ET en register — plus rapide qu'un formulaire. */}
+          <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>OU</Text>
+            <View style={styles.dividerLine} />
+          </View>
+
+          <TouchableOpacity
+            testID="google-signin-button"
+            onPress={onGoogleSignIn}
+            disabled={googleLoading || submitting}
+            style={[styles.googleBtn, googleLoading && { opacity: 0.6 }]}
+            activeOpacity={0.85}
+          >
+            {googleLoading ? (
+              <ActivityIndicator color="#3F3F46" />
+            ) : (
+              <>
+                <View style={styles.googleIconWrap}>
+                  <Text style={styles.googleIconG}>G</Text>
+                </View>
+                <Text style={styles.googleBtnText}>
+                  {mode === "login"
+                    ? "Continuer avec Google"
+                    : "S'inscrire avec Google"}
+                </Text>
+              </>
+            )}
+          </TouchableOpacity>
+
           {mode === "login" && (
             <TouchableOpacity
               testID="forgot-password-link"
@@ -1315,6 +1408,62 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: "900",
     letterSpacing: 1.2,
+  },
+
+  // 🔑 Google Sign-In — séparateur + bouton style Google Material
+  divider: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 18,
+    marginBottom: 12,
+    gap: 12,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: colors.borderSubtle,
+  },
+  dividerText: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    fontWeight: "700",
+    letterSpacing: 1,
+  },
+  googleBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+    minHeight: 56,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: "#DADCE0",
+  },
+  googleIconWrap: {
+    width: 22,
+    height: 22,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  googleIconG: {
+    fontSize: 22,
+    fontWeight: "900",
+    fontFamily: Platform.select({
+      ios: "Arial-BoldMT",
+      android: "sans-serif-medium",
+      default: "Arial, sans-serif",
+    }),
+    color: "#4285F4",
+    // On simule le "G" multicolore de Google via un simple caractère bleu.
+    // Un vrai SVG multicolore ajouterait beaucoup de complexité pour peu.
+  },
+  googleBtnText: {
+    color: "#3C4043",
+    fontSize: 15,
+    fontWeight: "700",
+    letterSpacing: 0.2,
   },
 
   // ────── Modal Mot de passe oublié ──────

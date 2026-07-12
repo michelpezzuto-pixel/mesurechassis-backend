@@ -1,0 +1,47 @@
+{
+  "summary": "Tested new POST /api/auth/google/session (Emergent-managed Google Sign-In) error-handling paths + regression on login/me/auto-send-status/site-v2-4tiers download. 12/12 tests pass (exit 0). Error paths behave exactly as spec: (a) missing body or missing session_id key → 422 Pydantic; (b) empty string / whitespace-only session_id → 400 with detail 'session_id requis'; (c) random invalid session_id → 401 with detail containing 'invalide'/'expirée' (Emergent /auth/v1/env/oauth/session-data rejects unknown sids as expected); (d) extra fields (email, role, some_random_field) are silently ignored — NO privilege-escalation vector via body injection, and station_id Optional[str] accepted without affecting error path. Regression: artisan@mesurechassis.fr / artisan123 login → 200 + access_token + user.email correct; /auth/me → 200 with role=admin; /campaign/auto-send/status → 200 enabled=true schedule='16h30 Europe/Brussels (Lun-Ven)' (label FIXED since iter31 which reported 'Mar-Ven'); /_downloads/site-v2-4tiers → 200 application/zip, ~1.6 MB, first bytes b'PK' (valid ZIP). Coverage-fail message in output is unrelated (project-wide pytest.ini fail-under=80 triggered because only 1 file was executed — actual test results all green).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "POST /api/auth/google/session",
+        "issue": "Endpoint calls Emergent verification API without any timeout guardrail beyond the 15s httpx timeout — if Emergent is slow (>15s) users see a generic 502 'Service d'authentification indisponible'. Consider adding retry-once logic or a shorter user-facing message. Not blocking."
+      },
+      {
+        "endpoint": "POST /api/auth/google/session",
+        "issue": "GoogleSessionPayload uses default Pydantic config (extra='ignore'). This is correct for our threat model (extra fields e.g. role='admin' are dropped) but is implicit — an explicit `model_config = ConfigDict(extra='ignore')` (or 'forbid' if strict) would make the intent explicit for future readers. Reference: /app/backend/routes/google_auth.py:41-44."
+      },
+      {
+        "endpoint": "POST /api/auth/google/session",
+        "issue": "When creating a new user via Google signup, `email_verified_at` is set to current time (line 131) but `role='admin'` is hard-coded (line 125) with no cap on how many admin accounts a single Google-authenticated person can create with different emails. Existing signup flow already has this same behavior, so this is consistent, not a regression."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iter32_google_auth.py",
+    "/app/test_reports/pytest/iter32_google_auth.xml"
+  ],
+  "action_items": [
+    "None blocking. Endpoint is production-ready for the error paths tested. Happy path (real Emergent session_id) MUST be verified in a browser with a real Google account before shipping — this cannot be automated from the test pod.",
+    "OPTIONAL polish: add explicit `model_config = ConfigDict(extra='ignore')` on GoogleSessionPayload for clarity.",
+    "OPTIONAL: consider logging a metric each time an invalid session_id hits (401 branch) so we can detect brute-force / probing attempts on the endpoint."
+  ],
+  "critical_code_review_comments": [
+    "google_auth.py: async httpx call uses `async with httpx.AsyncClient(...)` for a single GET — this opens/closes a full connection pool per request (extra TLS handshake per Google login). For low volume it's fine, but consider a module-level singleton client for high throughput.",
+    "google_auth.py:98 slug generation `''.join(c if c.isalnum() else '-' for c in name.lower())` collapses consecutive non-alphanumerics into repeated dashes (e.g. 'Jean-Pierre O'Brien' → 'jean-pierre-o-brien' but 'a  b' → 'a--b'). Then `.strip('-')` only trims edges. Minor cosmetic — not a bug since uuid.hex[:6] suffix ensures uniqueness.",
+    "google_auth.py: `str(data.get('email') or '').lower().strip()` — this is correct for Google (which returns already-verified emails), but there is no defensive check that Emergent's response has the fields we expect beyond email. If Emergent changes response schema (renames `name`→`display_name`), we silently fall back to email prefix. Acceptable given the coupling."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100% (12/12)", "frontend": "n/a"},
+  "seed_data_creation": "None. No user was created (happy path not tested). No cleanup needed.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "POST /api/auth/google/session is wired via /app/backend/routes/google_auth.py (registered in server.py line 125). Happy path requires a real Emergent OAuth session_id and can only be validated via the real browser flow: (1) frontend redirects to https://auth.emergentagent.com/?redirect=<app>, (2) Google auth, (3) callback with session_id, (4) POST that sid to /api/auth/google/session. Emergent verification URL used: https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data with header X-Session-ID. On new-user path, a company doc is inserted in db.companies (account_type='artisan', plan='pro' if BETA_MODE else 'free', freemium_trial_ends_at=+14d, subscription_expires_at=+10y if BETA) and user doc in db.users (role='admin', hashed_password=None, google_linked=True, email_verified_at=now, status='active'). For existing user re-login via Google, google_linked flag is set, picture is filled if missing, and pending_verification accounts are promoted to active. campaign_station_id is set ONLY for brand-new users AND only if the station exists and is active. Deleted users (status='deleted') get 403 with support contact. Regression: schedule label in /api/campaign/auto-send/status is now 'Lun-Ven' (was 'Mar-Ven' in iter31 — fixed by main agent).",
+  "rca_of_issue": "N/A — no bugs. New endpoint behaves per spec on all error branches. All 4 regression endpoints unchanged."
+}

@@ -52,6 +52,7 @@ type AuthCtx = {
   loading: boolean;
   lock: SubscriptionLock;
   signIn: (email: string, password: string) => Promise<void>;
+  signInWithGoogle: (sessionId: string, stationId?: string) => Promise<void>;
   signUp: (
     name: string,
     email: string,
@@ -166,6 +167,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     const res = await api.post("/auth/login", { email, password });
+    await saveToken(res.data.access_token);
+    setUser(res.data.user);
+    await fetchCompany();
+    registerPushTokenWithBackend();
+  };
+
+  /**
+   * 🔑 Connexion / inscription via Google Sign-In (Emergent-managed).
+   *
+   * Le frontend a déjà obtenu un `session_id` via le flow OAuth Emergent.
+   * On l'échange côté backend (POST /api/auth/google/session) contre NOTRE
+   * JWT applicatif — même shape que le login classique.
+   */
+  const signInWithGoogle = async (sessionId: string, stationId?: string) => {
+    const body: Record<string, unknown> = { session_id: sessionId };
+    if (stationId && stationId.trim()) body.station_id = stationId.trim();
+    const res = await api.post("/auth/google/session", body);
     await saveToken(res.data.access_token);
     setUser(res.data.user);
     await fetchCompany();
@@ -294,6 +312,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading,
         lock,
         signIn,
+        signInWithGoogle,
         signUp,
         verifyEmail,
         acceptInvitation,
