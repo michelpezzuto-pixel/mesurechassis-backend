@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import * as Clipboard from "expo-clipboard";
 import { api } from "@/src/services/api";
+import { saveImageToDevice } from "@/src/utils/saveImage";
 
 const BASE_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
@@ -254,9 +255,32 @@ export default function AdminCountdown() {
                 style={styles.visual}
                 resizeMode="contain"
               />
+              {/* 🆕 Bouton "Enregistrer l'image" — remplace l'appui-long
+                  natif qui ne marche pas sur <Image> RN. Web = téléchargement
+                  navigateur, iOS/Android = share sheet (Enregistrer dans
+                  Photos). */}
+              <TouchableOpacity
+                testID="countdown-save-visual"
+                style={styles.saveImgBtn}
+                onPress={() =>
+                  void saveImageToDevice(
+                    `${BASE_URL}/api/campaign/countdown/visual/${shown.n}`,
+                    `JetonCafe_J-${String(shown.n).padStart(2, "0")}.png`,
+                  )
+                }
+                activeOpacity={0.85}
+              >
+                <Ionicons
+                  name="download-outline"
+                  size={16}
+                  color={CAFE.goldBright}
+                />
+                <Text style={styles.saveImgBtnText}>
+                  ENREGISTRER L&apos;IMAGE
+                </Text>
+              </TouchableOpacity>
               <Text style={styles.hint}>
-                📲 Appui long sur l&apos;image → « Enregistrer l&apos;image »,
-                puis attachez-la au post sur chaque réseau.
+                Puis attachez-la au post sur chaque réseau.
               </Text>
 
               {/* Boutons plateformes */}
@@ -458,6 +482,26 @@ const styles = StyleSheet.create({
     fontSize: 11.5,
     marginTop: 8,
     textAlign: "center",
+  },
+
+  // 🆕 Bouton "Enregistrer l'image" (remplace l'appui long natif)
+  saveImgBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    marginTop: 12,
+    paddingVertical: 12,
+    borderRadius: 22,
+    borderWidth: 1.5,
+    borderColor: CAFE.goldBright,
+    backgroundColor: "rgba(240,195,130,0.10)",
+  },
+  saveImgBtnText: {
+    color: CAFE.goldBright,
+    fontWeight: "800",
+    fontSize: 12,
+    letterSpacing: 0.4,
   },
 
   platformBlock: { marginTop: 20 },

@@ -50,6 +50,8 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   // 🔑 Google Sign-In state
   const [googleLoading, setGoogleLoading] = useState(false);
+  // 🚀 Modale "Bientôt disponible" pour Entreprise Pro / MAX (teaser)
+  const [proTeaserOpen, setProTeaserOpen] = useState(false);
   // Œil show/hide pour les mots de passe (login, register, reset)
   const [showPassword, setShowPassword] = useState(false);
   const [showResetPassword, setShowResetPassword] = useState(false);
@@ -642,16 +644,22 @@ export default function SignIn() {
                   <TouchableOpacity
                     key={opt.key}
                     testID={`account-type-${opt.key}`}
-                    disabled={disabled}
                     onPress={() => {
-                      if (disabled) return;
+                      // 🚀 Le profil "Pro" est un teaser Entreprise MAX :
+                      //    on ouvre une modale qui liste toutes les
+                      //    fonctionnalités à venir (Bluetooth télémètre,
+                      //    Odoo, IA Yann étendue…) pour donner envie.
+                      if (disabled) {
+                        setProTeaserOpen(true);
+                        return;
+                      }
                       setAccountType(opt.key);
                     }}
                     activeOpacity={0.85}
                     style={[
                       styles.profileCard,
                       active && styles.profileCardActive,
-                      disabled && { opacity: 0.55 },
+                      disabled && { opacity: 0.7 },
                     ]}
                   >
                     <View
@@ -1247,6 +1255,134 @@ export default function SignIn() {
           </KeyboardAvoidingView>
         </View>
       </Modal>
+
+      {/* ═══════════════════════════════════════════════════════════
+          🚀 MODALE TEASER — Entreprise Pro / MAX (bientôt disponible)
+          Affichée quand l'utilisateur tape sur le profil « Pro » lors
+          de l'inscription. Objectif : donner envie (créer un lead
+          MAX) plutôt que juste griser la carte.
+          ═══════════════════════════════════════════════════════════ */}
+      <Modal
+        visible={proTeaserOpen}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setProTeaserOpen(false)}
+      >
+        <View style={styles.proBackdrop}>
+          <View style={styles.proSheet}>
+            <View style={styles.proHandle} />
+            <ScrollView contentContainerStyle={{ paddingBottom: 24 }} showsVerticalScrollIndicator={false}>
+              <View style={styles.proHeader}>
+                <View style={styles.proIconWrap}>
+                  <Ionicons name="rocket" size={30} color="#F97316" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <View style={styles.proBadge}>
+                    <Text style={styles.proBadgeText}>BIENTÔT DISPONIBLE</Text>
+                  </View>
+                  <Text style={styles.proTitle}>Entreprise MAX</Text>
+                  <Text style={styles.proSubtitle}>
+                    Multi-sites, Odoo, laser Bluetooth, sur devis
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.proPriceBox}>
+                <Text style={styles.proPriceLabel}>À partir de</Text>
+                <Text style={styles.proPriceValue}>199,99 €</Text>
+                <Text style={styles.proPriceUnit}>/ mois HTVA · sur devis</Text>
+              </View>
+
+              <Text style={styles.proSectionTitle}>CE QUI ARRIVE</Text>
+
+              {[
+                {
+                  icon: "bluetooth" as const,
+                  title: "Télémètre laser Bluetooth",
+                  desc: "Leica DISTO, Bosch GLM → mesures injectées automatiquement dans l'app. Fini les erreurs de saisie manuelle.",
+                },
+                {
+                  icon: "cube-outline" as const,
+                  title: "Intégration Odoo (ERP)",
+                  desc: "Génération automatique du devis dans votre Odoo dès que vous validez le chantier. Sync clients bidirectionnelle.",
+                },
+                {
+                  icon: "chatbubbles" as const,
+                  title: "IA Yann Enterprise",
+                  desc: "Copilote IA étendu : DTU 36.5, EN 14351, tolérances par pays, rédaction automatique du bon de commande.",
+                },
+                {
+                  icon: "people" as const,
+                  title: "Utilisateurs illimités",
+                  desc: "Plus de plafond à 20 utilisateurs. Multi-sites, multi-ateliers, partage cross-équipes.",
+                },
+                {
+                  icon: "shield-checkmark" as const,
+                  title: "SLA 4 h + audit RGPD",
+                  desc: "Contrat de service dédié, hotline prioritaire, rapport de conformité RGPD annuel signé.",
+                },
+                {
+                  icon: "stats-chart" as const,
+                  title: "Tableaux de bord multi-sites",
+                  desc: "KPIs consolidés par site, par équipe, par matériau. Export mensuel PowerBI/Excel.",
+                },
+                {
+                  icon: "cloud-upload" as const,
+                  title: "Espace de stockage étendu",
+                  desc: "500 Go photos + 100 000 chantiers/an inclus. Backup incrémental toutes les 6 h.",
+                },
+                {
+                  icon: "school" as const,
+                  title: "Formation sur-mesure",
+                  desc: "2 sessions de formation en visio incluses (bureau + terrain). Onboarding accompagné.",
+                },
+              ].map((feat, idx) => (
+                <View key={feat.title} style={styles.proFeatureRow} testID={`pro-feature-${idx}`}>
+                  <View style={styles.proFeatureIcon}>
+                    <Ionicons name={feat.icon} size={19} color="#F97316" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.proFeatureTitle}>{feat.title}</Text>
+                    <Text style={styles.proFeatureDesc}>{feat.desc}</Text>
+                  </View>
+                </View>
+              ))}
+
+              <View style={styles.proNotifyBox}>
+                <Ionicons name="notifications-outline" size={20} color={colors.primary} />
+                <Text style={styles.proNotifyText}>
+                  Choisissez <Text style={{ fontWeight: "700" }}>Entreprise</Text> maintenant
+                  pour bénéficier de MesureChâssis dès aujourd&apos;hui — vous serez notifié
+                  en premier dès qu&apos;Enterprise MAX sera disponible.
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                testID="pro-teaser-choose-entreprise"
+                style={styles.proPrimaryBtn}
+                onPress={() => {
+                  setAccountType("entreprise");
+                  setProTeaserOpen(false);
+                }}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.proPrimaryBtnText}>
+                  CHOISIR ENTREPRISE — 49,99 €/MOIS
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                testID="pro-teaser-close"
+                style={styles.proSecondaryBtn}
+                onPress={() => setProTeaserOpen(false)}
+                activeOpacity={0.85}
+              >
+                <Text style={styles.proSecondaryBtnText}>Fermer</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -1464,6 +1600,175 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "700",
     letterSpacing: 0.2,
+  },
+
+  // ═══════════════════════════════════════════════════════════
+  // 🚀 Modale teaser Entreprise MAX (Bientôt disponible)
+  // ═══════════════════════════════════════════════════════════
+  proBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.75)",
+    justifyContent: "flex-end",
+  },
+  proSheet: {
+    backgroundColor: colors.bg,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    maxHeight: "92%",
+    borderTopWidth: 1,
+    borderColor: colors.borderSubtle,
+  },
+  proHandle: {
+    alignSelf: "center",
+    width: 48,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: colors.textSecondary,
+    opacity: 0.4,
+    marginBottom: 14,
+  },
+  proHeader: {
+    flexDirection: "row",
+    gap: 14,
+    alignItems: "flex-start",
+    marginTop: 4,
+    marginBottom: 18,
+  },
+  proIconWrap: {
+    width: 60,
+    height: 60,
+    borderRadius: 16,
+    backgroundColor: "rgba(249,115,22,0.15)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  proBadge: {
+    alignSelf: "flex-start",
+    backgroundColor: "rgba(147,197,253,0.15)",
+    borderColor: "#93C5FD",
+    borderWidth: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    marginBottom: 6,
+  },
+  proBadgeText: {
+    color: "#93C5FD",
+    fontSize: 9.5,
+    fontWeight: "900",
+    letterSpacing: 0.8,
+  },
+  proTitle: {
+    color: colors.textPrimary,
+    fontSize: 22,
+    fontWeight: "900",
+    letterSpacing: -0.3,
+  },
+  proSubtitle: {
+    color: colors.textSecondary,
+    fontSize: 12.5,
+    marginTop: 2,
+  },
+  proPriceBox: {
+    backgroundColor: colors.surface,
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    flexDirection: "row",
+    alignItems: "baseline",
+    gap: 8,
+    marginBottom: 20,
+  },
+  proPriceLabel: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  proPriceValue: {
+    color: "#F97316",
+    fontSize: 26,
+    fontWeight: "900",
+    letterSpacing: -0.5,
+  },
+  proPriceUnit: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    flex: 1,
+  },
+  proSectionTitle: {
+    color: colors.textSecondary,
+    fontSize: 10.5,
+    fontWeight: "900",
+    letterSpacing: 1.3,
+    marginBottom: 12,
+  },
+  proFeatureRow: {
+    flexDirection: "row",
+    gap: 12,
+    marginBottom: 14,
+    alignItems: "flex-start",
+  },
+  proFeatureIcon: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    backgroundColor: "rgba(249,115,22,0.12)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  proFeatureTitle: {
+    color: colors.textPrimary,
+    fontSize: 14.5,
+    fontWeight: "700",
+    marginBottom: 3,
+  },
+  proFeatureDesc: {
+    color: colors.textSecondary,
+    fontSize: 12.5,
+    lineHeight: 18,
+  },
+  proNotifyBox: {
+    flexDirection: "row",
+    gap: 10,
+    backgroundColor: "rgba(249,115,22,0.08)",
+    borderRadius: 12,
+    padding: 14,
+    marginTop: 12,
+    marginBottom: 20,
+    alignItems: "flex-start",
+  },
+  proNotifyText: {
+    color: colors.textPrimary,
+    fontSize: 12.5,
+    lineHeight: 18,
+    flex: 1,
+  },
+  proPrimaryBtn: {
+    backgroundColor: "#F97316",
+    borderRadius: 26,
+    paddingVertical: 15,
+    alignItems: "center",
+    marginTop: 4,
+  },
+  proPrimaryBtnText: {
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: "900",
+    letterSpacing: 0.4,
+  },
+  proSecondaryBtn: {
+    borderRadius: 26,
+    paddingVertical: 13,
+    alignItems: "center",
+    marginTop: 8,
+  },
+  proSecondaryBtnText: {
+    color: colors.textSecondary,
+    fontSize: 13,
+    fontWeight: "700",
   },
 
   // ────── Modal Mot de passe oublié ──────

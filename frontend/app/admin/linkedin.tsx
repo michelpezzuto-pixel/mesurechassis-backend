@@ -14,6 +14,7 @@ import { useRouter } from "expo-router";
 import * as Clipboard from "expo-clipboard";
 import { api } from "@/src/services/api";
 import { colors } from "@/src/theme";
+import { saveImageToDevice } from "@/src/utils/saveImage";
 
 const BASE_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 
@@ -174,16 +175,37 @@ export default function AdminLinkedin() {
                 </Text>
                 <Text style={styles.subtitle}>{shown.subtitle}</Text>
 
-                {/* Visuel — appui long pour enregistrer sur iPhone */}
+                {/* Visuel */}
                 <Image
                   testID="linkedin-post-image"
                   source={{ uri: `${BASE_URL}/api/linkedin/image/${shown.day}` }}
                   style={styles.visual}
                   resizeMode="contain"
                 />
+                {/* 🆕 Bouton "Enregistrer l'image" — remplace l'appui-long
+                    natif qui ne marche pas sur <Image> RN. */}
+                <TouchableOpacity
+                  testID="linkedin-save-image"
+                  style={styles.saveImgBtn}
+                  onPress={() =>
+                    void saveImageToDevice(
+                      `${BASE_URL}/api/linkedin/image/${shown.day}`,
+                      `LinkedIn_Jour${String(shown.day).padStart(2, "0")}.png`,
+                    )
+                  }
+                  activeOpacity={0.85}
+                >
+                  <Ionicons
+                    name="download-outline"
+                    size={16}
+                    color={colors.primary}
+                  />
+                  <Text style={styles.saveImgBtnText}>
+                    ENREGISTRER L&apos;IMAGE
+                  </Text>
+                </TouchableOpacity>
                 <Text style={styles.hint}>
-                  📲 Appui long sur l&apos;image → « Enregistrer l&apos;image »,
-                  puis attachez-la à votre post LinkedIn
+                  Puis attachez-la à votre post LinkedIn
                 </Text>
 
                 {/* Texte du post */}
@@ -370,6 +392,25 @@ const styles = StyleSheet.create({
     fontSize: 11.5,
     marginTop: 8,
     textAlign: "center",
+  },
+  // 🆕 Bouton "Enregistrer l'image" (remplace l'appui long natif)
+  saveImgBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    marginTop: 12,
+    paddingVertical: 12,
+    borderRadius: 22,
+    borderWidth: 1.5,
+    borderColor: colors.primary,
+    backgroundColor: "rgba(249,115,22,0.10)",
+  },
+  saveImgBtnText: {
+    color: colors.primary,
+    fontWeight: "800",
+    fontSize: 12,
+    letterSpacing: 0.4,
   },
   textBox: {
     backgroundColor: colors.surface,

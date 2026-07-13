@@ -1,0 +1,32 @@
+{
+  "summary": "Frontend-only verification of Michel's 'save image' bug fix + Entreprise Pro teaser modal on iOS-like web viewport (390x844). All 5 tests PASS. Countdown & LinkedIn admin screens now show a visible 'ENREGISTRER L'IMAGE' button that triggers a real cross-platform image download on web (blob → <a download>). Pro-card tap opens a slide-up modal with correct copy (Entreprise MAX, BIENTÔT DISPONIBLE, 199,99 €, 8 feature rows) and both action buttons work as specified. Regression: dashboard admin buttons visibility and copy-caption buttons still behave correctly (Instagram removed, LinkedIn/Facebook present).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "admin/linkedin", "issues": ["When the campaign is complete (15/15 posts published) the default view shows the trophy 'done' box and the ENREGISTRER L'IMAGE button is not rendered — the user has to enter consultation mode by tapping a day row (J1..J15) to access the save button. This matches the code's logic (`shown && !today.done`) but may confuse users who want to re-download a past visual — consider always exposing the save button in consultation mode with a helper hint. Non-blocking."]}
+    ],
+    "react_native_issues": [
+      {"component": "shadow style props", "issue": "Console warning: '\"shadow*\" style props are deprecated. Use \"boxShadow\"'. Widespread across screens (visible on the very first onboarding/login load). Reference: run RN Web deprecation audit across styles; migrate `shadowColor`, `shadowOffset`, `shadowOpacity`, `shadowRadius` to `boxShadow` for web parity."}
+    ]
+  },
+  "test_report_links": ["/tmp/countdown.png", "/tmp/linkedin_j1.png", "/tmp/pro_teaser.png", "/tmp/entreprise_selected.png"],
+  "action_items": [
+    "None blocking for the reported bug — the fix is verified: web downloads trigger cleanly (JetonCafe_J-30.png and LinkedIn_Jour01.png). Michel's original iPhone flow (expo-sharing share sheet) cannot be tested from the web preview; recommend Michel verifies on his real device or via a TestFlight build.",
+    "Consider: on the LinkedIn screen, always show the save-image button (also when campaign is done) so past visuals can be re-downloaded from the consultation state.",
+    "Migrate deprecated `shadow*` RN Web style props to `boxShadow` to silence console warnings."
+  ],
+  "critical_code_review_comments": [
+    "saveImage.ts (web branch) does not attach auth headers — this works today because /api/linkedin/image/{day} and /api/campaign/countdown/visual/{n} are served without requiring the bearer token cookie/header. If those endpoints are ever locked behind auth headers, the blob fetch will fail with 401 and the fallback window.open will silently 401 too. Consider using the existing `api` axios instance for the fetch, or documenting the endpoints must remain publicly accessible (they use JWT via query-string / referrer? worth double-checking).",
+    "index.tsx (Pro teaser) — 'Entreprise MAX' price string '199,99 €/MOIS' in the CHOISIR ENTREPRISE button label is misleading: tapping the button selects the *Entreprise* plan (49,99 €), not MAX. The final button text 'CHOISIR ENTREPRISE — 49,99 €/MOIS' actually already reads 49,99€, so this is fine. No fix needed — flagging for reviewer clarity.",
+    "linkedin.tsx — the 'done' state hides the save button entirely. Users in consultation mode after campaign end still get the save button (verified), but the copy is not obvious. Add a small hint 'Consultez un jour ci-dessous pour ré-enregistrer son visuel'."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only)", "frontend": "100%"},
+  "seed_data_creation": "None. Used existing artisan@mesurechassis.fr / artisan123 account (platform owner).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Login flow requires clicking 'Passer' button on the onboarding carousel first (localStorage `mc_onboarding_seen` key isn't set by default). Direct navigation to /admin/countdown and /admin/linkedin works after login. Dashboard testIDs are `admin-*-button` (admin-countdown-button, admin-linkedin-button, admin-campagne-button, admin-stats-button) NOT `dashboard-*-button`. The LinkedIn campaign is fully published (15/15), so the save-image button only appears after tapping a day row in the list (consultation mode).",
+  "rca_of_issue": "Bug: on Michel's iPhone, long-press on <Image> in Countdown & LinkedIn screens did nothing — RN <Image> does not expose the browser's native context menu because it's rendered as a divs+background-image tree on web and as a native UIImageView on iOS. Fix implemented: a new saveImage util + a visible 'ENREGISTRER L'IMAGE' TouchableOpacity button. On web: fetch→blob→<a download>. On iOS/Android: FileSystem.downloadAsync + Sharing.shareAsync opens the native share sheet where the user picks 'Save to Photos'. Verified web download flow triggers real files (JetonCafe_J-30.png, LinkedIn_Jour01.png). Mobile share-sheet path cannot be exercised from Playwright/web preview — Michel should confirm on his real device."
+}
