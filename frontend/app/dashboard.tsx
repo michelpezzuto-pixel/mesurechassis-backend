@@ -508,8 +508,9 @@ export default function Dashboard() {
           </TouchableOpacity>
         )}
         {/* 🚦 Validation équipe (Double-Phase) — Le gérant approuve/rejette
-            les ouvriers rattachés à sa structure. Visible pour tous les admins. */}
-        {user?.role === "admin" && (
+            les ouvriers rattachés à sa structure.
+            🆕 Masqué en mode Artisan solo (pas d'équipe à valider). */}
+        {user?.role === "admin" && company?.account_type !== "artisan" && (
           <TouchableOpacity
             testID="admin-team-validation-button"
             onPress={() =>
