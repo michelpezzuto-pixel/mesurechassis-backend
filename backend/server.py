@@ -23,6 +23,7 @@ from routes import campaign as campaign_routes
 from routes import chantiers as chantiers_routes
 from routes import linkedin as linkedin_routes
 from routes import company as company_routes
+from routes import admin_tools as admin_tools_routes
 from routes import exports as exports_routes
 from routes import feedbacks as feedbacks_routes
 from routes import invitations as invitations_routes
@@ -112,6 +113,8 @@ api.include_router(spec_import_routes.router)
 api.include_router(testers_routes.router)
 # 🆕 Campagne emailing — prospection testeurs à 1 bouton (max 15/jour via Resend)
 api.include_router(campaign_routes.router)
+# 🛡️ Endpoints admin one-shot (purge email, etc.) — protégés PLATFORM_ADMIN_TOKEN
+api.include_router(admin_tools_routes.router)
 # 🆕 RGPD — Routeur public unsubscribe (pas d'auth, accès via lien JWT signé)
 api.include_router(campaign_routes.public_router)
 # 🆕 Campagne LinkedIn 15 jours — post du jour + visuels
