@@ -147,6 +147,8 @@ Si vous testez, dites-moi ce que vous en pensez — votre retour vaut de l'or.
 
 Michel Pezzuto — Menuisier · Fondateur MesureChâssis
 📧 info@mesurechassis.com
+🔗 LinkedIn : https://www.linkedin.com/in/michel-pezzuto-aa4797235/recent-activity/all/
+📘 Facebook : https://www.facebook.com/profile.php?id=615909097439000
 
 —
 Vous recevez cet email car votre entreprise est active dans la menuiserie. Pour ne plus être contacté, répondez simplement STOP."""
@@ -174,6 +176,8 @@ Si vous voulez une démo visio (10 min), répondez à ce mail — je m'adapte à
 Bien cordialement,
 Michel Pezzuto — MesureChâssis
 📧 info@mesurechassis.com
+🔗 LinkedIn : https://www.linkedin.com/in/michel-pezzuto-aa4797235/recent-activity/all/
+📘 Facebook : https://www.facebook.com/profile.php?id=615909097439000
 
 —
 Pour ne plus être contacté, répondez simplement STOP."""
@@ -196,11 +200,15 @@ C'est ce que MesureChâssis fait **depuis votre iPhone** — et c'est gratuit à
 
 [QR_CODE_PLACEHOLDER]
 
+☕ PS — Quelque chose de spécial se prépare pour le 12 août. Si vous téléchargez l'app maintenant, vous serez notifié en premier. Suivez-moi sur les réseaux pour découvrir ce que c'est, jour après jour.
+
 Un « oui » ou un « non », ça me va — je ne prends pas mal.
 
 Bonne continuation,
 Michel Pezzuto — Fondateur MesureChâssis
 📧 info@mesurechassis.com
+🔗 LinkedIn : https://www.linkedin.com/in/michel-pezzuto-aa4797235/recent-activity/all/
+📘 Facebook : https://www.facebook.com/profile.php?id=615909097439000
 
 —
 Pour ne plus être contacté, répondez simplement STOP."""
