@@ -1875,7 +1875,12 @@ export default function ChantierDetail() {
               {showAdd && (
                 <TouchableOpacity
                   testID="add-mesure-button"
-                  onPress={() => router.push(`/chantier/${id}/new-mesure`)}
+                  // 🆕 Le bouton AJOUTER est réservé aux OUVERTURES uniquement.
+                  //    Skip complet de l'étape "Configuration du mur" (=
+                  //    l'utilisateur veut ajouter une fenêtre/porte, pas
+                  //    configurer les murs). La config murs se fait via
+                  //    le 3ᵉ bouton dédié "Dimensions des murs".
+                  onPress={() => router.push(`/chantier/${id}/new-mesure?skip_wall=1`)}
                   style={[styles.gridBtn, styles.gridBtnPrimary]}
                   activeOpacity={0.85}
                 >

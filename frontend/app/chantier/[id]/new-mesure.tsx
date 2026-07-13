@@ -72,9 +72,17 @@ import {
 // ════════════════════════════════════════════════════════════════════════
 
 export default function NewMesureWizard() {
-  const { id, mesure_id, edit_wall_config } = useLocalSearchParams<{ id: string; mesure_id?: string; edit_wall_config?: string }>();
+  const { id, mesure_id, edit_wall_config, skip_wall } = useLocalSearchParams<{
+    id: string;
+    mesure_id?: string;
+    edit_wall_config?: string;
+    skip_wall?: string;
+  }>();
   const editingId = (mesure_id as string) || null;
   const wallEditOnly = edit_wall_config === "1";
+  // 🆕 Mode "AJOUTER ouverture" : force le skip complet de l'étape mur,
+  //    même si le chantier n'a jamais eu de wall_config renseignée.
+  const skipWallOnly = skip_wall === "1";
   const router = useRouter();
   const { isTablet } = useResponsive();
 
@@ -281,6 +289,12 @@ export default function NewMesureWizard() {
           // Création d'un NOUVEAU châssis sur un chantier déjà configuré
           // → on saute l'étape 1 et on commence directement par la
           // sélection de la forme.
+          setStep(1);
+        } else if (skipWallOnly) {
+          // 🆕 AJOUTER ouverture SANS wall_config existante :
+          // on force le skip de l'Étape 1 et on commence à l'Étape 2 (forme).
+          // La wall_config restera vide côté chantier tant que l'utilisateur
+          // ne clique pas sur "Dimensions des murs" — c'est voulu.
           setStep(1);
         }
       } finally {
@@ -1080,12 +1094,13 @@ export default function NewMesureWizard() {
     setStep(2);
   };
   const goBack = () => {
-    // 🏗️ Si la config mur est verrouillée (déjà sauvée pour le chantier),
+    // 🏗️ Si la config mur est verrouillée (déjà sauvée pour le chantier)
+    //    OU si on est en mode "AJOUTER ouverture" (skipWallOnly),
     //    on saute l'étape 1 lors du retour aussi : étape 2 → quitte.
     if (step === 2) {
       setStep(1);
     } else if (step === 1) {
-      if (wallConfigLocked) {
+      if (wallConfigLocked || skipWallOnly) {
         router.back();
       } else {
         setStep(0);
@@ -1111,15 +1126,32 @@ export default function NewMesureWizard() {
       >
         <View style={styles.topBar}>
           <View style={styles.stepRow}>
-            {[0, 1, 2].map((i) => (
-              <View
-                key={i}
-                testID={`step-pill-${i + 1}`}
-                style={[styles.stepPill, i <= step && styles.stepPillActive]}
-              >
-                <Text style={[styles.stepPillText, i <= step && { color: "#000" }]}>{i + 1}</Text>
-              </View>
-            ))}
+            {(() => {
+              // 🆕 Quand l'étape 1 (config mur) est masquée pour cette
+              //     session (chantier déjà configuré OU flux "AJOUTER
+              //     ouverture"), on n'affiche QUE les 2 pastilles restantes
+              //     pour éviter d'afficher un "1" grisé qui reste hors
+              //     d'atteinte. En mode wallEditOnly on garde les 3 (car
+              //     l'utilisateur va justement toucher la config mur).
+              const skipStep0 = (wallConfigLocked || skipWallOnly) && !wallEditOnly;
+              const visibleSteps = skipStep0 ? [1, 2] : [0, 1, 2];
+              return visibleSteps.map((i) => (
+                <View
+                  key={i}
+                  testID={`step-pill-${i + 1}`}
+                  style={[styles.stepPill, i <= step && styles.stepPillActive]}
+                >
+                  <Text
+                    style={[
+                      styles.stepPillText,
+                      i <= step && { color: "#000" },
+                    ]}
+                  >
+                    {skipStep0 ? i : i + 1}
+                  </Text>
+                </View>
+              ));
+            })()}
           </View>
           <TouchableOpacity
             testID="open-report-modal"
