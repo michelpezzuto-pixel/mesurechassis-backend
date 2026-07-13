@@ -513,6 +513,237 @@ async def verify_email(payload: VerifyEmailRequest):
     return TokenResponse(access_token=jwt_token, user=user_to_public(user))
 
 
+# ════════════════════════════════════════════════════════════════════
+# 🆕 GET /api/auth/verify-link?token=xxx — Landing page email verify
+# ════════════════════════════════════════════════════════════════════
+# Ancienne archi : le mail contenait `<FRONTEND_URL>/verify?token=xxx` →
+# le frontend Expo chargeait /verify.tsx qui POSTait le token vers
+# /auth/verify. Problème : si FRONTEND_URL pointe vers une preview
+# obsolète, le clic donne un 404.
+#
+# Nouvelle archi : le mail contient `<BACKEND_URL>/api/auth/verify-link`
+# → cet endpoint (GET, cliquable depuis un mail) traite le token
+# directement et renvoie une page HTML autonome de succès. Fonctionne
+# QUELLE QUE SOIT la disponibilité du frontend.
+# ════════════════════════════════════════════════════════════════════
+from fastapi.responses import HTMLResponse  # noqa: E402
+
+
+def _verify_html_page(*, ok: bool, title: str, message: str, cta_url: str | None = None) -> str:
+    """Rend une petite page HTML autonome (inline CSS, aucun asset externe).
+
+    Cette page est optimisée mobile — s'affiche correctement dans Safari
+    iOS quand l'utilisateur clique sur le lien depuis Mail.app.
+    """
+    color = "#22c55e" if ok else "#ef4444"
+    icon = "&#10003;" if ok else "&#10007;"
+    cta = ""
+    if cta_url:
+        cta = (
+            f'<a href="{cta_url}" style="display:inline-block;margin-top:22px;'
+            f'padding:14px 26px;background:#f97316;color:#fff;text-decoration:none;'
+            f'border-radius:24px;font-weight:700;font-size:14px;letter-spacing:.4px">'
+            f"OUVRIR MESURECHÂSSIS</a>"
+        )
+    return f"""<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{title} — MesureChâssis</title>
+<style>
+  body {{
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0a0a0a;
+    color: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }}
+  .card {{
+    max-width: 420px;
+    width: 100%;
+    background: #171717;
+    border: 1px solid #262626;
+    border-radius: 20px;
+    padding: 40px 28px;
+    text-align: center;
+  }}
+  .icon {{
+    width: 82px;
+    height: 82px;
+    border-radius: 50%;
+    background: {color}22;
+    color: {color};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    margin: 0 auto 20px;
+    border: 3px solid {color};
+  }}
+  h1 {{
+    font-size: 22px;
+    margin: 0 0 12px;
+    letter-spacing: 0.3px;
+  }}
+  p {{
+    font-size: 14px;
+    line-height: 1.55;
+    color: #a3a3a3;
+    margin: 0;
+  }}
+  .brand {{
+    margin-top: 32px;
+    font-size: 11px;
+    color: #737373;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }}
+</style></head>
+<body>
+  <div class="card">
+    <div class="icon">{icon}</div>
+    <h1>{title}</h1>
+    <p>{message}</p>
+    {cta}
+    <div class="brand">MESURECHÂSSIS</div>
+  </div>
+</body></html>"""
+
+
+@router.get("/auth/verify-link", response_class=HTMLResponse)
+async def verify_email_link_html(token: str):
+    """Landing page HTML : appelée quand l'utilisateur clique sur le lien
+    de son email de vérification. Valide le token et affiche un message
+    de succès (ou d'erreur) autonome — pas de dépendance frontend.
+    """
+    # Lien deep-link vers l'app native (fallback : le site web)
+    app_deep_link = "mesurechassis://"
+    fallback_web = "https://mesurechassis.com"
+
+    rec = await db.email_verifications.find_one({"token": token})
+    if not rec:
+        return HTMLResponse(
+            _verify_html_page(
+                ok=False,
+                title="Lien invalide",
+                message=(
+                    "Ce lien de vérification n'est pas reconnu. Il a peut-être "
+                    "expiré ou été déjà utilisé. Retournez dans l'application "
+                    "et demandez un nouveau lien depuis l'écran de connexion."
+                ),
+                cta_url=fallback_web,
+            ),
+            status_code=400,
+        )
+
+    # Cas idempotent : déjà utilisé + user actif → succès gracieux.
+    if rec.get("used"):
+        existing = await db.users.find_one({"id": rec["user_id"]}, {"_id": 0})
+        if existing and existing.get("status") == "active":
+            return HTMLResponse(
+                _verify_html_page(
+                    ok=True,
+                    title="Compte déjà activé",
+                    message=(
+                        "Votre compte est actif. Retournez dans l'application "
+                        "MesureChâssis pour vous connecter."
+                    ),
+                    cta_url=app_deep_link,
+                ),
+            )
+        return HTMLResponse(
+            _verify_html_page(
+                ok=False,
+                title="Lien déjà utilisé",
+                message="Ce lien de vérification a déjà été utilisé.",
+                cta_url=fallback_web,
+            ),
+            status_code=400,
+        )
+
+    # Vérification expiration
+    try:
+        expires = datetime.fromisoformat(
+            str(rec["expires_at"]).replace("Z", "+00:00")
+        )
+        if datetime.now(timezone.utc) > expires:
+            return HTMLResponse(
+                _verify_html_page(
+                    ok=False,
+                    title="Lien expiré",
+                    message=(
+                        "Ce lien a expiré (validité : 7 jours). Retournez dans "
+                        "l'application et demandez un nouveau lien depuis "
+                        "l'écran de connexion."
+                    ),
+                    cta_url=fallback_web,
+                ),
+                status_code=400,
+            )
+    except ValueError:
+        return HTMLResponse(
+            _verify_html_page(
+                ok=False,
+                title="Lien invalide",
+                message="Ce lien est malformé. Réessayez ou contactez le support.",
+                cta_url=fallback_web,
+            ),
+            status_code=400,
+        )
+
+    if rec.get("kind") != "verify":
+        return HTMLResponse(
+            _verify_html_page(
+                ok=False,
+                title="Type de lien incorrect",
+                message="Ce lien n'est pas un lien de vérification email.",
+                cta_url=fallback_web,
+            ),
+            status_code=400,
+        )
+
+    user = await db.users.find_one({"id": rec["user_id"]}, {"_id": 0})
+    if not user:
+        return HTMLResponse(
+            _verify_html_page(
+                ok=False,
+                title="Compte introuvable",
+                message="Utilisateur associé au lien introuvable.",
+                cta_url=fallback_web,
+            ),
+            status_code=404,
+        )
+
+    # Marque comme vérifié
+    now_iso = datetime.now(timezone.utc).isoformat()
+    await db.users.update_one(
+        {"id": user["id"]},
+        {"$set": {"status": "active", "email_verified_at": now_iso}},
+    )
+    await db.email_verifications.update_one(
+        {"token": token},
+        {"$set": {"used": True, "used_at": now_iso}},
+    )
+
+    return HTMLResponse(
+        _verify_html_page(
+            ok=True,
+            title="Compte activé !",
+            message=(
+                f"Bienvenue {user.get('name') or ''}, votre adresse "
+                "<strong>" + user.get("email", "") + "</strong> est bien "
+                "vérifiée. Retournez dans l'application MesureChâssis pour "
+                "vous connecter et créer votre premier chantier."
+            ),
+            cta_url=app_deep_link,
+        ),
+    )
+
+
 @router.post("/auth/resend-verification")
 async def resend_verification(payload: ResendVerificationRequest):
     """Renvoie un nouvel email de vérification."""

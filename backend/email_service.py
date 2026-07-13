@@ -25,7 +25,27 @@ RESEND_API_URL = "https://api.resend.com/emails"
 FROM_EMAIL = os.getenv("MAIL_FROM", "MesureChâssis <info@mesurechassis.com>")
 REPLY_TO_EMAIL = os.getenv("MAIL_REPLY_TO", "").strip()
 MAIL_SUPPORT = os.getenv("MAIL_SUPPORT", "info@mesurechassis.com")
+# ─────────────────────────────────────────────────────────────────────
+# 🆕 Résolution robuste de l'URL de base pour les liens email
+# ─────────────────────────────────────────────────────────────────────
+# Ordre de priorité (du plus stable au plus volatile) :
+#   1. PUBLIC_BACKEND_URL       → URL Railway prod stable (RECOMMANDÉ)
+#   2. FRONTEND_URL             → URL preview / prod frontend
+#   3. fallback : chaîne vide → lien relatif (marche pas dans mail).
 FRONTEND_URL = os.getenv("FRONTEND_URL", "")  # ex. https://mesurechassis.com
+
+
+def _link_base_url() -> str:
+    """URL de base à utiliser pour les liens dans les emails.
+
+    Priorité PUBLIC_BACKEND_URL car le backend Railway a une URL FIXE
+    qui ne change pas quand on change de preview/fork. Les liens de
+    vérification restent donc valides même après un redéploiement.
+    """
+    stable = os.getenv("PUBLIC_BACKEND_URL", "").rstrip("/")
+    if stable:
+        return stable
+    return FRONTEND_URL.rstrip("/") if FRONTEND_URL else ""
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -33,14 +53,17 @@ FRONTEND_URL = os.getenv("FRONTEND_URL", "")  # ex. https://mesurechassis.com
 # ─────────────────────────────────────────────────────────────────────
 def _build_link(path: str, token: str) -> str:
     """Construit le lien public pour activation / invitation."""
-    base = FRONTEND_URL.rstrip("/") if FRONTEND_URL else ""
+    base = _link_base_url()
     if base:
         return f"{base}{path}?token={token}"
     return f"{path}?token={token}"
 
 
 def build_verification_link(token: str) -> str:
-    return _build_link("/verify", token)
+    # 🆕 Endpoint GET côté backend qui renvoie une page HTML autonome de
+    # succès. Fonctionne même si le frontend Expo est indisponible ou
+    # que l'URL de preview a changé.
+    return _build_link("/api/auth/verify-link", token)
 
 
 def build_invitation_link(token: str) -> str:
