@@ -231,6 +231,89 @@ async def download_site_propre():
     )
 
 
+@api.get("/_downloads/site_propre")
+async def download_site_propre_alias():
+    """Alias avec underscore (au cas où l'URL est mal copiée)."""
+    return await download_site_propre()
+
+
+@api.get("/_downloads", response_class=HTMLResponse)
+@api.get("/_downloads/", response_class=HTMLResponse)
+async def downloads_index():
+    """Page d'accueil listant tous les fichiers téléchargeables — 1 clic
+    au lieu de copier des URL à la main sur iPhone."""
+    files = [
+        ("Site propre (ZIP complet)",
+         "site-propre",
+         "mesurechassis.com nettoyé, index.html mis à jour, sitemap complet.",
+         "2.9 Mo · ZIP"),
+        ("Page démo seule (HTML)",
+         "demo-html",
+         "Uniquement le fichier demo.html si vous voulez juste le mettre à jour.",
+         "31 Ko · HTML"),
+        ("Sitemap XML",
+         "sitemap-xml",
+         "Nouveau sitemap avec toutes les pages incluant Démo et Tarifs.",
+         "2.3 Ko · XML"),
+        ("Kit CapCut vidéo démo",
+         "kit-video-capcut",
+         "Storyboard 60s + script voix off + recommandations musique.",
+         "11 Ko · Markdown"),
+    ]
+    rows = "".join(
+        f'''<a class="dl" href="/api/_downloads/{slug}">
+             <div>
+               <div class="title">{title}</div>
+               <div class="desc">{desc}</div>
+             </div>
+             <div class="meta">{meta}<span class="arrow">↓</span></div>
+           </a>'''
+        for title, slug, desc, meta in files
+    )
+    return HTMLResponse(f"""<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Téléchargements — MesureChâssis</title>
+<style>
+  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+  body {{
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: #0a0a0c; color: #f5f5f5;
+    min-height: 100vh; padding: 24px 18px;
+  }}
+  .wrap {{ max-width: 640px; margin: 0 auto; }}
+  h1 {{
+    font-size: 22px; font-weight: 900; margin-bottom: 6px;
+    letter-spacing: -0.4px;
+  }}
+  h1 span {{ color: #FF5A00; }}
+  p.sub {{ color: #9E9EA5; font-size: 13.5px; margin-bottom: 28px; line-height: 1.5; }}
+  .dl {{
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 14px; background: #16161a; border: 1px solid #2a2a30;
+    border-radius: 14px; padding: 18px 18px;
+    margin-bottom: 12px; text-decoration: none; color: inherit;
+    transition: border-color .15s, transform .1s;
+  }}
+  .dl:hover, .dl:active {{ border-color: #FF5A00; transform: translateY(-1px); }}
+  .title {{ font-weight: 700; font-size: 15px; color: #ffffff; margin-bottom: 4px; }}
+  .desc {{ font-size: 12.5px; color: #9E9EA5; line-height: 1.45; }}
+  .meta {{
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: 6px; flex-shrink: 0; font-size: 11px; color: #737383;
+  }}
+  .arrow {{
+    display: inline-flex; width: 36px; height: 36px; border-radius: 50%;
+    background: #FF5A00; color: #0a0a0c; font-weight: 900; font-size: 18px;
+    justify-content: center; align-items: center;
+  }}
+</style></head><body><div class="wrap">
+  <h1>📥 Téléchargements <span>MesureChâssis</span></h1>
+  <p class="sub">Touchez un fichier pour le télécharger directement — plus besoin de copier une URL à la main.</p>
+  {rows}
+</div></body></html>""")
+
+
 
 # 🆕 Build 11.3 — Screenshots Apple App Store (iPhone 6.5" + iPad 12.9")
 @api.get("/_downloads/apple-screenshots")
