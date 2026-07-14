@@ -217,6 +217,20 @@ async def download_kit_capcut():
     return FileResponse(path, media_type="text/markdown", filename="Kit_CapCut_video_demo.md")
 
 
+@api.get("/_downloads/site-propre")
+async def download_site_propre():
+    """ZIP complet du site mesurechassis.com nettoyé et à jour
+    (index.html avec lien Démo, sitemap complet, sans fichiers superflus)."""
+    path = "/app/downloads_site/mesurechassis_site_propre.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="ZIP introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="mesurechassis_site_propre.zip",
+    )
+
+
 
 # 🆕 Build 11.3 — Screenshots Apple App Store (iPhone 6.5" + iPad 12.9")
 @api.get("/_downloads/apple-screenshots")

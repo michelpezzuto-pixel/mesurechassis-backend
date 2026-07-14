@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MesureChâssis — L'app de prise de mesures pour menuisiers</title>
+<meta name="description" content="L'app B2B disponible sur l'App Store qui révolutionne la prise de mesures pour les menuisiers pros. Importe ton cahier des charges, mesure sur chantier, exporte en PDF. Bientôt sur Play Store.">
+<link rel="icon" type="image/png" href="favicon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="MesureChâssis — Mesures terrain pour menuisiers">
+<meta property="og:description" content="L'app pro pour les menuisiers belges, français, luxembourgeois. Tes mesures dans ta poche.">
+<meta property="og:image" content="og-image.jpg">
+<meta property="og:url" content="https://mesurechassis.com/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --orange:#FF5A00;
+  --orange-light:#FF7733;
+  --bg:#0A0A0C;
+  --bg-2:#14141A;
+  --bg-3:#1F1F28;
+  --text:#FFFFFF;
+  --text-mute:#A8A8B0;
+  --border:#2A2A35;
+  --green:#22C55E;
+  --font-head:"Syne",-apple-system,BlinkMacSystemFont,sans-serif;
+  --font:"Inter",-apple-system,BlinkMacSystemFont,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+img,video{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+
+/* ===== Navbar ===== */
+nav.top{
+  position:sticky;top:0;z-index:50;
+  background:rgba(10,10,12,.85);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+nav.top .wrap{
+  max-width:1200px;margin:0 auto;padding:14px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+nav.top .brand{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--font-head);font-weight:800;font-size:1.15rem;
+}
+nav.top .brand img{width:30px;height:30px;border-radius:6px}
+nav.top .links{display:flex;gap:24px;align-items:center}
+nav.top .links a{
+  font-size:.93rem;font-weight:500;color:var(--text-mute);
+  transition:color .2s;
+}
+nav.top .links a:hover{color:var(--text)}
+nav.top .cta{
+  background:var(--orange);color:#000;
+  padding:9px 18px;border-radius:8px;
+  font-weight:700;font-size:.92rem;
+}
+@media(max-width:720px){nav.top .links a:not(.cta){display:none}}
+
+/* ===== Hero ===== */
+.hero{
+  position:relative;overflow:hidden;
+  padding:60px 24px 80px;text-align:center;
+  background:radial-gradient(ellipse at top,rgba(255,90,0,.08),transparent 60%);
+}
+.hero .container{max-width:1100px;margin:0 auto}
+.hero h1{
+  font-family:var(--font-head);
+  font-size:clamp(2rem,5vw,3.5rem);font-weight:800;
+  line-height:1.1;letter-spacing:-.025em;margin-bottom:20px;
+}
+.hero h1 em{font-style:normal;color:var(--orange)}
+.hero .subtitle{
+  font-size:clamp(1.05rem,2vw,1.25rem);
+  color:var(--text-mute);max-width:680px;margin:0 auto 36px;
+}
+.hero .cta-group{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 28px;border-radius:10px;
+  font-weight:700;font-size:1rem;
+  transition:transform .15s,box-shadow .15s;cursor:pointer;
+  border:none;
+}
+.btn-primary{background:var(--orange);color:#000;box-shadow:0 4px 20px rgba(255,90,0,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(255,90,0,.4)}
+.btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--bg-2)}
+
+/* ===== Video Player ===== */
+.video-wrap{
+  max-width:920px;margin:0 auto;
+  border-radius:16px;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 0 1px var(--border);
+  position:relative;background:#000;
+}
+.video-wrap video{width:100%;display:block;aspect-ratio:16/9}
+.video-controls{
+  position:absolute;bottom:12px;right:12px;display:flex;gap:8px;z-index:10;
+}
+.video-controls button{
+  background:rgba(0,0,0,.75);color:#fff;border:1px solid rgba(255,255,255,.2);
+  border-radius:8px;padding:8px 12px;cursor:pointer;
+  font-size:.85rem;font-weight:600;transition:background .15s;
+}
+.video-controls button:hover{background:rgba(0,0,0,.9)}
+
+/* ===== Sections ===== */
+section{padding:80px 24px}
+.section-wrap{max-width:1100px;margin:0 auto}
+section h2{
+  font-family:var(--font-head);font-weight:800;
+  font-size:clamp(1.7rem,3.5vw,2.4rem);text-align:center;
+  margin-bottom:48px;letter-spacing:-.02em;
+}
+section h2 em{font-style:normal;color:var(--orange)}
+
+/* ===== Features ===== */
+.features{background:var(--bg-2)}
+.features .grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;
+}
+.feature{
+  background:var(--bg-3);border:1px solid var(--border);
+  padding:32px 28px;border-radius:14px;text-align:left;
+  transition:transform .2s,border-color .2s;
+}
+.feature:hover{transform:translateY(-4px);border-color:var(--orange)}
+.feature .icon{
+  width:48px;height:48px;border-radius:10px;
+  background:rgba(255,90,0,.15);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;margin-bottom:16px;
+}
+.feature h3{font-family:var(--font-head);font-size:1.2rem;margin-bottom:10px}
+.feature p{color:var(--text-mute);font-size:.95rem}
+
+/* ===== Tarifs ===== */
+.pricing .grid{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:16px;
+}
+@media(max-width:1200px){.pricing .grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:820px){.pricing .grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.pricing .grid{grid-template-columns:1fr}}
+.plan{
+  background:var(--bg-2);border:1.5px solid var(--border);
+  padding:28px 20px;border-radius:14px;
+  display:flex;flex-direction:column;position:relative;
+}
+.plan.featured{border-color:var(--orange);box-shadow:0 8px 40px rgba(255,90,0,.15)}
+.plan.featured::before{
+  content:"Le + populaire";position:absolute;top:-12px;left:50%;transform:translateX(-50%);
+  background:var(--orange);color:#000;font-size:.75rem;font-weight:700;
+  padding:4px 12px;border-radius:20px;
+}
+.plan-name{font-family:var(--font-head);font-size:1.3rem;font-weight:800;margin-bottom:6px}
+.plan-tag{color:var(--text-mute);font-size:.88rem;margin-bottom:18px}
+.plan-price{
+  font-family:var(--font-head);font-size:2.4rem;font-weight:800;
+  color:var(--text);line-height:1;margin-bottom:4px;
+}
+.plan-price small{font-size:.45em;font-weight:500;color:var(--text-mute)}
+.plan-period{color:var(--text-mute);font-size:.85rem;margin-bottom:22px;display:block}
+.plan ul{list-style:none;margin-bottom:24px;flex:1}
+.plan ul li{
+  padding:7px 0 7px 26px;position:relative;font-size:.92rem;
+}
+.plan ul li::before{
+  content:"✓";position:absolute;left:0;
+  color:var(--orange);font-weight:700;
+}
+.plan-cta{
+  display:block;text-align:center;padding:12px;
+  border:1.5px solid var(--orange);border-radius:8px;color:var(--orange);
+  font-weight:700;transition:background .2s,color .2s;
+}
+.plan.featured .plan-cta{background:var(--orange);color:#000}
+.plan-cta:hover{background:var(--orange);color:#000}
+
+/* ===== FAQ ===== */
+.faq{background:var(--bg-2)}
+.faq-list{max-width:760px;margin:0 auto}
+.faq-item{
+  background:var(--bg-3);border:1px solid var(--border);
+  border-radius:12px;margin-bottom:12px;overflow:hidden;
+}
+.faq-item summary{
+  padding:18px 22px;cursor:pointer;font-weight:600;
+  list-style:none;display:flex;justify-content:space-between;align-items:center;
+}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{content:"+";color:var(--orange);font-size:1.3rem;font-weight:300}
+.faq-item[open] summary::after{content:"−"}
+.faq-item p{padding:0 22px 18px;color:var(--text-mute);font-size:.95rem}
+
+/* ===== CTA Final ===== */
+.cta-final{
+  text-align:center;padding:80px 24px;
+  background:linear-gradient(135deg,rgba(255,90,0,.12),rgba(255,90,0,.02));
+}
+.cta-final h2{margin-bottom:16px}
+.cta-final p{color:var(--text-mute);margin-bottom:32px;font-size:1.1rem}
+
+/* ===== Footer ===== */
+footer{
+  background:var(--bg-2);border-top:1px solid var(--border);
+  padding:40px 24px 24px;color:var(--text-mute);font-size:.88rem;
+}
+footer .wrap{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:32px;margin-bottom:32px;
+}
+footer h4{color:var(--text);font-family:var(--font-head);margin-bottom:14px;font-size:1rem}
+footer a{display:block;padding:5px 0;color:var(--text-mute);transition:color .15s}
+footer a:hover{color:var(--orange)}
+footer .copyright{
+  text-align:center;padding-top:20px;border-top:1px solid var(--border);
+  font-size:.82rem;color:var(--text-mute);
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="top">
+  <div class="wrap">
+    <a href="/" class="brand">
+      <img src="logo.png" alt="MesureChâssis logo">
+      <span>MesureChâssis</span>
+    </a>
+    <div class="links">
+      <a href="#fonctionnalites">Fonctionnalités</a>
+      <a href="#tarifs">Tarifs</a>
+      <a href="demo.html">Démo</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
+      <a href="telecharger.html" class="cta">📲 Télécharger</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="container">
+    <h1>L'app de prise de mesures<br>pensée pour les <em>menuisiers</em></h1>
+    <p class="subtitle">
+      Importe ton cahier des charges, mesure sur chantier en 3 taps, exporte vers PDF.
+      Plus de papier perdu, plus de saisies à refaire.
+    </p>
+    <div class="cta-group">
+      <a href="https://apps.apple.com/fr/app/mesurech%C3%A2ssis/id6776357930" target="_blank" rel="noopener" class="btn btn-primary">📲 Télécharger sur l'App Store</a>
+      <a href="telecharger.html" class="btn btn-ghost">Voir toutes les options →</a>
+    </div>
+    <p style="color:var(--text-mute);font-size:.88rem;margin-top:-24px;margin-bottom:32px">
+      ✅ Disponible sur iPhone &amp; iPad · ⏳ Bientôt sur Play Store
+    </p>
+
+    <!-- HERO VIDEO -->
+    <div class="video-wrap">
+      <video id="heroVideo"
+             autoplay muted loop playsinline preload="auto">
+        <source src="videos/hero_video.mp4" type="video/mp4">
+        Votre navigateur ne supporte pas la lecture vidéo HTML5.
+      </video>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FONCTIONNALITÉS ===== -->
+<section id="fonctionnalites" class="features">
+  <div class="section-wrap">
+    <h2>Tout ce dont tu as besoin sur <em>le terrain</em></h2>
+    <div class="grid">
+
+      <div class="feature">
+        <div class="icon">📷</div>
+        <h3>Import IA du CDC</h3>
+        <p>Photographie le cahier des charges, l'IA détecte automatiquement tous les châssis et leurs dimensions.</p>
+      </div>
+
+      <div class="feature">
+        <div class="icon">📏</div>
+        <h3>Mesures précises</h3>
+        <p>Connecte ton mètre laser ou saisis manuellement. Diagonales, équerrage, tolérances : tout est vérifié.</p>
+      </div>
+
+      <div class="feature">
+        <div class="icon">✅</div>
+        <h3>Validation chantier</h3>
+        <p>Vérifie chaque châssis et valide en 1 tap. Statut "à valider" / "validé" pour ne rien oublier.</p>
+      </div>
+
+      <div class="feature">
+        <div class="icon">📄</div>
+        <h3>Export PDF & Excel</h3>
+        <p>Génère ton rapport pro en 2 clics. Envoie au bureau d'études ou au CNC sans saisie manuelle.</p>
+      </div>
+
+      <div class="feature">
+        <div class="icon">👥</div>
+        <h3>Travail en équipe</h3>
+        <p>Partage tes chantiers avec tes commerciaux, techniciens et collègues. Rôles & permissions inclus.</p>
+      </div>
+
+      <div class="feature">
+        <div class="icon">🤖</div>
+        <h3>Yann, ton assistant IA</h3>
+        <p>Pose tes questions techniques, calcule des cotes, identifie un problème — Yann te répond 24/7.</p>
+      </div>
+
+      <div class="feature">
+        <div class="icon">🎯</div>
+        <h3>Wizard dynamique</h3>
+        <p>Un assistant pas-à-pas te guide sur chaque type de menuiserie (fenêtre, porte, coulissant, cintré) — impossible d'oublier une cote.</p>
+      </div>
+
+      <div class="feature">
+        <div class="icon">🚀</div>
+        <h3>Onboarding en 5 étapes</h3>
+        <p>Nouveau sur l'app ? Le tutoriel intégré t'apprend à mesurer ton premier chantier en moins de 3 minutes.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== TÉLÉCHARGEMENT (App Store + QR) ===== -->
+<section id="telecharger" style="padding:80px 24px;background:linear-gradient(180deg,var(--bg) 0%,var(--bg-2) 100%)">
+  <div class="section-wrap" style="max-width:1100px;margin:0 auto">
+    <h2>Disponible sur <em>l'App Store</em></h2>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:48px;align-items:center;background:var(--bg-3);border:1px solid var(--border);border-radius:20px;padding:40px;box-shadow:0 20px 60px rgba(0,0,0,0.35)" class="dl-hero-grid">
+      <div>
+        <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(34,197,94,0.14);color:var(--green);padding:6px 14px;border-radius:20px;font-size:.82rem;font-weight:700;margin-bottom:16px;border:1px solid rgba(34,197,94,0.3)">
+          <span style="width:8px;height:8px;background:var(--green);border-radius:50%;display:inline-block"></span>
+          Disponible maintenant sur iOS
+        </div>
+        <h3 style="font-family:var(--font-head);font-size:1.6rem;font-weight:800;color:var(--text);margin:0 0 12px;line-height:1.2">Téléchargez MesureChâssis sur votre iPhone</h3>
+        <p style="color:var(--text-mute);font-size:1rem;margin:0 0 24px;line-height:1.6">Scannez le QR code avec l'appareil photo de votre iPhone ou iPad, ou cliquez sur le bouton App Store officiel. L'installation prend moins d'une minute.</p>
+
+        <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+          <a href="https://apps.apple.com/fr/app/mesurech%C3%A2ssis/id6776357930" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.85rem;background:#000;color:#fff;padding:.85rem 1.5rem;border-radius:12px;text-decoration:none;border:1px solid rgba(255,255,255,0.15);transition:transform .2s">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="#fff" aria-hidden="true">
+              <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+            </svg>
+            <div style="text-align:left;line-height:1.2">
+              <div style="font-size:.7rem;color:#a8a8b0;font-weight:400">Télécharger sur l'</div>
+              <div style="font-family:var(--font-head);font-size:1.2rem;font-weight:700">App Store</div>
+            </div>
+          </a>
+
+          <div style="display:inline-flex;align-items:center;gap:.85rem;background:var(--bg-2);color:var(--text-mute);padding:.85rem 1.5rem;border-radius:12px;border:1.5px dashed var(--border);cursor:default;position:relative">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="#5a5a65" aria-hidden="true">
+              <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4483.9993.9993 0 .5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4483.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5902 8.2439 13.8533 7.8508 12 7.8508s-3.5902.3931-5.1367 1.0989L4.841 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3432-4.1021-2.6889-7.5743-6.1185-9.4396"/>
+            </svg>
+            <div style="text-align:left;line-height:1.2">
+              <div style="font-size:.7rem;font-weight:400">Bientôt disponible sur</div>
+              <div style="font-family:var(--font-head);font-size:1.2rem;font-weight:700;color:var(--text-mute)">Google Play</div>
+            </div>
+            <span style="position:absolute;top:-10px;right:-8px;background:var(--orange);color:#000;font-size:.65rem;font-weight:800;padding:3px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em">Prochainement</span>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:20px;margin-top:20px;flex-wrap:wrap;color:var(--text-mute);font-size:.85rem">
+          <span>⭐ iOS 15+</span>
+          <span>💾 &lt; 50 Mo</span>
+          <span>🆓 Gratuit</span>
+        </div>
+      </div>
+
+      <div style="text-align:center">
+        <div style="background:#fff;padding:14px;border-radius:16px;box-shadow:0 12px 40px rgba(255,107,53,0.25);display:inline-block">
+          <img src="images/qr-appstore-logo.png" alt="QR code pour télécharger MesureChâssis sur l'App Store" width="200" height="200" style="display:block;width:200px;height:200px">
+        </div>
+        <p style="color:var(--text-mute);margin:12px 0 0;font-size:.82rem;max-width:200px;line-height:1.4">📸 Scannez avec<br>l'appareil photo iPhone</p>
+      </div>
+    </div>
+    <style>
+      @media(max-width:820px){
+        .dl-hero-grid{grid-template-columns:1fr !important;gap:32px !important;padding:28px !important}
+        .dl-hero-grid > div:first-child{order:2;text-align:center}
+        .dl-hero-grid > div:first-child > div:nth-child(4){justify-content:center}
+      }
+    </style>
+  </div>
+</section>
+
+<!-- ===== TARIFS ===== -->
+<section id="tarifs" class="pricing">
+  <div class="section-wrap">
+    <h2>Choisis ton <em>plan</em></h2>
+    <p style="text-align:center;color:var(--text-mute);max-width:640px;margin:-32px auto 40px;font-size:1rem">
+      Deux plans gratuits à vie · Trois plans payants pour aller plus loin.<br>
+      <a href="tarifs.html" style="color:var(--orange)">Voir le comparatif détaillé →</a>
+    </p>
+    <div class="grid">
+
+      <div class="plan">
+        <div class="plan-name">🧰 Artisan</div>
+        <p class="plan-tag">L'artisan qui découvre</p>
+        <div class="plan-price">0 €</div>
+        <span class="plan-period">À vie · 1 utilisateur</span>
+        <ul>
+          <li>5 formes de menuiseries de base</li>
+          <li>Chantiers illimités</li>
+          <li>Mode hors-ligne local</li>
+          <li>Export PDF de base</li>
+          <li>Photos anti-litige</li>
+        </ul>
+        <a href="telecharger.html" class="plan-cta">Commencer →</a>
+      </div>
+
+      <div class="plan">
+        <div class="plan-name">🏢 Entreprise</div>
+        <p class="plan-tag">Petite équipe qui débute</p>
+        <div class="plan-price">0 €</div>
+        <span class="plan-period">À vie · 3 utilisateurs</span>
+        <ul>
+          <li>Tout le plan Artisan</li>
+          <li><strong>3 utilisateurs</strong> inclus</li>
+          <li>Partage de chantiers</li>
+          <li>Mode équipe basique</li>
+          <li>Statistiques simples</li>
+        </ul>
+        <a href="telecharger.html" class="plan-cta">Créer mon équipe →</a>
+      </div>
+
+      <div class="plan">
+        <div class="plan-name">⭐ Artisan Pro</div>
+        <p class="plan-tag">Le solo qui veut aller vite</p>
+        <div class="plan-price">19 €<small> HT/mois</small></div>
+        <span class="plan-period">1 utilisateur · Essai 14 j</span>
+        <ul>
+          <li>Tout le plan Artisan</li>
+          <li><strong>14 formes complètes</strong></li>
+          <li>Laser Bluetooth connecté</li>
+          <li>Assistant IA Yann illimité</li>
+          <li>Exports PDF / Excel / CSV</li>
+        </ul>
+        <a href="tarifs.html" class="plan-cta">Choisir Artisan Pro →</a>
+      </div>
+
+      <div class="plan featured">
+        <div class="plan-name">🚀 Entreprise Pro</div>
+        <p class="plan-tag">L'équipe qui produit</p>
+        <div class="plan-price">59 €<small> HT/mois</small></div>
+        <span class="plan-period">3+ utilisateurs · +5 €/u suppl.</span>
+        <ul>
+          <li>Tout Artisan Pro</li>
+          <li><strong>RBAC complet</strong> (Admin/Commercial/Tech.)</li>
+          <li>Intelligence CDC (import cahier des charges)</li>
+          <li>Workflow anti-bourdes</li>
+          <li>Dashboard équipe &amp; stats</li>
+          <li>Support prioritaire</li>
+        </ul>
+        <a href="tarifs.html" class="plan-cta">Choisir Entreprise Pro →</a>
+      </div>
+
+      <div class="plan" style="border-color:#B58BFF;background:linear-gradient(180deg,rgba(181,139,255,0.10) 0%,var(--bg-2) 60%)">
+        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#B58BFF,#FF6B35);color:#fff;font-size:.72rem;font-weight:800;padding:4px 12px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase">🏆 Nouveauté</div>
+        <div class="plan-name">💎 Entreprise MAX</div>
+        <p class="plan-tag">L'automatisation totale</p>
+        <div class="plan-price" style="color:#B58BFF">249 €<small> HT/mois</small></div>
+        <span class="plan-period">Utilisateurs illimités</span>
+        <ul>
+          <li>Tout Entreprise Pro</li>
+          <li><strong>🆕 Générateur de devis PDF auto</strong></li>
+          <li>Analyse IA avancée (14 formes par photo)</li>
+          <li>Mode hors-ligne + sync avancée</li>
+          <li>Gestion anti-litige complète</li>
+          <li>Branding personnalisé &amp; SSO</li>
+          <li>Account manager dédié</li>
+        </ul>
+        <a href="tarifs.html#max-avantages" class="plan-cta" style="border-color:#B58BFF;color:#B58BFF">Découvrir MAX →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section id="faq" class="faq">
+  <div class="section-wrap">
+    <h2>Questions <em>fréquentes</em></h2>
+    <div class="faq-list">
+
+      <details class="faq-item">
+        <summary>Sur quels appareils l'app fonctionne-t-elle ?</summary>
+        <p>MesureChâssis est disponible sur iOS et Android (smartphones et tablettes). Une version web est aussi accessible pour la gestion bureau depuis n'importe quel ordinateur.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Comment fonctionne l'import IA du cahier des charges ?</summary>
+        <p>Tu photographies les pages PDF/papier de ton CDC. Notre IA reconnaît automatiquement la liste des châssis, leurs dimensions, types (coulissant, ouvrant, fixe) et les crée dans l'app. Tu n'as plus qu'à mesurer sur place et valider.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Puis-je tester sans m'engager ?</summary>
+        <p>Oui ! Le plan Gratuit te permet d'utiliser l'app à vie jusqu'à 5 formes par chantier — aucune carte bancaire requise. Et pour les plans payants (Solo, Entreprise, Entreprise Pro), tu bénéficies de <strong>14 jours d'essai gratuit</strong> avec toutes les fonctionnalités débloquées. Tu peux annuler à tout moment avant la fin de la période sans être facturé.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Quels mètres laser sont compatibles ?</summary>
+        <p>Tous les mètres laser Bluetooth populaires : Bosch (GLM), Leica Disto, Stanley TLM, Hilti PD, etc. La connexion se fait en quelques secondes depuis les paramètres.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Mes données sont-elles sécurisées ?</summary>
+        <p>Oui. Toutes les données sont chiffrées (HTTPS + AES) et hébergées en Europe (RGPD). Tu restes propriétaire de tes données et peux les exporter ou supprimer à tout moment.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Puis-je l'utiliser pour autre chose que les châssis ?</summary>
+        <p>Oui — portes, verandas, gardes-corps, escaliers... tout ce qui se mesure avec des cotes et des diagonales fonctionne. L'app est conçue pour les menuisiers mais utilisable largement.</p>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA FINAL + CONTACT ===== -->
+<section id="contact" class="cta-final">
+  <h2>Prêt à <em>gagner du temps</em> ?</h2>
+  <p>Téléchargez MesureChâssis sur votre iPhone et essayez gratuitement.</p>
+  <div class="cta-group">
+    <a href="https://apps.apple.com/fr/app/mesurech%C3%A2ssis/id6776357930" target="_blank" rel="noopener" class="btn btn-primary">📲 Télécharger sur l'App Store</a>
+    <a href="mailto:info@mesurechassis.com" class="btn btn-ghost">📧 info@mesurechassis.com</a>
+  </div>
+  <p style="color:var(--text-mute);font-size:.85rem;margin-top:20px">
+    ⏳ Version Android bientôt disponible sur le Google Play Store
+  </p>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="wrap">
+    <div>
+      <h4>MesureChâssis</h4>
+      <p>L'app de prise de mesures pour les menuisiers pros en Belgique, France, Luxembourg et plus.</p>
+    </div>
+    <div>
+      <h4>Produit</h4>
+      <a href="#fonctionnalites">Fonctionnalités</a>
+      <a href="#telecharger">Télécharger</a>
+      <a href="#tarifs">Tarifs</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div>
+      <h4>Légal</h4>
+      <a href="mentions-legales.html">Mentions légales</a>
+      <a href="cgu.html">CGU</a>
+      <a href="cgv.html">CGV</a>
+      <a href="confidentialite.html">Confidentialité</a>
+      <a href="cookies.html">Cookies</a>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <a href="mailto:info@mesurechassis.com">info@mesurechassis.com</a>
+    </div>
+  </div>
+  <p class="copyright">© 2026 MesureChâssis — Tous droits réservés.</p>
+</footer>
+
+<script>
+// Auto-pause hero video when off-screen (économise CPU/data)
+(function(){
+  const video = document.getElementById("heroVideo");
+  if (!video) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) video.play().catch(() => {});
+      else video.pause();
+    });
+  }, { threshold: 0.2 });
+  observer.observe(video);
+})();
+</script>
+</body>
+</html>
