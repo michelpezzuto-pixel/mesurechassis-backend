@@ -222,3 +222,331 @@ async def admin_purge_email(
         + rows_html
     )
     return HTMLResponse(_html_page(title=f"PURGE OK · pattern={pattern}", body_html=body))
+
+
+
+# ══════════════════════════════════════════════════════════════════════
+# 🗺️ CARTE DES MENUISIERS INSCRITS
+# ══════════════════════════════════════════════════════════════════════
+@router.get("/admin/map/data")
+async def admin_map_data(
+    token: str = Query(..., description="PLATFORM_ADMIN_TOKEN"),
+    days: int = Query(0, description="Filtre : inscrits derniers N jours (0=tous)"),
+    only_active: bool = Query(False, description="Filtre : uniquement comptes actifs"),
+):
+    """JSON des utilisateurs inscrits avec leur géoloc (ville)."""
+    _check_token(token)
+
+    from datetime import datetime, timedelta, timezone
+
+    match: dict = {"status": {"$in": ["active", "pending_verification"]}}
+    if only_active:
+        match["status"] = "active"
+    if days > 0:
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+        match["created_at"] = {"$gte": cutoff}
+
+    projection = {
+        "_id": 0,
+        "id": 1,
+        "email": 1,
+        "name": 1,
+        "role": 1,
+        "status": 1,
+        "created_at": 1,
+        "google_linked": 1,
+        "signup_geo": 1,
+        "last_login_at": 1,
+        "company_id": 1,
+    }
+
+    users = await db.users.find(match, projection).to_list(length=5000)
+
+    # Aggrégations par région / pays
+    by_region: dict = {}
+    by_country: dict = {}
+    total_with_geo = 0
+    total_without_geo = 0
+
+    points: list = []
+    for u in users:
+        geo = u.get("signup_geo") or {}
+        # Anonymisation légère : masquer l'email en public
+        email = u.get("email") or ""
+        masked_email = email
+        if "@" in email:
+            local, domain = email.split("@", 1)
+            if len(local) > 3:
+                masked_email = f"{local[:2]}***@{domain}"
+
+        item = {
+            "id": u.get("id"),
+            "email": masked_email,
+            "email_full": email,
+            "name": u.get("name") or "",
+            "role": u.get("role") or "admin",
+            "created_at": u.get("created_at"),
+            "last_login_at": u.get("last_login_at"),
+            "google_linked": bool(u.get("google_linked")),
+            "status": u.get("status"),
+            "company_id": u.get("company_id"),
+            "city": geo.get("city") or "",
+            "region": geo.get("region") or "",
+            "country": geo.get("country") or "",
+            "country_code": geo.get("country_code") or "",
+            "lat": geo.get("lat"),
+            "lng": geo.get("lng"),
+        }
+        if geo.get("lat") and geo.get("lng"):
+            total_with_geo += 1
+        else:
+            total_without_geo += 1
+        # Compteurs
+        r_key = geo.get("region") or "(inconnu)"
+        c_key = geo.get("country") or "(inconnu)"
+        by_region[r_key] = by_region.get(r_key, 0) + 1
+        by_country[c_key] = by_country.get(c_key, 0) + 1
+        points.append(item)
+
+    return {
+        "total": len(users),
+        "with_geo": total_with_geo,
+        "without_geo": total_without_geo,
+        "by_region": by_region,
+        "by_country": by_country,
+        "points": points,
+    }
+
+
+@router.get("/admin/map", response_class=HTMLResponse)
+async def admin_map_html(
+    token: str = Query(..., description="PLATFORM_ADMIN_TOKEN"),
+):
+    """Page HTML interactive avec Leaflet + OpenStreetMap. Aucune clé API
+    requise. Charge les données via `/admin/map/data` en JSON."""
+    _check_token(token)
+
+    # HTML complet : Leaflet CDN + JS pour fetcher /admin/map/data
+    html = """<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Carte des menuisiers - Admin MesureChâssis</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; background: #0a0a0a; color: #f5f5f5; }
+  .app { display: flex; flex-direction: column; height: 100vh; }
+  header {
+    background: #0a0a0c; border-bottom: 1px solid #262626;
+    padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+  h1 { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
+  h1 span { color: #FF5A00; }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+  .filters button {
+    background: #1a1a1e; border: 1px solid #262626; color: #d4d4d4;
+    padding: 8px 14px; border-radius: 999px; font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: all .15s ease;
+  }
+  .filters button:hover { background: #262626; }
+  .filters button.active { background: #FF5A00; color: #0a0a0a; border-color: #FF5A00; }
+  .stats-bar {
+    display: flex; gap: 18px; padding: 10px 18px; background: #131315;
+    border-bottom: 1px solid #262626; flex-wrap: wrap;
+  }
+  .stat { display: flex; flex-direction: column; }
+  .stat-value { font-size: 20px; font-weight: 900; color: #FF5A00; letter-spacing: -0.5px; }
+  .stat-label { font-size: 10.5px; color: #a3a3a3; text-transform: uppercase; letter-spacing: 0.7px; margin-top: 2px; }
+  .main { flex: 1; display: flex; overflow: hidden; }
+  #map { flex: 1; background: #1a1a1e; }
+  aside {
+    width: 320px; background: #131315; border-left: 1px solid #262626;
+    overflow-y: auto; padding: 16px 14px;
+  }
+  aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 1.2px; color: #a3a3a3; margin-bottom: 10px; }
+  .region-row { display: flex; justify-content: space-between; padding: 8px 10px; border-radius: 8px; font-size: 13px; }
+  .region-row:nth-child(odd) { background: #1a1a1e; }
+  .region-count { color: #FF5A00; font-weight: 800; }
+  .empty { color: #737373; font-size: 12px; padding: 12px; text-align: center; }
+  .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); color: #FF5A00; font-weight: 700; z-index: 999; }
+  .leaflet-popup-content { color: #0a0a0c; font-family: inherit; }
+  .leaflet-popup-content b { color: #FF5A00; }
+  @media (max-width: 780px) {
+    aside { display: none; }
+  }
+</style></head><body>
+<div class="app">
+  <header>
+    <h1>🗺️ Carte des menuisiers <span>MesureChâssis</span></h1>
+    <div class="filters" id="filters">
+      <button data-days="0" class="active">Tous</button>
+      <button data-days="7">7 jours</button>
+      <button data-days="30">30 jours</button>
+      <button data-days="90">90 jours</button>
+      <button data-active="1">Actifs uniquement</button>
+    </div>
+  </header>
+  <div class="stats-bar" id="stats"></div>
+  <div class="main">
+    <div id="map"></div>
+    <aside>
+      <h2>Par région</h2>
+      <div id="regions"></div>
+      <h2 style="margin-top:20px">Par pays</h2>
+      <div id="countries"></div>
+    </aside>
+  </div>
+</div>
+<script>
+(function(){
+  var TOKEN = new URLSearchParams(location.search).get("token");
+  var API_BASE = "/api/admin/map/data";
+  var state = { days: 0, only_active: false };
+
+  // Carte centrée sur la Belgique
+  var map = L.map("map", { zoomControl: true }).setView([50.5, 4.5], 7);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: '© OpenStreetMap',
+    maxZoom: 18
+  }).addTo(map);
+
+  var cluster = L.markerClusterGroup({ maxClusterRadius: 45 });
+  map.addLayer(cluster);
+
+  function orangeIcon() {
+    return L.divIcon({
+      className: "mc-pin",
+      html: '<div style="width:22px;height:22px;background:#FF5A00;border:3px solid #0a0a0c;border-radius:50%;box-shadow:0 4px 10px rgba(255,90,0,0.5)"></div>',
+      iconSize: [22,22], iconAnchor: [11,11]
+    });
+  }
+
+  function fmtDate(iso) {
+    if (!iso) return "-";
+    try { return new Date(iso).toLocaleDateString("fr-BE"); } catch(e) { return iso; }
+  }
+
+  function renderStats(d) {
+    document.getElementById("stats").innerHTML =
+      '<div class="stat"><div class="stat-value">' + d.total + '</div><div class="stat-label">Inscrits</div></div>' +
+      '<div class="stat"><div class="stat-value">' + d.with_geo + '</div><div class="stat-label">Géolocalisés</div></div>' +
+      '<div class="stat"><div class="stat-value">' + d.without_geo + '</div><div class="stat-label">Sans géoloc</div></div>' +
+      '<div class="stat"><div class="stat-value">' + Object.keys(d.by_country).length + '</div><div class="stat-label">Pays</div></div>';
+  }
+
+  function renderList(target, obj) {
+    var entries = Object.entries(obj).sort(function(a,b){ return b[1]-a[1]; });
+    if (!entries.length) { target.innerHTML = '<div class="empty">Aucune donnée</div>'; return; }
+    target.innerHTML = entries.map(function(e){
+      return '<div class="region-row"><span>' + e[0] + '</span><span class="region-count">' + e[1] + '</span></div>';
+    }).join("");
+  }
+
+  function load() {
+    cluster.clearLayers();
+    var params = new URLSearchParams({ token: TOKEN, days: state.days, only_active: state.only_active });
+    fetch(API_BASE + "?" + params.toString())
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        renderStats(d);
+        renderList(document.getElementById("regions"), d.by_region);
+        renderList(document.getElementById("countries"), d.by_country);
+        d.points.forEach(function(p){
+          if (!p.lat || !p.lng) return;
+          // Léger jitter pour éviter la superposition parfaite (multi-inscrits même ville)
+          var jitter = 0.008;
+          var lat = p.lat + (Math.random()-0.5) * jitter;
+          var lng = p.lng + (Math.random()-0.5) * jitter;
+          var pop = '<b>' + (p.name || p.email) + '</b><br>' +
+                    (p.city || "?") + (p.region ? ", " + p.region : "") + '<br>' +
+                    '📅 Inscrit : ' + fmtDate(p.created_at) + '<br>' +
+                    (p.google_linked ? '🔑 Google' : '✉️ Email') + ' · <i>' + p.status + '</i><br>' +
+                    '<small style="color:#666">' + p.email + '</small>';
+          L.marker([lat, lng], { icon: orangeIcon() })
+            .bindPopup(pop)
+            .addTo(cluster);
+        });
+      })
+      .catch(function(err){ console.error(err); alert("Erreur chargement : " + err.message); });
+  }
+
+  document.getElementById("filters").addEventListener("click", function(e){
+    if (e.target.tagName !== "BUTTON") return;
+    var btn = e.target;
+    if (btn.dataset.days !== undefined) {
+      state.days = parseInt(btn.dataset.days, 10);
+      state.only_active = false;
+      Array.from(document.querySelectorAll("#filters button")).forEach(function(b){ b.classList.remove("active"); });
+      btn.classList.add("active");
+    } else if (btn.dataset.active !== undefined) {
+      state.only_active = !state.only_active;
+      btn.classList.toggle("active", state.only_active);
+    }
+    load();
+  });
+
+  load();
+})();
+</script>
+</body></html>"""
+
+    return HTMLResponse(html)
+
+
+# ══════════════════════════════════════════════════════════════════════
+# 🌍 BACKFILL RÉTROACTIF de la géolocalisation
+# ══════════════════════════════════════════════════════════════════════
+@router.get("/admin/map/backfill", response_class=HTMLResponse)
+async def admin_map_backfill(
+    token: str = Query(..., description="PLATFORM_ADMIN_TOKEN"),
+    confirm: str = Query("", description="Passer 'YES' pour exécuter"),
+):
+    """Applique une géolocalisation par défaut aux comptes déjà inscrits
+    qui n'ont pas de `signup_geo` (comptes créés avant l'ajout de la
+    géoloc automatique). Par défaut → Bruxelles, Belgique. Le vrai
+    remplissage se fera au fil des connexions."""
+    _check_token(token)
+
+    dry = confirm != "YES"
+
+    # Coordonnées par défaut = Bruxelles (fondateur belge)
+    default_geo = {
+        "city": "Bruxelles",
+        "region": "Région de Bruxelles-Capitale",
+        "country": "Belgique",
+        "country_code": "BE",
+        "lat": 50.8503,
+        "lng": 4.3517,
+        "source": "backfill_default",
+    }
+
+    query = {"signup_geo": {"$exists": False}}
+    n = await db.users.count_documents(query)
+
+    if dry:
+        confirm_url = f"?token={token}&confirm=YES"
+        body = (
+            f"<p><b>Aperçu — {n} utilisateur(s) sans géoloc.</b></p>"
+            f"<div class='stats'>{n}</div>"
+            f"<p>Seront tagués comme <code>Bruxelles, Belgique</code> "
+            f"(coordonnées par défaut) si vous confirmez. Les prochaines "
+            f"connexions/inscriptions rempliront progressivement les vraies "
+            f"villes.</p>"
+            f'<a class="btn" href="{confirm_url}">🌍 CONFIRMER LE BACKFILL</a>'
+        )
+        return HTMLResponse(_html_page(title="APERÇU BACKFILL GÉOLOC", body_html=body))
+
+    result = await db.users.update_many(query, {"$set": {"signup_geo": default_geo}})
+    body = (
+        f"<p><b>✅ Backfill effectué.</b></p>"
+        f"<div class='stats'>{result.modified_count} comptes tagués</div>"
+        f"<p>Tous les comptes existants sont désormais visibles sur la carte "
+        f"(par défaut à Bruxelles). Les nouveaux inscrits auront leur vraie "
+        f"ville détectée via IP.</p>"
+    )
+    return HTMLResponse(_html_page(title="BACKFILL OK", body_html=body))

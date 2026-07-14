@@ -326,6 +326,16 @@ async def register(payload: dict, request: Request):
         # /admin/team seront quant à eux créés avec validation_status="pending".
         "validation_status": "unvalidated",
     }
+    # 🗺️ Géolocalisation approximative (ville) via IP — best-effort,
+    # non-bloquant. Utilisée uniquement dans le dashboard admin pour
+    # visualiser la distribution géographique des inscriptions.
+    try:
+        from services.geolocation import geolocate_from_request
+        geo = await geolocate_from_request(request)
+        if geo:
+            user_doc["signup_geo"] = geo
+    except Exception:
+        pass  # Silencieux : la géoloc ne doit JAMAIS casser l'inscription.
     # ☕ Priorité 4 — Campagne Jeton Café : si l'inscription vient d'un QR
     # code de station partenaire (?station=<id>), on tague le compte.
     # Les comptes SANS ce tag ne voient jamais la fonctionnalité.

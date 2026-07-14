@@ -24,7 +24,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 import httpx
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 
 from db import BETA_MODE, db
@@ -45,7 +45,7 @@ class GoogleSessionPayload(BaseModel):
 
 
 @router.post("/auth/google/session")
-async def google_session(payload: GoogleSessionPayload):
+async def google_session(payload: GoogleSessionPayload, request: Request):
     """Échange un `session_id` Emergent contre notre JWT applicatif."""
     session_id = (payload.session_id or "").strip()
     if not session_id:
@@ -141,6 +141,14 @@ async def google_session(payload: GoogleSessionPayload):
             )
             if station:
                 user_doc["campaign_station_id"] = station_id_raw
+        # 🗺️ Géolocalisation approximative (ville) via IP — best-effort
+        try:
+            from services.geolocation import geolocate_from_request
+            geo = await geolocate_from_request(request)
+            if geo:
+                user_doc["signup_geo"] = geo
+        except Exception:
+            pass
         await db.users.insert_one(user_doc)
         logger.info("🔑 Google signup (nouveau compte) %s → %s", email, company_id)
 
