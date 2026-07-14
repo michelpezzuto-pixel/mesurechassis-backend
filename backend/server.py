@@ -189,6 +189,35 @@ async def download_liste_prospects():
     )
 
 
+# 🆕 Juillet 2026 — Page démo publique mesurechassis.com + sitemap
+@api.get("/_downloads/demo-html")
+async def download_demo_html():
+    """Page HTML `demo.html` pour mesurechassis.com."""
+    path = "/app/site_mesurechassis_final/demo.html"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="demo.html introuvable")
+    return FileResponse(path, media_type="text/html", filename="demo.html")
+
+
+@api.get("/_downloads/sitemap-xml")
+async def download_sitemap_xml():
+    """Sitemap XML mis à jour avec la nouvelle page démo."""
+    path = "/app/site_mesurechassis_final/sitemap.xml"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="sitemap.xml introuvable")
+    return FileResponse(path, media_type="application/xml", filename="sitemap.xml")
+
+
+@api.get("/_downloads/kit-video-capcut")
+async def download_kit_capcut():
+    """Kit CapCut (storyboard 60s pour la vidéo de démo)."""
+    path = "/app/memory/KIT_CAPCUT_video_demo.md"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Kit CapCut introuvable")
+    return FileResponse(path, media_type="text/markdown", filename="Kit_CapCut_video_demo.md")
+
+
+
 # 🆕 Build 11.3 — Screenshots Apple App Store (iPhone 6.5" + iPad 12.9")
 @api.get("/_downloads/apple-screenshots")
 async def download_apple_screenshots():
