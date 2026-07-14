@@ -296,7 +296,7 @@ nav a:not(.btn-primary):hover::after { width:100% }
 }
 
 </style>
-</head>
+<style>body.menu-open .mc-fab{display:none !important}</style></head>
 <body>
 <!-- ═══════════ COUNTDOWN BANNER GLOBAL ═══════════ -->
 <div class="beta-banner" id="freebie-banner" style="background:linear-gradient(90deg,#FF6B35 0%,#FF8C42 100%);color:#fff;padding:.65rem 1rem;text-align:center;font-size:.86rem;font-weight:500;line-height:1.4;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.4rem 1rem">
@@ -369,7 +369,7 @@ nav a:not(.btn-primary):hover::after { width:100% }
         <a href="contact.html" style="color:#a8a8b0;font-size:.92rem;font-weight:500;text-decoration:none">Contact</a>
         <a href="telecharger.html" class="btn-primary" style="background:#FF6B35;color:#fff;padding:.6rem 1.1rem;border-radius:8px;font-weight:600;font-size:.92rem;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem">📱 Télécharger l'app</a>
     </nav>
-    <button class="hamburger" aria-label="Menu" onclick="document.querySelector('.mobile-nav-mc').classList.toggle('open')" style="display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:4px;padding:6px">
+    <button class="hamburger" aria-label="Menu" onclick="document.querySelector('.mobile-nav-mc').classList.toggle('open');document.body.classList.toggle('menu-open')" style="display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:4px;padding:6px">
       <span style="width:22px;height:2px;background:#fff;border-radius:2px"></span>
       <span style="width:22px;height:2px;background:#fff;border-radius:2px"></span>
       <span style="width:22px;height:2px;background:#fff;border-radius:2px"></span>
@@ -1160,7 +1160,7 @@ console.log('✅ MesureChâssis animations chargées');
   window.declineCookies=function(){localStorage.setItem('mc_cookie_consent','declined');b.style.display='none';};
 })();
 </script>
-<a href="telecharger.html" aria-label="Télécharger l'application" style="position:fixed;bottom:1.5rem;right:1.5rem;background:#FF6B35;color:#fff;padding:.9rem 1.3rem;border-radius:50px;font-weight:700;font-size:.92rem;box-shadow:0 12px 30px rgba(255,107,53,0.25);z-index:90;display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;font-family:'DM Sans',sans-serif">
+<a class="mc-fab" href="telecharger.html" aria-label="Télécharger l'application" style="position:fixed;bottom:1.5rem;right:1.5rem;background:#FF6B35;color:#fff;padding:.9rem 1.3rem;border-radius:50px;font-weight:700;font-size:.92rem;box-shadow:0 12px 30px rgba(255,107,53,0.25);z-index:90;display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;font-family:'DM Sans',sans-serif">
   📱 <span class="fab-label-mc">Télécharger l'app</span>
   <style>@media(max-width:600px){.fab-label-mc{display:none}}</style>
 </a>

@@ -67,7 +67,16 @@ nav.top .cta{
   padding:9px 18px;border-radius:8px;
   font-weight:700;font-size:.92rem;
 }
-@media(max-width:720px){nav.top .links a:not(.cta){display:none}}
+@media(max-width:720px){
+  nav.top .links a:not(.cta){display:none}
+  nav.top .wrap{padding:12px 16px;gap:10px}
+  nav.top .brand{font-size:1rem;flex-shrink:1;min-width:0}
+  nav.top .brand span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  nav.top .cta{padding:8px 12px;font-size:.85rem;flex-shrink:0}
+}
+@media(max-width:380px){
+  nav.top .cta{padding:7px 10px;font-size:.78rem}
+}
 
 /* ===== Hero ===== */
 .hero{
