@@ -252,15 +252,33 @@ async def download_backend_railway_fix():
     )
 
 
+@api.get("/_downloads/build-131-combo")
+async def download_build_131_combo():
+    """ZIP combo pour le build 131 iOS : Rating Prompt activé + HelpButton
+    + backend/auth.py avec bouton d'aide sur page HTML verify-link."""
+    path = "/app/downloads_site/build_131_combo.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="ZIP combo introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="build_131_combo.zip",
+    )
+
+
 @api.get("/_downloads", response_class=HTMLResponse)
 @api.get("/_downloads/", response_class=HTMLResponse)
 async def downloads_index():
     """Page d'accueil listant tous les fichiers téléchargeables — 1 clic
     au lieu de copier des URL à la main sur iPhone."""
     files = [
-        ("Backend Railway (URGENT - fix email verify)",
+        ("Build 131 iOS - COMBO (Rating + Aide + Backend)",
+         "build-131-combo",
+         "TOUT pour build 131 : Rating Prompt activé, bouton Aide, backend page HTML avec support. À uploader dans GitHub Desktop.",
+         "36 Ko · ZIP"),
+        ("Backend Railway seul (fix email verify)",
          "backend-railway-fix",
-         "ZIP avec routes/auth.py, google_auth.py, admin_tools.py + services/geolocation.py à uploader dans Railway.",
+         "Si tu veux uniquement le backend (deja poussé, plus nécessaire).",
          "25 Ko · ZIP"),
         ("Site propre (ZIP complet)",
          "site-propre",

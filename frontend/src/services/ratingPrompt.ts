@@ -30,7 +30,7 @@ import * as StoreReview from "expo-store-review";
 import { Platform } from "react-native";
 
 /** 🚦 Master switch : activer au lancement de la campagne Jeton Café */
-const RATING_PROMPT_ENABLED_DEFAULT = false;
+const RATING_PROMPT_ENABLED_DEFAULT = true;
 
 /** Permet une override par variable d'env (utile pour QA/beta) */
 function isFeatureEnabled(): boolean {

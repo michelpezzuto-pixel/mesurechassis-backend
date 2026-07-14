@@ -23,6 +23,7 @@ import { setLanguage, SUPPORTED_LANGUAGES, SupportedLanguage } from "@/src/i18n"
 import { api } from "@/src/services/api";
 import { colors } from "@/src/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import HelpButton from "@/src/components/HelpButton";
 import {
   consumeInitialSessionId,
   openGoogleAuth,
@@ -584,6 +585,12 @@ export default function SignIn() {
               >
                 <Text style={styles.ghostBtnText}>← Retour à la connexion</Text>
               </TouchableOpacity>
+              {/* 🆘 Bouton d'aide contextuel — ne pas laisser l'utilisateur bloqué */}
+              <HelpButton
+                context="Vérification email"
+                userEmail={pendingVerification.email}
+                variant="full"
+              />
             </View>
           ) : (
             <>
@@ -1076,6 +1083,12 @@ export default function SignIn() {
               </Text>
             </TouchableOpacity>
           )}
+
+          {/* 🆘 Bouton d'aide compact — visible sur Connexion ET Inscription */}
+          <HelpButton
+            context={mode === "login" ? "Connexion" : "Inscription"}
+            variant="compact"
+          />
 
           {/* 🍎 iOS — App Store Guideline 4 (Design) — Build 107 :
            * Apple a rejeté Build 106 car le bouton "En savoir plus" ouvrait

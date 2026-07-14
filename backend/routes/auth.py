@@ -555,6 +555,38 @@ def _verify_html_page(*, ok: bool, title: str, message: str, cta_url: str | None
             f'border-radius:24px;font-weight:700;font-size:14px;letter-spacing:.4px">'
             f"OUVRIR MESURECHÂSSIS</a>"
         )
+    # 🆘 Bouton d'aide (uniquement en cas d'erreur — pas besoin sur succès)
+    help_block = ""
+    if not ok:
+        _help_subject = "%5BMesureCh%C3%A2ssis%5D%20Aide%20-%20Lien%20de%20v%C3%A9rification%20email"
+        _help_body = (
+            "Bonjour%20Michel%2C%0A%0AJe%20rencontre%20un%20probl%C3%A8me%20avec%20le%20lien%20"
+            "de%20v%C3%A9rification%20email%20de%20MesureCh%C3%A2ssis%20%3A%0A%0A"
+            "%5BD%C3%A9crivez%20ici%20votre%20probl%C3%A8me%5D%0A%0A"
+            "%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A"
+            "Infos%20techniques%20%3A%0A%E2%80%A2%20Mon%20email%20de%20connexion%20%3A%20"
+            "%0A%E2%80%A2%20Heure%20du%20clic%20%3A%20%0A"
+            "%E2%94%80%E2%94%80%E2%94%80%E2%94%80%E2%94%80%0A%0AMerci%20%21"
+        )
+        help_block = (
+            '<div style="margin-top:32px;padding-top:24px;border-top:1px solid #262626;">'
+            '<div style="font-size:12px;color:#a3a3a3;margin-bottom:12px;letter-spacing:0.3px;">'
+            "Un souci ? On est l&agrave; 👋"
+            "</div>"
+            f'<a href="mailto:info@mesurechassis.com?subject={_help_subject}&body={_help_body}" '
+            'style="display:inline-block;margin-right:8px;padding:10px 18px;background:#FF5A00;'
+            'color:#0A0A0C;text-decoration:none;border-radius:999px;font-weight:800;font-size:12px;'
+            'letter-spacing:0.3px">&#9993; Envoyer un email</a>'
+            '<a href="tel:+32496650032" '
+            'style="display:inline-block;padding:10px 18px;background:transparent;color:#F5F5F5;'
+            'text-decoration:none;border-radius:999px;font-weight:800;font-size:12px;'
+            'border:1px solid rgba(255,255,255,0.15);letter-spacing:0.3px">'
+            "&#9990; 0496 65 00 32</a>"
+            '<div style="font-size:10.5px;color:#737373;margin-top:12px;font-style:italic;">'
+            "R&eacute;ponse en moins de 24h par Michel, fondateur — en Belge, sans robot."
+            "</div>"
+            "</div>"
+        )
     return f"""<!DOCTYPE html>
 <html lang="fr"><head>
 <meta charset="UTF-8">
@@ -619,6 +651,7 @@ def _verify_html_page(*, ok: bool, title: str, message: str, cta_url: str | None
     <h1>{title}</h1>
     <p>{message}</p>
     {cta}
+    {help_block}
     <div class="brand">MESURECHÂSSIS</div>
   </div>
 </body></html>"""
