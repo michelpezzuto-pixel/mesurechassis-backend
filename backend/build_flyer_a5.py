@@ -71,7 +71,7 @@ FLYER_HTML = f"""
 
     <!-- HERO -->
     <div class="hero">
-      <div class="hero-eyebrow">Menuisiers pros - Wallonie - Bruxelles - Flandre</div>
+      <div class="hero-eyebrow">Nouveau 2026 - Menuisiers pros - Wallonie - Bruxelles - Flandre</div>
       <div class="hero-title">
         Fini les carnets<br>
         perdus dans<br>
@@ -85,9 +85,9 @@ FLYER_HTML = f"""
 
     <!-- FREE BANNER -->
     <div class="free-banner">
-      <div class="free-banner-eyebrow">Zero risque</div>
+      <div class="free-banner-eyebrow">Pionniers belges - places limitées</div>
       <div class="free-banner-headline">100% GRATUIT</div>
-      <div class="free-banner-detail">Sans carte bancaire - Sans engagement - Toutes fonctions incluses</div>
+      <div class="free-banner-detail">Rejoignez les 50 premiers menuisiers - Sans carte, sans engagement</div>
     </div>
 
     <!-- 3 ARGUMENTS -->
@@ -113,7 +113,7 @@ FLYER_HTML = f"""
     <div class="qr-block">
       <img class="qr-img" src="{QR_DATA_URI}" alt="QR Code MesureChâssis">
       <div class="qr-copy">
-        <div class="qr-cta">Scannez.<br><em>Essayez.</em><br>C'est gratuit.</div>
+        <div class="qr-cta">Rejoignez<br>les <em>pionniers</em>.<br>C'est gratuit.</div>
         <div class="qr-sub">mesurechassis.com - Disponible sur iPhone &amp; iPad. Version Android bientôt.</div>
         <div class="qr-badges">
           <span class="qr-badge">iOS</span>
