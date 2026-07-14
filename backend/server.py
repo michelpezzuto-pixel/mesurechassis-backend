@@ -237,12 +237,31 @@ async def download_site_propre_alias():
     return await download_site_propre()
 
 
+@api.get("/_downloads/backend-railway-fix")
+async def download_backend_railway_fix():
+    """ZIP des fichiers backend à uploader sur Railway pour ajouter
+    l'endpoint /api/auth/verify-link + la carte admin géo + la géoloc
+    automatique dans les inscriptions."""
+    path = "/app/downloads_site/backend_fixes_railway.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="ZIP backend introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="backend_fixes_railway.zip",
+    )
+
+
 @api.get("/_downloads", response_class=HTMLResponse)
 @api.get("/_downloads/", response_class=HTMLResponse)
 async def downloads_index():
     """Page d'accueil listant tous les fichiers téléchargeables — 1 clic
     au lieu de copier des URL à la main sur iPhone."""
     files = [
+        ("Backend Railway (URGENT - fix email verify)",
+         "backend-railway-fix",
+         "ZIP avec routes/auth.py, google_auth.py, admin_tools.py + services/geolocation.py à uploader dans Railway.",
+         "25 Ko · ZIP"),
         ("Site propre (ZIP complet)",
          "site-propre",
          "mesurechassis.com nettoyé, index.html mis à jour, sitemap complet.",
