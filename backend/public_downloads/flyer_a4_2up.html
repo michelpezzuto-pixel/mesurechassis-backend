@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="UTF-8">
+<title>Flyer prospection MesureChassis - A4 (2 A5)</title>
+<style>
+  @page {
+    size: 297mm 210mm;
+    margin: 0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    width: 297mm;
+    height: 210mm;
+    background: #FFFFFF;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+  }
+
+  /* Chaque flyer occupe exactement 148.5mm de large sur 210mm de haut */
+  .flyer {
+    width: 148.5mm;
+    height: 210mm;
+    position: relative;
+    overflow: hidden;
+    color: #F5F5F5;
+    background: #0A0A0C;
+  }
+
+  /* Halos orange decoratifs */
+  .flyer::before {
+    content: "";
+    position: absolute;
+    top: -60mm; right: -50mm;
+    width: 160mm; height: 160mm;
+    background: radial-gradient(circle, rgba(255,90,0,0.20) 0%, transparent 60%);
+    z-index: 0;
+  }
+  .flyer::after {
+    content: "";
+    position: absolute;
+    bottom: -35mm; left: -35mm;
+    width: 120mm; height: 120mm;
+    background: radial-gradient(circle, rgba(255,90,0,0.12) 0%, transparent 60%);
+    z-index: 0;
+  }
+
+  .card {
+    position: absolute;
+    inset: 0;
+    padding: 7mm 8mm;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 3mm;
+    border-bottom: 1px solid rgba(255,255,255,0.10);
+  }
+  .brand {
+    font-weight: 900;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+    color: #FFFFFF;
+  }
+  .brand-accent { color: #FF5A00; }
+  .brand-tag {
+    font-size: 8.5px;
+    color: #A8A8B0;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-top: 1mm;
+    font-weight: 500;
+  }
+  .flag {
+    background: linear-gradient(180deg, #000 33%, #FDDA24 33% 66%, #EF3340 66%);
+    width: 14px; height: 10px;
+    border-radius: 2px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .badge-be {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.14);
+    padding: 4px 9px;
+    border-radius: 20px;
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    color: #F5F5F5;
+    text-transform: uppercase;
+  }
+
+  /* HERO */
+  .hero { margin-top: 5mm; }
+  .hero-eyebrow {
+    font-size: 9px;
+    color: #FF5A00;
+    letter-spacing: 2px;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 3mm;
+  }
+  .hero-title {
+    font-weight: 900;
+    font-size: 26px;
+    line-height: 1.05;
+    letter-spacing: -0.8px;
+    color: #FFFFFF;
+  }
+  .hero-title em {
+    font-style: normal;
+    color: #FF5A00;
+  }
+  .hero-sub {
+    margin-top: 3mm;
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: #C4C4C8;
+    font-weight: 400;
+  }
+
+  /* FREE BANNER */
+  .free-banner {
+    margin: 5mm 0;
+    background: #FF5A00;
+    border-radius: 10px;
+    padding: 4.5mm 5mm;
+    color: #0A0A0C;
+    position: relative;
+    box-shadow: 0 6px 24px rgba(255,90,0,0.30);
+  }
+  .free-banner-eyebrow {
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    opacity: 0.9;
+  }
+  .free-banner-headline {
+    font-weight: 900;
+    font-size: 26px;
+    line-height: 1;
+    letter-spacing: -0.5px;
+    margin-top: 1.5mm;
+  }
+  .free-banner-detail {
+    font-size: 9.5px;
+    font-weight: 700;
+    margin-top: 2mm;
+    line-height: 1.4;
+  }
+
+  /* 3 ARGUMENTS */
+  .args {
+    display: flex;
+    gap: 2.5mm;
+    margin-bottom: 4mm;
+  }
+  .arg {
+    flex: 1;
+    background: #131318;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 3mm 2.8mm;
+  }
+  .arg-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(255,90,0,0.18);
+    color: #FF5A00;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 900;
+    margin-bottom: 2mm;
+  }
+  .arg-title {
+    font-size: 10.5px;
+    font-weight: 800;
+    color: #F5F5F5;
+    line-height: 1.15;
+    margin-bottom: 1.2mm;
+  }
+  .arg-desc {
+    font-size: 8.5px;
+    color: #9EA1AA;
+    line-height: 1.35;
+  }
+
+  /* QR BLOCK */
+  .qr-block {
+    display: flex;
+    gap: 4mm;
+    align-items: center;
+    padding: 3.5mm;
+    background: #FFFFFF;
+    border-radius: 10px;
+    margin-bottom: 3.5mm;
+  }
+  .qr-img {
+    width: 38mm; height: 38mm;
+    background: #fff;
+    flex-shrink: 0;
+  }
+  .qr-copy { flex: 1; }
+  .qr-cta {
+    font-weight: 900;
+    font-size: 14px;
+    color: #0A0A0C;
+    line-height: 1.15;
+    letter-spacing: -0.3px;
+  }
+  .qr-cta em {
+    font-style: normal;
+    color: #FF5A00;
+  }
+  .qr-sub {
+    font-size: 9px;
+    color: #4B4B54;
+    margin-top: 2mm;
+    line-height: 1.35;
+  }
+  .qr-badges {
+    display: flex;
+    gap: 4px;
+    margin-top: 2.5mm;
+  }
+  .qr-badge {
+    background: #0A0A0C;
+    color: #fff;
+    font-size: 8px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 12px;
+    letter-spacing: 0.3px;
+  }
+
+  /* SIGNATURE */
+  .sig {
+    display: flex;
+    align-items: center;
+    gap: 3mm;
+    padding: 3mm 3.5mm;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 8px;
+    margin-bottom: 3mm;
+  }
+  .sig-avatar {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FF5A00, #D94800);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .sig-copy { flex: 1; }
+  .sig-line1 {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #F5F5F5;
+    line-height: 1.15;
+  }
+  .sig-line2 {
+    font-size: 8.5px;
+    color: #A8A8B0;
+    margin-top: 1mm;
+    line-height: 1.3;
+  }
+  .sig-phone {
+    font-weight: 900;
+    font-size: 13px;
+    color: #FF5A00;
+    letter-spacing: -0.3px;
+    white-space: nowrap;
+  }
+
+  /* FOOTER */
+  .footer {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 2.5mm;
+    border-top: 1px solid rgba(255,255,255,0.10);
+    font-size: 8px;
+    color: #7A7A80;
+  }
+  .footer-teaser {
+    color: #FF5A00;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+  .footer-web strong { color: #F5F5F5; font-weight: 600; }
+
+  /* REPERES DE COUPE (marques au centre entre les deux flyers) */
+  .cut-guides {
+    position: absolute;
+    top: 0;
+    left: 148.5mm;
+    width: 0;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .cut-line {
+    position: absolute;
+    left: -0.15mm;
+    top: 5mm;
+    bottom: 5mm;
+    width: 0.3mm;
+    background-image: linear-gradient(to bottom, #FFFFFF 50%, transparent 50%);
+    background-size: 100% 3mm;
+    opacity: 0.35;
+  }
+  .cut-mark {
+    position: absolute;
+    width: 5mm;
+    height: 0.3mm;
+    background: #000;
+    left: -2.5mm;
+  }
+  .cut-mark.top { top: 0; }
+  .cut-mark.bottom { bottom: 0; }
+</style></head>
+<body>
+  
+<div class="flyer">
+  <div class="card">
+    <!-- HEADER -->
+    <div class="header">
+      <div>
+        <div class="brand">Mesure<span class="brand-accent">Châssis</span></div>
+        <div class="brand-tag">L'app terrain des menuisiers</div>
+      </div>
+      <div class="badge-be">
+        <span class="flag"></span>
+        Made in Belgium
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-eyebrow">Menuisiers pros - Wallonie - Bruxelles - Flandre</div>
+      <div class="hero-title">
+        Fini les carnets<br>
+        perdus dans<br>
+        le camion. <em>Enfin.</em>
+      </div>
+      <div class="hero-sub">
+        Photographiez un cahier des charges, l'IA extrait vos 22 fenêtres
+        en 45 secondes. Vous validez sur place, vous envoyez le devis.
+      </div>
+    </div>
+
+    <!-- FREE BANNER -->
+    <div class="free-banner">
+      <div class="free-banner-eyebrow">Zero risque</div>
+      <div class="free-banner-headline">100% GRATUIT</div>
+      <div class="free-banner-detail">Sans carte bancaire - Sans engagement - Toutes fonctions incluses</div>
+    </div>
+
+    <!-- 3 ARGUMENTS -->
+    <div class="args">
+      <div class="arg">
+        <div class="arg-icon">AI</div>
+        <div class="arg-title">Relevé intelligent</div>
+        <div class="arg-desc">L'IA lit vos cahiers des charges PDF et extrait toutes les ouvertures.</div>
+      </div>
+      <div class="arg">
+        <div class="arg-icon">&#8595;</div>
+        <div class="arg-title">Export en 1 clic</div>
+        <div class="arg-desc">PDF client, Excel devis, CSV ERP. Directement depuis le chantier.</div>
+      </div>
+      <div class="arg">
+        <div class="arg-icon">&#8226;</div>
+        <div class="arg-title">Chantier hors-ligne</div>
+        <div class="arg-desc">Cave, sous-sol, sans 4G : ça marche. Synchro auto au retour.</div>
+      </div>
+    </div>
+
+    <!-- QR BLOCK -->
+    <div class="qr-block">
+      <img class="qr-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAuQAAALkCAIAAADIxrcyAAAOVElEQVR42u3YvYrsOBCA0e3FWaH3f1ChWBvc9C4MI2ZK5TonbyTrx/3hz977HwCAW/1rCQAAsQIAIFYAALECACBWAADECgAgVgAAxAoAIFYAAMQKAIBYAQDECgCAWAEAxAoAgFgBABArAIBYAQAQKwCAWAEAECsAAGIFABArAABiBQAQKwAAYgUAQKwAAGIFAECsAACIFQBArAAAiBUAQKwAAIgVAACxAgCIFQAAsQIAiBUAALECACBWAIDKnqyBI4bVv9xas9z+Zs35ZNyK9yjreb1z3n0X/C+8+1yd8GUFALiaWAEAxAoAgFgBAMQKAIBYAQAQKwCAWAEAECsAgFgBABArAABiBQAQKwAAYgUAECsAAGIFAECsAABiBQBArAAAPT0VJ73WtHNfFDFa7dHJ857MOWudK56rrHXudia7sVbvfl/5sgIAiBUAALECAIgVAACxAgAgVgAAsQIAIFYAALECACBWAADECgAgVgAAxAoAIFYAAMQKAIBYAQDECgCAWAEAxAoAwHWebg8cMcrNea1pnV+8VlnP6y64R7gLVfiyAgCIFQAAsQIAiBUAALECACBWAACxAgAgVgAAsQIAIFYAAMQKACBWAADECgAgVgAAxAoAgFgBAMQKAIBYAQDECgDAdR5LwE9Ya6aMGzHKzbni856Mm/W83e5Rt7Xi3XxZAQDECgCAWAEAxAoAgFgBABArAIBYAQAQKwCAWAEAECsAAGIFABArAABiBQAQKwAAYgUAQKwAAGIFAECsAABiBQDgOo8l4CdEjJRx15qtxsUeeV468GUFABArAABiBQAQKwAAYgUAQKwAAGIFAECsAABiBQBArAAAiBUAQKwAAIgVAECsAACIFQAAsQIAiBUAALECAIgVAIDrPN0eeK1p163zX0WMlOc9GTdrj7Ket9u5cvfNmT98WQEAxAoAgFgBAMQKAIBYAQAQKwCAWAEAECsAgFgBABArAABiBQAQKwAAYgUAECsAAGIFAECsAABiBQBArAAAYgUA4DpPxUlHDDv34j1aaxr38rtgnY3rf4Hf5MsKACBWAADECgAgVgAAxAoAgFgBAMQKAIBYAQDECgCAWAEAECsAgFgBABArAIBYAQAQKwAAYgUAECsAAGIFABArAADXebIGXmtafV4j6zxXHDdilBu3oqx19r/AT/BlBQAQKwAAYgUAECsAAGIFAECsAABiBQBArAAAYgUAQKwAAIgVAECsAACIFQBArAAAiBUAALECAIgVAACxAgCIFQCA63z23lbhchEjZdy1prX6hbU6mXPWHmXNueJaVTzP3e6Cce+/R76sAABXEysAgFgBABArAIBYAQAQKwAAYgUAECsAAGIFABArAABiBQBArAAAYgUAQKwAAGIFAECsAACIFQBArAAAiBUAoKen2wNHjG//dq1Z7nmz5nyyzt2e92TOWevc7Q56b7gLb1LxTPqyAgCIFQAAsQIAiBUAALECACBWAACxAgAgVgAAsQIAIFYAAMQKACBWAADECgAgVgAAxAoAgFgBAMQKAIBYAQDECgDAdZ6Kk44Y5cZda5rzL4ybdTYqylrniuN2u4PugrtwG19WAACxAgAgVgAAsQIAIFYAAMQKACBWAADECgAgVgAAxAoAgFgBAMQKAIBYAQDECgCAWAEAECsAgFgBABArAIBYAQC4zpM1cMT49m/XmuXGPZE17slaVTwbFdeq25nM0u1cYX9v48sKACBWAADECgAgVgAAxAoAgFgBAMQKAIBYAQDECgCAWAEAECsAgFgBABArAIBYAQAQKwAAYgUAECsAAGIFABArAADXeSpOOmLYuV9Yq7Vmqz3qtlZZcz4Z1/7er+K5qnieu/FlBQAQKwAAYgUAECsAAGIFAECsAABiBQBArAAAYgUAQKwAAIgVAECsAACIFQBArAAAiBUAALECAIgVAACxAgCIFQCA63z23uUmHTHs3BetNVPWOWvcbmvV7Q5WPFfeG/fPueI96va+8mUFALiaWAEAxAoAgFgBAMQKAIBYAQAQKwCAWAEAECsAgFgBABArAABiBQAQKwAAYgUAECsAAGIFAECsAABiBQBArAAAPT2W4OvWmuXmHDFSnrfiuNx/j7L2N+vuZ92jbu/JrD3qdjZO+LICAIgVAACxAgCIFQAAsQIAIFYAALECACBWAACxAgAgVgAAxAoAIFYAAMQKACBWAADECgCAWAEAxAoAgFgBAMQKAMB1PnvvlIEjxrd/u9ZMGTfLyfNm7VHFtcp63m7nudvZyLq/WSqulf+j+/fIlxUA4GpiBQAQKwAAYgUAECsAAGIFAECsAABiBQBArAAAYgUAQKwAAIgVAECsAACIFQBArAAAiBUAALECAIgVAACxAgD09GQNvNa0+r8gYpSbc8WzcTLnkz3KGrfiWmWtczfd1qrbPcriywoAIFYAAMQKACBWAADECgCAWAEAxAoAgFgBAMQKAIBYAQAQKwCAWAEAECsAgFgBABArAABiBQAQKwAAYgUAECsAANf57L1TBo4Y3/7tWrPcQp8874mstcra36x17iZrj7qdjYrP223O/A5fVgAAsQIAIFYAALECACBWAADECgAgVgAAxAoAIFYAAMQKAIBYAQDECgCAWAEAxAoAgFgBABArAIBYAQAQKwCAWAEAuM5n720VLhcxUsZda1qrF6/zyVpVnDPvvvveG+/mywoAIFYAAMQKACBWAADECgCAWAEAxAoAgFgBAMQKAIBYAQAQKwCAWAEAECsAgFgBABArAABiBQAQKwAAYgUAECsAANd5Kk46YrTapLVmuXU+mXPW/lacc7dxu93BrD2qePcr7lHFs5G1zr6sAABXEysAgFgBABArAIBYAQAQKwAAYgUAECsAAGIFABArAABiBQBArAAAYgUAQKwAAGIFAECsAACIFQBArAAAiBUAoKen2wOvNb/924iRMu6JkzlX3CPnyrhv4p3j/8g6/+HLCgAgVgAAxAoAIFYAAMQKAIBYAQDECgCAWAEAxAoAgFgBABArAIBYAQAQKwCAWAEAECsAAGIFABArAABiBQAQKwAA1/nsvVMGjhjf/u1as9WcK65VRSfrjDN527mq+M5xB93B/+PLCgAgVgAAxAoAIFYAAMQKAIBYAQDECgCAWAEAxAoAgFgBABArAIBYAQAQKwCAWAEAECsAAGIFABArAABiBQAQKwAA13kswe+IGK3GXWua8+Vz7naeK+5vlqxz1e0883W+rAAAYgUAQKwAAGIFAECsAACIFQBArAAAiBUAQKwAAIgVAACxAgCIFQAAsQIAiBUAALECACBWAACxAgAgVgAAsQIAcJ3HEnzdWjNl3IjRas7OhnP1E+NmncmKc654NrrtUTe+rAAAYgUAQKwAAGIFAECsAACIFQBArAAAiBUAQKwAAIgVAACxAgCIFQAAsQIAiBUAALECACBWAACxAgAgVgAAsQIAcJ3P3jtl4IjRaqHXmuXWOWvOWbLO5Mk6u0f334Vue9RNxXd7xef1ZQUAuJpYAQDECgCAWAEAxAoAgFgBABArAIBYAQAQKwCAWAEAECsAAGIFABArAABiBQAQKwAAYgUAQKwAAGIFAECsAAA9PVkDrzWt/ovXOWKkzPlk3IrrnLVW7q/7+6azkfXe6PaePOHLCgAgVgAAxAoAIFYAAMQKAIBYAQDECgCAWAEAxAoAgFgBABArAIBYAQAQKwCAWAEAECsAAGIFABArAABiBQAQKwAA1/nsvVMGjhhW/3JrzVbPe3ImT9Yq6y5kzbniuBXPZMX3hjvoLvwfX1YAALECACBWAACxAgAgVgAAxAoAIFYAAMQKACBWAADECgCAWAEAxAoAgFgBAMQKAIBYAQAQKwCAWAEAECsAgFgBALjOU3HSa00790URo9y4Wfvb7VxlnY2sPco6kxXX2bvdHbyNLysAgFgBABArAIBYAQAQKwAAYgUAECsAAGIFABArAABiBQBArAAAYgUAQKwAAGIFAECsAACIFQBArAAAiBUAQKwAAFzn6fbAEaPcnNeareactUcV5+xMem/cdp7dhfvP5Mlvs57XlxUA4GpiBQAQKwAAYgUAECsAAGIFAECsAABiBQBArAAAYgUAQKwAAIgVAECsAACIFQBArAAAiBUAALECAIgVAACxAgD09FgC3mSt+e3fRoyUcbOcPG/WuCfrnLVHFc9VxXvU7Txn7W8WX1YAALECACBWAACxAgAgVgAAxAoAIFYAAMQKACBWAADECgCAWAEAxAoAgFgBAMQKAIBYAQAQKwCAWAEAECsAgFgBALjOYwl4k4jRas5rzXLPmzXnbuvcbX9Pxq343uh2F3xZAQCuJlYAALECACBWAACxAgAgVgAAxAoAIFYAAMQKACBWAADECgCAWAEAxAoAgFgBAMQKAIBYAQAQKwCAWAEAECsAQE9Ptwdea9p1+/tXESPltyeyxu3mZJ29c7w3/Jed82UFABArAABiBQAQKwAAYgUAQKwAAGIFAECsAABiBQBArAAAiBUAQKwAAIgVAECsAACIFQAAsQIAiBUAALECAIgVAIDrfPbeKQNHDKt/ubVmuTmfnKuT580at9taZZ1nc3aP3vQ/WHGtfFkBAMQKAIBYAQDECgCAWAEAECsAgFgBABArAIBYAQAQKwAAYgUAECsAAGIFABArAABiBQBArAAAYgUAQKwAAGIFAOA6n723VQAAruXLCgAgVgAAxAoAIFYAAMQKAIBYAQDECgCAWAEAxAoAgFgBABArAIBYAQAQKwCAWAEAECsAAGIFABArAABiBQAQKwAAYgUAQKwAAGIFAECsAABixRIAAGIFAECsAABiBQBArAAAiBUAQKwAAIgVAECsAACIFQAAsQIAiBUAALECAIgVAACxAgAgVgCA0v4DA/8BvzqUD5MAAAAASUVORK5CYII=" alt="QR Code MesureChâssis">
+      <div class="qr-copy">
+        <div class="qr-cta">Scannez.<br><em>Essayez.</em><br>C'est gratuit.</div>
+        <div class="qr-sub">mesurechassis.com - Disponible sur iPhone &amp; iPad. Version Android bientôt.</div>
+        <div class="qr-badges">
+          <span class="qr-badge">iOS</span>
+          <span class="qr-badge">iPad</span>
+          <span class="qr-badge">RGPD</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIGNATURE -->
+    <div class="sig">
+      <div class="sig-avatar">MP</div>
+      <div class="sig-copy">
+        <div class="sig-line1">Michel Pezzuto - menuisier &amp; fondateur</div>
+        <div class="sig-line2">Une question ? Je réponds directement, en Belge, sans robot.</div>
+      </div>
+      <div class="sig-phone">0496 65 00 32</div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <div class="footer-teaser">Conçu par un menuisier, pour les menuisiers</div>
+      <div class="footer-web">
+        <strong>mesurechassis.com</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+<div class="flyer">
+  <div class="card">
+    <!-- HEADER -->
+    <div class="header">
+      <div>
+        <div class="brand">Mesure<span class="brand-accent">Châssis</span></div>
+        <div class="brand-tag">L'app terrain des menuisiers</div>
+      </div>
+      <div class="badge-be">
+        <span class="flag"></span>
+        Made in Belgium
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-eyebrow">Menuisiers pros - Wallonie - Bruxelles - Flandre</div>
+      <div class="hero-title">
+        Fini les carnets<br>
+        perdus dans<br>
+        le camion. <em>Enfin.</em>
+      </div>
+      <div class="hero-sub">
+        Photographiez un cahier des charges, l'IA extrait vos 22 fenêtres
+        en 45 secondes. Vous validez sur place, vous envoyez le devis.
+      </div>
+    </div>
+
+    <!-- FREE BANNER -->
+    <div class="free-banner">
+      <div class="free-banner-eyebrow">Zero risque</div>
+      <div class="free-banner-headline">100% GRATUIT</div>
+      <div class="free-banner-detail">Sans carte bancaire - Sans engagement - Toutes fonctions incluses</div>
+    </div>
+
+    <!-- 3 ARGUMENTS -->
+    <div class="args">
+      <div class="arg">
+        <div class="arg-icon">AI</div>
+        <div class="arg-title">Relevé intelligent</div>
+        <div class="arg-desc">L'IA lit vos cahiers des charges PDF et extrait toutes les ouvertures.</div>
+      </div>
+      <div class="arg">
+        <div class="arg-icon">&#8595;</div>
+        <div class="arg-title">Export en 1 clic</div>
+        <div class="arg-desc">PDF client, Excel devis, CSV ERP. Directement depuis le chantier.</div>
+      </div>
+      <div class="arg">
+        <div class="arg-icon">&#8226;</div>
+        <div class="arg-title">Chantier hors-ligne</div>
+        <div class="arg-desc">Cave, sous-sol, sans 4G : ça marche. Synchro auto au retour.</div>
+      </div>
+    </div>
+
+    <!-- QR BLOCK -->
+    <div class="qr-block">
+      <img class="qr-img" src="data:image/png;base64,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rAAAiBUAALECAIgVAACxAgD09GQNvNa0+r8gYpSbc8WzcTLnkz3KGrfiWmWtczfd1qrbPcriywoAIFYAAMQKACBWAADECgCAWAEAxAoAgFgBAMQKAIBYAQAQKwCAWAEAECsAgFgBABArAABiBQAQKwAAYgUAECsAANf57L1TBo4Y3/7tWrPcQp8874mstcra36x17iZrj7qdjYrP223O/A5fVgAAsQIAIFYAALECACBWAADECgAgVgAAxAoAIFYAAMQKAIBYAQDECgCAWAEAxAoAgFgBABArAIBYAQAQKwCAWAEAuM5n720VLhcxUsZda1qrF6/zyVpVnDPvvvveG+/mywoAIFYAAMQKACBWAADECgCAWAEAxAoAgFgBAMQKAIBYAQAQKwCAWAEAECsAgFgBABArAABiBQAQKwAAYgUAECsAANd5Kk46YrTapLVmuXU+mXPW/lacc7dxu93BrD2qePcr7lHFs5G1zr6sAABXEysAgFgBABArAIBYAQAQKwAAYgUAECsAAGIFABArAABiBQBArAAAYgUAQKwAAGIFAECsAACIFQBArAAAiBUAoKen2wOvNb/924iRMu6JkzlX3CPnyrhv4p3j/8g6/+HLCgAgVgAAxAoAIFYAAMQKAIBYAQDECgCAWAEAxAoAgFgBABArAIBYAQAQKwCAWAEAECsAAGIFABArAABiBQAQKwAA1/nsvVMGjhjf/u1as9WcK65VRSfrjDN527mq+M5xB93B/+PLCgAgVgAAxAoAIFYAAMQKAIBYAQDECgCAWAEAxAoAgFgBABArAIBYAQAQKwCAWAEAECsAAGIFABArAABiBQAQKwAA13kswe+IGK3GXWua8+Vz7naeK+5vlqxz1e0883W+rAAAYgUAQKwAAGIFAECsAACIFQBArAAAiBUAQKwAAIgVAACxAgCIFQAAsQIAiBUAALECACBWAACxAgAgVgAAsQIAcJ3HEnzdWjNl3IjRas7OhnP1E+NmncmKc654NrrtUTe+rAAAYgUAQKwAAGIFAECsAACIFQBArAAAiBUAQKwAAIgVAACxAgCIFQAAsQIAiBUAALECACBWAACxAgAgVgAAsQIAcJ3P3jtl4IjRaqHXmuXWOWvOWbLO5Mk6u0f334Vue9RNxXd7xef1ZQUAuJpYAQDECgCAWAEAxAoAgFgBABArAIBYAQAQKwCAWAEAECsAAGIFABArAABiBQAQKwAAYgUAQKwAAGIFAECsAAA9PVkDrzWt/ovXOWKkzPlk3IrrnLVW7q/7+6azkfXe6PaePOHLCgAgVgAAxAoAIFYAAMQKAIBYAQDECgCAWAEAxAoAgFgBABArAIBYAQAQKwCAWAEAECsAAGIFABArAABiBQAQKwAA1/nsvVMGjhhW/3JrzVbPe3ImT9Yq6y5kzbniuBXPZMX3hjvoLvwfX1YAALECACBWAACxAgAgVgAAxAoAIFYAAMQKACBWAADECgCAWAEAxAoAgFgBAMQKAIBYAQAQKwCAWAEAECsAgFgBALjOU3HSa00790URo9y4Wfvb7VxlnY2sPco6kxXX2bvdHbyNLysAgFgBABArAIBYAQAQKwAAYgUAECsAAGIFABArAABiBQBArAAAYgUAQKwAAGIFAECsAACIFQBArAAAiBUAQKwAAFzn6fbAEaPcnNeareactUcV5+xMem/cdp7dhfvP5Mlvs57XlxUA4GpiBQAQKwAAYgUAECsAAGIFAECsAABiBQBArAAAYgUAQKwAAIgVAECsAACIFQBArAAAiBUAALECAIgVAACxAgD09FgC3mSt+e3fRoyUcbOcPG/WuCfrnLVHFc9VxXvU7Txn7W8WX1YAALECACBWAACxAgAgVgAAxAoAIFYAAMQKACBWAADECgCAWAEAxAoAgFgBAMQKAIBYAQAQKwCAWAEAECsAgFgBALjOYwl4k4jRas5rzXLPmzXnbuvcbX9Pxq343uh2F3xZAQCuJlYAALECACBWAACxAgAgVgAAxAoAIFYAAMQKACBWAADECgCAWAEAxAoAgFgBAMQKAIBYAQAQKwCAWAEAECsAQE9Ptwdea9p1+/tXESPltyeyxu3mZJ29c7w3/Jed82UFABArAABiBQAQKwAAYgUAQKwAAGIFAECsAABiBQBArAAAiBUAQKwAAIgVAECsAACIFQAAsQIAiBUAALECAIgVAIDrfPbeKQNHDKt/ubVmuTmfnKuT580at9taZZ1nc3aP3vQ/WHGtfFkBAMQKAIBYAQDECgCAWAEAECsAgFgBABArAIBYAQAQKwAAYgUAECsAAGIFABArAABiBQBArAAAYgUAQKwAAGIFAOA6n723VQAAruXLCgAgVgAAxAoAIFYAAMQKAIBYAQDECgCAWAEAxAoAgFgBABArAIBYAQAQKwCAWAEAECsAAGIFABArAABiBQAQKwAAYgUAQKwAAGIFAECsAABixRIAAGIFAECsAABiBQBArAAAiBUAQKwAAIgVAECsAACIFQAAsQIAiBUAALECAIgVAACxAgAgVgCA0v4DA/8BvzqUD5MAAAAASUVORK5CYII=" alt="QR Code MesureChâssis">
+      <div class="qr-copy">
+        <div class="qr-cta">Scannez.<br><em>Essayez.</em><br>C'est gratuit.</div>
+        <div class="qr-sub">mesurechassis.com - Disponible sur iPhone &amp; iPad. Version Android bientôt.</div>
+        <div class="qr-badges">
+          <span class="qr-badge">iOS</span>
+          <span class="qr-badge">iPad</span>
+          <span class="qr-badge">RGPD</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIGNATURE -->
+    <div class="sig">
+      <div class="sig-avatar">MP</div>
+      <div class="sig-copy">
+        <div class="sig-line1">Michel Pezzuto - menuisier &amp; fondateur</div>
+        <div class="sig-line2">Une question ? Je réponds directement, en Belge, sans robot.</div>
+      </div>
+      <div class="sig-phone">0496 65 00 32</div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <div class="footer-teaser">Conçu par un menuisier, pour les menuisiers</div>
+      <div class="footer-web">
+        <strong>mesurechassis.com</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="cut-guides">
+    <div class="cut-mark top"></div>
+    <div class="cut-line"></div>
+    <div class="cut-mark bottom"></div>
+  </div>
+</body></html>
