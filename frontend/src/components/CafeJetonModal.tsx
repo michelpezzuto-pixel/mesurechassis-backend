@@ -23,7 +23,14 @@ import {
   View,
 } from "react-native";
 
+import RatingPromptModal from "@/src/components/RatingPromptModal";
 import { api } from "@/src/services/api";
+import {
+  markPromptDismissed,
+  markPromptShown,
+  shouldShowRatingPrompt,
+  triggerNativeReview,
+} from "@/src/services/ratingPrompt";
 
 const GREEN = "#10B981";
 
@@ -52,6 +59,7 @@ export default function CafeJetonModal({
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [ratingVisible, setRatingVisible] = useState(false);
 
   const reset = () => {
     setStep("won");
@@ -72,6 +80,17 @@ export default function CafeJetonModal({
     try {
       await api.post(`/cafe/jetons/${jeton.id}/consume`, { pin });
       setStep("success");
+      // ⭐ Déclencheur Rating Prompt (feature flag OFF par défaut — voir
+      //    src/services/ratingPrompt.ts). Le check `shouldShowRatingPrompt`
+      //    gère l'activation + les throttles (max 1× / 90 jours, iOS only).
+      shouldShowRatingPrompt()
+        .then(async (should) => {
+          if (should) {
+            await markPromptShown();
+            setRatingVisible(true);
+          }
+        })
+        .catch(() => {});
     } catch (e: any) {
       const detail = e?.response?.data?.detail;
       setError(
@@ -83,10 +102,21 @@ export default function CafeJetonModal({
     }
   };
 
+  const handleRate = async () => {
+    setRatingVisible(false);
+    await triggerNativeReview();
+  };
+
+  const handleDismissRating = async () => {
+    setRatingVisible(false);
+    await markPromptDismissed();
+  };
+
   if (!jeton) return null;
 
   return (
-    <Modal visible={visible} transparent animationType="fade">
+    <>
+      <Modal visible={visible} transparent animationType="fade">
       <View style={styles.backdrop}>
         <View style={styles.card}>
           {step === "won" && (
@@ -191,6 +221,12 @@ export default function CafeJetonModal({
         </View>
       </View>
     </Modal>
+    <RatingPromptModal
+      visible={ratingVisible}
+      onRate={handleRate}
+      onDismiss={handleDismissRating}
+    />
+    </>
   );
 }
 
