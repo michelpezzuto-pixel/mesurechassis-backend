@@ -154,8 +154,22 @@ async def google_session(payload: GoogleSessionPayload, request: Request):
 
     # 4) Émission de NOTRE JWT — identique au login classique
     token = create_access_token(user_doc["id"], user_doc["role"])
+    user_public = user_to_public(user_doc).model_dump()
+    # 🔒 Flag TVA à compléter — Apple 3.1.3(c) + Stripe UE.
+    # Le frontend (AuthContext) affichera CompleteVatScreen en verrou
+    # plein écran tant que ce flag vaut True. On le calcule ici pour
+    # éviter un aller-retour /auth/me juste après le Google login.
+    try:
+        company_now = await db.companies.find_one(
+            {"company_id": user_doc["company_id"]},
+            {"_id": 0, "vat_number": 1},
+        )
+        if not (company_now and company_now.get("vat_number")):
+            user_public["vat_completion_required"] = True
+    except Exception:
+        pass
     return {
         "access_token": token,
         "token_type": "bearer",
-        "user": user_to_public(user_doc).model_dump(),
+        "user": user_public,
     }

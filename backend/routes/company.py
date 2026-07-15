@@ -64,6 +64,85 @@ async def update_company_profile(
     return _to_profile(doc, company_id)
 
 
+# ─────────────────────────────────────────────────────────────────────
+# 🔒 Complétion post-Google Sign-In — TVA + nom de société obligatoires
+# Compliance Apple 3.1.3(c) + Stripe UE (reverse charge).
+# Endpoint idempotent (refuse le rejeu si la TVA est déjà remplie).
+# ─────────────────────────────────────────────────────────────────────
+@router.post("/company/complete-signup")
+async def complete_signup(payload: dict, user=Depends(auth_user)):
+    """Fournit la TVA + nom de société après une inscription Google.
+
+    Ce endpoint est appelé par l'écran `CompleteVatScreen` (frontend) qui
+    s'affiche en verrou plein écran tant que `user.vat_completion_required
+    == True`. Il valide la TVA via VIES (fallback souple si VIES down),
+    puis met à jour la company. À la prochaine requête `/auth/me`, le
+    flag disparaît et le verrou se lève.
+
+    Payload : `{ "vat_number": "BE0123456789", "company_name": "..." }`
+    """
+    from datetime import datetime, timezone as _tz
+
+    company_id = user.get("company_id", "default")
+    doc = await ensure_company(company_id)
+
+    # Idempotence anti-rejeu : refuser si la TVA est déjà remplie
+    if doc.get("vat_number"):
+        raise HTTPException(
+            400,
+            "La TVA a déjà été renseignée pour ce compte. "
+            "Utilisez la page Profil pour la modifier.",
+        )
+
+    vat_raw = str((payload or {}).get("vat_number") or "").strip()
+    if not vat_raw:
+        raise HTTPException(400, "Numéro de TVA requis.")
+
+    company_name = str((payload or {}).get("company_name") or "").strip()
+
+    # Bypass VIES pour le compte démo Apple Review (même règle que /register)
+    email = str(user.get("email") or "").lower()
+    is_apple_review = email == "applereview@mesurechassis.com"
+
+    from services.vat_validator import validate_vat as _validate_vat
+    ok, normalized, msg = await _validate_vat(vat_raw, skip_vies=is_apple_review)
+    if not ok:
+        raise HTTPException(
+            400,
+            msg or "Numéro de TVA invalide. Vérifiez le format et le pays.",
+        )
+
+    update: dict = {
+        "vat_number": normalized,
+        "vat_country": (normalized or "")[:2] or None,
+        "vat_verified_at": datetime.now(_tz.utc).isoformat(),
+    }
+    if company_name:
+        # Contrainte de longueur minimale pour éviter les entrées vides ou
+        # farfelues (compat Stripe / factures).
+        if len(company_name) < 2 or len(company_name) > 120:
+            raise HTTPException(
+                400,
+                "Le nom de société doit contenir entre 2 et 120 caractères.",
+            )
+        update["name"] = company_name
+
+    address = str((payload or {}).get("address") or "").strip()
+    if address:
+        update["address"] = address[:200]
+
+    await db.companies.update_one(
+        {"company_id": company_id},
+        {"$set": update},
+        upsert=True,
+    )
+    return {
+        "ok": True,
+        "vat_number": normalized,
+        "company_name": update.get("name") or doc.get("name") or company_id,
+    }
+
+
 # --- C5 : Toggle Artisan ↔ Entreprise ----------------------------------
 @router.post("/company/switch-account-type", response_model=CompanyProfile)
 async def switch_account_type(

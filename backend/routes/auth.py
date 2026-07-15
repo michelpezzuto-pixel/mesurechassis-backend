@@ -844,7 +844,22 @@ async def login(payload: LoginRequest):
 
 @router.get("/auth/me", response_model=UserPublic)
 async def me(user=Depends(auth_user)):
-    return user_to_public(user)
+    pub = user_to_public(user)
+    # 🔒 Verrou TVA Google Sign-In — indique au frontend si l'utilisateur
+    # doit compléter sa TVA avant d'accéder au dashboard. Calculé à la
+    # volée depuis la company (jamais stocké sur l'user).
+    try:
+        company = await db.companies.find_one(
+            {"company_id": user.get("company_id", "default")},
+            {"_id": 0, "vat_number": 1},
+        )
+        if not (company and company.get("vat_number")):
+            data = pub.model_dump()
+            data["vat_completion_required"] = True
+            return UserPublic(**data)
+    except Exception:
+        pass  # silencieux : ne jamais casser /auth/me pour un flag optionnel
+    return pub
 
 
 @router.get("/users", response_model=List[UserPublic])

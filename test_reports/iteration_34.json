@@ -1,0 +1,40 @@
+{
+  "summary": "Backend Build 12 — Verrou TVA post-Google Sign-In : 14/14 tests pytest passent. Endpoint POST /api/company/complete-signup validé (401 sans auth, 400 sur TVA vide/invalide/format court/long, 200 sur BE0428759497 valide via VIES, idempotence anti-rejeu OK, persistance DB confirmée : vat_number/vat_country/vat_verified_at/name). Flag dynamique vat_completion_required correctement calculé dans /auth/me (True quand company sans TVA, null quand TVA présente, disparaît après complete-signup). Régression OK : login artisan, /auth/validate-vat, /auth/register avec TVA. FINDING IMPORTANT : la company de artisan@mesurechassis.fr (artisan-test-b14bf0) et celle de admin@mesurechassis.fr (default) N'ONT PAS de vat_number en DB — contrairement à ce que le brief affirmait. Ces comptes verront donc légitimement le CompleteVatScreen dès leur prochain login. À valider avec le fondateur : est-ce voulu (obligation de saisir la TVA sur ces comptes historiques) ou faut-il seeder rétroactivement leur TVA ?",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_vat_completion_lock.py",
+    "/app/test_reports/pytest/iter34_vat_lock.xml"
+  ],
+  "action_items": [
+    "DECISION PRODUIT: artisan@mesurechassis.fr (Michel) et admin@mesurechassis.fr n'ont PAS de vat_number en DB. Avec le nouveau verrou, ils déclencheront CompleteVatScreen au prochain login. Choisir : (a) seeder rétroactivement leur TVA, ou (b) accepter que Michel doive re-saisir sa TVA une fois.",
+    "Note : la vérification VIES sur BE0428759497 fonctionne en direct (test réel, non mocké). VIES peut être lent/indispo — vérifier le comportement du fallback souple du service vat_validator si VIES down en prod."
+  ],
+  "critical_code_review_comments": [
+    "routes/company.py:complete_signup — L'ordre des validations est correct : idempotence d'abord, puis vat_raw non vide, puis VIES, puis company_name (2-120). RAS.",
+    "routes/company.py:132 — Le champ 'address' est bien tronqué à 200 chars, safe.",
+    "routes/auth.py:845 (me) — Try/except silencieux pour ne pas casser /auth/me : bon choix défensif. L'objet UserPublic est reconstruit via ** data, propre.",
+    "routes/google_auth.py:158-170 — Même logique dupliquée dans /auth/google/session : DRY léger, mais acceptable vu la petite taille et la lisibilité.",
+    "models.py:UserPublic.vat_completion_required — Optional[bool]=None. OK ; le flag n'est JAMAIS stocké, pas de risque de désync DB."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_vat_completion_lock.py (nouveau fichier)"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "n/a (skipped per brief)"
+  },
+  "seed_data_creation": "Aucune donnée persistée. Tous les users/companies TEST_ créés en cours de test sont supprimés en teardown (fixture + try/finally).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Le fichier /app/backend/tests/test_vat_completion_lock.py est réutilisable pour régression. Il utilise create_access_token (deps.py) + motor pour fabriquer un JWT sur un user 'Google-like' inséré directement en DB, contournant l'API Emergent. TVA de test réelle publique : BE0428759497 (validée VIES).",
+  "rca_of_issue": "N/A — pas de bug. Le seul point d'attention est un état de données existant (Michel et admin n'ont pas de vat_number en DB) qui interagit avec la nouvelle feature. À trancher côté produit."
+}

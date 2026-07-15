@@ -5,6 +5,7 @@ import { api, clearToken, getToken, onAuthExpired, onSubscriptionState, onValida
 import { registerPushTokenWithBackend } from "@/src/services/notifications";
 import PaywallScreen from "@/src/components/PaywallScreen";
 import ValidationRequiredScreen from "@/src/components/ValidationRequiredScreen";
+import CompleteVatScreen from "@/src/components/CompleteVatScreen";
 import i18n, { setArtisanMode as setI18nArtisanMode } from "@/src/i18n";
 
 export type Role = "admin" | "commercial" | "technician";
@@ -15,6 +16,14 @@ export type User = {
   email: string;
   role: Role;
   company_id: string;
+  /**
+   * 🔒 Build 12 (juin 2026) — True quand l'utilisateur doit compléter
+   * son numéro de TVA (typiquement après Google Sign-In). Le verrou
+   * `CompleteVatScreen` s'affiche en plein écran tant que ce flag
+   * est vrai. Le backend calcule la valeur dans /auth/me et
+   * /auth/google/session (jamais stockée en DB).
+   */
+  vat_completion_required?: boolean;
 };
 
 export type CompanyProfile = {
@@ -346,6 +355,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }
           }}
           onLogout={signOut}
+        />
+      ) : user && user.vat_completion_required ? (
+        /* 🔒 Compte Google Sign-In sans TVA — verrou plein écran.
+            Priorité MAX : avant même la validation gérant, car aucun
+            usage payant ne peut être fait sans TVA (Apple 3.1.3(c)). */
+        <CompleteVatScreen
+          defaultCompanyName={company?.name || user.name}
+          onLogout={signOut}
+          onCompleted={async () => {
+            // Rafraîchit /auth/me → le flag doit repasser à undefined,
+            // ce qui lève automatiquement ce verrou.
+            try {
+              const res = await api.get<User>("/auth/me");
+              setUser(res.data);
+              await fetchCompany();
+            } catch {
+              /* silent — au prochain rafraîchissement le flag sera bon */
+            }
+          }}
         />
       ) : user && validationLock.required ? (
         /* 🔒 403 PAYWALL_VALIDATION_REQUIRED — compte en attente de validation

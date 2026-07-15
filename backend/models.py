@@ -17,6 +17,12 @@ class UserPublic(BaseModel):
     company_id: str
     status: str = "active"  # pending_verification | active | suspended
     email_verified_at: Optional[str] = None
+    # 🔒 Build 12 (juin 2026) — Verrou plein écran pour les utilisateurs
+    # Google Sign-In qui n'ont pas encore renseigné leur TVA. Calculé
+    # dynamiquement côté backend (jamais stocké) dans /auth/me et
+    # /auth/google/session. Le frontend affiche CompleteVatScreen tant
+    # que ce flag vaut True. Compliance Apple 3.1.3(c) + Stripe UE.
+    vat_completion_required: Optional[bool] = None
 
 
 class UserCreate(BaseModel):
