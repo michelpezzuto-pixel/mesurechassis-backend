@@ -219,15 +219,21 @@ async def download_kit_capcut():
 
 @api.get("/_downloads/site-propre")
 async def download_site_propre():
-    """ZIP complet du site mesurechassis.com nettoyé et à jour
-    (index.html avec lien Démo, sitemap complet, sans fichiers superflus)."""
-    path = "/app/downloads_site/mesurechassis_site_propre.zip"
-    if not os.path.isfile(path):
+    """ZIP complet du site mesurechassis.com — dernière version (15 juillet 2026).
+    Contient index.html avec bouton orange 'Télécharger' iPhone, sitemap
+    complet, toutes les pages HTML + images + vidéo hero + config."""
+    # Cherche d'abord le ZIP daté du jour, fallback sur l'ancien nom
+    candidates = [
+        "/app/downloads_site/mesurechassis_site_v2026-07-15.zip",
+        "/app/downloads_site/mesurechassis_site_propre.zip",
+    ]
+    path = next((p for p in candidates if os.path.isfile(p)), None)
+    if not path:
         raise HTTPException(status_code=404, detail="ZIP introuvable")
     return FileResponse(
         path,
         media_type="application/zip",
-        filename="mesurechassis_site_propre.zip",
+        filename="mesurechassis_site_v2026-07-15.zip",
     )
 
 
