@@ -1,10 +1,9 @@
 # 🔒 TODO — Écran TVA obligatoire post-Google Sign-In
 
-**Status** : En attente (Michel a validé l'idée mais préfère finir la campagne
-août 2026 avant de le prendre)
+**Status** : ✅ **IMPLÉMENTÉ (juin 2026, session courante) — Prêt à déployer**
 **Priorité** : P1 (compliance Apple 3.1.3(c) + Stripe facturation UE)
 **Estimation** : ~2h dev + 30 min tests
-**Décidé le** : 12 juillet 2026 · **À déclencher** : sur demande explicite Michel
+**Décidé le** : 12 juillet 2026 · **Implémenté le** : juin 2026
 
 ---
 
@@ -153,3 +152,33 @@ Quand Michel dit « go TVA Google » :
 
 Total : ~2h30 max. Aucune dépendance externe, tout le code VIES existe déjà
 côté backend.
+
+---
+
+## ✅ Récap implémentation (juin 2026)
+
+**Backend** :
+- `models.py` : `UserPublic.vat_completion_required: Optional[bool] = None`
+- `deps.py` : helper `user_needs_vat_completion(user, company)` + set
+  `VAT_CHECK_EXEMPT_EMAILS = PLATFORM_OWNER_EMAILS ∪ {applereview,
+  admin@mesurechassis.fr}` pour bypass des comptes techniques.
+- `auth.py` : `/auth/me` calcule dynamiquement le flag.
+- `google_auth.py` : `/auth/google/session` calcule dynamiquement le flag.
+- `company.py` : nouveau endpoint `POST /api/company/complete-signup`
+  (validation VIES + idempotence anti-rejeu + skip_vies pour Apple Review).
+
+**Frontend** :
+- Nouveau composant `src/components/CompleteVatScreen.tsx` (verrou plein
+  écran, validation VIES en direct avec debounce 500ms).
+- `AuthContext.tsx` : `User.vat_completion_required?: boolean` + rendu
+  conditionnel `CompleteVatScreen` juste après `PaywallScreen` (priorité
+  MAX, avant `ValidationRequiredScreen`).
+
+**Tests** : 24/24 passent (14 fonctionnels + 10 bypass), fichiers
+`test_vat_completion_lock.py` et `test_vat_bypass_iter35.py`.
+
+**Comptes bypassés** (voir résultat sur `/auth/me`) :
+- artisan@mesurechassis.fr (owner plateforme)
+- admin@mesurechassis.fr (super admin)
+- applereview@mesurechassis.com (Apple Review)
+- Tous les autres emails dans `PLATFORM_OWNER_EMAILS`
