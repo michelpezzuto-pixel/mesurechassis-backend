@@ -6,6 +6,20 @@
 
 ---
 
+## 📌 Décisions finales Michel (session juin 2026)
+
+1. **Email admin destinataire** : Michel préfère créer un alias dédié chez Easyhost
+   qui redirigera vers `info@mesurechassis.com`.
+   → **Utiliser `suppressions@mesurechassis.com`** (Michel doit créer l'alias
+   Easyhost AVANT le dev, sinon fallback sur `info@mesurechassis.com`).
+2. **Écran admin exit-surveys** : Faire en **HTML server-side** (même pattern que
+   `/admin/countdown` et `/admin/map`) — Michel peut le consulter depuis son
+   téléphone dans un webview, cohérence avec les autres dashboards admin.
+3. **Timing** : Implémentation **différée** — préservation crédits. À reprendre
+   sur demande explicite de Michel.
+
+---
+
 ## 🎯 Objectif
 
 Comprendre pourquoi un utilisateur supprime son compte + sauver ~15% des utilisateurs
