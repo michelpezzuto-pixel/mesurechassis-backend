@@ -182,3 +182,61 @@ côté backend.
 - admin@mesurechassis.fr (super admin)
 - applereview@mesurechassis.com (Apple Review)
 - Tous les autres emails dans `PLATFORM_OWNER_EMAILS`
+
+---
+
+## 🚧 Améliorations reportées à la PROCHAINE mise à jour (décidées juin 2026)
+
+Michel a validé la mise en prod du verrou TVA MVP (v1.0.27) tel quel. Les
+3 améliorations suivantes seront regroupées dans un futur build unique,
+APRÈS avoir observé si des users Google existants tombent sur le verrou :
+
+### 1. 📧 Email proactif Resend aux users Google existants
+Avant le déclenchement du verrou, envoyer un email :
+- Sujet : « Mise à jour MesureChâssis — numéro de TVA (ou SIREN/SIRET) requis »
+- Corps : explique la nouvelle exigence légale Apple/UE, prépare le user
+  à saisir sa TVA ou son SIREN/SIRET au prochain lancement.
+- Query cible :
+  ```python
+  await db.users.find({
+      "google_linked": True,
+      "email": {"$nin": list(VAT_CHECK_EXEMPT_EMAILS)},
+  })
+  ```
+  puis filtrer sur `company.vat_number` absent.
+
+### 2. 🆔 Fallback SIREN/SIRET/BCE pour auto-entrepreneurs
+Certains artisans sont **légalement sans TVA** :
+- 🇫🇷 France : auto-entrepreneurs (franchise en base <36 800 € en 2026)
+- 🇧🇪 Belgique : régime de la franchise TVA (<25 000 €)
+- 🇱🇺 Luxembourg : franchise <35 000 €
+
+Bloquer strictement sur la TVA = les exclure. Solution :
+- Dans `CompleteVatScreen`, ajouter un toggle « Je n'ai pas de TVA
+  (auto-entrepreneur / franchise) » qui bascule sur un input SIREN
+  (FR) / SIRET / BCE (BE) / autre identifiant national.
+- Backend : `POST /company/complete-signup` accepte soit `vat_number`
+  soit `national_id` (SIREN, SIRET, BCE) avec validation format
+  minimale par pays.
+- Nouveaux champs company : `national_id`, `national_id_type`
+  (`siren` | `siret` | `bce` | `other`), `has_vat: bool`.
+- Facturation Stripe : marquer `automatic_tax=false` pour ces users
+  (pas de TVA à collecter).
+
+### 3. ✨ Message adouci pour les comptes existants
+Différencier UI selon l'ancienneté du compte dans `CompleteVatScreen` :
+- **Comptes < 24h** (nouveaux Google signup) : garder « Une dernière
+  étape · Bienvenue » actuel.
+- **Comptes existants** : bandeau « ✨ Mise à jour légale » + titre
+  « Complétez votre profil pour continuer » + phrase rassurante
+  « Vos chantiers, mesures et factures restent intacts. »
+
+Détection : `user.created_at < now - 24h` (exposer `created_at` dans
+`/auth/me` si pas déjà fait).
+
+### 📋 Séquence recommandée pour la prochaine version
+1. Coder l'email Resend + endpoint admin déclenchable manuellement
+2. Coder le fallback SIREN/SIRET (backend + frontend)
+3. Adoucir le message dans `CompleteVatScreen`
+4. Michel déclenche l'email de com **J-3** avant push Railway
+5. Push Railway + rebuild mobile (bundle 1 seule fois)
