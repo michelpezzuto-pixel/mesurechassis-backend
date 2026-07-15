@@ -847,13 +847,16 @@ async def me(user=Depends(auth_user)):
     pub = user_to_public(user)
     # 🔒 Verrou TVA Google Sign-In — indique au frontend si l'utilisateur
     # doit compléter sa TVA avant d'accéder au dashboard. Calculé à la
-    # volée depuis la company (jamais stocké sur l'user).
+    # volée depuis la company (jamais stocké sur l'user). Les comptes
+    # techniques (owners plateforme, apple review, super admin) sont
+    # exemptés via `user_needs_vat_completion` (deps.py).
     try:
+        from deps import user_needs_vat_completion
         company = await db.companies.find_one(
             {"company_id": user.get("company_id", "default")},
             {"_id": 0, "vat_number": 1},
         )
-        if not (company and company.get("vat_number")):
+        if user_needs_vat_completion(user, company):
             data = pub.model_dump()
             data["vat_completion_required"] = True
             return UserPublic(**data)

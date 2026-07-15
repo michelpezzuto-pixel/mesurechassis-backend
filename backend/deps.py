@@ -294,6 +294,35 @@ def require_platform_owner(
     return user
 
 
+# 🔒 Build 12 (juin 2026) — Emails techniques exemptés du verrou TVA
+# (CompleteVatScreen frontend). Réservé aux comptes plateforme + Apple
+# Review + super admin, qui n'ont pas vocation à émettre des factures
+# clients. Tout le monde d'autre voit l'écran tant que la TVA n'est pas
+# renseignée (Apple 3.1.3(c) + Stripe UE).
+VAT_CHECK_EXEMPT_EMAILS = PLATFORM_OWNER_EMAILS | {
+    "applereview@mesurechassis.com",
+    "admin@mesurechassis.fr",
+}
+
+
+def user_needs_vat_completion(user_doc: dict, company_doc: Optional[dict]) -> bool:
+    """Retourne True si l'utilisateur doit compléter sa TVA avant d'accéder
+    à l'app. Le calcul est fait à la volée dans /auth/me et
+    /auth/google/session — jamais stocké en DB.
+
+    Règles d'exemption :
+      - Email dans VAT_CHECK_EXEMPT_EMAILS (owners plateforme + apple review
+        + super admin technique).
+      - Company avec `vat_number` déjà renseigné.
+    """
+    email = (user_doc.get("email") or "").lower()
+    if email in VAT_CHECK_EXEMPT_EMAILS:
+        return False
+    if not company_doc:
+        return True
+    return not bool(company_doc.get("vat_number"))
+
+
 def require_roles(roles: List[str]):
     def _dep(user: dict = Depends(require_active_subscription)) -> dict:
         # Mode Artisan Unique : bypass total des restrictions RBAC

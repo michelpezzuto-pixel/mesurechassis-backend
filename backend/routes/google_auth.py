@@ -159,12 +159,15 @@ async def google_session(payload: GoogleSessionPayload, request: Request):
     # Le frontend (AuthContext) affichera CompleteVatScreen en verrou
     # plein écran tant que ce flag vaut True. On le calcule ici pour
     # éviter un aller-retour /auth/me juste après le Google login.
+    # Les comptes techniques (owners plateforme, apple review, super
+    # admin) sont exemptés via `user_needs_vat_completion` (deps.py).
     try:
+        from deps import user_needs_vat_completion
         company_now = await db.companies.find_one(
             {"company_id": user_doc["company_id"]},
             {"_id": 0, "vat_number": 1},
         )
-        if not (company_now and company_now.get("vat_number")):
+        if user_needs_vat_completion(user_doc, company_now):
             user_public["vat_completion_required"] = True
     except Exception:
         pass

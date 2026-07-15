@@ -1,0 +1,41 @@
+{
+  "summary": "Backend iter35 — Validation du BYPASS TVA pour comptes techniques : 10/10 tests pytest passent (test_vat_bypass_iter35.py). (0) Le set VAT_CHECK_EXEMPT_EMAILS contient bien les 3 emails attendus (artisan@mesurechassis.fr via PLATFORM_OWNER_EMAILS, admin@mesurechassis.fr et applereview@mesurechassis.com ajoutés en dur). (A) BYPASS ACTIF : login + /auth/me sur les 3 comptes techniques → vat_completion_required==null même quand la company n'a pas de vat_number en DB (artisan-test-b14bf0 et 'default' toujours sans TVA — bypass sollicité pour de vrai). (B) VERROU TOUJOURS EFFECTIF : user test-vat-lock@fake.com (hors exempt list) créé en DB via motor + JWT via create_access_token → /auth/me renvoie True → POST /company/complete-signup avec BE0428759497 (VIES live) → 200 → /auth/me repasse à null → persistance DB confirmée (vat_number=BE0428759497, vat_country=BE, vat_verified_at set). (C) Régression : login artisan, /company/profile, /auth/validate-vat → 200. Cleanup : 0 doc TEST_ résiduel en DB. Aucun bug détecté, le helper user_needs_vat_completion() se comporte exactement comme spécifié.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "GET /api/health", "issue": "Endpoint mentionné dans le brief mais INEXISTANT en réalité (404). Test remplacé par /auth/validate-vat pour valider joignabilité. Non bloquant pour ce build mais à noter pour futurs briefs."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_vat_bypass_iter35.py",
+    "/app/test_reports/pytest/iter35_vat_bypass.xml"
+  ],
+  "action_items": [
+    "Aucun changement backend requis. Feature validée end-to-end : les 2 comptes techniques (artisan owner + admin@mesurechassis.fr) ne verront PLUS le CompleteVatScreen — décision produit de Michel appliquée correctement.",
+    "Optionnel : documenter dans PLATFORM_OWNER_EMAILS / VAT_CHECK_EXEMPT_EMAILS que ces sets sont utilisés pour DEUX gates distincts (owner check + VAT bypass), pour éviter qu'un futur dev ajoute un email owner sans réaliser qu'il exempte aussi la TVA."
+  ],
+  "critical_code_review_comments": [
+    "deps.py:308-323 — user_needs_vat_completion() : logique claire, court-circuit sur email exempt AVANT lookup company, propre. RAS.",
+    "deps.py:302-305 — VAT_CHECK_EXEMPT_EMAILS = PLATFORM_OWNER_EMAILS ∪ {applereview, admin} : union bien construite en set. Attention conceptuelle : les 2 sets ont des rôles différents (owner vs. tva) mais partagent des emails ; changer PLATFORM_OWNER_EMAILS impactera silencieusement le bypass TVA. Documenter ce couplage.",
+    "auth.py & google_auth.py — refactor vers le helper commun élimine bien la duplication signalée en iter34 (comment 'DRY léger'). Bien joué.",
+    "Le helper accepte company_doc=None → renvoie True (comportement défensif safe : si la company est introuvable, on force le user à compléter). Correct."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_vat_bypass_iter35.py (nouveau fichier — 10 tests, ~230 lignes)"
+  ],
+  "success_rate": {
+    "backend": "100% (10/10)",
+    "frontend": "n/a (backend-only par brief)"
+  },
+  "seed_data_creation": "Aucune donnée persistée. 2 users/companies TEST_ITER35 créés dans TestLockStillActiveForRealClient et supprimés dans try/finally. Vérification post-run : 0 doc _TEST_ résiduel.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Le fichier test_vat_bypass_iter35.py est réutilisable pour régression. Il vérifie à la fois le contenu du set VAT_CHECK_EXEMPT_EMAILS (import direct de deps.py) ET le comportement live via /auth/me. Si un futur dev retire le bypass, les 3 tests de la section A échoueront immédiatement. VIES live : BE0428759497 valide en direct — prévoir un timeout élargi (utilisé 30s ici) car VIES peut être lent. Note : /api/health n'existe pas dans ce projet (server.py FastAPI sans healthcheck router).",
+  "rca_of_issue": "N/A — feature complète et fonctionnelle. Le seul mini-écart avec le brief est l'endpoint /api/health qui n'existe pas ; corrigé côté test en pointant sur /auth/validate-vat."
+}
