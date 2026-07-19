@@ -28,7 +28,7 @@ except ImportError:  # pragma: no cover — fallback offset fixe (UTC+1)
     _BRUSSELS_TZ = timezone(timedelta(hours=1))
 
 import jwt
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, Form, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse
 
 from db import JWT_SECRET, db
@@ -1129,18 +1129,39 @@ public_router = APIRouter()
 
 
 @public_router.get("/public/unsubscribe", response_class=HTMLResponse)
-async def public_unsubscribe_page(token: str = Query(...)):
+async def public_unsubscribe_page(
+    request: Request,
+    token: str = Query(...),
+):
     """🌐 Page HTML publique de confirmation de désinscription.
 
-    1. Décode le token (vérifie la signature JWT)
-    2. Marque le prospect comme `unsubscribed=True`
-    3. Affiche une confirmation visuelle (sans JavaScript, pour les
-       webmails qui désactivent le JS)
-    """
-    payload = _decode_unsubscribe_token(token)
-    pid = payload["pid"]
-    email = payload["email"]
+    Comportement DEUX niveaux (compliance RGPD stricte — jamais de 400) :
+    1. Token JWT valide → désinscription automatique 1-clic + confirmation
+    2. Token JWT invalide (ex: tokens legacy d'anciennes versions) →
+       affiche un fallback avec formulaire "Confirmez votre email" qui
+       désinscrira via /public/unsubscribe/manual.
 
+    Cette double branche est CRITIQUE : renvoyer une 400 sec à un utilisateur
+    qui clique "Se désinscrire" viole Art. 21 RGPD et détruit la réputation
+    Resend (spam complaints). On DOIT toujours renvoyer une page rassurante.
+    """
+    # Tentative 1 : décoder normalement
+    try:
+        payload = _decode_unsubscribe_token(token)
+        pid = payload["pid"]
+        email = payload["email"]
+        return await _render_unsubscribe_ok(pid, email)
+    except HTTPException as e:
+        logger.warning(
+            "⚠️ Unsubscribe token invalide (legacy ?) : %s | first=%s",
+            e.detail, token[:20],
+        )
+        # Fallback : formulaire manuel
+        return _render_unsubscribe_fallback(bad_token=token[:12])
+
+
+async def _render_unsubscribe_ok(pid: str, email: str) -> HTMLResponse:
+    """Effectue la désinscription et renvoie la page de confirmation."""
     doc = await db.prospects.find_one({"id": pid})
     # On accepte même si le prospect n'existe plus en DB (ex: nettoyage),
     # pour rassurer l'utilisateur que sa demande est prise en compte.
@@ -1161,7 +1182,6 @@ async def public_unsubscribe_page(token: str = Query(...)):
             email, pid,
         )
 
-    # Page HTML de confirmation propre, mobile-friendly, sans JS
     html = f"""<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1206,6 +1226,126 @@ async def public_unsubscribe_page(token: str = Query(...)):
 </body>
 </html>"""
     return HTMLResponse(content=html, status_code=200)
+
+
+def _render_unsubscribe_fallback(bad_token: str = "") -> HTMLResponse:
+    """Fallback affiché quand le token JWT n'est pas décodable (tokens legacy
+    d'un ancien backend, JWT_SECRET modifié, etc.). RGPD : toujours 200,
+    jamais 400. Propose un formulaire manuel pour désinscription certaine.
+    """
+    html = f"""<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Confirmez votre désinscription — MesureChâssis</title>
+<style>
+  * {{ box-sizing:border-box; }}
+  body {{ margin:0; padding:24px; font-family:-apple-system,Segoe UI,Roboto,sans-serif;
+         background:#0C0C0E; color:#fff; min-height:100vh;
+         display:flex; align-items:center; justify-content:center; }}
+  .card {{ max-width:520px; width:100%; background:#18181B; border-radius:16px;
+          padding:32px 24px; text-align:center; border:1px solid #3F3F46; }}
+  .icon {{ width:72px; height:72px; border-radius:36px; background:#FF5A0022;
+          display:flex; align-items:center; justify-content:center;
+          margin:0 auto 16px; font-size:36px; }}
+  h1 {{ font-size:22px; margin:0 0 8px; color:#fff; }}
+  p {{ font-size:14px; line-height:1.55; color:#A1A1AA; margin:8px 0 16px; }}
+  form {{ margin-top:16px; }}
+  label {{ display:block; text-align:left; font-size:13px; color:#D4D4D8;
+          margin-bottom:6px; }}
+  input[type="email"] {{
+    width:100%; padding:12px 14px; border-radius:10px;
+    border:1px solid #3F3F46; background:#27272A; color:#fff;
+    font-size:15px; font-family:inherit;
+  }}
+  input[type="email"]:focus {{ outline:none; border-color:#FF5A00; }}
+  button {{
+    width:100%; margin-top:14px; padding:13px 20px;
+    background:#FF5A00; color:#fff; border:none; border-radius:10px;
+    font-size:14px; font-weight:700; letter-spacing:0.3px; cursor:pointer;
+    text-transform:uppercase;
+  }}
+  button:hover {{ background:#E85200; }}
+  .footer {{ font-size:12px; color:#52525B; margin-top:24px;
+            padding-top:16px; border-top:1px solid #27272A; }}
+  .footer a {{ color:#FF5A00; text-decoration:none; }}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">📧</div>
+    <h1>Confirmez votre désinscription</h1>
+    <p>Le lien que vous avez utilisé provient d'un envoi ancien, mais
+    votre demande est bien prise en compte. Confirmez simplement votre
+    adresse email ci-dessous et nous vous désinscrirons définitivement
+    dans la seconde.</p>
+    <form method="POST" action="/api/public/unsubscribe/manual">
+      <label for="email">Votre adresse email :</label>
+      <input type="email" name="email" id="email" required
+             placeholder="votre@email.com" autocomplete="email">
+      <button type="submit">Me désinscrire définitivement</button>
+    </form>
+    <div class="footer">
+      MesureChâssis — Outil pro pour menuisiers professionnels<br>
+      <a href="https://www.mesurechassis.com">www.mesurechassis.com</a><br>
+      <span style="color:#3F3F46;font-size:10px">ref: {bad_token}</span>
+    </div>
+  </div>
+</body>
+</html>"""
+    return HTMLResponse(content=html, status_code=200)
+
+
+@public_router.post("/public/unsubscribe/manual", response_class=HTMLResponse)
+async def public_unsubscribe_manual(email: str = Form(...)):
+    """Fallback manuel — désinscription par email uniquement.
+
+    Utilisé quand le token JWT est invalide (legacy / secret modifié).
+    Cherche le prospect par email et le marque comme désabonné.
+    Toujours renvoie 200 avec confirmation, même si l'email n'existe pas
+    en DB (pour ne pas révéler qui est prospect vs qui ne l'est pas).
+    """
+    email_norm = (email or "").strip().lower()
+    if not email_norm or "@" not in email_norm:
+        # Pas d'email valide → on renvoie quand même une confirmation
+        # rassurante (ne jamais dead-end un unsubscribe).
+        return await _render_unsubscribe_ok("unknown", email_norm or "votre email")
+
+    now_iso = datetime.now(timezone.utc).isoformat()
+    # Mise à jour ou insertion silencieuse (upsert-like)
+    result = await db.prospects.update_many(
+        {"email": email_norm},
+        {
+            "$set": {
+                "unsubscribed": True,
+                "unsubscribed_at": now_iso,
+                "unsubscribed_via": "manual_fallback",
+            }
+        },
+    )
+    if result.modified_count == 0:
+        # Prospect inconnu → on log pour Michel + on insère un enregistrement
+        # "blocklist" pour ne jamais envoyer à cette adresse même si elle
+        # est ajoutée plus tard.
+        try:
+            await db.prospects.insert_one({
+                "id": f"manual-{now_iso}",
+                "email": email_norm,
+                "unsubscribed": True,
+                "unsubscribed_at": now_iso,
+                "unsubscribed_via": "manual_fallback_blocklist",
+                "source": "manual_unsubscribe_page",
+                "created_at": now_iso,
+            })
+        except Exception:
+            pass  # doublon d'index → OK, déjà enregistré
+
+    logger.info(
+        "🚫 Désinscription MANUELLE (fallback) : %s (modified=%d)",
+        email_norm, result.modified_count,
+    )
+    return await _render_unsubscribe_ok("manual", email_norm)
 
 
 # Petit alias POST → même comportement (certains clients mail "click-tracking"
