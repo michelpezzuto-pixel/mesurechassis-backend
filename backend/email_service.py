@@ -25,6 +25,16 @@ RESEND_API_URL = "https://api.resend.com/emails"
 FROM_EMAIL = os.getenv("MAIL_FROM", "MesureChâssis <info@mesurechassis.com>")
 REPLY_TO_EMAIL = os.getenv("MAIL_REPLY_TO", "").strip()
 MAIL_SUPPORT = os.getenv("MAIL_SUPPORT", "info@mesurechassis.com")
+# 🔔 BCC founder — Michel veut "ressentir" chaque nouvel inscrit comme
+# un ping émotionnel (comme les $$$ de Stripe). Set via variable env
+# MAIL_FOUNDER_BCC. Support de plusieurs emails séparés par virgule.
+# Utilisé UNIQUEMENT pour les mails de bienvenue / vérification / invitation
+# (JAMAIS pour les mails de campagne ou notifications internes, sinon
+# la boîte du founder serait saturée).
+MAIL_FOUNDER_BCC = [
+    e.strip() for e in os.getenv("MAIL_FOUNDER_BCC", "").split(",")
+    if e.strip() and "@" in e.strip()
+]
 # ─────────────────────────────────────────────────────────────────────
 # 🆕 Résolution robuste de l'URL de base pour les liens email
 # ─────────────────────────────────────────────────────────────────────
@@ -108,6 +118,7 @@ def send_email(
     link: Optional[str] = None,
     html: Optional[str] = None,
     reply_to_override: Optional[str] = None,
+    founder_bcc: bool = False,
 ) -> dict:
     """Envoie un email via Resend.
 
@@ -120,6 +131,10 @@ def send_email(
 
     `reply_to_override` permet de spécifier un Reply-To différent du défaut
     (utile pour les feedbacks où on veut que la réponse aille au client).
+
+    `founder_bcc=True` ajoute automatiquement `MAIL_FOUNDER_BCC` en copie
+    cachée. Utilisé pour les emails "moments-clés" (bienvenue, invitation)
+    afin que le founder ressente chaque nouvel inscrit dans sa boîte.
     """
     payload_log = {"to": to, "subject": subject, "body": body, "link": link}
 
@@ -136,6 +151,13 @@ def send_email(
         "text": body,
         "html": html_content,
     }
+    # 🔔 BCC founder — filet émotionnel pour Michel (opt-in par email).
+    if founder_bcc and MAIL_FOUNDER_BCC:
+        # On évite le double-ping si le user est lui-même dans la liste BCC
+        # (ex: Michel crée un compte de test avec son propre email).
+        bcc_clean = [e for e in MAIL_FOUNDER_BCC if e.lower() != to.lower()]
+        if bcc_clean:
+            resend_payload["bcc"] = bcc_clean
     if REPLY_TO_EMAIL or reply_to_override:
         resend_payload["reply_to"] = reply_to_override or REPLY_TO_EMAIL
     headers = {
@@ -217,6 +239,7 @@ def send_verification_email(*, to: str, name: str, link: str) -> dict:
         subject="✅ Inscription enregistrée — Vérifiez votre email",
         body=body,
         link=link,
+        founder_bcc=True,  # 🔔 Michel reçoit une copie de chaque bienvenue
     )
 
 
@@ -287,6 +310,7 @@ def send_invitation_email(
         subject=f"Invitation à rejoindre {company_name} — MesureChâssis",
         body=body,
         link=link,
+        founder_bcc=True,  # 🔔 Michel voit chaque nouvelle invitation team
     )
 
 

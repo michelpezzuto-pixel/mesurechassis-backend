@@ -220,6 +220,7 @@ async def request_reactivation(payload: ReactivationRequestIn, request: Request)
             subject=subject,
             body=body_text,
             link=link,
+            founder_bcc=True,  # 🔔 Michel voit chaque tentative de retour user
         )
     except Exception as e:
         # On log l'erreur mais on ne l'expose pas au user
