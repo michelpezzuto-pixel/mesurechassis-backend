@@ -126,6 +126,177 @@ ORIGIN_PHRASES = {
 }
 
 # ═════════════════════════════════════════════════════════════════════
+# 🎨 TEMPLATE HTML EMAIL — Design propre + bouton App Store officiel
+# ═════════════════════════════════════════════════════════════════════
+# Compatible Outlook (tables), Gmail, iOS Mail, Yahoo, ProtonMail, etc.
+# Aucune image externe requise (bouton App Store = HTML/CSS pur).
+
+def _build_html_body(
+    *,
+    text_body: str,
+    prospect_id: str,
+    email: str,
+    show_qr: bool = True,
+) -> str:
+    """Convertit le body texte en HTML professionnel avec bouton App Store
+    style Apple, bouton secondaire web, QR code, signature icônes cliquables,
+    et footer unsubscribe 1-clic RGPD."""
+    import re
+    unsubscribe_token = _make_unsubscribe_token(prospect_id, email)
+    unsubscribe_url = f"{PUBLIC_BACKEND_URL}/api/public/unsubscribe?token={unsubscribe_token}"
+
+    # 1) Isoler le corps du message (avant signature)
+    lines = text_body.split("\n")
+    body_paragraphs = []
+    current_para: list[str] = []
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith(("Michel Pezzuto", "Bien cordialement", "Bonne continuation")):
+            break
+        if "[QR_CODE_PLACEHOLDER]" in stripped:
+            if current_para:
+                body_paragraphs.append(" ".join(current_para))
+                current_para = []
+            continue
+        if "STOP" in stripped or stripped == "—":
+            continue
+        if not stripped:
+            if current_para:
+                body_paragraphs.append(" ".join(current_para))
+                current_para = []
+        else:
+            current_para.append(stripped)
+    if current_para:
+        body_paragraphs.append(" ".join(current_para))
+
+    # 2) HTML des paragraphes — enlever les URLs texte (elles vont dans les boutons)
+    body_html_parts = []
+    for para in body_paragraphs:
+        clean = para
+        for url in (APP_STORE_URL, APP_WEB_URL):
+            clean = clean.replace(url, "")
+        clean = clean.replace("👉 ", "").replace("🌐 ", "")
+        clean = clean.replace("📲 Télécharger sur l'App Store :", "")
+        clean = clean.replace("📲 Scannez le QR code ou cliquez :", "")
+        clean = clean.replace("📲 App Store :", "")
+        clean = clean.replace("Vous n'avez pas d'iPhone ? Version Android en route + version web dispo :", "")
+        clean = clean.strip()
+        if clean:
+            clean = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", clean)
+            body_html_parts.append(
+                f'<p style="margin:0 0 16px;line-height:1.6;color:#1a1a1a;font-size:15px">{clean}</p>'
+            )
+    body_content_html = "\n".join(body_html_parts)
+
+    # 3) QR code
+    qr_html = ""
+    if show_qr:
+        qr_html = f"""
+        <tr><td style="padding:8px 24px 24px;text-align:center">
+          <img src="{QR_IMG_URL}" alt="QR code App Store" width="140" height="140"
+               style="display:block;margin:0 auto;border:1px solid #e5e5e5;border-radius:8px;padding:6px;background:#fff" />
+          <div style="font-size:11px;color:#8a8a8f;margin-top:6px">
+            Scannez avec l'appareil photo de votre iPhone
+          </div>
+        </td></tr>"""
+
+    # 4) Bouton App Store officiel style Apple (HTML pur, compat Outlook)
+    apple_button = f"""
+    <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto">
+      <tr><td style="background:#000000;border-radius:10px;padding:0" align="center">
+        <a href="{APP_STORE_URL}" target="_blank" style="text-decoration:none;color:#ffffff;display:inline-block">
+          <table cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td style="padding:10px 8px 10px 18px;vertical-align:middle" width="34">
+                <div style="font-size:28px;line-height:28px;color:#ffffff;font-family:-apple-system,'SF Pro',Arial,sans-serif"></div>
+              </td>
+              <td style="padding:8px 22px 8px 4px;vertical-align:middle" align="left">
+                <div style="font-size:10px;color:#ffffff;line-height:12px;letter-spacing:0.3px">Télécharger dans l'</div>
+                <div style="font-size:19px;color:#ffffff;font-weight:600;line-height:22px;letter-spacing:-0.3px">App Store</div>
+              </td>
+            </tr>
+          </table>
+        </a>
+      </td></tr>
+    </table>"""
+
+    # 5) Bouton secondaire web (Android/desktop)
+    web_button = f"""
+    <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto">
+      <tr><td style="background:#FF5A00;border-radius:8px" align="center">
+        <a href="{APP_WEB_URL}" target="_blank" style="text-decoration:none;color:#ffffff;display:inline-block;padding:12px 28px;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase">
+          🌐 Version Web / Android
+        </a>
+      </td></tr>
+    </table>"""
+
+    # 6) Signature
+    linkedin_url = "https://www.linkedin.com/in/michel-pezzuto-aa4797235/recent-activity/all/"
+    facebook_url = "https://www.facebook.com/profile.php?id=615909097439000"
+    signature_html = f"""
+    <tr><td style="padding:12px 24px 8px">
+      <table cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr><td style="border-top:1px solid #e5e5e5;padding-top:20px">
+          <p style="margin:0;font-size:14px;color:#1a1a1a;line-height:1.5">
+            <strong>Michel Pezzuto</strong><br>
+            <span style="color:#666;font-size:13px">Menuisier · Fondateur MesureChâssis</span>
+          </p>
+          <div style="margin-top:12px;font-size:13px">
+            <a href="mailto:info@mesurechassis.com" style="color:#FF5A00;text-decoration:none">✉ info@mesurechassis.com</a>
+          </div>
+          <div style="margin-top:6px;font-size:13px">
+            <a href="{linkedin_url}" target="_blank" style="color:#0A66C2;text-decoration:none;margin-right:14px">LinkedIn</a>
+            <a href="{facebook_url}" target="_blank" style="color:#1877F2;text-decoration:none">Facebook</a>
+          </div>
+        </td></tr>
+      </table>
+    </td></tr>"""
+
+    # 7) Footer RGPD
+    footer_html = f"""
+    <tr><td style="padding:0 24px 24px">
+      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-top:1px solid #eee;padding-top:16px">
+        <tr><td style="text-align:center;font-size:11px;color:#8a8a8f;line-height:1.6">
+          Vous recevez cet email car votre entreprise est active dans la menuiserie.<br>
+          <a href="{unsubscribe_url}" style="color:#8a8a8f;text-decoration:underline">Se désinscrire en 1 clic</a>
+          &nbsp;·&nbsp;
+          <a href="mailto:info@mesurechassis.com?subject=STOP" style="color:#8a8a8f;text-decoration:underline">Répondre STOP</a>
+          <br><br>
+          <span style="color:#c4c4c4">MesureChâssis © 2026 — Bruxelles, Belgique</span>
+        </td></tr>
+      </table>
+    </td></tr>"""
+
+    return f"""<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MesureChâssis</title></head>
+<body style="margin:0;padding:0;background:#f5f5f7;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif">
+  <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#f5f5f7">
+    <tr><td align="center" style="padding:24px 12px">
+      <table cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;background:#ffffff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);overflow:hidden">
+        <tr><td style="background:linear-gradient(135deg,#FF5A00,#FF7733);padding:20px 24px" align="left">
+          <div style="color:#ffffff;font-size:20px;font-weight:800;letter-spacing:-0.3px">MesureChâssis</div>
+          <div style="color:#ffffff;opacity:0.85;font-size:11px;margin-top:2px;letter-spacing:0.5px;text-transform:uppercase">L'app des menuisiers pros</div>
+        </td></tr>
+        <tr><td style="padding:28px 24px 8px">
+          {body_content_html}
+        </td></tr>
+        <tr><td style="padding:8px 24px 12px" align="center">{apple_button}</td></tr>
+        <tr><td style="padding:0 24px 8px" align="center">
+          <div style="font-size:12px;color:#8a8a8f;margin:4px 0">Ou</div>
+        </td></tr>
+        <tr><td style="padding:0 24px 20px" align="center">{web_button}</td></tr>
+        {qr_html}
+        {signature_html}
+        {footer_html}
+      </table>
+    </td></tr>
+  </table>
+</body></html>"""
+
+
+# ═════════════════════════════════════════════════════════════════════
 # === MAIL #1 — Premier contact (COURT, ~80 mots, style Michel) ═════
 # ═════════════════════════════════════════════════════════════════════
 # Refonte juillet 2026 — Lancement App Store validé par Apple.
@@ -767,28 +938,25 @@ async def _send_batch_task(items: list[dict]) -> None:
                 app_web_url=APP_WEB_URL,
                 app_store_url=APP_STORE_URL,
             )
-        # Insertion du QR code (image HTML inline) à la place du placeholder
-        # send_email rend automatiquement le body en HTML — le tag <img> sera
-        # préservé. On marque clairement la ligne pour les clients texte aussi.
-        # QR pointe désormais vers l'App Store (lien direct pour iPhone/iPad).
-        qr_html_block = (
-            f'<div style="text-align:center;margin:20px 0">'
-            f'<img src="{QR_IMG_URL}" alt="QR code App Store MesureChassis" '
-            f'width="200" height="200" '
-            f'style="border:1px solid #ddd;border-radius:8px;padding:8px;background:#fff" />'
-            f'<br><span style="font-size:12px;color:#666">'
-            f'(scannez avec l\'appareil photo de votre iPhone pour ouvrir l\'App Store)</span></div>'
+        # 🎨 Génération HTML pro : bouton App Store officiel + signature
+        # cliquable + footer unsubscribe RGPD. Le body texte reste comme
+        # fallback pour les clients qui ne rendent pas l'HTML.
+        html_body = _build_html_body(
+            text_body=body,
+            prospect_id=pid,
+            email=doc["email"],
+            show_qr=True,
         )
-        body = body.replace("[QR_CODE_PLACEHOLDER]", qr_html_block)
-
-        # 🆕 RGPD — Ajout du lien public unsubscribe en bas d'email
-        unsubscribe_footer = _build_unsubscribe_footer_html(pid, doc["email"])
-        body = body + "\n\n" + unsubscribe_footer
+        # On garde une version texte propre en fallback (sans les URLs
+        # verbeuses qui polluaient l'affichage brut Outlook).
+        text_fallback = body.replace("[QR_CODE_PLACEHOLDER]", "").strip()
         try:
-            # send_email est synchrone (appel HTTP Resend) → thread séparé
-            # pour ne pas bloquer l'event loop pendant le lot.
             res = await asyncio.to_thread(
-                send_email, to=doc["email"], subject=subject, body=body
+                send_email,
+                to=doc["email"],
+                subject=subject,
+                body=text_fallback,
+                html=html_body,
             )
             ok = bool(res.get("delivered"))
         except Exception as exc:  # noqa: BLE001
