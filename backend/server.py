@@ -217,6 +217,33 @@ async def download_kit_capcut():
     return FileResponse(path, media_type="text/markdown", filename="Kit_CapCut_video_demo.md")
 
 
+@api.get("/_downloads/kit-tournee")
+async def download_kit_tournee():
+    """Kit imprimable pour la tournée menuisiers de Michel.
+    Contient : identité, questionnaire découverte, chrono démo, débrief,
+    synthèse par visite, checklist de départ."""
+    path = "/app/downloads_michel_terrain/Kit_Tournee_Menuisiers.pdf"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Kit tournée introuvable")
+    return FileResponse(
+        path, media_type="application/pdf",
+        filename="Kit_Tournee_Menuisiers.pdf",
+    )
+
+
+@api.get("/_downloads/script-demo-90s")
+async def download_script_demo():
+    """Script de pitch 90 secondes + réponses aux objections classiques
+    à mémoriser avant la tournée terrain."""
+    path = "/app/downloads_michel_terrain/Script_Demo_90s.pdf"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Script démo introuvable")
+    return FileResponse(
+        path, media_type="application/pdf",
+        filename="Script_Demo_90s.pdf",
+    )
+
+
 @api.get("/_downloads/site-propre")
 async def download_site_propre():
     """ZIP complet du site mesurechassis.com — dernière version (15 juillet 2026).
