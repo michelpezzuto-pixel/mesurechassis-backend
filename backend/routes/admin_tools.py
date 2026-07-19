@@ -228,13 +228,68 @@ async def admin_purge_email(
 # ══════════════════════════════════════════════════════════════════════
 # 🗺️ CARTE DES MENUISIERS INSCRITS
 # ══════════════════════════════════════════════════════════════════════
+
+# Domaines et emails considérés comme "techniques" (à exclure du décompte
+# des vrais menuisiers). Utilisé par le filtre `exclude_owner=true`.
+# On aggrège plusieurs sources pour être robuste :
+#   1. PLATFORM_OWNER_EMAILS (Michel + ses alias personnels)
+#   2. Domaines internes MesureChâssis
+#   3. Comptes de démo / test récurrents
+_TECH_EMAIL_DOMAINS = {
+    "mesurechassis.fr",
+    "mesurechassis.com",
+    "mesurechassis.be",
+    "bruxmove.be",
+    "bruxmove.com",
+}
+_TECH_EMAIL_HARDCODED = {
+    "applereview@mesurechassis.com",
+    "admin@mesurechassis.fr",
+    "artisan@mesurechassis.fr",
+    "michelpezzuto@gmail.com",
+    "michelpezzuto@hotmail.com",
+    "info@mesurechassis.com",
+}
+
+
+def _is_technical_account(email: str) -> bool:
+    """Retourne True si l'email appartient à Michel, à un compte de test,
+    ou à un domaine interne MesureChâssis / Bruxmove."""
+    from deps import PLATFORM_OWNER_EMAILS
+
+    email_lower = (email or "").lower().strip()
+    if not email_lower or "@" not in email_lower:
+        return False
+    if email_lower in PLATFORM_OWNER_EMAILS:
+        return True
+    if email_lower in _TECH_EMAIL_HARDCODED:
+        return True
+    domain = email_lower.rsplit("@", 1)[-1]
+    if domain in _TECH_EMAIL_DOMAINS:
+        return True
+    return False
+
+
 @router.get("/admin/map/data")
 async def admin_map_data(
     token: str = Query(..., description="PLATFORM_ADMIN_TOKEN"),
     days: int = Query(0, description="Filtre : inscrits derniers N jours (0=tous)"),
     only_active: bool = Query(False, description="Filtre : uniquement comptes actifs"),
+    exclude_owner: bool = Query(
+        False,
+        description=(
+            "Exclut Michel (PLATFORM_OWNER_EMAILS + @bruxmove + comptes de test). "
+            "Utiliser pour connaître le vrai volume d'usage extérieur."
+        ),
+    ),
 ):
-    """JSON des utilisateurs inscrits avec leur géoloc (ville)."""
+    """JSON des utilisateurs inscrits avec leur géoloc (ville).
+
+    Réponse enrichie :
+    - `points[].account_type` : `real` (vrai menuisier) | `technical` (Michel/test)
+    - `real_users_count` : nombre de vrais menuisiers (hors comptes techniques)
+    - `technical_users_count` : comptes techniques identifiés
+    """
     _check_token(token)
 
     from datetime import datetime, timedelta, timezone
@@ -262,27 +317,42 @@ async def admin_map_data(
 
     users = await db.users.find(match, projection).to_list(length=5000)
 
-    # Aggrégations par région / pays
+    # Aggrégations par région / pays (uniquement sur les vrais menuisiers
+    # si exclude_owner=True, pour ne pas polluer les stats)
     by_region: dict = {}
     by_country: dict = {}
     total_with_geo = 0
     total_without_geo = 0
+    real_users_count = 0
+    technical_users_count = 0
 
     points: list = []
     for u in users:
+        email_full = u.get("email") or ""
+        is_tech = _is_technical_account(email_full)
+
+        # Filtre : si exclude_owner, on saute les techniques
+        if exclude_owner and is_tech:
+            technical_users_count += 1
+            continue
+
+        if is_tech:
+            technical_users_count += 1
+        else:
+            real_users_count += 1
+
         geo = u.get("signup_geo") or {}
         # Anonymisation légère : masquer l'email en public
-        email = u.get("email") or ""
-        masked_email = email
-        if "@" in email:
-            local, domain = email.split("@", 1)
+        masked_email = email_full
+        if "@" in email_full:
+            local, domain = email_full.split("@", 1)
             if len(local) > 3:
                 masked_email = f"{local[:2]}***@{domain}"
 
         item = {
             "id": u.get("id"),
             "email": masked_email,
-            "email_full": email,
+            "email_full": email_full,
             "name": u.get("name") or "",
             "role": u.get("role") or "admin",
             "created_at": u.get("created_at"),
@@ -296,12 +366,14 @@ async def admin_map_data(
             "country_code": geo.get("country_code") or "",
             "lat": geo.get("lat"),
             "lng": geo.get("lng"),
+            # 🆕 Distinction visuelle pour la carte HTML
+            "account_type": "technical" if is_tech else "real",
         }
         if geo.get("lat") and geo.get("lng"):
             total_with_geo += 1
         else:
             total_without_geo += 1
-        # Compteurs
+        # Compteurs (uniquement pour ce qui est affiché, donc respecte filtre)
         r_key = geo.get("region") or "(inconnu)"
         c_key = geo.get("country") or "(inconnu)"
         by_region[r_key] = by_region.get(r_key, 0) + 1
@@ -309,9 +381,13 @@ async def admin_map_data(
         points.append(item)
 
     return {
-        "total": len(users),
+        "total": len(points),
         "with_geo": total_with_geo,
         "without_geo": total_without_geo,
+        # 🆕 Distinction claire vrai vs technique
+        "real_users_count": real_users_count,
+        "technical_users_count": technical_users_count,
+        "excluded_owner": exclude_owner,
         "by_region": by_region,
         "by_country": by_country,
         "points": points,
@@ -389,6 +465,7 @@ async def admin_map_html(
       <button data-days="30">30 jours</button>
       <button data-days="90">90 jours</button>
       <button data-active="1">Actifs uniquement</button>
+      <button data-exclude-owner="1" style="border-color:#22c55e;color:#22c55e">👤 Vrais menuisiers</button>
     </div>
   </header>
   <div class="stats-bar" id="stats"></div>
@@ -399,6 +476,11 @@ async def admin_map_html(
       <div id="regions"></div>
       <h2 style="margin-top:20px">Par pays</h2>
       <div id="countries"></div>
+      <h2 style="margin-top:20px">Légende</h2>
+      <div style="font-size:12px;color:#a3a3a3;line-height:1.8">
+        <div><span style="display:inline-block;width:12px;height:12px;background:#22c55e;border-radius:50%;vertical-align:middle;margin-right:6px"></span>Vrai menuisier</div>
+        <div><span style="display:inline-block;width:12px;height:12px;background:#3b82f6;border-radius:50%;vertical-align:middle;margin-right:6px"></span>Compte technique (toi, test, Apple)</div>
+      </div>
     </aside>
   </div>
 </div>
@@ -406,7 +488,7 @@ async def admin_map_html(
 (function(){
   var TOKEN = new URLSearchParams(location.search).get("token");
   var API_BASE = "/api/admin/map/data";
-  var state = { days: 0, only_active: false };
+  var state = { days: 0, only_active: false, exclude_owner: false };
 
   // Carte centrée sur la Belgique
   var map = L.map("map", { zoomControl: true }).setView([50.5, 4.5], 7);
@@ -418,10 +500,14 @@ async def admin_map_html(
   var cluster = L.markerClusterGroup({ maxClusterRadius: 45 });
   map.addLayer(cluster);
 
-  function orangeIcon() {
+  function pinIcon(type) {
+    // 🟢 vert = vrai menuisier | 🔵 bleu = compte technique (Michel/test)
+    var color = type === "real" ? "#22c55e" : "#3b82f6";
+    var shadow = type === "real" ? "rgba(34,197,94,0.5)" : "rgba(59,130,246,0.5)";
     return L.divIcon({
       className: "mc-pin",
-      html: '<div style="width:22px;height:22px;background:#FF5A00;border:3px solid #0a0a0c;border-radius:50%;box-shadow:0 4px 10px rgba(255,90,0,0.5)"></div>',
+      html: '<div style="width:22px;height:22px;background:' + color +
+            ';border:3px solid #0a0a0c;border-radius:50%;box-shadow:0 4px 10px ' + shadow + '"></div>',
       iconSize: [22,22], iconAnchor: [11,11]
     });
   }
@@ -432,8 +518,11 @@ async def admin_map_html(
   }
 
   function renderStats(d) {
+    var realBadge = '<div class="stat"><div class="stat-value" style="color:#22c55e">' + (d.real_users_count||0) + '</div><div class="stat-label">Vrais menuisiers</div></div>';
+    var techBadge = '<div class="stat"><div class="stat-value" style="color:#3b82f6">' + (d.technical_users_count||0) + '</div><div class="stat-label">Comptes techniques</div></div>';
     document.getElementById("stats").innerHTML =
-      '<div class="stat"><div class="stat-value">' + d.total + '</div><div class="stat-label">Inscrits</div></div>' +
+      '<div class="stat"><div class="stat-value">' + d.total + '</div><div class="stat-label">Affichés</div></div>' +
+      realBadge + techBadge +
       '<div class="stat"><div class="stat-value">' + d.with_geo + '</div><div class="stat-label">Géolocalisés</div></div>' +
       '<div class="stat"><div class="stat-value">' + d.without_geo + '</div><div class="stat-label">Sans géoloc</div></div>' +
       '<div class="stat"><div class="stat-value">' + Object.keys(d.by_country).length + '</div><div class="stat-label">Pays</div></div>';
@@ -449,7 +538,12 @@ async def admin_map_html(
 
   function load() {
     cluster.clearLayers();
-    var params = new URLSearchParams({ token: TOKEN, days: state.days, only_active: state.only_active });
+    var params = new URLSearchParams({
+      token: TOKEN,
+      days: state.days,
+      only_active: state.only_active,
+      exclude_owner: state.exclude_owner,
+    });
     fetch(API_BASE + "?" + params.toString())
       .then(function(r){ return r.json(); })
       .then(function(d){
@@ -462,12 +556,16 @@ async def admin_map_html(
           var jitter = 0.008;
           var lat = p.lat + (Math.random()-0.5) * jitter;
           var lng = p.lng + (Math.random()-0.5) * jitter;
+          var typeLabel = p.account_type === "real"
+            ? '<span style="color:#22c55e;font-weight:700">👷 Vrai menuisier</span>'
+            : '<span style="color:#3b82f6;font-weight:700">🛠️ Compte technique</span>';
           var pop = '<b>' + (p.name || p.email) + '</b><br>' +
+                    typeLabel + '<br>' +
                     (p.city || "?") + (p.region ? ", " + p.region : "") + '<br>' +
                     '📅 Inscrit : ' + fmtDate(p.created_at) + '<br>' +
                     (p.google_linked ? '🔑 Google' : '✉️ Email') + ' · <i>' + p.status + '</i><br>' +
                     '<small style="color:#666">' + p.email + '</small>';
-          L.marker([lat, lng], { icon: orangeIcon() })
+          L.marker([lat, lng], { icon: pinIcon(p.account_type) })
             .bindPopup(pop)
             .addTo(cluster);
         });
@@ -481,11 +579,14 @@ async def admin_map_html(
     if (btn.dataset.days !== undefined) {
       state.days = parseInt(btn.dataset.days, 10);
       state.only_active = false;
-      Array.from(document.querySelectorAll("#filters button")).forEach(function(b){ b.classList.remove("active"); });
+      Array.from(document.querySelectorAll("#filters button[data-days]")).forEach(function(b){ b.classList.remove("active"); });
       btn.classList.add("active");
     } else if (btn.dataset.active !== undefined) {
       state.only_active = !state.only_active;
       btn.classList.toggle("active", state.only_active);
+    } else if (btn.dataset.excludeOwner !== undefined) {
+      state.exclude_owner = !state.exclude_owner;
+      btn.classList.toggle("active", state.exclude_owner);
     }
     load();
   });
