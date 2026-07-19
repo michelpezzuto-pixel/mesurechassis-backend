@@ -171,11 +171,60 @@ Une fois implémenté :
 
 ---
 
+## 🆕 Idée Michel du 15/07/2026 — Métaphore "Calculatrice iOS"
+
+Michel a eu l'intuition brillante d'utiliser le mental model de la
+calculatrice iOS (Simple vs Scientifique) pour structurer l'app.
+
+### Concept
+- **Mode Simple** = gratuit, UI épurée, 5 chantiers à vie/mois, 3 formes,
+  scan IA limité, PDF simple
+- **Mode Scientifique** = payant, toutes les features débloquées, UI riche
+- Bascule visuelle via toggle en haut à droite du dashboard
+- Analogie universelle (tout le monde connaît la calc iOS)
+
+### Pourquoi c'est puissant
+- Résout la peur "usine à gaz" (Simple par défaut = zéro intimidation)
+- Monétisation limpide (Scientifique = ce que tu paies pour)
+- Mental model gravé dans l'inconscient Apple (aucune éducation à faire)
+
+### Questions à valider en tournée
+1. **Scan IA en gratuit ?** — Compromis : 1 scan gratuit à vie ("wow moment")
+   puis paywall. Stratégie éprouvée (Notion AI, Grammarly).
+2. **5 chantiers à vie vs /mois ?** — À vie = paywall en 2 semaines
+   (frustration ?). Par mois = plus fair mais moins d'urgence upgrade.
+
+### Ce que ça remplacerait
+Actuellement 4 plans : Freemium / Standard (24.99€) / Team (59.99€) / Pro.
+Avec cette nouvelle structure :
+- Mode Simple = Freemium
+- Mode Scientifique = Standard/Team/Pro (fusion en 1 UI, différenciation
+  par capacités : mono-user vs équipe vs multi-sites)
+
+### Implémentation technique (spéculative, à confirmer)
+- Flag `user.ui_mode`: `simple` | `scientific`
+- Par défaut : `simple` au signup
+- Toggle switch en header du dashboard
+- Si Scientific + plan free → paywall modal
+- Mapping features → mode :
+  - `simple`: rectangle, trapèze, cintré, PDF, scan IA (1x)
+  - `scientific`: tout
+
+### Combinaison recommandée avec les 3 approches ci-dessus
+- Le **Mode Simple** intègre le concept d'**Approche A** (Discovery)
+- L'**onboarding vidéo** (Approche B) reste utile pour expliquer le toggle
+- La **checklist Live Coach** (Approche C) peut être conservée pour le mode
+  Simple uniquement
+
+---
+
 ## 🎯 Comment reprendre
 
 Quand Michel revient de sa tournée :
 1. Michel partage les observations brutes
 2. On analyse ensemble les blocages récurrents
-3. On choisit A / B / C (ou combo)
-4. On code selon la spec de l'approche retenue
-5. Test avec les mêmes 5 menuisiers (validation avant/après)
+3. On teste l'accueil de la métaphore Simple/Scientifique auprès des menuisiers
+   (question à poser : "Tu utiliserais l'app en mode Simple ou Scientifique ?")
+4. On choisit A / B / C / D (métaphore calculatrice) ou combo
+5. On code selon la spec retenue
+6. Test avec les mêmes 5 menuisiers (validation avant/après)
