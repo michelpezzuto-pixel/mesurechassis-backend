@@ -1,0 +1,1026 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>MesureChassis — Video 1 (9:16)</title>
+<style>
+  :root {
+    --orange: #F58220;
+    --orange-dark: #E56A00;
+    --blue: #1E88E5;
+    --blue-dark: #0D47A1;
+    --red: #E63946;
+    --red-dark: #B7263A;
+    --green: #16A34A;
+    --bg: #F4F5F7;
+    --ink: #1E293B;
+    --mut: #64748B;
+    --card: #FFFFFF;
+    --line: #E2E8F0;
+    --shadow: 0 10px 30px rgba(15,23,42,.10), 0 2px 6px rgba(15,23,42,.06);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: #0f172a;
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+
+  /* -------- Top toolbar (hors zone d'enregistrement) -------- */
+  .toolbar {
+    position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+    z-index: 999;
+    display: flex; gap: 8px; align-items: center;
+    background: rgba(15,23,42,.85); backdrop-filter: blur(8px);
+    padding: 8px 12px; border-radius: 999px;
+    color: #fff; font-size: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  }
+  .toolbar button {
+    background: rgba(255,255,255,.08);
+    color: #fff; border: 1px solid rgba(255,255,255,.15);
+    border-radius: 999px; padding: 6px 12px;
+    font-size: 12px; cursor: pointer;
+    transition: background .15s ease;
+  }
+  .toolbar button:hover { background: rgba(255,255,255,.18); }
+  .toolbar button.primary { background: var(--orange); border-color: var(--orange-dark); }
+  .toolbar button.primary:hover { background: var(--orange-dark); }
+  .toolbar .sep { width: 1px; height: 20px; background: rgba(255,255,255,.2); margin: 0 4px; }
+  .toolbar .step-indicator {
+    font-weight: 600; letter-spacing: .3px;
+    padding: 4px 10px; background: rgba(255,255,255,.08);
+    border-radius: 999px;
+  }
+
+  /* -------- 9:16 stage -------- */
+  .stage {
+    position: relative;
+    width: min(96vw, calc(100vh * 9 / 16 - 40px));
+    aspect-ratio: 9 / 16;
+    background: var(--bg);
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,.5);
+    isolation: isolate;
+  }
+  /* Motif technique subtil */
+  .stage::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(30,41,59,.08) 1px, transparent 0),
+      linear-gradient(#e6ecf3 1px, transparent 1px),
+      linear-gradient(90deg, #e6ecf3 1px, transparent 1px);
+    background-size: 22px 22px, 88px 88px, 88px 88px;
+    opacity: .55;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .stage::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 40%, transparent 55%, rgba(15,23,42,.08) 100%);
+    pointer-events: none; z-index: 1;
+  }
+
+  /* -------- Logo top -------- */
+  .brand {
+    position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+    z-index: 5;
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 800; font-size: 14px; color: var(--ink);
+    letter-spacing: .3px;
+  }
+  .brand .logo-dot {
+    width: 26px; height: 26px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--orange), var(--red));
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 14px;
+    box-shadow: 0 4px 12px rgba(245,130,32,.4);
+  }
+
+  /* -------- Top text banner -------- */
+  .top-text {
+    position: absolute;
+    top: 58px; left: 20px; right: 20px;
+    z-index: 5;
+    text-align: center;
+    color: var(--ink);
+    font-size: 26px; line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: -.5px;
+    opacity: 0;
+  }
+  .top-text .accent { color: var(--orange); }
+  .top-text .small { display: block; font-size: 13px; font-weight: 500; color: var(--mut); margin-top: 6px; }
+
+  /* -------- Character container -------- */
+  .character-wrap {
+    position: absolute;
+    top: 46%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px; height: 200px;
+    z-index: 4;
+  }
+  .character { width: 100%; height: 100%; overflow: visible; }
+
+  /* -------- Bubbles autour -------- */
+  .bubbles {
+    position: absolute;
+    top: 46%; left: 50%;
+    width: 320px; height: 320px;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    pointer-events: none;
+  }
+  .bubbles::before {
+    content: "";
+    position: absolute; inset: 0;
+    border: 2px dashed rgba(30,41,59,.15);
+    border-radius: 50%;
+  }
+  .bubble {
+    position: absolute;
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    box-shadow: 0 4px 12px rgba(15,23,42,.15);
+    border: 2px solid var(--line);
+    transform: scale(0);
+    opacity: 0;
+    transition: transform .4s cubic-bezier(.34,1.56,.64,1), opacity .3s;
+  }
+  .bubble.on {
+    transform: scale(1);
+    opacity: 1;
+    border-color: var(--orange);
+    box-shadow: 0 6px 18px rgba(245,130,32,.35), 0 0 0 6px rgba(245,130,32,.12);
+    animation: pulse-bubble 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse-bubble {
+    0%, 100% { box-shadow: 0 6px 18px rgba(245,130,32,.35), 0 0 0 6px rgba(245,130,32,.12); }
+    50%      { box-shadow: 0 6px 18px rgba(245,130,32,.45), 0 0 0 14px rgba(245,130,32,0); }
+  }
+  /* positions cercle : haut, HD, BD, BG, HG */
+  .bubble.b1 { top: 0;   left: 50%; transform: translate(-50%, 0) scale(0); }
+  .bubble.b2 { top: 25%; right: 0;  transform: translate(0, -50%) scale(0); }
+  .bubble.b3 { bottom: 25%; right: 0; transform: translate(0, 50%) scale(0); }
+  .bubble.b4 { bottom: 25%; left: 0; transform: translate(0, 50%) scale(0); }
+  .bubble.b5 { top: 25%; left: 0; transform: translate(0, -50%) scale(0); }
+  .bubble.b1.on { transform: translate(-50%, 0) scale(1); }
+  .bubble.b2.on { transform: translate(0, -50%) scale(1); }
+  .bubble.b3.on { transform: translate(0, 50%) scale(1); }
+  .bubble.b4.on { transform: translate(0, 50%) scale(1); }
+  .bubble.b5.on { transform: translate(0, -50%) scale(1); }
+
+  /* -------- Flying papers (étape 1) -------- */
+  .paper {
+    position: absolute;
+    width: 34px; height: 42px;
+    background: #fff;
+    border-radius: 3px;
+    box-shadow: 0 4px 10px rgba(0,0,0,.12);
+    z-index: 4;
+    opacity: 0;
+  }
+  .paper::before, .paper::after {
+    content: ""; position: absolute; left: 6px; right: 6px; height: 2px;
+    background: var(--line);
+  }
+  .paper::before { top: 8px; }
+  .paper::after { top: 16px; box-shadow: 0 6px 0 var(--line), 0 12px 0 var(--line); }
+
+  /* -------- UI popup card (fake phone UI) -------- */
+  .ui-popup {
+    position: absolute;
+    z-index: 6;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 14px 40px rgba(15,23,42,.18), 0 2px 8px rgba(15,23,42,.08);
+    padding: 14px;
+    width: 220px;
+    opacity: 0;
+    transform: translate(-50%, 8px) scale(.92);
+    left: 50%; top: 70%;
+    pointer-events: none;
+  }
+  .ui-popup.visible {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+    transition: transform .5s cubic-bezier(.34,1.56,.64,1), opacity .3s;
+  }
+  .ui-popup .ui-header {
+    display: flex; align-items: center; gap: 8px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 10px;
+  }
+  .ui-popup .ui-badge {
+    font-size: 10px; font-weight: 700; letter-spacing: .5px;
+    padding: 3px 8px; border-radius: 999px;
+    background: rgba(30,136,229,.1); color: var(--blue);
+    text-transform: uppercase;
+  }
+  .ui-popup .ui-badge.orange { background: rgba(245,130,32,.12); color: var(--orange); }
+  .ui-popup .ui-badge.green { background: rgba(22,163,74,.12); color: var(--green); }
+  .ui-popup .ui-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+  .ui-popup .ui-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink); margin-top: 6px; }
+  .ui-popup .ui-row .k { color: var(--mut); font-weight: 500; min-width: 60px; }
+  .ui-popup .ui-row .v { font-weight: 700; }
+
+  /* Zone note (étape 2) */
+  .note-field {
+    background: #F8FAFC;
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 12px; color: var(--ink);
+    min-height: 40px;
+    position: relative;
+  }
+  .note-field .typing::after {
+    content: "|"; margin-left: 2px; animation: blink 1s step-end infinite; color: var(--orange);
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  .voice-wave {
+    display: inline-flex; align-items: center; gap: 3px; margin-left: 6px;
+    vertical-align: middle;
+  }
+  .voice-wave span {
+    width: 3px; background: var(--orange); border-radius: 2px;
+    animation: wave 0.9s ease-in-out infinite;
+  }
+  .voice-wave span:nth-child(1) { height: 8px;  animation-delay: 0.0s; }
+  .voice-wave span:nth-child(2) { height: 14px; animation-delay: 0.1s; }
+  .voice-wave span:nth-child(3) { height: 10px; animation-delay: 0.2s; }
+  .voice-wave span:nth-child(4) { height: 16px; animation-delay: 0.3s; }
+  .voice-wave span:nth-child(5) { height: 8px;  animation-delay: 0.4s; }
+  @keyframes wave { 0%,100% { transform: scaleY(.4); } 50% { transform: scaleY(1); } }
+
+  /* Shape preview (étape 3) */
+  .shape-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .shape-grid .sh {
+    aspect-ratio: 1; background: #F8FAFC; border-radius: 8px;
+    border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: var(--mut);
+    transition: all .25s ease;
+  }
+  .shape-grid .sh.active {
+    background: rgba(245,130,32,.1);
+    border-color: var(--orange);
+    color: var(--orange);
+    transform: scale(1.08);
+  }
+  .diag-badge {
+    margin-top: 10px;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(22,163,74,.12);
+    color: var(--green);
+    font-size: 11px; font-weight: 700;
+    padding: 5px 10px; border-radius: 999px;
+    opacity: 0; transform: translateY(6px);
+    transition: opacity .3s ease, transform .3s ease;
+  }
+  .diag-badge.on { opacity: 1; transform: translateY(0); }
+
+  /* Photos anti-litige (étape 4) */
+  .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+  .photo-grid .ph {
+    aspect-ratio: 1; border-radius: 8px;
+    background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+    position: relative; overflow: hidden;
+    opacity: 0; transform: scale(.7);
+  }
+  .photo-grid .ph.on { opacity: 1; transform: scale(1); transition: all .3s cubic-bezier(.34,1.56,.64,1); }
+  .photo-grid .ph::after {
+    content: "🔒";
+    position: absolute; top: 3px; right: 4px;
+    font-size: 9px;
+    background: rgba(15,23,42,.75); color: #fff;
+    padding: 1px 4px; border-radius: 4px;
+  }
+  .photo-grid .ph .ts {
+    position: absolute; bottom: 3px; left: 4px;
+    font-size: 8px; color: #fff;
+    background: rgba(15,23,42,.7);
+    padding: 1px 3px; border-radius: 3px;
+    font-weight: 600;
+  }
+
+  /* Export PDF (étape 5) */
+  .export-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .doc-icon {
+    width: 42px; height: 52px; background: #fff;
+    border: 2px solid var(--orange);
+    border-radius: 6px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 900; color: var(--orange);
+    box-shadow: 0 4px 12px rgba(245,130,32,.25);
+  }
+  .doc-icon.pdf { color: var(--red); border-color: var(--red); box-shadow: 0 4px 12px rgba(230,57,70,.3); }
+  .arrow-flow {
+    flex: 1; text-align: center;
+    font-size: 20px; color: var(--orange);
+    animation: arrow-slide 1.2s ease-in-out infinite;
+  }
+  @keyframes arrow-slide {
+    0%,100% { transform: translateX(0); opacity: .6; }
+    50% { transform: translateX(6px); opacity: 1; }
+  }
+  .crm-target {
+    width: 60px; padding: 6px 4px;
+    background: linear-gradient(135deg, #714B67, #875A94);
+    color: #fff; text-align: center;
+    border-radius: 8px;
+    font-size: 10px; font-weight: 800;
+    box-shadow: 0 4px 12px rgba(113,75,103,.4);
+  }
+  .money-emoji {
+    position: absolute;
+    font-size: 26px;
+    z-index: 8;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* -------- CTA button -------- */
+  .cta {
+    position: absolute;
+    left: 50%; bottom: 42px;
+    transform: translateX(-50%);
+    z-index: 7;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    padding: 16px 22px;
+    border-radius: 999px;
+    font-size: 15px; font-weight: 800;
+    letter-spacing: .3px;
+    box-shadow: 0 12px 30px rgba(230,57,70,.5), 0 2px 6px rgba(230,57,70,.3), inset 0 -3px 0 rgba(0,0,0,.15);
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px;
+    min-width: 230px; justify-content: center;
+    transition: all .25s ease;
+  }
+  .cta:hover { transform: translateX(-50%) translateY(-2px); }
+  .cta.pulse {
+    animation: cta-pulse 1.4s cubic-bezier(.4,0,.6,1) infinite;
+  }
+  @keyframes cta-pulse {
+    0%,100% { box-shadow: 0 12px 30px rgba(230,57,70,.5), 0 2px 6px rgba(230,57,70,.3), inset 0 -3px 0 rgba(0,0,0,.15), 0 0 0 0 rgba(230,57,70,.5); }
+    70%     { box-shadow: 0 12px 30px rgba(230,57,70,.5), 0 2px 6px rgba(230,57,70,.3), inset 0 -3px 0 rgba(0,0,0,.15), 0 0 0 22px rgba(230,57,70,0); }
+  }
+  .cta .bell {
+    position: absolute; top: -8px; right: -6px;
+    background: var(--orange);
+    color: #fff;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800;
+    box-shadow: 0 2px 6px rgba(0,0,0,.3);
+    animation: bell-shake 2s ease-in-out infinite;
+  }
+  @keyframes bell-shake {
+    0%,90%,100% { transform: rotate(0); }
+    93% { transform: rotate(15deg); }
+    96% { transform: rotate(-15deg); }
+  }
+  .cta.hidden-bell .bell { display: none; }
+
+  /* -------- Confetti -------- */
+  .confetti-piece {
+    position: absolute;
+    width: 8px; height: 12px;
+    z-index: 9;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  /* -------- Progress bar bottom -------- */
+  .progress {
+    position: absolute;
+    bottom: 12px; left: 20px; right: 20px;
+    height: 3px;
+    background: rgba(15,23,42,.08);
+    border-radius: 999px;
+    z-index: 5;
+    overflow: hidden;
+  }
+  .progress .fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--orange), var(--red));
+    width: 0%;
+    border-radius: 999px;
+    transition: width .5s ease;
+  }
+
+  /* -------- Character SVG poses (visible controlled by JS) -------- */
+  .pose { display: none; }
+  .pose.active { display: block; }
+
+  /* -------- Small responsive tweak -------- */
+  @media (max-height: 700px) {
+    .top-text { font-size: 22px; top: 52px; }
+    .character-wrap { width: 160px; height: 180px; top: 44%; }
+    .bubbles { width: 290px; height: 290px; }
+    .cta { padding: 14px 20px; font-size: 14px; min-width: 210px; bottom: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <button id="btnPlay" class="primary">▶ Lancer</button>
+  <button id="btnPrev">◀</button>
+  <button id="btnNext">▶</button>
+  <button id="btnReset">↻ Reset</button>
+  <div class="sep"></div>
+  <button id="btnSound">🔊 Son</button>
+  <div class="step-indicator" id="stepIndicator">1 / 5</div>
+</div>
+
+<div class="stage" id="stage">
+
+  <!-- Brand -->
+  <div class="brand">
+    <div class="logo-dot">M</div>
+    <span>MesureChâssis</span>
+  </div>
+
+  <!-- Top text banner -->
+  <div class="top-text" id="topText"></div>
+
+  <!-- Flying papers (étape 1) -->
+  <div class="paper" id="p1" style="top: 30%; left: 20%;">📄</div>
+  <div class="paper" id="p2" style="top: 25%; right: 20%;"></div>
+  <div class="paper" id="p3" style="top: 55%; left: 15%;"></div>
+  <div class="paper" id="p4" style="top: 60%; right: 18%;"></div>
+  <div class="paper" id="p5" style="top: 40%; left: 30%;">🧮</div>
+
+  <!-- Bubbles autour -->
+  <div class="bubbles" id="bubbles">
+    <div class="bubble b1" data-i="1">🎙️</div>
+    <div class="bubble b2" data-i="2">🏛️</div>
+    <div class="bubble b3" data-i="3">🛡️</div>
+    <div class="bubble b4" data-i="4">📊</div>
+    <div class="bubble b5" data-i="5">⭕</div>
+  </div>
+
+  <!-- Character -->
+  <div class="character-wrap" id="character">
+    <svg class="character" viewBox="0 0 180 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- Common shadow -->
+      <ellipse cx="90" cy="192" rx="40" ry="5" fill="rgba(15,23,42,.15)"/>
+
+      <!-- ============ POSE 1 : overwhelmed ============ -->
+      <g class="pose pose-1 active">
+        <!-- Body -->
+        <rect x="66" y="90" width="48" height="60" rx="10" fill="#1E293B"/>
+        <!-- Arms up -->
+        <path d="M66 100 Q40 70 45 40" stroke="#F5D0A9" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <path d="M114 100 Q140 70 135 40" stroke="#F5D0A9" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <!-- Legs -->
+        <rect x="72" y="148" width="14" height="40" rx="6" fill="#2C3E50"/>
+        <rect x="94" y="148" width="14" height="40" rx="6" fill="#2C3E50"/>
+        <!-- Head -->
+        <circle cx="90" cy="60" r="26" fill="#F5D0A9"/>
+        <!-- Cap backwards -->
+        <path d="M64 52 Q66 34 90 33 Q114 34 116 52 L116 60 L64 60 Z" fill="#F58220"/>
+        <rect x="60" y="58" width="60" height="6" rx="2" fill="#1E293B"/>
+        <!-- Little button back cap -->
+        <circle cx="90" cy="38" r="3" fill="#E56A00"/>
+        <!-- Eyes worried -->
+        <ellipse cx="80" cy="66" rx="3" ry="4" fill="#1E293B"/>
+        <ellipse cx="100" cy="66" rx="3" ry="4" fill="#1E293B"/>
+        <!-- Eyebrows angled -->
+        <path d="M74 60 L84 63" stroke="#1E293B" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M106 60 L96 63" stroke="#1E293B" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Mouth : O shape -->
+        <ellipse cx="90" cy="78" rx="4" ry="5" fill="#1E293B"/>
+        <!-- Sweat drop -->
+        <ellipse cx="115" cy="55" rx="3" ry="5" fill="#60A5FA"/>
+      </g>
+
+      <!-- ============ POSE 2 : speaking (dictée) ============ -->
+      <g class="pose pose-2">
+        <rect x="66" y="90" width="48" height="60" rx="10" fill="#1E293B"/>
+        <!-- Right arm holding phone up -->
+        <path d="M114 100 Q145 92 148 60" stroke="#F5D0A9" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <rect x="140" y="30" width="18" height="32" rx="4" fill="#1E293B"/>
+        <rect x="142" y="32" width="14" height="24" rx="2" fill="#F58220"/>
+        <!-- Left arm relaxed -->
+        <path d="M66 100 Q50 120 55 145" stroke="#F5D0A9" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <!-- Legs -->
+        <rect x="72" y="148" width="14" height="40" rx="6" fill="#2C3E50"/>
+        <rect x="94" y="148" width="14" height="40" rx="6" fill="#2C3E50"/>
+        <!-- Head -->
+        <circle cx="90" cy="60" r="26" fill="#F5D0A9"/>
+        <path d="M64 52 Q66 34 90 33 Q114 34 116 52 L116 60 L64 60 Z" fill="#F58220"/>
+        <rect x="60" y="58" width="60" height="6" rx="2" fill="#1E293B"/>
+        <circle cx="90" cy="38" r="3" fill="#E56A00"/>
+        <!-- Eyes normal -->
+        <circle cx="80" cy="66" r="2.5" fill="#1E293B"/>
+        <circle cx="100" cy="66" r="2.5" fill="#1E293B"/>
+        <!-- Mouth speaking -->
+        <path d="M84 76 Q90 82 96 76" stroke="#1E293B" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </g>
+
+      <!-- ============ POSE 3 : measuring ============ -->
+      <g class="pose pose-3">
+        <rect x="66" y="90" width="48" height="60" rx="10" fill="#1E293B"/>
+        <!-- Arms forward holding laser -->
+        <path d="M66 105 Q50 100 40 108" stroke="#F5D0A9" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <path d="M114 105 Q125 100 130 108" stroke="#F5D0A9" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <!-- Laser device -->
+        <rect x="26" y="102" width="20" height="14" rx="3" fill="#16A34A"/>
+        <rect x="42" y="106" width="6" height="6" fill="#FBBF24"/>
+        <!-- Green laser beam -->
+        <line x1="48" y1="109" x2="140" y2="109" stroke="#16A34A" stroke-width="2" stroke-dasharray="4,3" opacity=".7"/>
+        <!-- Legs -->
+        <rect x="72" y="148" width="14" height="40" rx="6" fill="#2C3E50"/>
+        <rect x="94" y="148" width="14" height="40" rx="6" fill="#2C3E50"/>
+        <!-- Head -->
+        <circle cx="90" cy="60" r="26" fill="#F5D0A9"/>
+        <path d="M64 52 Q66 34 90 33 Q114 34 116 52 L116 60 L64 60 Z" fill="#F58220"/>
+        <rect x="60" y="58" width="60" height="6" rx="2" fill="#1E293B"/>
+        <circle cx="90" cy="38" r="3" fill="#E56A00"/>
+        <!-- Focused eyes -->
+        <path d="M76 66 L84 66" stroke="#1E293B" stroke-width="3" stroke-linecap="round"/>
+        <path d="M96 66 L104 66" stroke="#1E293B" stroke-width="3" stroke-linecap="round"/>
+        <!-- Mouth serious -->
+        <path d="M84 78 L96 78" stroke="#1E293B" stroke-width="2" stroke-linecap="round"/>
+      </g>
+
+      <!-- ============ POSE 4 : confident shield ============ -->
+      <g class="pose pose-4">
+        <rect x="66" y="90" width="48" height="60" rx="10" fill="#1E293B"/>
+        <!-- Left arm on hip -->
+        <path d="M66 100 Q52 110 62 132" stroke="#F5D0A9" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <!-- Right arm holding shield -->
+        <path d="M114 100 Q130 95 138 108" stroke="#F5D0A9" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <!-- Shield -->
+        <path d="M138 100 L158 100 L156 120 Q148 130 148 130 Q140 130 140 120 Z" fill="#1E88E5" stroke="#0D47A1" stroke-width="2"/>
+        <path d="M143 108 L147 114 L155 105" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- Legs -->
+        <rect x="72" y="148" width="14" height="40" rx="6" fill="#2C3E50"/>
+        <rect x="94" y="148" width="14" height="40" rx="6" fill="#2C3E50"/>
+        <!-- Head -->
+        <circle cx="90" cy="60" r="26" fill="#F5D0A9"/>
+        <path d="M64 52 Q66 34 90 33 Q114 34 116 52 L116 60 L64 60 Z" fill="#F58220"/>
+        <rect x="60" y="58" width="60" height="6" rx="2" fill="#1E293B"/>
+        <circle cx="90" cy="38" r="3" fill="#E56A00"/>
+        <circle cx="80" cy="66" r="2.5" fill="#1E293B"/>
+        <circle cx="100" cy="66" r="2.5" fill="#1E293B"/>
+        <path d="M82 77 Q90 82 98 77" stroke="#1E293B" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </g>
+
+      <!-- ============ POSE 5 : enthusiastic pointing down ============ -->
+      <g class="pose pose-5">
+        <rect x="66" y="90" width="48" height="60" rx="10" fill="#1E293B"/>
+        <!-- Left arm up -->
+        <path d="M66 100 Q45 80 42 45" stroke="#F5D0A9" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <circle cx="42" cy="42" r="7" fill="#F5D0A9"/>
+        <!-- Right arm pointing down -->
+        <path d="M114 100 Q130 130 122 158" stroke="#F5D0A9" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <!-- Pointing finger -->
+        <circle cx="122" cy="160" r="7" fill="#F5D0A9"/>
+        <rect x="120" y="160" width="4" height="14" rx="2" fill="#F5D0A9"/>
+        <!-- Legs -->
+        <rect x="72" y="148" width="14" height="40" rx="6" fill="#2C3E50"/>
+        <rect x="94" y="148" width="14" height="40" rx="6" fill="#2C3E50"/>
+        <!-- Head -->
+        <circle cx="90" cy="60" r="26" fill="#F5D0A9"/>
+        <path d="M64 52 Q66 34 90 33 Q114 34 116 52 L116 60 L64 60 Z" fill="#F58220"/>
+        <rect x="60" y="58" width="60" height="6" rx="2" fill="#1E293B"/>
+        <circle cx="90" cy="38" r="3" fill="#E56A00"/>
+        <!-- Happy eyes (^ ^) -->
+        <path d="M75 68 Q80 62 85 68" stroke="#1E293B" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M95 68 Q100 62 105 68" stroke="#1E293B" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- Big smile -->
+        <path d="M78 76 Q90 88 102 76" stroke="#1E293B" stroke-width="3" fill="#fff" stroke-linecap="round"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- UI Popup -->
+  <div class="ui-popup" id="uiPopup"></div>
+
+  <!-- CTA button -->
+  <button class="cta" id="cta">
+    <span id="ctaText">📄 Métrage Papier</span>
+    <span class="bell" id="ctaBell">1</span>
+  </button>
+
+  <!-- Progress -->
+  <div class="progress"><div class="fill" id="progressFill"></div></div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+/* ============================================================
+   MesureChassis — Marketing Video 1
+   Timeline interactive 5 étapes / autoplay / audio synthétique
+   ============================================================ */
+
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
+
+let currentStep = 0;    // 0 = idle, 1..5 = scenes
+let soundOn = true;
+let autoplay = false;
+let autoplayTimer = null;
+
+/* -------- AUDIO (Web Audio API synth) -------- */
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+function ensureAudio(){
+  if (!audioCtx) audioCtx = new AudioCtx();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function beep({freq=440, dur=0.12, type='sine', vol=0.12, sweep=null}={}){
+  if (!soundOn) return;
+  ensureAudio();
+  const t0 = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, t0);
+  if (sweep) osc.frequency.exponentialRampToValueAtTime(sweep, t0 + dur);
+  gain.gain.setValueAtTime(0, t0);
+  gain.gain.linearRampToValueAtTime(vol, t0 + 0.01);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start(t0); osc.stop(t0 + dur + 0.02);
+}
+function pop()     { beep({freq: 620, dur: 0.09, type: 'triangle', sweep: 320, vol: 0.14}); }
+function ding()    { beep({freq: 880, dur: 0.14, type: 'sine', sweep: 1320, vol: 0.10});
+                     setTimeout(()=>beep({freq:1320, dur:0.18, type:'sine', vol:0.08}), 90); }
+function whoosh()  { beep({freq: 220, dur: 0.35, type: 'sawtooth', sweep: 60, vol: 0.06}); }
+function tick()    { beep({freq: 1600, dur: 0.04, type: 'square', vol: 0.05}); }
+function cash()    {
+  beep({freq: 880, dur: 0.1, type: 'triangle', sweep: 1320, vol: 0.12});
+  setTimeout(()=>beep({freq: 1200, dur: 0.12, type: 'triangle', sweep: 1800, vol: 0.10}), 90);
+  setTimeout(()=>beep({freq: 1600, dur: 0.15, type: 'sine', vol: 0.10}), 200);
+}
+
+/* -------- Pose switch -------- */
+function setPose(n){
+  $$('.pose').forEach(p => p.classList.remove('active'));
+  const p = document.querySelector('.pose-' + n);
+  if (p) p.classList.add('active');
+}
+
+/* -------- Bubbles -------- */
+function setBubbles(activeUpTo){
+  for (let i=1; i<=5; i++){
+    const el = document.querySelector('.bubble.b'+i);
+    if (i <= activeUpTo) el.classList.add('on'); else el.classList.remove('on');
+  }
+}
+function turnOffBubbles(){ setBubbles(0); }
+
+/* -------- Top text -------- */
+function setTopText(html){
+  const el = $('#topText');
+  el.innerHTML = html;
+  gsap.fromTo(el, { opacity: 0, y: -14 }, { opacity: 1, y: 0, duration: .5, ease: "power2.out" });
+}
+function clearTopText(){ gsap.to('#topText', { opacity: 0, y: -8, duration: .3 }); }
+
+/* -------- CTA -------- */
+function setCTA(text, {pulse=false, bell=false}={}){
+  $('#ctaText').textContent = text;
+  const el = $('#cta');
+  el.classList.toggle('pulse', pulse);
+  el.classList.toggle('hidden-bell', !bell);
+  gsap.fromTo(el, { scale: .95 }, { scale: 1, duration: .35, ease: "back.out(2)" });
+}
+
+/* -------- UI popup helpers -------- */
+function showPopup(html){
+  const el = $('#uiPopup');
+  el.innerHTML = html;
+  el.classList.add('visible');
+}
+function hidePopup(){
+  $('#uiPopup').classList.remove('visible');
+}
+
+/* -------- Flying papers (étape 1) -------- */
+function animatePapersIn(){
+  ['#p1','#p2','#p3','#p4','#p5'].forEach((sel, i) => {
+    const el = $(sel);
+    gsap.fromTo(el,
+      { opacity: 0, y: 60, rotate: 0, scale: .6 },
+      { opacity: 1, y: 0, rotate: gsap.utils.random(-25, 25), scale: 1, duration: .5, delay: i * 0.08, ease: "back.out(1.5)" }
+    );
+    gsap.to(el, {
+      y: '+=10', rotate: '+=' + gsap.utils.random(-8, 8),
+      duration: 1.6 + Math.random(),
+      yoyo: true, repeat: -1, ease: "sine.inOut", delay: 0.5 + i * 0.1
+    });
+    setTimeout(pop, i * 80);
+  });
+}
+function animatePapersOut(){
+  ['#p1','#p2','#p3','#p4','#p5'].forEach((sel, i) => {
+    gsap.killTweensOf($(sel));
+    gsap.to($(sel), { opacity: 0, y: -80, rotate: 180, scale: .3, duration: .5, delay: i * 0.05, ease: "power2.in" });
+  });
+  whoosh();
+}
+
+/* -------- Confetti (étape 3) -------- */
+function launchConfetti(){
+  const colors = ['#F58220', '#1E88E5', '#16A34A', '#E63946', '#FBBF24'];
+  const stage = $('#stage');
+  for (let i=0; i<24; i++){
+    const c = document.createElement('div');
+    c.className = 'confetti-piece';
+    c.style.background = colors[i % colors.length];
+    c.style.left = '50%';
+    c.style.top = '55%';
+    c.style.transform = 'rotate(' + gsap.utils.random(0,360) + 'deg)';
+    stage.appendChild(c);
+    gsap.to(c, {
+      x: gsap.utils.random(-160, 160),
+      y: gsap.utils.random(-140, 40),
+      rotate: gsap.utils.random(0, 720),
+      opacity: 1,
+      duration: 1.1,
+      ease: "power2.out",
+      onComplete: () => {
+        gsap.to(c, { opacity: 0, y: '+=100', duration: .6, onComplete: () => c.remove() });
+      }
+    });
+  }
+  ding();
+}
+
+/* -------- Money emoji (étape 5) -------- */
+function launchMoney(){
+  const stage = $('#stage');
+  const emojis = ['💵', '💰', '⏱️', '💸', '⚡'];
+  for (let i=0; i<8; i++){
+    const m = document.createElement('div');
+    m.className = 'money-emoji';
+    m.textContent = emojis[i % emojis.length];
+    m.style.left = gsap.utils.random(20, 80) + '%';
+    m.style.top = '80%';
+    stage.appendChild(m);
+    gsap.to(m, {
+      y: -320 + gsap.utils.random(-30, 30),
+      x: gsap.utils.random(-40, 40),
+      opacity: 1,
+      rotate: gsap.utils.random(-40, 40),
+      duration: 1.3 + Math.random() * 0.5,
+      delay: i * 0.08,
+      ease: "power2.out",
+      onComplete: () => {
+        gsap.to(m, { opacity: 0, duration: .3, onComplete: () => m.remove() });
+      }
+    });
+  }
+  cash();
+}
+
+/* -------- STEP CONTENT -------- */
+const STEPS = {
+  1: () => {
+    setPose(1);
+    setBubbles(0);
+    hidePopup();
+    setTopText('Marre de la <span class="accent">paperasse</span> du soir&nbsp;?<span class="small">Bloc-notes, calculatrice, ressaisie&hellip;</span>');
+    setCTA('📄 Métrage Papier', { pulse: false, bell: false });
+    animatePapersIn();
+    gsap.fromTo('#character', { scale: .9, y: 10 }, { scale: 1, y: 0, duration: .6, ease: "back.out(1.5)" });
+  },
+
+  2: () => {
+    animatePapersOut();
+    setTimeout(() => {
+      setPose(2);
+      setBubbles(1);
+      setTopText('Dictée <span class="accent">vocale</span> instantanée<span class="small">Étape 1 · Nouveau chantier</span>');
+      pop();
+      showPopup(`
+        <div class="ui-header">
+          <span class="ui-badge orange">Chantier · Dupont</span>
+          <span style="margin-left:auto;font-size:11px;color:var(--mut);">14:32</span>
+        </div>
+        <div class="ui-row"><span class="k">Client</span><span class="v">M. Dupont</span></div>
+        <div class="ui-row"><span class="k">Ville</span><span class="v">Charleroi</span></div>
+        <div style="margin-top:10px;font-size:11px;color:var(--mut);font-weight:600;">Note vocale
+          <span class="voice-wave"><span></span><span></span><span></span><span></span><span></span></span>
+        </div>
+        <div class="note-field" style="margin-top:6px;">
+          <span class="typing" id="typingField"></span>
+        </div>
+      `);
+      // Typing effect
+      const target = "Attention au chat, passer par l'arrière 🐱";
+      let idx = 0;
+      const field = document.getElementById('typingField');
+      const typer = setInterval(() => {
+        if (!field) return clearInterval(typer);
+        field.textContent = target.slice(0, idx++);
+        if (idx % 3 === 0) tick();
+        if (idx > target.length) clearInterval(typer);
+      }, 55);
+      setCTA('🎙️ Dictée Vocale Activée', { pulse: false, bell: false });
+      ding();
+    }, 550);
+  },
+
+  3: () => {
+    setPose(3);
+    setBubbles(3);
+    setTopText('12 formes · Pythagore <span class="accent">auto</span><span class="small">Étape 2 · Prise de cotes</span>');
+    showPopup(`
+      <div class="ui-header">
+        <span class="ui-badge">Wizard · Formes</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--mut);">Baie 03</span>
+      </div>
+      <div class="shape-grid">
+        <div class="sh">▭</div>
+        <div class="sh active">⌒</div>
+        <div class="sh">◯</div>
+        <div class="sh">◐</div>
+        <div class="sh">△</div>
+        <div class="sh">◇</div>
+        <div class="sh">◑</div>
+        <div class="sh">⬠</div>
+      </div>
+      <div class="ui-row" style="margin-top:10px;">
+        <span class="k">L × H</span><span class="v">120 × 85 cm</span>
+      </div>
+      <div class="ui-row">
+        <span class="k">Diag.</span><span class="v">147.2 cm</span>
+      </div>
+      <span class="diag-badge" id="diagBadge">✅ DIAGONALE VALIDÉE (±0.2 cm)</span>
+    `);
+    // sparkle badge after delay
+    setTimeout(() => {
+      const b = document.getElementById('diagBadge');
+      if (b) b.classList.add('on');
+      launchConfetti();
+    }, 900);
+    setCTA('📐 12 Formes & Pythagore Auto', { pulse: false, bell: false });
+    pop();
+  },
+
+  4: () => {
+    setPose(4);
+    setBubbles(4);
+    setTopText('Photos horodatées <span class="accent">anti-litige</span><span class="small">Étape 3 · Sécurité chantier</span>');
+    showPopup(`
+      <div class="ui-header">
+        <span class="ui-badge" style="background:rgba(30,136,229,.12);color:var(--blue);">🛡️ Sécurité</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--mut);">6 photos</span>
+      </div>
+      <div class="photo-grid" id="photoGrid">
+        <div class="ph"><span class="ts">14:35</span></div>
+        <div class="ph"><span class="ts">14:36</span></div>
+        <div class="ph"><span class="ts">14:37</span></div>
+        <div class="ph"><span class="ts">14:38</span></div>
+        <div class="ph"><span class="ts">14:39</span></div>
+        <div class="ph"><span class="ts">14:40</span></div>
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:var(--mut);text-align:center;">
+        🔒 SHA-256 · GPS · Horodatage certifié
+      </div>
+    `);
+    // Sequentially reveal photos
+    const phs = $$('#photoGrid .ph');
+    phs.forEach((ph, i) => {
+      setTimeout(() => { ph.classList.add('on'); tick(); }, 150 + i * 180);
+    });
+    setCTA('🛡️ Photos Anti-Litige', { pulse: false, bell: false });
+    pop();
+  },
+
+  5: () => {
+    setPose(5);
+    setBubbles(5);
+    setTopText('Export <span class="accent">Odoo · PDF · Excel</span><span class="small">Étape 4 · Envoi automatique</span>');
+    showPopup(`
+      <div class="ui-header">
+        <span class="ui-badge green">✓ Chantier terminé</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--mut);">3 min 42 s</span>
+      </div>
+      <div class="export-row">
+        <div class="doc-icon pdf">PDF</div>
+        <div class="arrow-flow">→</div>
+        <div class="crm-target">Odoo</div>
+      </div>
+      <div class="export-row" style="margin-top:8px;">
+        <div class="doc-icon">XLSX</div>
+        <div class="arrow-flow">→</div>
+        <div class="crm-target" style="background:linear-gradient(135deg,#0EA5E9,#0284C7);">Vertuoza</div>
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:var(--green);font-weight:700;text-align:center;">
+        ⚡ 2h gagnées par chantier
+      </div>
+    `);
+    setCTA('📱 TÉLÉCHARGER MESURECHÂSSIS', { pulse: true, bell: true });
+    launchMoney();
+  }
+};
+
+/* -------- Navigation -------- */
+function goToStep(n){
+  n = Math.max(1, Math.min(5, n));
+  currentStep = n;
+  $('#stepIndicator').textContent = n + ' / 5';
+  $('#progressFill').style.width = (n * 20) + '%';
+  STEPS[n]();
+}
+
+function next(){ if (currentStep < 5) goToStep(currentStep + 1); }
+function prev(){ if (currentStep > 1) goToStep(currentStep - 1); else goToStep(1); }
+function reset(){
+  currentStep = 0;
+  stopAutoplay();
+  $('#stepIndicator').textContent = '1 / 5';
+  $('#progressFill').style.width = '0%';
+  clearTopText();
+  hidePopup();
+  turnOffBubbles();
+  setPose(1);
+  setCTA('▶ Prêt', { pulse: false, bell: false });
+  $$('.paper').forEach(p => { gsap.killTweensOf(p); gsap.set(p, { opacity: 0 }); });
+}
+
+/* -------- Autoplay -------- */
+const STEP_DURATIONS = { 1: 6000, 2: 9000, 3: 10000, 4: 10000, 5: 10000 };
+function startAutoplay(){
+  stopAutoplay();
+  autoplay = true;
+  $('#btnPlay').textContent = '⏸ Pause';
+  if (currentStep === 0 || currentStep >= 5) goToStep(1);
+  scheduleNext();
+}
+function stopAutoplay(){
+  autoplay = false;
+  if (autoplayTimer) clearTimeout(autoplayTimer);
+  $('#btnPlay').textContent = '▶ Lancer';
+}
+function scheduleNext(){
+  if (!autoplay) return;
+  const wait = STEP_DURATIONS[currentStep] || 6000;
+  autoplayTimer = setTimeout(() => {
+    if (currentStep < 5){
+      next();
+      scheduleNext();
+    } else {
+      stopAutoplay();
+    }
+  }, wait);
+}
+
+/* -------- Wiring -------- */
+$('#btnPlay').addEventListener('click', () => {
+  ensureAudio();
+  if (autoplay) stopAutoplay();
+  else startAutoplay();
+});
+$('#btnNext').addEventListener('click', () => { ensureAudio(); stopAutoplay(); if (currentStep === 0) goToStep(1); else next(); });
+$('#btnPrev').addEventListener('click', () => { ensureAudio(); stopAutoplay(); prev(); });
+$('#btnReset').addEventListener('click', () => { reset(); });
+$('#btnSound').addEventListener('click', () => {
+  soundOn = !soundOn;
+  $('#btnSound').textContent = soundOn ? '🔊 Son' : '🔇 Muet';
+});
+$('#cta').addEventListener('click', () => {
+  ensureAudio();
+  pop();
+  gsap.fromTo('#cta', { scale: 1 }, { scale: .95, duration: .1, yoyo: true, repeat: 1 });
+});
+document.addEventListener('keydown', (e) => {
+  ensureAudio();
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); stopAutoplay(); if (currentStep === 0) goToStep(1); else next(); }
+  if (e.key === 'ArrowLeft')  { e.preventDefault(); stopAutoplay(); prev(); }
+  if (e.key.toLowerCase() === 'r') { reset(); }
+  if (e.key.toLowerCase() === 'p') { $('#btnPlay').click(); }
+});
+
+/* -------- INIT -------- */
+reset();
+setCTA('▶ Cliquez sur Lancer', { pulse: false, bell: false });
+setTopText('MesureChâssis <span class="accent">v1.0</span><span class="small">Prêt à démarrer l\'animation ↓</span>');
+</script>
+
+</body>
+</html>
