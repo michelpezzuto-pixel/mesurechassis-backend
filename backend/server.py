@@ -217,6 +217,26 @@ async def download_kit_capcut():
     return FileResponse(path, media_type="text/markdown", filename="Kit_CapCut_video_demo.md")
 
 
+# 🎬 Juillet 2026 — Composant Web animation marketing Vidéo 1 (format 9:16)
+@api.get("/marketing/video1", response_class=HTMLResponse)
+async def marketing_video1_view():
+    """Animation marketing MesureChâssis — Vidéo 1 (à ouvrir dans le navigateur puis screen record)."""
+    path = "/app/marketing/video1-animation.html"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Animation vidéo 1 introuvable")
+    with open(path, "r", encoding="utf-8") as f:
+        return HTMLResponse(content=f.read(), status_code=200)
+
+
+@api.get("/_downloads/video1-animation")
+async def download_video1_animation():
+    """Télécharger le fichier HTML autonome de l'animation Vidéo 1."""
+    path = "/app/marketing/video1-animation.html"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Animation vidéo 1 introuvable")
+    return FileResponse(path, media_type="text/html", filename="mesurechassis-video1-animation.html")
+
+
 @api.get("/_downloads/kit-tournee")
 async def download_kit_tournee():
     """Kit imprimable pour la tournée menuisiers de Michel.
