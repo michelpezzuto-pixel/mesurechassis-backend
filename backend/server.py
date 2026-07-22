@@ -237,6 +237,20 @@ async def download_video1_animation():
     return FileResponse(path, media_type="text/html", filename="mesurechassis-video1-animation.html")
 
 
+# 🎬 Juillet 2026 — Pack vidéo pub 45s "Fait par un menuisier"
+@api.get("/_downloads/video-pub-45s-pack")
+async def download_video_pub_45s_pack():
+    """ZIP complet de la pub vidéo 45s (24 assets PNG + README + script)."""
+    path = "/app/backend/static/promo/video_pub_45s_pack.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Pack vidéo pub introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="mesurechassis-pub-video-45s-pack.zip",
+    )
+
+
 @api.get("/_downloads/kit-tournee")
 async def download_kit_tournee():
     """Kit imprimable pour la tournée menuisiers de Michel.
