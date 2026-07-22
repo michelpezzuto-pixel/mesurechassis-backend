@@ -227,50 +227,85 @@ export default function ImportSpecScreen() {
       setUploading(true);
       try {
         // ────────────────────────────────────────────────────────────
-        // 🔧 Stratégie d'upload :
-        //   1. Lis le fichier en Blob (web) ou en uri natif (Expo Go)
-        //   2. Si taille > 1.5 Mo → CHUNKED UPLOAD (anti-502 Cloudflare)
-        //   3. Sinon → upload classique (1 seule requête, plus rapide)
-        //
-        // Sur natif (iOS/Android Expo Go), on lit le fichier via fetch(uri)
-        // qui retourne un Blob, puis on découpe avec blob.slice().
+        // 🔧 Stratégie d'upload (juil. 2026 fix — "Fichier vide" iOS) :
+        //   • Sur WEB : lecture Blob via fetch(uri) → Blob → FormData
+        //   • Sur NATIF (iOS/Android) : envoi direct { uri, name, type }
+        //     dans FormData. React Native native module lit le fichier
+        //     lui-même sans passer par fetch() qui retourne parfois un
+        //     Blob de 0 bytes sur iOS avec des URI file:// et content://.
+        //   • Chunked (>1.5 Mo) : garde Blob + slice (natif : fallback
+        //     via fetch avec retry si taille 0).
         // ────────────────────────────────────────────────────────────
         console.log(
           "[import-spec] upload",
-          { platform: Platform.OS, name: file.name, mime: file.mimeType },
+          { platform: Platform.OS, name: file.name, mime: file.mimeType, uri: file.uri.slice(0, 40) },
         );
 
-        // Lecture du fichier en Blob (compatible web + natif via fetch(file://))
-        let fileBlob: Blob;
+        const isWeb = Platform.OS === "web";
+        let fileBlob: Blob | null = null;
+        let totalSize = 0;
+
+        // Sur natif, on essaie de lire le blob juste pour connaître la
+        // taille (chunked ou pas), mais si le blob est 0 bytes on utilise
+        // la méthode RN native directement.
         try {
           const resp = await fetch(file.uri);
-          if (!resp.ok) throw new Error(`Lecture du fichier impossible (${resp.status})`);
-          fileBlob = await resp.blob();
-          // Force le mime si absent
-          if (!fileBlob.type && file.mimeType) {
-            fileBlob = new Blob([await fileBlob.arrayBuffer()], { type: file.mimeType });
+          if (resp.ok) {
+            fileBlob = await resp.blob();
+            if (!fileBlob.type && file.mimeType) {
+              fileBlob = new Blob([await fileBlob.arrayBuffer()], { type: file.mimeType });
+            }
+            totalSize = fileBlob.size;
           }
         } catch (readErr: any) {
-          throw new Error(readErr?.message || "Impossible de lire le fichier");
+          console.warn("[import-spec] fetch(uri) échoué :", readErr?.message);
         }
 
-        const totalSize = fileBlob.size;
-        console.log("[import-spec] blob OK", totalSize, "bytes,", fileBlob.type);
+        console.log(
+          "[import-spec] blob read →",
+          totalSize,
+          "bytes,",
+          fileBlob?.type || "n/a",
+        );
 
-        // 🆕 Seuil chunked : 1.5 Mo (au-delà = chunked obligatoire)
+        // 🆕 Fix "Fichier vide" iOS : si taille inconnue ou 0 sur natif,
+        // on passe forcément par l'upload direct URI React Native
+        // (limité aux fichiers < 1.5 Mo, la grande majorité des cahiers
+        // des charges PDF).
         const CHUNK_THRESHOLD = 1.5 * 1024 * 1024;
-        const CHUNK_SIZE = 1024 * 1024; // 1 Mo par chunk
+        const CHUNK_SIZE = 1024 * 1024;
+        const useRnDirectUpload = !isWeb && (totalSize === 0 || !fileBlob);
 
         let draftData: SpecDraft;
 
-        if (totalSize > CHUNK_THRESHOLD) {
+        if (useRnDirectUpload) {
+          // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+          // 📱 UPLOAD NATIF RN — { uri, name, type } directement
+          // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+          console.log("[import-spec] Native RN direct upload (fix Blob vide iOS)");
+          const formData = new FormData();
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          formData.append("file", {
+            uri: file.uri,
+            name: file.name || "document.pdf",
+            type: file.mimeType || "application/pdf",
+          } as any);
+          const res = await api.post<SpecDraft>(
+            `/chantiers/${id}/import-spec`,
+            formData,
+            {
+              timeout: 120_000,
+              headers: { "Content-Type": "multipart/form-data" },
+            },
+          );
+          draftData = res.data;
+        } else if (totalSize > CHUNK_THRESHOLD && fileBlob) {
           // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
           // 📦 CHUNKED UPLOAD — Découpage en chunks de 1 Mo
           // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
           const totalChunks = Math.ceil(totalSize / CHUNK_SIZE);
           console.log(`[import-spec] CHUNKED mode: ${totalChunks} chunks de ${CHUNK_SIZE / 1024} Ko`);
 
-          // Étape 1 : init session côté backend
           const initRes = await api.post<{ upload_id: string; chunk_size: number }>(
             `/chantiers/${id}/import-spec/chunked/init`,
             {
@@ -282,9 +317,7 @@ export default function ImportSpecScreen() {
             { timeout: 15_000 },
           );
           const uploadId = initRes.data.upload_id;
-          console.log("[import-spec] chunked session:", uploadId);
 
-          // Étape 2 : upload chunk par chunk (séquentiel pour minimiser la charge)
           for (let i = 0; i < totalChunks; i++) {
             const start = i * CHUNK_SIZE;
             const end = Math.min(start + CHUNK_SIZE, totalSize);
@@ -295,7 +328,6 @@ export default function ImportSpecScreen() {
             fd.append("chunk_index", String(i));
             fd.append("file", chunk, `chunk_${i}`);
 
-            // Retry simple : 1 retry sur erreur réseau
             let lastErr: any = null;
             for (let attempt = 0; attempt < 2; attempt++) {
               try {
@@ -308,14 +340,12 @@ export default function ImportSpecScreen() {
                 break;
               } catch (e: any) {
                 lastErr = e;
-                console.warn(`[import-spec] chunk ${i + 1}/${totalChunks} retry ${attempt + 1}`, e?.message);
                 await new Promise((r) => setTimeout(r, 1500));
               }
             }
             if (lastErr) throw lastErr;
           }
 
-          // Étape 3 : complete → assemble + lance l'IA en background
           setUploadProgress(null);
           const completeRes = await api.post<SpecDraft>(
             `/chantiers/${id}/import-spec/chunked/${uploadId}/complete`,
@@ -323,10 +353,9 @@ export default function ImportSpecScreen() {
             { timeout: 30_000 },
           );
           draftData = completeRes.data;
-          console.log("[import-spec] CHUNKED done, draft:", draftData.id);
-        } else {
+        } else if (fileBlob) {
           // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-          // 🚀 UPLOAD CLASSIQUE — 1 seule requête (fichiers ≤ 1.5 Mo)
+          // 🚀 UPLOAD CLASSIQUE WEB — 1 seule requête (Blob)
           // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
           const formData = new FormData();
           formData.append("file", fileBlob, file.name);
@@ -336,6 +365,10 @@ export default function ImportSpecScreen() {
             { timeout: 120_000 },
           );
           draftData = res.data;
+        } else {
+          throw new Error(
+            "Impossible de lire le fichier. Réessayez ou choisissez un autre document.",
+          );
         }
 
         // Poll jusqu'à statut final (commun aux 2 modes)
