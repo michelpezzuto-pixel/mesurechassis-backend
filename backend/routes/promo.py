@@ -39,6 +39,7 @@ PUBLIC_SUBDIRS = {
     "tiktok_script4", "tiktok_script5", "tiktok_script6",
     "tiktok_script7", "tiktok_script8", "tiktok_script9",
     "tiktok_script10",
+    "video_pub_45s",  # 🎬 Pub vidéo 45s "Fait par un menuisier"
 }
 
 
