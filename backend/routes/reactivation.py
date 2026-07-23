@@ -37,6 +37,7 @@ from typing import Optional
 
 from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, EmailStr
 
 from db import db
@@ -195,7 +196,7 @@ async def request_reactivation(payload: ReactivationRequestIn, request: Request)
     original_email = user.get("original_email") or email
     name = user.get("name") or "Cher artisan"
 
-    link = _build_link("/reactivation", token)
+    link = _build_link("/api/auth/reactivation/page", token)
     subject = "🔓 Réactivation de votre compte MesureChâssis"
     body_text = (
         f"Bonjour {name},\n\n"
@@ -472,3 +473,249 @@ async def reactivation_status(email: str):
         "count": count,
         "max": REACTIVATION_QUOTA_MAX,
     }
+
+
+# ────────────────────────────────────────────────────────────────────────────
+# 6. Page HTML publique de réactivation (formulaire nouveau mot de passe)
+#    Correction du bug historique où l'email de réactivation pointait vers
+#    /reactivation (404 sur Railway). Cette page est autonome (aucune
+#    dépendance frontend) et POSTe directement vers /auth/reactivation/confirm.
+# ────────────────────────────────────────────────────────────────────────────
+
+
+def _reactivation_html_error(*, title: str, message: str) -> str:
+    return f"""<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{title} — MesureChâssis</title>
+<style>
+  * {{ box-sizing: border-box; }}
+  body {{
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0a0a0a; color: #f5f5f5; min-height: 100vh;
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+  }}
+  .card {{
+    max-width: 460px; width: 100%; background: #171717;
+    border: 2px solid #ef4444; border-radius: 20px; padding: 32px 24px;
+    text-align: center;
+  }}
+  .emoji {{ font-size: 56px; margin-bottom: 12px; }}
+  h1 {{ font-size: 22px; margin: 0 0 16px; color: #ef4444; }}
+  p {{ font-size: 15px; line-height: 1.6; color: #d4d4d4; margin: 10px 0; }}
+  a.btn {{
+    display: inline-block; margin-top: 24px; padding: 14px 26px;
+    background: #FF5A00; color: #fff; text-decoration: none;
+    border-radius: 26px; font-weight: 800; font-size: 14px;
+  }}
+</style></head>
+<body><div class="card">
+  <div class="emoji">⚠️</div>
+  <h1>{title}</h1>
+  <p>{message}</p>
+  <a class="btn" href="https://mesurechassis.com">Retour au site</a>
+</div></body></html>"""
+
+
+def _reactivation_html_form(*, token: str, email: str, name: str) -> str:
+    # Le formulaire poste via fetch JSON vers /api/auth/reactivation/confirm.
+    return f"""<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Réactiver mon compte — MesureChâssis</title>
+<style>
+  * {{ box-sizing: border-box; }}
+  body {{
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0a0a0a; color: #f5f5f5; min-height: 100vh;
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+  }}
+  .card {{
+    max-width: 460px; width: 100%; background: #171717;
+    border: 2px solid #22c55e; border-radius: 20px; padding: 28px 22px;
+  }}
+  .head {{ text-align: center; margin-bottom: 20px; }}
+  .head .emoji {{ font-size: 48px; }}
+  h1 {{ font-size: 21px; margin: 8px 0 4px; color: #22c55e; text-align: center; }}
+  .lead {{ font-size: 13.5px; color: #9E9EA5; text-align: center; line-height: 1.5; margin-bottom: 20px; }}
+  label {{ display: block; font-size: 11.5px; font-weight: 700;
+    letter-spacing: 0.4px; text-transform: uppercase; color: #d4d4d4;
+    margin-bottom: 6px; margin-top: 14px; }}
+  input {{
+    width: 100%; padding: 14px 14px; border-radius: 10px;
+    background: #0a0a0a; border: 1px solid #2a2a30; color: #fff;
+    font-size: 15px; font-family: inherit;
+  }}
+  input:focus {{ outline: none; border-color: #FF5A00; }}
+  .hint {{ font-size: 11.5px; color: #9E9EA5; margin-top: 6px; line-height: 1.4; }}
+  button {{
+    width: 100%; margin-top: 20px; padding: 15px; border: none;
+    background: #FF5A00; color: #fff; border-radius: 26px;
+    font-weight: 800; font-size: 14px; letter-spacing: 0.5px; cursor: pointer;
+  }}
+  button:disabled {{ opacity: 0.5; cursor: not-allowed; }}
+  .error {{ background: #3a1010; color: #fca5a5; padding: 10px 12px;
+    border-radius: 8px; font-size: 13px; margin-top: 14px; display: none; }}
+  .success {{ text-align: center; padding: 20px 0; }}
+  .success .emoji {{ font-size: 56px; }}
+  .success h2 {{ color: #22c55e; margin: 12px 0 8px; font-size: 20px; }}
+  .success p {{ color: #d4d4d4; font-size: 14px; line-height: 1.5; }}
+  #successBox {{ display: none; }}
+</style></head>
+<body><div class="card">
+  <div id="formBox">
+    <div class="head">
+      <div class="emoji">🔓</div>
+      <h1>Réactiver mon compte</h1>
+    </div>
+    <p class="lead">
+      Bonjour <strong>{name or "—"}</strong>, vous êtes sur le point de
+      réactiver le compte associé à <strong>{email}</strong>. Définissez un
+      nouveau mot de passe pour retrouver l'accès à MesureChâssis.
+    </p>
+    <form id="reactForm" onsubmit="return submitForm(event)">
+      <label for="pw1">Nouveau mot de passe</label>
+      <input type="password" id="pw1" name="pw1" minlength="8" required
+             autocomplete="new-password" />
+      <div class="hint">Minimum 8 caractères.</div>
+      <label for="pw2">Confirmer le mot de passe</label>
+      <input type="password" id="pw2" name="pw2" minlength="8" required
+             autocomplete="new-password" />
+      <div id="err" class="error"></div>
+      <button type="submit" id="submitBtn">RÉACTIVER MON COMPTE</button>
+    </form>
+  </div>
+  <div id="successBox" class="success">
+    <div class="emoji">🎉</div>
+    <h2>Compte réactivé !</h2>
+    <p>Votre compte est à nouveau actif. Ouvrez l'application MesureChâssis
+    et connectez-vous avec votre nouveau mot de passe.</p>
+    <button onclick="window.location.href='mesurechassis://'" style="margin-top:20px">
+      OUVRIR L'APPLICATION
+    </button>
+  </div>
+</div>
+<script>
+const TOKEN = {token!r};
+
+async function submitForm(ev) {{
+  ev.preventDefault();
+  const pw1 = document.getElementById('pw1').value;
+  const pw2 = document.getElementById('pw2').value;
+  const errEl = document.getElementById('err');
+  const btn = document.getElementById('submitBtn');
+  errEl.style.display = 'none';
+  if (pw1 !== pw2) {{
+    errEl.textContent = 'Les mots de passe ne correspondent pas.';
+    errEl.style.display = 'block';
+    return false;
+  }}
+  if (pw1.length < 8) {{
+    errEl.textContent = 'Le mot de passe doit contenir au moins 8 caractères.';
+    errEl.style.display = 'block';
+    return false;
+  }}
+  btn.disabled = true;
+  btn.textContent = 'RÉACTIVATION EN COURS…';
+  try {{
+    const res = await fetch('/api/auth/reactivation/confirm', {{
+      method: 'POST',
+      headers: {{ 'Content-Type': 'application/json' }},
+      body: JSON.stringify({{ token: TOKEN, new_password: pw1 }})
+    }});
+    const data = await res.json().catch(() => ({{}}));
+    if (!res.ok) {{
+      errEl.textContent = data.detail || 'Une erreur est survenue. Réessayez.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'RÉACTIVER MON COMPTE';
+      return false;
+    }}
+    document.getElementById('formBox').style.display = 'none';
+    document.getElementById('successBox').style.display = 'block';
+  }} catch (e) {{
+    errEl.textContent = 'Erreur réseau. Vérifiez votre connexion et réessayez.';
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'RÉACTIVER MON COMPTE';
+  }}
+  return false;
+}}
+</script>
+</body></html>"""
+
+
+@router.get("/auth/reactivation/page", response_class=HTMLResponse)
+async def reactivation_page(token: str):
+    """Page HTML publique cliquable depuis l'email de réactivation.
+
+    Fixe le bug historique où le lien pointait vers `/reactivation` (404 sur
+    Railway). Affiche un formulaire "nouveau mot de passe" qui POSTe vers
+    l'endpoint JSON existant `/api/auth/reactivation/confirm`.
+    """
+    doc = await db.reactivation_tokens.find_one({"token": token})
+    if not doc:
+        return HTMLResponse(
+            _reactivation_html_error(
+                title="Lien invalide",
+                message=(
+                    "Ce lien de réactivation n'est pas reconnu. Il a peut-être "
+                    "expiré ou été déjà utilisé."
+                ),
+            ),
+            status_code=400,
+        )
+    if doc.get("used_at"):
+        return HTMLResponse(
+            _reactivation_html_error(
+                title="Lien déjà utilisé",
+                message=(
+                    "Ce lien de réactivation a déjà été utilisé. Votre compte "
+                    "est probablement déjà actif — ouvrez l'application "
+                    "MesureChâssis pour vous connecter."
+                ),
+            ),
+            status_code=410,
+        )
+    try:
+        exp = datetime.fromisoformat(doc["expires_at"])
+    except Exception:
+        exp = datetime.now(timezone.utc) - timedelta(hours=1)
+    if exp <= datetime.now(timezone.utc):
+        return HTMLResponse(
+            _reactivation_html_error(
+                title="Lien expiré",
+                message=(
+                    "Ce lien a expiré (validité : 24 heures). Retournez dans "
+                    "l'application et demandez un nouveau lien depuis l'écran "
+                    "de connexion."
+                ),
+            ),
+            status_code=410,
+        )
+
+    user = await db.users.find_one(
+        {"id": doc["user_id"]},
+        {"_id": 0, "name": 1, "original_email": 1},
+    )
+    if not user:
+        return HTMLResponse(
+            _reactivation_html_error(
+                title="Compte introuvable",
+                message=(
+                    "Le compte associé à ce lien n'existe plus. Contactez "
+                    "info@mesurechassis.com si vous pensez que c'est une erreur."
+                ),
+            ),
+            status_code=404,
+        )
+
+    return HTMLResponse(
+        _reactivation_html_form(
+            token=token,
+            email=(user.get("original_email") or "").lower(),
+            name=user.get("name") or "",
+        )
+    )
