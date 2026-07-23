@@ -818,6 +818,18 @@ async def login(payload: LoginRequest):
     if status == "deleted":
         # Sécurité RGPD : ne pas confirmer l'existence d'un compte supprimé
         raise HTTPException(401, "Email ou mot de passe incorrect")
+    if status == "pending_deletion":
+        raise HTTPException(
+            status_code=403,
+            detail={
+                "code": "account_pending_deletion",
+                "message": (
+                    "Ce compte est en cours de suppression. Consultez votre "
+                    "email pour restaurer votre compte pendant la période de "
+                    "grâce (30 jours)."
+                ),
+            },
+        )
     if status == "pending_verification":
         raise HTTPException(
             status_code=403,

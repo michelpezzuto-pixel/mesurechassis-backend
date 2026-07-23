@@ -45,6 +45,28 @@ type Profile = {
 const FREE_LIMIT = 3;
 const SUPPORT_EMAIL = "info@mesurechassis.com";
 
+/** 🗑️ v1.1.4 — Options du questionnaire exit-survey (ordre = ordre affichage). */
+const DELETE_REASONS: readonly { key: string; label: string }[] = [
+  { key: "too_expensive", label: "C'est trop cher" },
+  {
+    key: "too_complex",
+    label: "L'application est trop compliquée à utiliser",
+  },
+  {
+    key: "missing_features",
+    label: "Je ne trouve pas les fonctionnalités dont j'ai besoin",
+  },
+  {
+    key: "technical_issues",
+    label: "Problèmes techniques ou bugs récurrents",
+  },
+  {
+    key: "no_longer_needed",
+    label: "Je n'ai plus besoin de l'outil pour mes chantiers",
+  },
+  { key: "other", label: "Autre" },
+];
+
 function formatDate(iso?: string | null): string {
   if (!iso) return "—";
   try {
@@ -83,11 +105,13 @@ export default function CompanyProfile() {
   const [saving, setSaving] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [cancelling, setCancelling] = useState(false);
-  // Lot E — RGPD soft-delete
+  // 🗑️ v1.1.4 — Exit Survey + Grace Period 30j (remplace legacy DELETE)
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteStep, setDeleteStep] = useState<1 | 2>(1);
+  const [deleteReason, setDeleteReason] = useState<string>("");
+  const [deleteCustomText, setDeleteCustomText] = useState("");
+  const [reasonPickerOpen, setReasonPickerOpen] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
-  const [deleteConfirmText, setDeleteConfirmText] = useState("");
-  const [deleteOptin, setDeleteOptin] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   // C5 — Bascule Artisan ↔ Entreprise
@@ -265,47 +289,60 @@ export default function CompanyProfile() {
     );
   }, [refreshCompany]);
 
-  /** Lot E — Soft-delete RGPD du compte courant. */
-  const doDeleteAccount = useCallback(async () => {
+  /** 🗑️ v1.1.4 — Ouverture du wizard 2 étapes. */
+  const openDeleteWizard = useCallback(() => {
+    setDeleteReason("");
+    setDeleteCustomText("");
+    setDeletePassword("");
+    setDeleteStep(1);
+    setDeleteOpen(true);
+  }, []);
+
+  const closeDeleteWizard = useCallback(() => {
+    setDeleteOpen(false);
+    setReasonPickerOpen(false);
+    // Ne pas reset immédiatement pour préserver la saisie si réouverture
+    setTimeout(() => {
+      setDeleteStep(1);
+      setDeletePassword("");
+    }, 250);
+  }, []);
+
+  /** 🗑️ v1.1.4 — Envoi Exit Survey + demande de suppression avec grace 30j. */
+  const doDeleteWithSurvey = useCallback(async () => {
     if (!deletePassword.trim()) {
       Alert.alert("Mot de passe requis", "Saisissez votre mot de passe.");
       return;
     }
-    if (deleteConfirmText.trim().toUpperCase() !== "SUPPRIMER") {
-      Alert.alert(
-        "Confirmation invalide",
-        "Tapez SUPPRIMER en majuscules pour confirmer.",
-      );
-      return;
-    }
     setDeleting(true);
     try {
-      const res = await api.delete("/auth/me", {
-        data: {
-          password: deletePassword,
-          confirm_text: deleteConfirmText.trim().toUpperCase(),
-          marketing_optin: deleteOptin,
-        },
+      const res = await api.post("/account/delete-with-survey", {
+        reason: deleteReason,
+        custom_text:
+          deleteReason === "other" ? deleteCustomText.trim() : null,
+        password: deletePassword,
       });
       const msg =
         (res?.data as any)?.message ||
-        "Compte supprimé. Toutes vos données ont été anonymisées.";
-      setDeleteOpen(false);
-      setDeletePassword("");
-      setDeleteConfirmText("");
-      setDeleteOptin(false);
-      Alert.alert("✅ Compte supprimé", msg, [
-        {
-          text: "OK",
-          onPress: async () => {
-            try {
-              await signOut();
-            } catch {
-              /* ignore */
-            }
+        "Compte supprimé. Vous avez 30 jours pour changer d'avis. " +
+          "Consultez votre email.";
+      closeDeleteWizard();
+      Alert.alert(
+        "✅ Compte supprimé",
+        msg,
+        [
+          {
+            text: "OK",
+            onPress: async () => {
+              try {
+                await signOut();
+              } catch {
+                /* ignore */
+              }
+            },
           },
-        },
-      ]);
+        ],
+      );
     } catch (e: any) {
       Alert.alert(
         "Suppression impossible",
@@ -316,9 +353,10 @@ export default function CompanyProfile() {
     }
   }, [
     deletePassword,
-    deleteConfirmText,
-    deleteOptin,
+    deleteReason,
+    deleteCustomText,
     signOut,
+    closeDeleteWizard,
   ]);
 
   const save = async () => {
@@ -885,7 +923,7 @@ export default function CompanyProfile() {
             </Text>
             <TouchableOpacity
               testID="open-delete-account"
-              onPress={() => setDeleteOpen(true)}
+              onPress={openDeleteWizard}
               activeOpacity={0.85}
               style={styles.dangerBtn}
             >
@@ -951,106 +989,256 @@ export default function CompanyProfile() {
           </View>
         </Modal>
 
-        {/* === Modal Suppression de compte (RGPD) === */}
+        {/* === 🗑️ v1.1.4 — Wizard Exit Survey + Grace Period === */}
         <Modal
           visible={deleteOpen}
           transparent
           animationType="fade"
-          onRequestClose={() => setDeleteOpen(false)}
+          onRequestClose={closeDeleteWizard}
         >
-          <View style={styles.modalBackdrop}>
-            <View style={styles.modalCard}>
-              <View style={styles.modalHead}>
-                <Ionicons name="warning" size={20} color={colors.alert} />
-                <Text style={styles.modalTitle}>SUPPRIMER MON COMPTE</Text>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            style={styles.modalBackdrop}
+          >
+            <ScrollView
+              contentContainerStyle={{
+                flexGrow: 1,
+                justifyContent: "center",
+                padding: 16,
+              }}
+              keyboardShouldPersistTaps="handled"
+            >
+              <View style={styles.modalCard}>
+                {deleteStep === 1 ? (
+                  <>
+                    <View style={styles.modalHead}>
+                      <Ionicons
+                        name="heart-dislike"
+                        size={20}
+                        color={colors.warning}
+                      />
+                      <Text style={styles.modalTitle}>
+                        DÉSOLÉ DE VOUS VOIR PARTIR…
+                      </Text>
+                    </View>
+                    <Text style={styles.modalBody}>
+                      Avant de supprimer votre compte, pourriez-vous nous dire
+                      pourquoi ? Vos retours nous aident énormément à
+                      améliorer MesureChâssis pour les autres artisans.
+                    </Text>
+
+                    <Text style={styles.labelSmall}>Raison principale</Text>
+                    <TouchableOpacity
+                      testID="reason-picker-open"
+                      onPress={() => setReasonPickerOpen((v) => !v)}
+                      activeOpacity={0.85}
+                      style={[styles.input, styles.reasonSelector]}
+                    >
+                      <Text
+                        style={{
+                          color: deleteReason
+                            ? colors.text
+                            : colors.placeholder,
+                          fontSize: 14,
+                          flex: 1,
+                        }}
+                        numberOfLines={2}
+                      >
+                        {deleteReason
+                          ? DELETE_REASONS.find(
+                              (r) => r.key === deleteReason,
+                            )?.label
+                          : "Sélectionnez une raison…"}
+                      </Text>
+                      <Ionicons
+                        name={
+                          reasonPickerOpen
+                            ? "chevron-up"
+                            : "chevron-down"
+                        }
+                        size={18}
+                        color={colors.placeholder}
+                      />
+                    </TouchableOpacity>
+
+                    {reasonPickerOpen && (
+                      <View style={styles.reasonList}>
+                        {DELETE_REASONS.map((r) => (
+                          <TouchableOpacity
+                            key={r.key}
+                            testID={`reason-option-${r.key}`}
+                            onPress={() => {
+                              setDeleteReason(r.key);
+                              setReasonPickerOpen(false);
+                            }}
+                            activeOpacity={0.7}
+                            style={[
+                              styles.reasonOption,
+                              deleteReason === r.key &&
+                                styles.reasonOptionActive,
+                            ]}
+                          >
+                            <Text style={styles.reasonOptionText}>
+                              {r.label}
+                            </Text>
+                            {deleteReason === r.key && (
+                              <Ionicons
+                                name="checkmark"
+                                size={16}
+                                color={colors.warning}
+                              />
+                            )}
+                          </TouchableOpacity>
+                        ))}
+                      </View>
+                    )}
+
+                    {deleteReason === "other" && (
+                      <>
+                        <Text style={styles.labelSmall}>
+                          Précisez votre raison
+                        </Text>
+                        <TextInput
+                          testID="delete-custom-text"
+                          value={deleteCustomText}
+                          onChangeText={setDeleteCustomText}
+                          placeholder="Dites-nous en plus…"
+                          placeholderTextColor={colors.placeholder}
+                          multiline
+                          numberOfLines={4}
+                          maxLength={500}
+                          style={[
+                            styles.input,
+                            { height: 100, textAlignVertical: "top" },
+                          ]}
+                        />
+                      </>
+                    )}
+
+                    <View style={styles.modalActions}>
+                      <TouchableOpacity
+                        testID="cancel-delete-account"
+                        onPress={closeDeleteWizard}
+                        activeOpacity={0.85}
+                        style={[styles.btn, styles.btnGhost, { flex: 1 }]}
+                      >
+                        <Text style={styles.btnGhostText}>ANNULER</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        testID="delete-step-continue"
+                        onPress={() => {
+                          if (!deleteReason) {
+                            Alert.alert(
+                              "Raison requise",
+                              "Sélectionnez une raison pour continuer.",
+                            );
+                            return;
+                          }
+                          if (
+                            deleteReason === "other" &&
+                            deleteCustomText.trim().length < 3
+                          ) {
+                            Alert.alert(
+                              "Précisez votre raison",
+                              "Décrivez en quelques mots pourquoi vous partez.",
+                            );
+                            return;
+                          }
+                          setReasonPickerOpen(false);
+                          setDeleteStep(2);
+                        }}
+                        activeOpacity={0.85}
+                        disabled={
+                          !deleteReason ||
+                          (deleteReason === "other" &&
+                            deleteCustomText.trim().length < 3)
+                        }
+                        style={[
+                          styles.btn,
+                          styles.btnDanger,
+                          { flex: 1 },
+                          (!deleteReason ||
+                            (deleteReason === "other" &&
+                              deleteCustomText.trim().length < 3)) && {
+                            opacity: 0.5,
+                          },
+                        ]}
+                      >
+                        <Text style={styles.btnDangerText}>CONTINUER</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                ) : (
+                  <>
+                    <View style={styles.modalHead}>
+                      <Ionicons
+                        name="warning"
+                        size={20}
+                        color={colors.alert}
+                      />
+                      <Text style={styles.modalTitle}>
+                        ÊTES-VOUS VRAIMENT SÛR ?
+                      </Text>
+                    </View>
+                    <Text style={styles.modalBody}>
+                      Cette action est{" "}
+                      <Text style={styles.bold}>irréversible</Text>. Vos
+                      chantiers, mesures et documents seront définitivement
+                      supprimés dans{" "}
+                      <Text style={styles.bold}>30 jours</Text>. Vous
+                      recevrez un email vous permettant de restaurer votre
+                      compte pendant cette période.
+                    </Text>
+
+                    <Text style={styles.labelSmall}>Votre mot de passe</Text>
+                    <TextInput
+                      testID="delete-password-input"
+                      value={deletePassword}
+                      onChangeText={setDeletePassword}
+                      placeholder="Mot de passe actuel"
+                      placeholderTextColor={colors.placeholder}
+                      secureTextEntry
+                      style={styles.input}
+                    />
+
+                    <View style={styles.modalActions}>
+                      <TouchableOpacity
+                        testID="delete-step-back"
+                        onPress={() => setDeleteStep(1)}
+                        disabled={deleting}
+                        activeOpacity={0.85}
+                        style={[styles.btn, styles.btnGhost, { flex: 1 }]}
+                      >
+                        <Text style={styles.btnGhostText}>RETOUR</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        testID="confirm-delete-account"
+                        onPress={doDeleteWithSurvey}
+                        disabled={deleting || !deletePassword.trim()}
+                        activeOpacity={0.85}
+                        style={[
+                          styles.btn,
+                          styles.btnDanger,
+                          { flex: 1 },
+                          (!deletePassword.trim() || deleting) && {
+                            opacity: 0.5,
+                          },
+                        ]}
+                      >
+                        {deleting ? (
+                          <ActivityIndicator color="#fff" />
+                        ) : (
+                          <Text style={styles.btnDangerText}>
+                            SUPPRIMER DÉFINITIVEMENT
+                          </Text>
+                        )}
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                )}
               </View>
-              <Text style={styles.modalBody}>
-                Cette action est <Text style={styles.bold}>irréversible</Text>.
-                Toutes vos données personnelles seront anonymisées
-                conformément au RGPD.
-              </Text>
-
-              <Text style={styles.labelSmall}>Votre mot de passe</Text>
-              <TextInput
-                testID="delete-password-input"
-                value={deletePassword}
-                onChangeText={setDeletePassword}
-                placeholder="Mot de passe actuel"
-                placeholderTextColor={colors.placeholder}
-                secureTextEntry
-                style={styles.input}
-              />
-
-              <Text style={styles.labelSmall}>
-                Tapez <Text style={styles.bold}>SUPPRIMER</Text> pour confirmer
-              </Text>
-              <TextInput
-                testID="delete-confirm-input"
-                value={deleteConfirmText}
-                onChangeText={setDeleteConfirmText}
-                placeholder="SUPPRIMER"
-                placeholderTextColor={colors.placeholder}
-                autoCapitalize="characters"
-                style={styles.input}
-              />
-
-              <TouchableOpacity
-                testID="delete-optin-toggle"
-                onPress={() => setDeleteOptin((v) => !v)}
-                activeOpacity={0.75}
-                style={styles.optinRow}
-              >
-                <View
-                  style={[
-                    styles.checkbox,
-                    deleteOptin && styles.checkboxChecked,
-                  ]}
-                >
-                  {deleteOptin && (
-                    <Ionicons name="checkmark" size={16} color="#000" />
-                  )}
-                </View>
-                <Text style={styles.optinText}>
-                  Je souhaite continuer à recevoir des offres commerciales
-                  de MesureChâssis (mon email sera conservé uniquement à cette
-                  fin).
-                </Text>
-              </TouchableOpacity>
-              <Text style={styles.optinHint}>
-                Si vous décochez cette case, votre email sera effacé
-                strictement conformément au RGPD.
-              </Text>
-
-              <View style={styles.modalActions}>
-                <TouchableOpacity
-                  testID="cancel-delete-account"
-                  onPress={() => {
-                    setDeleteOpen(false);
-                    setDeletePassword("");
-                    setDeleteConfirmText("");
-                  }}
-                  disabled={deleting}
-                  activeOpacity={0.85}
-                  style={[styles.btn, styles.btnGhost, { flex: 1 }]}
-                >
-                  <Text style={styles.btnGhostText}>ANNULER</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  testID="confirm-delete-account"
-                  onPress={doDeleteAccount}
-                  disabled={deleting}
-                  activeOpacity={0.85}
-                  style={[styles.btn, styles.btnDanger, { flex: 1 }]}
-                >
-                  {deleting ? (
-                    <ActivityIndicator color="#fff" />
-                  ) : (
-                    <Text style={styles.btnDangerText}>SUPPRIMER</Text>
-                  )}
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
         </Modal>
 
         {/* === C5 — Modal Bascule Artisan ↔ Entreprise === */}
@@ -1506,6 +1694,38 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     marginTop: 6,
     marginBottom: 4,
+  },
+  reasonSelector: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 8,
+  },
+  reasonList: {
+    marginTop: 8,
+    backgroundColor: colors.bg,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    overflow: "hidden",
+  },
+  reasonOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderSubtle,
+  },
+  reasonOptionActive: {
+    backgroundColor: colors.surface,
+  },
+  reasonOptionText: {
+    color: colors.textPrimary,
+    fontSize: 13.5,
+    flex: 1,
+    lineHeight: 18,
   },
   btn: {
     minHeight: 52,

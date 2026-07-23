@@ -181,6 +181,19 @@ async def auth_user(authorization: Optional[str] = Header(None)) -> dict:
     # refuse l'accès sans révéler la raison exacte (sécurité).
     if status == "deleted":
         raise HTTPException(status_code=401, detail="Compte supprimé.")
+    if status == "pending_deletion":
+        # Compte en grace period → JWT toujours refusés, l'user doit
+        # cliquer sur le lien de restauration dans l'email envoyé.
+        raise HTTPException(
+            status_code=403,
+            detail={
+                "code": "account_pending_deletion",
+                "message": (
+                    "Ce compte est en cours de suppression. Consultez votre "
+                    "email pour le restaurer (grâce 30 jours)."
+                ),
+            },
+        )
     if status == "pending_verification":
         raise HTTPException(
             status_code=403,

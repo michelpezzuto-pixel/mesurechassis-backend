@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>MesureChâssis — App Store Screenshots</title>
+<style>
+  :root {
+    --orange: #F58220;
+    --orange-dark: #E56A00;
+    --red: #E63946;
+    --green: #22C55E;
+    --blue: #3B82F6;
+    --ink: #0F172A;
+    --card: #1E293B;
+    --card-2: #0B1220;
+    --line: #334155;
+    --text: #E2E8F0;
+    --text-muted: #94A3B8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: #E5E7EB;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── Frame (dimensions fixes App Store) ─── */
+  .frame {
+    position: relative;
+    background: linear-gradient(180deg, #F9FAFB 0%, #E5E7EB 100%);
+    overflow: hidden;
+    margin: 0 auto;
+  }
+  .frame.iphone { width: 1290px; height: 2796px; }
+  .frame.ipad   { width: 2064px; height: 2752px; }
+
+  /* Marketing header banner */
+  .header {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    background: linear-gradient(135deg, #F58220 0%, #E56A00 100%);
+    padding: 90px 60px 70px;
+    text-align: center;
+    z-index: 2;
+  }
+  .iphone .header { padding: 90px 40px 60px; height: 420px; }
+  .ipad   .header { padding: 130px 80px 90px; height: 480px; }
+
+  .header .title {
+    color: #fff;
+    font-weight: 900;
+    letter-spacing: -1.2px;
+    line-height: 1.05;
+    text-shadow: 0 2px 20px rgba(0,0,0,.15);
+  }
+  .iphone .header .title { font-size: 110px; }
+  .ipad .header .title   { font-size: 140px; }
+
+  .header .subtitle {
+    color: rgba(255,255,255,0.92);
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    margin-top: 16px;
+  }
+  .iphone .header .subtitle { font-size: 42px; }
+  .ipad .header .subtitle { font-size: 54px; }
+
+  /* Device area (screen goes here) */
+  .device {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #000;
+    border: 12px solid #0B0F1A;
+    border-radius: 88px;
+    overflow: hidden;
+    box-shadow: 0 60px 120px rgba(0,0,0,0.25), 0 20px 40px rgba(0,0,0,.15);
+  }
+  .iphone .device {
+    top: 480px;
+    width: 1010px;
+    height: 2080px;
+    border-radius: 100px;
+  }
+  .ipad .device {
+    top: 560px;
+    width: 1600px;
+    height: 2050px;
+    border-radius: 60px;
+    border-width: 20px;
+  }
+
+  .screen {
+    position: absolute;
+    inset: 0;
+    background: #0F172A;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status bar iOS-like */
+  .status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 40px 60px 12px;
+    color: #fff;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .ipad .status { padding: 40px 60px 12px; font-size: 26px; }
+  .status .right { display: flex; align-items: center; gap: 12px; }
+  .icon-bat {
+    display: inline-block;
+    width: 42px; height: 22px;
+    border: 2px solid rgba(255,255,255,.9);
+    border-radius: 5px;
+    position: relative;
+  }
+  .icon-bat::after {
+    content: "";
+    position: absolute;
+    left: 2px; top: 2px; bottom: 2px;
+    width: 60%;
+    background: #fff;
+    border-radius: 2px;
+  }
+  .icon-bat::before {
+    content: "";
+    position: absolute;
+    right: -6px; top: 6px; bottom: 6px; width: 3px;
+    background: rgba(255,255,255,.9);
+    border-radius: 2px;
+  }
+
+  /* Common app UI */
+  .app-header {
+    padding: 32px 40px 24px;
+  }
+  .app-header .hello { color: var(--text-muted); font-size: 26px; margin-bottom: 4px; }
+  .app-header .name { color: #fff; font-size: 42px; font-weight: 800; }
+  .app-header .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(245,130,32,.15); color: var(--orange);
+    padding: 8px 16px; border-radius: 999px;
+    font-size: 22px; font-weight: 700;
+    margin-top: 12px;
+  }
+
+  .search {
+    margin: 20px 40px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 20px 24px;
+    color: var(--text-muted);
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .filter-row {
+    display: flex; gap: 12px;
+    padding: 8px 40px 24px;
+    overflow: hidden;
+  }
+  .chip {
+    padding: 12px 24px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    color: var(--text-muted);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .chip.on {
+    background: var(--orange);
+    color: #fff;
+  }
+
+  .chantier-card {
+    margin: 12px 40px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 24px 28px;
+    display: flex; align-items: center;
+    justify-content: space-between;
+  }
+  .chantier-card .info { flex: 1; }
+  .chantier-card .info h3 { color: #fff; font-size: 30px; font-weight: 800; margin-bottom: 8px; }
+  .chantier-card .info .addr { color: var(--text-muted); font-size: 22px; margin-bottom: 12px; }
+  .chantier-card .status-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 16px; border-radius: 999px;
+    font-size: 20px; font-weight: 700;
+    background: rgba(59,130,246,.16); color: #60A5FA;
+  }
+  .chantier-card .status-pill.mesurer { background: rgba(245,130,32,.16); color: var(--orange); }
+  .chantier-card .status-pill.valide  { background: rgba(34,197,94,.16); color: var(--green); }
+  .chantier-card .arrow { color: var(--text-muted); font-size: 40px; }
+
+  .footer-brand {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 30px 0;
+    text-align: center;
+    color: #fff;
+    background: #0B0F1A;
+    letter-spacing: 4px;
+    font-size: 22px;
+    font-weight: 800;
+  }
+  .footer-brand small {
+    display: block;
+    color: rgba(255,255,255,0.5);
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 4px;
+    letter-spacing: 2px;
+  }
+
+  /* Bottom accroche caption */
+  .caption-below {
+    position: absolute;
+    bottom: 60px;
+    left: 60px; right: 60px;
+    text-align: center;
+    color: var(--ink);
+    font-weight: 700;
+    z-index: 3;
+  }
+  .iphone .caption-below { font-size: 32px; bottom: 90px; }
+  .ipad .caption-below { font-size: 40px; bottom: 100px; }
+
+  /* ────────── SCREEN 1 — LOGIN Apple + Google ────────── */
+  .login-screen {
+    padding: 60px 60px 0;
+    text-align: center;
+  }
+  .login-flags {
+    display: flex; gap: 12px; justify-content: center;
+    margin: 40px 0 60px;
+  }
+  .flag {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 20px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 22px; color: var(--text);
+    font-weight: 700;
+  }
+  .flag.on { background: var(--orange); border-color: var(--orange); color: #fff; }
+  .flag .emoji { font-size: 22px; }
+  .logo-square {
+    width: 140px; height: 140px;
+    background: var(--orange);
+    border-radius: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 74px; color: #fff; font-weight: 900;
+    margin: 0 auto 24px;
+  }
+  .brand-h1 { font-size: 62px; font-weight: 900; letter-spacing: -1px; color: #fff; }
+  .brand-sub { font-size: 26px; color: var(--text-muted); margin-top: 12px; margin-bottom: 60px; }
+  .tab-row { display: flex; margin: 0 0 40px; border-bottom: 1px solid var(--line); }
+  .tab { flex: 1; padding: 24px; text-align: center; font-size: 30px; font-weight: 800; color: var(--text-muted); }
+  .tab.on { color: #fff; border-bottom: 4px solid var(--orange); }
+  .input-block { margin-bottom: 30px; text-align: left; }
+  .input-block .label {
+    text-transform: uppercase; letter-spacing: 2px;
+    color: var(--text-muted); font-size: 20px; font-weight: 700; margin-bottom: 12px;
+  }
+  .input-box {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--line);
+    padding: 24px 28px; border-radius: 18px;
+    font-size: 28px; color: var(--text-muted);
+  }
+  .primary-btn {
+    background: var(--orange);
+    color: #fff;
+    padding: 30px;
+    border-radius: 18px;
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-top: 20px;
+    margin-bottom: 24px;
+  }
+  .divider-or {
+    display: flex; align-items: center; gap: 20px;
+    color: var(--text-muted);
+    font-size: 22px; font-weight: 700;
+    margin: 30px 0;
+  }
+  .divider-or::before, .divider-or::after {
+    content: ""; flex: 1; height: 1px; background: var(--line);
+  }
+  .social-row { display: flex; gap: 20px; }
+  .social-btn {
+    flex: 1; padding: 26px 12px;
+    border-radius: 18px;
+    font-size: 26px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px;
+  }
+  .social-btn.apple {
+    background: #000; color: #fff;
+    border: 2px solid #333;
+  }
+  .social-btn.apple .apple-logo { font-size: 30px; }
+  .social-btn.google {
+    background: #fff; color: #202124;
+  }
+  .social-btn.google .g-circle {
+    width: 36px; height: 36px;
+    background: linear-gradient(180deg, #EA4335, #FBBC04 30%, #34A853 60%, #4285F4);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 900;
+    font-size: 30px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ────────── SCREEN 3 — Note vocale ────────── */
+  .voice-panel {
+    margin: 20px 40px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line);
+    border-radius: 26px;
+    padding: 34px 32px;
+  }
+  .voice-panel .label {
+    color: var(--text-muted); font-size: 22px;
+    text-transform: uppercase; letter-spacing: 2px; margin-bottom: 18px;
+    display: flex; align-items: center; gap: 12px; font-weight: 700;
+  }
+  .voice-panel .badge-live {
+    background: var(--orange); color: #fff;
+    padding: 4px 12px; border-radius: 8px;
+    font-size: 18px; letter-spacing: 1px;
+  }
+  .voice-note {
+    color: #fff; font-size: 30px;
+    line-height: 1.45;
+    padding: 20px 0;
+  }
+  .voice-waveform {
+    display: flex; align-items: center; gap: 6px;
+    justify-content: center;
+    padding: 30px 0 10px;
+  }
+  .voice-waveform .bar {
+    width: 8px;
+    background: var(--orange);
+    border-radius: 4px;
+  }
+  .mic-cta {
+    background: var(--orange);
+    color: #fff;
+    padding: 26px;
+    border-radius: 999px;
+    font-size: 28px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    gap: 14px;
+    margin: 30px 0 8px;
+    box-shadow: 0 12px 32px rgba(245,130,32,.4);
+  }
+  .mic-icon {
+    width: 48px; height: 48px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 28px;
+  }
+
+  /* ────────── SCREEN 4 — Wizard 12 formes ────────── */
+  .wizard-step-pill {
+    display: flex; align-items: center; gap: 12px;
+    padding: 0 40px;
+    margin-bottom: 18px;
+  }
+  .step-dot {
+    width: 46px; height: 46px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: 900; color: #fff;
+    background: var(--line);
+  }
+  .step-dot.on { background: var(--orange); }
+  .step-line { flex: 1; height: 3px; background: var(--line); }
+  .step-line.on { background: var(--orange); }
+  .shape-grid-big {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 12px 40px;
+  }
+  .shape-box {
+    aspect-ratio: 1;
+    background: rgba(255,255,255,0.04);
+    border: 2px solid var(--line);
+    border-radius: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 90px;
+    color: var(--text-muted);
+    position: relative;
+  }
+  .shape-box.on {
+    background: rgba(245,130,32,.12);
+    border-color: var(--orange);
+    color: var(--orange);
+  }
+  .shape-label {
+    position: absolute; bottom: 12px; left: 12px; right: 12px;
+    text-align: center;
+    font-size: 20px; font-weight: 700;
+    color: var(--text-muted);
+  }
+  .shape-box.on .shape-label { color: var(--orange); }
+  .validated-badge {
+    margin: 30px 40px;
+    background: rgba(34,197,94,.16);
+    color: var(--green);
+    padding: 24px 32px;
+    border-radius: 20px;
+    display: flex; align-items: center; gap: 16px;
+    font-size: 30px; font-weight: 800;
+  }
+
+  /* ────────── SCREEN 5 — Anti-litige photos ────────── */
+  .photo-shield-title {
+    padding: 32px 40px 20px;
+    text-align: center;
+  }
+  .photo-shield-title h2 {
+    color: #fff; font-size: 40px; font-weight: 800;
+    margin-bottom: 10px;
+  }
+  .photo-shield-title p {
+    color: var(--text-muted); font-size: 24px;
+  }
+  .anti-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 0 40px;
+  }
+  .anti-photo {
+    aspect-ratio: 1;
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .anti-photo .lock {
+    position: absolute; top: 20px; right: 20px;
+    background: rgba(15,23,42,0.85);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 20px;
+  }
+  .anti-photo .ts {
+    position: absolute; bottom: 20px; left: 20px;
+    background: rgba(15,23,42,0.85);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .anti-photo.p1 { background: linear-gradient(135deg, #64748B, #334155); }
+  .anti-photo.p2 { background: linear-gradient(135deg, #F58220, #EA580C); }
+  .anti-photo.p3 { background: linear-gradient(135deg, #475569, #1E293B); }
+  .anti-photo.p4 { background: linear-gradient(135deg, #6B7280, #374151); }
+  .anti-photo.p5 { background: linear-gradient(135deg, #78716C, #44403C); }
+  .anti-photo.p6 { background: linear-gradient(135deg, #57534E, #292524); }
+
+  .safety-meta {
+    margin: 30px 40px;
+    padding: 24px;
+    background: rgba(59,130,246,.16);
+    border-left: 6px solid var(--blue);
+    border-radius: 14px;
+    color: #93C5FD;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  /* ────────── SCREEN 6 — Export ────────── */
+  .export-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 20px 40px;
+  }
+  .export-btn {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line);
+    padding: 40px 24px;
+    border-radius: 26px;
+    text-align: center;
+  }
+  .export-icon {
+    width: 90px; height: 100px;
+    background: #fff;
+    border-radius: 12px;
+    margin: 0 auto 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 26px;
+    position: relative;
+  }
+  .export-icon.pdf { color: var(--red); border: 3px solid var(--red); }
+  .export-icon.xlsx { color: var(--green); border: 3px solid var(--green); }
+  .export-icon.csv { color: var(--blue); border: 3px solid var(--blue); }
+  .export-icon.json { color: #A855F7; border: 3px solid #A855F7; }
+  .export-label { color: #fff; font-size: 28px; font-weight: 800; }
+  .export-sub { color: var(--text-muted); font-size: 20px; margin-top: 6px; }
+  .integration-row {
+    padding: 30px 40px;
+    display: flex; align-items: center; justify-content: center;
+    gap: 24px;
+  }
+  .crm-pill {
+    padding: 20px 30px;
+    background: linear-gradient(135deg, #714B67, #875A94);
+    color: #fff;
+    border-radius: 20px;
+    font-size: 26px; font-weight: 800;
+    box-shadow: 0 8px 24px rgba(113,75,103,0.4);
+  }
+  .crm-pill.vertuoza { background: linear-gradient(135deg, #0EA5E9, #0284C7); }
+  .arrow-flow-big {
+    font-size: 44px; color: var(--orange);
+    font-weight: 900;
+  }
+
+  /* ────────── iPad specific : fiche chantier ────────── */
+  .chantier-detail {
+    padding: 20px 40px;
+  }
+  .chantier-detail .head {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line);
+    border-radius: 26px;
+    padding: 28px;
+    margin-bottom: 20px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .chantier-detail h2 { color: #fff; font-size: 40px; font-weight: 800; margin-bottom: 6px; }
+  .stat-row { display: flex; gap: 24px; margin: 24px 0; }
+  .stat-card {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border-radius: 20px;
+    padding: 24px;
+    text-align: center;
+  }
+  .stat-card .num { font-size: 60px; font-weight: 900; color: var(--orange); }
+  .stat-card .lbl { font-size: 22px; color: var(--text-muted); margin-top: 4px; letter-spacing: 1px; }
+
+  .ouv-list {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .ouv-row {
+    display: flex; align-items: center; gap: 20px;
+    padding: 20px 26px;
+    border-bottom: 1px solid var(--line);
+  }
+  .ouv-row:last-child { border-bottom: none; }
+  .ouv-row .num { color: var(--orange); font-size: 24px; font-weight: 900; min-width: 60px; }
+  .ouv-row .name { color: #fff; font-size: 24px; flex: 1; font-weight: 700; }
+  .ouv-row .type { color: var(--text-muted); font-size: 20px; }
+
+</style>
+</head>
+<body>
+<script>
+/* Renders the correct screenshot based on URL params
+   ?device=iphone|ipad&slide=1..6 (or 1..5 for ipad) */
+
+const params = new URLSearchParams(location.search);
+const device = params.get("device") || "iphone";
+const slide = parseInt(params.get("slide") || "1", 10);
+
+const IPHONE = [
+  // 1 — LOGIN Apple + Google
+  {
+    title: "Connexion en 1 tap",
+    subtitle: "Sign in Apple · Google · e-mail — dès l'ouverture",
+    screen: `
+      <div class="status">
+        <span>9:41</span>
+        <div class="right"><span>••••</span><span>📶</span><span class="icon-bat"></span></div>
+      </div>
+      <div class="login-screen">
+        <div class="login-flags">
+          <div class="flag on"><span class="emoji">🇫🇷</span> FR</div>
+          <div class="flag"><span class="emoji">🇧🇪</span> NL</div>
+          <div class="flag"><span class="emoji">🇬🇧</span> EN</div>
+        </div>
+        <div class="logo-square">M</div>
+        <div class="brand-h1">MESURECHÂSSIS</div>
+        <div class="brand-sub">Mesures terrain · Menuiseries pro</div>
+        <div class="tab-row">
+          <div class="tab on">CONNEXION</div>
+          <div class="tab">INSCRIPTION</div>
+        </div>
+        <div class="input-block">
+          <div class="label">EMAIL</div>
+          <div class="input-box">prenom.nom@entreprise.fr</div>
+        </div>
+        <div class="input-block">
+          <div class="label">MOT DE PASSE</div>
+          <div class="input-box">••••••••</div>
+        </div>
+        <div class="primary-btn">SE CONNECTER</div>
+        <div class="divider-or">OU</div>
+        <div class="social-row">
+          <div class="social-btn apple"><span class="apple-logo">🍎</span> Sign in</div>
+          <div class="social-btn google"><span class="g-circle">G</span> Google</div>
+        </div>
+      </div>
+    `,
+  },
+  // 2 — Dashboard chantiers
+  {
+    title: "Tous tes chantiers,\nen un clin d'œil",
+    subtitle: "Filtres · recherche · statuts en temps réel",
+    screen: `
+      <div class="status"><span>9:41</span><div class="right"><span>••••</span><span>📶</span><span class="icon-bat"></span></div></div>
+      <div class="app-header">
+        <div class="hello">Bonjour</div>
+        <div class="name">Sophie Martin</div>
+        <div class="badge">👤 Commercial</div>
+      </div>
+      <div class="search">🔍 Rechercher un chantier…</div>
+      <div class="filter-row">
+        <div class="chip on">TOUS</div>
+        <div class="chip">À MESURER</div>
+        <div class="chip">VALIDÉS</div>
+        <div class="chip">EN FABRIC…</div>
+      </div>
+      <div class="chantier-card">
+        <div class="info"><h3>Résidence Dupont</h3><div class="addr">📍 12 rue de la Meuse, Charleroi</div>
+        <span class="status-pill mesurer">• À MESURER</span></div><div class="arrow">›</div>
+      </div>
+      <div class="chantier-card">
+        <div class="info"><h3>Villa Lefèvre</h3><div class="addr">📍 Place du Marché 12, Bruxelles</div>
+        <span class="status-pill valide">• VALIDÉ</span></div><div class="arrow">›</div>
+      </div>
+      <div class="chantier-card">
+        <div class="info"><h3>Chalet Baudouin</h3><div class="addr">📍 Rue des Pins, Namur</div>
+        <span class="status-pill">• EN FABRICATION</span></div><div class="arrow">›</div>
+      </div>
+      <div class="chantier-card">
+        <div class="info"><h3>Rénovation Meunier</h3><div class="addr">📍 Chaussée de Charleroi</div>
+        <span class="status-pill mesurer">• À MESURER</span></div><div class="arrow">›</div>
+      </div>
+    `,
+  },
+  // 3 — Note vocale
+  {
+    title: "Dictée vocale\nsur le chantier",
+    subtitle: "Fini le crayon. Mains libres, cotes captées.",
+    screen: `
+      <div class="status"><span>9:41</span><div class="right"><span>••••</span><span>📶</span><span class="icon-bat"></span></div></div>
+      <div class="app-header">
+        <div class="hello">Chantier · Dupont</div>
+        <div class="name">Nouveau relevé</div>
+      </div>
+      <div class="voice-panel">
+        <div class="label">🎙️ NOTE VOCALE <span class="badge-live">EN COURS</span></div>
+        <div class="voice-note">« Baie séjour vue place. Coulissant 4 vantaux. Attention seuil bas. Le chat sort par l'arrière, ne pas laisser ouvert… »</div>
+        <div class="voice-waveform">
+          <span class="bar" style="height:20px"></span><span class="bar" style="height:60px"></span>
+          <span class="bar" style="height:32px"></span><span class="bar" style="height:78px"></span>
+          <span class="bar" style="height:44px"></span><span class="bar" style="height:90px"></span>
+          <span class="bar" style="height:54px"></span><span class="bar" style="height:36px"></span>
+          <span class="bar" style="height:70px"></span><span class="bar" style="height:26px"></span>
+          <span class="bar" style="height:80px"></span><span class="bar" style="height:42px"></span>
+          <span class="bar" style="height:60px"></span><span class="bar" style="height:24px"></span>
+          <span class="bar" style="height:66px"></span><span class="bar" style="height:36px"></span>
+        </div>
+      </div>
+      <div style="padding: 20px 40px;">
+        <div class="mic-cta"><span class="mic-icon">🎙️</span> APPUIE POUR PARLER</div>
+        <p style="text-align:center;color:var(--text-muted);font-size:22px;margin-top:14px;">
+          Transcription auto · Français + Néerlandais
+        </p>
+      </div>
+      <div style="padding: 12px 40px;">
+        <div class="chantier-card" style="margin:0;">
+          <div class="info">
+            <div class="addr" style="color:#93C5FD;font-weight:700;">💡 SUGGESTION IA</div>
+            <h3 style="font-size:26px;margin-top:8px;">L'app détecte : coulissant, 4 vantaux, seuil bas</h3>
+          </div>
+        </div>
+      </div>
+    `,
+  },
+  // 4 — Wizard 12 formes
+  {
+    title: "Wizard flexible\nen 3 étapes",
+    subtitle: "12 formes · Pythagore auto · diag. validée",
+    screen: `
+      <div class="status"><span>9:41</span><div class="right"><span>••••</span><span>📶</span><span class="icon-bat"></span></div></div>
+      <div class="app-header">
+        <div class="hello">Baie 03 · Dupont</div>
+        <div class="name">Choisis la forme</div>
+      </div>
+      <div class="wizard-step-pill">
+        <div class="step-dot on">1</div><div class="step-line on"></div>
+        <div class="step-dot on">2</div><div class="step-line"></div>
+        <div class="step-dot">3</div>
+      </div>
+      <div class="shape-grid-big">
+        <div class="shape-box">▭<span class="shape-label">Rectangle</span></div>
+        <div class="shape-box on">⌒<span class="shape-label">Plein cintre</span></div>
+        <div class="shape-box">◯<span class="shape-label">Œil-de-bœuf</span></div>
+        <div class="shape-box">◐<span class="shape-label">Demi-lune</span></div>
+        <div class="shape-box">△<span class="shape-label">Triangle</span></div>
+        <div class="shape-box">◇<span class="shape-label">Losange</span></div>
+        <div class="shape-box">⬠<span class="shape-label">Pentagone</span></div>
+        <div class="shape-box">◑<span class="shape-label">Segment</span></div>
+        <div class="shape-box">☐<span class="shape-label">Anse panier</span></div>
+      </div>
+      <div class="validated-badge">✅ DIAGONALE VALIDÉE (±0.2 cm)</div>
+    `,
+  },
+  // 5 — Anti-litige photos
+  {
+    title: "Anti-litige :\nphotos horodatées",
+    subtitle: "6 photos · GPS · SHA-256 · zéro contestation",
+    screen: `
+      <div class="status"><span>9:41</span><div class="right"><span>••••</span><span>📶</span><span class="icon-bat"></span></div></div>
+      <div class="photo-shield-title">
+        <h2>🛡️ PHOTOS SITE</h2>
+        <p>Preuves horodatées · Sécurité chantier</p>
+      </div>
+      <div class="anti-photo-grid">
+        <div class="anti-photo p1"><span class="lock">🔒 SHA-256</span><span class="ts">📅 14:35 · 📍</span></div>
+        <div class="anti-photo p2"><span class="lock">🔒 SHA-256</span><span class="ts">📅 14:36 · 📍</span></div>
+        <div class="anti-photo p3"><span class="lock">🔒 SHA-256</span><span class="ts">📅 14:37 · 📍</span></div>
+        <div class="anti-photo p4"><span class="lock">🔒 SHA-256</span><span class="ts">📅 14:38 · 📍</span></div>
+        <div class="anti-photo p5"><span class="lock">🔒 SHA-256</span><span class="ts">📅 14:39 · 📍</span></div>
+        <div class="anti-photo p6"><span class="lock">🔒 SHA-256</span><span class="ts">📅 14:40 · 📍</span></div>
+      </div>
+      <div class="safety-meta">💼 Preuve légale : chaque photo est cryptographiquement scellée. Impossible à contester devant un tribunal.</div>
+    `,
+  },
+  // 6 — Export
+  {
+    title: "Export Odoo · PDF ·\nExcel en 1 tap",
+    subtitle: "Envoie tes chantiers vers ton CRM · Zéro ressaisie",
+    screen: `
+      <div class="status"><span>9:41</span><div class="right"><span>••••</span><span>📶</span><span class="icon-bat"></span></div></div>
+      <div class="app-header">
+        <div class="hello">Chantier · Dupont</div>
+        <div class="name">Exports</div>
+      </div>
+      <div class="export-grid">
+        <div class="export-btn">
+          <div class="export-icon pdf">PDF</div>
+          <div class="export-label">RÉCAPITULATIF</div>
+          <div class="export-sub">Fiche client</div>
+        </div>
+        <div class="export-btn">
+          <div class="export-icon xlsx">XLS</div>
+          <div class="export-label">EXCEL .xlsx</div>
+          <div class="export-sub">Tableau atelier</div>
+        </div>
+        <div class="export-btn">
+          <div class="export-icon csv">CSV</div>
+          <div class="export-label">CSV</div>
+          <div class="export-sub">Fabricants</div>
+        </div>
+        <div class="export-btn">
+          <div class="export-icon json">JSON</div>
+          <div class="export-label">JSON API</div>
+          <div class="export-sub">Intégration</div>
+        </div>
+      </div>
+      <div class="integration-row">
+        <div class="crm-pill">Odoo</div>
+        <div class="arrow-flow-big">→</div>
+        <div style="color:#fff;font-size:26px;font-weight:800;">💾</div>
+        <div class="arrow-flow-big">→</div>
+        <div class="crm-pill vertuoza">Vertuoza</div>
+      </div>
+      <div style="padding: 30px 40px;">
+        <div class="validated-badge">⚡ 2h GAGNÉES PAR CHANTIER</div>
+      </div>
+    `,
+  },
+];
+
+const IPAD = [
+  // 1 — Fiche chantier détaillée
+  {
+    title: "Fiche chantier détaillée",
+    subtitle: "15 ouvertures · Photos anti-litige · Exports pro",
+    screen: `
+      <div class="status"><span>9:41</span><div class="right"><span>••••</span><span>📶</span><span class="icon-bat"></span></div></div>
+      <div class="app-header">
+        <div class="hello">← CHANTIER</div>
+        <div class="name">M. Lefèvre</div>
+        <div style="color:var(--text-muted);font-size:24px;margin-top:6px;">📍 Place du Marché 12, 1300 Bruxelles</div>
+      </div>
+      <div class="chantier-detail">
+        <div class="stat-row">
+          <div class="stat-card"><div class="num">15</div><div class="lbl">OUVERTURES</div></div>
+          <div class="stat-card"><div class="num">0</div><div class="lbl">ALERTES</div></div>
+          <div class="stat-card"><div class="num" style="color:var(--green);">6</div><div class="lbl">PHOTOS ANTI-LITIGE</div></div>
+          <div class="stat-card"><div class="num" style="color:var(--blue);">4</div><div class="lbl">FORMATS EXPORT</div></div>
+        </div>
+        <div class="ouv-list">
+          <div class="ouv-row"><span class="num">#1</span><span class="name">Baie séjour vue place (1/2)</span><span class="type">Coulissant 4 vantaux</span></div>
+          <div class="ouv-row"><span class="num">#2</span><span class="name">Baie séjour vue place (2/2)</span><span class="type">Coulissant 4 vantaux</span></div>
+          <div class="ouv-row"><span class="num">#3</span><span class="name">Fenêtre fixe Salle banquet 1</span><span class="type">Rectangle</span></div>
+          <div class="ouv-row"><span class="num">#4</span><span class="name">Fenêtre fixe Salle banquet 2</span><span class="type">Rectangle</span></div>
+          <div class="ouv-row"><span class="num">#5</span><span class="name">Fenêtre cuisine oscillo-battante</span><span class="type">OB</span></div>
+          <div class="ouv-row"><span class="num">#6</span><span class="name">Imposte WC</span><span class="type">Fixe</span></div>
+          <div class="ouv-row"><span class="num">#7</span><span class="name">Porte d'entrée vitrée</span><span class="type">Porte</span></div>
+          <div class="ouv-row"><span class="num">#8</span><span class="name">Coulissant terrasse étage</span><span class="type">Coulissant 2 vantaux</span></div>
+        </div>
+      </div>
+    `,
+  },
+  // 2 — Login Apple + Google grand format
+  {
+    title: "Login multi-comptes",
+    subtitle: "Apple · Google · e-mail — accès instantané",
+    screen: `
+      <div class="status"><span>9:41</span><div class="right"><span>••••</span><span>📶</span><span class="icon-bat"></span></div></div>
+      <div class="login-screen" style="padding: 80px 200px 0;">
+        <div class="login-flags"><div class="flag on"><span class="emoji">🇫🇷</span> FR</div><div class="flag"><span class="emoji">🇧🇪</span> NL</div><div class="flag"><span class="emoji">🇬🇧</span> EN</div></div>
+        <div class="logo-square">M</div>
+        <div class="brand-h1">MESURECHÂSSIS</div>
+        <div class="brand-sub">On-site measurements · Pro window makers</div>
+        <div class="tab-row"><div class="tab on">SIGN IN</div><div class="tab">SIGN UP</div></div>
+        <div class="input-block"><div class="label">EMAIL</div><div class="input-box">prenom.nom@entreprise.fr</div></div>
+        <div class="input-block"><div class="label">PASSWORD</div><div class="input-box">••••••••</div></div>
+        <div class="primary-btn">SIGN IN</div>
+        <div class="divider-or">OR</div>
+        <div class="social-row">
+          <div class="social-btn apple"><span class="apple-logo">🍎</span> Sign in with Apple</div>
+          <div class="social-btn google"><span class="g-circle">G</span> Continuer avec Google</div>
+        </div>
+      </div>
+    `,
+  },
+  // 3 — Wizard grand format
+  {
+    title: "Wizard 12 formes",
+    subtitle: "Fenêtres droites, cintrées, œils-de-bœuf…",
+    screen: `
+      <div class="status"><span>9:41</span><div class="right"><span>••••</span><span>📶</span><span class="icon-bat"></span></div></div>
+      <div class="app-header">
+        <div class="hello">Baie 03 · Villa Lefèvre</div>
+        <div class="name">Configuration mur</div>
+      </div>
+      <div class="wizard-step-pill" style="padding: 0 60px;">
+        <div class="step-dot on">1</div><div class="step-line on"></div>
+        <div class="step-dot on">2</div><div class="step-line"></div>
+        <div class="step-dot">3</div>
+      </div>
+      <div class="shape-grid-big" style="grid-template-columns: repeat(4, 1fr); padding: 30px 60px;">
+        <div class="shape-box">▭<span class="shape-label">Rectangle</span></div>
+        <div class="shape-box on">⌒<span class="shape-label">Plein cintre</span></div>
+        <div class="shape-box">◯<span class="shape-label">Œil-de-bœuf</span></div>
+        <div class="shape-box">◐<span class="shape-label">Demi-lune</span></div>
+        <div class="shape-box">△<span class="shape-label">Triangle</span></div>
+        <div class="shape-box">◇<span class="shape-label">Losange</span></div>
+        <div class="shape-box">⬠<span class="shape-label">Pentagone</span></div>
+        <div class="shape-box">◑<span class="shape-label">Segment</span></div>
+        <div class="shape-box">☐<span class="shape-label">Anse panier</span></div>
+        <div class="shape-box">◐<span class="shape-label">Semi-elliptique</span></div>
+        <div class="shape-box">⬢<span class="shape-label">Hexagone</span></div>
+        <div class="shape-box">▱<span class="shape-label">Parallélogr.</span></div>
+      </div>
+      <div class="validated-badge" style="margin: 30px 60px;">✅ DIAGONALE VALIDÉE · Pythagore auto ±0.2 cm</div>
+    `,
+  },
+  // 4 — Gestion équipe
+  {
+    title: "Gestion équipe centralisée",
+    subtitle: "Admin · Commercial · Technicien — chacun son rôle",
+    screen: `
+      <div class="status"><span>9:41</span><div class="right"><span>••••</span><span>📶</span><span class="icon-bat"></span></div></div>
+      <div class="app-header">
+        <div class="hello">Menuiserie Michel · Équipe</div>
+        <div class="name">Ton équipe</div>
+      </div>
+      <div class="chantier-detail">
+        <div class="stat-row">
+          <div class="stat-card"><div class="num">4</div><div class="lbl">MEMBRES</div></div>
+          <div class="stat-card"><div class="num" style="color:var(--green);">12</div><div class="lbl">CHANTIERS ACTIFS</div></div>
+          <div class="stat-card"><div class="num" style="color:var(--blue);">3</div><div class="lbl">RÔLES</div></div>
+          <div class="stat-card"><div class="num" style="color:var(--orange);">98%</div><div class="lbl">SATISFACTION</div></div>
+        </div>
+        <div class="ouv-list">
+          <div class="ouv-row"><span style="width:60px;height:60px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:26px;">MP</span>
+          <span class="name">Michel Pezzuto</span><span class="type" style="color:var(--orange);font-weight:800;">👔 ADMIN</span></div>
+          <div class="ouv-row"><span style="width:60px;height:60px;background:#3B82F6;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:26px;">SM</span>
+          <span class="name">Sophie Martin</span><span class="type" style="color:#60A5FA;font-weight:800;">💼 COMMERCIAL</span></div>
+          <div class="ouv-row"><span style="width:60px;height:60px;background:#22C55E;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:26px;">LP</span>
+          <span class="name">Luc Petit</span><span class="type" style="color:#4ADE80;font-weight:800;">🔧 TECHNICIEN</span></div>
+          <div class="ouv-row"><span style="width:60px;height:60px;background:#A855F7;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:26px;">MB</span>
+          <span class="name">Marc Bernard</span><span class="type" style="color:#C084FC;font-weight:800;">🔧 TECHNICIEN</span></div>
+        </div>
+        <div style="margin-top:30px;padding:24px;background:rgba(34,197,94,.16);border-radius:20px;color:var(--green);font-size:26px;font-weight:800;text-align:center;">
+          🤝 Collaboration temps réel · Notifications instantanées
+        </div>
+      </div>
+    `,
+  },
+  // 5 — Dashboard 2 colonnes
+  {
+    title: "Vue d'ensemble grand écran",
+    subtitle: "Chantiers · Mesures · Photos · Exports — tout accessible",
+    screen: `
+      <div class="status"><span>9:41</span><div class="right"><span>••••</span><span>📶</span><span class="icon-bat"></span></div></div>
+      <div class="app-header">
+        <div class="hello">Bonjour</div>
+        <div class="name">Sophie Martin</div>
+        <div class="badge">💼 Commercial</div>
+      </div>
+      <div class="search">🔍 Rechercher un chantier…</div>
+      <div class="filter-row" style="padding: 8px 60px 24px;">
+        <div class="chip on">TOUS</div>
+        <div class="chip">À MESURER</div>
+        <div class="chip">VALIDÉS</div>
+        <div class="chip">EN FABRICATION</div>
+        <div class="chip">CLÔTURÉS</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;padding: 0 60px;">
+        <div class="chantier-card" style="margin:0;">
+          <div class="info"><h3>Villa Lefèvre</h3><div class="addr">📍 Bruxelles · 15 ouv.</div>
+          <span class="status-pill valide">• VALIDÉ</span></div><div class="arrow">›</div>
+        </div>
+        <div class="chantier-card" style="margin:0;">
+          <div class="info"><h3>Résidence Dupont</h3><div class="addr">📍 Charleroi · 8 ouv.</div>
+          <span class="status-pill mesurer">• À MESURER</span></div><div class="arrow">›</div>
+        </div>
+        <div class="chantier-card" style="margin:0;">
+          <div class="info"><h3>Chalet Baudouin</h3><div class="addr">📍 Namur · 12 ouv.</div>
+          <span class="status-pill">• EN FABRICATION</span></div><div class="arrow">›</div>
+        </div>
+        <div class="chantier-card" style="margin:0;">
+          <div class="info"><h3>Rénovation Meunier</h3><div class="addr">📍 Charleroi · 6 ouv.</div>
+          <span class="status-pill mesurer">• À MESURER</span></div><div class="arrow">›</div>
+        </div>
+        <div class="chantier-card" style="margin:0;">
+          <div class="info"><h3>Extension Legrand</h3><div class="addr">📍 Liège · 4 ouv.</div>
+          <span class="status-pill valide">• VALIDÉ</span></div><div class="arrow">›</div>
+        </div>
+        <div class="chantier-card" style="margin:0;">
+          <div class="info"><h3>Bureau CasaFit</h3><div class="addr">📍 Bruxelles · 20 ouv.</div>
+          <span class="status-pill">• EN FABRICATION</span></div><div class="arrow">›</div>
+        </div>
+      </div>
+    `,
+  },
+];
+
+const list = device === "iphone" ? IPHONE : IPAD;
+const idx = Math.max(1, Math.min(list.length, slide)) - 1;
+const cfg = list[idx];
+
+const frameClass = device === "iphone" ? "iphone" : "ipad";
+document.body.innerHTML = `
+<div class="frame ${frameClass}">
+  <div class="header">
+    <div class="title">${cfg.title.replace(/\n/g, "<br>")}</div>
+    <div class="subtitle">${cfg.subtitle}</div>
+  </div>
+  <div class="device">
+    <div class="screen">${cfg.screen}
+      <div class="footer-brand">MESURECHÂSSIS<small>Mesures terrain · Menuiseries pro</small></div>
+    </div>
+  </div>
+</div>`;
+</script>
+</body>
+</html>

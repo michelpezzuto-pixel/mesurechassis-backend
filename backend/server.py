@@ -42,6 +42,7 @@ from routes import apple_auth as apple_auth_routes
 from routes import reactivation as reactivation_routes
 from routes import validation as validation_routes
 from routes import config as config_routes
+from routes import account_deletion as account_deletion_routes
 from seed import seed_data, ensure_apple_review_user
 
 
@@ -70,6 +71,10 @@ async def lifespan(_app: FastAPI):
     _recap_task = _asyncio.create_task(campaign_routes.weekly_recap_loop())
     # 🆕 Auto-send quotidien 16h30 belge (Mar-Ven, lot de 40)
     _auto_send_task = _asyncio.create_task(campaign_routes.auto_send_daily_loop())
+    # 🗑️ Exit Survey — hard-delete des comptes en pending_deletion +30j
+    _hard_delete_task = _asyncio.create_task(
+        account_deletion_routes.hard_delete_loop()
+    )
     # 🆕 Build 9 — Index unique sur referral_code (anti-collision concurrente).
     # `sparse=True` permet aux documents sans champ d'exister sans violer
     # l'unicité (migration progressive depuis les comptes pré-existants).
@@ -134,6 +139,8 @@ api.include_router(google_auth_routes.router)
 api.include_router(apple_auth_routes.router)
 api.include_router(reactivation_routes.router)
 api.include_router(validation_routes.router)
+# 🗑️ v1.1.4 — Exit Survey + Grace Period 30j (suppression compte)
+api.include_router(account_deletion_routes.router)
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -254,6 +261,30 @@ async def download_video_pub_45s_pack():
         path,
         media_type="application/zip",
         filename="mesurechassis-pub-video-45s-pack.zip",
+    )
+
+
+# 📸 v1.1.3 — Générateur captures App Store (iPhone + iPad)
+@api.get("/marketing/appstore-screenshot", response_class=HTMLResponse)
+async def marketing_appstore_screenshot(device: str = "iphone", slide: int = 1):
+    """Rend une capture App Store à la dimension exacte (device + slide)."""
+    path = "/app/marketing/appstore/screenshot.html"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Template screenshot introuvable")
+    with open(path, "r", encoding="utf-8") as f:
+        return HTMLResponse(content=f.read(), status_code=200)
+
+
+@api.get("/_downloads/appstore-screenshots-pack")
+async def download_appstore_screenshots_pack():
+    """ZIP des 11 captures App Store PNG (iPhone × 6 + iPad × 5)."""
+    path = "/app/backend/static/promo/appstore_screenshots_pack.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Pack captures introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="mesurechassis-appstore-screenshots-pack.zip",
     )
 
 

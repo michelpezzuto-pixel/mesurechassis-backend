@@ -1,0 +1,47 @@
+{
+  "summary": "Backend v1.1.4 — Exit Survey + Grace Period (30j) : 12/12 tests PASS dans tests/test_exit_survey_v114.py couvrant les 4 endpoints ciblés + le blocage login/JWT. (1) POST /account/delete-with-survey — 401 no-auth ✓, 400 'Raison invalide' ✓, 400 'Veuillez préciser' (reason=other sans/avec custom_text='   ') ✓, 400 'Mot de passe incorrect' ✓, happy path 200 avec {ok, grace_period_days:30, hard_delete_scheduled_at, message} ✓. DB confirmée : user.status='pending_deletion', pending_deletion_since/until (≈ now+30j), et account_deletion_surveys avec reason, reason_label, custom_text, plan_at_deletion, days_since_signup, chantier_count, deletion_requested_at, hard_delete_scheduled_at, restored_at=None, hard_deleted_at=None ✓. (2) Login block — POST /auth/login sur user en pending_deletion → 403 detail={code:'account_pending_deletion',message:…} ✓. GET /auth/me avec l'ancien JWT (zombie) → 403 même code ✓. (3) GET /account/restore — 422 sans token ✓, HTML 200 avec 'COMPTE RESTAURÉ' pour token valide, user.status→'active' + survey.restored_at set ✓, login post-restore 200 nominal ✓, idempotence : réutilisation du même token → 200 'COMPTE DÉJÀ ACTIF' ✓. (4) GET /admin/exit-surveys — 422 no-token ✓, 401 mauvais token ✓, 200 HTML dashboard avec stats+tableau pour bon PLATFORM_ADMIN_TOKEN ✓. Cleanup vérifié : 0 user lot_exit_* résiduel, 0 doc account_deletion_surveys résiduel après tests. UN SEUL écart mineur détecté (non bloquant, cf minor issue).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "GET /api/account/restore?token=<invalide>",
+        "issue": "Spec dit 'HTML 400 (page erreur)' mais l'implémentation renvoie du JSON 400 (application/json) quand jwt.decode échoue. En effet _decode_restore_token lève HTTPException(400,...) → FastAPI sérialise en JSON par défaut, contournant response_class=HTMLResponse du décorateur. Impact UX mineur : l'utilisateur clique un lien pourri (expiré/corrompu) et voit du JSON au lieu de la page d'erreur stylée. Le status HTTP reste correct. Fix simple : envelopper le try/except dans l'endpoint et retourner HTMLResponse(_html_response(..., accent='#ef4444'), status_code=400) explicitement, comme c'est déjà fait pour 'Compte introuvable' et 'Compte définitivement supprimé'."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_exit_survey_v114.py",
+    "/app/test_reports/pytest/iter36_exit_survey.xml"
+  ],
+  "action_items": [
+    "(Optionnel, UX) Wrapper _decode_restore_token dans un try/except au niveau du handler restore_account() pour retourner HTMLResponse au lieu de JSON quand le token est invalide/expiré (page erreur cohérente avec les autres cas d'erreur).",
+    "(Info) Le brief mentionne '167/167 PASS' pour la regression pytest complète mais ce baseline n'est PLUS atteignable dans la preview actuelle : le run global affiche 82 failed / 326 passed / 4 skipped / 94 errors — ce sont des pré-existants dus à des users seedés absents (yann@…, cousin.artisan@…, spec_test_owner@…), à MC_RETURN_VERIF_LINK=0 (test_verification), au verrou TVA obligatoire (test_verification.register), au quota extra-seat (test_verification.invite) et à des soucis d'event-loop asyncio dans test_vat_completion_lock.py. AUCUNE de ces régressions n'est causée par la feature v1.1.4 ni par mes nouveaux tests. Recommandation : soit re-seeder les comptes manquants (script scripts/seed_test_users.py à créer), soit marquer ces tests xfail/skip conditionnels au niveau de l'env. Ces failures étaient présentes AVANT mon intervention (test_verification échoue déjà sur test_verify_then_login_ok à cause du champ verification_link retiré de la réponse quand MC_RETURN_VERIF_LINK!=1)."
+  ],
+  "critical_code_review_comments": [
+    "routes/account_deletion.py:230 — verify_password sur user_doc['hashed_password'] : bien gardé contre password vide (ligne 248-249). ✓",
+    "routes/account_deletion.py:301-314 — survey inséré AVANT update user : si le second échoue on a un survey orphelin, mais impact quasi nul (idempotence via update_one sur user_id). Acceptable.",
+    "routes/account_deletion.py:382-385 — restore_account : la validation Query(min_length=10) protège contre les tokens trop courts en 422, mais _decode_restore_token retourne JSON 400 au lieu de HTML (cf minor issue).",
+    "routes/account_deletion.py:446-449 — update survey filtre sur restored_at=None ET hard_deleted_at=None : correct pour empêcher un update accidentel sur un survey déjà hard-deleted. ✓",
+    "deps.py:184-196 + routes/auth.py:821-832 — les deux points de blocage pending_deletion retournent le MÊME code 'account_pending_deletion' et le même status 403. Cohérent avec la spec, testé end-to-end. ✓",
+    "PLATFORM_ADMIN_TOKEN présent dans .env et vérifié dans _check_admin_token (routes/account_deletion.py:555-560). ✓",
+    "hard_delete_loop() correctement importée depuis server.py au startup (n'a pas été testée en live — trop long à attendre 6h — mais la fonction hard_delete_expired_pending_accounts est safe : anonymisation email + hash SHA256 + $unset des champs pending_*)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_exit_survey_v114.py (NEW — 12 tests pytest-asyncio, cleanup autouse module scope)"
+  ],
+  "success_rate": {
+    "backend": "100% (12/12 sur la feature v1.1.4)",
+    "frontend": "N/A — skip demandé par le main agent"
+  },
+  "seed_data_creation": "Aucune donnée persistante créée. Chaque test crée un user 'lot_exit_<hex>@mesurechassis.fr' via insertion Motor directe + login pour JWT, puis nettoie user + survey + company dans la fixture yield. Cleanup module-level 'anti-résidu' vérifie 0 doc restant en fin de session. admin@mesurechassis.fr NON touché. BETA_MODE et PLATFORM_ADMIN_TOKEN NON modifiés.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "La suite tests/test_exit_survey_v114.py est stable et rapide (~5s). Elle utilise l'ASGITransport in-process (conftest.py: client fixture) et un JWT réel via /auth/login sur un user créé dynamiquement. Pour re-tester : `cd /app/backend && python -m pytest tests/test_exit_survey_v114.py -v --no-cov`. La régression globale (`pytest tests/`) n'est PAS un bon signal actuellement (nombreuses failures pré-existantes indépendantes de la feature v1.1.4). Focus sur cette suite dédiée pour valider la feature.",
+  "rca_of_issue": "Aucun bug critique. Un écart mineur de format (JSON au lieu de HTML sur restore avec token corrompu) documenté dans backend_issues.minor. Root cause : FastAPI ne wrappe pas les HTTPException dans le response_class du décorateur — le response_class ne s'applique qu'au return value du handler. Mitigation : catch l'exception dans le handler et retourner HTMLResponse(..., status_code=400) manuellement, comme le fait déjà le code pour les autres branches d'erreur (Compte introuvable ligne 390-402, Compte définitivement supprimé ligne 406-418). Pas de blocker Apple Guideline 5.1.1(v)."
+}
