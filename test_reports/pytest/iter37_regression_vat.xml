@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="7" failures="5" skipped="0" tests="36" time="11.310" timestamp="2026-07-23T09:29:53.003925+00:00" hostname="agent-env-c1ffddfa-709a-40ca-ba97-1da3706771c7"><testcase classname="tests.test_vat_validation" name="test_register_missing_vat_returns_400" time="0.415" /><testcase classname="tests.test_vat_validation" name="test_register_invalid_country_returns_400" time="0.044" /><testcase classname="tests.test_vat_validation" name="test_register_valid_be_vat_succeeds_and_persists" time="1.231" /><testcase classname="tests.test_vat_validation" name="test_register_be_bad_format_returns_400" time="0.045" /><testcase classname="tests.test_vat_validation" name="test_register_be_fake_vies_rejects" time="0.433" /><testcase classname="tests.test_vat_validation" name="test_register_apple_review_test_email_no_bypass" time="0.412" /><testcase classname="tests.test_vat_validation" name="test_register_apple_review_real_email_bypasses_vies" time="0.042" /><testcase classname="tests.test_vat_validation" name="test_register_fr_format_valid" time="0.411" /><testcase classname="tests.test_vat_validation" name="test_vies_fallback_on_exception" time="0.001" /><testcase classname="tests.test_vat_validation" name="test_vies_fallback_on_timeout" time="0.001" /><testcase classname="tests.test_vat_validation" name="test_format_normalize" time="0.000" /><testcase classname="tests.test_vat_validation" name="test_format_rejects_unknown_country" time="0.001" /><testcase classname="tests.test_vat_completion_lock.TestCompleteSignup" name="test_a1_no_auth_returns_401" time="0.150" /><testcase classname="tests.test_vat_completion_lock.TestCompleteSignup" name="test_a2_empty_vat_returns_400" time="0.000"><error message="failed on setup with &quot;RuntimeError: There is no current event loop in thread 'MainThread'.&quot;">tests/test_vat_completion_lock.py:85: in google_user
+    user_id, token = _run(_create_google_like_user(email, company_id))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_vat_completion_lock.py:39: in _run
+    return asyncio.get_event_loop().run_until_complete(coro)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/events.py:681: in get_event_loop
+    raise RuntimeError('There is no current event loop in thread %r.'
+E   RuntimeError: There is no current event loop in thread 'MainThread'.</error></testcase><testcase classname="tests.test_vat_completion_lock.TestCompleteSignup" name="test_a3_invalid_vat_format_returns_400" time="0.000"><error message="failed on setup with &quot;RuntimeError: There is no current event loop in thread 'MainThread'.&quot;">tests/test_vat_completion_lock.py:85: in google_user
+    user_id, token = _run(_create_google_like_user(email, company_id))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_vat_completion_lock.py:39: in _run
+    return asyncio.get_event_loop().run_until_complete(coro)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/events.py:681: in get_event_loop
+    raise RuntimeError('There is no current event loop in thread %r.'
+E   RuntimeError: There is no current event loop in thread 'MainThread'.</error></testcase><testcase classname="tests.test_vat_completion_lock.TestCompleteSignup" name="test_a4_company_name_too_short_returns_400" time="0.000"><error message="failed on setup with &quot;RuntimeError: There is no current event loop in thread 'MainThread'.&quot;">tests/test_vat_completion_lock.py:85: in google_user
+    user_id, token = _run(_create_google_like_user(email, company_id))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_vat_completion_lock.py:39: in _run
+    return asyncio.get_event_loop().run_until_complete(coro)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/events.py:681: in get_event_loop
+    raise RuntimeError('There is no current event loop in thread %r.'
+E   RuntimeError: There is no current event loop in thread 'MainThread'.</error></testcase><testcase classname="tests.test_vat_completion_lock.TestCompleteSignup" name="test_a5_company_name_too_long_returns_400" time="0.000"><error message="failed on setup with &quot;RuntimeError: There is no current event loop in thread 'MainThread'.&quot;">tests/test_vat_completion_lock.py:85: in google_user
+    user_id, token = _run(_create_google_like_user(email, company_id))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_vat_completion_lock.py:39: in _run
+    return asyncio.get_event_loop().run_until_complete(coro)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/events.py:681: in get_event_loop
+    raise RuntimeError('There is no current event loop in thread %r.'
+E   RuntimeError: There is no current event loop in thread 'MainThread'.</error></testcase><testcase classname="tests.test_vat_completion_lock.TestCompleteSignup" name="test_a6_valid_payload_returns_200" time="0.000"><error message="failed on setup with &quot;RuntimeError: There is no current event loop in thread 'MainThread'.&quot;">tests/test_vat_completion_lock.py:85: in google_user
+    user_id, token = _run(_create_google_like_user(email, company_id))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_vat_completion_lock.py:39: in _run
+    return asyncio.get_event_loop().run_until_complete(coro)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/events.py:681: in get_event_loop
+    raise RuntimeError('There is no current event loop in thread %r.'
+E   RuntimeError: There is no current event loop in thread 'MainThread'.</error></testcase><testcase classname="tests.test_vat_completion_lock.TestCompleteSignup" name="test_a7_db_persistence_after_complete_signup" time="0.000"><error message="failed on setup with &quot;RuntimeError: There is no current event loop in thread 'MainThread'.&quot;">tests/test_vat_completion_lock.py:85: in google_user
+    user_id, token = _run(_create_google_like_user(email, company_id))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_vat_completion_lock.py:39: in _run
+    return asyncio.get_event_loop().run_until_complete(coro)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/events.py:681: in get_event_loop
+    raise RuntimeError('There is no current event loop in thread %r.'
+E   RuntimeError: There is no current event loop in thread 'MainThread'.</error></testcase><testcase classname="tests.test_vat_completion_lock.TestCompleteSignup" name="test_a8_replay_returns_400" time="0.000"><error message="failed on setup with &quot;RuntimeError: There is no current event loop in thread 'MainThread'.&quot;">tests/test_vat_completion_lock.py:85: in google_user
+    user_id, token = _run(_create_google_like_user(email, company_id))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_vat_completion_lock.py:39: in _run
+    return asyncio.get_event_loop().run_until_complete(coro)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/events.py:681: in get_event_loop
+    raise RuntimeError('There is no current event loop in thread %r.'
+E   RuntimeError: There is no current event loop in thread 'MainThread'.</error></testcase><testcase classname="tests.test_vat_completion_lock.TestAuthMeVatFlag" name="test_b1_user_with_vat_no_flag" time="0.310" /><testcase classname="tests.test_vat_completion_lock.TestAuthMeVatFlag" name="test_b2_user_without_vat_flag_true" time="0.000"><failure message="RuntimeError: There is no current event loop in thread 'MainThread'.">tests/test_vat_completion_lock.py:193: in test_b2_user_without_vat_flag_true
+    user_id, token = _run(_create_google_like_user(email, company_id))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_vat_completion_lock.py:39: in _run
+    return asyncio.get_event_loop().run_until_complete(coro)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/events.py:681: in get_event_loop
+    raise RuntimeError('There is no current event loop in thread %r.'
+E   RuntimeError: There is no current event loop in thread 'MainThread'.</failure></testcase><testcase classname="tests.test_vat_completion_lock.TestAuthMeVatFlag" name="test_b3_flag_disappears_after_complete_signup" time="0.000"><failure message="RuntimeError: There is no current event loop in thread 'MainThread'.">tests/test_vat_completion_lock.py:207: in test_b3_flag_disappears_after_complete_signup
+    user_id, token = _run(_create_google_like_user(email, company_id))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_vat_completion_lock.py:39: in _run
+    return asyncio.get_event_loop().run_until_complete(coro)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/events.py:681: in get_event_loop
+    raise RuntimeError('There is no current event loop in thread %r.'
+E   RuntimeError: There is no current event loop in thread 'MainThread'.</failure></testcase><testcase classname="tests.test_vat_completion_lock.TestRegression" name="test_c1_login_artisan" time="0.265" /><testcase classname="tests.test_vat_completion_lock.TestRegression" name="test_c2_validate_vat_endpoint" time="0.411" /><testcase classname="tests.test_vat_completion_lock.TestRegression" name="test_c3_register_with_valid_vat" time="0.971"><failure message="RuntimeError: There is no current event loop in thread 'MainThread'.">tests/test_vat_completion_lock.py:265: in test_c3_register_with_valid_vat
+    _run(_db.users.delete_many({"email": email}))
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/motor/metaprogramming.py:73: in method
+    loop = self.get_io_loop()
+           ^^^^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/motor/core.py:1351: in get_io_loop
+    return self.database.get_io_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/motor/core.py:862: in get_io_loop
+    return self._client.get_io_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/motor/core.py:158: in get_io_loop
+    return self.io_loop
+           ^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/motor/core.py:154: in io_loop
+    self._io_loop = self._framework.get_event_loop()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/events.py:681: in get_event_loop
+    raise RuntimeError('There is no current event loop in thread %r.'
+E   RuntimeError: There is no current event loop in thread 'MainThread'.</failure></testcase><testcase classname="tests.test_vat_bypass_iter35.TestExemptSetContent" name="test_0a_admin_email_in_exempt" time="0.000" /><testcase classname="tests.test_vat_bypass_iter35.TestExemptSetContent" name="test_0b_applereview_email_in_exempt" time="0.000" /><testcase classname="tests.test_vat_bypass_iter35.TestExemptSetContent" name="test_0c_artisan_owner_email_in_exempt" time="0.000" /><testcase classname="tests.test_vat_bypass_iter35.TestBypassTechnicalAccounts" name="test_a1_artisan_owner_bypass" time="0.384"><failure message="RuntimeError: There is no current event loop in thread 'MainThread'.">tests/test_vat_bypass_iter35.py:108: in test_a1_artisan_owner_bypass
+    doc = _run(_db.companies.find_one({"company_id": company_id}))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/motor/metaprogramming.py:73: in method
+    loop = self.get_io_loop()
+           ^^^^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/motor/core.py:1351: in get_io_loop
+    return self.database.get_io_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/motor/core.py:862: in get_io_loop
+    return self._client.get_io_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/motor/core.py:158: in get_io_loop
+    return self.io_loop
+           ^^^^^^^^^^^^
+/root/.venv/lib/python3.11/site-packages/motor/core.py:154: in io_loop
+    self._io_loop = self._framework.get_event_loop()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/events.py:681: in get_event_loop
+    raise RuntimeError('There is no current event loop in thread %r.'
+E   RuntimeError: There is no current event loop in thread 'MainThread'.</failure></testcase><testcase classname="tests.test_vat_bypass_iter35.TestBypassTechnicalAccounts" name="test_a2_admin_mesurechassis_bypass" time="0.304" /><testcase classname="tests.test_vat_bypass_iter35.TestBypassTechnicalAccounts" name="test_a3_applereview_bypass" time="0.304" /><testcase classname="tests.test_vat_bypass_iter35.TestLockStillActiveForRealClient" name="test_b_full_flow" time="0.000"><failure message="RuntimeError: There is no current event loop in thread 'MainThread'.">tests/test_vat_bypass_iter35.py:183: in test_b_full_flow
+    user_id, token = _run(_create_non_exempt_user(email, company_id))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_vat_bypass_iter35.py:51: in _run
+    return asyncio.get_event_loop().run_until_complete(coro)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/events.py:681: in get_event_loop
+    raise RuntimeError('There is no current event loop in thread %r.'
+E   RuntimeError: There is no current event loop in thread 'MainThread'.</failure></testcase><testcase classname="tests.test_vat_bypass_iter35.TestRegression" name="test_c1_backend_reachable" time="4.319" /><testcase classname="tests.test_vat_bypass_iter35.TestRegression" name="test_c2_artisan_login_token_ok" time="0.264" /><testcase classname="tests.test_vat_bypass_iter35.TestRegression" name="test_c3_company_profile_with_artisan_token" time="0.312" /></testsuite></testsuites>

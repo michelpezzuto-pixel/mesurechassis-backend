@@ -319,21 +319,26 @@ VAT_CHECK_EXEMPT_EMAILS = PLATFORM_OWNER_EMAILS | {
 
 
 def user_needs_vat_completion(user_doc: dict, company_doc: Optional[dict]) -> bool:
-    """Retourne True si l'utilisateur doit compléter sa TVA avant d'accéder
-    à l'app. Le calcul est fait à la volée dans /auth/me et
-    /auth/google/session — jamais stocké en DB.
+    """Retourne True si l'utilisateur doit compléter sa TVA (ou un
+    identifiant business alternatif) avant d'accéder à l'app.
 
     Règles d'exemption :
       - Email dans VAT_CHECK_EXEMPT_EMAILS (owners plateforme + apple review
         + super admin technique).
-      - Company avec `vat_number` déjà renseigné.
+      - Company avec `vat_number` déjà renseigné (mode TVA classique).
+      - Company avec `business_id_value` renseigné (fallback v1.1.4 :
+        SIREN/SIRET pour auto-entrepreneurs FR, BCE pour BE).
     """
     email = (user_doc.get("email") or "").lower()
     if email in VAT_CHECK_EXEMPT_EMAILS:
         return False
     if not company_doc:
         return True
-    return not bool(company_doc.get("vat_number"))
+    if company_doc.get("vat_number"):
+        return False
+    if company_doc.get("business_id_value"):
+        return False
+    return True
 
 
 def require_roles(roles: List[str]):

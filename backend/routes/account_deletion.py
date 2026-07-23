@@ -382,7 +382,26 @@ def _html_response(*, title: str, body: str, accent: str = "#22c55e") -> str:
 @router.get("/account/restore", response_class=HTMLResponse)
 async def restore_account(token: str = Query(..., min_length=10)):
     """Restaure un compte en pending_deletion via lien email signé."""
-    claims = _decode_restore_token(token)
+    try:
+        claims = _decode_restore_token(token)
+    except HTTPException as e:
+        # Convertit le JSON 400 par défaut en une page HTML lisible
+        detail = e.detail if isinstance(e.detail, str) else "Lien invalide."
+        return HTMLResponse(
+            _html_response(
+                title="Lien invalide",
+                accent="#ef4444",
+                body=(
+                    "<div class='emoji'>⚠️</div>"
+                    "<h1>LIEN INVALIDE</h1>"
+                    f"<p>{detail}</p>"
+                    "<p style='color:#9E9EA5;font-size:12px;margin-top:12px;'>"
+                    "Si vous pensez que c'est une erreur, contactez "
+                    "info@mesurechassis.com.</p>"
+                ),
+            ),
+            status_code=e.status_code or 400,
+        )
     user_id = claims["sub"]
 
     user_doc = await db.users.find_one({"id": user_id})

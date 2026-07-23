@@ -103,6 +103,31 @@ async def validate_vat_endpoint(payload: dict):
     return {"valid": ok, "normalized": normalized, "message": msg}
 
 
+# 🇫🇷🇧🇪 v1.1.4 — Fallback pour auto-entrepreneurs non-assujettis TVA
+@router.post("/auth/validate-business-id")
+async def validate_business_id_endpoint(payload: dict):
+    """Pré-validation SIREN/SIRET (FR) ou BCE (BE) en direct.
+
+    Publique et sans effet de bord. Utilisé en fallback dans
+    `CompleteVatScreen` lorsque l'utilisateur est en régime micro-BNC,
+    franchise en base ou auto-entrepreneur non-assujetti TVA.
+
+    Payload : `{ "id_type": "siren|siret|bce", "id_value": "…" }`
+    """
+    id_type = str((payload or {}).get("id_type") or "").strip().lower()
+    id_value = str((payload or {}).get("id_value") or "").strip()
+    if not id_type or not id_value:
+        raise HTTPException(400, "id_type et id_value sont requis.")
+    from services.business_id_validator import validate_business_id
+    ok, normalized, err = validate_business_id(id_type, id_value)
+    return {
+        "valid": bool(ok),
+        "normalized": normalized,
+        "message": err,
+        "id_type": id_type,
+    }
+
+
 @router.post("/auth/register")
 async def register(payload: dict, request: Request):
     """Inscription — Dual-mode :
@@ -866,7 +891,7 @@ async def me(user=Depends(auth_user)):
         from deps import user_needs_vat_completion
         company = await db.companies.find_one(
             {"company_id": user.get("company_id", "default")},
-            {"_id": 0, "vat_number": 1},
+            {"_id": 0, "vat_number": 1, "business_id_value": 1},
         )
         if user_needs_vat_completion(user, company):
             data = pub.model_dump()

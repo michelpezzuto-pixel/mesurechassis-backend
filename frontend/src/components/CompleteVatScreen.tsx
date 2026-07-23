@@ -48,11 +48,30 @@ type VatStatus = {
   message?: string;
 } | null;
 
+/** 🇫🇷🇧🇪 v1.1.4 — Modes de validation professionnels acceptés. */
+type IdMode = "vat" | "siren" | "siret" | "bce";
+
+const ID_MODE_LABELS: Record<IdMode, string> = {
+  vat: "TVA UE",
+  siren: "SIREN (FR)",
+  siret: "SIRET (FR)",
+  bce: "BCE (BE)",
+};
+
+const ID_MODE_PLACEHOLDERS: Record<IdMode, string> = {
+  vat: "ex. BE0123456789",
+  siren: "9 chiffres — ex. 383474814",
+  siret: "14 chiffres — ex. 44306184100047",
+  bce: "10 chiffres — ex. 0403170701",
+};
+
 export default function CompleteVatScreen({
   defaultCompanyName,
   onCompleted,
   onLogout,
 }: Props) {
+  const [idMode, setIdMode] = useState<IdMode>("vat");
+  const [showFallback, setShowFallback] = useState(false);
   const [vatNumber, setVatNumber] = useState<string>("");
   const [companyName, setCompanyName] = useState<string>(defaultCompanyName || "");
   const [vatStatus, setVatStatus] = useState<VatStatus>(null);
@@ -61,23 +80,39 @@ export default function CompleteVatScreen({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Validation en direct VIES avec debounce 500ms.
-  const runValidation = useCallback(async (raw: string) => {
-    const cleaned = raw.trim();
-    if (!cleaned || cleaned.length < 4) {
+  // Validation en direct (VIES pour TVA, contrôle local pour SIREN/SIRET/BCE).
+  const runValidation = useCallback(async (raw: string, mode: IdMode) => {
+    const cleaned = mode === "vat" ? raw.trim() : raw.replace(/\D/g, "");
+    const minLen = mode === "vat" ? 4 : mode === "siren" ? 9 : mode === "siret" ? 14 : 10;
+    if (!cleaned || cleaned.length < minLen) {
       setVatStatus(null);
       return;
     }
     setChecking(true);
     try {
-      const { data } = await api.post<{
-        valid: boolean;
-        normalized?: string;
-        message?: string;
-      }>("/auth/validate-vat", { vat_number: cleaned });
-      setVatStatus(data);
-      if (data.valid && data.normalized && data.normalized !== cleaned) {
-        setVatNumber(data.normalized);
+      if (mode === "vat") {
+        const { data } = await api.post<{
+          valid: boolean;
+          normalized?: string;
+          message?: string;
+        }>("/auth/validate-vat", { vat_number: cleaned });
+        setVatStatus(data);
+        if (data.valid && data.normalized && data.normalized !== cleaned) {
+          setVatNumber(data.normalized);
+        }
+      } else {
+        const { data } = await api.post<{
+          valid: boolean;
+          normalized?: string;
+          message?: string;
+        }>("/auth/validate-business-id", {
+          id_type: mode,
+          id_value: cleaned,
+        });
+        setVatStatus(data);
+        if (data.valid && data.normalized && data.normalized !== cleaned) {
+          setVatNumber(data.normalized);
+        }
       }
     } catch {
       setVatStatus({ valid: false, message: "Erreur réseau — réessayez." });
@@ -93,12 +128,12 @@ export default function CompleteVatScreen({
       return;
     }
     debounceRef.current = setTimeout(() => {
-      runValidation(vatNumber);
+      runValidation(vatNumber, idMode);
     }, 500);
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [vatNumber, runValidation]);
+  }, [vatNumber, idMode, runValidation]);
 
   const canSubmit =
     !!vatStatus?.valid &&
@@ -112,20 +147,33 @@ export default function CompleteVatScreen({
     setSubmitting(true);
     setSubmitError(null);
     try {
-      await api.post("/company/complete-signup", {
-        vat_number: vatNumber.trim(),
+      const body: Record<string, string> = {
         company_name: companyName.trim(),
-      });
+      };
+      if (idMode === "vat") {
+        body.vat_number = vatNumber.trim();
+      } else {
+        body.business_id_type = idMode;
+        body.business_id_value = vatNumber.trim();
+      }
+      await api.post("/company/complete-signup", body);
       await onCompleted();
     } catch (e) {
       const err = e as { response?: { data?: { detail?: string } } };
       setSubmitError(
         err?.response?.data?.detail ||
-          "Impossible d'enregistrer la TVA. Vérifiez la saisie et réessayez.",
+          "Impossible d'enregistrer vos informations. Vérifiez la saisie et réessayez.",
       );
     } finally {
       setSubmitting(false);
     }
+  };
+
+  /** Change de mode et reset la validation. */
+  const switchMode = (m: IdMode) => {
+    setIdMode(m);
+    setVatNumber("");
+    setVatStatus(null);
   };
 
   return (
@@ -155,28 +203,85 @@ export default function CompleteVatScreen({
           <View style={styles.messageBox}>
             <Text style={styles.messageText}>
               Pour activer votre compte, indiquez votre{" "}
-              <Text style={styles.bold}>numéro de TVA européen</Text> et le{" "}
+              <Text style={styles.bold}>identifiant professionnel</Text> et le{" "}
               <Text style={styles.bold}>nom de votre société</Text>. Ces
               informations sont obligatoires pour émettre vos factures
               conformes UE et respecter les règles Apple.
             </Text>
           </View>
 
-          {/* TVA */}
-          <Text style={styles.label}>
-            Numéro de TVA européen{" "}
+          {/* 🇫🇷🇧🇪 v1.1.4 — Toggle "Je n'ai pas de numéro de TVA" */}
+          {!showFallback ? (
+            <TouchableOpacity
+              testID="complete-vat-toggle-fallback"
+              onPress={() => setShowFallback(true)}
+              activeOpacity={0.7}
+              style={styles.fallbackToggle}
+            >
+              <Ionicons
+                name="help-circle-outline"
+                size={16}
+                color={colors.textSecondary}
+              />
+              <Text style={styles.fallbackToggleText}>
+                Je n&apos;ai pas de TVA (auto-entrepreneur, franchise…)
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.segmentWrap}>
+              <Text style={[styles.label, { alignSelf: "flex-start" }]}>
+                Type d&apos;identifiant
+              </Text>
+              <View style={styles.segmentRow}>
+                {(["vat", "siren", "siret", "bce"] as IdMode[]).map((m) => (
+                  <TouchableOpacity
+                    key={m}
+                    testID={`id-mode-${m}`}
+                    onPress={() => switchMode(m)}
+                    activeOpacity={0.85}
+                    style={[
+                      styles.segment,
+                      idMode === m && styles.segmentActive,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.segmentText,
+                        idMode === m && styles.segmentTextActive,
+                      ]}
+                    >
+                      {ID_MODE_LABELS[m]}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Identifiant TVA / SIREN / SIRET / BCE */}
+          <Text style={[styles.label, { marginTop: 14 }]}>
+            {idMode === "vat"
+              ? "Numéro de TVA européen"
+              : `Numéro ${ID_MODE_LABELS[idMode]}`}{" "}
             <Text style={{ color: colors.alert }}>*</Text>
           </Text>
           <View style={styles.inputRow}>
             <TextInput
               testID="complete-vat-input"
               value={vatNumber}
-              onChangeText={(v) => setVatNumber(v.toUpperCase().replace(/\s/g, ""))}
-              placeholder="ex. BE0123456789"
+              onChangeText={(v) =>
+                setVatNumber(
+                  idMode === "vat"
+                    ? v.toUpperCase().replace(/\s/g, "")
+                    : v.replace(/\D/g, ""),
+                )
+              }
+              placeholder={ID_MODE_PLACEHOLDERS[idMode]}
               placeholderTextColor={colors.placeholder}
-              autoCapitalize="characters"
+              autoCapitalize={idMode === "vat" ? "characters" : "none"}
               autoCorrect={false}
-              maxLength={20}
+              keyboardType={idMode === "vat" ? "default" : "number-pad"}
+              maxLength={idMode === "vat" ? 20 : 14}
               editable={!submitting}
               style={[
                 styles.input,
@@ -205,18 +310,25 @@ export default function CompleteVatScreen({
           </View>
           {vatStatus?.valid && (
             <Text style={[styles.hint, { color: colors.success }]}>
-              ✓ TVA validée par la base européenne VIES
+              {idMode === "vat"
+                ? "✓ TVA validée par la base européenne VIES"
+                : `✓ ${ID_MODE_LABELS[idMode]} valide (contrôle de clé OK)`}
             </Text>
           )}
           {vatStatus && !vatStatus.valid && vatNumber.trim().length >= 4 && (
             <Text style={[styles.hint, { color: colors.anomaly }]}>
-              ✗ {vatStatus.message || "Numéro de TVA invalide"}
+              ✗ {vatStatus.message || "Identifiant invalide"}
             </Text>
           )}
           {!vatStatus && vatNumber.trim().length < 4 && (
             <Text style={styles.hint}>
-              Pays supportés : BE, FR, DE, NL, LU, IT, ES, PT, AT, PL, et tous
-              les autres États membres de l&apos;UE.
+              {idMode === "vat"
+                ? "Pays supportés : BE, FR, DE, NL, LU, IT, ES, PT, AT, PL, et tous les autres États membres de l'UE."
+                : idMode === "siren"
+                  ? "Le SIREN identifie votre entreprise auprès de l'INSEE (9 chiffres)."
+                  : idMode === "siret"
+                    ? "Le SIRET identifie votre établissement (14 chiffres, inclut le SIREN)."
+                    : "Le BCE est votre numéro d'entreprise belge (10 chiffres)."}
             </Text>
           )}
 
@@ -289,9 +401,13 @@ export default function CompleteVatScreen({
           )}
 
           <Text style={styles.helper}>
-            Validation automatique via la base européenne{" "}
-            <Text style={styles.helperBold}>VIES</Text>. Aucune donnée n&apos;est
-            partagée avec des tiers.
+            {idMode === "vat"
+              ? "Validation automatique via la base européenne "
+              : "Contrôle de clé local — aucune donnée n'est partagée avec des tiers. "}
+            {idMode === "vat" && (
+              <Text style={styles.helperBold}>VIES</Text>
+            )}
+            {idMode === "vat" && ". Aucune donnée n'est partagée avec des tiers."}
           </Text>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -445,4 +561,51 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
   helperBold: { fontWeight: "700", color: colors.textPrimary },
+  fallbackToggle: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    marginTop: 4,
+    marginBottom: 4,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  fallbackToggleText: {
+    color: colors.textSecondary,
+    fontSize: 12.5,
+    textDecorationLine: "underline",
+  },
+  segmentWrap: {
+    width: "100%",
+    marginBottom: 4,
+  },
+  segmentRow: {
+    flexDirection: "row",
+    backgroundColor: colors.surface,
+    borderRadius: 10,
+    padding: 4,
+    borderWidth: 1,
+    borderColor: colors.borderSubtle,
+    gap: 4,
+  },
+  segment: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 7,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  segmentActive: {
+    backgroundColor: colors.primary,
+  },
+  segmentText: {
+    color: colors.textSecondary,
+    fontSize: 11.5,
+    fontWeight: "700",
+    letterSpacing: 0.2,
+  },
+  segmentTextActive: {
+    color: "#fff",
+  },
 });

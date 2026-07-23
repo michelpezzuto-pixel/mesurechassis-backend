@@ -71,52 +71,73 @@ async def update_company_profile(
 # ─────────────────────────────────────────────────────────────────────
 @router.post("/company/complete-signup")
 async def complete_signup(payload: dict, user=Depends(auth_user)):
-    """Fournit la TVA + nom de société après une inscription Google.
+    """Fournit la TVA (ou fallback SIREN/SIRET/BCE) + nom de société.
+
+    Deux modes acceptés (le premier trouvé dans le payload est utilisé) :
+      • Mode TVA (par défaut) : `{ "vat_number": "BE0123456789", "company_name": "…" }`
+      • Mode fallback (v1.1.4) : `{ "business_id_type": "siren|siret|bce",
+        "business_id_value": "123456789", "company_name": "…" }`
 
     Ce endpoint est appelé par l'écran `CompleteVatScreen` (frontend) qui
     s'affiche en verrou plein écran tant que `user.vat_completion_required
-    == True`. Il valide la TVA via VIES (fallback souple si VIES down),
-    puis met à jour la company. À la prochaine requête `/auth/me`, le
-    flag disparaît et le verrou se lève.
-
-    Payload : `{ "vat_number": "BE0123456789", "company_name": "..." }`
+    == True`. À la prochaine requête `/auth/me`, le flag disparaît.
     """
     from datetime import datetime, timezone as _tz
 
     company_id = user.get("company_id", "default")
     doc = await ensure_company(company_id)
 
-    # Idempotence anti-rejeu : refuser si la TVA est déjà remplie
-    if doc.get("vat_number"):
+    # Idempotence anti-rejeu : refuser si la TVA (ou un business_id) est déjà remplie
+    if doc.get("vat_number") or doc.get("business_id_value"):
         raise HTTPException(
             400,
-            "La TVA a déjà été renseignée pour ce compte. "
-            "Utilisez la page Profil pour la modifier.",
+            "Les informations professionnelles ont déjà été renseignées. "
+            "Utilisez la page Profil pour les modifier.",
         )
 
-    vat_raw = str((payload or {}).get("vat_number") or "").strip()
-    if not vat_raw:
-        raise HTTPException(400, "Numéro de TVA requis.")
-
-    company_name = str((payload or {}).get("company_name") or "").strip()
+    payload = payload or {}
+    company_name = str(payload.get("company_name") or "").strip()
+    biz_id_type = str(payload.get("business_id_type") or "").strip().lower()
+    biz_id_value = str(payload.get("business_id_value") or "").strip()
+    vat_raw = str(payload.get("vat_number") or "").strip()
 
     # Bypass VIES pour le compte démo Apple Review (même règle que /register)
     email = str(user.get("email") or "").lower()
     is_apple_review = email == "applereview@mesurechassis.com"
 
-    from services.vat_validator import validate_vat as _validate_vat
-    ok, normalized, msg = await _validate_vat(vat_raw, skip_vies=is_apple_review)
-    if not ok:
-        raise HTTPException(
-            400,
-            msg or "Numéro de TVA invalide. Vérifiez le format et le pays.",
-        )
+    update: dict = {}
 
-    update: dict = {
-        "vat_number": normalized,
-        "vat_country": (normalized or "")[:2] or None,
-        "vat_verified_at": datetime.now(_tz.utc).isoformat(),
-    }
+    # --- Mode fallback SIREN/SIRET/BCE (auto-entrepreneurs / franchise base) ---
+    if biz_id_type and biz_id_type != "vat":
+        from services.business_id_validator import validate_business_id
+        ok, normalized, err = validate_business_id(biz_id_type, biz_id_value)
+        if not ok:
+            raise HTTPException(400, err or "Identifiant professionnel invalide.")
+        update.update({
+            "business_id_type": biz_id_type,
+            "business_id_value": normalized,
+            "business_id_verified_at": datetime.now(_tz.utc).isoformat(),
+        })
+    else:
+        # --- Mode TVA classique (comportement historique) ---
+        if not vat_raw:
+            raise HTTPException(
+                400,
+                "Numéro de TVA requis (ou basculez sur SIREN/SIRET/BCE si non assujetti).",
+            )
+        from services.vat_validator import validate_vat as _validate_vat
+        ok, normalized, msg = await _validate_vat(vat_raw, skip_vies=is_apple_review)
+        if not ok:
+            raise HTTPException(
+                400,
+                msg or "Numéro de TVA invalide. Vérifiez le format et le pays.",
+            )
+        update.update({
+            "vat_number": normalized,
+            "vat_country": (normalized or "")[:2] or None,
+            "vat_verified_at": datetime.now(_tz.utc).isoformat(),
+        })
+
     if company_name:
         # Contrainte de longueur minimale pour éviter les entrées vides ou
         # farfelues (compat Stripe / factures).
@@ -127,7 +148,7 @@ async def complete_signup(payload: dict, user=Depends(auth_user)):
             )
         update["name"] = company_name
 
-    address = str((payload or {}).get("address") or "").strip()
+    address = str(payload.get("address") or "").strip()
     if address:
         update["address"] = address[:200]
 
@@ -138,7 +159,9 @@ async def complete_signup(payload: dict, user=Depends(auth_user)):
     )
     return {
         "ok": True,
-        "vat_number": normalized,
+        "vat_number": update.get("vat_number"),
+        "business_id_type": update.get("business_id_type"),
+        "business_id_value": update.get("business_id_value"),
         "company_name": update.get("name") or doc.get("name") or company_id,
     }
 

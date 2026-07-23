@@ -165,7 +165,7 @@ async def google_session(payload: GoogleSessionPayload, request: Request):
         from deps import user_needs_vat_completion
         company_now = await db.companies.find_one(
             {"company_id": user_doc["company_id"]},
-            {"_id": 0, "vat_number": 1},
+            {"_id": 0, "vat_number": 1, "business_id_value": 1},
         )
         if user_needs_vat_completion(user_doc, company_now):
             user_public["vat_completion_required"] = True
