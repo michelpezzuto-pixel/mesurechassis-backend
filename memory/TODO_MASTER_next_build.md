@@ -21,7 +21,7 @@ pour :
 
 | # | Feature | Priorité | Effort | Fichier détail |
 |---|---|---|---|---|
-| 1 | **Sign in with Apple + refonte écran Bienvenue** | 🔴 **P0** | 3h | Ci-dessous |
+| 1 | ~~**Sign in with Apple + refonte écran Bienvenue**~~ ✅ **FAIT en v1.1.3** (bouton, redesign Welcome reporté) | ~~🔴 **P0**~~ | ~~3h~~ | Fait dans `apple_auth.py` + `AppleSignInButton.tsx` |
 | 2 | Exit Survey + Grace Period 30j | 🔴 P0 | 3h | `TODO_exit_survey.md` |
 | 3 | Fallback SIREN/SIRET auto-entrepreneurs | 🟠 P1 | 1h | `TODO_vat_google_signin.md` |
 | 4 | Email proactif Resend users Google | 🟠 P1 | 30min | `TODO_vat_google_signin.md` |

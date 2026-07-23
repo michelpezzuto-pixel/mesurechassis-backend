@@ -11,6 +11,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.mesurechassis.escalier",
+      "usesAppleSignIn": true,
       "buildNumber": "120",
       "infoPlist": {
         "NSCameraUsageDescription": "MesureChâssis utilise l'appareil photo pour permettre aux menuisiers professionnels de photographier les ouvertures (fenêtres, châssis, baies) lors de leurs prises de mesures sur chantier. Exemple : prendre une photo d'une fenêtre PVC à remplacer et l'attacher à la fiche de mesure du client pour validation atelier.",

@@ -66,6 +66,13 @@ type AuthCtx = {
   versionCheck: AppVersionCheck | null;
   signIn: (email: string, password: string) => Promise<void>;
   signInWithGoogle: (sessionId: string, stationId?: string) => Promise<void>;
+  /** 🍎 v1.1.3 — Sign in with Apple (iOS only, Guideline 4.8) */
+  signInWithApple: (
+    identityToken: string,
+    userName?: string,
+    userEmail?: string,
+    stationId?: string,
+  ) => Promise<void>;
   signUp: (
     name: string,
     email: string,
@@ -221,6 +228,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   /**
+   * 🍎 Connexion / inscription via Sign in with Apple (iOS only).
+   *
+   * Le frontend a déjà obtenu un `identity_token` JWT via
+   * expo-apple-authentication.signInAsync(). On l'échange côté backend
+   * (POST /api/auth/apple/session) contre NOTRE JWT applicatif.
+   *
+   * Nom + email envoyés UNIQUEMENT à la 1re connexion (Apple ne les
+   * renvoie plus ensuite).
+   */
+  const signInWithApple = async (
+    identityToken: string,
+    userName?: string,
+    userEmail?: string,
+    stationId?: string,
+  ) => {
+    const body: Record<string, unknown> = { identity_token: identityToken };
+    if (userName && userName.trim()) body.user_name = userName.trim();
+    if (userEmail && userEmail.trim()) body.user_email = userEmail.trim();
+    if (stationId && stationId.trim()) body.station_id = stationId.trim();
+    const res = await api.post("/auth/apple/session", body);
+    await saveToken(res.data.access_token);
+    setUser(res.data.user);
+    await fetchCompany();
+    registerPushTokenWithBackend();
+  };
+
+  /**
    * Inscription Master Admin (création d'une nouvelle société).
    * Le compte est créé en `pending_verification`. La réponse contient
    * `verification_link` (MOCK MVP) qui permet de simuler le clic email.
@@ -344,6 +378,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         versionCheck,
         signIn,
         signInWithGoogle,
+        signInWithApple,
         signUp,
         verifyEmail,
         acceptInvitation,

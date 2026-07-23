@@ -38,6 +38,7 @@ from routes import testers as testers_routes
 from routes import promo as promo_routes
 from routes import jeton_cafe as jeton_cafe_routes
 from routes import google_auth as google_auth_routes
+from routes import apple_auth as apple_auth_routes
 from routes import reactivation as reactivation_routes
 from routes import validation as validation_routes
 from routes import config as config_routes
@@ -129,6 +130,8 @@ api.include_router(promo_routes.router)
 api.include_router(jeton_cafe_routes.router)
 # 🔑 Google Sign-In (Emergent-managed Google Auth)
 api.include_router(google_auth_routes.router)
+# 🍎 Sign in with Apple — Apple Guideline 4.8 (v1.1.3+)
+api.include_router(apple_auth_routes.router)
 api.include_router(reactivation_routes.router)
 api.include_router(validation_routes.router)
 

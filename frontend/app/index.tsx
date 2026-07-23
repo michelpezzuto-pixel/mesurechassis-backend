@@ -24,6 +24,7 @@ import { api } from "@/src/services/api";
 import { colors } from "@/src/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import HelpButton from "@/src/components/HelpButton";
+import AppleSignInButton from "@/src/components/AppleSignInButton";
 import {
   consumeInitialSessionId,
   openGoogleAuth,
@@ -1070,6 +1071,22 @@ export default function SignIn() {
               </>
             )}
           </TouchableOpacity>
+
+          {/* 🍎 v1.1.3 — Sign in with Apple (iOS only, Guideline 4.8).
+              Ne s'affiche PAS sur Android/web (composant natif iOS). */}
+          <View style={{ marginTop: 10 }}>
+            <AppleSignInButton
+              buttonType={mode === "login" ? "signin" : "signup"}
+              stationId={stationInfo?.id}
+              onSuccess={() => {
+                // La navigation est gérée automatiquement par AuthContext
+                // dès que setUser est appelé.
+              }}
+              onError={(msg) => {
+                Alert.alert("Connexion Apple", msg);
+              }}
+            />
+          </View>
 
           {mode === "login" && (
             <TouchableOpacity
