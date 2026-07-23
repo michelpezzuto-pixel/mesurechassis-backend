@@ -268,13 +268,17 @@ export default function ImportSpecScreen() {
           fileBlob?.type || "n/a",
         );
 
-        // 🆕 Fix "Fichier vide" iOS : si taille inconnue ou 0 sur natif,
-        // on passe forcément par l'upload direct URI React Native
-        // (limité aux fichiers < 1.5 Mo, la grande majorité des cahiers
-        // des charges PDF).
-        const CHUNK_THRESHOLD = 1.5 * 1024 * 1024;
+        // 🆕 Fix "Fichier vide" iOS (v1.1.3) :
+        // Sur natif (iOS/Android) → TOUJOURS utiliser RN Direct Upload.
+        // Raison : sur iOS, fetch(uri) retourne parfois un Blob avec size > 0
+        // (métadonnées cache iOS) MAIS les bytes sont vides à l'envoi.
+        // Le seul chemin fiable est le natif RN FormData avec { uri, name, type }.
+        // On garde chunked (>5 Mo) pour les gros PDFs.
+        const CHUNK_THRESHOLD = 5 * 1024 * 1024;
         const CHUNK_SIZE = 1024 * 1024;
-        const useRnDirectUpload = !isWeb && (totalSize === 0 || !fileBlob);
+        const isNative = !isWeb;
+        const useRnDirectUpload =
+          isNative && (totalSize === 0 || totalSize <= CHUNK_THRESHOLD);
 
         let draftData: SpecDraft;
 
