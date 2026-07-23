@@ -27,7 +27,7 @@ pour :
 | 4 | Email proactif Resend users Google | 🟠 P1 | 30min | `TODO_vat_google_signin.md` |
 | 5 | ~~Force update (style Revolut)~~ ✅ **FAIT en v1.1.3** | ~~🟠 P1~~ | ~~2h~~ | `TODO_force_update.md` + `GUIDE_notifications_maj_app.md` |
 | 6 | Message adouci verrou TVA | 🟡 P2 | 15min | `TODO_vat_google_signin.md` |
-| 7 | Carte admin dans l'app | 🟢 P2 | 30min | `TODO_carte_admin_mobile.md` |
+| 7 | ~~Carte admin dans l'app~~ ✅ **FAIT en v1.1.3** (bouton "Carte" + lien signé 5 min) | ~~🟢 P2~~ | ~~30min~~ | `TODO_carte_admin_mobile.md` |
 
 **Total estimé** : ~11h dev + ~2h tests + review = **13h** (répartissable sur 2 sessions)
 

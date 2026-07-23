@@ -16,7 +16,7 @@ from __future__ import annotations
 import os
 import re
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import HTMLResponse
 
 from db import db
@@ -25,13 +25,32 @@ router = APIRouter()
 
 _PROTECTED_RE = re.compile(r"@mesurechassis\.fr$", re.IGNORECASE)
 
+# 🗺️ v1.1.3 — JWT court-vécu signé avec le PLATFORM_ADMIN_TOKEN comme secret.
+#   Le mobile appelle `/admin/map/access-link` (auth JWT user habituel + platform
+#   owner) → reçoit une URL `?token=<short_jwt>` valide 5 min. Il ouvre l'URL
+#   dans Safari via Linking → le navigateur accède aux endpoints admin/map
+#   sans jamais voir le PLATFORM_ADMIN_TOKEN long-vécu.
+_MAP_JWT_SCOPE = "admin_map"
+_MAP_JWT_TTL_MIN = 5
+
 
 def _check_token(token: str) -> None:
+    """Autorise soit le PLATFORM_ADMIN_TOKEN long-vécu, soit un JWT court-vécu
+    de scope 'admin_map' signé avec ce token comme secret (voir
+    /admin/map/access-link)."""
     expected = os.getenv("PLATFORM_ADMIN_TOKEN", "").strip()
     if not expected:
         raise HTTPException(500, "PLATFORM_ADMIN_TOKEN non configuré côté serveur")
-    if token != expected:
-        raise HTTPException(401, "Token admin invalide")
+    if token == expected:
+        return  # ✅ Token statique (usage terminal / lien direct)
+    # Tentative JWT court-vécu
+    try:
+        import jwt as _jwt  # local import — pyjwt déjà installé (Apple Sign-In)
+        claims = _jwt.decode(token, expected, algorithms=["HS256"])
+    except Exception:
+        raise HTTPException(401, "Token admin invalide") from None
+    if claims.get("scope") != _MAP_JWT_SCOPE:
+        raise HTTPException(401, "Token admin invalide (scope)")
 
 
 def _html_page(*, title: str, body_html: str, is_error: bool = False) -> str:
@@ -268,6 +287,50 @@ def _is_technical_account(email: str) -> bool:
     if domain in _TECH_EMAIL_DOMAINS:
         return True
     return False
+
+
+# ══════════════════════════════════════════════════════════════════════
+# 🗺️ v1.1.3 — Accès mobile à la carte via lien signé (JWT 5 min)
+# ══════════════════════════════════════════════════════════════════════
+from deps import require_platform_owner  # noqa: E402
+
+
+def _generate_map_jwt() -> str:
+    """Crée un JWT court-vécu signé avec le PLATFORM_ADMIN_TOKEN comme secret."""
+    import jwt as _jwt
+    from datetime import datetime, timezone, timedelta
+
+    expected = os.getenv("PLATFORM_ADMIN_TOKEN", "").strip()
+    if not expected:
+        raise HTTPException(500, "PLATFORM_ADMIN_TOKEN non configuré côté serveur")
+    payload = {
+        "scope": _MAP_JWT_SCOPE,
+        "iat": datetime.now(timezone.utc),
+        "exp": datetime.now(timezone.utc) + timedelta(minutes=_MAP_JWT_TTL_MIN),
+    }
+    return _jwt.encode(payload, expected, algorithm="HS256")
+
+
+@router.post("/admin/map/access-link")
+async def admin_map_access_link(user: dict = Depends(require_platform_owner)):
+    """Génère un lien temporaire (5 min) vers la carte HTML admin.
+
+    Requiert : platform owner (email dans PLATFORM_OWNER_EMAILS).
+    Le lien retourné peut être ouvert dans un navigateur ou un WebView —
+    il embarque un JWT signé à durée courte.
+    """
+    short_jwt = _generate_map_jwt()
+    base = os.getenv(
+        "MAP_PUBLIC_BASE_URL",
+        "https://capable-gratitude-production-db51.up.railway.app",
+    ).rstrip("/")
+    map_url = f"{base}/api/admin/map?token={short_jwt}&exclude_owner=true"
+    data_url = f"{base}/api/admin/map/data?token={short_jwt}&exclude_owner=true"
+    return {
+        "map_url": map_url,
+        "data_url": data_url,
+        "expires_in_seconds": _MAP_JWT_TTL_MIN * 60,
+    }
 
 
 @router.get("/admin/map/data")

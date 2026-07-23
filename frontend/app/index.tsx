@@ -1041,52 +1041,69 @@ export default function SignIn() {
             )}
           </TouchableOpacity>
 
-          {/* 🔑 Séparateur "ou" + bouton Google Sign-In (Emergent-managed).
-              Disponible en login ET en register — plus rapide qu'un formulaire. */}
+          {/* 🔑 Séparateur "ou" puis boutons Apple + Google.
+              • iOS : Apple à gauche + Google à droite (côte à côte)
+              • Web/Android : Google seul, pleine largeur (Apple iOS-only) */}
           <View style={styles.divider}>
             <View style={styles.dividerLine} />
             <Text style={styles.dividerText}>OU</Text>
             <View style={styles.dividerLine} />
           </View>
 
-          <TouchableOpacity
-            testID="google-signin-button"
-            onPress={onGoogleSignIn}
-            disabled={googleLoading || submitting}
-            style={[styles.googleBtn, googleLoading && { opacity: 0.6 }]}
-            activeOpacity={0.85}
-          >
-            {googleLoading ? (
-              <ActivityIndicator color="#3F3F46" />
-            ) : (
-              <>
-                <View style={styles.googleIconWrap}>
-                  <Text style={styles.googleIconG}>G</Text>
-                </View>
-                <Text style={styles.googleBtnText}>
-                  {mode === "login"
-                    ? "Continuer avec Google"
-                    : "S'inscrire avec Google"}
-                </Text>
-              </>
-            )}
-          </TouchableOpacity>
-
-          {/* 🍎 v1.1.3 — Sign in with Apple (iOS only, Guideline 4.8).
-              Ne s'affiche PAS sur Android/web (composant natif iOS). */}
-          <View style={{ marginTop: 10 }}>
-            <AppleSignInButton
-              buttonType={mode === "login" ? "signin" : "signup"}
-              stationId={stationInfo?.id}
-              onSuccess={() => {
-                // La navigation est gérée automatiquement par AuthContext
-                // dès que setUser est appelé.
-              }}
-              onError={(msg) => {
-                Alert.alert("Connexion Apple", msg);
-              }}
-            />
-          </View>
+          {Platform.OS === "ios" ? (
+            <View style={styles.socialRow}>
+              {/* 🍎 Apple à gauche */}
+              <View style={styles.socialCol}>
+                <AppleSignInButton
+                  buttonType={mode === "login" ? "signin" : "signup"}
+                  stationId={stationInfo?.id}
+                  onError={(msg) => Alert.alert("Connexion Apple", msg)}
+                />
+              </View>
+              {/* 🔵 Google à droite (compact) */}
+              <TouchableOpacity
+                testID="google-signin-button"
+                onPress={onGoogleSignIn}
+                disabled={googleLoading || submitting}
+                style={[styles.googleBtn, styles.socialCol, googleLoading && { opacity: 0.6 }]}
+                activeOpacity={0.85}
+              >
+                {googleLoading ? (
+                  <ActivityIndicator color="#3F3F46" />
+                ) : (
+                  <>
+                    <View style={styles.googleIconWrap}>
+                      <Text style={styles.googleIconG}>G</Text>
+                    </View>
+                    <Text style={styles.googleBtnText}>Google</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity
+              testID="google-signin-button"
+              onPress={onGoogleSignIn}
+              disabled={googleLoading || submitting}
+              style={[styles.googleBtn, googleLoading && { opacity: 0.6 }]}
+              activeOpacity={0.85}
+            >
+              {googleLoading ? (
+                <ActivityIndicator color="#3F3F46" />
+              ) : (
+                <>
+                  <View style={styles.googleIconWrap}>
+                    <Text style={styles.googleIconG}>G</Text>
+                  </View>
+                  <Text style={styles.googleBtnText}>
+                    {mode === "login"
+                      ? "Continuer avec Google"
+                      : "S'inscrire avec Google"}
+                  </Text>
+                </>
+              )}
+            </TouchableOpacity>
+          )}
 
           {mode === "login" && (
             <TouchableOpacity
@@ -1630,6 +1647,16 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "700",
     letterSpacing: 0.2,
+  },
+  // 🍎 v1.1.3 — Ligne Apple + Google côte à côte (iOS uniquement)
+  socialRow: {
+    flexDirection: "row",
+    gap: 10,
+    alignItems: "stretch",
+  },
+  socialCol: {
+    flex: 1,
+    minHeight: 50,
   },
 
   // ═══════════════════════════════════════════════════════════

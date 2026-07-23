@@ -4,6 +4,7 @@ import {
   Alert,
   FlatList,
   KeyboardAvoidingView,
+  Linking,
   Modal,
   Platform,
   RefreshControl,
@@ -148,6 +149,31 @@ export default function Dashboard() {
     user?.role === "admin" &&
     !!user?.email &&
     PLATFORM_OWNER_EMAILS.includes(user.email.toLowerCase());
+
+  // 🗺️ v1.1.3 — Ouvre la carte admin dans le navigateur via un lien signé
+  // court-vécu (5 min). L'endpoint est protégé serveur (require_platform_owner).
+  const openAdminMap = async () => {
+    try {
+      const res = await api.post<{ map_url: string }>(
+        "/admin/map/access-link",
+      );
+      const url = res.data?.map_url;
+      if (!url) throw new Error("URL absente");
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        // Fallback : copier l'URL si impossible d'ouvrir
+        // eslint-disable-next-line no-alert
+        alert(`Impossible d'ouvrir la carte automatiquement.\n\nColle ce lien dans ton navigateur (valide 5 min) :\n\n${url}`);
+      }
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.detail || err?.message || "Erreur inconnue";
+      // eslint-disable-next-line no-alert
+      alert(`Impossible d'ouvrir la carte : ${msg}`);
+    }
+  };
 
   // ☕ Priorité 4 — Bouton « Mes cafés » visible UNIQUEMENT si le compte est
   // issu d'un QR code de station partenaire (fetch silencieux au montage).
@@ -528,6 +554,19 @@ export default function Dashboard() {
             <Text style={styles.actionBtnText} numberOfLines={1}>
               Validation équipe
             </Text>
+          </TouchableOpacity>
+        )}
+        {/* 🗺️ v1.1.3 — Carte des inscrits géolocalisés (owner only).
+            Ouvre la carte HTML dans un navigateur via lien signé 5 min. */}
+        {isPlatformOwner && (
+          <TouchableOpacity
+            testID="admin-map-button"
+            onPress={openAdminMap}
+            style={styles.actionBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="map-outline" size={18} color={colors.primary} />
+            <Text style={styles.actionBtnText} numberOfLines={1}>Carte</Text>
           </TouchableOpacity>
         )}
         {/* Campagne emailing prospection — 🔐 outil interne, visible
