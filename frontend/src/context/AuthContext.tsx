@@ -6,6 +6,8 @@ import { registerPushTokenWithBackend } from "@/src/services/notifications";
 import PaywallScreen from "@/src/components/PaywallScreen";
 import ValidationRequiredScreen from "@/src/components/ValidationRequiredScreen";
 import CompleteVatScreen from "@/src/components/CompleteVatScreen";
+import ForceUpdateScreen from "@/src/components/ForceUpdateScreen";
+import { checkAppVersion, type AppVersionCheck } from "@/src/services/appVersion";
 import i18n, { setArtisanMode as setI18nArtisanMode } from "@/src/i18n";
 
 export type Role = "admin" | "commercial" | "technician";
@@ -60,6 +62,8 @@ type AuthCtx = {
   artisanMode: boolean;
   loading: boolean;
   lock: SubscriptionLock;
+  /** 📱 v1.1.3 — État de la vérification de version app (null tant que non chargé). */
+  versionCheck: AppVersionCheck | null;
   signIn: (email: string, password: string) => Promise<void>;
   signInWithGoogle: (sessionId: string, stationId?: string) => Promise<void>;
   signUp: (
@@ -102,6 +106,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     message?: string;
     reason?: string;
   }>({ required: false });
+
+  // 📱 v1.1.3 — App version check (banner + éventuel écran bloquant)
+  const [versionCheck, setVersionCheck] = useState<AppVersionCheck | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    const run = async () => {
+      const res = await checkAppVersion();
+      if (!cancelled) setVersionCheck(res);
+    };
+    // Immédiat au boot puis toutes les 15 min tant que l'app tourne
+    run();
+    const iv = setInterval(run, 15 * 60 * 1000);
+    return () => {
+      cancelled = true;
+      clearInterval(iv);
+    };
+  }, []);
 
   // Subscribe to subscription lock events from the axios response interceptor.
   useEffect(() => {
@@ -320,6 +341,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         artisanMode,
         loading,
         lock,
+        versionCheck,
         signIn,
         signInWithGoogle,
         signUp,
@@ -338,10 +360,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         hasRole,
       }}
     >
-      {/* Subscription paywall — covers everything when expired/suspended.
+      {/* 🔴 v1.1.3 — Force Update SCREEN — priorité MAX (avant tout autre verrou).
+          Bloque totalement l'usage de l'app si la version installée est <
+          APP_MIN_VERSION ET que le backend a activé APP_FORCE_UPDATE=true. */}
+      {versionCheck?.forceUpdate ? (
+        <ForceUpdateScreen
+          currentVersion={versionCheck.currentVersion}
+          latestVersion={versionCheck.latestVersion}
+          minVersion={versionCheck.minVersion}
+          message={versionCheck.message}
+          highlights={versionCheck.highlights}
+          appStoreUrl={versionCheck.appStoreUrl}
+          playStoreUrl={versionCheck.playStoreUrl}
+          onLogout={user ? signOut : undefined}
+        />
+      ) : /* Subscription paywall — covers everything when expired/suspended.
           🚧 BETA GRATUITE : on désactive ce verrou tant que la société est
-          flaggée `beta_mode=true` côté backend. */}
-      {user && lock.expired && !company?.beta_mode ? (
+          flaggée `beta_mode=true` côté backend. */
+      user && lock.expired && !company?.beta_mode ? (
         <PaywallScreen
           status={lock.status}
           expires_at={lock.expires_at}

@@ -1,8 +1,15 @@
 import axios from "axios";
+import Constants from "expo-constants";
 import { storage } from "@/src/utils/storage";
 
 const BASE_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
 const TOKEN_KEY = "mc_access_token";
+
+// 📱 v1.1.3 — Version installée sur l'appareil, envoyée à toutes les requêtes
+// via l'entête X-App-Version. Le backend l'utilise pour tracker qui reste
+// sur d'anciennes versions et afficher la bannière/écran de mise à jour.
+const APP_VERSION: string =
+  (Constants.expoConfig?.version as string | undefined) || "0.0.0";
 
 /**
  * Clé API statique partagée — couche de sécurité supplémentaire au-dessus
@@ -34,6 +41,8 @@ api.interceptors.request.use(async (config) => {
   if (HAS_API_KEY) {
     (config.headers as any)["X-API-Key"] = API_KEY;
   }
+  // 📱 v1.1.3 — Version installée du client mobile (pour tracking + banner update)
+  (config.headers as any)["X-App-Version"] = APP_VERSION;
   return config;
 });
 

@@ -25,6 +25,7 @@ import { subscribeQueueSize, syncQueue, enqueueChantier, isNetworkError } from "
 import { colors, statusMeta, getStatusLabelI18n, READY_FOR_EXPORT_BADGE } from "@/src/theme";
 import { useResponsive } from "@/src/utils/responsive";
 import FilleulInviteBanner from "@/src/components/FilleulInviteBanner";
+import UpdateAvailableBanner from "@/src/components/UpdateAvailableBanner";
 import ChatHelp from "@/src/components/ChatHelp";
 import AppointmentPicker from "@/src/components/AppointmentPicker";
 import OnboardingCard from "@/src/components/OnboardingCard";
@@ -43,7 +44,7 @@ type Chantier = {
 //   La constante statique a été remplacée par un FILTERS local dans Dashboard.
 
 export default function Dashboard() {
-  const { user, signOut, company } = useAuth();
+  const { user, signOut, company, versionCheck } = useAuth();
   const router = useRouter();
   const { t } = useTranslation();
   // 🆕 V3 — Filtres traduits dynamiquement via i18n (au lieu d'une constante statique)
@@ -621,6 +622,18 @@ export default function Dashboard() {
 
       {/* 🆕 Build 9 — Incite le filleul à parrainer (disparaît dès 1er parrainage) */}
       <FilleulInviteBanner />
+
+      {/* 📱 v1.1.3 — Bannière soft "Nouvelle version disponible" (dismissable
+          par version, revient auto au prochain latest_version). */}
+      {versionCheck?.updateAvailable && !versionCheck.forceUpdate && (
+        <UpdateAvailableBanner
+          currentVersion={versionCheck.currentVersion}
+          latestVersion={versionCheck.latestVersion}
+          highlights={versionCheck.highlights}
+          appStoreUrl={versionCheck.appStoreUrl}
+          playStoreUrl={versionCheck.playStoreUrl}
+        />
+      )}
 
       <View style={styles.searchWrap}>
         <Ionicons name="search" size={18} color={colors.textSecondary} />

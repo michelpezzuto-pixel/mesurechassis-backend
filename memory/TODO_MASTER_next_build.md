@@ -25,7 +25,7 @@ pour :
 | 2 | Exit Survey + Grace Period 30j | 🔴 P0 | 3h | `TODO_exit_survey.md` |
 | 3 | Fallback SIREN/SIRET auto-entrepreneurs | 🟠 P1 | 1h | `TODO_vat_google_signin.md` |
 | 4 | Email proactif Resend users Google | 🟠 P1 | 30min | `TODO_vat_google_signin.md` |
-| 5 | Force update (style Revolut) | 🟠 P1 | 2h | `TODO_force_update.md` |
+| 5 | ~~Force update (style Revolut)~~ ✅ **FAIT en v1.1.3** | ~~🟠 P1~~ | ~~2h~~ | `TODO_force_update.md` + `GUIDE_notifications_maj_app.md` |
 | 6 | Message adouci verrou TVA | 🟡 P2 | 15min | `TODO_vat_google_signin.md` |
 | 7 | Carte admin dans l'app | 🟢 P2 | 30min | `TODO_carte_admin_mobile.md` |
 

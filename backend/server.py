@@ -40,6 +40,7 @@ from routes import jeton_cafe as jeton_cafe_routes
 from routes import google_auth as google_auth_routes
 from routes import reactivation as reactivation_routes
 from routes import validation as validation_routes
+from routes import config as config_routes
 from seed import seed_data, ensure_apple_review_user
 
 
@@ -113,6 +114,8 @@ api.include_router(spec_import_routes.router)
 api.include_router(testers_routes.router)
 # 🆕 Campagne emailing — prospection testeurs à 1 bouton (max 15/jour via Resend)
 api.include_router(campaign_routes.router)
+# 📱 v1.1.3 — Config publique app-version (mise à jour requise/disponible)
+api.include_router(config_routes.router)
 # 🛡️ Endpoints admin one-shot (purge email, etc.) — protégés PLATFORM_ADMIN_TOKEN
 api.include_router(admin_tools_routes.router)
 # 🆕 RGPD — Routeur public unsubscribe (pas d'auth, accès via lien JWT signé)
