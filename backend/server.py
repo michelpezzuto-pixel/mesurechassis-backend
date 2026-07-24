@@ -445,6 +445,20 @@ async def download_demo_star_20slides():
     )
 
 
+@api.get("/_downloads/demo-button-20slides")
+async def download_demo_button_20slides():
+    """Démo vidéo pro : 20 slides avec effet bouton-qui-s'enfonce (style Apple/Stripe).
+    Ripple orange discret, transitions fluides. 30 sec, 9:16."""
+    path = "/app/backend/static/promo/hero_shots/demo_button_20slides.mp4"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Démo bouton introuvable")
+    return FileResponse(
+        path,
+        media_type="video/mp4",
+        filename="mesurechassis-demo-button-20slides.mp4",
+    )
+
+
 # 🎬 Wizard Flow — 4 screenshots authentiques de l'app pour storytelling marketing
 @api.get("/_downloads/wizard-flow/{step}")
 async def download_wizard_flow(step: str):
