@@ -744,6 +744,32 @@ async def download_site_v2_4tiers():
     )
 
 
+# 🚀 v1.1.4 — Audit landing page + trackers + Calendly + preuve sociale (24 juil 2026)
+@api.get("/_downloads/site-v2-audit-ads-ready")
+async def download_site_v2_audit_ads_ready():
+    """🚀 Site vitrine mesurechassis.com — version "prête pour Ads" (24 juil 2026).
+
+    Version bonifiée avec :
+      • Bandeau promo "Gratuit jusqu'à 31 oct 2026"
+      • Trackers Meta Pixel + GA4 + Google Ads Conversion + Schema.org
+      • Bouton "📞 Réserver 15 min avec Michel" (Calendly, avec placeholder)
+      • Section preuve sociale (4 chiffres clés)
+      • Twitter Card + Open Graph enrichis
+
+    ⚠️ Contient un README_TRACKERS.md à lire — 4 IDs à remplacer avant upload FTP.
+
+    À uploader tel quel via FTP à la racine du site.
+    """
+    path = "/app/backend/static/promo/mesurechassis-site-v2.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="mesurechassis-site-v2-audit-ads-ready.zip",
+    )
+
+
 @api.get("/_downloads/site-index-html")
 async def download_site_index_html():
     """🆕 Fichier index.html modifié cette session (juil. 2026).
