@@ -347,6 +347,34 @@ async def download_hero_measurer():
     )
 
 
+@api.get("/_downloads/hero-shapes-pack")
+async def download_hero_shapes_pack():
+    """ZIP des 12 hero shots (une par forme d'ouverture supportée)."""
+    path = "/app/backend/static/promo/hero_shots/hero_shots_pack.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Pack hero shots introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="mesurechassis-hero-shots-12-formes.zip",
+    )
+
+
+@api.get("/_downloads/hero-shape/{shape_id}")
+async def download_hero_shape(shape_id: str):
+    """Télécharge un hero shot individuel par nom de fichier
+    (ex: 03_plein_cintre, 10_bow_window)."""
+    safe = shape_id.replace("/", "").replace("..", "").strip()
+    path = f"/app/backend/static/promo/hero_shots/{safe}.png"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail=f"Hero shape {safe} introuvable")
+    return FileResponse(
+        path,
+        media_type="image/png",
+        filename=f"mesurechassis-hero-{safe}.png",
+    )
+
+
 # 📸 v1.1.3 — Générateur captures App Store (iPhone + iPad)
 @api.get("/marketing/appstore-screenshot", response_class=HTMLResponse)
 async def marketing_appstore_screenshot(device: str = "iphone", slide: int = 1):
