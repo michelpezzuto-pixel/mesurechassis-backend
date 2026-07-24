@@ -283,14 +283,53 @@ async def download_marketing_kit_master():
 # 🏷️ Juin 2026 — Watermark PNG pour montage vidéo CapCut
 @api.get("/_downloads/watermark-logo")
 async def download_watermark_logo():
-    """Icône MesureChâssis PNG à utiliser comme watermark dans les vidéos."""
+    """Icône MesureChâssis PNG (1024×1024, fond orange plein) — style App Store."""
     path = "/app/backend/static/promo/mesurechassis_watermark_v1.png"
     if not os.path.isfile(path):
         raise HTTPException(status_code=404, detail="Watermark introuvable")
     return FileResponse(
         path,
         media_type="image/png",
-        filename="mesurechassis-watermark.png",
+        filename="mesurechassis-icon.png",
+    )
+
+
+@api.get("/_downloads/watermark-rounded")
+async def download_watermark_rounded():
+    """Icône MesureChâssis avec coins arrondis iOS (512×512, transparent autour)."""
+    path = "/app/backend/static/promo/mesurechassis_watermark_rounded.png"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Watermark arrondi introuvable")
+    return FileResponse(
+        path,
+        media_type="image/png",
+        filename="mesurechassis-icon-rounded.png",
+    )
+
+
+@api.get("/_downloads/wordmark-dark")
+async def download_wordmark_dark():
+    """Logo horizontal (icône + texte orange) pour fond clair. 1077×220."""
+    path = "/app/backend/static/promo/mesurechassis_wordmark.png"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Wordmark sombre introuvable")
+    return FileResponse(
+        path,
+        media_type="image/png",
+        filename="mesurechassis-wordmark-fond-clair.png",
+    )
+
+
+@api.get("/_downloads/wordmark-light")
+async def download_wordmark_light():
+    """Logo horizontal (icône + texte blanc) pour fond foncé. 1077×220."""
+    path = "/app/backend/static/promo/mesurechassis_wordmark_light.png"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Wordmark clair introuvable")
+    return FileResponse(
+        path,
+        media_type="image/png",
+        filename="mesurechassis-wordmark-fond-fonce.png",
     )
 
 
