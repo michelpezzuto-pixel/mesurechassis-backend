@@ -418,6 +418,19 @@ async def download_carrousel_20():
     )
 
 
+@api.get("/_downloads/demo-hand-4slides")
+async def download_demo_hand_4slides():
+    """Démo vidéo de 4 slides (10 sec) avec main IA qui tap sur SUIVANT."""
+    path = "/app/backend/static/promo/hero_shots/demo_hand_4slides.mp4"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Démo introuvable")
+    return FileResponse(
+        path,
+        media_type="video/mp4",
+        filename="mesurechassis-demo-hand-4slides.mp4",
+    )
+
+
 # 🎬 Wizard Flow — 4 screenshots authentiques de l'app pour storytelling marketing
 @api.get("/_downloads/wizard-flow/{step}")
 async def download_wizard_flow(step: str):
