@@ -333,6 +333,20 @@ async def download_wordmark_light():
     )
 
 
+@api.get("/_downloads/hero-measurer")
+async def download_hero_measurer():
+    """Photo marketing : mesureur en chantier + app MesureChâssis en surimpression.
+    Format 16:9 landscape, prêt pour landing page, LinkedIn, YouTube, Meta Ads."""
+    path = "/app/backend/static/promo/hero_shots/measurer_hero_v1.png"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Hero shot introuvable")
+    return FileResponse(
+        path,
+        media_type="image/png",
+        filename="mesurechassis-hero-mesureur-chantier.png",
+    )
+
+
 # 📸 v1.1.3 — Générateur captures App Store (iPhone + iPad)
 @api.get("/marketing/appstore-screenshot", response_class=HTMLResponse)
 async def marketing_appstore_screenshot(device: str = "iphone", slide: int = 1):
