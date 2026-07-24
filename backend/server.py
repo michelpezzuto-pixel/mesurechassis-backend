@@ -431,6 +431,20 @@ async def download_demo_hand_4slides():
     )
 
 
+@api.get("/_downloads/demo-star-20slides")
+async def download_demo_star_20slides():
+    """Démo vidéo animée COMPLÈTE : 20 slides avec étoile orange qui clique
+    sur les boutons selon le parcours utilisateur réel. 40 sec, 9:16."""
+    path = "/app/backend/static/promo/hero_shots/demo_star_20slides.mp4"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Démo étoile introuvable")
+    return FileResponse(
+        path,
+        media_type="video/mp4",
+        filename="mesurechassis-demo-star-20slides.mp4",
+    )
+
+
 # 🎬 Wizard Flow — 4 screenshots authentiques de l'app pour storytelling marketing
 @api.get("/_downloads/wizard-flow/{step}")
 async def download_wizard_flow(step: str):
