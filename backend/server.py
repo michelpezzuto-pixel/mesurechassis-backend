@@ -403,6 +403,30 @@ async def download_hero_mascot():
     )
 
 
+# 🎬 Wizard Flow — 4 screenshots authentiques de l'app pour storytelling marketing
+@api.get("/_downloads/wizard-flow/{step}")
+async def download_wizard_flow(step: str):
+    """Screenshots wizard : 1_choix_forme, 2_dimensions, 3_feuillures_allege,
+    4_avec_bosch (photo pro Bosch en remplacement du mur)."""
+    mapping = {
+        "1_choix_forme": ("wizard_flow_1_choix_forme.webp", "image/webp"),
+        "2_dimensions": ("wizard_flow_2_dimensions.webp", "image/webp"),
+        "3_feuillures_allege": ("wizard_flow_3_feuillures_allege.webp", "image/webp"),
+        "4_avec_bosch": ("wizard_flow_4_with_bosch.png", "image/png"),
+    }
+    if step not in mapping:
+        raise HTTPException(status_code=404, detail=f"Étape {step} inconnue")
+    filename, mime = mapping[step]
+    path = f"/app/backend/static/promo/hero_shots/{filename}"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail=f"Fichier {filename} introuvable")
+    return FileResponse(
+        path,
+        media_type=mime,
+        filename=f"mesurechassis-wizard-{step}.{filename.split('.')[-1]}",
+    )
+
+
 # 📸 v1.1.3 — Générateur captures App Store (iPhone + iPad)
 @api.get("/marketing/appstore-screenshot", response_class=HTMLResponse)
 async def marketing_appstore_screenshot(device: str = "iphone", slide: int = 1):
