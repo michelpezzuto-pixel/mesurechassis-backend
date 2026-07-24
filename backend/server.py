@@ -403,6 +403,21 @@ async def download_hero_mascot():
     )
 
 
+# 🎠 Carrousel marketing — parcours utilisateur en 20 étapes
+@api.get("/_downloads/carrousel-20-etapes")
+async def download_carrousel_20():
+    """ZIP de 20 screenshots authentiques triés chronologiquement — 
+    du login jusqu'à l'export PDF. Photo Bosch intégrée à l'étape 16."""
+    path = "/app/backend/static/promo/hero_shots/carrousel_20_etapes.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Carrousel introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="mesurechassis-carrousel-20-etapes.zip",
+    )
+
+
 # 🎬 Wizard Flow — 4 screenshots authentiques de l'app pour storytelling marketing
 @api.get("/_downloads/wizard-flow/{step}")
 async def download_wizard_flow(step: str):
