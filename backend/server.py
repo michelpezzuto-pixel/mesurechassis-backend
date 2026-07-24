@@ -375,6 +375,19 @@ async def download_hero_shape(shape_id: str):
     )
 
 
+@api.get("/_downloads/hero-mascot")
+async def download_hero_mascot():
+    """Version mascotte cartoon du mesureur — style TikTok viral."""
+    path = "/app/backend/static/promo/hero_shots/MASCOT_menuisier_v1.png"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Mascotte introuvable")
+    return FileResponse(
+        path,
+        media_type="image/png",
+        filename="mesurechassis-mascot-menuisier.png",
+    )
+
+
 # 📸 v1.1.3 — Générateur captures App Store (iPhone + iPad)
 @api.get("/marketing/appstore-screenshot", response_class=HTMLResponse)
 async def marketing_appstore_screenshot(device: str = "iphone", slide: int = 1):
