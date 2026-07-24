@@ -280,6 +280,20 @@ async def download_marketing_kit_master():
     )
 
 
+# 🏷️ Juin 2026 — Watermark PNG pour montage vidéo CapCut
+@api.get("/_downloads/watermark-logo")
+async def download_watermark_logo():
+    """Icône MesureChâssis PNG à utiliser comme watermark dans les vidéos."""
+    path = "/app/backend/static/promo/mesurechassis_watermark_v1.png"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Watermark introuvable")
+    return FileResponse(
+        path,
+        media_type="image/png",
+        filename="mesurechassis-watermark.png",
+    )
+
+
 # 📸 v1.1.3 — Générateur captures App Store (iPhone + iPad)
 @api.get("/marketing/appstore-screenshot", response_class=HTMLResponse)
 async def marketing_appstore_screenshot(device: str = "iphone", slide: int = 1):
