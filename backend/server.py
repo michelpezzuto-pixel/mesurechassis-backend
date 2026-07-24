@@ -360,6 +360,21 @@ async def download_hero_shapes_pack():
     )
 
 
+@api.get("/_downloads/hero-diverse-pack")
+async def download_hero_diverse_pack():
+    """ZIP FINAL des 12 hero shots divers (mix homme/femme + ethnies).
+    Distribution : 5 hommes blancs + 2 femmes blanches + 2 hommes noirs
+    + 2 hommes maghrébins + 1 homme asiatique. 16:9 HD, prêts Canva."""
+    path = "/app/backend/static/promo/hero_shots/hero_shots_diverse_12.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Pack diverse introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="mesurechassis-hero-shots-diverse-12.zip",
+    )
+
+
 @api.get("/_downloads/hero-shape/{shape_id}")
 async def download_hero_shape(shape_id: str):
     """Télécharge un hero shot individuel par nom de fichier
