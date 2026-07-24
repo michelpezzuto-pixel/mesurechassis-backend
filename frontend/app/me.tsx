@@ -142,9 +142,7 @@ export default function MyInfoScreen() {
           <LanguagePicker />
 
           {/* 🆕 Build 9 — Accès au système de parrainage
-           * 🍎 Masqué sur iOS (App Store 3.1.1) : les récompenses "mois
-           * offerts" sont des crédits d'abonnement. */}
-          {Platform.OS !== "ios" && (
+           * 🍎 iOS-safe : wording orienté "aider un collègue" (App Store 3.1.1). */}
           <TouchableOpacity
             testID="open-referral-btn"
             onPress={() => router.push("/referral")}
@@ -152,17 +150,26 @@ export default function MyInfoScreen() {
             style={styles.referralCard}
           >
             <View style={styles.referralIcon}>
-              <Ionicons name="gift" size={22} color={colors.primary} />
+              <Ionicons
+                name={Platform.OS === "ios" ? "people" : "gift"}
+                size={22}
+                color={colors.primary}
+              />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.referralTitle}>{t("screens.me.referralCard")}</Text>
+              <Text style={styles.referralTitle}>
+                {Platform.OS === "ios"
+                  ? "Aider un collègue"
+                  : t("screens.me.referralCard")}
+              </Text>
               <Text style={styles.referralDesc}>
-                {t("screens.me.referralDesc")}
+                {Platform.OS === "ios"
+                  ? "Partagez votre code pour inviter un menuisier à essayer MesureChâssis."
+                  : t("screens.me.referralDesc")}
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={22} color={colors.textSecondary} />
           </TouchableOpacity>
-          )}
 
           {/* 🆕 Build 9 — Accès direct au Centre d'aide / FAQ */}
           <TouchableOpacity

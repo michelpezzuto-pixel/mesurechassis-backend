@@ -53,14 +53,11 @@ export default function ReferralScreen() {
   const [draftCode, setDraftCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // 🍎 Écran inaccessible sur iOS (App Store 3.1.1) : les récompenses
-  // "mois offerts" sont des crédits d'abonnement.
-  useEffect(() => {
-    if (Platform.OS === "ios") {
-      router.replace("/dashboard");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // 🍎 iOS-safe (App Store 3.1.1) : on garde l'écran accessible pour que
+  // l'utilisateur puisse voir/partager son code, mais on MASQUE toute
+  // mention monétaire (mois offerts, récompenses, crédits). Les stats
+  // "filleuls actifs / en attente" restent visibles car neutres.
+  const isIOS = Platform.OS === "ios";
 
   const load = useCallback(async () => {
     try {
@@ -109,10 +106,15 @@ export default function ReferralScreen() {
 
   const handleShare = async () => {
     if (!status?.code) return;
-    const msg =
-      `🎁 J'utilise MesureChâssis pour mes prises de mesures sur chantier.\n\n` +
-      `Inscris-toi avec mon code de parrainage : ${status.code}\n\n` +
-      `https://mesurechassis.com`;
+    // 🍎 iOS : wording neutre "aider un collègue". Android/Web : peut
+    // mentionner l'offre puisque conforme à leurs règles.
+    const msg = isIOS
+      ? `👷 J'utilise MesureChâssis pour mes prises de mesures sur chantier — ça me fait gagner un temps fou.\n\n` +
+        `Si tu veux tester, inscris-toi avec mon code : ${status.code}\n\n` +
+        `https://mesurechassis.com`
+      : `🎁 J'utilise MesureChâssis pour mes prises de mesures sur chantier.\n\n` +
+        `Inscris-toi avec mon code de parrainage : ${status.code}\n\n` +
+        `https://mesurechassis.com`;
     try {
       await Share.share({ message: msg, title: "Rejoignez-moi sur MesureChâssis" });
     } catch {
@@ -232,12 +234,14 @@ export default function ReferralScreen() {
               <Text style={styles.statValue}>{status.referrals_pending}</Text>
               <Text style={styles.statLabel}>En attente</Text>
             </View>
-            <View style={styles.statBox}>
-              <Text style={[styles.statValue, { color: colors.primary }]}>
-                {status.credit_months_total}
-              </Text>
-              <Text style={styles.statLabel}>Mois gagnés</Text>
-            </View>
+            {!isIOS && (
+              <View style={styles.statBox}>
+                <Text style={[styles.statValue, { color: colors.primary }]}>
+                  {status.credit_months_total}
+                </Text>
+                <Text style={styles.statLabel}>Mois gagnés</Text>
+              </View>
+            )}
           </View>
 
           {/* Barre de progression */}
@@ -255,7 +259,8 @@ export default function ReferralScreen() {
             {reachedMax && " — limite atteinte"}
           </Text>
 
-          {status.credit_months_remaining > 0 && (
+          {/* Banner mois offerts — masqué sur iOS (App Store 3.1.1) */}
+          {!isIOS && status.credit_months_remaining > 0 && (
             <View style={styles.creditBanner}>
               <Ionicons name="gift" size={18} color={colors.primary} />
               <Text style={styles.creditText}>
@@ -268,22 +273,42 @@ export default function ReferralScreen() {
           )}
         </View>
 
-        {/* ===== INFO RÉCOMPENSE ===== */}
+        {/* ===== INFO — 2 variantes selon plateforme ===== */}
         <View style={styles.infoCard}>
           <View style={styles.infoHeader}>
-            <Ionicons name="gift-outline" size={20} color={colors.primary} />
-            <Text style={styles.infoTitle}>{t("screens.referral.howItWorks")}</Text>
+            <Ionicons
+              name={isIOS ? "people-outline" : "gift-outline"}
+              size={20}
+              color={colors.primary}
+            />
+            <Text style={styles.infoTitle}>
+              {isIOS
+                ? "Aider un collègue"
+                : t("screens.referral.howItWorks")}
+            </Text>
           </View>
-          <Text style={styles.infoText}>
-            • Partagez votre code à un menuisier{"\n"}
-            • Il s&apos;inscrit à MesureChâssis avec votre code{"\n"}
-            • Dès l&apos;activation de son 1er abonnement, vous gagnez{" "}
-            <Text style={{ fontWeight: "900", color: colors.primary }}>
-              2 mois offerts
-            </Text>{" "}
-            sur votre prochain renouvellement{"\n"}
-            • Maximum {status.max_referrals} filleuls par parrain
-          </Text>
+          {isIOS ? (
+            <Text style={styles.infoText}>
+              • Partagez votre code à un menuisier qui aimerait gagner du
+              temps sur ses prises de mesures.{"\n"}
+              • Il s&apos;inscrit à MesureChâssis avec votre code depuis
+              son site web.{"\n"}
+              • Vous restez en contact — chaque professionnel qui rejoint
+              MesureChâssis grâce à vous nous aide à améliorer
+              l&apos;application.
+            </Text>
+          ) : (
+            <Text style={styles.infoText}>
+              • Partagez votre code à un menuisier{"\n"}
+              • Il s&apos;inscrit à MesureChâssis avec votre code{"\n"}
+              • Dès l&apos;activation de son 1er abonnement, vous gagnez{" "}
+              <Text style={{ fontWeight: "900", color: colors.primary }}>
+                2 mois offerts
+              </Text>{" "}
+              sur votre prochain renouvellement{"\n"}
+              • Maximum {status.max_referrals} filleuls par parrain
+            </Text>
+          )}
         </View>
 
         {/* ===== PARRAIN ACTUEL (si on a été parrainé) ===== */}
