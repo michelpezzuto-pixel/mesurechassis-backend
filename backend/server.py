@@ -264,6 +264,22 @@ async def download_video_pub_45s_pack():
     )
 
 
+# 🎬 Juin 2026 — Kit Marketing MASTER (Pub 45s + 10 TikTok variantes + Photos + Guides CapCut)
+@api.get("/_downloads/marketing-kit-master")
+async def download_marketing_kit_master():
+    """ZIP master de 88 MB : pub principale 45s + 10 scripts TikTok
+    (assets + voix-off MP3 déjà générées) + photos réalistes + guide CapCut
+    pas-à-pas + LISEZ-MOI stratégie de publication."""
+    path = "/app/backend/static/promo/marketing_kit_master.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Kit marketing master introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="mesurechassis-marketing-kit-master.zip",
+    )
+
+
 # 📸 v1.1.3 — Générateur captures App Store (iPhone + iPad)
 @api.get("/marketing/appstore-screenshot", response_class=HTMLResponse)
 async def marketing_appstore_screenshot(device: str = "iphone", slide: int = 1):
