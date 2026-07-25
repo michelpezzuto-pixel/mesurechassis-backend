@@ -16,7 +16,7 @@ from __future__ import annotations
 import os
 import re
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse
 
 from db import db
@@ -31,7 +31,7 @@ _PROTECTED_RE = re.compile(r"@mesurechassis\.fr$", re.IGNORECASE)
 #   dans Safari via Linking → le navigateur accède aux endpoints admin/map
 #   sans jamais voir le PLATFORM_ADMIN_TOKEN long-vécu.
 _MAP_JWT_SCOPE = "admin_map"
-_MAP_JWT_TTL_MIN = 5
+_MAP_JWT_TTL_MIN = 15  # 🆕 15 min (auparavant 5) — plus tolérant sur ouverture lente
 
 
 def _check_token(token: str) -> None:
@@ -46,9 +46,28 @@ def _check_token(token: str) -> None:
     # Tentative JWT court-vécu
     try:
         import jwt as _jwt  # local import — pyjwt déjà installé (Apple Sign-In)
-        claims = _jwt.decode(token, expected, algorithms=["HS256"])
-    except Exception:
-        raise HTTPException(401, "Token admin invalide") from None
+        # leeway=10s pour tolérer un léger décalage d'horloge entre serveurs
+        claims = _jwt.decode(token, expected, algorithms=["HS256"], leeway=10)
+    except Exception as e:
+        # 🆕 Messages d'erreur explicites pour faciliter le debug côté client
+        err_name = type(e).__name__
+        if err_name == "ExpiredSignatureError":
+            raise HTTPException(
+                401,
+                "Lien expiré (valide 5 min). Retourne dans l'app et clique à nouveau sur Carte.",
+            ) from None
+        if err_name == "InvalidSignatureError":
+            raise HTTPException(
+                401,
+                "Signature invalide — clé serveur différente entre génération et validation.",
+            ) from None
+        if err_name in ("DecodeError", "InvalidTokenError"):
+            raise HTTPException(
+                401,
+                f"Token malformé ({err_name}). Retourne dans l'app et régénère un lien.",
+            ) from None
+        # Fallback avec type d'erreur pour debug
+        raise HTTPException(401, f"Token admin invalide ({err_name})") from None
     if claims.get("scope") != _MAP_JWT_SCOPE:
         raise HTTPException(401, "Token admin invalide (scope)")
 
@@ -312,18 +331,33 @@ def _generate_map_jwt() -> str:
 
 
 @router.post("/admin/map/access-link")
-async def admin_map_access_link(user: dict = Depends(require_platform_owner)):
-    """Génère un lien temporaire (5 min) vers la carte HTML admin.
+async def admin_map_access_link(
+    request: Request,
+    user: dict = Depends(require_platform_owner),
+):
+    """Génère un lien temporaire (15 min) vers la carte HTML admin.
 
     Requiert : platform owner (email dans PLATFORM_OWNER_EMAILS).
     Le lien retourné peut être ouvert dans un navigateur ou un WebView —
     il embarque un JWT signé à durée courte.
+
+    🔒 IMPORTANT : le `map_url` retourné pointe vers CE MÊME SERVEUR (celui
+    qui a signé le JWT). C'est indispensable car le JWT est signé avec le
+    PLATFORM_ADMIN_TOKEN local — un autre serveur avec un token différent
+    rejetterait la signature.
     """
     short_jwt = _generate_map_jwt()
-    base = os.getenv(
-        "MAP_PUBLIC_BASE_URL",
-        "https://capable-gratitude-production-db51.up.railway.app",
-    ).rstrip("/")
+    # 🆕 Base URL dynamique : on utilise l'URL du serveur qui a reçu la requête
+    # (via header X-Forwarded-Proto/Host si derrière un proxy, sinon request.url).
+    # Priorité : env MAP_PUBLIC_BASE_URL > URL de la requête courante.
+    env_base = os.getenv("MAP_PUBLIC_BASE_URL", "").strip().rstrip("/")
+    if env_base:
+        base = env_base
+    else:
+        # Reconstruit "scheme://host" depuis la requête courante
+        scheme = request.headers.get("x-forwarded-proto") or request.url.scheme
+        host = request.headers.get("x-forwarded-host") or request.url.netloc
+        base = f"{scheme}://{host}"
     map_url = f"{base}/api/admin/map?token={short_jwt}&exclude_owner=true"
     data_url = f"{base}/api/admin/map/data?token={short_jwt}&exclude_owner=true"
     return {
