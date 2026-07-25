@@ -43,6 +43,7 @@ from routes import reactivation as reactivation_routes
 from routes import validation as validation_routes
 from routes import config as config_routes
 from routes import account_deletion as account_deletion_routes
+from routes import newsletter as newsletter_routes
 from seed import seed_data, ensure_apple_review_user
 
 
@@ -142,6 +143,9 @@ api.include_router(validation_routes.router)
 # 🗑️ v1.1.4 — Exit Survey + Grace Period 30j (suppression compte)
 api.include_router(account_deletion_routes.router)
 
+# 📚 Juin 2026 — Capture email landing page (guide gratuit "5 pièges")
+api.include_router(newsletter_routes.router)
+
 
 # ─────────────────────────────────────────────────────────────────────
 # 🪪 Handler global 422 — log détaillé des erreurs de validation pour
@@ -228,6 +232,26 @@ async def download_kit_capcut():
     if not os.path.isfile(path):
         raise HTTPException(status_code=404, detail="Kit CapCut introuvable")
     return FileResponse(path, media_type="text/markdown", filename="Kit_CapCut_video_demo.md")
+
+
+# 🆕 Juin 2026 — Landing page complète (double CTA + capture email)
+@api.get("/_downloads/landing-www")
+async def download_landing_www():
+    """
+    Archive ZIP de la landing page mesurechassis.com prête pour upload FTP.
+    Contient : index.html (Double CTA + form guide) + toutes les autres pages,
+    images, vidéos, .htaccess et robots.txt.
+    """
+    import glob
+    matches = sorted(glob.glob("/app/backend/public_downloads/landing/mesurechassis-www-*.zip"))
+    if not matches:
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    path = matches[-1]  # plus récent
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename=os.path.basename(path),
+    )
 
 
 # 🎬 Juillet 2026 — Composant Web animation marketing Vidéo 1 (format 9:16)
