@@ -1061,6 +1061,26 @@ async def admin_traction_dashboard(
       testent l'app une fois et disparaissent. Un ratio &gt; 30% indique un vrai
       product-market fit qui se construit.
     </p>
+
+    <h2>📥 Exports CSV (pour campagne emailing Resend/Mailchimp)</h2>
+    <p style='color:#a3a3a3;font-size:13px;margin-bottom:12px'>
+      Les fichiers sont ouvrables dans Excel / Google Sheets. Séparateur : point-virgule.
+      Encodage UTF-8 avec BOM (accents préservés).
+    </p>
+    <div style='display:flex;flex-wrap:wrap;gap:10px;margin-top:8px'>
+      <a class='btn safe' href='/api/admin/traction/export.csv?token={token}&segment=all'
+         style='background:#22c55e;text-decoration:none'>📋 TOUS les vrais menuisiers</a>
+      <a class='btn' href='/api/admin/traction/export.csv?token={token}&segment=inactive'
+         style='background:#f97316;text-decoration:none'>💤 Inscrits jamais reconnectés</a>
+      <a class='btn' href='/api/admin/traction/export.csv?token={token}&segment=no_chantier'
+         style='background:#8b5cf6;text-decoration:none'>📭 Sans aucun chantier créé</a>
+      <a class='btn' href='/api/admin/traction/export.csv?token={token}&segment=suspicious'
+         style='background:#ef4444;text-decoration:none'>⚠️ Emails suspects (à purger)</a>
+    </div>
+    <p style='color:#737373;font-size:12px;margin-top:14px'>
+      Colonnes fournies : email, nom, entreprise, pays, ville, région, date d'inscription,
+      dernière connexion, connecté via Google, a créé un chantier, statut, email suspect.
+    </p>
     """
 
     return HTMLResponse(_html_page(title="📊 TRACTION RÉELLE", body_html=body))
@@ -1084,3 +1104,127 @@ async def admin_traction_access_link(
         "url": f"{base}/api/admin/traction?token={short_jwt}",
         "expires_in_seconds": _MAP_JWT_TTL_MIN * 60,
     }
+
+
+
+# ══════════════════════════════════════════════════════════════════════
+# 📥 Export CSV des utilisateurs (owner-only, JWT admin_map)
+# ══════════════════════════════════════════════════════════════════════
+from fastapi.responses import PlainTextResponse  # noqa: E402
+
+
+@router.get("/admin/traction/export.csv", response_class=PlainTextResponse)
+async def admin_traction_export_csv(
+    token: str = Query(..., description="JWT scope admin_map"),
+    segment: str = Query(
+        "all",
+        description=(
+            "Segment à exporter : 'all' (tous vrais menuisiers), "
+            "'inactive' (jamais reconnectés), "
+            "'no_chantier' (aucun chantier créé), "
+            "'suspicious' (emails jetables)"
+        ),
+    ),
+):
+    """Export CSV des emails utilisateurs. Ouvrable dans Excel/Sheets.
+
+    Colonnes : email, nom, entreprise, pays, ville, inscrit_le,
+               dernière_connexion, google_link, a_chantier, statut, segment.
+    """
+    _check_token(token)
+
+    from datetime import datetime, timezone
+    import csv
+    from io import StringIO
+
+    now = datetime.now(timezone.utc)
+
+    def _to_iso(dt):
+        if not dt:
+            return ""
+        if isinstance(dt, datetime):
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            return dt.strftime("%Y-%m-%d %H:%M")
+        return str(dt)
+
+    # Récupération users
+    cursor = db.users.find({}, {
+        "id": 1, "email": 1, "name": 1, "role": 1, "created_at": 1,
+        "last_login_at": 1, "signup_geo": 1, "company_id": 1,
+        "google_linked": 1, "status": 1,
+    })
+
+    # Company names (pour lisibilité)
+    company_names: dict[str, str] = {}
+
+    rows: list[dict] = []
+    async for u in cursor:
+        email = (u.get("email") or "").lower().strip()
+        if _is_technical_account(email):
+            continue  # on exclut TOUJOURS les comptes techniques du CSV
+        geo = u.get("signup_geo") or {}
+        cid = u.get("company_id")
+        if cid and cid not in company_names:
+            comp = await db.companies.find_one({"id": cid}, {"name": 1})
+            company_names[cid] = (comp or {}).get("name", "") if comp else ""
+        company_name = company_names.get(cid, "") if cid else ""
+        has_chantier = False
+        if cid:
+            n = await db.chantiers.count_documents({"company_id": cid}, limit=1)
+            has_chantier = n > 0
+
+        last_login = u.get("last_login_at")
+        has_ever_logged_in = last_login is not None
+
+        row = {
+            "email": email,
+            "nom": u.get("name") or "",
+            "entreprise": company_name,
+            "pays": geo.get("country") or "",
+            "ville": geo.get("city") or "",
+            "region": geo.get("region") or "",
+            "inscrit_le": _to_iso(u.get("created_at")),
+            "derniere_connexion": _to_iso(last_login),
+            "google_linked": "oui" if u.get("google_linked") else "non",
+            "a_cree_chantier": "oui" if has_chantier else "non",
+            "statut": u.get("status") or "active",
+            "email_suspect": "oui" if _is_suspicious_email(email) else "non",
+        }
+        rows.append(row)
+
+    # Filtrer selon segment
+    if segment == "inactive":
+        rows = [r for r in rows if r["derniere_connexion"] == ""]
+    elif segment == "no_chantier":
+        rows = [r for r in rows if r["a_cree_chantier"] == "non"]
+    elif segment == "suspicious":
+        rows = [r for r in rows if r["email_suspect"] == "oui"]
+    # else 'all' → tout garder
+
+    # Tri : plus récent en haut
+    rows.sort(key=lambda r: r["inscrit_le"], reverse=True)
+
+    # Écrire CSV
+    buf = StringIO()
+    if not rows:
+        buf.write("Aucun utilisateur ne correspond à ce segment.\n")
+    else:
+        # BOM UTF-8 pour Excel qui lit bien les accents
+        buf.write("\ufeff")
+        writer = csv.DictWriter(buf, fieldnames=list(rows[0].keys()), delimiter=";")
+        writer.writeheader()
+        writer.writerows(rows)
+
+    csv_text = buf.getvalue()
+    from fastapi.responses import Response
+    return Response(
+        content=csv_text,
+        media_type="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition": (
+                f'attachment; filename="mesurechassis-users-{segment}-'
+                f'{now.strftime("%Y%m%d")}.csv"'
+            ),
+        },
+    )
