@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Guide MesureChâssis — 5 pièges à éviter</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color: #1c1c1e;
+    background: #fff;
+    font-size: 11.5pt;
+    line-height: 1.5;
+  }
+
+  /* ═════ COUVERTURE ═════ */
+  .cover {
+    height: 297mm;
+    padding: 30mm 22mm;
+    background: linear-gradient(160deg, #001B44 0%, #003580 60%, #005BA6 100%);
+    color: #fff;
+    page-break-after: always;
+    display: flex; flex-direction: column; justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: ""; position: absolute; right: -80mm; top: -60mm;
+    width: 180mm; height: 180mm; border-radius: 50%;
+    background: rgba(0,200,83,0.15);
+  }
+  .cover::after {
+    content: ""; position: absolute; left: -50mm; bottom: -50mm;
+    width: 140mm; height: 140mm; border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  .cover-logo { font-size: 14pt; font-weight: 700; letter-spacing: 2px; position: relative; z-index: 2; }
+  .cover-eyebrow {
+    font-size: 10.5pt; text-transform: uppercase; letter-spacing: 3px;
+    color: #00C853; font-weight: 700; margin-bottom: 8mm; position: relative; z-index: 2;
+  }
+  .cover-title {
+    font-size: 38pt; line-height: 1.05; font-weight: 800;
+    margin: 0 0 6mm; position: relative; z-index: 2;
+  }
+  .cover-title em { color: #00C853; font-style: normal; }
+  .cover-subtitle {
+    font-size: 14pt; line-height: 1.4; font-weight: 400;
+    color: rgba(255,255,255,0.85); max-width: 130mm; margin: 0 0 20mm;
+    position: relative; z-index: 2;
+  }
+  .cover-meta {
+    display: flex; gap: 14mm; position: relative; z-index: 2;
+    font-size: 10pt; color: rgba(255,255,255,0.7);
+  }
+  .cover-meta strong { display: block; color: #fff; font-size: 22pt; font-weight: 700; margin-bottom: 1mm; }
+  .cover-footer {
+    font-size: 9.5pt; color: rgba(255,255,255,0.6);
+    border-top: 1px solid rgba(255,255,255,0.15); padding-top: 5mm;
+    position: relative; z-index: 2;
+  }
+
+  /* ═════ PAGE INTRO ═════ */
+  .intro {
+    padding: 25mm 22mm;
+    page-break-after: always;
+  }
+  .intro h1 {
+    font-size: 24pt; font-weight: 800; margin: 0 0 6mm;
+    color: #003580;
+  }
+  .intro .lead {
+    font-size: 13pt; color: #3a3a3c; line-height: 1.55; margin-bottom: 8mm;
+  }
+  .intro .signature {
+    background: #F5F7FA; padding: 8mm; border-left: 4px solid #00C853;
+    border-radius: 4px; margin-top: 10mm;
+    font-size: 10.5pt; color: #3a3a3c; line-height: 1.6;
+  }
+  .intro .signature strong { color: #003580; }
+
+  /* ═════ PIÈGES ═════ */
+  .piege {
+    padding: 20mm 22mm 15mm;
+    page-break-after: always;
+    position: relative;
+  }
+  .piege-header {
+    display: flex; align-items: center; gap: 8mm;
+    border-bottom: 3px solid #003580; padding-bottom: 6mm; margin-bottom: 8mm;
+  }
+  .piege-num {
+    font-size: 44pt; font-weight: 900; color: #003580;
+    line-height: 1; letter-spacing: -2px;
+    background: linear-gradient(135deg, #003580, #00C853);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .piege-header h2 {
+    font-size: 22pt; font-weight: 700; margin: 0; line-height: 1.15;
+    color: #1c1c1e; flex: 1;
+  }
+  .hook {
+    background: #FFF3CD; border-left: 4px solid #F5A623;
+    padding: 5mm 7mm; border-radius: 4px;
+    font-size: 12pt; font-weight: 600; color: #7A5C00;
+    margin-bottom: 8mm;
+  }
+  .block { margin-bottom: 6mm; }
+  .block h3 {
+    font-size: 12pt; font-weight: 700; margin: 0 0 3mm;
+    color: #003580; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .block p { margin: 0; font-size: 11pt; line-height: 1.55; color: #2c2c2e; }
+  .block-red {
+    background: #FDF2F2; padding: 5mm 7mm; border-radius: 4px;
+    border-left: 4px solid #D0021B;
+  }
+  .block-red h3 { color: #A00013; }
+  .block-green {
+    background: #F0FBF3; padding: 5mm 7mm; border-radius: 4px;
+    border-left: 4px solid #00C853;
+  }
+  .block-green h3 { color: #008C3A; }
+  .gain {
+    margin-top: 8mm; padding: 5mm 7mm;
+    background: #003580; color: #fff; border-radius: 4px;
+    font-size: 11pt; font-weight: 600; text-align: center;
+  }
+
+  /* ═════ CTA FINAL ═════ */
+  .cta {
+    height: 297mm;
+    padding: 30mm 22mm;
+    background: linear-gradient(160deg, #F5F7FA 0%, #E8EEF5 100%);
+    display: flex; flex-direction: column; justify-content: center;
+    text-align: center;
+  }
+  .cta h1 {
+    font-size: 28pt; font-weight: 800; color: #003580;
+    margin: 0 0 6mm; line-height: 1.15;
+  }
+  .cta .cta-sub {
+    font-size: 14pt; color: #3a3a3c; max-width: 140mm; margin: 0 auto 12mm;
+    line-height: 1.5;
+  }
+  .cta-features {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 6mm; margin: 8mm auto 12mm; max-width: 140mm; text-align: left;
+  }
+  .cta-feature {
+    background: #fff; padding: 6mm; border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    font-size: 10.5pt; color: #2c2c2e;
+  }
+  .cta-feature strong { color: #003580; display: block; margin-bottom: 2mm; font-size: 11.5pt; }
+  .cta-btn {
+    display: inline-block; background: #00C853; color: #001B44;
+    padding: 6mm 14mm; border-radius: 100mm; font-size: 14pt;
+    font-weight: 700; text-decoration: none; margin: 4mm 0;
+    box-shadow: 0 4px 14px rgba(0,200,83,0.35);
+  }
+  .cta-url { font-size: 12pt; color: #003580; font-weight: 600; margin-top: 4mm; }
+  .cta-signature {
+    margin-top: 20mm; font-size: 10pt; color: #6c6c70;
+    border-top: 1px solid #d0d5dd; padding-top: 6mm;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═════ COUVERTURE ═════ -->
+<section class="cover">
+  <div class="cover-logo">MESURECHÂSSIS · Le guide terrain</div>
+  <div>
+    <div class="cover-eyebrow">Guide gratuit · Édition 2026</div>
+    <h1 class="cover-title">Les 5 pièges<br>qui te font perdre<br><em>2h par chantier</em>.</h1>
+    <p class="cover-subtitle">
+      Rédigé par un menuisier belge, testé sur 400+ chantiers.
+      Chaque erreur coûte entre 400 € et 1 500 € — et se règle en 5 minutes.
+    </p>
+    <div class="cover-meta">
+      <div><strong>5</strong>pièges concrets</div>
+      <div><strong>15 min</strong>de lecture</div>
+      <div><strong>400+</strong>chantiers testés</div>
+    </div>
+  </div>
+  <div class="cover-footer">
+    © 2026 MesureChâssis · Bruxelles, Belgique · mesurechassis.com
+  </div>
+</section>
+
+<!-- ═════ INTRO ═════ -->
+<section class="intro">
+  <h1>Salut, moi c'est Michel.</h1>
+  <p class="lead">
+    Je suis menuisier depuis 15 ans en Belgique. Sur les 400 derniers chantiers
+    que j'ai suivis (chez moi ou chez des confrères), j'ai identifié <strong>5 erreurs
+    qui reviennent CONSTAMMENT</strong> à la prise de mesures.
+  </p>
+  <p class="lead">
+    Ces 5 pièges coûtent en moyenne <strong>1 200 € par chantier raté</strong>
+    (matière + main-d'œuvre + retour client). Le pire ? Elles sont TOUTES évitables
+    en changeant 2-3 réflexes.
+  </p>
+  <p class="lead">
+    Ce guide, c'est ce que j'aurais aimé lire quand j'ai commencé. Pas de blabla,
+    pas de vente déguisée : 5 pièges, 5 histoires vraies, 5 solutions qui marchent.
+  </p>
+  <div class="signature">
+    <strong>Comment lire ce guide :</strong><br>
+    Chaque piège fait 1 page. Tu peux tout lire en 15 min, ou piocher juste
+    ceux qui te parlent. À la fin, il y a une page bonus si tu veux automatiser
+    tout ça — mais tu peux aussi t'en servir sans app.<br><br>
+    <strong>Bonne lecture,<br>Michel — Fondateur MesureChâssis</strong>
+  </div>
+</section>
+
+
+<section class="piege">
+  <div class="piege-header">
+    <div class="piege-num">01</div>
+    <h2>Mesurer avec le mètre ruban qui traîne</h2>
+  </div>
+  <div class="hook">⚠️ Un ruban tordu de 3 mm sur 2m40 → 7 mm d'écart. Rappel : le seuil de rebut usine, c'est ± 2 mm.</div>
+
+  <div class="block">
+    <h3>🧱 L'histoire vraie</h3>
+    <p>Vincent, menuisier à Charleroi, m'a raconté qu'il a dû refaire 3 châssis sur un chantier de 12 unités. Coût pour lui : 1 400 € de matière + 8h de main-d'œuvre. Cause ? Le ruban qui avait pris un choc dans la camionnette 15 jours plus tôt.</p>
+  </div>
+
+  <div class="block block-red">
+    <h3>❌ L'erreur classique</h3>
+    <p>Utiliser le même ruban pendant 5 ans sans jamais le calibrer, et faire confiance à la marque "pro" tamponnée dessus.</p>
+  </div>
+
+  <div class="block block-green">
+    <h3>✅ La solution qui marche</h3>
+    <p>Un mètre laser à moins de 60 € (Bosch GLM 20, Stanley TLM99) te donne du ± 1,5 mm sur 20 m. Tu le fais tomber : tu le rachètes, point. Tu ne prends plus le risque de refaire un châssis à 400 €.</p>
+  </div>
+
+  <div class="gain">💰 Gain estimé · + 30 minutes par prise de cotes · Zéro reprise chantier</div>
+</section>
+
+<section class="piege">
+  <div class="piege-header">
+    <div class="piege-num">02</div>
+    <h2>Prendre une seule mesure par côté</h2>
+  </div>
+  <div class="hook">⚠️ Un tableau de maçonnerie n'est JAMAIS un rectangle parfait. Écart moyen : 8 mm entre haut et bas.</div>
+
+  <div class="block">
+    <h3>🧱 L'histoire vraie</h3>
+    <p>Sur un chantier à Uccle en 2024, j'ai mesuré une baie coulissante de 3m20. Larg. haut : 3202. Larg. bas : 3187. Larg. milieu : 3194. Si je commandais la larg. moyenne (3194), le vitrage passait en haut mais forçait en bas. J'ai commandé 3184 (mini - 3 mm de jeu). Pose nickel.</p>
+  </div>
+
+  <div class="block block-red">
+    <h3>❌ L'erreur classique</h3>
+    <p>"Je prends au milieu, c'est bon" — sur un tableau vieux de 40 ans en Belgique, tu vas payer cette phrase 700 €.</p>
+  </div>
+
+  <div class="block block-green">
+    <h3>✅ La solution qui marche</h3>
+    <p>TOUJOURS 3 mesures en largeur (haut / milieu / bas) et 3 en hauteur (gauche / milieu / droite). Tu commandes la valeur mini + jeu de pose.</p>
+  </div>
+
+  <div class="gain">💰 Gain estimé · 0 % de retour chantier · + 15 % de marge sur devis</div>
+</section>
+
+<section class="piege">
+  <div class="piege-header">
+    <div class="piege-num">03</div>
+    <h2>Griffonner les cotes sur un bout de plâtre</h2>
+  </div>
+  <div class="hook">⚠️ Les traits au crayon partent au premier coup de chiffon. Ton chantier est perdu.</div>
+
+  <div class="block">
+    <h3>🧱 L'histoire vraie</h3>
+    <p>Un stagiaire chez un confrère bruxellois a noté 24 cotes au crayon sur la porte d'entrée en démontage. Le lendemain, l'équipe démolition avait passé le mur au karcher. 3 jours de retour au chantier pour tout remesurer.</p>
+  </div>
+
+  <div class="block block-red">
+    <h3>❌ L'erreur classique</h3>
+    <p>Bloc-notes papier qui se mouille + crayon qui s'efface + photos dans la galerie qu'on retrouve jamais.</p>
+  </div>
+
+  <div class="block block-green">
+    <h3>✅ La solution qui marche</h3>
+    <p>Une app mobile dédiée (MesureChâssis, mais pas que) qui :<br>1. Sauvegarde en cloud instantanément<br>2. Associe chaque cote à un plan visuel<br>3. Génère un PDF client PRO en 30 secondes<br>4. Garde l'historique de TOUS tes chantiers</p>
+  </div>
+
+  <div class="gain">💰 Gain estimé · + 2h par jour · Zéro perte d'info · Client bluffé</div>
+</section>
+
+<section class="piege">
+  <div class="piege-header">
+    <div class="piege-num">04</div>
+    <h2>Oublier le sens d'ouverture au moment de commander</h2>
+  </div>
+  <div class="hook">⚠️ OG / OD / OF / OT. Une lettre inversée = châssis à refaire.</div>
+
+  <div class="block">
+    <h3>🧱 L'histoire vraie</h3>
+    <p>Un menuisier de Liège a commandé 8 fenêtres OD (ouverture droite) au lieu de 5 OG + 3 OD. Le fournisseur a refait la totalité sous garantie... mais 6 semaines de retard sur le chantier. Le client a exigé une remise de 12 %.</p>
+  </div>
+
+  <div class="block block-red">
+    <h3>❌ L'erreur classique</h3>
+    <p>Reporter les sens d'ouverture DE MÉMOIRE le soir devant la commande, sans photo ni schéma sur place.</p>
+  </div>
+
+  <div class="block block-green">
+    <h3>✅ La solution qui marche</h3>
+    <p>Sur chaque prise de cotes, TOUJOURS :<br>1. Photo de la fenêtre existante (ouverte + fermée)<br>2. Croquis avec flèches (OG = charnières gauche vues de l'intérieur)<br>3. Note du sens de vue (intérieur ou extérieur)<br><br>Une app avec pictos automatiques (OG/OD/OF/OT visuels) élimine 100 % du risque.</p>
+  </div>
+
+  <div class="gain">💰 Gain estimé · 0 commande erronée · 0 remise commerciale forcée</div>
+</section>
+
+<section class="piege">
+  <div class="piege-header">
+    <div class="piege-num">05</div>
+    <h2>Ne pas noter la nature du mur</h2>
+  </div>
+  <div class="hook">⚠️ Brique creuse, béton, ossature bois, hourdis... Chaque support change TA fixation, ton étanchéité, ton devis.</div>
+
+  <div class="block">
+    <h3>🧱 L'histoire vraie</h3>
+    <p>Antoine, artisan à Namur, a devisé 12 châssis "pose classique" à 380 €/unité. Sur place le jour de la pose : ossature bois isolée avec bardage extérieur. Il a fallu ajouter un précadre alu (+ 90 €/châssis + 1 jour main-d'œuvre). Il a mangé la différence sur son devis fixe.</p>
+  </div>
+
+  <div class="block block-red">
+    <h3>❌ L'erreur classique</h3>
+    <p>Deviser depuis les cotes seules, sans questionner (ou noter) la nature du support.</p>
+  </div>
+
+  <div class="block block-green">
+    <h3>✅ La solution qui marche</h3>
+    <p>Sur chaque prise de mesures, note :<br>1. Nature du mur (brique / béton / ossature / hourdis)<br>2. Épaisseur totale de la maçonnerie<br>3. Présence d'un isolant extérieur (crépi / bardage / ETICS)<br>4. Photo de l'appui/battée existante<br><br>Ces 4 infos remontent AUTOMATIQUEMENT dans le devis correct.</p>
+  </div>
+
+  <div class="gain">💰 Gain estimé · + 15-20 % de marge protégée · Devis solides</div>
+</section>
+
+
+<!-- ═════ CTA FINAL ═════ -->
+<section class="cta">
+  <h1>Envie d'automatiser<br>ces 5 checks ?</h1>
+  <p class="cta-sub">
+    L'app MesureChâssis intègre toutes ces vérifications DIRECTEMENT dans le
+    formulaire de prise de mesures. 12 formes de châssis (rectangle, trapèze,
+    cintré, arc surbaissé…), sens d'ouverture visuels, PDF client généré en 30 s.
+  </p>
+  <div class="cta-features">
+    <div class="cta-feature">
+      <strong>📐 12 formes de châssis</strong>
+      Rectangle, cintré, trapèze, arc surbaissé, œil-de-bœuf… Tout est prévu.
+    </div>
+    <div class="cta-feature">
+      <strong>📸 Photos + croquis</strong>
+      Chaque cote reliée à une photo. Zéro info perdue.
+    </div>
+    <div class="cta-feature">
+      <strong>📄 PDF client PRO</strong>
+      Devis + prise de cotes en 30 s. Ton logo, tes couleurs.
+    </div>
+    <div class="cta-feature">
+      <strong>☁️ Cloud sécurisé</strong>
+      Sauvegarde automatique. Retrouve un chantier de 2023 en 2 clics.
+    </div>
+  </div>
+  <a href="https://www.mesurechassis.com" class="cta-btn">
+    Tester gratuitement 30 jours →
+  </a>
+  <div class="cta-url">mesurechassis.com</div>
+  <p class="cta-signature">
+    Aucune CB demandée · Aucun engagement · Support en français<br>
+    Michel · Fondateur — michel@mesurechassis.com
+  </p>
+</section>
+
+</body>
+</html>

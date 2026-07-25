@@ -44,6 +44,7 @@ from routes import validation as validation_routes
 from routes import config as config_routes
 from routes import account_deletion as account_deletion_routes
 from routes import newsletter as newsletter_routes
+from routes import newsletter_sequence as newsletter_sequence_routes
 from seed import seed_data, ensure_apple_review_user
 
 
@@ -145,6 +146,7 @@ api.include_router(account_deletion_routes.router)
 
 # 📚 Juin 2026 — Capture email landing page (guide gratuit "5 pièges")
 api.include_router(newsletter_routes.router)
+api.include_router(newsletter_sequence_routes.router)
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -251,6 +253,24 @@ async def download_landing_www():
         path,
         media_type="application/zip",
         filename=os.path.basename(path),
+    )
+
+
+# 📚 Juin 2026 — Guide gratuit PDF (lead magnet capture email)
+@api.get("/downloads/guide-5-pieges.pdf")
+async def download_guide_5_pieges():
+    """
+    PDF public du guide "5 pièges qui te font perdre 2h par chantier".
+    URL utilisée dans les emails Resend envoyés aux inscrits newsletter.
+    """
+    path = "/app/backend/public_downloads/guide-5-pieges.pdf"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Guide introuvable")
+    return FileResponse(
+        path,
+        media_type="application/pdf",
+        filename="mesurechassis-guide-5-pieges.pdf",
+        headers={"Cache-Control": "public, max-age=3600"},
     )
 
 

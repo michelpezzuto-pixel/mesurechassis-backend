@@ -60,7 +60,7 @@ class NewsletterSubscribeOut(BaseModel):
 # ─────────────────────────────────────────────────────────────────
 GUIDE_PDF_URL = os.getenv(
     "GUIDE_PDF_URL",
-    "https://www.mesurechassis.com/guide-5-pieges.pdf",
+    "https://capable-gratitude-production-db51.up.railway.app/api/downloads/guide-5-pieges.pdf",
 )
 
 
