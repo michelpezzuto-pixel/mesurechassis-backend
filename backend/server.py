@@ -277,6 +277,20 @@ async def download_guide_5_pieges():
     )
 
 
+# 🎬 Juillet 2026 — Scénario tournage TikTok (interne, kit Michel)
+@api.get("/downloads/scenario-tournage-tiktok.pdf")
+async def download_scenario_tiktok():
+    """PDF interne : 5 scripts 'Vrai ou Faux' + checklist tournage."""
+    path = "/app/backend/public_downloads/scenario-tournage-tiktok.pdf"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Scénario introuvable")
+    return FileResponse(
+        path,
+        media_type="application/pdf",
+        filename="MesureChassis-scenario-tournage-tiktok.pdf",
+    )
+
+
 # 🎬 Juillet 2026 — Composant Web animation marketing Vidéo 1 (format 9:16)
 @api.get("/marketing/video1", response_class=HTMLResponse)
 async def marketing_video1_view():
