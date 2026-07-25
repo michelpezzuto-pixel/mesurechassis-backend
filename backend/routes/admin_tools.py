@@ -748,3 +748,339 @@ async def admin_map_backfill(
         f"ville détectée via IP.</p>"
     )
     return HTMLResponse(_html_page(title="BACKFILL OK", body_html=body))
+
+
+# ══════════════════════════════════════════════════════════════════════
+# 📊 Juin 2026 — Dashboard "Traction réelle" (owner-only)
+#
+# Distingue les vrais utilisateurs actifs des inscrits fantômes.
+# KPIs affichés :
+#   - Total inscrits & vrais menuisiers (non-techniques)
+#   - Actifs 7j / 30j (basé sur last_login_at)
+#   - Ont créé ≥ 1 chantier / ≥ 5 ouvertures mesurées
+#   - Emails suspects (domaines jetables)
+#   - Répartition par pays
+#   - 20 derniers inscrits avec activité
+# ══════════════════════════════════════════════════════════════════════
+
+_DISPOSABLE_EMAIL_DOMAINS = {
+    "yopmail.com", "yopmail.fr", "mailinator.com", "guerrillamail.com",
+    "guerrillamail.net", "guerrillamail.info", "guerrillamail.biz",
+    "10minutemail.com", "10minutemail.net", "tempmail.com", "temp-mail.org",
+    "throwawaymail.com", "getnada.com", "sharklasers.com", "trashmail.com",
+    "trashmail.io", "maildrop.cc", "mohmal.com", "dispostable.com",
+    "mytemp.email", "moakt.com", "emailondeck.com", "fakeinbox.com",
+    "spam4.me", "burnermail.io",
+}
+
+
+def _is_suspicious_email(email: str) -> bool:
+    if not email or "@" not in email:
+        return True
+    domain = email.rsplit("@", 1)[-1].lower().strip()
+    return domain in _DISPOSABLE_EMAIL_DOMAINS
+
+
+async def _compute_traction_stats() -> dict:
+    """Calcule les KPIs de traction réelle depuis la base."""
+    from datetime import datetime, timezone, timedelta
+
+    now = datetime.now(timezone.utc)
+    d7 = now - timedelta(days=7)
+    d30 = now - timedelta(days=30)
+
+    total = 0
+    real = 0
+    technical = 0
+    active_7d = 0
+    active_30d = 0
+    suspicious = 0
+    with_chantier = 0
+    with_5_ouvertures = 0
+    by_country: dict[str, int] = {}
+    signup_dates_7d = 0
+    signup_dates_30d = 0
+    latest_signups: list[dict] = []
+
+    cursor = db.users.find(
+        {},
+        {
+            "id": 1,
+            "email": 1,
+            "name": 1,
+            "role": 1,
+            "created_at": 1,
+            "last_login_at": 1,
+            "signup_geo": 1,
+            "company_id": 1,
+            "google_linked": 1,
+            "status": 1,
+        },
+    )
+
+    async for u in cursor:
+        total += 1
+        email = (u.get("email") or "").lower().strip()
+        is_tech = _is_technical_account(email)
+        if is_tech:
+            technical += 1
+            continue
+        real += 1
+
+        # Activité
+        ll = u.get("last_login_at")
+        if isinstance(ll, datetime):
+            if ll.tzinfo is None:
+                ll = ll.replace(tzinfo=timezone.utc)
+            if ll >= d7:
+                active_7d += 1
+            if ll >= d30:
+                active_30d += 1
+
+        # Ancienneté du signup
+        ca = u.get("created_at")
+        if isinstance(ca, datetime):
+            if ca.tzinfo is None:
+                ca = ca.replace(tzinfo=timezone.utc)
+            if ca >= d7:
+                signup_dates_7d += 1
+            if ca >= d30:
+                signup_dates_30d += 1
+            latest_signups.append({
+                "email": email,
+                "name": u.get("name") or "",
+                "created_at": ca,
+                "last_login_at": ll if isinstance(ll, datetime) else None,
+                "company_id": u.get("company_id"),
+                "google_linked": bool(u.get("google_linked")),
+                "status": u.get("status") or "active",
+                "signup_geo": u.get("signup_geo") or {},
+            })
+
+        # Emails suspects
+        if _is_suspicious_email(email):
+            suspicious += 1
+
+        # Répartition par pays
+        geo = u.get("signup_geo") or {}
+        country = (geo.get("country") or "(inconnu)").strip() or "(inconnu)"
+        by_country[country] = by_country.get(country, 0) + 1
+
+        # Compter chantiers/ouvertures pour ce user
+        company_id = u.get("company_id")
+        if company_id:
+            n_chantiers = await db.chantiers.count_documents(
+                {"company_id": company_id}, limit=1
+            )
+            if n_chantiers > 0:
+                with_chantier += 1
+
+    # Pour compter ceux qui ont ≥5 ouvertures, on remonte via chantiers → ouvertures
+    # Aggregation par company_id
+    pipeline = [
+        {"$unwind": "$ouvertures"},
+        {"$group": {"_id": "$company_id", "n": {"$sum": 1}}},
+        {"$match": {"n": {"$gte": 5}}},
+    ]
+    companies_with_5plus = 0
+    async for _doc in db.chantiers.aggregate(pipeline):
+        companies_with_5plus += 1
+
+    # Tri des 20 derniers signups
+    latest_signups.sort(key=lambda x: x["created_at"], reverse=True)
+    latest_signups = latest_signups[:20]
+
+    return {
+        "total": total,
+        "real": real,
+        "technical": technical,
+        "signups_7d": signup_dates_7d,
+        "signups_30d": signup_dates_30d,
+        "active_7d": active_7d,
+        "active_30d": active_30d,
+        "with_chantier": with_chantier,
+        "companies_with_5plus_openings": companies_with_5plus,
+        "suspicious_emails": suspicious,
+        "by_country": by_country,
+        "latest_signups": latest_signups,
+    }
+
+
+@router.get("/admin/traction", response_class=HTMLResponse)
+async def admin_traction_dashboard(
+    token: str = Query(..., description="PLATFORM_ADMIN_TOKEN ou JWT scope admin_map"),
+):
+    """Dashboard HTML de traction réelle — accès via lien JWT court-vécu."""
+    _check_token(token)
+    stats = await _compute_traction_stats()
+
+    # % actifs sur vrais menuisiers
+    real = stats["real"] or 1
+    pct_active_7d = round(stats["active_7d"] / real * 100, 1)
+    pct_active_30d = round(stats["active_30d"] / real * 100, 1)
+    pct_with_chantier = round(stats["with_chantier"] / real * 100, 1)
+
+    # Verdict global honnête
+    if pct_active_30d < 5:
+        verdict = "🔴 Traction faible — la majorité des inscrits n'a jamais réutilisé l'app"
+        verdict_color = "#dc2626"
+    elif pct_active_30d < 20:
+        verdict = "🟡 Traction moyenne — beaucoup d'inscrits fantômes, mais un noyau existe"
+        verdict_color = "#d97706"
+    elif pct_active_30d < 50:
+        verdict = "🟢 Bonne traction — engagement solide chez tes vrais utilisateurs"
+        verdict_color = "#16a34a"
+    else:
+        verdict = "🚀 Excellente traction — tu as une vraie base fidèle"
+        verdict_color = "#059669"
+
+    # Pays
+    country_rows = "".join(
+        f"<tr><td>{c}</td><td style='text-align:right'>{n}</td></tr>"
+        for c, n in sorted(stats["by_country"].items(), key=lambda x: -x[1])[:10]
+    )
+
+    # 20 derniers inscrits
+    from datetime import datetime, timezone
+
+    def _fmt_dt(dt):
+        if not dt:
+            return "<i style='color:#666'>jamais</i>"
+        if isinstance(dt, str):
+            return dt[:10]
+        return dt.strftime("%d/%m/%Y %H:%M")
+
+    def _row_bg(u):
+        # rouge = suspect ; gris = jamais reconnecté ; blanc = OK
+        if _is_suspicious_email(u["email"]):
+            return "background:#fee2e2"
+        if not u.get("last_login_at"):
+            return "background:#f3f4f6;color:#666"
+        return ""
+
+    latest_rows = "".join(
+        f"<tr style='{_row_bg(u)}'>"
+        f"<td>{_fmt_dt(u['created_at'])}</td>"
+        f"<td>{u['email']}</td>"
+        f"<td>{u.get('name') or '<i style=color:#999>—</i>'}</td>"
+        f"<td>{_fmt_dt(u.get('last_login_at'))}</td>"
+        f"<td>{'🔵 Google' if u.get('google_linked') else '📧 Email'}</td>"
+        f"<td>{(u.get('signup_geo') or {}).get('country') or '<i>?</i>'}</td>"
+        f"</tr>"
+        for u in stats["latest_signups"]
+    )
+
+    body = f"""
+    <style>
+      .verdict {{ text-align: center; }}
+      .kpi-grid {{
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+        margin: 12px 0 24px;
+      }}
+      .kpi {{
+        background: #262626;
+        border-radius: 12px;
+        padding: 14px 12px;
+        text-align: center;
+      }}
+      .kpi .v {{ font-size: 30px; font-weight: 900; color: #22c55e; line-height: 1.1; }}
+      .kpi .l {{ font-size: 11px; color: #a3a3a3; margin-top: 6px; letter-spacing: 0.4px; text-transform: uppercase; }}
+      .kpi .l small {{ display: block; color: #737373; text-transform: none; font-size: 11px; margin-top: 3px; }}
+      table {{
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        background: #1a1a1a;
+        border-radius: 10px;
+        overflow: hidden;
+        font-size: 12.5px;
+      }}
+      thead th {{
+        background: #262626;
+        color: #d4d4d4;
+        text-align: left;
+        padding: 10px 10px;
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+      }}
+      tbody td {{
+        padding: 8px 10px;
+        border-top: 1px solid #262626;
+        color: #e5e5e5;
+      }}
+      tbody tr:hover td {{ background: #262626; }}
+    </style>
+
+    <div class='verdict' style='background:{verdict_color};color:white;padding:16px;border-radius:12px;font-size:15px;font-weight:600;margin-bottom:24px'>
+        {verdict}
+    </div>
+
+    <h2>📊 KPIs Traction Réelle</h2>
+    <div class='kpi-grid'>
+      <div class='kpi'><div class='v'>{stats['real']}</div><div class='l'>VRAIS MENUISIERS<br><small>(hors techniques)</small></div></div>
+      <div class='kpi'><div class='v' style='color:#22c55e'>{stats['active_7d']}</div><div class='l'>ACTIFS 7j<br><small>{pct_active_7d}%</small></div></div>
+      <div class='kpi'><div class='v' style='color:#0891b2'>{stats['active_30d']}</div><div class='l'>ACTIFS 30j<br><small>{pct_active_30d}%</small></div></div>
+      <div class='kpi'><div class='v' style='color:#f97316'>{stats['with_chantier']}</div><div class='l'>ONT CRÉÉ ≥ 1 CHANTIER<br><small>{pct_with_chantier}%</small></div></div>
+      <div class='kpi'><div class='v' style='color:#a855f7'>{stats['companies_with_5plus_openings']}</div><div class='l'>ENTREPRISES ≥ 5 OUVERTURES<br><small>vrais utilisateurs</small></div></div>
+      <div class='kpi'><div class='v' style='color:#ef4444'>{stats['suspicious_emails']}</div><div class='l'>EMAILS SUSPECTS<br><small>(domaines jetables)</small></div></div>
+    </div>
+
+    <h2>📈 Croissance récente</h2>
+    <div class='kpi-grid'>
+      <div class='kpi'><div class='v'>{stats['signups_7d']}</div><div class='l'>INSCRIPTIONS 7 derniers jours</div></div>
+      <div class='kpi'><div class='v'>{stats['signups_30d']}</div><div class='l'>INSCRIPTIONS 30 derniers jours</div></div>
+      <div class='kpi'><div class='v' style='color:#94a3b8'>{stats['technical']}</div><div class='l'>COMPTES TECHNIQUES<br><small>(Michel, tests, internes)</small></div></div>
+    </div>
+
+    <h2>🌍 Répartition par pays (top 10)</h2>
+    <table>
+      <thead><tr><th>Pays</th><th style='text-align:right'>Nb inscrits</th></tr></thead>
+      <tbody>{country_rows}</tbody>
+    </table>
+
+    <h2>🕐 20 derniers inscrits</h2>
+    <p style='color:#666;font-size:13px'>
+      🔴 fond rouge = email suspect (domaine jetable) &nbsp;·&nbsp;
+      ⚪ fond gris = jamais reconnecté depuis inscription
+    </p>
+    <table>
+      <thead><tr>
+        <th>Inscription</th><th>Email</th><th>Nom</th>
+        <th>Dernière connexion</th><th>Type</th><th>Pays</th>
+      </tr></thead>
+      <tbody>{latest_rows}</tbody>
+    </table>
+
+    <p style='margin-top:32px;color:#666;font-size:13px;line-height:1.6'>
+      💡 <b>Comment interpréter</b> : le vrai KPI de traction est le taux <b>ACTIFS 30j</b>
+      sur vrais menuisiers. Un ratio &lt; 15% signifie que la majorité de tes inscrits
+      testent l'app une fois et disparaissent. Un ratio &gt; 30% indique un vrai
+      product-market fit qui se construit.
+    </p>
+    """
+
+    return HTMLResponse(_html_page(title="📊 TRACTION RÉELLE", body_html=body))
+
+
+@router.post("/admin/traction/access-link")
+async def admin_traction_access_link(
+    request: Request,
+    user: dict = Depends(require_platform_owner),
+):
+    """Génère un lien signé pour ouvrir le dashboard traction dans un navigateur."""
+    short_jwt = _generate_map_jwt()  # même scope admin_map suffit
+    env_base = os.getenv("MAP_PUBLIC_BASE_URL", "").strip().rstrip("/")
+    if env_base:
+        base = env_base
+    else:
+        scheme = request.headers.get("x-forwarded-proto") or request.url.scheme
+        host = request.headers.get("x-forwarded-host") or request.url.netloc
+        base = f"{scheme}://{host}"
+    return {
+        "url": f"{base}/api/admin/traction?token={short_jwt}",
+        "expires_in_seconds": _MAP_JWT_TTL_MIN * 60,
+    }

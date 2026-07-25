@@ -175,6 +175,30 @@ export default function Dashboard() {
     }
   };
 
+  // 📊 Juin 2026 — Dashboard traction réelle (owner-only)
+  // Affiche vrais menuisiers actifs vs inscrits fantômes, emails suspects, etc.
+  const openAdminTraction = async () => {
+    try {
+      const res = await api.post<{ url: string }>(
+        "/admin/traction/access-link",
+      );
+      const url = res.data?.url;
+      if (!url) throw new Error("URL absente");
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        // eslint-disable-next-line no-alert
+        alert(`Colle ce lien dans ton navigateur (valide 15 min) :\n\n${url}`);
+      }
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.detail || err?.message || "Erreur inconnue";
+      // eslint-disable-next-line no-alert
+      alert(`Impossible d'ouvrir la traction : ${msg}`);
+    }
+  };
+
   // ☕ Priorité 4 — Bouton « Mes cafés » visible UNIQUEMENT si le compte est
   // issu d'un QR code de station partenaire (fetch silencieux au montage).
   const [hasCafeStation, setHasCafeStation] = useState(false);
@@ -567,6 +591,19 @@ export default function Dashboard() {
           >
             <Ionicons name="map-outline" size={18} color={colors.primary} />
             <Text style={styles.actionBtnText} numberOfLines={1}>Carte</Text>
+          </TouchableOpacity>
+        )}
+        {/* 📊 Juin 2026 — Dashboard traction réelle (owner only).
+            Vrais menuisiers actifs, emails suspects, croissance. */}
+        {isPlatformOwner && (
+          <TouchableOpacity
+            testID="admin-traction-button"
+            onPress={openAdminTraction}
+            style={styles.actionBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="pulse-outline" size={18} color={colors.primary} />
+            <Text style={styles.actionBtnText} numberOfLines={1}>Traction</Text>
           </TouchableOpacity>
         )}
         {/* Campagne emailing prospection — 🔐 outil interne, visible
