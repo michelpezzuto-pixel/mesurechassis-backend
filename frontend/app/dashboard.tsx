@@ -1402,15 +1402,20 @@ const styles = StyleSheet.create({
   },
   actionsBarWrap: {
     flexGrow: 0,
+    // 🆕 Juin 2026 — Fix web mobile : sans minHeight explicite, la ScrollView
+    // horizontale se ratatine à ~10px sur Safari mobile web (RN Web bug).
+    // Sur iOS natif, le contenu impose la hauteur automatiquement.
+    minHeight: 58,
     borderBottomWidth: 1,
     borderBottomColor: colors.borderSubtle,
   },
   actionsBar: {
     flexDirection: "row",
-    alignItems: "stretch",
+    alignItems: "center",
     gap: 6,
     paddingHorizontal: 16,
     paddingBottom: 10,
+    paddingTop: 4,
   },
   actionBtn: {
     flexDirection: "row",
