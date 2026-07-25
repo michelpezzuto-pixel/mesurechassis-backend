@@ -59,7 +59,7 @@
   .pill.excel .badge { background: #217346; }
   .pill.json .badge  { background: #F5A623; color: #1c1c1e; }
 
-  /* Highlights — Virtua & Adou */
+  /* Highlights — Odoo & Vertuoza (logiciels devis pro) */
   .pill.pro {
     grid-column: 1 / -1;
     background: linear-gradient(90deg, rgba(255,106,0,0.15), rgba(255,106,0,0.05));
@@ -69,9 +69,10 @@
     padding: 38px 44px;
   }
   .pill.pro .badge {
-    background: #FF6A00;
     width: 100px; height: 100px;
     font-size: 34px;
+    padding: 0;
+    overflow: hidden;
   }
   .pill.pro .tag {
     margin-left: auto;
@@ -84,8 +85,45 @@
     text-transform: uppercase;
     letter-spacing: 1px;
   }
-  .pill.virtua { animation: bounce-in 700ms cubic-bezier(.15,1.4,.4,1) 2400ms forwards; }
-  .pill.adou   { animation: bounce-in 700ms cubic-bezier(.15,1.4,.4,1) 3000ms forwards; }
+
+  /* Logo Odoo — carré violet aubergine avec "odoo" en blanc */
+  .badge.odoo-logo {
+    background: linear-gradient(135deg, #A03A6E, #714B67);
+    color: #fff;
+    font-weight: 900;
+    font-size: 30px;
+    letter-spacing: -1px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  /* Logo Vertuoza — carré bleu marine avec motif + "V" */
+  .badge.vertuoza-logo {
+    background: #14133E;
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .badge.vertuoza-logo::before {
+    content: "";
+    position: absolute; top: 24px; left: 22px; right: 22px;
+    height: 4px;
+    background: #fff;
+    border-radius: 2px;
+    box-shadow:
+      0 8px 0 -1px rgba(255,255,255,0.85),
+      0 16px 0 -2px rgba(255,255,255,0.65);
+    transform: skewX(-8deg);
+  }
+  .badge.vertuoza-logo::after {
+    content: "V";
+    position: absolute; bottom: 8px; right: 0; left: 0;
+    text-align: center;
+    font-size: 34px; font-weight: 900; color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .pill.odoo     { animation: bounce-in 700ms cubic-bezier(.15,1.4,.4,1) 2400ms forwards; }
+  .pill.vertuoza { animation: bounce-in 700ms cubic-bezier(.15,1.4,.4,1) 3000ms forwards; }
 
   .footer {
     margin-top: 60px;
@@ -134,14 +172,14 @@
       <span>JSON</span>
     </div>
 
-    <div class="pill pro virtua">
-      <div class="badge">V</div>
-      <span>Virtua</span>
+    <div class="pill pro odoo">
+      <div class="badge odoo-logo">odoo</div>
+      <span>Odoo</span>
       <span class="tag">Devis</span>
     </div>
-    <div class="pill pro adou">
-      <div class="badge">A</div>
-      <span>Adou</span>
+    <div class="pill pro vertuoza">
+      <div class="badge vertuoza-logo"></div>
+      <span>Vertuoza</span>
       <span class="tag">Devis</span>
     </div>
   </div>
