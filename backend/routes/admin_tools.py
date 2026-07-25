@@ -556,6 +556,7 @@ async def admin_map_html(
 <div class="app">
   <header>
     <h1>🗺️ Carte des menuisiers <span>MesureChâssis</span></h1>
+    <a id="tractionLink" href="#" style="background:#22c55e;color:#0a0a0a;padding:9px 16px;border-radius:999px;font-size:12px;font-weight:800;text-decoration:none;white-space:nowrap">📊 VOIR LA TRACTION</a>
     <div class="filters" id="filters">
       <button data-days="0" class="active">Tous</button>
       <button data-days="7">7 jours</button>
@@ -586,6 +587,12 @@ async def admin_map_html(
   var TOKEN = new URLSearchParams(location.search).get("token");
   var API_BASE = "/api/admin/map/data";
   var state = { days: 0, only_active: false, exclude_owner: false };
+
+  // 📊 Lien direct vers dashboard traction (réutilise le même token JWT)
+  var tractionLink = document.getElementById("tractionLink");
+  if (tractionLink && TOKEN) {
+    tractionLink.href = "/api/admin/traction?token=" + encodeURIComponent(TOKEN);
+  }
 
   // Carte centrée sur la Belgique
   var map = L.map("map", { zoomControl: true }).setView([50.5, 4.5], 7);
