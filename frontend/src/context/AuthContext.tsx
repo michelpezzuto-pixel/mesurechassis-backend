@@ -26,6 +26,13 @@ export type User = {
    * /auth/google/session (jamais stockée en DB).
    */
   vat_completion_required?: boolean;
+  /**
+   * 🆕 v1.1.5 (juillet 2026) — True si le compte a été créé avant
+   * l'activation du verrou TVA (15 juillet 2026). Utilisé par
+   * CompleteVatScreen pour afficher un message adouci ("nouvelle
+   * exigence Apple") plutôt que le texte d'onboarding brut.
+   */
+  vat_grandfathered?: boolean;
 };
 
 export type CompanyProfile = {
@@ -433,6 +440,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             usage payant ne peut être fait sans TVA (Apple 3.1.3(c)). */
         <CompleteVatScreen
           defaultCompanyName={company?.name || user.name}
+          grandfathered={!!user.vat_grandfathered}
           onLogout={signOut}
           onCompleted={async () => {
             // Rafraîchit /auth/me → le flag doit repasser à undefined,

@@ -896,6 +896,23 @@ async def me(user=Depends(auth_user)):
         if user_needs_vat_completion(user, company):
             data = pub.model_dump()
             data["vat_completion_required"] = True
+            # 🆕 v1.1.5 — Détecte les comptes créés AVANT l'activation
+            # du verrou TVA (cutoff = 15 juillet 2026). Pour eux, le
+            # frontend affiche un message adouci ("nouvelle exigence
+            # Apple") au lieu du texte brut d'onboarding.
+            try:
+                from datetime import datetime as _dt
+                _VAT_LOCK_CUTOFF = _dt.fromisoformat("2026-07-15T00:00:00+00:00")
+                created_at = user.get("created_at")
+                if isinstance(created_at, str):
+                    try:
+                        created_at = _dt.fromisoformat(created_at.replace("Z", "+00:00"))
+                    except Exception:
+                        created_at = None
+                if created_at and created_at < _VAT_LOCK_CUTOFF:
+                    data["vat_grandfathered"] = True
+            except Exception:
+                pass
             return UserPublic(**data)
     except Exception:
         pass  # silencieux : ne jamais casser /auth/me pour un flag optionnel

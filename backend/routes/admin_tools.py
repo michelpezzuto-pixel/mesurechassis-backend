@@ -1153,6 +1153,28 @@ async def admin_traction_access_link(
     }
 
 
+# 📣 v1.1.5 — Lien signé pour le Marketing Dashboard (newsletter + broadcasts)
+@router.post("/admin/marketing/access-link")
+async def admin_marketing_access_link(
+    request: Request,
+    user: dict = Depends(require_platform_owner),
+):
+    """Génère un lien signé pour ouvrir le Marketing Dashboard dans un navigateur.
+    Réutilise le scope `admin_map` (le check accepte les deux scopes)."""
+    short_jwt = _generate_map_jwt()
+    env_base = os.getenv("MAP_PUBLIC_BASE_URL", "").strip().rstrip("/")
+    if env_base:
+        base = env_base
+    else:
+        scheme = request.headers.get("x-forwarded-proto") or request.url.scheme
+        host = request.headers.get("x-forwarded-host") or request.url.netloc
+        base = f"{scheme}://{host}"
+    return {
+        "url": f"{base}/api/admin/newsletter/dashboard?token={short_jwt}",
+        "expires_in_seconds": _MAP_JWT_TTL_MIN * 60,
+    }
+
+
 
 # ══════════════════════════════════════════════════════════════════════
 # 📥 Export CSV des utilisateurs (owner-only, JWT admin_map)

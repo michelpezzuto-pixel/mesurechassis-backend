@@ -287,14 +287,26 @@ SEQUENCE: list[tuple[int, int, Callable]] = [
 
 
 # ─────────────────────────────────────────────────────────────────
-# Auth admin (même mécanisme que admin_tools.py)
+# Auth admin (compatible token statique OU short JWT admin_map)
 # ─────────────────────────────────────────────────────────────────
 def _check_admin_token(token: str) -> None:
+    """Autorise soit PLATFORM_ADMIN_TOKEN long-vécu, soit un short JWT
+    (scope admin_map) signé avec ce token — même mécanisme que
+    admin_tools._check_token."""
     expected = os.getenv("PLATFORM_ADMIN_TOKEN", "").strip()
     if not expected:
         raise HTTPException(500, "PLATFORM_ADMIN_TOKEN non configuré")
-    if token != expected:
-        raise HTTPException(401, "Token admin invalide")
+    if token == expected:
+        return
+    try:
+        import jwt as _jwt
+        claims = _jwt.decode(token, expected, algorithms=["HS256"], leeway=10)
+        # Accepte les scopes admin_map (partagé avec Map & Traction)
+        if claims.get("scope") in ("admin_map", "admin_marketing"):
+            return
+    except Exception:
+        pass
+    raise HTTPException(401, "Token admin invalide")
 
 
 # ─────────────────────────────────────────────────────────────────
@@ -442,3 +454,227 @@ async def sequence_stats(
             "4": "J30 envoyé (offre 30j)",
         },
     }
+
+
+
+# ─────────────────────────────────────────────────────────────────
+# 🎨 Marketing Dashboard HTML — hub centralisé
+# Accessible depuis l'admin panel de l'app mobile (bouton "Marketing")
+# ─────────────────────────────────────────────────────────────────
+@router.get("/dashboard", include_in_schema=False)
+async def marketing_dashboard(
+    token: str = Query(..., description="short JWT admin_marketing ou PLATFORM_ADMIN_TOKEN"),
+):
+    """Dashboard HTML unifié : Newsletter + Broadcasts."""
+    _check_admin_token(token)
+    coll = db["newsletter_subscribers"]
+
+    # Stats newsletter
+    total = await coll.count_documents({})
+    unsubscribed = await coll.count_documents({"unsubscribed": True})
+    active = total - unsubscribed
+    steps = {}
+    for step in range(5):
+        c = await coll.count_documents({
+            "sequence_step": step,
+            "unsubscribed": {"$ne": True},
+        })
+        steps[step] = c
+
+    # Stats broadcast (users réels — même filtre que /admin/users/notify-*)
+    try:
+        from routes.admin_tools import _is_technical_account
+    except Exception:
+        def _is_technical_account(email: str) -> bool:  # fallback
+            el = (email or "").lower()
+            return (
+                not el or "@example.com" in el
+                or el.startswith("pytest_") or el.startswith("test_")
+            )
+    real_users = 0
+    async for u in db.users.find({}, {"email": 1}):
+        if not _is_technical_account(u.get("email", "")):
+            real_users += 1
+
+    flag_counts: dict[str, int] = {}
+    async for doc in db.users.find({"broadcast_flags": {"$exists": True}}, {"broadcast_flags": 1}):
+        flags = doc.get("broadcast_flags", {}) or {}
+        for k, v in flags.items():
+            if v is True:
+                flag_counts[k] = flag_counts.get(k, 0) + 1
+
+    flag_rows = "".join(
+        f'<tr><td>{k}</td><td style="text-align:right;font-weight:600">{v}</td></tr>'
+        for k, v in sorted(flag_counts.items())
+    ) or '<tr><td colspan="2" style="color:#8e8e93;text-align:center;padding:16px">Aucun broadcast envoyé pour le moment</td></tr>'
+
+    from fastapi.responses import HTMLResponse
+    html = f"""<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MesureChâssis · Marketing Dashboard</title>
+<style>
+  * {{ box-sizing:border-box; }}
+  body {{
+    margin:0; padding:16px; background:#0b0b0d; color:#f5f5f7;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    font-size:14.5px; line-height:1.5;
+  }}
+  h1 {{ font-size:22px; margin:0 0 4px; }}
+  .sub {{ color:#8e8e93; margin:0 0 20px; font-size:12.5px; }}
+  .card {{ background:#1c1c1e; border-radius:14px; padding:16px; margin-bottom:14px; }}
+  .card h2 {{ font-size:14px; margin:0 0 12px; color:#00C853; text-transform:uppercase; letter-spacing:1px; }}
+  .stat-row {{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }}
+  .stat {{ background:#2c2c2e; padding:12px; border-radius:10px; text-align:center; }}
+  .stat .num {{ font-size:22px; font-weight:800; color:#fff; }}
+  .stat .lbl {{ font-size:10.5px; color:#8e8e93; text-transform:uppercase; margin-top:2px; }}
+  .btn {{
+    display:inline-block; background:#00C853; color:#001B44;
+    padding:10px 16px; border-radius:8px; font-weight:700;
+    font-size:13px; text-decoration:none; margin:4px 4px 4px 0; border:none; cursor:pointer;
+  }}
+  .btn-outline {{ background:transparent; border:1px solid #48484a; color:#f5f5f7; }}
+  .btn-danger {{ background:#FF453A; color:#fff; }}
+  input, textarea {{
+    background:#2c2c2e; border:1px solid #48484a; color:#f5f5f7;
+    padding:10px 12px; border-radius:8px; font-size:14px;
+    width:100%; margin-bottom:8px; font-family:inherit;
+  }}
+  label {{ font-size:12px; color:#8e8e93; display:block; margin-bottom:4px; }}
+  table {{ width:100%; border-collapse:collapse; font-size:12.5px; }}
+  table td {{ padding:6px 0; border-bottom:1px solid #2c2c2e; }}
+  #log {{ background:#000; padding:10px; border-radius:8px; font-family:'SF Mono',Monaco,monospace;
+          font-size:11px; color:#00C853; max-height:200px; overflow-y:auto; white-space:pre-wrap; margin-top:10px; }}
+  .steps {{ display:flex; gap:6px; flex-wrap:wrap; }}
+  .step-pill {{ background:#2c2c2e; padding:6px 10px; border-radius:100px; font-size:11.5px; color:#8e8e93; }}
+  .step-pill strong {{ color:#fff; }}
+</style>
+</head><body>
+
+<h1>📣 Marketing Dashboard</h1>
+<p class="sub">Newsletter · Broadcasts email · Tests</p>
+
+<!-- 📚 NEWSLETTER -->
+<div class="card">
+  <h2>📚 Newsletter (guide gratuit)</h2>
+  <div class="stat-row">
+    <div class="stat"><div class="num">{total}</div><div class="lbl">Total</div></div>
+    <div class="stat"><div class="num" style="color:#00C853">{active}</div><div class="lbl">Actifs</div></div>
+    <div class="stat"><div class="num" style="color:#FF453A">{unsubscribed}</div><div class="lbl">Désinscrits</div></div>
+  </div>
+  <p style="margin:14px 0 6px;font-size:12px;color:#8e8e93;">Progression séquence :</p>
+  <div class="steps">
+    <div class="step-pill"><strong>{steps[0]}</strong> Welcome (J0)</div>
+    <div class="step-pill"><strong>{steps[1]}</strong> J3 trapèze</div>
+    <div class="step-pill"><strong>{steps[2]}</strong> J7 Sambre</div>
+    <div class="step-pill"><strong>{steps[3]}</strong> J14 TVA</div>
+    <div class="step-pill"><strong>{steps[4]}</strong> J30 offre</div>
+  </div>
+  <div style="margin-top:16px">
+    <button class="btn btn-outline" onclick="runSeq(true)">🧪 Dry-run</button>
+    <button class="btn" onclick="runSeq(false)">▶️ Envoyer maintenant</button>
+    <a class="btn btn-outline" target="_blank" href="/api/admin/newsletter/preview/3?token={token}">👀 J3</a>
+    <a class="btn btn-outline" target="_blank" href="/api/admin/newsletter/preview/7?token={token}">👀 J7</a>
+    <a class="btn btn-outline" target="_blank" href="/api/admin/newsletter/preview/14?token={token}">👀 J14</a>
+    <a class="btn btn-outline" target="_blank" href="/api/admin/newsletter/preview/30?token={token}">👀 J30</a>
+  </div>
+</div>
+
+<!-- 🚀 BROADCAST NOUVELLE VERSION -->
+<div class="card">
+  <h2>🚀 Broadcast — Nouvelle version app</h2>
+  <p style="font-size:12.5px;color:#8e8e93;margin:0 0 12px">
+    Envoie un email à tous les users réels ({real_users} au total).
+    Idempotent : chaque user ne reçoit qu'une fois par version.
+  </p>
+  <label>Version</label>
+  <input id="ver" value="1.0.35" placeholder="1.0.35">
+  <label>Nouveautés (une par ligne, max 5)</label>
+  <textarea id="hi" rows="4" placeholder="Correction de bugs&#10;Amélioration exports PDF&#10;Formulaire TVA plus rapide"></textarea>
+  <button class="btn btn-outline" onclick="notifyVer(true)">🧪 Dry-run</button>
+  <button class="btn" onclick="notifyVer(false)">▶️ Envoyer</button>
+  <a class="btn btn-outline" target="_blank" href="#" id="previewVer">👀 Preview</a>
+  <script>
+    document.getElementById('ver').addEventListener('input', updPreview);
+    document.getElementById('hi').addEventListener('input', updPreview);
+    function updPreview() {{
+      const v = document.getElementById('ver').value;
+      const h = document.getElementById('hi').value.split('\\n').filter(x=>x.trim()).join('|');
+      document.getElementById('previewVer').href =
+        '/api/admin/users/broadcast-preview/new-version?token={token}&version=' +
+        encodeURIComponent(v) + '&highlights=' + encodeURIComponent(h);
+    }}
+    updPreview();
+  </script>
+</div>
+
+<!-- 🍎 BROADCAST TVA -->
+<div class="card">
+  <h2>🍎 Broadcast — Exigence TVA (users grandfathered)</h2>
+  <p style="font-size:12.5px;color:#8e8e93;margin:0 0 12px">
+    Notifie UNIQUEMENT les Google/Apple users créés avant le 15 juillet 2026
+    et dont la company n'a pas encore de vat_number/business_id.
+    Idempotent (flag : notified_vat_lock_2026_07).
+  </p>
+  <button class="btn btn-outline" onclick="notifyVat(true)">🧪 Dry-run (aperçu cibles)</button>
+  <button class="btn" onclick="notifyVat(false)">▶️ Envoyer</button>
+  <a class="btn btn-outline" target="_blank" href="/api/admin/users/broadcast-preview/vat-requirement?token={token}">👀 Preview</a>
+</div>
+
+<!-- 📊 HISTORIQUE BROADCASTS -->
+<div class="card">
+  <h2>📊 Broadcasts envoyés</h2>
+  <table>{flag_rows}</table>
+</div>
+
+<div id="log">Prêt.</div>
+
+<script>
+const TOKEN = '{token}';
+function log(s) {{
+  const el = document.getElementById('log');
+  el.textContent += '\\n' + new Date().toISOString().substring(11,19) + ' — ' + s;
+  el.scrollTop = el.scrollHeight;
+}}
+async function runSeq(dry) {{
+  log((dry?'DRY-RUN':'ENVOI') + ' séquence newsletter…');
+  try {{
+    const r = await fetch(`/api/admin/newsletter/run-sequence?token=${{TOKEN}}&dry_run=${{dry}}`, {{method:'POST'}});
+    const j = await r.json();
+    log(JSON.stringify(j, null, 2));
+  }} catch (e) {{ log('❌ ' + e.message); }}
+}}
+async function notifyVer(dry) {{
+  const v = document.getElementById('ver').value.trim();
+  const hi = document.getElementById('hi').value.split('\\n').map(x=>x.trim()).filter(Boolean);
+  if (!v) return alert('Version obligatoire.');
+  if (!dry && !confirm('Envoi RÉEL à ' + {real_users} + ' users pour la v' + v + '. Confirmer ?')) return;
+  log((dry?'DRY-RUN':'ENVOI') + ' broadcast v' + v + '…');
+  try {{
+    const r = await fetch(`/api/admin/users/notify-new-version?token=${{TOKEN}}`, {{
+      method:'POST',
+      headers:{{'Content-Type':'application/json'}},
+      body: JSON.stringify({{latest_version:v, highlights:hi, dry_run:dry}}),
+    }});
+    const j = await r.json();
+    log(JSON.stringify(j, null, 2));
+  }} catch (e) {{ log('❌ ' + e.message); }}
+}}
+async function notifyVat(dry) {{
+  if (!dry && !confirm('Envoi RÉEL du mail TVA aux Google users grandfathered. Confirmer ?')) return;
+  log((dry?'DRY-RUN':'ENVOI') + ' broadcast TVA…');
+  try {{
+    const r = await fetch(`/api/admin/users/notify-vat-requirement?token=${{TOKEN}}`, {{
+      method:'POST',
+      headers:{{'Content-Type':'application/json'}},
+      body: JSON.stringify({{dry_run:dry}}),
+    }});
+    const j = await r.json();
+    log(JSON.stringify(j, null, 2));
+  }} catch (e) {{ log('❌ ' + e.message); }}
+}}
+</script>
+
+</body></html>"""
+    return HTMLResponse(html)

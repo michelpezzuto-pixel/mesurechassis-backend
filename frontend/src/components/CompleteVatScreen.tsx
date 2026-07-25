@@ -40,6 +40,11 @@ type Props = {
   defaultCompanyName?: string;
   onCompleted: () => Promise<void> | void;
   onLogout?: () => void;
+  /** 🆕 v1.1.5 — Compte créé avant l'activation du verrou TVA (15 juillet 2026).
+   *  Affiche un message adouci ("nouvelle exigence Apple") au lieu du texte
+   *  d'onboarding brut. Ne change PAS la logique de validation, uniquement
+   *  le copywriting. */
+  grandfathered?: boolean;
 };
 
 type VatStatus = {
@@ -69,6 +74,7 @@ export default function CompleteVatScreen({
   defaultCompanyName,
   onCompleted,
   onLogout,
+  grandfathered = false,
 }: Props) {
   const [idMode, setIdMode] = useState<IdMode>("vat");
   const [showFallback, setShowFallback] = useState(false);
@@ -194,19 +200,36 @@ export default function CompleteVatScreen({
             />
           </View>
 
-          <Text style={styles.title}>Une dernière étape</Text>
+          <Text style={styles.title}>
+            {grandfathered ? "Nouvelle exigence Apple 🍎" : "Une dernière étape"}
+          </Text>
           <Text style={styles.subtitle}>
-            MesureChâssis est un service réservé aux professionnels
-            de la menuiserie
+            {grandfathered
+              ? "Ton compte existe déjà — merci de compléter tes informations pour continuer à utiliser l'app."
+              : "MesureChâssis est un service réservé aux professionnels de la menuiserie"}
           </Text>
 
           <View style={styles.messageBox}>
             <Text style={styles.messageText}>
-              Pour activer votre compte, indiquez votre{" "}
-              <Text style={styles.bold}>identifiant professionnel</Text> et le{" "}
-              <Text style={styles.bold}>nom de votre société</Text>. Ces
-              informations sont obligatoires pour émettre vos factures
-              conformes UE et respecter les règles Apple.
+              {grandfathered ? (
+                <>
+                  Suite à la <Text style={styles.bold}>nouvelle règle Apple 3.1.3(c)</Text>,
+                  les apps B2B doivent vérifier que chaque utilisateur est un
+                  professionnel UE. Ajoute simplement ton{" "}
+                  <Text style={styles.bold}>identifiant pro</Text> (TVA, SIREN, SIRET
+                  ou BCE) et confirme le{" "}
+                  <Text style={styles.bold}>nom de ta société</Text>. Ça prend 30 secondes,
+                  et tu n&apos;auras plus jamais à le refaire. Désolé pour la contrainte 🙏
+                </>
+              ) : (
+                <>
+                  Pour activer votre compte, indiquez votre{" "}
+                  <Text style={styles.bold}>identifiant professionnel</Text> et le{" "}
+                  <Text style={styles.bold}>nom de votre société</Text>. Ces
+                  informations sont obligatoires pour émettre vos factures
+                  conformes UE et respecter les règles Apple.
+                </>
+              )}
             </Text>
           </View>
 

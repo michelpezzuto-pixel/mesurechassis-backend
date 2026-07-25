@@ -45,6 +45,7 @@ from routes import config as config_routes
 from routes import account_deletion as account_deletion_routes
 from routes import newsletter as newsletter_routes
 from routes import newsletter_sequence as newsletter_sequence_routes
+from routes import broadcast as broadcast_routes
 from seed import seed_data, ensure_apple_review_user
 
 
@@ -147,6 +148,8 @@ api.include_router(account_deletion_routes.router)
 # 📚 Juin 2026 — Capture email landing page (guide gratuit "5 pièges")
 api.include_router(newsletter_routes.router)
 api.include_router(newsletter_sequence_routes.router)
+# 📣 v1.1.5 — Broadcasts email admin (nouvelle version app, exigence TVA)
+api.include_router(broadcast_routes.router)
 
 
 # ─────────────────────────────────────────────────────────────────────

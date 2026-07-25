@@ -26,7 +26,7 @@ import { subscribeQueueSize, syncQueue, enqueueChantier, isNetworkError } from "
 import { colors, statusMeta, getStatusLabelI18n, READY_FOR_EXPORT_BADGE } from "@/src/theme";
 import { useResponsive } from "@/src/utils/responsive";
 import FilleulInviteBanner from "@/src/components/FilleulInviteBanner";
-import UpdateAvailableBanner from "@/src/components/UpdateAvailableBanner";
+import UpdateAvailableBanner from "@/src/components/UpdateAvailableBanner"; // eslint-disable-line @typescript-eslint/no-unused-vars -- conservé pour rollback rapide (v1.1.5 : banner désactivé au profit d'un email Resend)
 import ChatHelp from "@/src/components/ChatHelp";
 import AppointmentPicker from "@/src/components/AppointmentPicker";
 import OnboardingCard from "@/src/components/OnboardingCard";
@@ -45,6 +45,7 @@ type Chantier = {
 //   La constante statique a été remplacée par un FILTERS local dans Dashboard.
 
 export default function Dashboard() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- versionCheck utilisé auparavant par la bannière UpdateAvailableBanner (désactivée v1.1.5). Le blocage `forceUpdate` reste géré par ForceUpdateGate au niveau AuthContext.
   const { user, signOut, company, versionCheck } = useAuth();
   const router = useRouter();
   const { t } = useTranslation();
@@ -196,6 +197,30 @@ export default function Dashboard() {
         err?.response?.data?.detail || err?.message || "Erreur inconnue";
       // eslint-disable-next-line no-alert
       alert(`Impossible d'ouvrir la traction : ${msg}`);
+    }
+  };
+
+  // 📣 v1.1.5 (juillet 2026) — Marketing Dashboard (newsletter + broadcasts email)
+  // Ouvre le hub /api/admin/newsletter/dashboard via un short JWT signé.
+  const openAdminMarketing = async () => {
+    try {
+      const res = await api.post<{ url: string }>(
+        "/admin/marketing/access-link",
+      );
+      const url = res.data?.url;
+      if (!url) throw new Error("URL absente");
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        // eslint-disable-next-line no-alert
+        alert(`Colle ce lien dans ton navigateur (valide 15 min) :\n\n${url}`);
+      }
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.detail || err?.message || "Erreur inconnue";
+      // eslint-disable-next-line no-alert
+      alert(`Impossible d'ouvrir le marketing : ${msg}`);
     }
   };
 
@@ -606,6 +631,19 @@ export default function Dashboard() {
             <Text style={styles.actionBtnText} numberOfLines={1}>Traction</Text>
           </TouchableOpacity>
         )}
+        {/* 📣 Juillet 2026 — Marketing Dashboard (newsletter + broadcasts).
+            Ouvre une page HTML unifiée pour piloter les emails Resend. */}
+        {isPlatformOwner && (
+          <TouchableOpacity
+            testID="admin-marketing-button"
+            onPress={openAdminMarketing}
+            style={styles.actionBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="paper-plane-outline" size={18} color={colors.primary} />
+            <Text style={styles.actionBtnText} numberOfLines={1}>Marketing</Text>
+          </TouchableOpacity>
+        )}
         {/* Campagne emailing prospection — 🔐 outil interne, visible
             UNIQUEMENT pour le propriétaire de la plateforme. */}
         {isPlatformOwner && (
@@ -699,17 +737,12 @@ export default function Dashboard() {
       {/* 🆕 Build 9 — Incite le filleul à parrainer (disparaît dès 1er parrainage) */}
       <FilleulInviteBanner />
 
-      {/* 📱 v1.1.3 — Bannière soft "Nouvelle version disponible" (dismissable
-          par version, revient auto au prochain latest_version). */}
-      {versionCheck?.updateAvailable && !versionCheck.forceUpdate && (
-        <UpdateAvailableBanner
-          currentVersion={versionCheck.currentVersion}
-          latestVersion={versionCheck.latestVersion}
-          highlights={versionCheck.highlights}
-          appStoreUrl={versionCheck.appStoreUrl}
-          playStoreUrl={versionCheck.playStoreUrl}
-        />
-      )}
+      {/* 📱 v1.1.5 (juillet 2026) — Bannière soft "Nouvelle version disponible"
+          désactivée sur demande de Michel. Les users sont désormais notifiés
+          par EMAIL Resend via /api/admin/users/notify-new-version. Le blocage
+          dur (force_update) reste actif (voir AuthContext / ForceUpdateGate).
+          Le composant UpdateAvailableBanner est conservé au cas où on veut
+          revenir en arrière (mais n'est plus rendu). */}
 
       <View style={styles.searchWrap}>
         <Ionicons name="search" size={18} color={colors.textSecondary} />

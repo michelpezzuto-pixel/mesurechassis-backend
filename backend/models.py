@@ -23,6 +23,11 @@ class UserPublic(BaseModel):
     # /auth/google/session. Le frontend affiche CompleteVatScreen tant
     # que ce flag vaut True. Compliance Apple 3.1.3(c) + Stripe UE.
     vat_completion_required: Optional[bool] = None
+    # 🆕 v1.1.5 (juillet 2026) — Distingue les comptes existants (créés
+    # avant l'entrée en vigueur du verrou TVA) pour afficher un message
+    # adouci "on est désolé, nouvelle règle Apple" plutôt que le texte
+    # brut. Calculé dynamiquement dans /auth/me à partir de user.created_at.
+    vat_grandfathered: Optional[bool] = None
 
 
 class UserCreate(BaseModel):
