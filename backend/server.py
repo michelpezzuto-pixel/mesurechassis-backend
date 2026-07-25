@@ -305,6 +305,20 @@ async def download_endcard_tiktok():
     )
 
 
+# 🎬 Juillet 2026 — Endcard TikTok ANIMÉE (MP4, texte cascade + CHÂSSIS orange)
+@api.get("/downloads/endcard-tiktok-animated.mp4")
+async def download_endcard_animated():
+    """Endcard animée 1080x1920 · 3.5 s · MP4 · overlay CapCut ready."""
+    path = "/app/backend/public_downloads/endcard-tiktok-animated.mp4"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Vidéo endcard introuvable")
+    return FileResponse(
+        path,
+        media_type="video/mp4",
+        filename="MesureChassis-endcard-animated.mp4",
+    )
+
+
 # 🎬 Juillet 2026 — Composant Web animation marketing Vidéo 1 (format 9:16)
 @api.get("/marketing/video1", response_class=HTMLResponse)
 async def marketing_video1_view():
