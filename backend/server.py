@@ -319,6 +319,23 @@ async def download_endcard_animated():
     )
 
 
+# 🎙️ Juillet 2026 — Échantillons voix OpenAI TTS (pour choix Michel)
+@api.get("/downloads/voice-sample/{voice}")
+async def download_voice_sample(voice: str):
+    """Retourne un échantillon MP3 de voix OpenAI TTS."""
+    allowed = {"onyx", "echo", "fable", "nova", "alloy", "shimmer"}
+    if voice not in allowed:
+        raise HTTPException(status_code=404, detail=f"Voix inconnue. Choix : {allowed}")
+    path = f"/app/backend/public_downloads/voice-samples/sample-{voice}.mp3"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Échantillon introuvable")
+    return FileResponse(
+        path,
+        media_type="audio/mpeg",
+        filename=f"MesureChassis-voice-{voice}.mp3",
+    )
+
+
 # 🎬 Juillet 2026 — Composant Web animation marketing Vidéo 1 (format 9:16)
 @api.get("/marketing/video1", response_class=HTMLResponse)
 async def marketing_video1_view():
