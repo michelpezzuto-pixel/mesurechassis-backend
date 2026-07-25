@@ -319,6 +319,20 @@ async def download_endcard_animated():
     )
 
 
+# 📤 Juillet 2026 — Animation formats d'export (PDF/CSV/Excel/JSON/Virtua/Adou)
+@api.get("/downloads/export-formats-animated.mp4")
+async def download_export_formats():
+    """Overlay 1080x1920 · 5 s · met en avant Virtua & Adou (glow orange)."""
+    path = "/app/backend/public_downloads/export-formats-animated.mp4"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Vidéo formats introuvable")
+    return FileResponse(
+        path,
+        media_type="video/mp4",
+        filename="MesureChassis-export-formats.mp4",
+    )
+
+
 # 🎙️ Juillet 2026 — Échantillons voix OpenAI TTS (pour choix Michel)
 @api.get("/downloads/voice-sample/{voice}")
 async def download_voice_sample(voice: str):
