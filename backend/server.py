@@ -291,6 +291,20 @@ async def download_scenario_tiktok():
     )
 
 
+# 🖼️ Juillet 2026 — Endcard TikTok corrigée (fautes Runway → texte propre)
+@api.get("/downloads/endcard-tiktok.png")
+async def download_endcard_tiktok():
+    """Endcard 1080x1920 avec QR + Apple logo + texte français propre."""
+    path = "/app/backend/public_downloads/endcard-tiktok-1080x1920.png"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Endcard introuvable")
+    return FileResponse(
+        path,
+        media_type="image/png",
+        filename="MesureChassis-endcard-tiktok-1080x1920.png",
+    )
+
+
 # 🎬 Juillet 2026 — Composant Web animation marketing Vidéo 1 (format 9:16)
 @api.get("/marketing/video1", response_class=HTMLResponse)
 async def marketing_video1_view():
