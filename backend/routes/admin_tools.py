@@ -279,6 +279,16 @@ _TECH_EMAIL_DOMAINS = {
     "mesurechassis.be",
     "bruxmove.be",
     "bruxmove.com",
+    # 🆕 Juin 2026 — Domaines utilisés par le testing agent / fixtures pytest.
+    # Ces domaines sont TOUJOURS des faux comptes, jamais de vrais menuisiers.
+    "example.com",
+    "example.org",
+    "example.net",
+    "test.mesurechassis.com",
+    "test.com",
+    "demo.fr",
+    "acmecorp.fr",
+    "acmecorp.com",
 }
 _TECH_EMAIL_HARDCODED = {
     "applereview@mesurechassis.com",
@@ -287,7 +297,20 @@ _TECH_EMAIL_HARDCODED = {
     "michelpezzuto@gmail.com",
     "michelpezzuto@hotmail.com",
     "info@mesurechassis.com",
+    "x@x.com",
 }
+
+# 🆕 Juin 2026 — Patterns "local part" toujours techniques (pytest fixtures).
+# Ex: pytest_XYZ@... / test_acme_1@... / PYTEST_verif_...
+_TECH_LOCAL_PATTERNS = (
+    "pytest_",
+    "pytest-",
+    "test_acme_",
+    "test_other_",
+    "test-user-",
+    "test_user_",
+    "prospection_test_",
+)
 
 
 def _is_technical_account(email: str) -> bool:
@@ -302,9 +325,13 @@ def _is_technical_account(email: str) -> bool:
         return True
     if email_lower in _TECH_EMAIL_HARDCODED:
         return True
-    domain = email_lower.rsplit("@", 1)[-1]
+    local, domain = email_lower.rsplit("@", 1)
     if domain in _TECH_EMAIL_DOMAINS:
         return True
+    # 🆕 Patterns "local part" de fixtures pytest
+    for prefix in _TECH_LOCAL_PATTERNS:
+        if local.startswith(prefix):
+            return True
     return False
 
 
@@ -1088,6 +1115,19 @@ async def admin_traction_dashboard(
       Colonnes fournies : email, nom, entreprise, pays, ville, région, date d'inscription,
       dernière connexion, connecté via Google, a créé un chantier, statut, email suspect.
     </p>
+
+    <h2 style='margin-top:36px'>🧹 Maintenance base</h2>
+    <p style='color:#a3a3a3;font-size:13px'>
+      Purge les comptes techniques (fixtures pytest, @example.com, etc.) qui polluent
+      les statistiques. Michel + comptes internes sont automatiquement exclus.
+      Un aperçu est présenté avant toute suppression.
+    </p>
+    <p style='margin-top:8px'>
+      <a class='btn' href='/api/admin/purge-test-accounts?token={token}'
+         style='background:#f59e0b;text-decoration:none'>
+        🔎 APERÇU des comptes à purger
+      </a>
+    </p>
     """
 
     return HTMLResponse(_html_page(title="📊 TRACTION RÉELLE", body_html=body))
@@ -1235,3 +1275,199 @@ async def admin_traction_export_csv(
             ),
         },
     )
+
+
+# ══════════════════════════════════════════════════════════════════════
+# 🧹 Juin 2026 — Purge des comptes techniques (fixtures pytest polluant la prod)
+#
+# Endpoint owner-only, 2 modes :
+#   1. Preview (par défaut)  → liste ce qui SERAIT supprimé, ne touche à rien
+#   2. Exécution réelle       → paramètre ?confirm=YES_DELETE_222
+#
+# Cascade : users → companies (si vides) → chantiers (via company_id) →
+#           subscriptions → device_tokens → verification_tokens
+# ══════════════════════════════════════════════════════════════════════
+
+
+async def _identify_test_accounts() -> list[dict]:
+    """Retourne la liste des users qui matchent les critères 'compte technique'
+    mais qui ne sont PAS Michel (owner) ni un compte interne intentionnel."""
+    from deps import PLATFORM_OWNER_EMAILS
+
+    matches = []
+    cursor = db.users.find({}, {"id": 1, "email": 1, "name": 1, "company_id": 1, "created_at": 1})
+    async for u in cursor:
+        email = (u.get("email") or "").lower().strip()
+        if not email:
+            continue
+        # Ne JAMAIS supprimer Michel ou les comptes hardcodés intentionnels
+        if email in PLATFORM_OWNER_EMAILS:
+            continue
+        if email in _TECH_EMAIL_HARDCODED:
+            continue
+        # Détection : domaines fixtures OU pattern local pytest_*
+        local, _, domain = email.partition("@")
+        is_test_domain = domain in _TECH_EMAIL_DOMAINS and domain not in (
+            "mesurechassis.fr", "mesurechassis.com", "mesurechassis.be",
+            "bruxmove.be", "bruxmove.com",
+        )
+        is_test_local = any(local.startswith(p) for p in _TECH_LOCAL_PATTERNS)
+        if is_test_domain or is_test_local:
+            matches.append({
+                "id": u.get("id"),
+                "email": email,
+                "name": u.get("name") or "",
+                "company_id": u.get("company_id"),
+                "created_at": u.get("created_at"),
+            })
+    return matches
+
+
+@router.get("/admin/purge-test-accounts", response_class=HTMLResponse)
+async def admin_purge_test_accounts(
+    token: str = Query(..., description="JWT admin_map"),
+    confirm: str = Query(
+        "",
+        description="Laisser vide pour PREVIEW. Mettre 'YES_DELETE_222' pour supprimer réellement.",
+    ),
+):
+    """Purge des comptes @example.com / pytest_* qui polluent la prod."""
+    _check_token(token)
+    accounts = await _identify_test_accounts()
+
+    if not accounts:
+        body = "<h2>✅ Aucun compte technique à purger</h2><p>La base est déjà propre.</p>"
+        return HTMLResponse(_html_page(title="🧹 PURGE TEST ACCOUNTS", body_html=body))
+
+    from collections import Counter
+    domains = Counter()
+    for a in accounts:
+        d = a["email"].split("@", 1)[1] if "@" in a["email"] else "?"
+        domains[d] += 1
+    domain_stats = "".join(
+        f"<tr><td>@{d}</td><td style='text-align:right'><b>{n}</b></td></tr>"
+        for d, n in domains.most_common()
+    )
+    sample_rows = "".join(
+        f"<tr><td>{a['email']}</td>"
+        f"<td>{a.get('name') or '<i style=color:#666>—</i>'}</td>"
+        f"<td>{a.get('company_id') or '<i>—</i>'}</td></tr>"
+        for a in accounts[:30]
+    )
+
+    # ─── MODE PREVIEW ───
+    if confirm != "YES_DELETE_222":
+        body = f"""
+        <style>
+          table {{ width:100%; border-collapse:collapse; margin-top:12px; background:#1a1a1a; border-radius:10px; overflow:hidden; font-size:13px; }}
+          th, td {{ padding:9px 12px; border-top:1px solid #262626; color:#e5e5e5; }}
+          thead th {{ background:#262626; color:#d4d4d4; font-size:11px; text-transform:uppercase; letter-spacing:0.4px; }}
+        </style>
+        <div style='background:#f59e0b;color:#000;padding:14px 18px;border-radius:10px;font-weight:700;margin-bottom:24px'>
+          🔎 MODE APERÇU — Aucune donnée n'a été supprimée.
+        </div>
+
+        <h2>📊 {len(accounts)} comptes techniques identifiés</h2>
+        <table>
+          <thead><tr><th>Domaine</th><th style='text-align:right'>Nb</th></tr></thead>
+          <tbody>{domain_stats}</tbody>
+        </table>
+
+        <h2>🔍 Aperçu (30 premiers)</h2>
+        <table>
+          <thead><tr><th>Email</th><th>Nom</th><th>Company ID</th></tr></thead>
+          <tbody>{sample_rows}</tbody>
+        </table>
+
+        <h2 style='margin-top:32px;color:#ef4444'>⚠️ Confirmation requise</h2>
+        <p style='color:#d4d4d4;font-size:14px;line-height:1.6'>
+          Pour <b>supprimer réellement</b> ces {len(accounts)} comptes ainsi que leurs
+          chantiers, entreprises vides, tokens et souscriptions associés, clique
+          sur le bouton rouge ci-dessous.
+        </p>
+        <p style='margin-top:14px'>
+          <a class='btn' style='background:#ef4444;text-decoration:none'
+             href='?token={token}&confirm=YES_DELETE_222'>
+            🗑️ SUPPRIMER LES {len(accounts)} COMPTES
+          </a>
+        </p>
+        <p style='color:#737373;font-size:12px;margin-top:20px'>
+          🛡️ <b>Sécurité</b> : Michel (owner) et les comptes internes intentionnels
+          (info@, applereview@, admin@, artisan@) sont EXCLUS par sécurité.
+          Un backup JSON complet sera sauvegardé avant toute suppression.
+        </p>
+        """
+        return HTMLResponse(_html_page(title="🧹 PURGE (aperçu)", body_html=body))
+
+    # ─── MODE EXÉCUTION RÉELLE ───
+    from datetime import datetime, timezone
+    import json
+    now = datetime.now(timezone.utc)
+
+    backup_path = f"/app/backend/static/backups/purge_{now.strftime('%Y%m%d_%H%M%S')}.json"
+    os.makedirs(os.path.dirname(backup_path), exist_ok=True)
+
+    users_backup = []
+    company_ids = set()
+    for a in accounts:
+        u = await db.users.find_one({"id": a["id"]})
+        if u:
+            u["_id"] = str(u.get("_id", ""))
+            for k, v in list(u.items()):
+                if isinstance(v, datetime):
+                    u[k] = v.isoformat()
+            users_backup.append(u)
+        if a.get("company_id"):
+            company_ids.add(a["company_id"])
+
+    with open(backup_path, "w", encoding="utf-8") as f:
+        json.dump({"users": users_backup, "purged_at": now.isoformat()}, f, indent=2, default=str)
+
+    user_ids = [a["id"] for a in accounts]
+    emails = [a["email"] for a in accounts]
+
+    n_users = (await db.users.delete_many({"id": {"$in": user_ids}})).deleted_count
+    n_chantiers = (await db.chantiers.delete_many({"company_id": {"$in": list(company_ids)}})).deleted_count
+    n_companies = 0
+    for cid in company_ids:
+        remaining = await db.users.count_documents({"company_id": cid}, limit=1)
+        if remaining == 0:
+            r = await db.companies.delete_one({"id": cid})
+            n_companies += r.deleted_count
+
+    async def safe_delete(coll_name, filter_):
+        try:
+            return (await db[coll_name].delete_many(filter_)).deleted_count
+        except Exception:
+            return 0
+
+    n_tokens = await safe_delete("verification_tokens", {"email": {"$in": emails}})
+    n_devices = await safe_delete("device_tokens", {"user_id": {"$in": user_ids}})
+    n_subs = await safe_delete("subscriptions", {"user_id": {"$in": user_ids}})
+    n_deletion = await safe_delete("account_deletion_requests", {"user_id": {"$in": user_ids}})
+    n_referrals = await safe_delete("referrals", {"referrer_user_id": {"$in": user_ids}})
+
+    body = f"""
+    <div style='background:#22c55e;color:#000;padding:16px;border-radius:10px;font-weight:700;font-size:16px;margin-bottom:24px'>
+      ✅ Purge exécutée avec succès
+    </div>
+
+    <h2>📊 Résultats</h2>
+    <ul style='color:#e5e5e5;line-height:2;font-size:15px'>
+      <li>Users supprimés : <b>{n_users}</b></li>
+      <li>Chantiers supprimés (cascade) : <b>{n_chantiers}</b></li>
+      <li>Companies vides supprimées : <b>{n_companies}</b></li>
+      <li>Verification tokens : <b>{n_tokens}</b></li>
+      <li>Device tokens : <b>{n_devices}</b></li>
+      <li>Subscriptions : <b>{n_subs}</b></li>
+      <li>Deletion requests : <b>{n_deletion}</b></li>
+      <li>Referrals : <b>{n_referrals}</b></li>
+    </ul>
+
+    <p style='color:#a3a3a3;font-size:13px;margin-top:24px'>
+      💾 <b>Backup JSON</b> sauvegardé sur le serveur :
+      <code style='background:#262626;padding:2px 6px;border-radius:3px'>{backup_path}</code>
+    </p>
+    """
+    return HTMLResponse(_html_page(title="🧹 PURGE OK", body_html=body))
+
