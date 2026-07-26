@@ -81,6 +81,23 @@ export function onAuthExpired(cb: () => void) {
   return () => authExpiredListeners.delete(cb);
 }
 
+// 🎯 Juillet 2026 — Freemium limit bus (HTTP 402 avec code=free_limit_reached)
+// Déclenché quand un user gratuit atteint une limite (3 chantiers, 5 ouvertures,
+// 10 questions Yann/mois, 3 imports IA CDC/mois). Affiche un paywall modal
+// contextuel selon le type de limite.
+export type FreeLimitState = {
+  limitType: "chantiers" | "ouvertures" | "yann_question" | "ia_cdc_import" | "export_format";
+  current: number;
+  maximum: number;
+  message: string;
+  upgradeUrl?: string;
+};
+const freeLimitListeners = new Set<(s: FreeLimitState) => void>();
+export function onFreeLimitReached(cb: (s: FreeLimitState) => void) {
+  freeLimitListeners.add(cb);
+  return () => freeLimitListeners.delete(cb);
+}
+
 api.interceptors.response.use(
   // ⚠️ Ne JAMAIS effacer le verrou paywall sur un simple succès : les
   // endpoints non soumis à l'abonnement (auth/me, company/profile, push
@@ -98,6 +115,18 @@ api.interceptors.response.use(
             expired: true,
             status: d.subscription_status,
             expires_at: d.subscription_expires_at,
+          })
+        );
+      }
+      // 🎯 Juillet 2026 — Freemium limit reached (nouveau système Freemium)
+      if (d?.code === "free_limit_reached") {
+        freeLimitListeners.forEach((cb) =>
+          cb({
+            limitType: d.limit_type,
+            current: d.current,
+            maximum: d.maximum,
+            message: d.message,
+            upgradeUrl: d.upgrade_url,
           })
         );
       }

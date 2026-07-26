@@ -10,6 +10,8 @@ import { startQueueAutoSync } from "@/src/services/offlineQueue";
 import "@/src/utils/alertPolyfill";
 // 🆕 V3 — Initialisation i18n (FR/NL/EN) au démarrage de l'app
 import "@/src/i18n";
+// 🎯 Juillet 2026 — Modal paywall Freemium (global, s'affiche via bus d'événements)
+import FreeLimitPaywallModal from "@/src/components/FreeLimitPaywallModal";
 
 export default function RootLayout() {
   useEffect(() => {
@@ -56,6 +58,9 @@ export default function RootLayout() {
             <Stack.Screen name="me" options={{ headerShown: false }} />
             <Stack.Screen name="subscription" options={{ headerShown: false }} />
           </Stack>
+          {/* 🎯 Modal paywall Freemium — s'affiche automatiquement via bus d'événements
+              quand le backend renvoie HTTP 402 avec code=free_limit_reached */}
+          <FreeLimitPaywallModal />
         </AuthProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
