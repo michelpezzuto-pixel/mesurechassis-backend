@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ═══════════════════════════════════════════════════
+     SEO & OPEN GRAPH — Page Démo
+     ═══════════════════════════════════════════════════ -->
+<title>Démo publique – Voir MesureChâssis en action | Application menuisiers pros</title>
+<meta name="description" content="Regardez comment MesureChâssis fait gagner 2 heures par chantier aux menuisiers belges. Démonstration vidéo + captures d'écran. Sans inscription.">
+<meta name="keywords" content="démo MesureChâssis, application menuisier démo, prise de mesures fenêtres démo, cahier des charges IA menuisier">
+<link rel="canonical" href="https://mesurechassis.com/demo.html">
+<meta name="robots" content="index, follow">
+<meta name="language" content="fr-BE">
+
+<!-- OPEN GRAPH -->
+<meta property="og:type"        content="website">
+<meta property="og:url"         content="https://mesurechassis.com/demo.html">
+<meta property="og:title"       content="Démo publique – MesureChâssis en action">
+<meta property="og:description" content="60 secondes pour comprendre comment un menuisier belge gagne 2 heures par chantier avec MesureChâssis.">
+<meta property="og:image"       content="https://mesurechassis.com/og-image.jpg">
+<meta property="og:locale"      content="fr_BE">
+
+<!-- FAVICON + LOGO -->
+<link rel="icon" type="image/png" href="favicon.png">
+
+<!-- FONTS -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --bg: #121214;
+    --bg2: #1a1a1e;
+    --bg3: #222228;
+    --orange: #FF6B35;
+    --orange-dim: rgba(255, 107, 53, 0.12);
+    --orange-glow: rgba(255, 107, 53, 0.25);
+    --green: #4CAF50;
+    --white: #FFFFFF;
+    --gray1: #e8e8e8;
+    --gray2: #a8a8b0;
+    --gray3: #5a5a65;
+    --border: rgba(255,255,255,0.07);
+    --border-orange: rgba(255,107,53,0.3);
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --radius: 12px;
+    --radius-sm: 8px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--gray1);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+}
+
+/* Noise overlay */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+}
+
+/* HERO */
+.demo-hero {
+    position: relative;
+    z-index: 1;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 4.5rem 5% 3rem;
+    text-align: center;
+}
+.demo-hero::before {
+    content: '';
+    position: absolute;
+    inset: -50px 0 0 0;
+    background: radial-gradient(ellipse at center top, var(--orange-dim), transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+}
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: var(--orange-dim);
+    color: var(--orange);
+    border: 1px solid var(--border-orange);
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+}
+h1 {
+    font-family: var(--font-head);
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 1.25rem;
+}
+h1 em { font-style: normal; color: var(--orange); }
+.hero-sub {
+    font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+    color: var(--gray2);
+    max-width: 720px;
+    margin: 0 auto 2rem;
+    line-height: 1.55;
+}
+
+/* VIDEO EMBED */
+.video-wrap {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto 2.5rem;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    box-shadow: 0 40px 90px rgba(0,0,0,0.5), 0 0 60px rgba(255,107,53,0.08);
+    aspect-ratio: 16 / 9;
+}
+.video-wrap iframe,
+.video-wrap video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+/* Placeholder (avant que Michel colle son embed) */
+.video-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    background: linear-gradient(135deg, #1a1a1e, #222228);
+    padding: 2rem;
+    text-align: center;
+}
+.play-badge {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: var(--orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 30px;
+    box-shadow: 0 10px 40px var(--orange-glow);
+    animation: pulseBadge 2s ease-in-out infinite;
+}
+@keyframes pulseBadge {
+    0%,100% { transform: scale(1); box-shadow: 0 10px 40px var(--orange-glow); }
+    50%     { transform: scale(1.06); box-shadow: 0 10px 60px var(--orange-glow); }
+}
+.video-placeholder h3 {
+    font-family: var(--font-head);
+    font-size: 1.4rem;
+    color: #fff;
+    margin: 0;
+}
+.video-placeholder p {
+    font-size: 0.95rem;
+    color: var(--gray2);
+    margin: 0;
+    max-width: 480px;
+}
+
+/* CTA BUTTONS */
+.cta-row {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+}
+.btn-pro {
+    background: var(--orange);
+    color: #fff;
+    padding: 0.95rem 1.6rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 0.98rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 8px 30px rgba(255,107,53,0.25);
+}
+.btn-pro:hover { background: #e85d2a; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,107,53,0.35); }
+.btn-ghost {
+    background: transparent;
+    color: var(--gray1);
+    padding: 0.95rem 1.6rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    font-family: var(--font-body);
+    font-size: 0.98rem;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+.btn-ghost:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-dim); }
+
+/* SECTION FEATURES */
+.features {
+    max-width: 1180px;
+    margin: 5rem auto 0;
+    padding: 0 5%;
+    position: relative;
+    z-index: 1;
+}
+.features-title {
+    font-family: var(--font-head);
+    font-size: clamp(1.6rem, 3vw, 2.3rem);
+    font-weight: 800;
+    color: var(--white);
+    text-align: center;
+    margin: 0 0 0.6rem;
+    letter-spacing: -0.02em;
+}
+.features-title em { font-style: normal; color: var(--orange); }
+.features-lead {
+    text-align: center;
+    color: var(--gray2);
+    max-width: 620px;
+    margin: 0 auto 3.5rem;
+    font-size: 1rem;
+}
+.feature {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 3.5rem;
+    align-items: center;
+    margin-bottom: 4.5rem;
+}
+.feature:nth-child(even) { grid-template-columns: 1fr 1.15fr; }
+.feature:nth-child(even) .feature-img { order: -1; }
+.feature-img {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    overflow: hidden;
+    transition: transform 0.4s ease;
+}
+.feature-img img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    object-fit: cover;
+}
+.feature-img:hover { transform: translateY(-4px); }
+.feature-body h3 {
+    font-family: var(--font-head);
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--white);
+    margin: 0 0 0.7rem;
+    letter-spacing: -0.01em;
+}
+.feature-body h3 em { font-style: normal; color: var(--orange); }
+.feature-body p {
+    color: var(--gray2);
+    font-size: 1rem;
+    line-height: 1.65;
+    margin: 0 0 0.9rem;
+}
+.feature-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: var(--orange-dim);
+    color: var(--orange);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 1rem;
+}
+@media (max-width: 780px) {
+    .feature, .feature:nth-child(even) {
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+        margin-bottom: 3.5rem;
+    }
+    .feature:nth-child(even) .feature-img { order: 0; }
+}
+
+/* SECTION "PAS MENUISIER ?" */
+.non-pro {
+    max-width: 900px;
+    margin: 5rem auto 4rem;
+    padding: 2.5rem 2rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+.non-pro h2 {
+    font-family: var(--font-head);
+    font-size: 1.5rem;
+    color: var(--white);
+    margin: 0 0 0.75rem;
+    font-weight: 700;
+}
+.non-pro p {
+    color: var(--gray2);
+    margin: 0 auto 1.5rem;
+    max-width: 640px;
+    font-size: 0.98rem;
+}
+.non-pro-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    text-align: left;
+    margin-top: 2rem;
+}
+.non-pro-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1.1rem 1.1rem 1rem;
+}
+.non-pro-card strong {
+    color: var(--white);
+    font-family: var(--font-head);
+    font-size: 0.98rem;
+    display: block;
+    margin-bottom: 0.35rem;
+}
+.non-pro-card span {
+    color: var(--gray3);
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+/* FINAL CTA */
+.final-cta {
+    max-width: 900px;
+    margin: 0 auto 5rem;
+    padding: 3rem 2rem;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(255,107,53,0.06), rgba(255,107,53,0.02));
+    border: 1px solid var(--border-orange);
+    border-radius: var(--radius);
+    position: relative;
+    z-index: 1;
+}
+.final-cta h2 {
+    font-family: var(--font-head);
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    color: var(--white);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin: 0 0 0.6rem;
+}
+.final-cta h2 em { font-style: normal; color: var(--orange); }
+.final-cta p {
+    color: var(--gray2);
+    margin: 0 auto 1.8rem;
+    max-width: 560px;
+}
+.small-note {
+    color: var(--gray3);
+    font-size: 0.8rem;
+    margin-top: 1.5rem;
+}
+
+</style>
+<style>body.menu-open .mc-fab{display:none !important}</style></head>
+<body>
+
+<!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
+<header style="position:sticky;top:0;z-index:100;background:rgba(18,18,20,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.07)">
+    <div class="header-inner" style="max-width:1280px;margin:0 auto;padding:.9rem 5%;display:flex;align-items:center;justify-content:space-between;gap:1rem">
+        <a href="index.html" class="logo" style="font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:#fff;text-decoration:none;display:flex;align-items:center;gap:10px;letter-spacing:-.02em">
+            <img src="logo.png" alt="MesureChâssis logo" style="width:32px;height:32px;border-radius:8px;object-fit:cover">
+            Mesure<span style="color:#FF6B35">Châssis</span>
+        </a>
+        <nav class="desktop-nav" style="display:flex;align-items:center;gap:1.5rem">
+            <a href="index.html" style="color:#a8a8b0;font-size:.92rem;font-weight:500;text-decoration:none">Accueil</a>
+            <a href="index.html#tarifs" style="color:#a8a8b0;font-size:.92rem;font-weight:500;text-decoration:none">Tarifs</a>
+            <a href="demo.html" style="color:#FF6B35;font-size:.92rem;font-weight:600;text-decoration:none">Démo</a>
+            <a href="guide.html" style="color:#a8a8b0;font-size:.92rem;font-weight:500;text-decoration:none">Guide</a>
+            <a href="faq.html" style="color:#a8a8b0;font-size:.92rem;font-weight:500;text-decoration:none">FAQ</a>
+            <a href="contact.html" style="color:#a8a8b0;font-size:.92rem;font-weight:500;text-decoration:none">Contact</a>
+            <a href="telecharger.html" style="background:#FF6B35;color:#fff;padding:.6rem 1.1rem;border-radius:8px;font-weight:600;font-size:.92rem;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem">📱 Télécharger l'app</a>
+        </nav>
+        <button class="hamburger" aria-label="Menu" onclick="document.querySelector('.mobile-nav-mc').classList.toggle('open');document.body.classList.toggle('menu-open')" style="display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:4px;padding:6px">
+            <span style="width:22px;height:2px;background:#fff;border-radius:2px"></span>
+            <span style="width:22px;height:2px;background:#fff;border-radius:2px"></span>
+            <span style="width:22px;height:2px;background:#fff;border-radius:2px"></span>
+        </button>
+    </div>
+    <nav class="mobile-nav-mc" aria-label="Navigation mobile" style="display:none;flex-direction:column;gap:1rem;padding:1rem 5% 1.5rem;background:rgba(18,18,20,.98);border-bottom:1px solid rgba(255,255,255,0.07)">
+        <a href="index.html" style="color:#e8e8e8;padding:.5rem 0;font-weight:500;text-decoration:none">Accueil</a>
+        <a href="index.html#tarifs" style="color:#e8e8e8;padding:.5rem 0;font-weight:500;text-decoration:none">Tarifs</a>
+        <a href="demo.html" style="color:#FF6B35;padding:.5rem 0;font-weight:600;text-decoration:none">Démo</a>
+        <a href="guide.html" style="color:#e8e8e8;padding:.5rem 0;font-weight:500;text-decoration:none">Guide</a>
+        <a href="faq.html" style="color:#e8e8e8;padding:.5rem 0;font-weight:500;text-decoration:none">FAQ</a>
+        <a href="contact.html" style="color:#e8e8e8;padding:.5rem 0;font-weight:500;text-decoration:none">Contact</a>
+        <a href="telecharger.html" style="background:#FF6B35;color:#fff;padding:.6rem 1.1rem;border-radius:8px;font-weight:600;font-size:.92rem;text-decoration:none;width:fit-content">📱 Télécharger l'app</a>
+    </nav>
+    <style>
+        .mobile-nav-mc.open{display:flex !important}
+        @media(max-width:880px){.desktop-nav{display:none !important}.hamburger{display:flex !important}}
+    </style>
+</header>
+
+<!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+<section class="demo-hero">
+    <div class="eyebrow">
+        <span>🎬</span> Démo publique - sans inscription
+    </div>
+    <h1>Regardez MesureChâssis <em>en action</em>.</h1>
+    <p class="hero-sub">
+        60 secondes pour comprendre comment un menuisier belge gagne 2 heures par chantier
+        en photographiant simplement son cahier des charges.
+    </p>
+
+    <!-- ═══════ ZONE VIDÉO ═══════
+         👉 Michel : remplacez le bloc `video-placeholder` ci-dessous par votre embed
+                     YouTube / Vimeo / vidéo hébergée. Deux options :
+
+         ── OPTION A : YouTube ──
+         <iframe src="https://www.youtube.com/embed/VOTRE_VIDEO_ID?rel=0"
+                 title="Démo MesureChâssis"
+                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                 allowfullscreen></iframe>
+
+         ── OPTION B : Fichier MP4 hébergé sur le site ──
+         <video controls poster="images/demo-poster.jpg" preload="metadata">
+             <source src="videos/demo-mesurechassis.mp4" type="video/mp4">
+         </video>
+    -->
+    <div class="video-wrap">
+        <div class="video-placeholder">
+            <div class="play-badge">▶</div>
+            <h3>Vidéo de démo</h3>
+            <p>À venir - la vidéo présentera un chantier complet<br>de A à Z, du cahier des charges à l'export du devis.</p>
+        </div>
+    </div>
+
+    <div class="cta-row">
+        <a href="telecharger.html" class="btn-pro">
+            📱 Vous êtes menuisier pro ? Rejoignez les 50 premiers
+        </a>
+        <a href="mailto:info@mesurechassis.com?subject=Suivre%20le%20lancement%20MesureChâssis" class="btn-ghost">
+            ✉️ Sinon, suivez le lancement
+        </a>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════ FEATURES ═══════════════════════════════ -->
+<section class="features">
+    <h2 class="features-title">Ce que vous verrez dans la <em>vidéo</em>.</h2>
+    <p class="features-lead">Un aperçu rapide des 5 fonctions les plus utilisées sur les chantiers belges.</p>
+
+    <!-- 1. Import IA du cahier des charges -->
+    <div class="feature">
+        <div class="feature-body">
+            <div class="feature-tag">01 · IA embarquée</div>
+            <h3>Photographiez le CDC, <em>l'IA fait le reste</em>.</h3>
+            <p>
+                Prenez en photo (ou glissez le PDF) du cahier des charges de votre client.
+                En moins de 45 secondes, MesureChâssis extrait automatiquement chaque fenêtre,
+                chaque porte, chaque baie coulissante avec ses dimensions, sa forme et sa position.
+            </p>
+            <p>
+                Fini le tableur Excel à remplir à la main entre 2 chantiers : validez juste
+                les cotes sur place, l'app a déjà rempli 90% du travail.
+            </p>
+        </div>
+        <div class="feature-img">
+            <img src="images/guide-02-a.jpg" alt="Import du cahier des charges par IA" loading="lazy">
+        </div>
+    </div>
+
+    <!-- 2. Relevé chantier avec Pythagore -->
+    <div class="feature">
+        <div class="feature-body">
+            <div class="feature-tag">02 · Relevé sur chantier</div>
+            <h3>Diagonales <em>vérifiées</em>, erreurs bloquées.</h3>
+            <p>
+                À chaque fenêtre, l'app vous demande les 2 diagonales de la baie maçonnerie.
+                Si elles ne concordent pas mathématiquement (Pythagore), MesureChâssis vous
+                alerte AVANT que vous quittiez le chantier : baie de travers, cote fausse,
+                oubli de mesure…
+            </p>
+            <p>
+                Résultat : plus de retour SAV « le châssis ne rentre pas » qui coûte
+                600 € par chantier en moyenne.
+            </p>
+        </div>
+        <div class="feature-img">
+            <img src="images/Prise-de-cotes-Rectangle.jpg" alt="Vérification des diagonales" loading="lazy">
+        </div>
+    </div>
+
+    <!-- 3. Export multi-formats -->
+    <div class="feature">
+        <div class="feature-body">
+            <div class="feature-tag">03 · Export instantané</div>
+            <h3>Un chantier = un clic = <em>PDF client + Excel devis</em>.</h3>
+            <p>
+                Une fois vos mesures validées, MesureChâssis génère automatiquement :
+            </p>
+            <p style="margin-left:1rem;color:#e8e8e8">
+                • <strong>PDF client</strong> propre avec plan technique, photos et signatures<br>
+                • <strong>Excel devis</strong> avec colonnes prêtes pour votre logiciel de tarification<br>
+                • <strong>CSV / JSON</strong> pour vos machines CNC ou votre ERP (Odoo, Winbiz…)
+            </p>
+            <p>
+                Envoi direct par mail au client depuis le camion, avant même de remonter en voiture.
+            </p>
+        </div>
+        <div class="feature-img">
+            <img src="images/guide-08-a.jpg" alt="Export PDF Excel CSV" loading="lazy">
+        </div>
+    </div>
+
+    <!-- 4. Mode hors-ligne -->
+    <div class="feature">
+        <div class="feature-body">
+            <div class="feature-tag">04 · Mode hors-ligne</div>
+            <h3>Cave sans 4G ? <em>Aucun problème</em>.</h3>
+            <p>
+                MesureChâssis fonctionne 100% hors-ligne : mesures, photos, calculs, exports.
+                Vos données restent en local sur le téléphone et se synchronisent automatiquement
+                dès que vous retrouvez du réseau (au retour au dépôt, dans la voiture, à la maison).
+            </p>
+            <p>
+                Zéro perte de données. Zéro retour sur chantier pour « refaire la mesure ».
+            </p>
+        </div>
+        <div class="feature-img">
+            <img src="images/hero1.jpg" alt="Mode hors-ligne sur chantier" loading="lazy">
+        </div>
+    </div>
+
+    <!-- 5. Jeton café -->
+    <div class="feature">
+        <div class="feature-body">
+            <div class="feature-tag">05 · Bonus terrain</div>
+            <h3>Un chantier terminé = <em>un café offert</em>.</h3>
+            <p>
+                Chaque chantier finalisé dans MesureChâssis vous fait gagner un jeton café,
+                consommable à la pompe partenaire la plus proche (réseau Total-BE et
+                indépendants). C'est notre façon de vous remercier d'utiliser l'app.
+            </p>
+            <p>
+                Un ristouré terrain, pas une carte de fidélité corporate.
+            </p>
+        </div>
+        <div class="feature-img">
+            <img src="images/tableau_de_bord.jpg" alt="Jeton café après chantier" loading="lazy">
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════ "PAS MENUISIER ?" ═══════════════════════════════ -->
+<section class="non-pro">
+    <h2>Vous n'êtes pas menuisier pro ?</h2>
+    <p>
+        MesureChâssis est <strong>strictement réservé aux menuisiers professionnels</strong>
+        (poseurs de châssis, ébénistes, entreprises de menuiserie) avec un numéro de TVA belge
+        ou européen valide. Voici pourquoi et comment vous pouvez quand même nous suivre :
+    </p>
+
+    <div class="non-pro-grid">
+        <div class="non-pro-card">
+            <strong>🧱 Vous êtes particulier</strong>
+            <span>Faites appel à un menuisier de votre région : il utilisera peut-être
+            MesureChâssis pour votre devis 😉</span>
+        </div>
+        <div class="non-pro-card">
+            <strong>🎓 Vous êtes étudiant / formation</strong>
+            <span>Contactez-nous par email : nous avons un accès formation pour les
+            centres et écoles de menuiserie.</span>
+        </div>
+        <div class="non-pro-card">
+            <strong>📰 Vous êtes journaliste / partenaire</strong>
+            <span>Nous vous fournissons volontiers un accès presse et un dossier
+            complet sur simple demande.</span>
+        </div>
+        <div class="non-pro-card">
+            <strong>💡 Vous êtes curieux</strong>
+            <span>Cette page est faite pour vous. Vous pouvez aussi nous suivre sur
+            LinkedIn ou Facebook pour voir l'avancement du projet.</span>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════ FINAL CTA ═══════════════════════════════ -->
+<section class="final-cta">
+    <h2>Vous êtes menuisier pro ? <em>C'est parti.</em></h2>
+    <p>
+        Rejoignez les 50 premiers menuisiers belges qui utilisent MesureChâssis en avant-première.
+        100% gratuit, sans carte bancaire, sans engagement.
+    </p>
+    <div class="cta-row">
+        <a href="telecharger.html" class="btn-pro">
+            📱 Télécharger l'app
+        </a>
+        <a href="index.html#tarifs" class="btn-ghost">
+            💶 Voir les tarifs
+        </a>
+    </div>
+    <p class="small-note">Made in Belgium 🇧🇪 · RGPD compliant · Support 7j/7 en français</p>
+</section>
+
+<!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+<footer style="position:relative;z-index:1;border-top:1px solid rgba(255,255,255,0.07);background:#121214;padding:3rem 5% 1.5rem;margin-top:2rem;font-family:'DM Sans',sans-serif">
+    <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;align-items:start" class="footer-grid-mc">
+        <div>
+            <a href="index.html" style="font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;margin-bottom:.75rem;text-decoration:none">
+                <img src="logo.png" alt="MesureChâssis logo" style="width:30px;height:30px;border-radius:7px;object-fit:cover">
+                Mesure<span style="color:#FF6B35">Châssis</span>
+            </a>
+            <p style="font-size:.88rem;color:#5a5a65;margin-bottom:1rem;line-height:1.6">L'application terrain qui transforme la prise de mesures des menuisiers et poseurs de châssis.</p>
+            <a href="mailto:info@mesurechassis.com" style="color:#e8e8e8;font-size:.9rem;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem">✉️ info@mesurechassis.com</a>
+            <div style="display:flex;gap:.6rem;margin-top:1rem" class="social-mc">
+                <a href="https://www.facebook.com/share/1Feu4NEyDx/" target="_blank" rel="noopener" aria-label="Page Facebook MesureChâssis" title="Suivez-nous sur Facebook" style="width:38px;height:38px;border-radius:10px;background:#1877F2;display:inline-flex;align-items:center;justify-content:center;text-decoration:none"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047v-2.66c0-3.025 1.792-4.697 4.533-4.697 1.313 0 2.686.236 2.686.236v2.971H15.83c-1.491 0-1.956.93-1.956 1.886v2.264h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg></a>
+                <a href="https://www.linkedin.com/in/michel-pezzuto-aa4797235" target="_blank" rel="noopener" aria-label="LinkedIn Michel Pezzuto" title="Suivez-nous sur LinkedIn" style="width:38px;height:38px;border-radius:10px;background:#0A66C2;display:inline-flex;align-items:center;justify-content:center;text-decoration:none"><svg width="19" height="19" viewBox="0 0 24 24" fill="#fff"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM7.119 20.452H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg></a>
+            </div>
+        </div>
+        <div>
+            <h4 style="font-family:'Syne',sans-serif;font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:#FF6B35;margin:0 0 1rem;font-weight:700">Produit</h4>
+            <a href="index.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Accueil</a>
+            <a href="index.html#tarifs" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Tarifs</a>
+            <a href="demo.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Démo</a>
+            <a href="telecharger.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Télécharger</a>
+            <a href="beta.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Bêta gratuite</a>
+            <a href="a-propos.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">À propos</a>
+        </div>
+        <div>
+            <h4 style="font-family:'Syne',sans-serif;font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:#FF6B35;margin:0 0 1rem;font-weight:700">Ressources</h4>
+            <a href="guide.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Guide d'utilisation</a>
+            <a href="faq.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">FAQ</a>
+            <a href="contact.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Support / Contact</a>
+        </div>
+        <div>
+            <h4 style="font-family:'Syne',sans-serif;font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:#FF6B35;margin:0 0 1rem;font-weight:700">Légal</h4>
+            <a href="mentions-legales.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Mentions légales</a>
+            <a href="cgu.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">CGU</a>
+            <a href="cgv.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">CGV</a>
+            <a href="confidentialite.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Confidentialité (RGPD)</a>
+            <a href="cookies.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Politique cookies</a>
+        </div>
+    </div>
+    <div style="max-width:1280px;margin:2.5rem auto 0;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.07);display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;font-size:.8rem;color:#5a5a65">
+        <div>© 2026 MesureChâssis. Tous droits réservés. Fait avec ❤️ en Belgique.</div>
+        <div>v1.0 · <a href="contact.html" style="color:#5a5a65;text-decoration:none">Signaler un problème</a></div>
+    </div>
+    <style>@media(max-width:760px){.footer-grid-mc{grid-template-columns:1fr 1fr !important}.footer-grid-mc>div:first-child{grid-column:1/-1}}</style>
+</footer>
+
+<!-- FLOATING BUTTON -->
+<a class="mc-fab" href="telecharger.html" aria-label="Télécharger l'application" style="position:fixed;bottom:1.5rem;right:1.5rem;background:#FF6B35;color:#fff;padding:.9rem 1.3rem;border-radius:50px;font-weight:700;font-size:.92rem;box-shadow:0 12px 30px rgba(255,107,53,0.25);z-index:90;display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;font-family:'DM Sans',sans-serif">
+    📱 <span class="fab-label-mc">Télécharger l'app</span>
+    <style>@media(max-width:600px){.fab-label-mc{display:none}}</style>
+</a>
+
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"7f7b0fd8732c4326aae4b9d58d5c514a","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

@@ -259,6 +259,24 @@ async def download_landing_www():
     )
 
 
+@api.get("/_downloads/landing-diff")
+async def download_landing_diff():
+    """
+    Archive ZIP "diff" : uniquement les fichiers modifiés/ajoutés depuis la dernière version.
+    Inclut INSTRUCTIONS-UPLOAD.txt pour guider l'upload FTP.
+    """
+    import glob
+    matches = sorted(glob.glob("/app/backend/public_downloads/landing/mesurechassis-diff-*.zip"))
+    if not matches:
+        raise HTTPException(status_code=404, detail="Diff introuvable")
+    path = matches[-1]
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename=os.path.basename(path),
+    )
+
+
 # 📚 Juin 2026 — Guide gratuit PDF (lead magnet capture email)
 @api.get("/downloads/guide-5-pieges.pdf")
 async def download_guide_5_pieges():
