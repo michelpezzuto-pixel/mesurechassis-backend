@@ -58,17 +58,34 @@ STRIPE_WEBHOOK_SECRETS = [
 ]
 APP_DEEP_LINK_SCHEME = os.getenv("APP_DEEP_LINK_SCHEME", "mesurechassis")
 APP_WEB_RETURN_URL = os.getenv("APP_WEB_RETURN_URL", "https://mesurechassis.com")
-TRIAL_PERIOD_DAYS = 90  # 3 mois d'essai gratuit
+# 📅 Juillet 2026 — Trial ramené de 90 à 14 jours (nouveau modèle Freemium)
+# Reste géré côté DB (db.TRIAL_DAYS) pour la logique métier. Ici c'est
+# la période d'essai côté Stripe (pour l'affichage checkout).
+TRIAL_PERIOD_DAYS = 14
 
 # Mapping plan → tuple(price_base, price_extra_user, included_seats)
+# Alias en juillet 2026 :
+#   "solo"       = "artisan_pro"   → 19 €/mois — 1 utilisateur
+#   "entreprise" = "entreprise_pro" → 69 €/mois — 3+ utilisateurs
+#   "pro"        = "entreprise_max" (futur — pas encore activé côté Stripe)
 PLAN_PRICE_MAP = {
     "solo": (
-        os.getenv("STRIPE_PRICE_SOLO", ""),
+        os.getenv("STRIPE_PRICE_ARTISAN_PRO") or os.getenv("STRIPE_PRICE_SOLO", ""),
         None,  # pas de prix sup
         1,
     ),
+    "artisan_pro": (  # nouvel alias explicite
+        os.getenv("STRIPE_PRICE_ARTISAN_PRO") or os.getenv("STRIPE_PRICE_SOLO", ""),
+        None,
+        1,
+    ),
     "entreprise": (
-        os.getenv("STRIPE_PRICE_ENTREPRISE_BASE", ""),
+        os.getenv("STRIPE_PRICE_ENTREPRISE_PRO") or os.getenv("STRIPE_PRICE_ENTREPRISE_BASE", ""),
+        os.getenv("STRIPE_PRICE_ENTREPRISE_EXTRA", ""),
+        3,
+    ),
+    "entreprise_pro": (  # nouvel alias explicite
+        os.getenv("STRIPE_PRICE_ENTREPRISE_PRO") or os.getenv("STRIPE_PRICE_ENTREPRISE_BASE", ""),
         os.getenv("STRIPE_PRICE_ENTREPRISE_EXTRA", ""),
         3,
     ),

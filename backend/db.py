@@ -76,21 +76,40 @@ CONVERTED_STATUSES = {"en_commande", "en_fabrication", "cloture"}
 VALID_BLOCK_TYPES = {"standard", "coulissant", "porte", "trapeze"}
 VALID_WALL_TYPES = {"ite", "iti", "brique_parement", "crepi_simple"}
 
-# Paywall — Freemium tier (anti-fraud lifetime limit)
-# 🚧 BETA GRATUITE : la limite est désactivée — tous les comptes ont
-# accès illimité (plan=pro forcé via ensure_company). Cette constante
-# est conservée pour permettre la réactivation rapide du Freemium plus
-# tard (intégration Stripe).
-VALID_PLANS = {"free", "trial", "pro", "beta"}
-FREE_PLAN_MAX_CHANTIERS = 3
+# ═══════════════════════════════════════════════════════════════════════
+# 💰 Freemium tier — Limites du plan gratuit (juillet 2026)
+# ═══════════════════════════════════════════════════════════════════════
+# Après la fin de l'essai 14 jours (Artisan Pro) ou fallback Entreprise,
+# les users basculent automatiquement vers un plan gratuit LIMITÉ.
+#
+# Fonctionnalités qualitatives QUI RESTENT gratuites :
+#   ✅ Export PDF
+#   ✅ Photos anti-litige
+#   ✅ Wizard mesure + calcul auto (diagonales, feuillures, tolérances)
+#   ✅ 14 formes de menuiseries (choix limité par le nombre d'ouvertures)
+#
+# Limites QUANTITATIVES du plan gratuit :
+VALID_PLANS = {"free", "trial", "pro", "entreprise", "beta"}
+FREE_PLAN_MAX_CHANTIERS = 3               # 3 chantiers max en gratuit
+FREE_PLAN_MAX_OUVERTURES = 5              # 5 ouvertures max cumulées en gratuit
+FREE_YANN_QUESTIONS_MONTHLY = 10          # 10 questions Yann / mois calendaire
+FREE_IA_IMPORTS_MONTHLY = 3               # 3 imports IA cahier des charges / mois
+FREE_EXPORT_FORMATS = {"pdf"}             # Export PDF uniquement (pas Excel/CSV/JSON)
 
-# 🚧 BETA GRATUITE : flag global qui force tous les comptes à un état
-# d'abonnement actif et illimité. Mettre à False quand Stripe sera prêt.
-BETA_MODE = True
+# ═══════════════════════════════════════════════════════════════════════
+# 🚧 BETA_MODE — Toggle global pour forcer tous les comptes en Pro illimité
+# ═══════════════════════════════════════════════════════════════════════
+# TRUE  → phase actuelle (tous les users ont accès Pro illimité gratos)
+# FALSE → phase paiement activée (limites + trials appliquées)
+#
+# Pour désactiver sans redéployer le code : ajouter BETA_MODE=false dans
+# le .env de production (Railway) puis redémarrer le backend.
+BETA_MODE = os.getenv("BETA_MODE", "true").lower() in ("true", "1", "yes", "on")
 
-# Durée de la période d'essai (Trial) — exactement 3 mois (90 jours).
-# (Inactif tant que BETA_MODE=True : tous les comptes sont en plan=pro actif.)
+# Durée de la période d'essai (Trial) — 14 jours pour Artisan Pro et
+# Entreprise Pro. (Entreprise MAX aura 30 jours quand implémenté.)
 TRIAL_DAYS = 14
+TRIAL_DAYS_ENTREPRISE_MAX = 30  # Pour usage futur — pas encore actif
 
 # Endpoints accessibles même si l'abonnement est expiré
 SUBSCRIPTION_OPEN_PATHS = {

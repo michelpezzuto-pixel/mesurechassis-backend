@@ -34,6 +34,7 @@ from routes import partners as partners_routes
 from routes import stats as stats_routes
 from routes import spec_import as spec_import_routes
 from routes import stripe_routes
+from routes import limits as limits_routes
 from routes import testers as testers_routes
 from routes import promo as promo_routes
 from routes import jeton_cafe as jeton_cafe_routes
@@ -103,6 +104,7 @@ api = APIRouter(prefix="/api")
 api.include_router(auth_routes.router)
 api.include_router(invitations_routes.router)
 api.include_router(stripe_routes.router)
+api.include_router(limits_routes.router)
 api.include_router(chantiers_routes.router)
 api.include_router(mesures_routes.router)
 api.include_router(feedbacks_routes.router)
