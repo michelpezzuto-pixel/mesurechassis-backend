@@ -43,10 +43,11 @@ export default function CGV() {
         </Section>
 
         <Section title="3. Période d'essai">
-          Un essai gratuit de 90 jours est proposé à toute nouvelle société
-          inscrite. À l&apos;issue de cette période, l&apos;accès est automatiquement
-          verrouillé si aucun abonnement Pro n&apos;a été souscrit. Les données
-          restent conservées pendant 12 mois en cas de non-renouvellement.
+          Un essai gratuit de 14 jours est proposé à toute nouvelle société
+          inscrite. À l&apos;issue de cette période, l&apos;accès aux
+          fonctionnalités avancées est automatiquement restreint si aucun
+          abonnement n&apos;a été souscrit. Les données restent conservées
+          pendant 12 mois en cas de non-renouvellement.
         </Section>
 
         <Section title="4. Tarifs et facturation">

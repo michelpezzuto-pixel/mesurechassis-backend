@@ -357,8 +357,8 @@ export default function SubscriptionScreen() {
               {status?.has_subscription ? "Changer de plan" : "Choisir un plan"}
             </Text>
             <Text style={styles.sectionHint}>
-              ✨ 3 mois gratuits pour démarrer, sans engagement. Annulez à tout
-              moment depuis le portail.
+              ✨ 14 jours d&apos;essai gratuit pour démarrer, sans engagement.
+              Annulez à tout moment depuis le portail.
             </Text>
 
             {PLANS.map((plan) => {
@@ -514,7 +514,7 @@ function computeStatusLabel(s: SubscriptionStatus | null) {
       title: isIOS ? "Compte actif" : "Aucun abonnement actif",
       body: isIOS
         ? "Votre compte est opérationnel. La gestion du compte se fait depuis votre espace personnel sur le site web."
-        : "Démarrez votre essai gratuit de 3 mois en choisissant un plan ci-dessous.",
+        : "Démarrez votre essai gratuit de 14 jours en choisissant un plan ci-dessous.",
       color: isIOS ? ("green" as const) : ("neutral" as const),
       icon: isIOS
         ? ("checkmark-circle" as const)

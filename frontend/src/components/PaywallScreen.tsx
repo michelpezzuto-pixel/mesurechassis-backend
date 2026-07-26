@@ -84,7 +84,7 @@ export default function PaywallScreen({
           <Text style={styles.alertBody}>
             {Platform.OS === "ios"
               ? "Votre accès est actuellement suspendu. Pour rétablir votre compte, contactez notre support."
-              : "Votre période d'essai de 3 mois est terminée ou votre abonnement n'est pas en ordre. Régularisez votre abonnement pour récupérer l'accès complet à vos chantiers, mesures et exports."}
+              : "Votre période d'essai de 14 jours est terminée ou votre abonnement n'est pas en ordre. Régularisez votre abonnement pour récupérer l'accès complet à vos chantiers, mesures et exports."}
           </Text>
         </View>
 
