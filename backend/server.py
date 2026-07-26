@@ -319,6 +319,54 @@ async def download_endcard_animated():
     )
 
 
+# 📦 Juillet 2026 — Package App Store (7 captures 1290x2796 + 2 vidéos MP4)
+@api.get("/downloads/appstore-package.zip")
+async def download_appstore_package():
+    """
+    ZIP complet prêt à uploader dans App Store Connect :
+    - 7 captures iPhone 6.9\" (1290x2796) dans l'ordre marketing optimisé
+    - 1 vidéo App Preview conforme Apple (886x1920, 15.9s)
+    - 1 vidéo Social/TikTok avec endcard QR (1080x2340, 15.9s)
+    - README d'utilisation
+    """
+    path = "/app/backend/public_downloads/MesureChassis-AppStore-Package.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Package App Store introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="MesureChassis-AppStore-Package.zip",
+    )
+
+
+# 🎬 Juillet 2026 — App Preview vidéo conforme Apple (spec 886x1920)
+@api.get("/downloads/appstore-preview.mp4")
+async def download_appstore_preview():
+    """Vidéo App Preview 15.9s conforme Apple Guidelines (pas de logo Apple / pas de 'download')."""
+    path = "/app/backend/public_downloads/MesureChassis-AppPreview-APPLE.mp4"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="App Preview introuvable")
+    return FileResponse(
+        path,
+        media_type="video/mp4",
+        filename="MesureChassis-AppPreview-APPLE.mp4",
+    )
+
+
+# 🎬 Juillet 2026 — Vidéo Social (TikTok/Instagram/LinkedIn) avec endcard QR
+@api.get("/downloads/social-video.mp4")
+async def download_social_video():
+    """Vidéo verticale 1080x2340 avec endcard QR code + Apple logo. Pour TikTok/IG/LinkedIn."""
+    path = "/app/backend/public_downloads/MesureChassis-Video-SOCIAL.mp4"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Vidéo sociale introuvable")
+    return FileResponse(
+        path,
+        media_type="video/mp4",
+        filename="MesureChassis-Video-SOCIAL.mp4",
+    )
+
+
 # 📤 Juillet 2026 — Animation formats d'export (PDF/CSV/Excel/JSON/Virtua/Adou)
 @api.get("/downloads/export-formats-animated.mp4")
 async def download_export_formats():
