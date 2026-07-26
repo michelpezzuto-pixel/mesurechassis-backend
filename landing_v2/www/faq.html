@@ -311,55 +311,12 @@ footer {
   </style>
 <style>body.menu-open .mc-fab{display:none !important}</style></head>
 <body>
-<!-- ═══════════ COUNTDOWN BANNER GLOBAL ═══════════ -->
-<div class="beta-banner" id="freebie-banner" style="background:linear-gradient(90deg,#FF6B35 0%,#FF8C42 100%);color:#fff;padding:.65rem 1rem;text-align:center;font-size:.86rem;font-weight:500;line-height:1.4;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.4rem 1rem">
-  <strong>🎁 Accès TOTAL GRATUIT</strong>
-  <span>· Plus que <span id="countdown-text" style="color:#FFF7E6;font-weight:700;background:rgba(0,0,0,0.18);padding:1px 8px;border-radius:6px">…</span> · au 1ᵉʳ octobre 2026, l'app repasse en Freemium (5 formes gratuites à vie).</span>
-  <a href="telecharger.html" style="color:#fff;text-decoration:underline;font-weight:700">Essayer maintenant →</a>
+<!-- ═══════════ ANNONCE ESSAI GRATUIT ═══════════ -->
+<div class="beta-banner" style="background:linear-gradient(90deg,#FF6B35 0%,#FF8C42 100%);color:#fff;padding:.65rem 1rem;text-align:center;font-size:.86rem;font-weight:500;line-height:1.4;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.4rem 1rem">
+  <strong>⭐ 14 jours d'essai Pro gratuit</strong>
+  <span>· Toutes les fonctionnalités débloquées · Sans carte bancaire · Résiliation en 1 clic</span>
+  <a href="tarifs.html" style="color:#fff;text-decoration:underline;font-weight:700">Voir les tarifs →</a>
 </div>
-
-<style>
-  #freebie-banner.urgent {
-    background: linear-gradient(90deg,#FF3B30 0%,#FF6B35 100%) !important;
-    animation: pulse-bg 2.5s ease-in-out infinite;
-  }
-  #freebie-banner.urgent #countdown-text { background: rgba(255,255,255,0.22); color: #FFEEDC; }
-  @keyframes pulse-bg {
-    0%,100% { filter: brightness(1); }
-    50% { filter: brightness(1.13); }
-  }
-</style>
-
-<script>
-(function() {
-  var DEADLINE = new Date('2026-09-30T23:59:59+02:00').getTime();
-  var URGENT_THRESHOLD = 14 * 24 * 60 * 60 * 1000;
-  function tick() {
-    var now = new Date().getTime();
-    var diff = DEADLINE - now;
-    var el = document.getElementById('countdown-text');
-    var banner = document.getElementById('freebie-banner');
-    if (!el || !banner) return;
-    if (diff <= 0) {
-      el.textContent = '— offre terminée';
-      banner.classList.remove('urgent');
-      return;
-    }
-    var d = Math.floor(diff / (1000 * 60 * 60 * 24));
-    var h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    var m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    if (diff <= URGENT_THRESHOLD) {
-      banner.classList.add('urgent');
-      el.textContent = d + 'j ' + h + 'h ' + m + 'min';
-    } else {
-      banner.classList.remove('urgent');
-      el.textContent = d + ' jours';
-    }
-  }
-  tick();
-  setInterval(tick, 30000);
-})();
-</script>
 
 <header style="position:sticky;top:0;z-index:100;background:rgba(18,18,20,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.07)">
   <div class="header-inner" style="max-width:1280px;margin:0 auto;padding:.9rem 5%;display:flex;align-items:center;justify-content:space-between;gap:1rem">
