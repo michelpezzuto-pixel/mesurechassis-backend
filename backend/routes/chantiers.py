@@ -13,6 +13,10 @@ from deps import (
     require_roles,
     send_push_to_user,
 )
+from routes.limits import (
+    check_free_plan_limit,
+    FreeLimitType,
+)
 from email_service import (
     send_assignment_email,
     send_ready_for_verification_email,
@@ -53,6 +57,12 @@ async def create_chantier(
     # 🚧 BETA GRATUITE : limite désactivée (BETA_MODE=True). Le bloc reste
     # en place pour réactivation simple une fois Stripe en ligne.
     #
+    # 🆕 Juillet 2026 — Freemium souple : on utilise d'abord le compteur
+    # d'ouvertures ACTIVES (chantiers non archivés/supprimés). Un user
+    # gratuit peut ainsi archiver un chantier terminé pour libérer un
+    # slot. La règle "lifetime" ci-dessous reste en fallback anti-abus.
+    await check_free_plan_limit(user, FreeLimitType.CHANTIERS)
+
     # 💡 Règle métier CRITIQUE (juillet 2026) :
     # Le compteur `chantiers_lifetime_count` s'incrémente à la CRÉATION mais
     # ne se décrémente JAMAIS à la SUPPRESSION. Un Freemium ne peut donc
