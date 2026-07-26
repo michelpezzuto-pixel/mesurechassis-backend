@@ -267,6 +267,10 @@ async def import_spec(
     # 2) Paywall
     _ensure_subscription_allows_import(user)
 
+    # 🎯 Juillet 2026 — Paywall Freemium : max 3 imports IA CDC / mois
+    from routes.limits import check_free_plan_limit, FreeLimitType
+    await check_free_plan_limit(user, FreeLimitType.IA_CDC_IMPORT)
+
     # 3) Lecture du fichier (avec garde-fou taille)
     raw_bytes = await file.read()
     if not raw_bytes:

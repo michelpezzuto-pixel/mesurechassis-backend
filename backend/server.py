@@ -35,6 +35,8 @@ from routes import stats as stats_routes
 from routes import spec_import as spec_import_routes
 from routes import stripe_routes
 from routes import limits as limits_routes
+from routes import trial_expiration as trial_expiration_routes
+from routes import pricing_migration as pricing_migration_routes
 from routes import testers as testers_routes
 from routes import promo as promo_routes
 from routes import jeton_cafe as jeton_cafe_routes
@@ -105,6 +107,8 @@ api.include_router(auth_routes.router)
 api.include_router(invitations_routes.router)
 api.include_router(stripe_routes.router)
 api.include_router(limits_routes.router)
+api.include_router(trial_expiration_routes.router)
+api.include_router(pricing_migration_routes.router)
 api.include_router(chantiers_routes.router)
 api.include_router(mesures_routes.router)
 api.include_router(feedbacks_routes.router)
@@ -384,6 +388,20 @@ async def download_social_video():
         path,
         media_type="video/mp4",
         filename="MesureChassis-Video-SOCIAL.mp4",
+    )
+
+
+# 🎁 Juillet 2026 — Release complète v1.1 Freemium (backend + landing + docs)
+@api.get("/downloads/release-v1.1.zip")
+async def download_release_v1_1():
+    """Package complet à déployer : backend + landing + assets Apple + docs."""
+    path = "/app/backend/public_downloads/mesurechassis-release-v1.1-freemium.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Release ZIP introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="mesurechassis-release-v1.1-freemium.zip",
     )
 
 

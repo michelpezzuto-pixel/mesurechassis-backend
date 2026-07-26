@@ -10,6 +10,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from db import VALID_BLOCK_TYPES, db
 from deps import require_active_subscription, require_roles
 from models import Mesure, MesureCreate
+from routes.limits import check_free_plan_limit, FreeLimitType
 from utils import check_chantier_access, compute_alerts
 
 router = APIRouter()
@@ -28,6 +29,8 @@ async def create_mesure(
 ):
     if payload.block_type not in VALID_BLOCK_TYPES:
         raise HTTPException(400, "Invalid block_type")
+    # 🎯 Juillet 2026 — Paywall Freemium : max 5 ouvertures cumulées
+    await check_free_plan_limit(user, FreeLimitType.OUVERTURES)
     await check_chantier_access(db, payload.chantier_id, user)
     alerts, slope = compute_alerts(payload)
     doc = payload.model_dump()

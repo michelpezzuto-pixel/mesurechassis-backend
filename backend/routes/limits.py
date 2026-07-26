@@ -144,8 +144,8 @@ async def _count_active_chantiers(company_id: str) -> int:
 
 
 async def _count_total_ouvertures(company_id: str) -> int:
-    """Nombre total d'ouvertures créées pour une company (tous chantiers actifs)."""
-    # Récupère les IDs des chantiers actifs, puis compte les ouvertures
+    """Nombre total d'ouvertures (mesures) créées pour une company (chantiers actifs)."""
+    # Récupère les IDs des chantiers actifs, puis compte les mesures/ouvertures
     active_ids_cursor = db.chantiers.find(
         {
             "company_id": company_id,
@@ -159,7 +159,7 @@ async def _count_total_ouvertures(company_id: str) -> int:
     chantier_ids = [d.get("chantier_id") async for d in active_ids_cursor if d.get("chantier_id")]
     if not chantier_ids:
         return 0
-    return await db.ouvertures.count_documents({"chantier_id": {"$in": chantier_ids}})
+    return await db.mesures.count_documents({"chantier_id": {"$in": chantier_ids}})
 
 
 async def _count_yann_questions_this_month(user_id: str) -> int:
@@ -176,9 +176,10 @@ async def _count_ia_imports_this_month(user_id: str) -> int:
     """Nombre d'imports IA CDC effectués par l'user depuis le début du mois."""
     now = datetime.now(timezone.utc)
     first_day = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    return await db.spec_imports.count_documents({
-        "user_id": user_id,
-        "created_at": {"$gte": first_day},
+    # Compte tous les drafts créés ce mois-ci par cet user
+    return await db.spec_drafts.count_documents({
+        "created_by": user_id,
+        "created_at": {"$gte": first_day.isoformat()},
     })
 
 

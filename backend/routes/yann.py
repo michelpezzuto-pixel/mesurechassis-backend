@@ -131,6 +131,10 @@ async def chat_with_yann(payload: ChatRequest, user=Depends(auth_user)):
             },
         )
 
+    # 🎯 Juillet 2026 — Paywall Freemium : max 10 questions/mois en gratuit
+    from routes.limits import check_free_plan_limit, FreeLimitType
+    await check_free_plan_limit(user, FreeLimitType.YANN_QUESTION)
+
     message = (payload.message or "").strip()
     if not message:
         raise HTTPException(400, "Message vide")
