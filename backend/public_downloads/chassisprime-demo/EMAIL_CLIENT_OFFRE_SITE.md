@@ -14,7 +14,7 @@ Salut [Prénom],
 
 Comme promis, j'ai bossé sur ta maquette. Voici le lien pour la voir en direct — **ouvre-le sur ordinateur ou tablette de préférence** pour bien capter l'effet visuel :
 
-👉 **https://mesurechassis.com/api/demo/chassisprime-CP2026-a7f9k2m**
+👉 **https://mesurechassis.com/demo-cp-2026-a7f9k2m/**
 
 Prends 5 minutes, scrolle tranquillement. Tu vas voir : c'est un vrai site premium, pas un template Wix acheté 15€. Chaque bloc a été pensé pour te positionner comme **le fabricant haut de gamme du bassin carolo**, pas comme un simple menuisier parmi d'autres.
 
@@ -88,7 +88,7 @@ Fondateur — MesureChâssis
 
 > Salut [Prénom] 👋
 >
-> Ta démo est en ligne : **https://mesurechassis.com/api/demo/chassisprime-CP2026-a7f9k2m**
+> Ta démo est en ligne : **https://mesurechassis.com/demo-cp-2026-a7f9k2m/**
 >
 > Ouvre sur PC ou tablette pour l'effet max 👌
 >
