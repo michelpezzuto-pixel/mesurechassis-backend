@@ -287,6 +287,20 @@ async def download_landing_diff():
 # URL avec token obscur — non-devinable, non-indexée
 # 🔒 Juin 2026 — Démo standalone confidentielle Châssis Prime (client B2B)
 # URL avec token obscur — non-devinable, non-indexée
+@api.get("/demo/chassisprime-a-uploader.zip")
+async def download_chassisprime_demo_zip():
+    """ZIP à uploader via FileZilla dans le dossier www/ de mesurechassis.com."""
+    path = "/app/backend/public_downloads/chassisprime-demo-a-uploader.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="chassisprime-demo-a-uploader.zip",
+        headers={"Cache-Control": "no-store"},
+    )
+
+
 @api.get("/demo/chassisprime-logo.png")
 async def demo_chassisprime_logo():
     """Logo officiel Châssis Prime (fourni par le client) servi pour la démo."""
