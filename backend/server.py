@@ -283,6 +283,35 @@ async def download_landing_diff():
     )
 
 
+# 🔒 Juin 2026 — Démo standalone confidentielle Châssis Prime (client B2B)
+# URL avec token obscur — non-devinable, non-indexée
+@api.get("/demo/chassisprime-CP2026-a7f9k2m")
+async def demo_chassisprime_protected():
+    """
+    Démo HTML confidentielle pour le client Châssis Prime.
+    Servie avec headers de sécurité forts pour empêcher indexation, cache, iframing.
+    """
+    path = "/app/backend/public_downloads/chassisprime-demo/index.html"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Démo introuvable")
+    with open(path, "r", encoding="utf-8") as f:
+        content = f.read()
+    return HTMLResponse(
+        content=content,
+        headers={
+            "Cache-Control": "no-store, no-cache, must-revalidate, private, max-age=0",
+            "Pragma": "no-cache",
+            "Expires": "0",
+            "X-Frame-Options": "DENY",
+            "Content-Security-Policy": "frame-ancestors 'none'",
+            "X-Content-Type-Options": "nosniff",
+            "Referrer-Policy": "no-referrer",
+            "X-Robots-Tag": "noindex, nofollow, noarchive, nosnippet",
+            "Permissions-Policy": "interest-cohort=()",
+        },
+    )
+
+
 # 📚 Juin 2026 — Guide gratuit PDF (lead magnet capture email)
 @api.get("/downloads/guide-5-pieges.pdf")
 async def download_guide_5_pieges():
