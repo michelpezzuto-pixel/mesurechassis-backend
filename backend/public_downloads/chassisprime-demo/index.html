@@ -19,8 +19,8 @@
 :root{
   --navy:#0A2540;
   --navy-dark:#061829;
-  --gold:#D4A574;
-  --gold-dark:#B8895A;
+  --gold:#B8935A;
+  --gold-dark:#9C7A48;
   --cream:#F9F7F4;
   --white:#FFFFFF;
   --gray:#6B7280;
@@ -52,6 +52,10 @@ header{position:sticky;top:0;background:rgba(249,247,244,.95);backdrop-filter:bl
 nav{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;max-width:1200px;margin:0 auto}
 .logo{display:flex;align-items:center;gap:12px;font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:800;color:var(--navy)}
 .logo-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--navy);font-weight:900;font-size:1.3rem;box-shadow:var(--shadow)}
+.logo-img{height:48px;width:auto;display:block;object-fit:contain}
+.logo-footer{display:flex;align-items:center}
+.logo-img-footer{height:52px;width:auto;display:block;object-fit:contain;background:rgba(255,255,255,.96);padding:10px 16px;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+@media(max-width:840px){.logo-img{height:38px}}
 nav ul{display:flex;gap:32px;list-style:none;align-items:center}
 nav a{font-weight:500;font-size:.95rem;color:var(--gray-dark);transition:color .2s}
 nav a:hover{color:var(--gold)}
@@ -298,8 +302,7 @@ body::before{
 <header>
   <nav>
     <a href="#" class="logo">
-      <div class="logo-icon">CP</div>
-      <span>Châssis Prime</span>
+      <img src="/api/demo/chassisprime-logo.png" alt="Châssis Prime — Aluminium" class="logo-img">
     </a>
     <ul>
       <li><a href="#services">Services</a></li>
@@ -315,9 +318,9 @@ body::before{
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <span class="hero-badge">Fabricant belge · 12 ans d'expérience</span>
+      <span class="hero-badge">Fabricant belge · Spécialiste Aluminium</span>
       <h1>Des châssis <em>haut de gamme</em>, pensés pour votre patrimoine.</h1>
-      <p class="hero-sub">Châssis Prime fabrique et pose des châssis PVC, aluminium et bois sur mesure à Charleroi. Kömmerling, Deceuninck, Reynaers — le meilleur des marques allemandes et belges, garanti 10 ans.</p>
+      <p class="hero-sub">Châssis Prime fabrique et pose des châssis <strong>aluminium</strong>, PVC et bois sur mesure à Charleroi. Reynaers, Schüco, Kömmerling — le meilleur des marques allemandes et belges, garanti 10 ans.</p>
       <div class="hero-ctas">
         <a href="#contact" class="btn btn-primary">Obtenir mon devis en 24h →</a>
         <a href="#realisations" class="btn btn-outline">Voir nos réalisations</a>
@@ -685,9 +688,8 @@ body::before{
   <div class="wrap">
     <div class="footer-grid">
       <div>
-        <div class="logo" style="color:white;margin-bottom:16px">
-          <div class="logo-icon">CP</div>
-          <span style="color:white">Châssis Prime</span>
+        <div class="logo-footer" style="margin-bottom:16px">
+          <img src="/api/demo/chassisprime-logo.png" alt="Châssis Prime — Aluminium" class="logo-img-footer">
         </div>
         <p style="color:rgba(255,255,255,.6);font-size:.9rem;max-width:280px">Fabricant belge de châssis sur mesure. Kömmerling, Deceuninck, Reynaers. Charleroi et toute la Wallonie.</p>
       </div>

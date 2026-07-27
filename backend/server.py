@@ -285,6 +285,24 @@ async def download_landing_diff():
 
 # 🔒 Juin 2026 — Démo standalone confidentielle Châssis Prime (client B2B)
 # URL avec token obscur — non-devinable, non-indexée
+# 🔒 Juin 2026 — Démo standalone confidentielle Châssis Prime (client B2B)
+# URL avec token obscur — non-devinable, non-indexée
+@api.get("/demo/chassisprime-logo.png")
+async def demo_chassisprime_logo():
+    """Logo officiel Châssis Prime (fourni par le client) servi pour la démo."""
+    path = "/app/backend/public_downloads/chassisprime-demo/assets/chassisprime-logo.png"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Logo introuvable")
+    return FileResponse(
+        path,
+        media_type="image/png",
+        headers={
+            "Cache-Control": "public, max-age=86400",
+            "X-Robots-Tag": "noindex, nofollow",
+        },
+    )
+
+
 @api.get("/demo/chassisprime-CP2026-a7f9k2m")
 async def demo_chassisprime_protected():
     """
