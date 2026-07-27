@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roadmap — MesureChâssis · Les 16 fonctionnalités qui arrivent</title>
+<meta name="description" content="Découvre les 16 fonctionnalités en préparation pour MesureChâssis : générateur de devis PDF, Module Marché Public, connecteur Billit, mètre laser Bluetooth, mode vérification chantier et bien plus.">
+<link rel="icon" type="image/png" href="favicon.png">
+<meta name="robots" content="index, follow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--orange:#FF5A00;--orange-light:#FF7733;--purple:#B58BFF;--bg:#0A0A0C;--bg-2:#14141A;--bg-3:#1F1F28;--text:#FFFFFF;--text-mute:#A8A8B0;--border:#2A2A35;--green:#22C55E;--font-head:"Syne",-apple-system,sans-serif;--font:"Inter",-apple-system,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.promo-banner{background:linear-gradient(90deg,#FF5A00 0%,#FF7733 50%,#FF5A00 100%);color:#fff;text-align:center;padding:11px 16px;font-weight:700;font-size:.92rem;position:relative;z-index:60}
+.promo-banner a{color:#000;background:#fff;padding:3px 10px;border-radius:20px;font-weight:800;margin-left:6px;font-size:.85rem;display:inline-block}
+@media(max-width:560px){.promo-banner{font-size:.82rem;padding:9px 12px}.promo-banner a{font-size:.75rem;padding:2px 8px}}
+nav.top{position:sticky;top:0;z-index:50;background:rgba(10,10,12,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+nav.top .wrap{max-width:1200px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+nav.top .brand{display:flex;align-items:center;gap:10px;font-family:var(--font-head);font-weight:800;font-size:1.15rem}
+nav.top .brand img{width:30px;height:30px;border-radius:6px}
+nav.top .links{display:flex;gap:22px;align-items:center}
+nav.top .links a{font-size:.92rem;font-weight:500;color:var(--text-mute);transition:color .2s}
+nav.top .links a:hover{color:var(--text)}
+nav.top .cta{background:var(--orange);color:#000;padding:9px 18px;border-radius:8px;font-weight:700;font-size:.92rem}
+@media(max-width:840px){nav.top .links a:not(.cta){display:none}nav.top .wrap{padding:12px 16px}nav.top .brand{font-size:1rem}}
+.hero{padding:70px 24px 50px;text-align:center;background:radial-gradient(ellipse at top,rgba(255,90,0,.09),transparent 60%)}
+.hero .badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,90,0,.14);color:var(--orange);padding:6px 14px;border-radius:20px;font-size:.82rem;font-weight:700;margin-bottom:20px;border:1px solid rgba(255,90,0,.3)}
+.hero h1{font-family:var(--font-head);font-size:clamp(2rem,4.5vw,3rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;margin-bottom:18px;max-width:820px;margin-inline:auto}
+.hero h1 em{font-style:normal;color:var(--orange)}
+.hero p.sub{font-size:clamp(1rem,1.8vw,1.15rem);color:var(--text-mute);max-width:720px;margin:0 auto}
+section{padding:60px 24px}
+.wrap{max-width:1200px;margin:0 auto}
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-bottom:36px;padding:16px 24px;background:var(--bg-2);border:1px solid var(--border);border-radius:14px}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:.88rem;color:var(--text-mute)}
+.tag-plan{padding:3px 10px;border-radius:12px;font-size:.72rem;font-weight:700;letter-spacing:.02em}
+.tag-artisan{background:rgba(255,90,0,.15);color:var(--orange);border:1px solid rgba(255,90,0,.35)}
+.tag-entreprise{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.35)}
+.tag-all{background:rgba(181,139,255,.15);color:var(--purple);border:1px solid rgba(181,139,255,.35)}
+.grid-features{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.f-card{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:24px;position:relative;transition:transform .2s,border-color .2s}
+.f-card:hover{transform:translateY(-3px);border-color:var(--orange)}
+.f-card .num{position:absolute;top:16px;right:20px;font-family:var(--font-head);font-size:2.2rem;font-weight:800;color:rgba(255,90,0,.12);line-height:1}
+.f-card .emoji{font-size:2rem;margin-bottom:12px;display:block}
+.f-card h3{font-family:var(--font-head);font-size:1.15rem;font-weight:800;margin-bottom:8px;padding-right:40px;line-height:1.25}
+.f-card p{color:var(--text-mute);font-size:.92rem;margin-bottom:16px;line-height:1.55}
+.f-card .tags{display:flex;gap:8px;flex-wrap:wrap}
+.f-card .status{position:absolute;bottom:20px;right:20px;font-size:.75rem;color:var(--orange);font-weight:700}
+.suggest-box{background:linear-gradient(135deg,rgba(255,90,0,.10),rgba(255,119,51,.06));border:1px solid rgba(255,90,0,.35);border-radius:18px;padding:44px 32px;text-align:center;margin-top:60px}
+.suggest-box h2{font-family:var(--font-head);font-size:clamp(1.5rem,3vw,2rem);font-weight:800;margin-bottom:12px}
+.suggest-box p{color:var(--text-mute);margin-bottom:24px;max-width:600px;margin-inline:auto}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:10px;font-weight:700;font-size:1rem;transition:transform .15s,box-shadow .15s;cursor:pointer;border:none}
+.btn-primary{background:var(--orange);color:#000;box-shadow:0 4px 20px rgba(255,90,0,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(255,90,0,.4)}
+footer{background:var(--bg-2);border-top:1px solid var(--border);padding:40px 24px 24px;color:var(--text-mute);font-size:.88rem;margin-top:60px}
+footer .wrap-f{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:32px;margin-bottom:32px}
+footer h4{color:var(--text);font-family:var(--font-head);margin-bottom:14px;font-size:1rem}
+footer a{display:block;padding:5px 0;color:var(--text-mute);transition:color .15s}
+footer a:hover{color:var(--orange)}
+footer .cr{text-align:center;padding-top:20px;border-top:1px solid var(--border);font-size:.82rem}
+</style>
+</head>
+<body>
+
+<div class="promo-banner">📱 iOS App Store · 🤖 Android en beta —
+  <a href="fondateurs.html">👉 20 places gratuites À VIE</a>
+</div>
+
+<nav class="top">
+  <div class="wrap">
+    <a href="/" class="brand"><img src="logo.png" alt="Logo"><span>MesureChâssis</span></a>
+    <div class="links">
+      <a href="index.html#fonctionnalites">Fonctionnalités</a>
+      <a href="tarifs.html">Tarifs</a>
+      <a href="roadmap.html" style="color:var(--orange)">Roadmap</a>
+      <a href="fondateurs.html">Fondateurs</a>
+      <a href="comparatif.html">Comparatif</a>
+      <a href="telecharger.html" class="cta">📲 Télécharger</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="badge"><span style="width:8px;height:8px;background:var(--orange);border-radius:50%"></span>Mise à jour continue · 16 fonctionnalités en préparation</div>
+  <h1>La roadmap pour devenir <em>la référence</em> mobile des menuisiers en Europe</h1>
+  <p class="sub">Voici les 16 chantiers digitaux sur lesquels je travaille pour toi. Chaque fonctionnalité est pensée avec des menuisiers du terrain — pas des développeurs déconnectés.</p>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="legend">
+      <div class="legend-item"><span class="tag-plan tag-artisan">Artisan MAX</span> · Solo pro équipé</div>
+      <div class="legend-item"><span class="tag-plan tag-entreprise">Entreprise+</span> · Équipe 3-5 pers.</div>
+      <div class="legend-item"><span class="tag-plan tag-all">Tous plans</span> · Inclus partout</div>
+      <div class="legend-item"><span style="color:var(--orange);font-weight:700">🔔 Bientôt</span> · Ouverture à venir</div>
+    </div>
+
+    <div class="grid-features">
+
+      <div class="f-card"><span class="num">01</span><span class="emoji">💰</span><h3>Config prix &amp; marges</h3><p>Une page dédiée pour saisir tes coefficients, marges par gamme (PVC/Alu/Bois), remises volume et prix minimums. Tes prix sont ensuite appliqués partout automatiquement.</p><div class="tags"><span class="tag-plan tag-artisan">Artisan MAX</span></div><span class="status">🔔 Bientôt</span></div>
+
+      <div class="f-card"><span class="num">02</span><span class="emoji">📊</span><h3>Import Excel pré-rempli</h3><p>Charge tes catalogues fournisseurs (Reynaers, Deceuninck, Kömmerling…) en 1 clic depuis un template Excel. Prix, références, options — tout est intégré à ton chiffrage automatique.</p><div class="tags"><span class="tag-plan tag-artisan">Artisan MAX</span></div><span class="status">🔔 Bientôt</span></div>
+
+      <div class="f-card"><span class="num">03</span><span class="emoji">📄</span><h3>Générateur devis PDF pro</h3><p>Devis PDF haut de gamme, brandé à ton logo, générés en 1 clic à partir des mesures terrain. Calcul TVA, primes énergie estimées, signature électronique client.</p><div class="tags"><span class="tag-plan tag-artisan">Artisan MAX</span></div><span class="status">🔔 Bientôt</span></div>
+
+      <div class="f-card"><span class="num">04</span><span class="emoji">✏️</span><h3>Import dessin papier + photo</h3><p>Photographie un croquis papier ou un plan client, l'IA reconstitue les dimensions et crée automatiquement les châssis correspondants dans l'app.</p><div class="tags"><span class="tag-plan tag-artisan">Artisan MAX</span></div><span class="status">🔔 Bientôt</span></div>
+
+      <div class="f-card"><span class="num">05</span><span class="emoji">🔄</span><h3>Sens d'ouverture DIN</h3><p>Norme DIN (vue de l'intérieur) intégrée nativement dans l'app. Choix rapide : ouvrant gauche / droit / oscillo-battant, avec pictogramme unifié sur devis et bon de fabrication.</p><div class="tags"><span class="tag-plan tag-artisan">Artisan MAX</span></div><span class="status">🔔 Bientôt</span></div>
+
+      <div class="f-card"><span class="num">06</span><span class="emoji">🔗</span><h3>Connecteur Billit</h3><p>Passerelle API directe avec Billit (logiciel comptable belge). Chaque devis accepté devient une facture dans ta compta, avec suivi paiement et rappels automatiques.</p><div class="tags"><span class="tag-plan tag-entreprise">Entreprise MAX</span></div><span class="status">🔔 Bientôt</span></div>
+
+      <div class="f-card"><span class="num">07</span><span class="emoji">💻</span><h3>Interface web PC</h3><p>Un dashboard bureau (Windows / Mac) pour gérer devis, chantiers, équipes et facturation depuis un grand écran. Sync temps réel avec l'app mobile.</p><div class="tags"><span class="tag-plan tag-artisan">Artisan MAX</span></div><span class="status">🔔 Bientôt</span></div>
+
+      <div class="f-card"><span class="num">08</span><span class="emoji">📑</span><h3>Templates devis multiples</h3><p>Plusieurs modèles de devis PDF au choix : sobre, premium noir/or, artisanal chaleureux, corporate. Personnalisation logo, couleurs, mentions légales par template.</p><div class="tags"><span class="tag-plan tag-entreprise">Entreprise+</span></div><span class="status">🔔 Bientôt</span></div>
+
+      <div class="f-card"><span class="num">09</span><span class="emoji">📁</span><h3>Import PDF Eko4u</h3><p>Parseur IA spécialisé pour les devis fournisseurs Eko4u. Extrait automatiquement les lignes, quantités et prix pour intégration dans ton propre devis client.</p><div class="tags"><span class="tag-plan tag-entreprise">Entreprise MAX</span></div><span class="status">🔔 Bientôt</span></div>
+
+      <div class="f-card"><span class="num">10</span><span class="emoji">✉️</span><h3>Envoi devis email + tracking</h3><p>Envoie le devis PDF directement depuis l'app, avec suivi d'ouverture et relances automatiques. Sais qui a lu, qui n'a pas lu, qui a répondu.</p><div class="tags"><span class="tag-plan tag-artisan">Artisan MAX</span></div><span class="status">🔔 Bientôt</span></div>
+
+      <div class="f-card"><span class="num">11</span><span class="emoji">⌨️</span><h3>Saisie manuelle améliorée</h3><p>Refonte du clavier de saisie : chiffres larges, boutons +/-, favoris (largeurs standards), calcul automatique diagonale théorique en temps réel.</p><div class="tags"><span class="tag-plan tag-artisan">Artisan MAX</span></div><span class="status">🔔 Bientôt</span></div>
+
+      <div class="f-card"><span class="num">12</span><span class="emoji">🔍</span><h3>Mode vérification chantier</h3><p>Compare automatiquement les mesures théoriques (CDC) vs les mesures réelles prises sur chantier. Alerte les écarts &gt; seuil configurable avant d'envoyer en fabrication.</p><div class="tags"><span class="tag-plan tag-entreprise">Entreprise+</span></div><span class="status">🔔 Bientôt</span></div>
+
+      <div class="f-card"><span class="num">13</span><span class="emoji">🏛️</span><h3>Mode Marché Public</h3><p>Analyse automatisée des cahiers des charges publics (communes, CPAS, régies, écoles). Extraction des lots, calcul de rentabilité, pré-remplissage de la réponse technique.</p><div class="tags"><span class="tag-plan tag-entreprise">Entreprise MAX</span></div><span class="status">🔔 Bientôt</span></div>
+
+      <div class="f-card"><span class="num">14</span><span class="emoji">📐</span><h3>Mètre laser Bluetooth</h3><p>Support natif pour tous les mètres laser Bluetooth du marché : Bosch GLM, Leica Disto, Stanley TLM, Hilti PD. La mesure arrive directement dans le champ actif de l'app.</p><div class="tags"><span class="tag-plan tag-artisan">Artisan MAX</span></div><span class="status">🔔 Bientôt</span></div>
+
+      <div class="f-card"><span class="num">15</span><span class="emoji">🎓</span><h3>Onboarding + Mode Simple/Avancé</h3><p>Tutoriel interactif 3 étapes pour les nouveaux utilisateurs. Bascule "Mode Simple" (juste l'essentiel) vs "Mode Avancé" (toutes les options), pour ne jamais être perdu.</p><div class="tags"><span class="tag-plan tag-all">Tous plans</span></div><span class="status">🔔 Bientôt</span></div>
+
+      <div class="f-card"><span class="num">16</span><span class="emoji">🎁</span><h3>Système de parrainage</h3><p>Code parrainage personnel : +1 mois gratuit par filleul qui souscrit, +3 mois pour un témoignage vidéo. Wall of Fame publique des ambassadeurs les plus actifs.</p><div class="tags"><span class="tag-plan tag-all">Tous plans</span></div><span class="status">🔔 Bientôt</span></div>
+
+    </div>
+
+    <div class="suggest-box">
+      <h2>Une fonctionnalité qui te manque ?</h2>
+      <p>Tu es menuisier et tu vois un chantier digital que je devrais coder ? Dis-le moi, chaque suggestion est étudiée personnellement.</p>
+      <a href="mailto:fondateurs@mesurechassis.com?subject=Suggestion%20fonctionnalit%C3%A9%20MesureCh%C3%A2ssis&body=Bonjour%20Michel%2C%0A%0AJe%20suis%20menuisier%20et%20j%27aimerais%20voir%20la%20fonctionnalit%C3%A9%20suivante%20dans%20MesureCh%C3%A2ssis%20%3A%0A%0A%5BD%C3%A9cris%20ton%20id%C3%A9e%20ici%5D%0A%0AMon%20activit%C3%A9%20%3A%20%5B%C3%A0%20compl%C3%A9ter%5D%0AMon%20contact%20%3A%20%5B%C3%A0%20compl%C3%A9ter%5D%0A%0AMerci%20!" class="btn btn-primary">💡 Suggérer une fonctionnalité</a>
+      <p style="margin-top:18px;font-size:.85rem">📧 fondateurs@mesurechassis.com — réponse sous 48h</p>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="wrap-f">
+    <div><h4>MesureChâssis</h4><p>L'app de prise de mesures pour les menuisiers pros en Belgique, France, Luxembourg.</p></div>
+    <div><h4>Produit</h4><a href="index.html#fonctionnalites">Fonctionnalités</a><a href="tarifs.html">Tarifs</a><a href="roadmap.html">Roadmap</a><a href="comparatif.html">Comparatif</a></div>
+    <div><h4>Communauté</h4><a href="fondateurs.html">Programme Fondateurs</a><a href="beta.html">Beta Android</a><a href="devenir-testeur.html">Devenir testeur</a></div>
+    <div><h4>Légal</h4><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">CGU</a><a href="cgv.html">CGV</a><a href="confidentialite.html">Confidentialité</a></div>
+  </div>
+  <p class="cr">© 2026 MesureChâssis — Tous droits réservés.</p>
+</footer>
+
+</body>
+</html>

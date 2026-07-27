@@ -358,11 +358,11 @@ footer .copyright{
 <body>
 
 <!-- ═══════════════════════════════════════════════════════════════
-     🎁 BANDEAU PROMO — 14 jours d'essai Pro gratuit
+     🎁 BANDEAU PROMO — iOS/Android + Fondateurs
      ═══════════════════════════════════════════════════════════════ -->
 <div class="promo-banner" role="banner">
-  ⭐ <strong>14 jours d'essai gratuit</strong> · Toutes les fonctionnalités Pro débloquées · Sans carte bancaire
-  <a href="#tarifs" onclick="mftpTrackConversion('promo_banner_click')">Voir les tarifs →</a>
+  📱 <strong>iOS disponible sur App Store</strong> · 🤖 Android en beta —
+  <a href="fondateurs.html" onclick="mftpTrackConversion('banner_fondateurs_click')">👉 20 places gratuites À VIE</a>
 </div>
 
 <!-- ===== NAV ===== -->
@@ -374,10 +374,10 @@ footer .copyright{
     </a>
     <div class="links">
       <a href="#fonctionnalites">Fonctionnalités</a>
-      <a href="#tarifs">Tarifs</a>
-      <a href="demo.html">Démo</a>
-      <a href="#faq">FAQ</a>
-      <a href="#contact">Contact</a>
+      <a href="tarifs.html">Tarifs</a>
+      <a href="roadmap.html">Roadmap</a>
+      <a href="comparatif.html">Comparatif</a>
+      <a href="fondateurs.html">🏆 Fondateurs</a>
       <a href="telecharger.html" class="cta">📲 Télécharger</a>
     </div>
   </div>
@@ -760,13 +760,13 @@ async function submitNotifyLaunch(e){
 }
 </script>
 
-<!-- ===== TARIFS ===== -->
+<!-- ===== TARIFS 6 PLANS ===== -->
 <section id="tarifs" class="pricing">
   <div class="section-wrap">
     <h2>Choisis ton <em>plan</em></h2>
-    <p style="text-align:center;color:var(--text-mute);max-width:640px;margin:-32px auto 24px;font-size:1rem">
+    <p style="text-align:center;color:var(--text-mute);max-width:720px;margin:-32px auto 20px;font-size:1rem">
       <strong>14 jours d'essai gratuit</strong> sur tous les plans payants · Sans carte bancaire · Résiliation en 1 clic.<br>
-      <a href="tarifs.html" style="color:var(--orange)">Voir le comparatif détaillé →</a>
+      <a href="tarifs.html" style="color:var(--orange)">Voir la grille détaillée et le comparatif →</a>
     </p>
 
     <!-- 🔔 BANDEAU OUVERTURE ABONNEMENTS -->
@@ -775,80 +775,125 @@ async function submitNotifyLaunch(e){
         <span style="font-size:1.15rem">🔒</span> Abonnements payants — ouverture prochaine
       </div>
       <p style="margin:0;color:var(--text-mute);font-size:.9rem;line-height:1.5">
-        L'application <strong>gratuite est disponible dès maintenant</strong> sur l'App Store (3 chantiers · 5 ouvertures).<br>
-        Les plans payants ouvrent au <strong>4<sup>ème</sup> trimestre 2026</strong>. Clique sur "Me notifier à l'ouverture" pour être averti en priorité et bénéficier des <strong>14 jours d'essai gratuit</strong>.
+        L'application <strong>Artisan Gratuit est disponible dès maintenant</strong> sur l'App Store.<br>
+        Les 5 plans payants ouvrent au <strong>4<sup>ème</sup> trimestre 2026</strong>. Clique "Me notifier à l'ouverture" pour être averti en priorité et profiter des <strong>14 jours d'essai gratuit</strong>.
       </p>
     </div>
 
-    <div class="grid">
+    <!-- SÉPARATEUR SOLO -->
+    <h3 style="font-family:var(--font-head);text-align:center;font-size:1.15rem;color:var(--text-mute);text-transform:uppercase;letter-spacing:.15em;font-weight:700;margin-bottom:22px">🧰 Plans Solo · 1 utilisateur</h3>
+
+    <div class="grid" style="grid-template-columns:repeat(3,1fr);max-width:1000px;margin:0 auto 60px">
 
       <div class="plan">
-        <div class="plan-name">🧰 Artisan Gratuit</div>
-        <p class="plan-tag">Pour tester l'app à ton rythme</p>
+        <div class="plan-name">Artisan Gratuit</div>
+        <p class="plan-tag">Pour tester à ton rythme</p>
         <div class="plan-price">0 €</div>
-        <span class="plan-period">1 utilisateur · Toujours gratuit</span>
+        <span class="plan-period">Toujours gratuit</span>
         <ul>
           <li><strong>3 chantiers</strong> maximum</li>
-          <li><strong>5 ouvertures</strong> maximum</li>
-          <li>Toutes les 14 formes de menuiseries</li>
-          <li>Export PDF · Photos anti-litige</li>
+          <li><strong>5 formes</strong> de menuiseries</li>
           <li>Yann IA (10 questions/mois)</li>
-          <li>Import IA CDC (3 imports/mois)</li>
+          <li>Export PDF basique</li>
+          <li>Photos anti-litige</li>
         </ul>
         <a href="telecharger.html" class="plan-cta" onclick="mftpTrackConversion('plan_click_artisan_gratuit')">Commencer gratuitement →</a>
       </div>
 
       <div class="plan featured">
-        <div class="plan-name">⭐ Artisan Pro</div>
+        <div class="plan-name">⭐ Artisan Solo</div>
         <p class="plan-tag">Le solo qui veut aller vite</p>
         <div class="plan-price">19 €<small> /mois</small></div>
-        <span class="plan-period">1 utilisateur · 14 j gratuits</span>
+        <span class="plan-period">1 utilisateur · 14 j d'essai</span>
         <ul>
           <li><strong>Chantiers illimités</strong></li>
-          <li><strong>Ouvertures illimitées</strong></li>
+          <li><strong>14 formes</strong> de menuiseries</li>
           <li><strong>Yann IA illimité</strong></li>
-          <li><strong>Import IA CDC illimité</strong></li>
-          <li>Laser Bluetooth connecté</li>
+          <li>Import IA CDC (photos illimitées)</li>
           <li>Exports PDF / Excel / CSV / JSON</li>
+          <li>Support prioritaire email</li>
         </ul>
-        <a href="mailto:info@mesurechassis.com?subject=Notification%20%E2%80%94%20Plan%20Artisan%20Pro&body=Bonjour%2C%0A%0AJe%20souhaite%20%C3%AAtre%20notifi%C3%A9%20d%C3%A8s%20l%27ouverture%20des%20abonnements%20du%20plan%20Artisan%20Pro%20(19%20%E2%82%AC%2Fmois)%20avec%2014%20jours%20d%27essai%20gratuit.%0A%0AMon%20activit%C3%A9%20%3A%20%5B%C3%A0%20compl%C3%A9ter%5D%0A%0AMerci%20!" class="plan-cta" onclick="mftpTrackConversion('plan_notify_artisan_pro')">🔔 Me notifier à l'ouverture</a>
+        <a href="mailto:info@mesurechassis.com?subject=Notification%20%E2%80%94%20Artisan%20Solo%2019%E2%82%AC&body=Bonjour%2C%0A%0AJe%20souhaite%20%C3%AAtre%20notifi%C3%A9%20d%C3%A8s%20l%27ouverture%20du%20plan%20Artisan%20Solo%20(19%20%E2%82%AC%2Fmois).%0A%0AMon%20activit%C3%A9%20%3A%20%5B%C3%A0%20compl%C3%A9ter%5D%0A%0AMerci%20!" class="plan-cta" onclick="mftpTrackConversion('plan_notify_artisan_solo')">🔔 Me notifier à l'ouverture</a>
       </div>
 
+      <div class="plan" style="border-color:#B58BFF;background:linear-gradient(180deg,rgba(181,139,255,0.10) 0%,var(--bg-2) 60%);position:relative">
+        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#B58BFF,#FF6B35);color:#fff;font-size:.72rem;font-weight:800;padding:4px 12px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase">💎 Tout inclus</div>
+        <div class="plan-name">Artisan MAX</div>
+        <p class="plan-tag">Solo + toutes les nouveautés à vie</p>
+        <div class="plan-price" style="color:#B58BFF">199 €<small> /mois</small></div>
+        <span class="plan-period">1 utilisateur · 14 j d'essai</span>
+        <ul>
+          <li>Tout Artisan Solo</li>
+          <li><strong>🆕 Générateur devis PDF pro</strong></li>
+          <li><strong>🆕 Config prix &amp; marges</strong></li>
+          <li><strong>🆕 Import catalogue fabricants</strong></li>
+          <li><strong>🆕 Interface web PC</strong></li>
+          <li><strong>🆕 Mètre laser Bluetooth</strong></li>
+          <li>Toutes les futures features à vie</li>
+        </ul>
+        <a href="mailto:info@mesurechassis.com?subject=Notification%20%E2%80%94%20Artisan%20MAX%20199%E2%82%AC&body=Bonjour%2C%0A%0AJe%20souhaite%20%C3%AAtre%20notifi%C3%A9%20d%C3%A8s%20l%27ouverture%20du%20plan%20Artisan%20MAX%20(199%20%E2%82%AC%2Fmois)%20avec%20toutes%20les%20futures%20fonctionnalit%C3%A9s%20incluses.%0A%0AMon%20activit%C3%A9%20%3A%20%5B%C3%A0%20compl%C3%A9ter%5D%0A%0AMerci%20!" class="plan-cta" style="border-color:#B58BFF;color:#B58BFF" onclick="mftpTrackConversion('plan_notify_artisan_max')">🔔 Me notifier à l'ouverture</a>
+      </div>
+
+    </div>
+
+    <!-- SÉPARATEUR ÉQUIPE -->
+    <h3 style="font-family:var(--font-head);text-align:center;font-size:1.15rem;color:var(--text-mute);text-transform:uppercase;letter-spacing:.15em;font-weight:700;margin-bottom:22px">🚀 Plans Entreprise · 3 à 5 utilisateurs</h3>
+
+    <div class="grid" style="grid-template-columns:repeat(3,1fr);max-width:1000px;margin:0 auto">
+
       <div class="plan">
-        <div class="plan-name">🚀 Entreprise Pro</div>
+        <div class="plan-name">Entreprise Gratuit</div>
+        <p class="plan-tag">Découvre en équipe</p>
+        <div class="plan-price">0 €</div>
+        <span class="plan-period">3 utilisateurs · Découverte</span>
+        <ul>
+          <li><strong>3 chantiers</strong> partagés</li>
+          <li>3 utilisateurs (RBAC basique)</li>
+          <li>Yann IA (10 questions/mois)</li>
+          <li>Export PDF basique</li>
+          <li>Sync temps réel équipe</li>
+        </ul>
+        <a href="telecharger.html" class="plan-cta" onclick="mftpTrackConversion('plan_click_entreprise_gratuit')">Commencer gratuitement →</a>
+      </div>
+
+      <div class="plan featured">
+        <div class="plan-name">⭐ Entreprise</div>
         <p class="plan-tag">L'équipe qui produit</p>
         <div class="plan-price">69 €<small> /mois</small></div>
-        <span class="plan-period">3+ utilisateurs · 14 j gratuits</span>
+        <span class="plan-period">3-5 utilisateurs · 14 j d'essai</span>
         <ul>
-          <li>Tout Artisan Pro</li>
-          <li><strong>RBAC complet</strong> (Admin/Commercial/Tech.)</li>
-          <li>Intelligence CDC (import cahier des charges)</li>
+          <li>Tout Artisan Solo × 5</li>
+          <li><strong>RBAC complet</strong> (Admin/Com/Tech)</li>
           <li>Workflow anti-bourdes</li>
           <li>Dashboard équipe &amp; stats</li>
           <li>Support prioritaire</li>
         </ul>
-        <a href="mailto:info@mesurechassis.com?subject=Notification%20%E2%80%94%20Plan%20Entreprise%20Pro&body=Bonjour%2C%0A%0AJe%20souhaite%20%C3%AAtre%20notifi%C3%A9%20d%C3%A8s%20l%27ouverture%20des%20abonnements%20du%20plan%20Entreprise%20Pro%20(69%20%E2%82%AC%2Fmois)%20avec%2014%20jours%20d%27essai%20gratuit.%0A%0AMon%20entreprise%20%3A%20%5B%C3%A0%20compl%C3%A9ter%5D%0ANombre%20de%20collaborateurs%20%3A%20%5B%C3%A0%20compl%C3%A9ter%5D%0A%0AMerci%20!" class="plan-cta" onclick="mftpTrackConversion('plan_notify_entreprise_pro')">🔔 Me notifier à l'ouverture</a>
+        <a href="mailto:info@mesurechassis.com?subject=Notification%20%E2%80%94%20Entreprise%2069%E2%82%AC&body=Bonjour%2C%0A%0AJe%20souhaite%20%C3%AAtre%20notifi%C3%A9%20d%C3%A8s%20l%27ouverture%20du%20plan%20Entreprise%20(69%20%E2%82%AC%2Fmois).%0A%0AMon%20entreprise%20%3A%20%5B%C3%A0%20compl%C3%A9ter%5D%0ANombre%20de%20collaborateurs%20%3A%20%5B%C3%A0%20compl%C3%A9ter%5D%0A%0AMerci%20!" class="plan-cta" onclick="mftpTrackConversion('plan_notify_entreprise')">🔔 Me notifier à l'ouverture</a>
       </div>
 
-      <div class="plan" style="border-color:#B58BFF;background:linear-gradient(180deg,rgba(181,139,255,0.10) 0%,var(--bg-2) 60%);position:relative;opacity:.85">
-        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#B58BFF,#FF6B35);color:#fff;font-size:.72rem;font-weight:800;padding:4px 12px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase">🏆 Bientôt</div>
-        <div class="plan-name">💎 Entreprise MAX</div>
+      <div class="plan" style="border-color:#B58BFF;background:linear-gradient(180deg,rgba(181,139,255,0.10) 0%,var(--bg-2) 60%);position:relative">
+        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#B58BFF,#FF6B35);color:#fff;font-size:.72rem;font-weight:800;padding:4px 12px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase">💎 Tout inclus</div>
+        <div class="plan-name">Entreprise MAX</div>
         <p class="plan-tag">L'automatisation totale</p>
         <div class="plan-price" style="color:#B58BFF">299 €<small> /mois</small></div>
-        <span class="plan-period">Utilisateurs illimités · 30 j gratuits</span>
+        <span class="plan-period">3-5 users · 14 j d'essai</span>
         <ul>
-          <li>Tout Entreprise Pro</li>
-          <li><strong>🆕 Générateur de devis PDF auto</strong></li>
-          <li>Analyse IA avancée (14 formes par photo)</li>
-          <li>Mode hors-ligne + sync avancée</li>
-          <li>Gestion anti-litige complète</li>
-          <li>Branding personnalisé &amp; SSO</li>
-          <li>Account manager dédié</li>
+          <li>Tout Entreprise</li>
+          <li><strong>🆕 Générateur devis PDF pro</strong></li>
+          <li><strong>🆕 Mode Marché Public</strong></li>
+          <li><strong>🆕 Connecteur Billit compta</strong></li>
+          <li><strong>🆕 Import PDF Eko4u</strong></li>
+          <li><strong>🆕 Mode vérification chantier</strong></li>
+          <li>Toutes les futures features à vie</li>
         </ul>
-        <a href="tarifs.html#max-avantages" class="plan-cta" style="border-color:#B58BFF;color:#B58BFF">🔔 Être notifié →</a>
+        <a href="mailto:info@mesurechassis.com?subject=Notification%20%E2%80%94%20Entreprise%20MAX%20299%E2%82%AC&body=Bonjour%2C%0A%0AJe%20souhaite%20%C3%AAtre%20notifi%C3%A9%20d%C3%A8s%20l%27ouverture%20du%20plan%20Entreprise%20MAX%20(299%20%E2%82%AC%2Fmois)%20avec%20toutes%20les%20futures%20fonctionnalit%C3%A9s%20incluses.%0A%0AMon%20entreprise%20%3A%20%5B%C3%A0%20compl%C3%A9ter%5D%0ANombre%20de%20collaborateurs%20%3A%20%5B%C3%A0%20compl%C3%A9ter%5D%0A%0AMerci%20!" class="plan-cta" style="border-color:#B58BFF;color:#B58BFF" onclick="mftpTrackConversion('plan_notify_entreprise_max')">🔔 Me notifier à l'ouverture</a>
       </div>
 
     </div>
+
+    <p style="text-align:center;color:var(--text-mute);font-size:.88rem;margin-top:40px">
+      💡 <a href="comparatif.html" style="color:var(--orange)">Voir le comparatif face à WinPro, Elcia, HerculePro et Obat →</a>
+    </p>
   </div>
 </section>
 
@@ -916,7 +961,15 @@ async function submitNotifyLaunch(e){
       <h4>Produit</h4>
       <a href="#fonctionnalites">Fonctionnalités</a>
       <a href="#telecharger">Télécharger</a>
-      <a href="#tarifs">Tarifs</a>
+      <a href="tarifs.html">Tarifs</a>
+      <a href="roadmap.html">Roadmap</a>
+      <a href="comparatif.html">Comparatif</a>
+    </div>
+    <div>
+      <h4>Communauté</h4>
+      <a href="fondateurs.html">🏆 Programme Fondateurs</a>
+      <a href="beta.html">Beta Android</a>
+      <a href="devenir-testeur.html">Devenir testeur</a>
       <a href="#faq">FAQ</a>
     </div>
     <div>
@@ -930,6 +983,7 @@ async function submitNotifyLaunch(e){
     <div>
       <h4>Contact</h4>
       <a href="mailto:info@mesurechassis.com">info@mesurechassis.com</a>
+      <a href="mailto:fondateurs@mesurechassis.com">fondateurs@mesurechassis.com</a>
     </div>
   </div>
   <p class="copyright">© 2026 MesureChâssis — Tous droits réservés.</p>

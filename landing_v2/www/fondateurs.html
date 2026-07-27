@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programme Fondateurs — MesureChâssis · Rejoins la première vague</title>
+<meta name="description" content="20 places gratuites à vie pour les premiers testeurs Android · Programme Ambassadeurs iOS avec parrainage · Rejoins la première vague MesureChâssis.">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--orange:#FF5A00;--orange-light:#FF7733;--purple:#B58BFF;--bg:#0A0A0C;--bg-2:#14141A;--bg-3:#1F1F28;--text:#FFFFFF;--text-mute:#A8A8B0;--border:#2A2A35;--green:#22C55E;--gold:#FFD166;--font-head:"Syne",-apple-system,sans-serif;--font:"Inter",-apple-system,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.promo-banner{background:linear-gradient(90deg,#FF5A00 0%,#FF7733 50%,#FF5A00 100%);color:#fff;text-align:center;padding:11px 16px;font-weight:700;font-size:.92rem;position:relative;z-index:60}
+.promo-banner a{color:#000;background:#fff;padding:3px 10px;border-radius:20px;font-weight:800;margin-left:6px;font-size:.85rem;display:inline-block}
+@media(max-width:560px){.promo-banner{font-size:.82rem;padding:9px 12px}.promo-banner a{font-size:.75rem;padding:2px 8px}}
+nav.top{position:sticky;top:0;z-index:50;background:rgba(10,10,12,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+nav.top .wrap{max-width:1200px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+nav.top .brand{display:flex;align-items:center;gap:10px;font-family:var(--font-head);font-weight:800;font-size:1.15rem}
+nav.top .brand img{width:30px;height:30px;border-radius:6px}
+nav.top .links{display:flex;gap:22px;align-items:center}
+nav.top .links a{font-size:.92rem;font-weight:500;color:var(--text-mute);transition:color .2s}
+nav.top .links a:hover{color:var(--text)}
+nav.top .cta{background:var(--orange);color:#000;padding:9px 18px;border-radius:8px;font-weight:700;font-size:.92rem}
+@media(max-width:840px){nav.top .links a:not(.cta){display:none}nav.top .wrap{padding:12px 16px}nav.top .brand{font-size:1rem}}
+.hero{padding:70px 24px 50px;text-align:center;background:radial-gradient(ellipse at top,rgba(255,90,0,.10),transparent 60%)}
+.hero .badge{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(90deg,rgba(255,209,102,.15),rgba(255,90,0,.15));color:var(--gold);padding:6px 14px;border-radius:20px;font-size:.82rem;font-weight:700;margin-bottom:20px;border:1px solid rgba(255,209,102,.35)}
+.hero h1{font-family:var(--font-head);font-size:clamp(2rem,4.5vw,3.2rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;margin-bottom:18px;max-width:900px;margin-inline:auto}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero p.sub{font-size:clamp(1rem,1.8vw,1.15rem);color:var(--text-mute);max-width:720px;margin:0 auto}
+section{padding:60px 24px}
+.wrap{max-width:1200px;margin:0 auto}
+.two-cols{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+@media(max-width:960px){.two-cols{grid-template-columns:1fr;gap:28px}}
+.program-card{background:var(--bg-2);border:1px solid var(--border);border-radius:20px;padding:40px 32px;position:relative;overflow:hidden}
+.program-card.android{border-color:rgba(34,197,94,.35);background:linear-gradient(180deg,rgba(34,197,94,.06) 0%,var(--bg-2) 40%)}
+.program-card.ios{border-color:rgba(181,139,255,.35);background:linear-gradient(180deg,rgba(181,139,255,.06) 0%,var(--bg-2) 40%)}
+.program-icon{font-size:3rem;margin-bottom:14px;line-height:1}
+.program-badge{display:inline-block;font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:14px}
+.program-card.android .program-badge{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.35)}
+.program-card.ios .program-badge{background:rgba(181,139,255,.15);color:var(--purple);border:1px solid rgba(181,139,255,.35)}
+.program-card h2{font-family:var(--font-head);font-size:clamp(1.5rem,2.5vw,1.9rem);font-weight:800;margin-bottom:12px;letter-spacing:-.01em}
+.program-card .lead{color:var(--text-mute);margin-bottom:24px;font-size:1rem;line-height:1.6}
+.perks{list-style:none;margin-bottom:26px}
+.perks li{padding:10px 0 10px 32px;position:relative;color:var(--text);font-size:.95rem;border-bottom:1px solid var(--border)}
+.perks li:last-child{border-bottom:none}
+.perks li::before{content:"✓";position:absolute;left:0;top:10px;color:var(--orange);font-weight:800;font-size:1.1rem;width:22px;height:22px;background:rgba(255,90,0,.14);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.reward-box{background:rgba(255,209,102,.08);border:1px dashed rgba(255,209,102,.4);border-radius:12px;padding:16px 20px;margin-bottom:24px}
+.reward-box strong{color:var(--gold)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:10px;font-weight:700;font-size:1rem;transition:transform .15s,box-shadow .15s;cursor:pointer;border:none;text-align:center;justify-content:center;width:100%}
+.btn-primary{background:var(--orange);color:#000;box-shadow:0 4px 20px rgba(255,90,0,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(255,90,0,.4)}
+.btn-purple{background:var(--purple);color:#000;box-shadow:0 4px 20px rgba(181,139,255,.3)}
+.btn-purple:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(181,139,255,.4)}
+.small-note{font-size:.82rem;color:var(--text-mute);margin-top:14px;text-align:center;line-height:1.5}
+.constraints{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:16px 20px;font-size:.85rem;color:var(--text-mute);line-height:1.6;margin-bottom:22px}
+.constraints strong{color:var(--text)}
+.wall-fame{background:var(--bg-2);padding:60px 24px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.wall-fame h2{font-family:var(--font-head);font-size:clamp(1.5rem,2.5vw,2rem);font-weight:800;text-align:center;margin-bottom:12px}
+.wall-fame p.intro{color:var(--text-mute);text-align:center;margin-bottom:36px;max-width:640px;margin-inline:auto}
+.fame-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;max-width:1000px;margin:0 auto}
+.fame-slot{background:var(--bg-3);border:1px dashed var(--border);border-radius:12px;padding:22px;text-align:center;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-mute);font-size:.88rem}
+.fame-slot .num{font-family:var(--font-head);font-size:1.5rem;font-weight:800;color:var(--gold);margin-bottom:8px}
+footer{background:var(--bg-2);border-top:1px solid var(--border);padding:40px 24px 24px;color:var(--text-mute);font-size:.88rem}
+footer .wrap-f{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:32px;margin-bottom:32px}
+footer h4{color:var(--text);font-family:var(--font-head);margin-bottom:14px;font-size:1rem}
+footer a{display:block;padding:5px 0;color:var(--text-mute);transition:color .15s}
+footer a:hover{color:var(--orange)}
+footer .cr{text-align:center;padding-top:20px;border-top:1px solid var(--border);font-size:.82rem}
+</style>
+</head>
+<body>
+
+<div class="promo-banner">📱 iOS App Store · 🤖 Android en beta —
+  <a href="fondateurs.html">👉 20 places gratuites À VIE</a>
+</div>
+
+<nav class="top">
+  <div class="wrap">
+    <a href="/" class="brand"><img src="logo.png" alt="Logo"><span>MesureChâssis</span></a>
+    <div class="links">
+      <a href="index.html#fonctionnalites">Fonctionnalités</a>
+      <a href="tarifs.html">Tarifs</a>
+      <a href="roadmap.html">Roadmap</a>
+      <a href="fondateurs.html" style="color:var(--orange)">Fondateurs</a>
+      <a href="comparatif.html">Comparatif</a>
+      <a href="telecharger.html" class="cta">📲 Télécharger</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="badge">🏆 Programme exclusif · Réservé aux 20 premiers</div>
+  <h1>Deviens <em>Fondateur</em> de MesureChâssis</h1>
+  <p class="sub">Les vingt premiers menuisiers qui rejoignent l'aventure Android obtiennent l'app gratuite à vie. Les utilisateurs iOS deviennent Ambassadeurs et gagnent des mois gratuits contre parrainage et témoignage. Ta place se mérite — ta contribution se récompense.</p>
+</section>
+
+<section>
+  <div class="wrap two-cols">
+
+    <!-- BETA ANDROID -->
+    <div class="program-card android">
+      <div class="program-icon">🤖</div>
+      <span class="program-badge">Programme Beta Android</span>
+      <h2>20 places gratuites à vie</h2>
+      <p class="lead">L'app est en phase de finition sur Android. Je cherche <strong>20 menuisiers pros</strong> qui veulent tester en avant-première, remonter les bugs, suggérer des améliorations — et rester utilisateurs privilégiés à vie.</p>
+
+      <ul class="perks">
+        <li>Accès à la beta Android en <strong>avant-première</strong> (avant le Play Store public)</li>
+        <li><strong>Compte gratuit à vie</strong> une fois l'app publiée officiellement</li>
+        <li>Ligne directe avec Michel (fondateur) pour tes remontées</li>
+        <li>Ton nom + entreprise sur la page <a href="#wall-fame" style="color:var(--gold);text-decoration:underline">Ambassadeurs</a> du site (opt-in)</li>
+        <li>Pas d'appel téléphonique — tout par email, à ton rythme</li>
+      </ul>
+
+      <div class="reward-box">
+        🏆 <strong>Récompense bonus</strong> : les <strong>5 testeurs les plus actifs</strong> (feedback qualité, suggestions, bugs remontés) reçoivent le plan <strong>Entreprise MAX gratuit À VIE</strong> (valeur 3 588 €/an).
+      </div>
+
+      <div class="constraints">
+        <strong>Conditions d'inscription :</strong><br>
+        · Menuisier / vitrier / poseur pro en Belgique, France ou Luxembourg<br>
+        · <strong>Un compte par n° de TVA</strong> (anti-abus)<br>
+        · Adresse Gmail requise (pour Google Play Console)<br>
+        · Engagement moral : au moins 2 chantiers testés dans les 4 semaines
+      </div>
+
+      <a href="mailto:fondateurs@mesurechassis.com?subject=Candidature%20Beta%20Android%20MesureCh%C3%A2ssis&body=Bonjour%20Michel%2C%0A%0AJe%20candidate%20pour%20une%20des%2020%20places%20de%20la%20beta%20Android%20MesureCh%C3%A2ssis.%0A%0A---%20INFOS%20---%0AGmail%20(pour%20Google%20Play)%20%3A%20%0ANom%20%26%20pr%C3%A9nom%20%3A%20%0AEntreprise%20%3A%20%0AN%C2%B0%20TVA%20%3A%20%0AT%C3%A9l%C3%A9phone%20%3A%20%0APays%20(BE%2FFR%2FLU)%20%3A%20%0A%0A---%20PROFIL%20---%0AType%20d%27activit%C3%A9%20(menuisier%2Fposeur%2Fvitrier%2Fautre)%20%3A%20%0ANombre%20de%20chantiers%2Fmois%20environ%20%3A%20%0AJe%20mesure%20des%20ch%C3%A2ssis%20%3A%20PVC%20%2F%20Alu%20%2F%20Bois%20(entoure)%0A%0A---%20MOTIVATION%20---%0APourquoi%20je%20veux%20tester%20MesureCh%C3%A2ssis%20%3A%20%0A%0A%5B%C3%A9cris%20quelques%20lignes%5D%0A%0A---%20BONUS%20---%0AJe%20suis%20d%27accord%20que%20mon%20nom%20%2B%20entreprise%20apparaissent%20sur%20la%20page%20Ambassadeurs%20du%20site%20%3A%20OUI%20%2F%20NON%0A%0AMerci%20!%0A%5Bton%20pr%C3%A9nom%5D" class="btn btn-primary">🤖 Candidater — Beta Android</a>
+
+      <p class="small-note">Sélection au fur et à mesure des candidatures reçues.<br>Réponse sous 48h à <strong>fondateurs@mesurechassis.com</strong></p>
+    </div>
+
+    <!-- AMBASSADEURS iOS -->
+    <div class="program-card ios">
+      <div class="program-icon">🍎</div>
+      <span class="program-badge">Programme Ambassadeurs iOS</span>
+      <h2>Gagne des mois gratuits</h2>
+      <p class="lead">Tu es déjà sur l'App Store et tu aimes MesureChâssis ? Deviens Ambassadeur. Chaque menuisier que tu parraines, chaque témoignage que tu partages, se transforme en abonnement offert.</p>
+
+      <ul class="perks">
+        <li><strong>+1 mois gratuit</strong> par filleul qui souscrit via ton code parrainage</li>
+        <li><strong>+3 mois gratuits</strong> pour un témoignage vidéo (2-3 min, sur ton chantier)</li>
+        <li>Badge <strong>"Ambassadeur"</strong> visible dans l'app et sur le site</li>
+        <li>Ta photo + entreprise sur le Wall of Fame ci-dessous</li>
+        <li>Accès aux versions bêta des nouvelles fonctionnalités avant tout le monde</li>
+      </ul>
+
+      <div class="reward-box">
+        🎁 <strong>Top 3 parrains de l'année</strong> : abonnement <strong>Artisan MAX offert 12 mois</strong> + une visite atelier chez un fabricant partenaire (Reynaers, Deceuninck ou Schüco selon planning).
+      </div>
+
+      <div class="constraints">
+        <strong>Comment ça marche :</strong><br>
+        · Le système de parrainage sera <strong>intégré dans l'app</strong> à l'ouverture des abonnements (Q4 2026)<br>
+        · Tu peux <strong>t'inscrire dès maintenant</strong> pour être notifié en priorité<br>
+        · Un code parrainage personnel te sera généré<br>
+        · Aucun engagement financier — 100 % transparent
+      </div>
+
+      <a href="mailto:fondateurs@mesurechassis.com?subject=Inscription%20Programme%20Ambassadeurs%20iOS&body=Bonjour%20Michel%2C%0A%0AJe%20souhaite%20rejoindre%20le%20programme%20Ambassadeurs%20iOS%20de%20MesureCh%C3%A2ssis.%0A%0A---%20INFOS%20---%0ANom%20%26%20pr%C3%A9nom%20%3A%20%0AEntreprise%20%3A%20%0AN%C2%B0%20TVA%20%3A%20%0AT%C3%A9l%C3%A9phone%20%3A%20%0APays%20%3A%20%0A%0A---%20MON%20USAGE%20---%0AJe%20suis%20d%C3%A9j%C3%A0%20utilisateur%20iOS%20MesureCh%C3%A2ssis%20%3A%20OUI%20%2F%20NON%0AJe%20connais%20combien%20de%20menuisiers%20autour%20de%20moi%20%3A%20%0A%0A---%20MES%20INTENTIONS%20---%0AJe%20suis%20pr%C3%AAt%20%C3%A0%20parrainer%20%3A%20OUI%20%2F%20NON%0AJe%20suis%20pr%C3%AAt%20%C3%A0%20faire%20un%20t%C3%A9moignage%20vid%C3%A9o%20%3A%20OUI%20%2F%20NON%0AMon%20nom%20%2B%20entreprise%20sur%20le%20Wall%20of%20Fame%20%3A%20OUI%20%2F%20NON%0A%0AMerci%20!%0A%5Bton%20pr%C3%A9nom%5D" class="btn btn-purple">🍎 Devenir Ambassadeur iOS</a>
+
+      <p class="small-note">Inscription anticipée — tu seras contacté quand le programme ouvrira officiellement.<br>Réponse sous 48h à <strong>fondateurs@mesurechassis.com</strong></p>
+    </div>
+
+  </div>
+</section>
+
+<section class="wall-fame" id="wall-fame">
+  <h2>🏆 Wall of Fame — Nos premiers Ambassadeurs</h2>
+  <p class="intro">Ces places attendent tes noms et ceux de tes confrères. Rejoins la première vague et écris ton nom dans l'histoire de MesureChâssis.</p>
+  <div class="fame-grid">
+    <div class="fame-slot"><span class="num">#1</span>Place à saisir<br>🇧🇪 🇫🇷 🇱🇺</div>
+    <div class="fame-slot"><span class="num">#2</span>Place à saisir</div>
+    <div class="fame-slot"><span class="num">#3</span>Place à saisir</div>
+    <div class="fame-slot"><span class="num">#4</span>Place à saisir</div>
+    <div class="fame-slot"><span class="num">#5</span>Place à saisir</div>
+    <div class="fame-slot"><span class="num">#6</span>Place à saisir</div>
+    <div class="fame-slot"><span class="num">#7</span>Place à saisir</div>
+    <div class="fame-slot"><span class="num">#8</span>Place à saisir</div>
+    <div class="fame-slot"><span class="num">#9</span>Place à saisir</div>
+    <div class="fame-slot"><span class="num">#10</span>Place à saisir</div>
+    <div class="fame-slot"><span class="num">#11</span>Place à saisir</div>
+    <div class="fame-slot"><span class="num">#12</span>Place à saisir</div>
+    <div class="fame-slot"><span class="num">#13</span>Place à saisir</div>
+    <div class="fame-slot"><span class="num">#14</span>Place à saisir</div>
+    <div class="fame-slot"><span class="num">#15</span>Place à saisir</div>
+    <div class="fame-slot"><span class="num">#16</span>Place à saisir</div>
+    <div class="fame-slot"><span class="num">#17</span>Place à saisir</div>
+    <div class="fame-slot"><span class="num">#18</span>Place à saisir</div>
+    <div class="fame-slot"><span class="num">#19</span>Place à saisir</div>
+    <div class="fame-slot"><span class="num">#20</span>Place à saisir</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap-f">
+    <div><h4>MesureChâssis</h4><p>L'app de prise de mesures pour les menuisiers pros en Belgique, France, Luxembourg.</p></div>
+    <div><h4>Produit</h4><a href="index.html#fonctionnalites">Fonctionnalités</a><a href="tarifs.html">Tarifs</a><a href="roadmap.html">Roadmap</a><a href="comparatif.html">Comparatif</a></div>
+    <div><h4>Communauté</h4><a href="fondateurs.html">Programme Fondateurs</a><a href="beta.html">Beta Android</a><a href="devenir-testeur.html">Devenir testeur</a></div>
+    <div><h4>Légal</h4><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">CGU</a><a href="cgv.html">CGV</a><a href="confidentialite.html">Confidentialité</a></div>
+  </div>
+  <p class="cr">© 2026 MesureChâssis — Tous droits réservés.</p>
+</footer>
+
+</body>
+</html>

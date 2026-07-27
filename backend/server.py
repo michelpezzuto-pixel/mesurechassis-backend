@@ -287,6 +287,21 @@ async def download_landing_diff():
 # URL avec token obscur — non-devinable, non-indexée
 # 🔒 Juin 2026 — Démo standalone confidentielle Châssis Prime (client B2B)
 # URL avec token obscur — non-devinable, non-indexée
+# 🌐 Juillet 2026 — Refonte site v3 (6 plans + roadmap + fondateurs + comparatif)
+@api.get("/downloads/refonte-v3")
+async def download_refonte_v3():
+    """ZIP des 5 fichiers HTML à uploader via FileZilla sur mesurechassis.com."""
+    path = "/app/backend/public_downloads/mesurechassis-refonte-v3-a-uploader.zip"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Archive introuvable")
+    return FileResponse(
+        path,
+        media_type="application/zip",
+        filename="mesurechassis-refonte-v3-a-uploader.zip",
+        headers={"Cache-Control": "no-store"},
+    )
+
+
 @api.get("/demo/chassisprime-a-uploader.zip")
 async def download_chassisprime_demo_zip():
     """ZIP à uploader via FileZilla dans le dossier www/ de mesurechassis.com."""
