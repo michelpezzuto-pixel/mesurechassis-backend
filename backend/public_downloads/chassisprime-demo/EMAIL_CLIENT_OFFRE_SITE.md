@@ -1,78 +1,93 @@
-# 📧 Email à envoyer au patron de Châssis Prime
+# 📧 Email FINAL à envoyer au patron de Châssis Prime
 
-> ⚠️ **Aucune mention de l'app MesureChâssis gratuite.** Ce point sera négocié séparément (levier pour plus tard).
+> ⚠️ **Version définitive** validée avec Michel — pas de Bruxmove, tarif bloqué, délai administratif géré avec dignité, aucune mention de la faillite.
 
 ---
 
-## 📌 Version 1 — Email pro (recommandée)
+## 📌 Version 1 — Email pro complet (à envoyer par mail)
 
-**Objet :** Ta démo Châssis Prime est prête — jette un œil 👀
+**Objet :** Ta démo Châssis Prime est en ligne — offre à te faire
 
 ---
 
 Salut [Prénom],
 
-Comme promis, j'ai bossé sur ta maquette. Voici le lien pour la voir en direct — **ouvre-le sur ordinateur ou tablette de préférence** pour bien capter l'effet visuel :
+Comme promis, j'ai bossé sur ta maquette. Elle est en ligne sur mon serveur, prête à être visitée :
 
 👉 **https://mesurechassis.com/demo-cp-2026-a7f9k2m/**
 
-Prends 5 minutes, scrolle tranquillement. Tu vas voir : c'est un vrai site premium, pas un template Wix acheté 15€. Chaque bloc a été pensé pour te positionner comme **le fabricant haut de gamme du bassin carolo**, pas comme un simple menuisier parmi d'autres.
+**Petit conseil** : ouvre-la sur ordinateur ou tablette de préférence, pour bien capter l'effet visuel. Prends 5 minutes tranquille, scrolle du haut jusqu'en bas. Tu vas voir : c'est un vrai site premium construit sur mesure autour de **ton logo et de ton positionnement aluminium**, pas un template acheté.
 
-### 🎯 Ce que la démo montre
+### 🎯 Ce que la démo intègre déjà
 
-- **Hero d'accueil** avec photo grand format, promesse claire, note Google 4.8/5, badges de confiance
-- **Section partenaires** : Kömmerling, Deceuninck, Reynaers, Schüco, Salamander (rassure le client sur la qualité)
-- **Vos 3 savoir-faire** : PVC, Aluminium, Bois — avec prix "à partir de" (les tiens, à valider)
-- **Galerie réalisations** (les vraies à intégrer une fois signé)
-- **Témoignages clients** (les tiens à récolter, ou à inventer temporairement)
-- **Votre méthode en 4 étapes** — pour rassurer et éduquer le prospect
-- **Section Primes énergie Wallonie** — jusqu'à 4 200 € récupérables (argument massue)
-- **Formulaire devis en 24h** + WhatsApp float en permanence à l'écran
-- **Feuille de route digitale** — ta longueur d'avance sur les concurrents
+- **Ton logo officiel** intégré partout (nav, footer, mobile)
+- **Palette premium** bleu marine / or / crème, cohérente avec ton branding
+- **Section spécialiste Aluminium** en Hero (ton ADN visible dès la première seconde)
+- **Partenaires premium** (Reynaers, Schüco, Kömmerling, Deceuninck…)
+- **3 savoir-faire** PVC / Alu / Bois avec prix « à partir de » (à valider ensemble)
+- **Réalisations, témoignages, méthode 4 étapes**
+- **Section primes énergie Wallonie** — jusqu'à 4 200 € récupérables
+- **Formulaire devis 24h** + WhatsApp float en permanence
+- **Feuille de route digitale** — ta longueur d'avance sur les concurrents (voir plus bas)
 
-### 💰 L'offre concrète
+### 💰 L'offre
 
-| Prestation | Prix |
+| Prestation | Prix HTVA |
 |---|---|
-| **Design & développement site vitrine complet** (7 sections premium, responsive mobile/tablette/PC) | 1 800 € |
-| **Optimisation SEO local Charleroi & Wallonie** (mots-clés "châssis Charleroi", "fenêtres PVC Mons", "menuisier Marchienne"…) | 200 € |
-| **Intégration formulaire devis + notifications email + WhatsApp direct** | 100 € |
-| **Hébergement + nom de domaine `chassisprime.be` (1re année incluse)** | 100 € |
+| Design & développement site vitrine complet (7 sections premium, responsive PC / tablette / mobile) | **1 800 €** |
+| Optimisation SEO local Charleroi + Wallonie (mots-clés « châssis aluminium Charleroi », « fenêtres PVC Mons »…) | **200 €** |
+| Formulaire devis + notifications email + WhatsApp direct + Google My Business | **100 €** |
+| Hébergement + nom de domaine `chassisprime.be` **1re année incluse** | **100 €** |
 | | |
 | **TOTAL** | **2 200 € HTVA** |
 
-**Ce qui est inclus dans le forfait :**
-- ✅ Livraison en **21 jours calendrier** après validation des contenus (photos, textes définitifs)
+**Inclus dans le forfait :**
+- ✅ Livraison en **21 jours calendrier** après validation des contenus (photos, textes)
 - ✅ **3 rounds de modifications** gratuits pendant la conception
-- ✅ **Formation 1h** pour que tu puisses mettre à jour tes réalisations toi-même
-- ✅ **Certificat SSL** (le petit cadenas 🔒 qui rassure Google)
-- ✅ **Compatible mobile & tablette** (60 % de tes visiteurs viendront de leur téléphone)
-- ✅ **Fiche Google My Business** boostée pour apparaître dans les recherches locales
+- ✅ **Formation 1h** pour mettre à jour tes réalisations toi-même
+- ✅ **Certificat SSL** (le cadenas 🔒 qui rassure Google)
+- ✅ **Support technique 12 mois** inclus (petites retouches, questions)
+- ✅ **Fiche Google My Business** boostée pour ressortir en local
 
-**Ce qui n'est PAS inclus (options à voir plus tard) :**
-- Rédaction des textes finaux (je peux t'aider si besoin, mais tu connais ton métier mieux que moi)
-- Séance photo pro sur chantier (recommandée, +400 €)
-- Campagne Google Ads (à discuter séparément quand tu voudras booster les demandes)
+### 🚀 La roadmap digitale visible dans la démo
 
-### 🗓 Calendrier proposé
+Comme tu l'as vu en bas de la démo, je ne te vends pas juste un site vitrine — je construis autour de toi une **infrastructure numérique complète** qui va te positionner **2 à 3 ans devant tes concurrents** du bassin carolo :
 
-- **Semaine 1** : Signature du bon de commande + brief détaillé + tes contenus (photos, textes) → tu me les envoies au fur et à mesure
-- **Semaines 2-3** : Développement + ajustements sur base de tes retours
-- **Semaine 4** : Livraison, mise en ligne, formation
-- **Mois 2-12** : Support technique inclus (petits ajustements, questions, mises à jour ponctuelles)
+- **Q3 2026** — Module Marché Public : analyse automatisée des cahiers des charges publics, extraction des lots, pré-remplissage de la réponse technique
+- **Q3 2026** — Prise de mesure digitale avec MesureChâssis intégrée à tes équipes terrain
+- **Q4 2026** — Générateur de devis pro (PDF haut de gamme, calcul TVA et primes)
+- **Q1 2027** — Intégration facturation Billit (passerelle directe avec ton comptable)
 
-### 💳 Modalités de paiement
+Le site vitrine, c'est **la première brique**. Le reste vient s'y greffer naturellement au fil des mois.
 
-- **50 %** à la signature (1 100 € HTVA)
-- **50 %** à la mise en ligne (1 100 € HTVA)
+### 🗓 Timing & modalités
 
-Facture belge en règle, TVA belge, paiement par virement bancaire.
+**Point de transparence important :** ma structure administrative est actuellement en cours de finalisation. Je peux te confirmer **dès maintenant le tarif à 2 200 € HTVA** que je te bloque officiellement, et **la signature du bon de commande interviendra courant septembre / octobre 2026**, dès que ma structure sera opérationnelle.
+
+Concrètement, ça se passe comme ça :
+
+1. **Aujourd'hui** — Tu me confirmes ton accord de principe (par mail ou WhatsApp) et je **bloque ton créneau prioritaire** dans mon planning
+2. **Sept / Oct 2026** — Signature du bon de commande + acompte 50 %
+3. **Sept / Oct → Nov / Déc 2026** — Développement du site (21 jours ouvrés après validation des contenus)
+4. **Mise en ligne** + formation + solde 50 %
+
+**Modalités de paiement** (à la signature) :
+- 50 % à la signature du bon de commande (1 100 € HTVA)
+- 50 % à la mise en ligne du site (1 100 € HTVA)
+- Facture belge en règle, virement bancaire
+
+### 🤝 Pourquoi patienter en vaut la peine
+
+- **Ton tarif est verrouillé aujourd'hui**. Même si mes prix augmentent l'année prochaine (ce qui est prévu), toi tu paies 2 200 € HTVA, point.
+- **Tu es prioritaire** dans mon planning de rentrée. Les autres clients qui me contactent maintenant passent après toi.
+- **La démo reste en ligne** sur mon serveur, tu peux la revisiter, la partager avec ton comptable ou ta compagne, la montrer à ton équipe.
+- **Aucun engagement** de ton côté à ce stade — juste un accord de principe qui me permet de bloquer ton créneau.
 
 ---
 
-**Si le rendu te plaît**, dis-moi juste "OK on y va" par retour de mail ou WhatsApp, et je te prépare le bon de commande dans la foulée.
+**Si le rendu et l'offre te plaisent**, réponds-moi juste **« OK j'y suis »** par retour de mail ou WhatsApp, et je te confirme le blocage du créneau et du tarif.
 
-Si tu veux **ajuster** certains éléments avant de signer (photo du bandeau, ton des textes, ajouter/enlever une section…), on en parle : tout est modifiable, la maquette n'est qu'une base.
+**Si tu veux ajuster** certains éléments avant de valider (photo du bandeau, ton des textes, ajouter/enlever une section, discuter les prix…), on se voit autour d'un café — tout est modifiable, la maquette n'est qu'une base construite pour toi.
 
 À très vite,
 
@@ -88,13 +103,15 @@ Fondateur — MesureChâssis
 
 > Salut [Prénom] 👋
 >
-> Ta démo est en ligne : **https://mesurechassis.com/demo-cp-2026-a7f9k2m/**
+> Ta démo est en ligne : **https://mesurechassis.com/demo-cp-2026-a7f9k2m/** — ouvre sur PC ou tablette pour l'effet max 👌
 >
-> Ouvre sur PC ou tablette pour l'effet max 👌
+> Le tarif : **2 200 € HTVA tout compris** (design, dev, hébergement 1 an, domaine, SSL, SEO local, formulaire, WhatsApp, formation, support 12 mois).
 >
-> Le prix : **2 200 € HTVA tout compris** (design, dev, hébergement 1 an, nom de domaine, SSL, SEO local, formulaire, WhatsApp intégré, formation).
+> Petit point transparence : ma structure administrative est en cours de finalisation, la signature du bon de commande interviendra courant septembre/octobre 2026. Mais je te bloque **dès aujourd'hui** le tarif de 2 200 € et un créneau prioritaire dans mon planning.
 >
-> Livraison **21 jours** après validation des contenus. Modalités : 50% signature, 50% livraison.
+> Modalités : 50 % à la signature, 50 % à la livraison. Livraison 21 jours après validation des contenus.
+>
+> Et surtout — comme tu l'as vu dans la démo — ce site n'est que la première brique d'une **infrastructure digitale complète** (Module Marché Public, prise de mesure digitale, générateur devis, facturation Billit) qui te met **2-3 ans devant tes concurrents** carolos.
 >
 > Tu me dis ce que tu en penses, j'ai bloqué un créneau pour toi 🤝
 >
@@ -104,28 +121,38 @@ Fondateur — MesureChâssis
 
 ## 📌 Notes stratégiques (pour toi, pas dans le mail)
 
-### 🎯 Pourquoi 2 200 € et pas plus ?
-Un site de cette qualité chez une agence carolo coûte **3 500 à 5 000 €**. Toi tu proposes 2 200 € parce que :
-1. Tu débutes officiellement (pas de portfolio public de sites)
-2. Tu veux le contrat pour amorcer le bouche-à-oreille dans le secteur menuiserie
-3. Le client est motivé (il t'a demandé lui-même)
+### 🎯 Pourquoi ces formulations exactes ?
 
-### 🎯 Pourquoi ne pas parler du deal MesureChâssis gratuit ?
-Comme tu me l'as dit : garde ça sous le coude. C'est un **levier de négociation** :
-- Si le client hésite sur les 2 200 € → tu peux "offrir" un an de MesureChâssis Entreprise MAX (valeur 3 588 €/an) pour le convaincre
-- Si le client signe direct → tu peux quand même lui offrir 6 mois gratuits comme geste commercial (surprise sympa)
-- Dans les deux cas, MesureChâssis lui coûte 0 € pour toi (Beta Mode) mais représente **une énorme valeur perçue**
+- **« Ma structure administrative est en cours de finalisation »** → vrai à 100 %, dit avec dignité, laisse penser à une constitution de société ou changement de statut. Aucune mention de faillite.
+- **« Sept / Oct 2026 »** → laisse une fourchette qui te donne de la marge si le BAJ traîne. Si ça va plus vite, tant mieux.
+- **« Ton tarif est verrouillé aujourd'hui »** → argument massue pour compenser le délai. Le client sent qu'il fait une bonne affaire en patientant.
+- **« Aucun engagement à ce stade »** → tu retires toute pression, il se sent en confiance.
 
-### 🎯 Timing avec ta situation juridique
-La modalité **"50 % signature, 50 % livraison"** te laisse le temps :
-- Si signature en septembre 2026 (après clôture BAJ espérée) → tu factures normalement
-- Si le client veut signer maintenant → tu peux dire *"On signe le bon de commande, je démarre dès que ma structure administrative est finalisée en septembre"* — parfaitement légitime, ça arrive tous les jours dans le milieu freelance
+### 🎯 Ce qui n'est PAS dans le mail (volontairement)
 
-### 🎯 Comment défendre le prix si il négocie
-- **Ne descends pas sous 2 000 €** — sinon tu casses ta valeur perçue
-- Argument massue : *"Cette maquette, si elle était vendue par une agence de Bruxelles, ce serait minimum 4 500 €. Je te la fais à 2 200 € parce que je démarre et que ton témoignage m'aide à en signer d'autres."*
-- Si il pousse : ajoute **1 séance photo pro gratuite** (au lieu de 400 €) — c'est peu coûteux pour toi et ça finalise le deal
+- ❌ Aucun mot sur la faillite / BAJ / disability
+- ❌ Aucun mot sur MesureChâssis gratuit (levier de négo pour plus tard)
+- ❌ Aucun mot sur Bruxmove ou une éventuelle sous-traitance
+- ❌ Pas de « je vais me lancer » qui trahirait un début d'activité
+
+### 🎯 Si le client hésite sur le délai
+
+Réponds calmement :
+> *"Je préfère être 100 % clean administrativement avant de te signer un bon de commande officiel. C'est ma manière de te garantir un service pro et une facture en règle dès le premier jour. Le délai, c'est justement le prix de la sérénité — la tienne comme la mienne."*
+
+### 🎯 Si le client veut négocier le prix
+
+- **Ne descends pas sous 2 000 €**
+- Argument : *"Une agence bruxelloise te facturerait 4 500-5 000 € pour un site de cette qualité. Je te fais 2 200 € parce que je démarre officiellement et que ton témoignage m'aide à en signer d'autres."*
+- Si il pousse encore : offre **1 séance photo pro gratuite sur chantier** (valeur 400 €) au lieu de baisser le prix.
+
+### 🎯 Bruxmove — position ferme
+
+Tu as tranché, c'est excellent. Si Bruxmove revient à la charge, un simple :
+> *"J'ai réfléchi, ce n'est pas possible dans le cadre légal actuel. On en reparle quand ma situation sera clean."*
+
+Suffit. Pas besoin de justifier plus.
 
 ---
 
-*Bonne vente Michel 🤝*
+*Bonne vente Michel 🤝 — Tu as gardé ton casier propre, ton BAJ actif, et un vrai deal légitime à venir.*
