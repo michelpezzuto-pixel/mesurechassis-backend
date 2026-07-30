@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Bannière LinkedIn MesureChâssis</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body {
+    width: 1584px;
+    height: 396px;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    background: #000;
+  }
+  .banner {
+    position: relative;
+    width: 1584px;
+    height: 396px;
+    background:
+      radial-gradient(circle at 12% 85%, rgba(255,90,0,0.28) 0%, transparent 42%),
+      linear-gradient(135deg, #0A0A0C 0%, #14141A 60%, #1F1F28 100%);
+    display: flex;
+    align-items: center;
+    color: #fff;
+    overflow: hidden;
+  }
+  /* ============ LEFT — TAGLINE ============ */
+  .left {
+    flex: 0 0 430px;
+    padding-left: 60px;
+    z-index: 3;
+  }
+  .accent-bar {
+    width: 60px;
+    height: 5px;
+    background: linear-gradient(90deg, #FF5A00, #FF7733);
+    border-radius: 3px;
+    margin-bottom: 22px;
+  }
+  .tagline {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 26px;
+    line-height: 1.2;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+  .tagline .highlight {
+    color: #FF5A00;
+    font-style: italic;
+  }
+  .founder {
+    margin-top: 28px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: #A8A8B0;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .founder strong {
+    color: #FFF;
+    font-weight: 700;
+  }
+
+  /* ============ CENTER — LOGO + BRAND ============ */
+  .center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    gap: 18px;
+  }
+  .logo-wrap {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 6px 24px rgba(255,90,0,0.35));
+  }
+  .logo-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .brand-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 44px;
+    letter-spacing: 1.5px;
+    color: #fff;
+    line-height: 1;
+  }
+  .brand-sub {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    color: #A8A8B0;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+  .brand-sub .dot { color: #FF5A00; margin: 0 8px; }
+
+  /* ============ RIGHT — FLAG + MADE IN + APP STORE ============ */
+  .right {
+    flex: 0 0 440px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 50px;
+    gap: 22px;
+    z-index: 3;
+  }
+  .flag {
+    width: 36px;
+    height: 160px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    flex-shrink: 0;
+  }
+  .flag > div { flex: 1; }
+  .flag-black  { background: #000; }
+  .flag-yellow { background: #FAE042; }
+  .flag-red    { background: #ED2939; }
+
+  .right-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 16px;
+  }
+  .made-in {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    color: #fff;
+    letter-spacing: 2px;
+    line-height: 1.1;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .made-in-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: #FF5A00;
+    letter-spacing: 3px;
+    margin-top: 5px;
+    text-align: right;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* App Store badge */
+  .appstore {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #000;
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 9px;
+    padding: 7px 14px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .appstore-apple {
+    width: 22px;
+    height: 22px;
+    fill: #fff;
+    flex-shrink: 0;
+  }
+  .appstore-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+  .appstore-small {
+    font-size: 8px;
+    color: #fff;
+    letter-spacing: 0.8px;
+    margin-bottom: 3px;
+  }
+  .appstore-big {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.3px;
+  }
+
+  /* URL bottom footer */
+  .url-footer {
+    position: absolute;
+    bottom: 16px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: #7A7A85;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+    z-index: 4;
+  }
+  .url-footer .sep { color: #FF5A00; margin: 0 12px; }
+</style>
+</head>
+<body>
+<div class="banner">
+
+  <!-- LEFT -->
+  <div class="left">
+    <div class="accent-bar"></div>
+    <div class="tagline">
+      Créée par un<br>
+      <span class="highlight">menuisier belge</span>,<br>
+      pour les menuisiers belges.
+    </div>
+    <div class="founder">
+      <strong>Michel Pezzuto</strong> · Fondateur · 20 ans de terrain
+    </div>
+  </div>
+
+  <!-- CENTER -->
+  <div class="center">
+    <div class="logo-wrap">
+      <img src="logo.png" alt="MesureChâssis logo">
+    </div>
+    <div class="brand-title">MESURECHÂSSIS</div>
+    <div class="brand-sub">MESURES TERRAIN <span class="dot">·</span> MENUISERIES PRO</div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="flag">
+      <div class="flag-black"></div>
+      <div class="flag-yellow"></div>
+      <div class="flag-red"></div>
+    </div>
+    <div class="right-content">
+      <div>
+        <div class="made-in">MADE IN<br>BELGIUM</div>
+        <div class="made-in-sub">🇧🇪 100%</div>
+      </div>
+      <a class="appstore" href="#">
+        <svg class="appstore-apple" viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg">
+          <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zM256.7 105.5c26.8-31.9 24.4-60.9 23.6-71.5-23.7 1.4-51.1 16.2-66.7 34.4-17.2 19.5-27.3 43.6-25.1 68.9 25.6 2 49-11.1 68.2-31.8z"/>
+        </svg>
+        <div class="appstore-text">
+          <span class="appstore-small">Télécharger sur</span>
+          <span class="appstore-big">App Store</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- URL FOOTER -->
+  <div class="url-footer">
+    MESURECHASSIS.COM <span class="sep">·</span> INFO@MESURECHASSIS.COM
+  </div>
+
+</div>
+</body>
+</html>
