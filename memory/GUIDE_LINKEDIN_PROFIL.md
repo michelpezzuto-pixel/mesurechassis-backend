@@ -1,135 +1,279 @@
-# 💼 GUIDE LINKEDIN — Profil Michel Pezzuto (version finale, SANS PRIX)
+# 💼 GUIDE LINKEDIN — Profil Michel Pezzuto (VERSION FINALE 2026.07 — Option A : 100% pro)
 
 Profil : https://www.linkedin.com/in/michel-pezzuto-aa4797235
-Règle absolue : AUCUN prix, AUCUN TJM sur le profil. Les fourchettes tarifaires restent dans les notes privées et se discutent uniquement en rendez-vous.
+Règles absolues :
+- AUCUN prix, AUCUN TJM sur le profil.
+- Jamais le mot « expert » pour l'IA → « praticien / consultant ».
+- Photo de profil = TA tête (pas le logo). Logo = Page Entreprise plus tard.
 
 ---
 
-## ÉTAPE 1 — Le Titre (headline)
-
-App LinkedIn → ta photo → « Voir le profil » → crayon ✏️ à côté de ton nom → champ « Titre ».
+## 📝 SECTION 1 — Titre (headline)
 
 ```
-Fondateur MesureChâssis 📱 | Consultant IA & Développement SaaS pour la construction | 15 ans de terrain en menuiserie
+Fondateur MesureChâssis 🇧🇪 · 20 ans de terrain châssis alu & PVC · Consultant IA & développement SaaS pour la construction
 ```
 
-## ÉTAPE 2 — La section « À propos » (Infos)
-
-Profil → descendre jusqu'à « Infos » → crayon ✏️ → tout remplacer par :
+## 📄 SECTION 2 — À propos
 
 ```
-J'ai passé 15 ans sur les chantiers, mètre en main, à prendre des mesures de châssis. Je connais le carnet qui prend la pluie, la cote notée trop vite, l'aller-retour à 40 km parce qu'il manque une hauteur d'allège.
+20 ans à mesurer, poser, dessiner, chiffrer des châssis en Belgique
+et au Grand-Duché du Luxembourg.
 
-Alors j'ai construit l'outil que j'aurais voulu avoir : MesureChâssis, une application mobile de prise de mesures pour menuisiers et entreprises de châssis. Wizard de mesure guidé, gestion d'équipe (commerciaux, techniciens), import de cahiers des charges analysés par IA, exports PDF professionnels. Disponible sur l'App Store.
+Je connais le terrain parce que je l'ai foulé : de la maison unifamiliale
+au bâtiment tertiaire, de la fenêtre PVC de base à la façade aluminium
+sur mesure, du croquis à la main aux plans AutoCAD 3D transmis à
+l'architecte.
 
-Je l'ai développée seul, en pilotant des intelligences artificielles (Anthropic Claude, Gemini, GPT) comme on pilote une équipe. C'est devenu mon deuxième métier : je conçois des applications et des automatisations sur mesure pour les entreprises de la construction, avec une vitesse et un coût qui étaient impensables il y a deux ans.
+Formé à l'Académie des Beaux-Arts, autodidacte assumé sur AutoCAD,
+la 3D, les réseaux informatiques et le web. J'ai construit toute ma
+carrière à l'intersection du métier manuel et de la technique numérique.
 
-Ce que j'apporte, c'est le mélange rare des deux mondes : je parle châssis, tableaux de mesures et pose — ET je sais transformer ça en logiciel qui tourne.
+Mon dernier poste marquant : Carte Blanche (ferronnerie, Filsdorf/LUX),
+où en 3 ans j'ai été bureau d'études, plans fabrication, plans pose,
+coordination architectes, négociation fournisseurs (-10 000 €/mois de
+marge gagnée sur les aciers et aluminiums), et bâtisseur du réseau
+informatique interne.
 
-🔧 Ce que je fais concrètement :
-• Applications métier mobiles et web (devis, mesures, suivi de chantier)
-• Automatisation par IA : lecture de cahiers des charges, extraction de données PDF, génération de documents
-• Conseil aux entreprises de menuiserie qui veulent digitaliser sans jargon et sans usine à gaz
+C'est là que j'ai compris ce qui coince vraiment sur nos chantiers :
+pas la mesure. La ressaisie. Le carnet perdu. Le devis qui traîne
+5 jours au bureau.
 
-📱 Découvrez MesureChâssis sur l'App Store.
-📩 Un projet, une idée, un processus qui vous fait perdre du temps ? Parlons-en en message privé.
+En 2025, j'ai décidé de construire l'outil que j'aurais voulu utiliser
+pendant 20 ans. Et j'ai découvert un deuxième métier en le faisant :
+j'ai développé MesureChâssis seul, en pilotant des intelligences
+artificielles (Anthropic Claude, Gemini, GPT) comme on pilote une
+équipe de chantier. Savoir faire produire un agent IA — lui donner
+le bon brief, cadrer, contrôler, corriger — c'est une compétence à
+part entière. Elle me permet aujourd'hui de livrer des applications
+et des automatisations à une vitesse et un coût impensables il y a
+deux ans.
+
+—
+
+MesureChâssis, c'est :
+
+📸 Un cahier des charges photographié → 22 fenêtres extraites
+    en 45 secondes par l'IA
+📐 14 formes de baies reconnues (carré, porte, trapèze, œil-de-bœuf,
+    coulissant, cintré…)
+📤 6 formats d'export en 1 clic (PDF client, Excel devis, CSV ERP)
+📡 Fonctionne hors-ligne (cave, sous-sol, chantier sans 4G)
+🔒 Sauvegarde cloud automatique, photos jointes à chaque ouverture
+🇧🇪 Créé en Belgique, support en français, serveurs européens, RGPD
+
+Application actuellement en phase bêta et 100% gratuite pour les
+premiers menuisiers belges qui rejoignent le programme pionniers.
+
+—
+
+Basé à Sombreffe. Je me déplace en Wallonie et à Bruxelles pour
+rencontrer les menuisiers qui veulent tester l'outil sur leurs
+propres chantiers.
+
+📧 info@mesurechassis.com
+🌐 mesurechassis.com
+📱 Disponible sur l'App Store
+
+Conçu par un menuisier, pour les menuisiers.
 ```
 
-## ÉTAPE 3 — Expérience n°1 (NOUVELLE) : Consultant IA
+## 💼 SECTION 3 — Expériences (une par une, dans cet ordre)
 
-Profil → « Expérience » → **+** → « Ajouter une expérience ».
-
-- **Intitulé** : `Consultant IA & Développement SaaS assisté par IA`
-- **Type d'emploi** : Indépendant
-- **Entreprise** : `Freelance — Secteur construction & menuiserie`
-- **Date de début** : Janvier 2025 — **case « J'occupe actuellement ce poste » cochée**
-- **Lieu** : Belgique · À distance
-- **Description** :
-
+### 🔹 Expérience 1 — Actuelle
 ```
-J'aide les entreprises de la construction et de la menuiserie à utiliser l'intelligence artificielle pour gagner du temps sur ce qui n'est pas leur métier : la paperasse, la ressaisie, les documents.
+Titre : Fondateur & Développeur
+Entreprise : MesureChâssis
+Dates : 2025 - Présent
+Lieu : Sombreffe, Belgique · Hybride
 
-• Conception et développement d'applications métier complètes (mobile + web) en pilotant des IA de dernière génération (Anthropic Claude, Gemini, GPT)
-• Automatisation documentaire : analyse de cahiers des charges par IA, extraction automatique des châssis et spécifications techniques (vitrage, Uw/Ug, RAL, normes), génération de PDF professionnels
-• Mise en place de campagnes email automatisées et d'outils internes sur mesure
-• Publication d'applications sur l'App Store (validation Apple obtenue)
+Fondation et développement de MesureChâssis, application mobile B2B de
+prise de mesure et génération de devis châssis pour menuisiers belges.
 
-Réalisation phare : MesureChâssis, application SaaS de prise de mesures pour menuisiers, conçue, développée et publiée en autonomie complète.
+• Développement de l'app iOS (Expo/React Native + FastAPI + MongoDB)
+• Import IA de cahiers des charges (PDF/Excel/photo) via Gemini 2.5 Flash
+• 14 formes de baies reconnues, 6 formats d'export
+• Publication App Store, gestion utilisateurs, roadmap technique
+• Stratégie produit + go-to-market + community building
 
-Peu de gens dans la construction savent faire ce pont entre le chantier et l'IA. C'est exactement là que je me situe.
+Actuellement en phase bêta gratuite pour les premiers menuisiers belges.
 ```
 
-## ÉTAPE 4 — Expérience n°2 : Fondateur MesureChâssis
-
-Même chemin : « Expérience » → **+** → « Ajouter une expérience ».
-
-- **Intitulé** : `Fondateur & Développeur`
-- **Type d'emploi** : Indépendant
-- **Entreprise** : `MesureChâssis`
-- **Date de début** : 2025 — poste actuel coché
-- **Description** :
-
+### 🔹 Expérience 2 — Actuelle (NOUVELLE : la compétence IA)
 ```
-MesureChâssis est l'application mobile de prise de mesures pensée par un menuisier, pour les menuisiers. Disponible sur l'App Store.
+Titre : Consultant IA & Pilotage d'agents intelligents
+Type d'emploi : Indépendant
+Entreprise : Freelance — Secteur construction & menuiserie
+Dates : Janvier 2025 - Présent (case « J'occupe actuellement ce poste » cochée)
+Lieu : Belgique · À distance
 
-• Wizard de mesure guidé : plus aucune cote oubliée sur chantier
-• 12 formes de châssis, options techniques complètes
-• Gestion d'équipe : rôles commerciaux / techniciens / admin
-• Import de cahiers des charges analysé par IA (extraction automatique des châssis et exigences)
-• Exports PDF professionnels prêts à envoyer au fournisseur
+J'aide les entreprises de la construction à utiliser l'intelligence
+artificielle pour gagner du temps sur ce qui n'est pas leur métier :
+la paperasse, la ressaisie, les documents.
 
-Compatible avec vos outils existants (Elcia, Odoo, Vertuoza…) : MesureChâssis complète votre chaîne, il ne la remplace pas.
-```
+Ma spécialité : le pilotage d'agents IA. Faire produire un résultat
+professionnel à une IA, ça ne s'improvise pas — c'est un vrai savoir-faire
+qui s'apprend sur le terrain, comme le métré. Brief précis, découpage des
+tâches, contrôle qualité, correction de trajectoire : je travaille avec
+Claude (Anthropic), Gemini (Google) et GPT (OpenAI) comme on dirige une
+équipe.
 
-## ÉTAPE 5 — Expérience n°3 : tes 15 ans de menuiserie
+Résultats concrets :
+• Une application SaaS complète (MesureChâssis) conçue, développée et
+  publiée sur l'App Store en pilotant des agents IA de bout en bout
+• Lecture automatique de cahiers des charges : 22 fenêtres extraites
+  d'un PDF en 45 secondes
+• Automatisations sur mesure : extraction de données, génération de
+  documents, campagnes e-mail
 
-Ajoute (ou complète) ton parcours terrain. Modèle à adapter avec les vrais noms/dates :
-
-- **Intitulé** : `Menuisier — Poseur de châssis` (ou `Technicien de mesure / Chef d'équipe` selon la période)
-- **Entreprise** : [nom de l'entreprise]
-- **Dates** : [ex. 2009 – 2024]
-- **Description** :
-
-```
-15 ans d'expérience terrain en menuiserie extérieure : prise de mesures, pose de châssis et portes (PVC, ALU, bois), relation client, coordination avec les fabricants.
-
-C'est cette expérience de terrain qui alimente aujourd'hui chaque écran de MesureChâssis : je développe l'outil dont j'avais besoin quand j'étais sur chantier.
+Je ne suis pas un théoricien de l'IA. Je suis un artisan qui a appris
+à la faire travailler.
 ```
 
-## ÉTAPE 6 — Compétences (ordre d'ajout = ordre d'importance)
+### 🔹 Expérience 3
+```
+Titre : Bureau d'études & Coordination technique
+Entreprise : Carte Blanche (Ferronnerie)
+Dates : 2013 - 2016
+Lieu : Filsdorf, Luxembourg
 
-Profil → « Compétences » → **+**. Ajoute dans cet ordre :
+3 ans au cœur du bureau d'études d'une ferronnerie en très forte
+croissance (passée de locaux préfabriqués à des installations modernes
+en 3 ans, chiffre d'affaires en millions).
 
-1. Intelligence artificielle (IA)
-2. Développement SaaS
-3. Anthropic Claude
-4. Prompt Engineering
-5. Automatisation des processus
-6. React Native
-7. Menuiserie
-8. Prise de mesures techniques
-9. Développement d'applications mobiles
-10. Gestion de projet
-11. Analyse de cahiers des charges
-12. Relation client B2B
-13. Python
-14. Publication App Store
-15. Secteur de la construction
+• Plans de principe 3D (AutoCAD 3D)
+• Plans de fabrication, plans de pose, plans de détail
+• Coordination avec architectes et maîtres d'ouvrage
+• Réunions clients, chiffrage, suivi de projet
+• Négociation fournisseurs (aluminiums, inox) — économies moyennes
+  10 000 €/mois pour l'entreprise
+• Conception et déploiement du réseau NAS interne
+• Contribution active à la structuration de l'entreprise en croissance
+```
 
-Ensuite : sur les 3 premières, clique dessus → « Épingler » pour qu'elles apparaissent en haut.
+### 🔹 Expérience 4
+```
+Titre : Dessinateur AutoCAD & Support informatique
+Entreprise : Bunusevac (Bureau d'études)
+Dates : 2010 - 2013
+Lieu : Bertrange, Luxembourg
 
-## ÉTAPE 7 — Finitions (5 minutes)
+Bureau d'études spécialisé en renaturation de cours d'eau. Projets
+de passes à poissons et aménagements hydrauliques.
 
-1. **Photo de couverture** : utilise la bannière déjà générée pour Facebook → https://[ton-domaine]/api/linkedin/asset/fb_couverture.png (appui long → enregistrer → LinkedIn → profil → appareil photo en haut → importer).
-2. **Site web dans les coordonnées** : ajoute le lien App Store de MesureChâssis (Profil → « Coordonnées » → crayon → Site web).
-3. **Nom de la section « Sélection »** : épingle un post MesureChâssis (visuel J1 de la campagne) si tu veux une vitrine.
-4. **Mode créateur : NON** — tu as choisi de ne pas poster activement, on reste sur un profil vitrine solide.
+• Plans techniques 2D et 3D sur AutoCAD (formation approfondie)
+• Support informatique et maintenance réseau
+• Documentation technique
+```
 
-## ⚠️ RAPPELS
+### 🔹 Expérience 5
+```
+Titre : Métreur / Poseur châssis
+Entreprise : Batisystem
+Dates : 2008
+Lieu : Belgique / Luxembourg
 
-- ❌ Aucun prix, aucun TJM, aucune « fourchette » nulle part sur le profil (décision Michel — les tarifs se discutent en privé, en rendez-vous).
-- ❌ Ne pas mentionner le statut de faillite ni le BAJ.
-- ✅ Le profil sert à : crédibilité B2B quand un prospect te googlise après un email ou une visite terrain.
+Menuiserie extérieure — mesures, chiffrage, pose de châssis alu et PVC.
+```
 
----
-*Guide généré le 13/06/2026 — session stratégie LinkedIn. Statut : livré à Michel, en attente de mise en ligne.*
+### 🔹 Expérience 6
+```
+Titre : Métreur commercial
+Entreprise : Coljon
+Dates : 2007 - 2008
+Lieu : Arlon (BE) et Luxembourg
+
+Prise de mesures chez le client, chiffrage, coordination avec l'atelier
+de production (site Luxembourg) et l'équipe commerciale (site Arlon).
+```
+
+### 🔹 Expérience 7
+```
+Titre : Métreur & Poseur châssis aluminium
+Entreprise : Alutec
+Dates : 2005 - 2007
+Lieu : Luxembourg
+
+Deux ans dans l'univers des châssis aluminium haut de gamme.
+Prise de mesures, préparation, pose sur chantiers résidentiels et
+tertiaires.
+```
+
+### 🔹 Expérience 8
+```
+Titre : Employé polyvalent
+Entreprise : Cactus (Groupe Bertrange)
+Dates : 2004
+Lieu : Luxembourg
+
+Première expérience professionnelle en grande distribution après
+mon parcours d'études artistiques en Belgique.
+```
+
+## 🎓 SECTION 4 — Formation
+```
+Établissement : Académie des Beaux-Arts
+Domaine : Arts plastiques et visuels
+Dates : Années 2000
+Ville : Belgique
+
+Autres formations :
+• AutoCAD 2D & 3D (approfondissement autodidacte + formation professionnelle)
+• Photoshop
+• HTML / CSS
+• Maintenance et administration réseau informatique
+• Pilotage d'agents IA (Claude, Gemini, GPT) — autodidacte, pratique quotidienne depuis 2025
+```
+
+## 🛠️ SECTION 5 — Compétences (dans cet ordre)
+
+**Compétences IA (les mettre EN PREMIER — c'est le différenciateur) :**
+- Pilotage d'agents IA (Claude, Gemini, GPT)
+- Prompt engineering
+- Automatisation par IA
+- Intelligence artificielle appliquée
+- Extraction de données par IA (documents, PDF)
+
+**Compétences métier :**
+- Prise de mesure châssis
+- Menuiserie aluminium
+- Menuiserie PVC
+- Métré et chiffrage
+- Plans de fabrication
+- Plans de pose
+- Devis châssis
+- Coordination chantier
+
+**Compétences techniques :**
+- AutoCAD 2D / 3D
+- Photoshop
+- HTML/CSS
+- Administration réseau
+- Gestion de fournisseurs
+
+**Compétences entrepreneuriales :**
+- Fondation de startup
+- Product Management
+- Développement mobile (Expo/React Native)
+- Roadmap produit
+- Stratégie B2B
+
+## 🖼️ SECTION 6 — Bannière LinkedIn (1584 × 396 px)
+Proposition (à générer côté backend sur demande de Michel) :
+- Fond noir profond
+- Gauche : accent orange + tagline « Création belge, par un menuisier belge, pour les menuisiers belges »
+- Centre : logo MesureChâssis en grand
+- Droite : drapeau belge vertical + « MADE IN BELGIUM »
+Statut : EN ATTENTE du GO de Michel.
+
+## 🎯 Cohérence des dates (vérifiée)
+- 2004 Cactus → 2005-2007 Alutec → 2007-2008 Coljon → 2008 Batisystem
+- Trou 2008-2010 : volontaire. Réponse si question : « formation informatique ».
+- 2010-2013 Bunusevac → 2013-2016 Carte Blanche
+- Trou 2016-2025 : volontaire. Réponse si question : « préparation entrepreneuriale ».
+- 2025-présent : MesureChâssis + Consultant IA (les deux en parallèle = cohérent).
+
+## 📌 Volontairement exclu (Option A validée)
+- ❌ Garde-corps en Plus (indépendant)
+- ❌ Toute mention personnelle, santé, famille, faillite
+- ❌ Prix / TJM / tarifs
