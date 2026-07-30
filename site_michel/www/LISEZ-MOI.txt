@@ -1,0 +1,49 @@
+═══════════════════════════════════════════════════════════════════
+  🔧 CORRECTIF v2.1.1 (26 juillet 2026, 22h30)
+  Freemium limits + hébergement RGPD
+═══════════════════════════════════════════════════════════════════
+
+CORRECTIONS APPORTÉES :
+
+1. tarifs.html — Limites Freemium alignées avec le backend
+   • Plan Artisan (0€) : 3 chantiers max + 5 ouvertures max +
+     Yann IA 10 q/mois + Import CDC 3/mois
+   • Plan Entreprise (0€) : idem + 3 utilisateurs max
+   • Tableau comparatif : lignes ajustées avec vrais chiffres
+
+2. faq.html — Question "Puis-je utiliser sans payer ?" alignée
+
+3. cgv.html — Article 1 (Éditeur) : hébergement corrigé
+   Avant : "Railway (US), Vercel (US) et OVH (FR/BE)"
+   Après : "EasyHost.be (Belgique) + Railway (US) sous CCT"
+
+4. confidentialite.html — Article 5 (Sécurité) :
+   Précision sur la localisation des données + cadre CCT Article 46
+   RGPD pour le transfert hors UE vers Railway US.
+
+═══════════════════════════════════════════════════════════════════
+
+📤 UPLOAD FTP
+
+Décompressez le ZIP, ouvrez FileZilla, uploadez ces 4 fichiers
+en écrasant les anciens sur mesurechassis.com :
+  • tarifs.html
+  • faq.html
+  • cgv.html
+  • confidentialite.html
+
+═══════════════════════════════════════════════════════════════════
+
+⚠️ IMPORTANT — CONFORMITÉ RGPD
+
+Le correctif du fichier confidentialite.html est CRITIQUE :
+L'ancienne version prétendait "hébergement sécurisé en Europe"
+alors que le backend Railway est aux États-Unis. Cette imprécision
+exposait à un risque de plainte CNIL/APD (autorité belge de
+protection des données).
+
+La nouvelle version mentionne explicitement Railway US et cite
+les Clauses Contractuelles Types de la Commission européenne
+(article 46 RGPD) qui encadrent légalement ce transfert.
+
+═══════════════════════════════════════════════════════════════════

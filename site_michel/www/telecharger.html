@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Télécharger MesureChâssis — Disponible sur l'App Store</title>
+  <meta name="description" content="Téléchargez MesureChâssis gratuitement sur iPhone et iPad depuis l'App Store. Version Android bientôt disponible sur le Play Store.">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="fr-BE">
+  <meta name="author" content="MesureChâssis">
+  <link rel="canonical" href="https://mesurechassis.com/telecharger.html">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mesurechassis.com/telecharger.html">
+  <meta property="og:title" content="Télécharger MesureChâssis — Disponible sur l'App Store">
+  <meta property="og:description" content="Téléchargez MesureChâssis gratuitement sur iPhone et iPad depuis l'App Store. Version Android bientôt disponible.">
+  <meta property="og:image" content="https://mesurechassis.com/og-image.jpg">
+  <meta property="og:locale" content="fr_BE">
+  <meta property="og:site_name" content="MesureChâssis">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Télécharger MesureChâssis — Disponible sur l'App Store">
+  <meta name="twitter:description" content="Téléchargez MesureChâssis gratuitement sur iPhone et iPad depuis l'App Store. Version Android bientôt disponible.">
+  <meta name="twitter:image" content="https://mesurechassis.com/og-image.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+
+:root {
+    --bg: #121214;
+    --bg2: #1a1a1e;
+    --bg3: #222228;
+    --orange: #FF6B35;
+    --orange-dim: rgba(255, 107, 53, 0.12);
+    --orange-glow: rgba(255, 107, 53, 0.25);
+    --green: #4CAF50;
+    --green-dim: rgba(76, 175, 80, 0.12);
+    --white: #FFFFFF;
+    --gray1: #e8e8e8;
+    --gray2: #a8a8b0;
+    --gray3: #5a5a65;
+    --border: rgba(255,255,255,0.07);
+    --border-orange: rgba(255,107,53,0.3);
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --radius: 12px;
+    --radius-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+    background: var(--bg);
+    color: var(--gray1);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+a { color: var(--orange); text-decoration: none; transition: opacity .2s; }
+a:hover { opacity: .8; }
+h1, h2, h3, h4 { font-family: var(--font-head); color: var(--white); line-height: 1.2; }
+h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; margin-bottom: 1.5rem; word-break: break-word; overflow-wrap: break-word; hyphens: auto; }
+h1 em { color: var(--orange); font-style: normal; }
+h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 700; margin: 2.5rem 0 1rem; }
+h3 { font-size: 1.25rem; font-weight: 600; margin: 1.5rem 0 .75rem; }
+p { margin-bottom: 1rem; color: var(--gray2); }
+ul, ol { margin: 0 0 1rem 1.5rem; color: var(--gray2); }
+li { margin-bottom: .5rem; }
+strong { color: var(--white); }
+section, article { position: relative; z-index: 1; }
+
+/* === HEADER === */
+header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(18, 18, 20, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+}
+.header-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: .9rem 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.logo {
+    font-family: var(--font-head);
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: -.02em;
+}
+.logo span { color: var(--orange); }
+.logo img { width: 32px; height: 32px; border-radius: 8px; }
+header nav { display: flex; align-items: center; gap: 1.5rem; }
+header nav a { color: var(--gray2); font-size: .92rem; font-weight: 500; transition: color .2s; }
+header nav a:hover { color: var(--white); opacity: 1; }
+.btn-primary, .btn-download {
+    background: var(--orange);
+    color: var(--white) !important;
+    padding: .6rem 1.1rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: .92rem;
+    transition: transform .2s, box-shadow .2s;
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    border: none;
+    cursor: pointer;
+}
+.btn-primary:hover, .btn-download:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px var(--orange-glow);
+    opacity: 1;
+}
+.btn-secondary {
+    background: var(--bg3);
+    color: var(--gray1);
+    padding: .6rem 1.1rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: .92rem;
+    border: 1px solid var(--border);
+    transition: all .2s;
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+}
+.btn-secondary:hover { border-color: var(--orange); color: var(--white); opacity: 1; }
+.hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px;
+}
+.hamburger span { width: 22px; height: 2px; background: var(--white); border-radius: 2px; }
+.mobile-nav {
+    display: none;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 5% 1.5rem;
+    background: rgba(18,18,20,.98);
+    border-bottom: 1px solid var(--border);
+}
+.mobile-nav.open { display: flex; }
+.mobile-nav a { color: var(--gray1); padding: .5rem 0; font-weight: 500; }
+
+@media (max-width: 880px) {
+    header nav { display: none; }
+    .hamburger { display: flex; }
+}
+
+/* === MAIN CONTENT === */
+main {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 3rem 5% 5rem;
+    position: relative;
+    z-index: 1;
+}
+main p { font-size: 1rem; line-height: 1.75; }
+.lead {
+    font-size: 1.15rem;
+    color: var(--gray1);
+    margin-bottom: 2rem;
+    padding-left: 1rem;
+    border-left: 3px solid var(--orange);
+}
+.meta {
+    color: var(--gray3);
+    font-size: .85rem;
+    margin-bottom: 2rem;
+}
+
+/* === FOOTER === */
+footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+    padding: 3rem 5% 1.5rem;
+    margin-top: 4rem;
+}
+.footer-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 2.5rem;
+    align-items: start;
+}
+.footer-brand .footer-logo {
+    font-family: var(--font-head);
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: .75rem;
+}
+.footer-brand .footer-logo span { color: var(--orange); }
+.footer-brand .footer-logo img { width: 30px; height: 30px; border-radius: 7px; }
+.footer-brand p { font-size: .88rem; color: var(--gray3); margin-bottom: 1rem; }
+.footer-brand .footer-mail {
+    color: var(--gray1);
+    font-size: .9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+}
+.footer-col h4 {
+    font-family: var(--font-head);
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--orange);
+    margin: 0 0 1rem;
+    font-weight: 700;
+}
+.footer-col a {
+    display: block;
+    color: var(--gray2);
+    font-size: .88rem;
+    padding: .25rem 0;
+    transition: color .15s;
+}
+.footer-col a:hover { color: var(--white); opacity: 1; }
+.footer-bottom {
+    max-width: 1280px;
+    margin: 2.5rem auto 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: .8rem;
+    color: var(--gray3);
+}
+@media (max-width: 760px) {
+    .footer-inner { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .footer-brand { grid-column: 1 / -1; }
+    .footer-bottom { flex-direction: column; }
+}
+
+/* === COOKIE BANNER === */
+.cookie-banner {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    max-width: 880px;
+    margin: 0 auto;
+    background: var(--bg2);
+    border: 1px solid var(--border-orange);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    z-index: 200;
+    display: none;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+}
+.cookie-banner.show { display: block; }
+.cookie-banner-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.cookie-banner p { margin: 0; font-size: .9rem; flex: 1; min-width: 250px; color: var(--gray1); }
+.cookie-banner .actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+
+/* === FAB (Download CTA) === */
+.fab-download {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: var(--orange);
+    color: var(--white);
+    padding: .9rem 1.3rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: .92rem;
+    box-shadow: 0 12px 30px var(--orange-glow);
+    z-index: 90;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    transition: transform .2s;
+}
+.fab-download:hover { transform: scale(1.05); opacity: 1; }
+@media (max-width: 600px) {
+    .fab-download { bottom: 1rem; right: 1rem; padding: .75rem 1rem; font-size: .85rem; }
+    .fab-download .fab-label { display: none; }
+}
+
+  </style>
+<style>body.menu-open .mc-fab{display:none !important}</style></head>
+<body>
+<!-- ═══════════ ANNONCE ESSAI GRATUIT ═══════════ -->
+<div class="beta-banner" style="background:linear-gradient(90deg,#FF6B35 0%,#FF8C42 100%);color:#fff;padding:.65rem 1rem;text-align:center;font-size:.86rem;font-weight:500;line-height:1.4;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.4rem 1rem">
+  <strong>⭐ 14 jours d'essai Pro gratuit</strong>
+  <span>· Toutes les fonctionnalités débloquées · Sans carte bancaire · Résiliation en 1 clic</span>
+  <a href="tarifs.html" style="color:#fff;text-decoration:underline;font-weight:700">Voir les tarifs →</a>
+</div>
+
+<header style="position:sticky;top:0;z-index:100;background:rgba(18,18,20,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.07)">
+  <div class="header-inner" style="max-width:1280px;margin:0 auto;padding:.9rem 5%;display:flex;align-items:center;justify-content:space-between;gap:1rem">
+    <a href="index.html" class="logo" style="font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:#fff;text-decoration:none;display:flex;align-items:center;gap:10px;letter-spacing:-.02em">
+      <img class="logo-img" src="logo.png" alt="MesureChâssis logo" style="width:32px;height:32px;border-radius:8px;object-fit:cover">
+      Mesure<span style="color:#FF6B35">Châssis</span>
+    </a>
+    <nav class="desktop-nav" style="display:flex;align-items:center;gap:1.5rem">
+        <a href="index.html" style="color:#a8a8b0;font-size:.92rem;font-weight:500;text-decoration:none">Accueil</a>
+        <a href="tarifs.html" style="color:#a8a8b0;font-size:.92rem;font-weight:500;text-decoration:none">Tarifs</a>
+        <a href="guide.html" style="color:#a8a8b0;font-size:.92rem;font-weight:500;text-decoration:none">Guide</a>
+        <a href="faq.html" style="color:#a8a8b0;font-size:.92rem;font-weight:500;text-decoration:none">FAQ</a>
+        <a href="contact.html" style="color:#a8a8b0;font-size:.92rem;font-weight:500;text-decoration:none">Contact</a>
+        <a href="telecharger.html" class="btn-primary" style="background:#FF6B35;color:#fff;padding:.6rem 1.1rem;border-radius:8px;font-weight:600;font-size:.92rem;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem">📱 Télécharger l'app</a>
+    </nav>
+    <button class="hamburger" aria-label="Menu" onclick="document.querySelector('.mobile-nav-mc').classList.toggle('open');document.body.classList.toggle('menu-open')" style="display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:4px;padding:6px">
+      <span style="width:22px;height:2px;background:#fff;border-radius:2px"></span>
+      <span style="width:22px;height:2px;background:#fff;border-radius:2px"></span>
+      <span style="width:22px;height:2px;background:#fff;border-radius:2px"></span>
+    </button>
+  </div>
+  <nav class="mobile-nav-mc" aria-label="Navigation mobile" style="display:none;flex-direction:column;gap:1rem;padding:1rem 5% 1.5rem;background:rgba(18,18,20,.98);border-bottom:1px solid rgba(255,255,255,0.07)">
+    <a href="index.html" style="color:#e8e8e8;padding:.5rem 0;font-weight:500;text-decoration:none">Accueil</a>
+    <a href="tarifs.html" style="color:#e8e8e8;padding:.5rem 0;font-weight:500;text-decoration:none">Tarifs</a>
+    <a href="guide.html" style="color:#e8e8e8;padding:.5rem 0;font-weight:500;text-decoration:none">Guide</a>
+    <a href="faq.html" style="color:#e8e8e8;padding:.5rem 0;font-weight:500;text-decoration:none">FAQ</a>
+    <a href="contact.html" style="color:#e8e8e8;padding:.5rem 0;font-weight:500;text-decoration:none">Contact</a>
+    <a href="telecharger.html" style="background:#FF6B35;color:#fff;padding:.6rem 1.1rem;border-radius:8px;font-weight:600;font-size:.92rem;text-decoration:none;width:fit-content">📱 Télécharger l'app</a>
+  </nav>
+  <style>
+    .mobile-nav-mc.open{display:flex !important}
+    @media(max-width:880px){.desktop-nav{display:none !important}.hamburger{display:flex !important}}
+  </style>
+</header>
+<main>
+
+<h1>Télécharger <em>MesureChâssis</em></h1>
+<p class="lead"><strong style="color:#4CAF50">✅ Disponible dès maintenant sur l'App Store !</strong> Téléchargez MesureChâssis gratuitement sur votre iPhone ou iPad et commencez à mesurer vos chantiers en quelques secondes. La version Android arrive très prochainement.</p>
+
+<style>
+.dl-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+@media (max-width: 700px) { .dl-grid { grid-template-columns: 1fr; } }
+.dl-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  transition: border-color .2s, transform .2s;
+}
+.dl-card:hover { border-color: var(--border-orange); transform: translateY(-3px); }
+.dl-card .icon-os { font-size: 3rem; margin-bottom: .75rem; display: flex; justify-content: center; align-items: center; height: 60px; }
+.dl-card h3 { margin: 0 0 .5rem; color: var(--white); }
+.dl-card .platform { font-size: .85rem; color: var(--gray3); margin-bottom: 1.25rem; }
+.dl-card .status-badge {
+  display: inline-block;
+  padding: .35rem .8rem;
+  border-radius: 20px;
+  font-size: .78rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+.status-beta { background: var(--orange-dim); color: var(--orange); border: 1px solid var(--border-orange); }
+.status-soon { background: rgba(255,255,255,.05); color: var(--gray2); border: 1px solid var(--border); }
+.dl-btn {
+  display: inline-block;
+  padding: .85rem 1.5rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  margin-top: .5rem;
+  width: 100%;
+  font-size: .95rem;
+}
+.dl-btn-primary { background: var(--orange); color: var(--white); }
+.dl-btn-disabled { background: var(--bg3); color: var(--gray2); border: 1px solid var(--border); cursor: not-allowed; }
+.dl-info { font-size: .82rem; color: var(--gray3); margin-top: 1rem; line-height: 1.5; }
+
+.notify-form {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin: 2rem 0;
+}
+.notify-form input[type=email] {
+  width: 100%;
+  padding: .85rem 1rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  margin-bottom: .75rem;
+}
+.notify-form input[type=email]:focus { outline: none; border-color: var(--orange); }
+.notify-form button {
+  width: 100%;
+  padding: .85rem;
+  background: var(--orange);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.notice-banner {
+  background: var(--orange-dim);
+  border: 1px solid var(--border-orange);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin: 2rem 0;
+  display: flex;
+  gap: .75rem;
+  align-items: flex-start;
+}
+</style>
+
+<!-- ═══════════ HERO DOWNLOAD - APP STORE + QR ═══════════ -->
+<section aria-label="Télécharger sur l'App Store" style="background:linear-gradient(135deg,#1a1a1e 0%,#222228 100%);border:1px solid rgba(255,107,53,0.35);border-radius:20px;padding:2.5rem;margin:2rem 0;box-shadow:0 20px 60px rgba(0,0,0,.35),0 0 0 1px rgba(255,107,53,0.15)">
+  <div style="display:grid;grid-template-columns:1fr auto;gap:2.5rem;align-items:center" class="hero-dl-grid">
+    <div>
+      <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(76,175,80,0.14);color:#4CAF50;padding:.35rem .9rem;border-radius:20px;font-size:.82rem;font-weight:700;margin-bottom:1rem;border:1px solid rgba(76,175,80,0.3)">
+        <span style="width:8px;height:8px;background:#4CAF50;border-radius:50%;display:inline-block;animation:pulse-dot 2s ease-in-out infinite"></span>
+        Disponible maintenant
+      </div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:clamp(1.5rem,3vw,2rem);font-weight:800;color:#fff;margin:0 0 .75rem;line-height:1.2">📱 Téléchargez sur l'<span style="color:#FF6B35">App Store</span></h2>
+      <p style="color:#a8a8b0;font-size:1rem;margin:0 0 1.5rem;line-height:1.6">Scannez le QR code avec l'appareil photo de votre iPhone ou iPad, ou cliquez sur le bouton ci-dessous. L'installation prend moins d'une minute.</p>
+
+      <a href="https://apps.apple.com/fr/app/mesurech%C3%A2ssis/id6776357930" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.85rem;background:#000;color:#fff;padding:.85rem 1.5rem;border-radius:12px;text-decoration:none;border:1px solid rgba(255,255,255,0.15);transition:transform .2s,box-shadow .2s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 25px rgba(0,0,0,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30" fill="#fff" aria-hidden="true">
+          <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+        </svg>
+        <div style="text-align:left;line-height:1.2">
+          <div style="font-size:.72rem;color:#a8a8b0;font-weight:400">Télécharger sur l'</div>
+          <div style="font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:700">App Store</div>
+        </div>
+      </a>
+
+      <div style="display:flex;gap:1.5rem;margin-top:1.5rem;flex-wrap:wrap;color:#a8a8b0;font-size:.85rem">
+        <span>⭐ Compatible iOS 15+</span>
+        <span>💾 &lt; 50 Mo</span>
+        <span>🆓 Gratuit à télécharger</span>
+      </div>
+    </div>
+
+    <div style="text-align:center">
+      <div style="background:#fff;padding:1rem;border-radius:16px;box-shadow:0 12px 40px rgba(255,107,53,0.25);display:inline-block">
+        <img src="images/qr-appstore-logo.png" alt="QR code pour télécharger MesureChâssis sur l'App Store" width="220" height="220" style="display:block;width:220px;height:220px">
+      </div>
+      <p style="color:#a8a8b0;margin:.85rem 0 0;font-size:.85rem;max-width:220px;line-height:1.4">📸 Ouvrez l'appareil photo<br>de votre iPhone pour scanner</p>
+    </div>
+  </div>
+  <style>
+    @keyframes pulse-dot {0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+    @media(max-width:720px){
+      .hero-dl-grid{grid-template-columns:1fr !important;text-align:center}
+      .hero-dl-grid > div:first-child{order:2}
+      .hero-dl-grid > div:last-child{order:1}
+    }
+  </style>
+</section>
+
+<h2 style="text-align:center;margin-top:3.5rem">Choisissez votre plateforme</h2>
+<p style="text-align:center">MesureChâssis est déjà accessible sur iPhone et iPad. La version Android sera publiée sur le Play Store dans les prochaines semaines.</p>
+
+<div class="dl-grid">
+
+  <div class="dl-card" style="border:2px solid rgba(255,107,53,0.4);background:linear-gradient(135deg,rgba(255,107,53,0.06) 0%,rgba(255,107,53,0.02) 100%)">
+    <span class="icon-os" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="56" height="56" fill="#ffffff">
+        <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+      </svg>
+    </span>
+    <h3>iOS · iPhone &amp; iPad</h3>
+    <div class="platform">iOS 15 ou plus récent</div>
+    <span class="status-badge" style="background:rgba(76,175,80,0.14);color:#4CAF50;border:1px solid rgba(76,175,80,0.35)">✅ Disponible maintenant</span>
+    <a href="https://apps.apple.com/fr/app/mesurech%C3%A2ssis/id6776357930" target="_blank" rel="noopener" class="dl-btn dl-btn-primary">
+      📲 Télécharger sur l'App Store
+    </a>
+    <p class="dl-info">Ouvrez ce lien depuis votre iPhone ou iPad pour installer l'application en un tap. Vous pouvez aussi rechercher <strong>« MesureChâssis »</strong> directement dans l'App Store.</p>
+  </div>
+
+  <div class="dl-card">
+    <span class="icon-os" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="56" height="56" fill="#3DDC84">
+        <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4483.9993.9993 0 .5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4483.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5902 8.2439 13.8533 7.8508 12 7.8508s-3.5902.3931-5.1367 1.0989L4.841 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3432-4.1021-2.6889-7.5743-6.1185-9.4396"/>
+      </svg>
+    </span>
+    <h3>Android · Play Store</h3>
+    <div class="platform">Téléphones &amp; tablettes · Android 9+</div>
+    <span class="status-badge status-soon">⏳ Bientôt disponible</span>
+    <a href="#notify" class="dl-btn dl-btn-disabled" onclick="document.getElementById('notify').scrollIntoView({behavior:'smooth'});return false;">
+      🔔 Être prévenu de la sortie
+    </a>
+    <p class="dl-info">Notre application est en cours de finalisation pour le Google Play Store. Laissez votre email ci-dessous, vous serez averti dès la sortie officielle.</p>
+  </div>
+
+</div>
+
+<h2 id="notify">🔔 Être prévenu pour la sortie Android</h2>
+<form class="notify-form" id="notifyForm" onsubmit="return submitNotify(event)">
+  <p style="margin-bottom:1rem">Vous utilisez un téléphone Android ? Entrez votre email pour recevoir un lien d'installation dès que MesureChâssis sera disponible sur le Google Play Store. Aucun spam, désinscription en 1 clic.</p>
+  <input type="email" name="email" placeholder="vous@entreprise.fr" required aria-label="Votre email">
+  <button type="submit">🔔 Me prévenir dès la sortie Android</button>
+  <p id="notifyFeedback" style="margin-top:.75rem;color:var(--green);text-align:center;display:none">✅ Merci ! Nous vous écrirons dès que la version Android sera prête.</p>
+</form>
+
+<h2 style="text-align:center;margin-top:3rem">💻 Version Web accessible immédiatement</h2>
+<p style="text-align:center">Pas d'iPhone à portée de main ? Vous pouvez aussi accéder à MesureChâssis directement depuis n'importe quel navigateur récent (Chrome, Safari, Firefox, Edge), sur ordinateur ou mobile — sans installation.</p>
+
+<div style="background:#1a1a1e;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:1.5rem;margin:2rem auto;max-width:520px;text-align:center">
+  <a href="https://window-field-app.preview.emergentagent.com" target="_blank" rel="noopener" style="display:inline-block;background:#FF6B35;color:#fff;padding:.85rem 1.75rem;border-radius:8px;font-weight:600;text-decoration:none">🌐 Ouvrir la version web</a>
+  <p style="color:#5a5a65;margin:1rem 0 0;font-size:.85rem">💡 <strong>Astuce</strong> : ajoutez la page à votre écran d'accueil pour un accès rapide comme une vraie app.</p>
+</div>
+
+<h2>Configuration requise</h2>
+<ul>
+  <li><strong>Android</strong> : version 9 (Pie) ou plus récente · 100 Mo d'espace libre</li>
+  <li><strong>iOS</strong> : iOS 15 ou plus récent · iPhone 8 minimum</li>
+  <li><strong>Web</strong> : Chrome 90+, Safari 15+, Firefox 88+, Edge 90+</li>
+  <li><strong>Connexion</strong> : 4G/Wi-Fi recommandée pour la synchro (mode hors-ligne supporté)</li>
+</ul>
+
+<script>
+function submitNotify(e) {
+  e.preventDefault();
+  var email = e.target.email.value;
+  // Envoi vers backend FastAPI : POST /api/notify-ios
+  fetch('/api/notify-ios', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({email: email})
+  }).catch(function() { /* silently fail */ });
+  document.getElementById('notifyFeedback').style.display = 'block';
+  e.target.reset();
+  return false;
+}
+</script>
+
+</main>
+<footer style="position:relative;z-index:1;border-top:1px solid rgba(255,255,255,0.07);background:#121214;padding:3rem 5% 1.5rem;margin-top:4rem;font-family:'DM Sans',sans-serif">
+  <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;align-items:start" class="footer-grid-mc">
+    <div>
+      <a href="index.html" style="font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;margin-bottom:.75rem;text-decoration:none">
+        <img src="logo.png" alt="MesureChâssis logo" style="width:30px;height:30px;border-radius:7px;object-fit:cover">
+        Mesure<span style="color:#FF6B35">Châssis</span>
+      </a>
+      <p style="font-size:.88rem;color:#5a5a65;margin-bottom:1rem;line-height:1.6">L'application terrain qui transforme la prise de mesures des menuisiers et poseurs de châssis.</p>
+      <a href="mailto:info@mesurechassis.com" style="color:#e8e8e8;font-size:.9rem;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem">✉️ info@mesurechassis.com</a>
+    </div>
+    <div>
+      <h4 style="font-family:'Syne',sans-serif;font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:#FF6B35;margin:0 0 1rem;font-weight:700">Produit</h4>
+      <a href="index.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Accueil</a>
+      <a href="tarifs.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Tarifs</a>
+      <a href="telecharger.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Télécharger</a>
+      <a href="tarifs.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Programme de parrainage</a>
+      <a href="a-propos.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">À propos</a>
+    </div>
+    <div>
+      <h4 style="font-family:'Syne',sans-serif;font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:#FF6B35;margin:0 0 1rem;font-weight:700">Ressources</h4>
+      <a href="guide.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Guide d'utilisation</a>
+      <a href="faq.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">FAQ</a>
+      <a href="contact.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Support / Contact</a>
+    </div>
+    <div>
+      <h4 style="font-family:'Syne',sans-serif;font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:#FF6B35;margin:0 0 1rem;font-weight:700">Légal</h4>
+      <a href="mentions-legales.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Mentions légales</a>
+      <a href="cgu.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">CGU</a>
+      <a href="cgv.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">CGV</a>
+      <a href="confidentialite.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Confidentialité (RGPD)</a>
+      <a href="cookies.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Politique cookies</a>
+    </div>
+  </div>
+  <div style="max-width:1280px;margin:2.5rem auto 0;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.07);display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;font-size:.8rem;color:#5a5a65">
+    <div>© 2026 MesureChâssis. Tous droits réservés. Fait avec ❤️ en Belgique.</div>
+    <div>v1.0 · <a href="contact.html" style="color:#5a5a65;text-decoration:none">Signaler un problème</a></div>
+  </div>
+  <style>@media(max-width:760px){.footer-grid-mc{grid-template-columns:1fr 1fr !important}.footer-grid-mc>div:first-child{grid-column:1/-1}}</style>
+</footer>
+<div id="cookieBanner" role="dialog" aria-label="Consentement cookies" style="position:fixed;bottom:1rem;left:1rem;right:1rem;max-width:880px;margin:0 auto;background:#1a1a1e;border:1px solid rgba(255,107,53,0.3);border-radius:12px;padding:1.25rem 1.5rem;z-index:200;display:none;box-shadow:0 20px 60px rgba(0,0,0,.5);font-family:'DM Sans',sans-serif;color:#e8e8e8">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">
+    <p style="margin:0;font-size:.9rem;flex:1;min-width:250px;color:#e8e8e8">🍪 Nous utilisons des cookies strictement nécessaires au fonctionnement du site. Aucun cookie marketing ni de tracking tiers n'est utilisé sans votre accord. <a href="cookies.html" style="color:#FF6B35;text-decoration:none">En savoir plus</a></p>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+      <button onclick="declineCookies()" style="background:#222228;color:#e8e8e8;padding:.6rem 1.1rem;border-radius:8px;font-weight:600;font-size:.92rem;border:1px solid rgba(255,255,255,0.07);cursor:pointer;font-family:inherit">Refuser</button>
+      <button onclick="acceptCookies()" style="background:#FF6B35;color:#fff;padding:.6rem 1.1rem;border-radius:8px;font-weight:600;font-size:.92rem;border:none;cursor:pointer;font-family:inherit">J'accepte</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var b=document.getElementById('cookieBanner');if(!b)return;
+  if(!localStorage.getItem('mc_cookie_consent')){setTimeout(function(){b.style.display='block';},600);}
+  window.acceptCookies=function(){localStorage.setItem('mc_cookie_consent','accepted');b.style.display='none';};
+  window.declineCookies=function(){localStorage.setItem('mc_cookie_consent','declined');b.style.display='none';};
+})();
+</script>
+<a class="mc-fab" href="telecharger.html" aria-label="Télécharger l'application" style="position:fixed;bottom:1.5rem;right:1.5rem;background:#FF6B35;color:#fff;padding:.9rem 1.3rem;border-radius:50px;font-weight:700;font-size:.92rem;box-shadow:0 12px 30px rgba(255,107,53,0.25);z-index:90;display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;font-family:'DM Sans',sans-serif">
+  📱 <span class="fab-label-mc">Télécharger l'app</span>
+  <style>@media(max-width:600px){.fab-label-mc{display:none}}</style>
+</a>
+</body>
+</html>

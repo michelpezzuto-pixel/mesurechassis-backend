@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ — Questions fréquentes — MesureChâssis</title>
+  <meta name="description" content="Toutes les réponses sur MesureChâssis : tarifs, fonctionnalités, sécurité, RGPD, support. Réponses claires aux questions des menuisiers.">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="fr-BE">
+  <meta name="author" content="MesureChâssis">
+  <link rel="canonical" href="https://mesurechassis.com/faq.html">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mesurechassis.com/faq.html">
+  <meta property="og:title" content="FAQ — Questions fréquentes — MesureChâssis">
+  <meta property="og:description" content="Toutes les réponses sur MesureChâssis : tarifs, fonctionnalités, sécurité, RGPD, support. Réponses claires aux questions des menuisiers.">
+  <meta property="og:image" content="https://mesurechassis.com/og-image.jpg">
+  <meta property="og:locale" content="fr_BE">
+  <meta property="og:site_name" content="MesureChâssis">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="FAQ — Questions fréquentes — MesureChâssis">
+  <meta name="twitter:description" content="Toutes les réponses sur MesureChâssis : tarifs, fonctionnalités, sécurité, RGPD, support. Réponses claires aux questions des menuisiers.">
+  <meta name="twitter:image" content="https://mesurechassis.com/og-image.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+
+:root {
+    --bg: #121214;
+    --bg2: #1a1a1e;
+    --bg3: #222228;
+    --orange: #FF6B35;
+    --orange-dim: rgba(255, 107, 53, 0.12);
+    --orange-glow: rgba(255, 107, 53, 0.25);
+    --green: #4CAF50;
+    --green-dim: rgba(76, 175, 80, 0.12);
+    --white: #FFFFFF;
+    --gray1: #e8e8e8;
+    --gray2: #a8a8b0;
+    --gray3: #5a5a65;
+    --border: rgba(255,255,255,0.07);
+    --border-orange: rgba(255,107,53,0.3);
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --radius: 12px;
+    --radius-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+    background: var(--bg);
+    color: var(--gray1);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+a { color: var(--orange); text-decoration: none; transition: opacity .2s; }
+a:hover { opacity: .8; }
+h1, h2, h3, h4 { font-family: var(--font-head); color: var(--white); line-height: 1.2; }
+h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; margin-bottom: 1.5rem; }
+h1 em { color: var(--orange); font-style: normal; }
+h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 700; margin: 2.5rem 0 1rem; }
+h3 { font-size: 1.25rem; font-weight: 600; margin: 1.5rem 0 .75rem; }
+p { margin-bottom: 1rem; color: var(--gray2); }
+ul, ol { margin: 0 0 1rem 1.5rem; color: var(--gray2); }
+li { margin-bottom: .5rem; }
+strong { color: var(--white); }
+section, article { position: relative; z-index: 1; }
+
+/* === HEADER === */
+header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(18, 18, 20, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+}
+.header-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: .9rem 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.logo {
+    font-family: var(--font-head);
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: -.02em;
+}
+.logo span { color: var(--orange); }
+.logo img { width: 32px; height: 32px; border-radius: 8px; }
+header nav { display: flex; align-items: center; gap: 1.5rem; }
+header nav a { color: var(--gray2); font-size: .92rem; font-weight: 500; transition: color .2s; }
+header nav a:hover { color: var(--white); opacity: 1; }
+.btn-primary, .btn-download {
+    background: var(--orange);
+    color: var(--white) !important;
+    padding: .6rem 1.1rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: .92rem;
+    transition: transform .2s, box-shadow .2s;
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    border: none;
+    cursor: pointer;
+}
+.btn-primary:hover, .btn-download:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px var(--orange-glow);
+    opacity: 1;
+}
+.btn-secondary {
+    background: var(--bg3);
+    color: var(--gray1);
+    padding: .6rem 1.1rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: .92rem;
+    border: 1px solid var(--border);
+    transition: all .2s;
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+}
+.btn-secondary:hover { border-color: var(--orange); color: var(--white); opacity: 1; }
+.hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px;
+}
+.hamburger span { width: 22px; height: 2px; background: var(--white); border-radius: 2px; }
+.mobile-nav {
+    display: none;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 5% 1.5rem;
+    background: rgba(18,18,20,.98);
+    border-bottom: 1px solid var(--border);
+}
+.mobile-nav.open { display: flex; }
+.mobile-nav a { color: var(--gray1); padding: .5rem 0; font-weight: 500; }
+
+@media (max-width: 880px) {
+    header nav { display: none; }
+    .hamburger { display: flex; }
+}
+
+/* === MAIN CONTENT === */
+main {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 3rem 5% 5rem;
+    position: relative;
+    z-index: 1;
+}
+main p { font-size: 1rem; line-height: 1.75; }
+.lead {
+    font-size: 1.15rem;
+    color: var(--gray1);
+    margin-bottom: 2rem;
+    padding-left: 1rem;
+    border-left: 3px solid var(--orange);
+}
+.meta {
+    color: var(--gray3);
+    font-size: .85rem;
+    margin-bottom: 2rem;
+}
+
+/* === FOOTER === */
+footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+    padding: 3rem 5% 1.5rem;
+    margin-top: 4rem;
+}
+.footer-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 2.5rem;
+    align-items: start;
+}
+.footer-brand .footer-logo {
+    font-family: var(--font-head);
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: .75rem;
+}
+.footer-brand .footer-logo span { color: var(--orange); }
+.footer-brand .footer-logo img { width: 30px; height: 30px; border-radius: 7px; }
+.footer-brand p { font-size: .88rem; color: var(--gray3); margin-bottom: 1rem; }
+.footer-brand .footer-mail {
+    color: var(--gray1);
+    font-size: .9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+}
+.footer-col h4 {
+    font-family: var(--font-head);
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--orange);
+    margin: 0 0 1rem;
+    font-weight: 700;
+}
+.footer-col a {
+    display: block;
+    color: var(--gray2);
+    font-size: .88rem;
+    padding: .25rem 0;
+    transition: color .15s;
+}
+.footer-col a:hover { color: var(--white); opacity: 1; }
+.footer-bottom {
+    max-width: 1280px;
+    margin: 2.5rem auto 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: .8rem;
+    color: var(--gray3);
+}
+@media (max-width: 760px) {
+    .footer-inner { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .footer-brand { grid-column: 1 / -1; }
+    .footer-bottom { flex-direction: column; }
+}
+
+/* === COOKIE BANNER === */
+.cookie-banner {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    max-width: 880px;
+    margin: 0 auto;
+    background: var(--bg2);
+    border: 1px solid var(--border-orange);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    z-index: 200;
+    display: none;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+}
+.cookie-banner.show { display: block; }
+.cookie-banner-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.cookie-banner p { margin: 0; font-size: .9rem; flex: 1; min-width: 250px; color: var(--gray1); }
+.cookie-banner .actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+
+/* === FAB (Download CTA) === */
+.fab-download {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: var(--orange);
+    color: var(--white);
+    padding: .9rem 1.3rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: .92rem;
+    box-shadow: 0 12px 30px var(--orange-glow);
+    z-index: 90;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    transition: transform .2s;
+}
+.fab-download:hover { transform: scale(1.05); opacity: 1; }
+@media (max-width: 600px) {
+    .fab-download { bottom: 1rem; right: 1rem; padding: .75rem 1rem; font-size: .85rem; }
+    .fab-download .fab-label { display: none; }
+}
+
+  </style>
+<style>body.menu-open .mc-fab{display:none !important}</style></head>
+<body>
+<!-- ═══════════ ANNONCE ESSAI GRATUIT ═══════════ -->
+<div class="beta-banner" style="background:linear-gradient(90deg,#FF6B35 0%,#FF8C42 100%);color:#fff;padding:.65rem 1rem;text-align:center;font-size:.86rem;font-weight:500;line-height:1.4;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.4rem 1rem">
+  <strong>⭐ 14 jours d'essai Pro gratuit</strong>
+  <span>· Toutes les fonctionnalités débloquées · Sans carte bancaire · Résiliation en 1 clic</span>
+  <a href="tarifs.html" style="color:#fff;text-decoration:underline;font-weight:700">Voir les tarifs →</a>
+</div>
+
+<header style="position:sticky;top:0;z-index:100;background:rgba(18,18,20,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.07)">
+  <div class="header-inner" style="max-width:1280px;margin:0 auto;padding:.9rem 5%;display:flex;align-items:center;justify-content:space-between;gap:1rem">
+    <a href="index.html" class="logo" style="font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:#fff;text-decoration:none;display:flex;align-items:center;gap:10px;letter-spacing:-.02em">
+      <img class="logo-img" src="logo.png" alt="MesureChâssis logo" style="width:32px;height:32px;border-radius:8px;object-fit:cover">
+      Mesure<span style="color:#FF6B35">Châssis</span>
+    </a>
+    <nav class="desktop-nav" style="display:flex;align-items:center;gap:1.5rem">
+        <a href="index.html" style="color:#a8a8b0;font-size:.92rem;font-weight:500;text-decoration:none">Accueil</a>
+        <a href="tarifs.html" style="color:#a8a8b0;font-size:.92rem;font-weight:500;text-decoration:none">Tarifs</a>
+        <a href="guide.html" style="color:#a8a8b0;font-size:.92rem;font-weight:500;text-decoration:none">Guide</a>
+        <a href="faq.html" style="color:#fff;font-size:.92rem;font-weight:500;text-decoration:none">FAQ</a>
+        <a href="contact.html" style="color:#a8a8b0;font-size:.92rem;font-weight:500;text-decoration:none">Contact</a>
+        <a href="telecharger.html" class="btn-primary" style="background:#FF6B35;color:#fff;padding:.6rem 1.1rem;border-radius:8px;font-weight:600;font-size:.92rem;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem">📱 Télécharger l'app</a>
+    </nav>
+    <button class="hamburger" aria-label="Menu" onclick="document.querySelector('.mobile-nav-mc').classList.toggle('open');document.body.classList.toggle('menu-open')" style="display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:4px;padding:6px">
+      <span style="width:22px;height:2px;background:#fff;border-radius:2px"></span>
+      <span style="width:22px;height:2px;background:#fff;border-radius:2px"></span>
+      <span style="width:22px;height:2px;background:#fff;border-radius:2px"></span>
+    </button>
+  </div>
+  <nav class="mobile-nav-mc" aria-label="Navigation mobile" style="display:none;flex-direction:column;gap:1rem;padding:1rem 5% 1.5rem;background:rgba(18,18,20,.98);border-bottom:1px solid rgba(255,255,255,0.07)">
+    <a href="index.html" style="color:#e8e8e8;padding:.5rem 0;font-weight:500;text-decoration:none">Accueil</a>
+    <a href="tarifs.html" style="color:#e8e8e8;padding:.5rem 0;font-weight:500;text-decoration:none">Tarifs</a>
+    <a href="guide.html" style="color:#e8e8e8;padding:.5rem 0;font-weight:500;text-decoration:none">Guide</a>
+    <a href="faq.html" style="color:#e8e8e8;padding:.5rem 0;font-weight:500;text-decoration:none">FAQ</a>
+    <a href="contact.html" style="color:#e8e8e8;padding:.5rem 0;font-weight:500;text-decoration:none">Contact</a>
+    <a href="telecharger.html" style="background:#FF6B35;color:#fff;padding:.6rem 1.1rem;border-radius:8px;font-weight:600;font-size:.92rem;text-decoration:none;width:fit-content">📱 Télécharger l'app</a>
+  </nav>
+  <style>
+    .mobile-nav-mc.open{display:flex !important}
+    @media(max-width:880px){.desktop-nav{display:none !important}.hamburger{display:flex !important}}
+  </style>
+</header>
+<main>
+
+<h1>Questions <em>fréquentes</em></h1>
+<p class="lead">Toutes les réponses sur MesureChâssis : fonctionnalités, tarifs, sécurité, support. Vous ne trouvez pas votre réponse ? <a href="contact.html">Contactez-nous</a>.</p>
+
+<style>
+.faq-item {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: .75rem;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.faq-item[open] { border-color: var(--border-orange); }
+.faq-item summary {
+  padding: 1.1rem 1.4rem;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--white);
+  font-family: var(--font-head);
+  font-size: 1rem;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+  content: '+';
+  color: var(--orange);
+  font-size: 1.5rem;
+  transition: transform .2s;
+  font-weight: 300;
+}
+.faq-item[open] summary::after { content: '×'; }
+.faq-item p {
+  padding: 0 1.4rem 1.2rem;
+  margin: 0;
+  color: var(--gray2);
+  line-height: 1.7;
+}
+</style>
+
+<h2>Démarrage</h2>
+<details class="faq-item">
+<summary>Sur quels appareils l'application fonctionne-t-elle ?</summary>
+<p>MesureChâssis est disponible sur iOS 15 et plus, Android 9 et plus. Une version web responsive est également accessible depuis n'importe quel navigateur récent (Chrome, Safari, Firefox, Edge).</p>
+</details>
+<details class="faq-item">
+<summary>Comment créer mon compte ?</summary>
+<p>Téléchargez l'application, sélectionnez « Inscription », renseignez vos informations et validez. Votre compte gratuit est créé immédiatement, sans carte bancaire requise.</p>
+</details>
+<details class="faq-item">
+<summary>Puis-je utiliser l'application sans payer ?</summary>
+<p>Oui ! Deux plans <strong>gratuits à vie</strong> sont disponibles :<br>
+• <strong>Artisan</strong> (0 €) — 1 utilisateur, 5 formes de menuiseries de base, 3 chantiers max, 5 ouvertures max.<br>
+• <strong>Entreprise</strong> (0 €) — 3 utilisateurs, même chose + partage de chantiers et mode équipe basique.<br>
+Aucune carte bancaire requise, sans limite de durée. Vous ne passez à un plan payant que si vous voulez plus de fonctionnalités.</p>
+</details>
+<details class="faq-item">
+<summary>Quelles sont les différences entre les 5 plans ?</summary>
+<p>MesureChâssis propose 5 plans clairs :<br>
+• <strong>Artisan (0 €)</strong> — 1 utilisateur, fonctions de base.<br>
+• <strong>Entreprise (0 €)</strong> — 3 utilisateurs, fonctions de base + mode équipe.<br>
+• <strong>Artisan Pro (19 €/mois)</strong> — 1 utilisateur, laser Bluetooth, IA Yann illimité, 14 formes complètes, exports pro.<br>
+• <strong>Entreprise Pro (69 €/mois)</strong> — 3+ utilisateurs, RBAC complet, Intelligence CDC, workflow anti-bourdes, support prioritaire.<br>
+• <strong>Entreprise MAX (299 €/mois)</strong> — Utilisateurs illimités + <strong>générateur de devis PDF automatique</strong>, analyse IA avancée, mode hors-ligne complet, gestion anti-litige.<br>
+Comparatif détaillé sur la <a href="tarifs.html">page Tarifs</a>.</p>
+</details>
+<details class="faq-item" style="border-color:rgba(181,139,255,0.35);background:linear-gradient(135deg,rgba(181,139,255,0.06),transparent)">
+<summary>🏆 Quelles sont les différences entre Entreprise Pro et Entreprise MAX ?</summary>
+<p>Le plan <strong>MAX débloque l'automatisation totale</strong> : devis instantanés générés à partir des mesures, connexion laser illimitée et mode hors-ligne sans restriction pour les très gros volumes. Les 6 exclusivités MAX :</p>
+<ul style="margin:.5rem 0 .5rem 1.5rem">
+  <li><strong>Générateur de devis PDF automatique</strong> — Les mesures deviennent un devis pro personnalisé en un tap.</li>
+  <li><strong>Télémètre laser Bluetooth</strong> sans restriction — Transfert direct des mesures, zéro saisie.</li>
+  <li><strong>Mode hors-ligne + synchronisation avancée</strong> — Chantier ininterrompu sans réseau, sync auto à la reconnexion.</li>
+  <li><strong>Analyse IA avancée</strong> — Détection des 14 formes d'ouvertures par simple photo.</li>
+  <li><strong>Utilisateurs illimités</strong> — Tous les techniciens et commerciaux synchronisés.</li>
+  <li><strong>Gestion anti-litige</strong> — Archivage photo systématique attaché à chaque fiche pour la protection juridique.</li>
+</ul>
+<p style="margin-top:.5rem">Pour tester le plan MAX, <a href="contact.html">demandez une démo personnalisée</a>.</p>
+</details>
+<h2>Fonctionnalités</h2>
+<details class="faq-item">
+<summary>Quels types de formes de châssis sont supportés ?</summary>
+<p>Le wizard prend en charge <strong>14 formes complètes</strong> couvrant tous les besoins des menuisiers : Rectangle/Carré, Porte d'entrée, Porte de garage, Trapèze, Œil-de-bœuf, Coulissant levant, Plein cintre, Arc surbaissé, Pan coupé, Bow-Window, Polygone (3 à 8 arêtes éditables), Ovale, Cintre asymétrique et forme libre. Le plan <strong>Entreprise MAX</strong> ajoute la <strong>détection automatique par photo</strong> des 14 formes grâce à l'IA avancée.</p>
+</details>
+<details class="faq-item">
+<summary>L'application est-elle disponible en plusieurs langues ?</summary>
+<p>Oui ! L'interface complète est disponible en <strong>français, anglais et néerlandais</strong> (FR / EN / NL). Les documents exportés (PDF, fiches techniques) sont également générés dans la langue de votre choix — idéal pour les équipes et clients néerlandophones.</p>
+</details>
+<details class="faq-item">
+<summary>Comment fonctionne le programme de parrainage ?</summary>
+<p>Chaque client dispose d'un code de parrainage personnel dans l'application. Lorsqu'un confrère s'inscrit avec votre code et active son abonnement, vous gagnez <strong>2 mois offerts</strong> — cumulables, sans limite de filleuls.</p>
+</details>
+<details class="faq-item">
+<summary>Comment fonctionne la vérification des diagonales ?</summary>
+<p>L'application applique automatiquement le théorème de Pythagore à chaque saisie de cotes pour détecter les incohérences géométriques. Une alerte s'affiche si l'écart dépasse le seuil paramétré.</p>
+</details>
+<details class="faq-item">
+<summary>Puis-je ajouter des photos aux mesures ?</summary>
+<p>Oui, chaque ouverture peut être documentée avec plusieurs photos (avant, après, détails techniques). Les photos sont stockées de manière sécurisée et incluses dans les exports PDF.</p>
+</details>
+<details class="faq-item">
+<summary>L'application fonctionne-t-elle hors-ligne ?</summary>
+<p>Oui — tous les plans permettent de prendre des mesures en mode hors-ligne local. Les données sont synchronisées automatiquement dès que la connexion est rétablie. Le plan <strong>Entreprise MAX</strong> ajoute une <strong>synchronisation avancée</strong> (multi-appareils, résolution auto des conflits, sync en arrière-plan) pour les gros volumes et les équipes qui travaillent en permanence en zone sans réseau.</p>
+</details>
+<details class="faq-item">
+<summary>Quels formats d'export sont disponibles ?</summary>
+<p>PDF technique avec votre logo (prêt fournisseur), Excel (XLSX), CSV, et JSON pour intégration CNC / ERP.</p>
+</details>
+<details class="faq-item">
+<summary>Comment fonctionne la dictée vocale ?</summary>
+<p>Lors de la création d'un chantier ou de l'ajout de notes, tapez sur l'icône « microphone » pour dicter vos notes en mains-libres. Compatible iOS et Android.</p>
+</details>
+<h2>Tarifs & facturation</h2>
+<details class="faq-item">
+<summary>Comment se passe la facturation ?</summary>
+<p>Aucune facturation tant que vous restez sur le plan gratuit (5 formes). Si vous passez à un plan payant, le paiement est mensuel par carte bancaire via Stripe. Les factures sont envoyées par email et archivées dans votre compte.</p>
+</details>
+<details class="faq-item">
+<summary>Puis-je changer de plan en cours d'abonnement ?</summary>
+<p>Oui, vous pouvez passer d'un plan à un autre à tout moment depuis votre espace personnel sur mesurechassis.com. Le changement prend effet immédiatement, avec ajustement au prorata.</p>
+</details>
+<details class="faq-item">
+<summary>Comment ajouter un utilisateur supplémentaire à mon plan Entreprise Pro ?</summary>
+<p>Depuis l'écran « Équipe » de votre admin, cliquez sur « Inviter un membre ». Sur <strong>Entreprise Pro (69 €)</strong>, 3 utilisateurs sont inclus. Sur <strong>Entreprise MAX (299 €)</strong>, les utilisateurs sont illimités — vous invitez autant de techniciens et commerciaux que nécessaire, sans coût additionnel.</p>
+</details>
+<details class="faq-item">
+<summary>La TVA est-elle incluse dans les tarifs affichés ?</summary>
+<p>Les tarifs affichés (19 € et 69 €) sont les <strong>prix finaux</strong>, sans TVA à ajouter à ce stade. L'éditeur mesure Châssis est en cours d'inscription à la BCE en Belgique sous le régime de la franchise TVA ; en conséquence, aucune TVA n'est facturée aux clients pour l'instant. Cette page sera mise à jour si le régime fiscal évolue.</p>
+</details>
+<details class="faq-item">
+<summary>Quels moyens de paiement acceptez-vous ?</summary>
+<p>Cartes Visa, MasterCard, American Express, Bancontact, et prélèvement SEPA. Tous les paiements sont sécurisés via Stripe (PCI-DSS niveau 1).</p>
+</details>
+<h2>Données & sécurité</h2>
+<details class="faq-item">
+<summary>Où sont stockées mes données ?</summary>
+<p>Toutes les données sont hébergées en Union européenne (centres de données conformes RGPD) avec chiffrement au repos (AES-256) et en transit (TLS 1.3).</p>
+</details>
+<details class="faq-item">
+<summary>Mes données sont-elles sauvegardées ?</summary>
+<p>Oui, des sauvegardes automatiques quotidiennes sont effectuées avec une rétention de 30 jours. Vous pouvez également exporter vos données à tout moment.</p>
+</details>
+<details class="faq-item">
+<summary>Puis-je supprimer mon compte ?</summary>
+<p>Oui, en 1 clic depuis votre profil. Conformément au RGPD, vos données personnelles sont anonymisées ou supprimées sous 30 jours. Voir notre <a href="confidentialite.html">politique RGPD</a>.</p>
+</details>
+<details class="faq-item">
+<summary>Mes clients voient-ils mes données ?</summary>
+<p>Non. Vos données restent strictement confidentielles. Seuls les membres de votre équipe que vous invitez explicitement peuvent y accéder, selon leur rôle.</p>
+</details>
+<h2>Support</h2>
+<details class="faq-item">
+<summary>Comment contacter le support ?</summary>
+<p>Par email : <a href="mailto:info@mesurechassis.com">info@mesurechassis.com</a>. Réponse sous 24h ouvrées (12h pour les comptes Entreprise).</p>
+</details>
+<details class="faq-item">
+<summary>Y a-t-il une formation incluse ?</summary>
+<p>Le <a href="guide.html">guide d'utilisation</a> en ligne est gratuit et exhaustif. Pour les équipes Entreprise, une session d'onboarding visio de 30 min est offerte.</p>
+</details>
+<details class="faq-item">
+<summary>Comment suggérer une amélioration ?</summary>
+<p>Depuis l'application, allez dans « Feedback » et soumettez votre idée. Toutes les suggestions sont étudiées par notre équipe produit.</p>
+</details>
+
+
+<div style="margin-top:3rem;padding:2rem;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);text-align:center">
+  <h3 style="margin-top:0">Vous ne trouvez pas votre réponse ?</h3>
+  <p>Notre équipe répond en moins de 24h ouvrées.</p>
+  <a href="contact.html" class="btn-primary" style="display:inline-block;margin-top:.5rem">✉️ Nous contacter</a>
+</div>
+
+</main>
+<footer style="position:relative;z-index:1;border-top:1px solid rgba(255,255,255,0.07);background:#121214;padding:3rem 5% 1.5rem;margin-top:4rem;font-family:'DM Sans',sans-serif">
+  <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;align-items:start" class="footer-grid-mc">
+    <div>
+      <a href="index.html" style="font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;margin-bottom:.75rem;text-decoration:none">
+        <img src="logo.png" alt="MesureChâssis logo" style="width:30px;height:30px;border-radius:7px;object-fit:cover">
+        Mesure<span style="color:#FF6B35">Châssis</span>
+      </a>
+      <p style="font-size:.88rem;color:#5a5a65;margin-bottom:1rem;line-height:1.6">L'application terrain qui transforme la prise de mesures des menuisiers et poseurs de châssis.</p>
+      <a href="mailto:info@mesurechassis.com" style="color:#e8e8e8;font-size:.9rem;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem">✉️ info@mesurechassis.com</a>
+    </div>
+    <div>
+      <h4 style="font-family:'Syne',sans-serif;font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:#FF6B35;margin:0 0 1rem;font-weight:700">Produit</h4>
+      <a href="index.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Accueil</a>
+      <a href="tarifs.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Tarifs</a>
+      <a href="telecharger.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Télécharger</a>
+      <a href="tarifs.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Programme de parrainage</a>
+      <a href="a-propos.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">À propos</a>
+    </div>
+    <div>
+      <h4 style="font-family:'Syne',sans-serif;font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:#FF6B35;margin:0 0 1rem;font-weight:700">Ressources</h4>
+      <a href="guide.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Guide d'utilisation</a>
+      <a href="faq.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">FAQ</a>
+      <a href="contact.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Support / Contact</a>
+    </div>
+    <div>
+      <h4 style="font-family:'Syne',sans-serif;font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:#FF6B35;margin:0 0 1rem;font-weight:700">Légal</h4>
+      <a href="mentions-legales.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Mentions légales</a>
+      <a href="cgu.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">CGU</a>
+      <a href="cgv.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">CGV</a>
+      <a href="confidentialite.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Confidentialité (RGPD)</a>
+      <a href="cookies.html" style="display:block;color:#a8a8b0;font-size:.88rem;padding:.25rem 0;text-decoration:none">Politique cookies</a>
+    </div>
+  </div>
+  <div style="max-width:1280px;margin:2.5rem auto 0;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.07);display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;font-size:.8rem;color:#5a5a65">
+    <div>© 2026 MesureChâssis. Tous droits réservés. Fait avec ❤️ en Belgique.</div>
+    <div>v1.0 · <a href="contact.html" style="color:#5a5a65;text-decoration:none">Signaler un problème</a></div>
+  </div>
+  <style>@media(max-width:760px){.footer-grid-mc{grid-template-columns:1fr 1fr !important}.footer-grid-mc>div:first-child{grid-column:1/-1}}</style>
+</footer>
+<div id="cookieBanner" role="dialog" aria-label="Consentement cookies" style="position:fixed;bottom:1rem;left:1rem;right:1rem;max-width:880px;margin:0 auto;background:#1a1a1e;border:1px solid rgba(255,107,53,0.3);border-radius:12px;padding:1.25rem 1.5rem;z-index:200;display:none;box-shadow:0 20px 60px rgba(0,0,0,.5);font-family:'DM Sans',sans-serif;color:#e8e8e8">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">
+    <p style="margin:0;font-size:.9rem;flex:1;min-width:250px;color:#e8e8e8">🍪 Nous utilisons des cookies strictement nécessaires au fonctionnement du site. Aucun cookie marketing ni de tracking tiers n'est utilisé sans votre accord. <a href="cookies.html" style="color:#FF6B35;text-decoration:none">En savoir plus</a></p>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+      <button onclick="declineCookies()" style="background:#222228;color:#e8e8e8;padding:.6rem 1.1rem;border-radius:8px;font-weight:600;font-size:.92rem;border:1px solid rgba(255,255,255,0.07);cursor:pointer;font-family:inherit">Refuser</button>
+      <button onclick="acceptCookies()" style="background:#FF6B35;color:#fff;padding:.6rem 1.1rem;border-radius:8px;font-weight:600;font-size:.92rem;border:none;cursor:pointer;font-family:inherit">J'accepte</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var b=document.getElementById('cookieBanner');if(!b)return;
+  if(!localStorage.getItem('mc_cookie_consent')){setTimeout(function(){b.style.display='block';},600);}
+  window.acceptCookies=function(){localStorage.setItem('mc_cookie_consent','accepted');b.style.display='none';};
+  window.declineCookies=function(){localStorage.setItem('mc_cookie_consent','declined');b.style.display='none';};
+})();
+</script>
+<a class="mc-fab" href="telecharger.html" aria-label="Télécharger l'application" style="position:fixed;bottom:1.5rem;right:1.5rem;background:#FF6B35;color:#fff;padding:.9rem 1.3rem;border-radius:50px;font-weight:700;font-size:.92rem;box-shadow:0 12px 30px rgba(255,107,53,0.25);z-index:90;display:inline-flex;align-items:center;gap:.5rem;text-decoration:none;font-family:'DM Sans',sans-serif">
+  📱 <span class="fab-label-mc">Télécharger l'app</span>
+  <style>@media(max-width:600px){.fab-label-mc{display:none}}</style>
+</a>
+</body>
+</html>
+
+</html>

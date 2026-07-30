@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparatif — MesureChâssis vs WinPro, Elcia, HerculePro, Obat</title>
+<meta name="description" content="Compare MesureChâssis face à WinPro, Elcia, HerculePro et Obat sur 20 critères : mobile natif, IA, mesures terrain, devis auto, marché public, Made in Belgium.">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--orange:#FF5A00;--orange-light:#FF7733;--purple:#B58BFF;--bg:#0A0A0C;--bg-2:#14141A;--bg-3:#1F1F28;--text:#FFFFFF;--text-mute:#A8A8B0;--border:#2A2A35;--green:#22C55E;--red:#EF4444;--yellow:#EAB308;--font-head:"Syne",-apple-system,sans-serif;--font:"Inter",-apple-system,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.promo-banner{background:linear-gradient(90deg,#FF5A00 0%,#FF7733 50%,#FF5A00 100%);color:#fff;text-align:center;padding:11px 16px;font-weight:700;font-size:.92rem;position:relative;z-index:60}
+.promo-banner a{color:#000;background:#fff;padding:3px 10px;border-radius:20px;font-weight:800;margin-left:6px;font-size:.85rem;display:inline-block}
+@media(max-width:560px){.promo-banner{font-size:.82rem;padding:9px 12px}.promo-banner a{font-size:.75rem;padding:2px 8px}}
+nav.top{position:sticky;top:0;z-index:50;background:rgba(10,10,12,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+nav.top .wrap{max-width:1200px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+nav.top .brand{display:flex;align-items:center;gap:10px;font-family:var(--font-head);font-weight:800;font-size:1.15rem}
+nav.top .brand img{width:30px;height:30px;border-radius:6px}
+nav.top .links{display:flex;gap:22px;align-items:center}
+nav.top .links a{font-size:.92rem;font-weight:500;color:var(--text-mute);transition:color .2s}
+nav.top .links a:hover{color:var(--text)}
+nav.top .cta{background:var(--orange);color:#000;padding:9px 18px;border-radius:8px;font-weight:700;font-size:.92rem}
+@media(max-width:840px){nav.top .links a:not(.cta){display:none}nav.top .wrap{padding:12px 16px}nav.top .brand{font-size:1rem}}
+.hero{padding:70px 24px 40px;text-align:center;background:radial-gradient(ellipse at top,rgba(255,90,0,.09),transparent 60%)}
+.hero .badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,90,0,.14);color:var(--orange);padding:6px 14px;border-radius:20px;font-size:.82rem;font-weight:700;margin-bottom:20px;border:1px solid rgba(255,90,0,.3)}
+.hero h1{font-family:var(--font-head);font-size:clamp(2rem,4.5vw,3.2rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;margin-bottom:18px;max-width:900px;margin-inline:auto}
+.hero h1 em{font-style:normal;color:var(--orange)}
+.hero p.sub{font-size:clamp(1rem,1.8vw,1.15rem);color:var(--text-mute);max-width:760px;margin:0 auto}
+section{padding:50px 24px}
+.wrap{max-width:1300px;margin:0 auto}
+.table-wrap{background:var(--bg-2);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.35)}
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.compare{width:100%;border-collapse:collapse;min-width:900px}
+table.compare thead{background:var(--bg-3);position:sticky;top:0;z-index:2}
+table.compare th{padding:18px 14px;text-align:center;font-family:var(--font-head);font-weight:800;font-size:.9rem;letter-spacing:.01em;border-bottom:2px solid var(--border);vertical-align:middle}
+table.compare th.critere{text-align:left;color:var(--text-mute);text-transform:uppercase;font-size:.7rem;letter-spacing:.08em;background:var(--bg-2);width:22%}
+table.compare th.brand-mc{background:linear-gradient(180deg,rgba(255,90,0,.20),transparent);color:var(--orange);border-bottom:2px solid var(--orange)}
+table.compare th .brand-name{display:block;font-size:1rem;line-height:1.1}
+table.compare th .brand-loc{display:block;font-size:.7rem;color:var(--text-mute);text-transform:uppercase;letter-spacing:.06em;margin-top:4px;font-weight:500;font-family:var(--font)}
+table.compare tr.cat-row td{padding:16px 14px 8px;background:var(--bg-3);color:var(--orange);text-transform:uppercase;font-size:.72rem;letter-spacing:.12em;font-weight:800;font-family:var(--font-head);border-top:1px solid var(--border)}
+table.compare tbody td{padding:14px 12px;font-size:.88rem;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;text-align:center}
+table.compare tbody td.crit{text-align:left;color:var(--text);font-weight:500;padding-left:20px}
+table.compare tbody td.mc-cell{background:rgba(255,90,0,.05);font-weight:700}
+.ico-yes{color:var(--green);font-size:1.15rem;font-weight:800}
+.ico-no{color:var(--red);font-size:1.05rem;opacity:.7}
+.ico-partial{color:var(--yellow);font-size:1rem;font-weight:700}
+.ico-soon{color:var(--orange);font-size:.72rem;font-weight:800;background:rgba(255,90,0,.15);padding:3px 8px;border-radius:12px;border:1px solid rgba(255,90,0,.35);white-space:nowrap;display:inline-block}
+.verdict{background:linear-gradient(135deg,rgba(255,90,0,.10),rgba(255,119,51,.06));border:1px solid rgba(255,90,0,.35);border-radius:18px;padding:44px 32px;margin-top:50px}
+.verdict h2{font-family:var(--font-head);font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;text-align:center;margin-bottom:14px}
+.verdict h2 em{font-style:normal;color:var(--orange)}
+.verdict-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:32px}
+.verdict-card{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:24px}
+.verdict-card .emoji{font-size:1.8rem;margin-bottom:10px;display:block}
+.verdict-card h3{font-family:var(--font-head);font-size:1.05rem;font-weight:800;margin-bottom:8px}
+.verdict-card p{color:var(--text-mute);font-size:.9rem;line-height:1.55}
+.cta-band{text-align:center;padding:60px 24px 40px;background:linear-gradient(135deg,rgba(255,90,0,.12),rgba(255,90,0,.02))}
+.cta-band h2{font-family:var(--font-head);font-size:clamp(1.5rem,2.8vw,2.2rem);font-weight:800;margin-bottom:14px}
+.cta-band p{color:var(--text-mute);margin-bottom:26px;font-size:1.05rem}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:10px;font-weight:700;font-size:1rem;transition:transform .15s,box-shadow .15s;cursor:pointer;border:none}
+.btn-primary{background:var(--orange);color:#000;box-shadow:0 4px 20px rgba(255,90,0,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(255,90,0,.4)}
+.btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border);margin-left:8px}
+.btn-ghost:hover{background:var(--bg-2)}
+.legend-lg{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;margin-bottom:24px;font-size:.85rem;color:var(--text-mute)}
+.legend-lg span{display:inline-flex;align-items:center;gap:6px}
+footer{background:var(--bg-2);border-top:1px solid var(--border);padding:40px 24px 24px;color:var(--text-mute);font-size:.88rem;margin-top:60px}
+footer .wrap-f{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:32px;margin-bottom:32px}
+footer h4{color:var(--text);font-family:var(--font-head);margin-bottom:14px;font-size:1rem}
+footer a{display:block;padding:5px 0;color:var(--text-mute);transition:color .15s}
+footer a:hover{color:var(--orange)}
+footer .cr{text-align:center;padding-top:20px;border-top:1px solid var(--border);font-size:.82rem}
+</style>
+</head>
+<body>
+
+<div class="promo-banner">📱 iOS App Store · 🤖 Android en beta —
+  <a href="fondateurs.html">👉 20 places gratuites À VIE</a>
+</div>
+
+<nav class="top">
+  <div class="wrap">
+    <a href="/" class="brand"><img src="logo.png" alt="Logo"><span>MesureChâssis</span></a>
+    <div class="links">
+      <a href="index.html#fonctionnalites">Fonctionnalités</a>
+      <a href="tarifs.html">Tarifs</a>
+      <a href="roadmap.html">Roadmap</a>
+      <a href="fondateurs.html">Fondateurs</a>
+      <a href="comparatif.html" style="color:var(--orange)">Comparatif</a>
+      <a href="telecharger.html" class="cta">📲 Télécharger</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="badge">⚔️ Face à la concurrence</div>
+  <h1>MesureChâssis vs <em>tous les autres</em></h1>
+  <p class="sub">Compare honnêtement MesureChâssis face aux 4 solutions les plus utilisées par les menuisiers francophones : <strong>WinPro, Elcia, HerculePro et Obat</strong>. 20 critères, zéro langue de bois.</p>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="legend-lg">
+      <span><span class="ico-yes">✓</span> Fonctionnalité disponible</span>
+      <span><span class="ico-partial">◐</span> Partiel / limité</span>
+      <span><span class="ico-no">✗</span> Non disponible</span>
+      <span><span class="ico-soon">🔔 Bientôt</span> Sur la roadmap MesureChâssis</span>
+    </div>
+
+    <div class="table-wrap">
+      <div class="tbl-scroll">
+        <table class="compare">
+          <thead>
+            <tr>
+              <th class="critere">Critère</th>
+              <th class="brand-mc"><span class="brand-name">MesureChâssis</span><span class="brand-loc">🇧🇪 Made in Belgium</span></th>
+              <th><span class="brand-name">WinPro</span><span class="brand-loc">🇫🇷 Desktop</span></th>
+              <th><span class="brand-name">Elcia</span><span class="brand-loc">🇫🇷 ERP suite</span></th>
+              <th><span class="brand-name">HerculePro</span><span class="brand-loc">🇫🇷 Desktop</span></th>
+              <th><span class="brand-name">Obat</span><span class="brand-loc">🇫🇷 App BTP</span></th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr class="cat-row"><td colspan="6">📱 Mobilité &amp; terrain</td></tr>
+            <tr><td class="crit">App mobile native iOS &amp; Android</td><td class="mc-cell"><span class="ico-yes">✓</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-partial">◐</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-yes">✓</span></td></tr>
+            <tr><td class="crit">Prise de mesure directe sur chantier</td><td class="mc-cell"><span class="ico-yes">✓</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-partial">◐</span></td></tr>
+            <tr><td class="crit">Fonctionne hors connexion</td><td class="mc-cell"><span class="ico-yes">✓</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-partial">◐</span></td></tr>
+            <tr><td class="crit">Mètre laser Bluetooth connecté</td><td class="mc-cell"><span class="ico-soon">🔔 Bientôt</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td></tr>
+
+            <tr class="cat-row"><td colspan="6">🧠 Intelligence artificielle</td></tr>
+            <tr><td class="crit">Import automatique du CDC par photo (IA)</td><td class="mc-cell"><span class="ico-yes">✓</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td></tr>
+            <tr><td class="crit">Analyse IA des 14 formes de menuiseries</td><td class="mc-cell"><span class="ico-yes">✓</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td></tr>
+            <tr><td class="crit">Assistant IA intégré (chatbot pro)</td><td class="mc-cell"><span class="ico-yes">✓ Yann</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td></tr>
+            <tr><td class="crit">Import dessin papier via IA</td><td class="mc-cell"><span class="ico-soon">🔔 Bientôt</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td></tr>
+
+            <tr class="cat-row"><td colspan="6">📄 Devis &amp; chiffrage</td></tr>
+            <tr><td class="crit">Chiffrage automatique complexe</td><td class="mc-cell"><span class="ico-soon">🔔 Bientôt</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-partial">◐</span></td></tr>
+            <tr><td class="crit">Config prix &amp; marges personnalisées</td><td class="mc-cell"><span class="ico-soon">🔔 Bientôt</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-partial">◐</span></td></tr>
+            <tr><td class="crit">Import catalogue fabricants (Reynaers, Deceuninck…)</td><td class="mc-cell"><span class="ico-soon">🔔 Bientôt</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-no">✗</span></td></tr>
+            <tr><td class="crit">Génération devis PDF pro brandé</td><td class="mc-cell"><span class="ico-soon">🔔 Bientôt</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-yes">✓</span></td></tr>
+            <tr><td class="crit">Envoi devis email + tracking d'ouverture</td><td class="mc-cell"><span class="ico-soon">🔔 Bientôt</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-partial">◐</span></td><td><span class="ico-yes">✓</span></td></tr>
+            <tr><td class="crit">Signature électronique client</td><td class="mc-cell"><span class="ico-soon">🔔 Bientôt</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-partial">◐</span></td><td><span class="ico-yes">✓</span></td></tr>
+
+            <tr class="cat-row"><td colspan="6">🏭 Fabrication &amp; qualité</td></tr>
+            <tr><td class="crit">Vérification chantier (théorique vs réel)</td><td class="mc-cell"><span class="ico-yes">✓</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-partial">◐</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td></tr>
+            <tr><td class="crit">Sens d'ouverture DIN normalisé</td><td class="mc-cell"><span class="ico-soon">🔔 Bientôt</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-no">✗</span></td></tr>
+            <tr><td class="crit">Photos anti-litige archivées</td><td class="mc-cell"><span class="ico-yes">✓</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-partial">◐</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-yes">✓</span></td></tr>
+
+            <tr class="cat-row"><td colspan="6">👥 Équipe &amp; workflow</td></tr>
+            <tr><td class="crit">Gestion des rôles RBAC (Admin / Com / Tech)</td><td class="mc-cell"><span class="ico-yes">✓</span></td><td><span class="ico-partial">◐</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-partial">◐</span></td></tr>
+            <tr><td class="crit">Multi-utilisateurs illimités</td><td class="mc-cell"><span class="ico-yes">✓ dès 69 €</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-yes">✓</span></td></tr>
+
+            <tr class="cat-row"><td colspan="6">🔗 Intégrations</td></tr>
+            <tr><td class="crit">Connecteur Billit (compta belge)</td><td class="mc-cell"><span class="ico-soon">🔔 Bientôt</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td></tr>
+            <tr><td class="crit">Import PDF Eko4u</td><td class="mc-cell"><span class="ico-soon">🔔 Bientôt</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-partial">◐</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td></tr>
+            <tr><td class="crit">Mode Marché Public (appels d'offres)</td><td class="mc-cell"><span class="ico-soon">🔔 Bientôt</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-partial">◐</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td></tr>
+            <tr><td class="crit">Export PDF / Excel / CSV / JSON</td><td class="mc-cell"><span class="ico-yes">✓</span></td><td><span class="ico-partial">◐</span></td><td><span class="ico-yes">✓</span></td><td><span class="ico-partial">◐</span></td><td><span class="ico-partial">◐</span></td></tr>
+
+            <tr class="cat-row"><td colspan="6">💰 Prix &amp; accessibilité</td></tr>
+            <tr><td class="crit">Version gratuite complète</td><td class="mc-cell"><span class="ico-yes">✓ 3 chantiers</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-yes">✓</span></td></tr>
+            <tr><td class="crit">Prix plan Solo</td><td class="mc-cell"><strong style="color:var(--orange)">19 €/mois</strong></td><td>~150 €/mois</td><td>~200 €/mois</td><td>~120 €/mois</td><td>~29 €/mois</td></tr>
+            <tr><td class="crit">Prix plan Équipe 3-5 users</td><td class="mc-cell"><strong style="color:var(--orange)">69 €/mois</strong></td><td>~400 €/mois</td><td>~500 €/mois</td><td>~300 €/mois</td><td>~99 €/mois</td></tr>
+            <tr><td class="crit">Essai gratuit sans carte bancaire</td><td class="mc-cell"><span class="ico-yes">✓ 14 jours</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-partial">◐</span></td><td><span class="ico-partial">◐</span></td><td><span class="ico-yes">✓</span></td></tr>
+
+            <tr class="cat-row"><td colspan="6">🎨 UX &amp; simplicité</td></tr>
+            <tr><td class="crit">Onboarding &lt; 5 minutes</td><td class="mc-cell"><span class="ico-yes">✓</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-yes">✓</span></td></tr>
+            <tr><td class="crit">Made in Belgium par un menuisier</td><td class="mc-cell"><span class="ico-yes">✓</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td><td><span class="ico-no">✗</span></td></tr>
+            <tr><td class="crit">Support en français direct fondateur</td><td class="mc-cell"><span class="ico-yes">✓</span></td><td><span class="ico-partial">◐</span></td><td><span class="ico-partial">◐</span></td><td><span class="ico-partial">◐</span></td><td><span class="ico-partial">◐</span></td></tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p style="color:var(--text-mute);font-size:.78rem;margin-top:14px;text-align:center;font-style:italic">Comparatif basé sur les fonctionnalités publiquement annoncées par chaque éditeur au 27 juillet 2026. MesureChâssis inclut les fonctionnalités disponibles (✓) et celles annoncées sur la <a href="roadmap.html" style="color:var(--orange)">roadmap officielle</a> (🔔 Bientôt). Prix indicatifs concurrents — nous invitons à vérifier les tarifs à jour chez chaque éditeur.</p>
+
+    <div class="verdict">
+      <h2>Notre <em>positionnement</em></h2>
+      <p style="text-align:center;color:var(--text-mute);max-width:720px;margin:0 auto 8px">MesureChâssis n'est pas "encore une app menuisier de plus". C'est la première solution pensée <strong>mobile-first, IA-native, chantier-terrain</strong> — avec un fondateur qui est menuisier lui-même.</p>
+
+      <div class="verdict-grid">
+        <div class="verdict-card">
+          <span class="emoji">🎯</span>
+          <h3>Le meilleur de chacun, rassemblé</h3>
+          <p>Nous absorbons progressivement la meilleure fonctionnalité de chaque concurrent pour tout regrouper dans une seule app mobile pensée pour ton pouce.</p>
+        </div>
+        <div class="verdict-card">
+          <span class="emoji">💰</span>
+          <h3>3× moins cher</h3>
+          <p>À qualité équivalente, MesureChâssis coûte 3× moins cher qu'Elcia ou WinPro. Sans compromis sur la puissance, sans licences perpétuelles à racheter.</p>
+        </div>
+        <div class="verdict-card">
+          <span class="emoji">📱</span>
+          <h3>Mobile natif, pas adaptation</h3>
+          <p>Nos concurrents sont nés sur PC il y a 15-20 ans. MesureChâssis est né en 2025 sur iPhone — pensé chantier, pensé pouce, pensé rapidité.</p>
+        </div>
+        <div class="verdict-card">
+          <span class="emoji">🇧🇪</span>
+          <h3>Made in Belgium</h3>
+          <p>Développé à Charleroi par un menuisier belge. Support en français, comptabilité belge (Billit), primes wallonnes intégrées. Enfin un outil qui parle ta langue.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="cta-band">
+  <h2>Prêt à changer de logiciel ?</h2>
+  <p>Télécharge l'app gratuite. Si elle te séduit, tu bascules sur un plan payant en 14 jours d'essai gratuits. Zéro engagement.</p>
+  <a href="https://apps.apple.com/fr/app/mesurech%C3%A2ssis/id6776357930" target="_blank" rel="noopener" class="btn btn-primary">📲 Télécharger sur l'App Store</a>
+  <a href="fondateurs.html" class="btn btn-ghost">🏆 Rejoindre les Fondateurs</a>
+</section>
+
+<footer>
+  <div class="wrap-f">
+    <div><h4>MesureChâssis</h4><p>L'app de prise de mesures pour les menuisiers pros en Belgique, France, Luxembourg.</p></div>
+    <div><h4>Produit</h4><a href="index.html#fonctionnalites">Fonctionnalités</a><a href="tarifs.html">Tarifs</a><a href="roadmap.html">Roadmap</a><a href="comparatif.html">Comparatif</a></div>
+    <div><h4>Communauté</h4><a href="fondateurs.html">Programme Fondateurs</a><a href="beta.html">Beta Android</a><a href="devenir-testeur.html">Devenir testeur</a></div>
+    <div><h4>Légal</h4><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">CGU</a><a href="cgv.html">CGV</a><a href="confidentialite.html">Confidentialité</a></div>
+  </div>
+  <p class="cr">© 2026 MesureChâssis — Tous droits réservés.</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarifs — MesureChâssis · 6 plans pour tous les menuisiers</title>
+<meta name="description" content="6 plans MesureChâssis : Artisan Gratuit / Solo (19€) / MAX (199€) · Entreprise Gratuit / Standard (69€) / MAX (299€). 14 jours d'essai gratuit sur les plans payants.">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--orange:#FF5A00;--orange-light:#FF7733;--purple:#B58BFF;--bg:#0A0A0C;--bg-2:#14141A;--bg-3:#1F1F28;--text:#FFFFFF;--text-mute:#A8A8B0;--border:#2A2A35;--green:#22C55E;--red:#EF4444;--font-head:"Syne",-apple-system,sans-serif;--font:"Inter",-apple-system,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.promo-banner{background:linear-gradient(90deg,#FF5A00 0%,#FF7733 50%,#FF5A00 100%);color:#fff;text-align:center;padding:11px 16px;font-weight:700;font-size:.92rem;position:relative;z-index:60}
+.promo-banner a{color:#000;background:#fff;padding:3px 10px;border-radius:20px;font-weight:800;margin-left:6px;font-size:.85rem;display:inline-block}
+@media(max-width:560px){.promo-banner{font-size:.82rem;padding:9px 12px}.promo-banner a{font-size:.75rem;padding:2px 8px}}
+nav.top{position:sticky;top:0;z-index:50;background:rgba(10,10,12,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+nav.top .wrap{max-width:1200px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+nav.top .brand{display:flex;align-items:center;gap:10px;font-family:var(--font-head);font-weight:800;font-size:1.15rem}
+nav.top .brand img{width:30px;height:30px;border-radius:6px}
+nav.top .links{display:flex;gap:22px;align-items:center}
+nav.top .links a{font-size:.92rem;font-weight:500;color:var(--text-mute);transition:color .2s}
+nav.top .links a:hover{color:var(--text)}
+nav.top .cta{background:var(--orange);color:#000;padding:9px 18px;border-radius:8px;font-weight:700;font-size:.92rem}
+@media(max-width:840px){nav.top .links a:not(.cta){display:none}nav.top .wrap{padding:12px 16px}nav.top .brand{font-size:1rem}}
+.hero{padding:70px 24px 40px;text-align:center;background:radial-gradient(ellipse at top,rgba(255,90,0,.09),transparent 60%)}
+.hero .badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,90,0,.14);color:var(--orange);padding:6px 14px;border-radius:20px;font-size:.82rem;font-weight:700;margin-bottom:20px;border:1px solid rgba(255,90,0,.3)}
+.hero h1{font-family:var(--font-head);font-size:clamp(2rem,4.5vw,3.2rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;margin-bottom:18px;max-width:900px;margin-inline:auto}
+.hero h1 em{font-style:normal;color:var(--orange)}
+.hero p.sub{font-size:clamp(1rem,1.8vw,1.15rem);color:var(--text-mute);max-width:720px;margin:0 auto}
+section{padding:40px 24px}
+.wrap{max-width:1300px;margin:0 auto}
+.opening-notice{max-width:820px;margin:0 auto 36px;padding:20px 24px;background:linear-gradient(90deg,rgba(255,107,53,0.10),rgba(181,139,255,0.10));border:1px solid rgba(255,107,53,0.30);border-radius:14px;text-align:center}
+.opening-notice-title{display:inline-flex;align-items:center;gap:.5rem;color:var(--orange);font-weight:700;font-size:1rem;margin-bottom:8px}
+.opening-notice p{margin:0;color:var(--text-mute);font-size:.92rem;line-height:1.6}
+.section-title{text-align:center;font-family:var(--font-head);font-size:1.05rem;color:var(--text-mute);text-transform:uppercase;letter-spacing:.15em;font-weight:700;margin:36px 0 20px;padding-top:20px}
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1100px;margin:0 auto}
+@media(max-width:900px){.plans-grid{grid-template-columns:1fr;gap:16px}}
+.plan{background:var(--bg-2);border:1.5px solid var(--border);padding:32px 24px;border-radius:16px;display:flex;flex-direction:column;position:relative}
+.plan.featured{border-color:var(--orange);box-shadow:0 8px 40px rgba(255,90,0,.15)}
+.plan.featured::before{content:"⭐ Le + populaire";position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--orange);color:#000;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px}
+.plan.max{border-color:var(--purple);background:linear-gradient(180deg,rgba(181,139,255,0.10) 0%,var(--bg-2) 60%)}
+.plan.max::before{content:"💎 Tout inclus";position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#B58BFF,#FF6B35);color:#fff;font-size:.72rem;font-weight:800;padding:4px 12px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase}
+.plan-name{font-family:var(--font-head);font-size:1.35rem;font-weight:800;margin-bottom:6px}
+.plan-tag{color:var(--text-mute);font-size:.9rem;margin-bottom:20px}
+.plan-price{font-family:var(--font-head);font-size:2.6rem;font-weight:800;color:var(--text);line-height:1;margin-bottom:4px}
+.plan.max .plan-price{color:var(--purple)}
+.plan-price small{font-size:.42em;font-weight:500;color:var(--text-mute)}
+.plan-period{color:var(--text-mute);font-size:.85rem;margin-bottom:24px;display:block}
+.plan ul{list-style:none;margin-bottom:26px;flex:1}
+.plan ul li{padding:9px 0 9px 28px;position:relative;font-size:.93rem;line-height:1.5}
+.plan ul li::before{content:"✓";position:absolute;left:0;top:9px;color:var(--orange);font-weight:700}
+.plan.max ul li::before{color:var(--purple)}
+.plan-cta{display:block;text-align:center;padding:13px;border:1.5px solid var(--orange);border-radius:8px;color:var(--orange);font-weight:700;transition:background .2s,color .2s}
+.plan.featured .plan-cta{background:var(--orange);color:#000}
+.plan.max .plan-cta{border-color:var(--purple);color:var(--purple)}
+.plan.max .plan-cta:hover{background:var(--purple);color:#000}
+.plan-cta:hover{background:var(--orange);color:#000}
+.faq-tarifs{background:var(--bg-2);padding:60px 24px;border-top:1px solid var(--border)}
+.faq-tarifs h2{font-family:var(--font-head);font-size:clamp(1.5rem,2.5vw,2rem);font-weight:800;text-align:center;margin-bottom:36px}
+.faq-tarifs h2 em{font-style:normal;color:var(--orange)}
+.faq-list{max-width:800px;margin:0 auto}
+.faq-item{background:var(--bg-3);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.faq-item summary{padding:18px 22px;cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{content:"+";color:var(--orange);font-size:1.3rem;font-weight:300}
+.faq-item[open] summary::after{content:"−"}
+.faq-item p{padding:0 22px 18px;color:var(--text-mute);font-size:.95rem;line-height:1.65}
+.cta-band{text-align:center;padding:60px 24px 40px;background:linear-gradient(135deg,rgba(255,90,0,.12),rgba(255,90,0,.02))}
+.cta-band h2{font-family:var(--font-head);font-size:clamp(1.5rem,2.8vw,2.2rem);font-weight:800;margin-bottom:14px}
+.cta-band p{color:var(--text-mute);margin-bottom:26px;font-size:1.05rem}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:10px;font-weight:700;font-size:1rem;transition:transform .15s,box-shadow .15s;cursor:pointer;border:none}
+.btn-primary{background:var(--orange);color:#000;box-shadow:0 4px 20px rgba(255,90,0,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(255,90,0,.4)}
+.btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border);margin-left:8px}
+.btn-ghost:hover{background:var(--bg-2)}
+footer{background:var(--bg-2);border-top:1px solid var(--border);padding:40px 24px 24px;color:var(--text-mute);font-size:.88rem;margin-top:60px}
+footer .wrap-f{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:32px;margin-bottom:32px}
+footer h4{color:var(--text);font-family:var(--font-head);margin-bottom:14px;font-size:1rem}
+footer a{display:block;padding:5px 0;color:var(--text-mute);transition:color .15s}
+footer a:hover{color:var(--orange)}
+footer .cr{text-align:center;padding-top:20px;border-top:1px solid var(--border);font-size:.82rem}
+</style>
+</head>
+<body>
+
+<div class="promo-banner">📱 iOS App Store · 🤖 Android en beta —
+  <a href="fondateurs.html">👉 20 places gratuites À VIE</a>
+</div>
+
+<nav class="top">
+  <div class="wrap">
+    <a href="/" class="brand"><img src="logo.png" alt="Logo"><span>MesureChâssis</span></a>
+    <div class="links">
+      <a href="index.html#fonctionnalites">Fonctionnalités</a>
+      <a href="tarifs.html" style="color:var(--orange)">Tarifs</a>
+      <a href="roadmap.html">Roadmap</a>
+      <a href="fondateurs.html">Fondateurs</a>
+      <a href="comparatif.html">Comparatif</a>
+      <a href="telecharger.html" class="cta">📲 Télécharger</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="badge">💰 Simple &amp; transparent · Sans surprise</div>
+  <h1>Un plan <em>pour chaque menuisier</em></h1>
+  <p class="sub">Six formules pour couvrir tous les besoins : du solo qui teste au grand atelier qui automatise tout. Essai gratuit 14 jours sur les plans payants, résiliation en 1 clic.</p>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="opening-notice">
+      <div class="opening-notice-title">🔒 Abonnements payants — ouverture prochaine</div>
+      <p>L'application <strong>Artisan Gratuit</strong> est disponible dès maintenant sur l'App Store.<br>
+      Les <strong>5 plans payants</strong> ouvrent au <strong>4<sup>ème</sup> trimestre 2026</strong>. Clique "Me notifier à l'ouverture" pour être averti en priorité et profiter des <strong>14 jours d'essai gratuit</strong>.</p>
+    </div>
+
+    <h2 class="section-title">🧰 Plans Solo · 1 utilisateur</h2>
+
+    <div class="plans-grid">
+
+      <div class="plan">
+        <div class="plan-name">Artisan Gratuit</div>
+        <p class="plan-tag">Pour tester à ton rythme</p>
+        <div class="plan-price">0 €</div>
+        <span class="plan-period">1 utilisateur · Toujours gratuit</span>
+        <ul>
+          <li><strong>3 chantiers</strong> maximum</li>
+          <li><strong>5 formes</strong> de menuiseries (sur 14)</li>
+          <li>Yann IA — 10 questions/mois</li>
+          <li>Export PDF basique</li>
+          <li>Photos anti-litige incluses</li>
+          <li>Sync cloud (1 appareil)</li>
+        </ul>
+        <a href="telecharger.html" class="plan-cta">Commencer gratuitement →</a>
+      </div>
+
+      <div class="plan featured">
+        <div class="plan-name">Artisan Solo</div>
+        <p class="plan-tag">Le solo qui veut aller vite</p>
+        <div class="plan-price">19 €<small> /mois</small></div>
+        <span class="plan-period">1 utilisateur · 14 j d'essai</span>
+        <ul>
+          <li><strong>Chantiers illimités</strong></li>
+          <li><strong>14 formes</strong> de menuiseries complètes</li>
+          <li><strong>Yann IA illimité</strong></li>
+          <li>Import IA CDC illimité</li>
+          <li>Exports PDF / Excel / CSV / JSON</li>
+          <li>Sync multi-appareils</li>
+          <li>Support prioritaire email</li>
+        </ul>
+        <a href="mailto:info@mesurechassis.com?subject=Notification%20%E2%80%94%20Artisan%20Solo%2019%E2%82%AC&body=Bonjour%2C%0A%0AJe%20souhaite%20%C3%AAtre%20notifi%C3%A9%20d%C3%A8s%20l%27ouverture%20du%20plan%20Artisan%20Solo%20(19%20%E2%82%AC%2Fmois).%0A%0AMon%20activit%C3%A9%20%3A%20%5B%C3%A0%20compl%C3%A9ter%5D%0A%0AMerci%20!" class="plan-cta">🔔 Me notifier à l'ouverture</a>
+      </div>
+
+      <div class="plan max">
+        <div class="plan-name">Artisan MAX</div>
+        <p class="plan-tag">Solo + toutes les nouveautés</p>
+        <div class="plan-price">199 €<small> /mois</small></div>
+        <span class="plan-period">1 utilisateur · 14 j d'essai</span>
+        <ul>
+          <li><strong>Tout Artisan Solo</strong></li>
+          <li>🆕 Générateur devis PDF pro</li>
+          <li>🆕 Config prix &amp; marges</li>
+          <li>🆕 Import catalogue fabricants</li>
+          <li>🆕 Interface web PC</li>
+          <li>🆕 Mètre laser Bluetooth</li>
+          <li>🆕 Envoi devis email + tracking</li>
+          <li>🆕 Sens d'ouverture DIN</li>
+          <li><strong>Toutes les futures features à vie</strong></li>
+        </ul>
+        <a href="mailto:info@mesurechassis.com?subject=Notification%20%E2%80%94%20Artisan%20MAX%20199%E2%82%AC&body=Bonjour%2C%0A%0AJe%20souhaite%20%C3%AAtre%20notifi%C3%A9%20d%C3%A8s%20l%27ouverture%20du%20plan%20Artisan%20MAX%20(199%20%E2%82%AC%2Fmois)%20avec%20toutes%20les%20futures%20fonctionnalit%C3%A9s%20incluses.%0A%0AMon%20activit%C3%A9%20%3A%20%5B%C3%A0%20compl%C3%A9ter%5D%0A%0AMerci%20!" class="plan-cta">🔔 Me notifier à l'ouverture</a>
+      </div>
+
+    </div>
+
+    <h2 class="section-title">🚀 Plans Entreprise · 3 à 5 utilisateurs</h2>
+
+    <div class="plans-grid">
+
+      <div class="plan">
+        <div class="plan-name">Entreprise Gratuit</div>
+        <p class="plan-tag">Découvre en équipe</p>
+        <div class="plan-price">0 €</div>
+        <span class="plan-period">3 utilisateurs · Découverte</span>
+        <ul>
+          <li><strong>3 chantiers</strong> partagés en équipe</li>
+          <li><strong>3 utilisateurs</strong> avec RBAC basique</li>
+          <li>Yann IA — 10 questions/mois (équipe)</li>
+          <li>Export PDF basique</li>
+          <li>Sync temps réel entre membres</li>
+          <li>Dashboard équipe simplifié</li>
+        </ul>
+        <a href="telecharger.html" class="plan-cta">Commencer gratuitement →</a>
+      </div>
+
+      <div class="plan featured">
+        <div class="plan-name">Entreprise</div>
+        <p class="plan-tag">L'équipe qui produit</p>
+        <div class="plan-price">69 €<small> /mois</small></div>
+        <span class="plan-period">3-5 utilisateurs · 14 j d'essai</span>
+        <ul>
+          <li><strong>Chantiers illimités partagés</strong></li>
+          <li><strong>14 formes</strong> de menuiseries</li>
+          <li><strong>RBAC complet</strong> (Admin/Com/Tech)</li>
+          <li>Workflow anti-bourdes intégré</li>
+          <li>Import IA CDC illimité</li>
+          <li>Dashboard équipe &amp; stats</li>
+          <li>Yann IA illimité pour tous</li>
+          <li>Support prioritaire</li>
+        </ul>
+        <a href="mailto:info@mesurechassis.com?subject=Notification%20%E2%80%94%20Entreprise%2069%E2%82%AC&body=Bonjour%2C%0A%0AJe%20souhaite%20%C3%AAtre%20notifi%C3%A9%20d%C3%A8s%20l%27ouverture%20du%20plan%20Entreprise%20(69%20%E2%82%AC%2Fmois).%0A%0AMon%20entreprise%20%3A%20%5B%C3%A0%20compl%C3%A9ter%5D%0ANombre%20de%20collaborateurs%20%3A%20%5B%C3%A0%20compl%C3%A9ter%5D%0A%0AMerci%20!" class="plan-cta">🔔 Me notifier à l'ouverture</a>
+      </div>
+
+      <div class="plan max">
+        <div class="plan-name">Entreprise MAX</div>
+        <p class="plan-tag">L'automatisation totale</p>
+        <div class="plan-price">299 €<small> /mois</small></div>
+        <span class="plan-period">3-5 users · 14 j d'essai</span>
+        <ul>
+          <li><strong>Tout Entreprise</strong></li>
+          <li>🆕 Générateur devis PDF pro</li>
+          <li>🆕 Mode Marché Public (appels d'offres)</li>
+          <li>🆕 Connecteur Billit compta belge</li>
+          <li>🆕 Import PDF Eko4u</li>
+          <li>🆕 Mode vérification chantier</li>
+          <li>🆕 Templates devis multiples</li>
+          <li>🆕 Interface web PC dashboard</li>
+          <li><strong>Toutes les futures features à vie</strong></li>
+        </ul>
+        <a href="mailto:info@mesurechassis.com?subject=Notification%20%E2%80%94%20Entreprise%20MAX%20299%E2%82%AC&body=Bonjour%2C%0A%0AJe%20souhaite%20%C3%AAtre%20notifi%C3%A9%20d%C3%A8s%20l%27ouverture%20du%20plan%20Entreprise%20MAX%20(299%20%E2%82%AC%2Fmois)%20avec%20toutes%20les%20futures%20fonctionnalit%C3%A9s%20incluses.%0A%0AMon%20entreprise%20%3A%20%5B%C3%A0%20compl%C3%A9ter%5D%0ANombre%20de%20collaborateurs%20%3A%20%5B%C3%A0%20compl%C3%A9ter%5D%0A%0AMerci%20!" class="plan-cta">🔔 Me notifier à l'ouverture</a>
+      </div>
+
+    </div>
+
+    <p style="text-align:center;color:var(--text-mute);font-size:.9rem;margin-top:40px">
+      🎯 Découvre <a href="roadmap.html" style="color:var(--orange)">les 16 fonctionnalités à venir</a> et le <a href="comparatif.html" style="color:var(--orange)">comparatif face aux concurrents</a>.
+    </p>
+  </div>
+</section>
+
+<section class="faq-tarifs">
+  <h2>Questions fréquentes sur les <em>tarifs</em></h2>
+  <div class="faq-list">
+
+    <details class="faq-item"><summary>Pourquoi 6 plans plutôt que 2 ou 3 ?</summary><p>Parce que les besoins d'un menuisier solo sont très différents de ceux d'un atelier avec 4 collaborateurs. Nous voulons que chacun paye exactement pour ce qu'il utilise — ni plus, ni moins. Le plan Gratuit couvre 3 chantiers, Solo débloque tout pour un menuisier, MAX ajoute le générateur de devis auto et toutes les futures features. Idem côté Entreprise.</p></details>
+
+    <details class="faq-item"><summary>Que signifie « Toutes les futures features à vie » sur MAX ?</summary><p>Cela signifie que tant que tu es abonné à Artisan MAX ou Entreprise MAX, <strong>toutes les nouvelles fonctionnalités qu'on développera (voir <a href="roadmap.html" style="color:var(--orange)">roadmap</a>) seront incluses gratuitement</strong>. Pas de module payant à débloquer, pas de surprise. Tu paies un tarif tout inclus.</p></details>
+
+    <details class="faq-item"><summary>Pourquoi les plans payants ne sont pas encore ouverts ?</summary><p>L'application est en production, l'App Store nous a validés en juillet 2026, et nous finalisons actuellement la structure administrative pour l'ouverture officielle des abonnements payants. Ouverture prévue au <strong>4<sup>ème</sup> trimestre 2026</strong>. En attendant, tu peux utiliser l'app gratuitement et être notifié en priorité de l'ouverture.</p></details>
+
+    <details class="faq-item"><summary>Puis-je changer de plan à tout moment ?</summary><p>Oui. Upgrade / downgrade en 1 clic depuis ton compte. Le prorata est calculé automatiquement. Aucun engagement de durée, résiliation en 1 clic.</p></details>
+
+    <details class="faq-item"><summary>Comment fonctionne l'essai gratuit de 14 jours ?</summary><p>Sur tous les plans payants (Artisan Solo, Artisan MAX, Entreprise, Entreprise MAX), tu bénéficies de 14 jours avec toutes les fonctionnalités débloquées. <strong>Sans carte bancaire à l'inscription</strong>. Si tu annules avant J14, aucun prélèvement. Si tu confirmes, la facturation démarre au J15.</p></details>
+
+    <details class="faq-item"><summary>Y a-t-il des remises annuelles ?</summary><p>Oui, pour les abonnements annuels tu bénéficies de <strong>2 mois gratuits</strong> (~17 % de remise). Détails disponibles à l'ouverture des abonnements payants.</p></details>
+
+    <details class="faq-item"><summary>Comment devenir « Fondateur » et bénéficier de tarifs préférentiels ?</summary><p>Deux programmes existent : <strong>Beta Android</strong> (20 places gratuites à vie) et <strong>Ambassadeurs iOS</strong> (mois gratuits par parrainage et témoignage). Détails complets sur la <a href="fondateurs.html" style="color:var(--orange)">page Fondateurs</a>.</p></details>
+
+    <details class="faq-item"><summary>Comparaison avec WinPro, Elcia, HerculePro, Obat ?</summary><p>À qualité équivalente, MesureChâssis coûte 3× moins cher. Voir le <a href="comparatif.html" style="color:var(--orange)">comparatif détaillé sur 20 critères</a>.</p></details>
+
+  </div>
+</section>
+
+<section class="cta-band">
+  <h2>Prêt à essayer ?</h2>
+  <p>Télécharge gratuitement sur l'App Store et démarre en 3 minutes. Zéro carte bancaire, zéro engagement.</p>
+  <a href="https://apps.apple.com/fr/app/mesurech%C3%A2ssis/id6776357930" target="_blank" rel="noopener" class="btn btn-primary">📲 Télécharger sur l'App Store</a>
+  <a href="fondateurs.html" class="btn btn-ghost">🏆 Rejoindre les Fondateurs</a>
+</section>
+
+<footer>
+  <div class="wrap-f">
+    <div><h4>MesureChâssis</h4><p>L'app de prise de mesures pour les menuisiers pros en Belgique, France, Luxembourg.</p></div>
+    <div><h4>Produit</h4><a href="index.html#fonctionnalites">Fonctionnalités</a><a href="tarifs.html">Tarifs</a><a href="roadmap.html">Roadmap</a><a href="comparatif.html">Comparatif</a></div>
+    <div><h4>Communauté</h4><a href="fondateurs.html">Programme Fondateurs</a><a href="beta.html">Beta Android</a><a href="devenir-testeur.html">Devenir testeur</a></div>
+    <div><h4>Légal</h4><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">CGU</a><a href="cgv.html">CGV</a><a href="confidentialite.html">Confidentialité</a></div>
+  </div>
+  <p class="cr">© 2026 MesureChâssis — Tous droits réservés.</p>
+</footer>
+
+</body>
+</html>

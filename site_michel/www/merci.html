@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merci ! Bienvenue chez mesure Châssis</title>
+<meta name="description" content="Merci de votre abonnement à mesure Châssis. Votre essai gratuit de 14 jours démarre maintenant.">
+<link rel="icon" type="image/png" href="favicon.png">
+<meta name="robots" content="noindex, nofollow">
+
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5NQCPPEK6J"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5NQCPPEK6J', { anonymize_ip: true });
+</script>
+
+<!-- Meta Pixel -->
+<script>
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,
+  'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '000000000000000');
+  fbq('track', 'PageView');
+</script>
+
+<style>
+  :root {
+    --orange: #FF6B35;
+    --orange-dark: #e85d2a;
+    --bg-1: #0F172A;
+    --bg-2: #1E293B;
+    --text-1: #F1F5F9;
+    --text-2: #94A3B8;
+    --green: #22c55e;
+    --border: rgba(255,255,255,0.08);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+    color: var(--text-1);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  /* Header simple */
+  .header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .brand {
+    display: flex; align-items: center; gap: .6rem;
+    color: var(--text-1); text-decoration: none;
+    font-weight: 700; font-size: 1.05rem;
+  }
+  .brand-icon {
+    width: 40px; height: 40px;
+    border-radius: 9px;
+    overflow: hidden;
+    display: block;
+    box-shadow: 0 2px 8px rgba(255,107,53,0.35);
+  }
+  .brand-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* Hero merci */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+    animation: fadeIn .6s ease-out;
+  }
+  .success-icon {
+    width: 96px; height: 96px;
+    background: rgba(34,197,94,0.15);
+    border: 3px solid var(--green);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 3rem;
+    animation: scaleIn .5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  h1 {
+    font-family: 'Sora', 'DM Sans', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+  .plan-badge {
+    display: inline-block;
+    background: rgba(255,107,53,0.15);
+    color: var(--orange);
+    border: 1px solid rgba(255,107,53,0.35);
+    padding: .35rem 1rem;
+    border-radius: 999px;
+    font-size: .88rem;
+    font-weight: 700;
+    margin: .5rem 0 1.5rem;
+    letter-spacing: .02em;
+  }
+  .lead {
+    color: var(--text-2);
+    font-size: 1.1rem;
+    max-width: 540px;
+    margin: 0 auto;
+  }
+
+  /* Cards steps */
+  .steps {
+    margin: 3rem 0 2rem;
+    display: grid;
+    gap: 1rem;
+  }
+  .step {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: transform .2s, border-color .2s;
+  }
+  .step:hover {
+    border-color: rgba(255,107,53,0.35);
+    transform: translateY(-2px);
+  }
+  .step-num {
+    flex-shrink: 0;
+    width: 36px; height: 36px;
+    background: var(--orange);
+    color: #fff;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-family: 'Sora', sans-serif;
+  }
+  .step-content h3 {
+    font-family: 'Sora', 'DM Sans', sans-serif;
+    font-size: 1.05rem;
+    margin-bottom: .35rem;
+    color: var(--text-1);
+  }
+  .step-content p {
+    color: var(--text-2);
+    font-size: .94rem;
+    margin-bottom: .5rem;
+  }
+  .step-content a {
+    color: var(--orange);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: .92rem;
+  }
+  .step-content a:hover { text-decoration: underline; }
+
+  /* CTA */
+  .cta-row {
+    display: flex; flex-wrap: wrap;
+    gap: 1rem; justify-content: center;
+    margin: 2rem 0 1rem;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .9rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: .95rem;
+    transition: all .2s;
+    border: 1px solid transparent;
+  }
+  .btn-primary {
+    background: var(--orange);
+    color: #fff;
+  }
+  .btn-primary:hover {
+    background: var(--orange-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(255,107,53,0.35);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-1);
+    border-color: var(--border);
+  }
+  .btn-ghost:hover {
+    border-color: var(--orange);
+    color: var(--orange);
+  }
+
+  /* Info box */
+  .info-box {
+    background: rgba(34,197,94,0.06);
+    border: 1px solid rgba(34,197,94,0.25);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+  }
+  .info-box .icon { font-size: 1.5rem; flex-shrink: 0; }
+  .info-box h4 {
+    font-family: 'Sora', 'DM Sans', sans-serif;
+    color: var(--green);
+    font-size: 1rem;
+    margin-bottom: .25rem;
+  }
+  .info-box p {
+    color: var(--text-2);
+    font-size: .92rem;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: auto;
+    padding: 2rem 1.5rem 1.5rem;
+    text-align: center;
+    color: var(--text-2);
+    font-size: .85rem;
+    border-top: 1px solid var(--border);
+  }
+  .footer a { color: var(--text-2); text-decoration: none; }
+  .footer a:hover { color: var(--orange); }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scaleIn {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+  }
+
+  @media (max-width: 600px) {
+    .hero { padding: 2rem 1rem 1rem; }
+    .success-icon { width: 80px; height: 80px; font-size: 2.5rem; }
+    .step { padding: 1rem; }
+    .cta-row { flex-direction: column; align-items: stretch; }
+    .btn { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="brand">
+      <div class="brand-icon"><img src="logo.png" alt="mesure Châssis" width="40" height="40"></div>
+      <span>mesure Châssis</span>
+    </a>
+    <a href="index.html" style="color:var(--text-2);text-decoration:none;font-size:.9rem">← Retour à l'accueil</a>
+  </div>
+</header>
+
+<!-- Contenu principal -->
+<main class="container">
+
+  <div class="hero">
+    <div class="success-icon">✅</div>
+    <h1>Merci pour votre confiance ! 🎉</h1>
+    <div class="plan-badge" id="planBadge">Chargement de votre plan…</div>
+    <p class="lead" id="leadText">
+      Votre essai gratuit de <strong>14 jours</strong> démarre maintenant.
+      Vous ne serez pas facturé avant la fin de la période d'essai, et vous
+      pouvez résilier à tout moment depuis votre espace client Stripe.
+    </p>
+  </div>
+
+  <!-- Étapes suivantes -->
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>📲 Téléchargez l'application</h3>
+        <p>Si ce n'est pas déjà fait, téléchargez mesure Châssis sur votre iPhone ou iPad depuis l'App Store.</p>
+        <a href="https://apps.apple.com/fr/app/mesurech%C3%A2ssis/id6776357930" target="_blank" rel="noopener">
+          Ouvrir sur l'App Store →
+        </a>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>🔐 Connectez-vous avec l'email de paiement</h3>
+        <p>Ouvrez l'app et créez votre compte (ou connectez-vous) avec la même adresse email que celle utilisée lors du paiement Stripe.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>🚀 Profitez de toutes les fonctionnalités Pro</h3>
+        <p id="planFeatures">Votre plan est activé automatiquement dans les 5 minutes qui suivent le paiement. Toutes les fonctionnalités Pro sont déverrouillées.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h3>📧 Confirmation par email</h3>
+        <p>Vous recevrez sous quelques minutes un email de Stripe avec le récapitulatif de votre abonnement et votre facture (aussi téléchargeable depuis votre espace client).</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Info box rassurante -->
+  <div class="info-box">
+    <div class="icon">🛡️</div>
+    <div>
+      <h4>Rappel — Vos 14 jours gratuits</h4>
+      <p>
+        Vous n'êtes <strong>débité de rien</strong> pour l'instant. Le premier prélèvement aura lieu dans 14 jours, uniquement si vous ne résiliez pas avant.
+        Pour résilier ou modifier votre abonnement, rendez-vous dans les paramètres de l'application ou contactez-nous à <a href="mailto:info@mesurechassis.com" style="color:var(--green);text-decoration:underline">info@mesurechassis.com</a>.
+      </p>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-row">
+    <a href="https://apps.apple.com/fr/app/mesurech%C3%A2ssis/id6776357930" target="_blank" rel="noopener" class="btn btn-primary">
+      📲 Télécharger l'app
+    </a>
+    <a href="mailto:info@mesurechassis.com" class="btn btn-ghost">
+      💬 Nous contacter
+    </a>
+  </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+  <p>
+    Une question ? <a href="mailto:info@mesurechassis.com">info@mesurechassis.com</a> · <a href="tel:+32496650032">+32 496 65 00 32</a>
+  </p>
+  <p style="margin-top:.5rem">
+    <a href="index.html">Accueil</a> ·
+    <a href="cgv.html">CGV</a> ·
+    <a href="confidentialite.html">Confidentialité</a> ·
+    <a href="contact.html">Contact</a>
+  </p>
+  <p style="margin-top:1rem;font-size:.78rem;color:#64748B">
+    © 2026 mesure Châssis — Merci pour votre confiance 💙
+  </p>
+</footer>
+
+<!-- Script pour personnaliser selon le plan -->
+<script>
+  (function() {
+    // Récupérer le paramètre ?plan= de l'URL
+    const params = new URLSearchParams(window.location.search);
+    const plan = params.get('plan') || 'pro';
+
+    const planBadge = document.getElementById('planBadge');
+    const planFeatures = document.getElementById('planFeatures');
+
+    let planLabel = 'Plan Pro';
+    let planFeaturesText = 'Votre plan est activé automatiquement dans les 5 minutes qui suivent le paiement. Toutes les fonctionnalités Pro sont déverrouillées.';
+    let conversionValue = 19;
+
+    if (plan === 'artisan-pro') {
+      planLabel = '⭐ Artisan Pro · 19€/mois (après 14j)';
+      planFeaturesText = 'Chantiers illimités, 14 formes complètes, Laser Bluetooth, Assistant IA Yann illimité, exports PDF/Excel/CSV/JSON, logo entreprise. Tout est activé dès votre première connexion.';
+      conversionValue = 19;
+    } else if (plan === 'entreprise-pro') {
+      planLabel = '🚀 Entreprise Pro · 69€/mois (après 14j)';
+      planFeaturesText = 'Tout Artisan Pro + Mode équipe RBAC (Admin/Commercial/Technicien), Workflow anti-bourdes, Dashboard équipe, Intelligence CDC, Support prioritaire. Invitez vos collaborateurs depuis l\'application.';
+      conversionValue = 69;
+    }
+
+    planBadge.textContent = planLabel;
+    planFeatures.textContent = planFeaturesText;
+
+    // Tracker la conversion (Google Ads + Meta + GA4)
+    try {
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'purchase', {
+          currency: 'EUR',
+          value: conversionValue,
+          items: [{ item_id: plan, item_name: planLabel, price: conversionValue, quantity: 1 }]
+        });
+        gtag('event', 'conversion_' + plan.replace('-', '_'));
+      }
+      if (typeof fbq !== 'undefined') {
+        fbq('track', 'Subscribe', { value: conversionValue, currency: 'EUR', predicted_ltv: conversionValue * 12 });
+      }
+    } catch(e) { /* silent */ }
+  })();
+</script>
+
+</body>
+</html>

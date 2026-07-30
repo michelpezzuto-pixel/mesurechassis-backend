@@ -1,0 +1,81 @@
+═══════════════════════════════════════════════════════════════════
+  mesure Châssis — Landing Page v2.1 (Freemium + Stripe Payment Links)
+  Généré le 26 juillet 2026
+═══════════════════════════════════════════════════════════════════
+
+🎯 QUOI DE NEUF DANS CE ZIP ?
+
+1. ✅ index.html — Boutons CTA "Artisan Pro" & "Entreprise Pro"
+   pointent maintenant vers Stripe Payment Links.
+   Prix mis à jour : plus de mention "HT" (adaptés à la situation
+   particulier / franchise TVA).
+
+2. ✅ tarifs.html — Idem CTAs. Prix Entreprise Pro corrigé 59→69€.
+   Prix Entreprise MAX corrigé 249→299€. Mentions "HT" retirées.
+
+3. ✅ faq.html — Prix et mentions TVA mis à jour dans les Q/R.
+
+4. ✅ contact.html — Prix Entreprise MAX corrigé.
+
+5. ✅ guide.html — Prix Entreprise MAX corrigé.
+
+6. 🆕 merci.html (NOUVEAU) — Page post-paiement Stripe.
+   Personnalisée selon le plan choisi via le paramètre URL
+   (?plan=artisan-pro ou ?plan=entreprise-pro).
+   Inclut : icône de succès animée, 4 étapes claires,
+   rappel des 14 jours gratuits, tracking Google Ads / Meta.
+
+7. 📄 cgv.html — RÉÉCRITURE COMPLÈTE conforme droit belge :
+   • Prix 2026 corrects (19€ Artisan Pro / 69€ Entreprise Pro)
+   • Aucune mention TVA (situation particulier / franchise)
+   • Droit de rétractation 14 jours (art. VI.47 CDE)
+   • Éditeur identifié : Michel Pezzuto, mention "inscription BCE en cours"
+   • Adaptée au modèle Freemium avec essai gratuit 14 jours
+   • Reconduction tacite, résiliation à tout moment
+   • Médiation ODR européenne, tribunaux belges
+
+═══════════════════════════════════════════════════════════════════
+
+📤 COMMENT UPLOADER
+
+1. Connectez-vous à votre FTP (FileZilla) sur mesurechassis.com
+2. Naviguez vers le dossier racine (public_html / www / htdocs)
+3. Uploadez les 7 fichiers de ce ZIP en ÉCRASANT les anciens
+4. Testez immédiatement :
+   ✓ https://mesurechassis.com/ (cliquez sur "Artisan Pro" → doit
+     rediriger vers Stripe checkout avec "14 jours gratuits")
+   ✓ https://mesurechassis.com/tarifs.html (idem)
+   ✓ https://mesurechassis.com/merci.html?plan=artisan-pro
+     (doit afficher "Artisan Pro · 19€/mois")
+   ✓ https://mesurechassis.com/merci.html?plan=entreprise-pro
+     (doit afficher "Entreprise Pro · 69€/mois")
+   ✓ https://mesurechassis.com/cgv.html (nouveau contenu)
+
+═══════════════════════════════════════════════════════════════════
+
+🔗 URLS STRIPE UTILISÉES (à vérifier avant upload si besoin)
+
+• Artisan Pro (19€/mois, essai 14j) :
+  https://buy.stripe.com/3cIeVegbD5zu84MevYdQQ02
+
+• Entreprise Pro (69€/mois, essai 14j) :
+  https://buy.stripe.com/fZueVe0cF6Dy2KsevYdQQ00
+
+═══════════════════════════════════════════════════════════════════
+
+⚠️ RAPPELS IMPORTANTS
+
+1. Le premier client qui souscrit → vous avez 30 jours pour vous
+   inscrire officiellement à la BCE (Banque-Carrefour des Entreprises)
+   en tant qu'indépendant. Coût ~90€ (guichet type Xerius/Partena).
+
+2. Une fois inscrit à la BCE, il faudra mettre à jour la mention
+   dans cgv.html (article 1) et confidentialite.html avec votre
+   nouveau numéro d'entreprise BE0XXX.XXX.XXX.
+
+3. Le code de sauvegarde 2FA Stripe : notez-le absolument sur
+   PAPIER ou dans un gestionnaire de mots de passe (Bitwarden,
+   1Password, KeePass). Sans lui, si vous perdez votre téléphone,
+   vous perdez l'accès à votre argent Stripe DÉFINITIVEMENT.
+
+═══════════════════════════════════════════════════════════════════
