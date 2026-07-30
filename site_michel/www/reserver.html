@@ -609,7 +609,8 @@ function submitForm(e) {
       techQ1.style.display = 'none';
       techQ2.style.display = 'block';
       document.getElementById('ouvrantcache').setAttribute('required', 'required');
-      // Reset la valeur pareclose pour empêcher réutilisation
+      // ⚠️ CRUCIAL : retirer required du champ pareclose caché (sinon HTML5 bloque le submit)
+      document.getElementById('pareclose').removeAttribute('required');
       document.getElementById('pareclose').value = '';
       showError("❌ Mauvaise réponse. Voici une DEUXIÈME question métier — c'est ta dernière chance.");
       techQ2.scrollIntoView({behavior:'smooth', block:'center'});
