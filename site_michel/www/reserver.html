@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Réserver un appel WhatsApp avec Michel — MesureChâssis</title>
+<meta name="description" content="Réservez un appel WhatsApp gratuit de 15 minutes avec Michel Pezzuto, fondateur de MesureChâssis. Menuisier belge, 20 ans de terrain. Questionnaire de qualification.">
+<meta name="robots" content="noindex,follow">
+<link rel="icon" type="image/png" href="favicon.png">
+
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5NQCPPEK6J"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5NQCPPEK6J', { anonymize_ip: true });
+  window.mftpTrackConversion = function(eventName) {
+    try { gtag('event', eventName, { app_name: 'mesurechassis' }); } catch(e){}
+  };
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --orange:#FF5A00;
+  --orange-light:#FF7733;
+  --bg:#0A0A0C;
+  --bg-2:#14141A;
+  --bg-3:#1F1F28;
+  --text:#FFFFFF;
+  --text-mute:#A8A8B0;
+  --border:#2A2A35;
+  --green:#22C55E;
+  --red:#EF4444;
+  --whatsapp:#25D366;
+  --font-head:"Syne",-apple-system,BlinkMacSystemFont,sans-serif;
+  --font:"Inter",-apple-system,BlinkMacSystemFont,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+
+/* ===== Navbar ===== */
+nav.top{
+  background:rgba(10,10,12,.92);
+  border-bottom:1px solid var(--border);
+  padding:14px 24px;
+}
+nav.top .wrap{
+  max-width:960px;margin:0 auto;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--font-head);
+  font-weight:800;font-size:1.15rem;color:var(--text)}
+.brand img{width:32px;height:32px}
+.back-link{
+  color:var(--text-mute);font-size:.9rem;padding:6px 12px;border-radius:6px;
+  transition:all .15s;
+}
+.back-link:hover{color:var(--orange)}
+
+/* ===== Main ===== */
+main{
+  flex:1;
+  max-width:640px;
+  margin:0 auto;
+  padding:32px 24px 60px;
+  width:100%;
+}
+.hero-block{
+  text-align:center;
+  margin-bottom:32px;
+}
+.badge-whatsapp{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.35);
+  color:var(--whatsapp);
+  padding:6px 14px;border-radius:20px;
+  font-size:.82rem;font-weight:600;
+  margin-bottom:16px;
+  letter-spacing:.3px;
+}
+h1{
+  font-family:var(--font-head);
+  font-size:clamp(1.8rem,4.5vw,2.4rem);
+  font-weight:800;
+  line-height:1.15;
+  margin-bottom:14px;
+  letter-spacing:-.5px;
+}
+h1 em{color:var(--orange);font-style:normal}
+.subtitle{
+  color:var(--text-mute);
+  font-size:1.03rem;
+  max-width:520px;
+  margin:0 auto;
+}
+.trust-line{
+  margin-top:18px;
+  display:flex;
+  justify-content:center;
+  gap:18px;
+  flex-wrap:wrap;
+  font-size:.85rem;
+  color:var(--text-mute);
+}
+.trust-line span{display:inline-flex;align-items:center;gap:6px}
+
+/* ===== Form ===== */
+form{
+  background:var(--bg-2);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:28px;
+  margin-top:12px;
+}
+.q-group{
+  margin-bottom:22px;
+}
+.q-group:last-of-type{margin-bottom:12px}
+.q-label{
+  display:block;
+  font-family:var(--font-head);
+  font-weight:700;
+  color:var(--text);
+  margin-bottom:10px;
+  font-size:1.02rem;
+  letter-spacing:.2px;
+}
+.q-label .num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:24px;height:24px;
+  background:var(--orange);color:#fff;
+  border-radius:50%;
+  font-size:.78rem;
+  margin-right:8px;
+  font-family:var(--font);
+  font-weight:700;
+}
+.q-label .required{color:var(--orange);margin-left:3px}
+.q-help{
+  display:block;
+  color:var(--text-mute);
+  font-size:.82rem;
+  margin-top:-5px;
+  margin-bottom:10px;
+  font-weight:400;
+  padding-left:32px;
+}
+input[type="text"],input[type="tel"],input[type="email"],textarea,select{
+  width:100%;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:11px 14px;
+  color:var(--text);
+  font-family:var(--font);
+  font-size:.95rem;
+  transition:border .15s;
+}
+input[type="text"]:focus,input[type="tel"]:focus,input[type="email"]:focus,textarea:focus,select:focus{
+  outline:none;border-color:var(--orange);
+}
+input[type="text"]::placeholder,input[type="tel"]::placeholder{color:#5a5a65}
+.input-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+}
+@media(max-width:520px){.input-row{grid-template-columns:1fr}}
+
+.radio-group{display:flex;flex-direction:column;gap:8px}
+.radio-item{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 14px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:8px;
+  cursor:pointer;
+  transition:all .15s;
+}
+.radio-item:hover{border-color:var(--orange-light);background:#141420}
+.radio-item input[type="radio"]{
+  appearance:none;
+  width:18px;height:18px;
+  border:2px solid var(--border);
+  border-radius:50%;
+  cursor:pointer;
+  position:relative;
+  flex-shrink:0;
+}
+.radio-item input[type="radio"]:checked{border-color:var(--orange)}
+.radio-item input[type="radio"]:checked::after{
+  content:"";position:absolute;top:2px;left:2px;
+  width:10px;height:10px;background:var(--orange);border-radius:50%;
+}
+.radio-item input[type="radio"]:checked + span{color:var(--orange);font-weight:600}
+.radio-item span{color:var(--text);font-size:.94rem}
+
+/* Honeypot (hidden) */
+.honeypot{
+  position:absolute!important;left:-9999px!important;top:-9999px!important;
+  width:1px;height:1px;opacity:0;pointer-events:none;
+}
+
+/* Submit button */
+.btn-submit{
+  width:100%;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  background:var(--whatsapp);
+  color:#000;
+  border:none;
+  padding:15px 24px;
+  border-radius:10px;
+  font-family:var(--font-head);
+  font-size:1.05rem;
+  font-weight:800;
+  cursor:pointer;
+  transition:all .15s;
+  margin-top:8px;
+  letter-spacing:.3px;
+}
+.btn-submit:hover:not(:disabled){
+  background:#1eb559;
+  transform:translateY(-1px);
+  box-shadow:0 6px 20px rgba(37,211,102,.35);
+}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed}
+.btn-submit svg{width:20px;height:20px;fill:currentColor}
+
+.form-footer-note{
+  text-align:center;
+  color:var(--text-mute);
+  font-size:.8rem;
+  margin-top:16px;
+  padding:0 8px;
+  line-height:1.5;
+}
+
+.error-box{
+  background:rgba(239,68,68,.12);
+  border:1px solid rgba(239,68,68,.4);
+  color:#fca5a5;
+  padding:12px 16px;
+  border-radius:8px;
+  margin-top:16px;
+  font-size:.9rem;
+  display:none;
+}
+.error-box.active{display:block}
+
+/* Success page */
+.success-view{
+  display:none;
+  text-align:center;
+  padding:40px 20px;
+  background:var(--bg-2);
+  border:1px solid var(--border);
+  border-radius:14px;
+}
+.success-view.active{display:block}
+.success-view .check{
+  width:70px;height:70px;
+  background:var(--whatsapp);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;
+  font-size:2.2rem;
+}
+.success-view h2{
+  font-family:var(--font-head);
+  font-size:1.6rem;
+  font-weight:800;
+  margin-bottom:12px;
+}
+.success-view p{color:var(--text-mute);margin-bottom:12px}
+.success-view .redirect-note{
+  margin-top:22px;padding-top:20px;border-top:1px solid var(--border);
+  font-size:.85rem;color:#7a7a85;
+}
+
+/* ===== Footer ===== */
+footer{
+  background:var(--bg-2);border-top:1px solid var(--border);
+  padding:20px 24px;color:var(--text-mute);
+  text-align:center;font-size:.82rem;
+}
+footer a{color:var(--orange)}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="top">
+  <div class="wrap">
+    <a href="/" class="brand">
+      <img src="logo.png" alt="MesureChâssis">
+      <span>MesureChâssis</span>
+    </a>
+    <a href="/" class="back-link">← Retour au site</a>
+  </div>
+</nav>
+
+<!-- ===== MAIN ===== -->
+<main>
+
+  <!-- ===== FORM VIEW ===== -->
+  <div id="formView">
+
+    <div class="hero-block">
+      <span class="badge-whatsapp">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        Appel WhatsApp gratuit · 15-20 min
+      </span>
+      <h1>Discutons de ton <em>chantier</em></h1>
+      <p class="subtitle">
+        Je suis Michel, fondateur et menuisier belge (20 ans de terrain). 
+        Réponds à ces quelques questions et je t'appelle sur WhatsApp dans les 24-48h ouvrées.
+      </p>
+      <div class="trust-line">
+        <span>🇧🇪 100% belge</span>
+        <span>💬 Zéro spam</span>
+        <span>🎯 Menuisiers uniquement</span>
+      </div>
+    </div>
+
+    <form id="qualifForm" onsubmit="return submitForm(event)">
+
+      <!-- Honeypot anti-bot (caché) -->
+      <div class="honeypot">
+        <label>Ne remplissez pas ce champ (anti-spam)</label>
+        <input type="text" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <!-- Q1 : Nom -->
+      <div class="q-group">
+        <label class="q-label" for="fullname"><span class="num">1</span>Ton nom complet<span class="required">*</span></label>
+        <input type="text" id="fullname" name="fullname" placeholder="Prénom Nom" required autocomplete="name">
+      </div>
+
+      <!-- Q2 : Entreprise -->
+      <div class="q-group">
+        <label class="q-label" for="company"><span class="num">2</span>Nom de ton entreprise<span class="required">*</span></label>
+        <span class="q-help">Ou "Indépendant" si tu bosses seul</span>
+        <input type="text" id="company" name="company" placeholder="Ex : Menuiseries Dupont SPRL" required autocomplete="organization">
+      </div>
+
+      <!-- Q3 : Taille équipe -->
+      <div class="q-group">
+        <label class="q-label"><span class="num">3</span>Combien de personnes dans ta société ?<span class="required">*</span></label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="team" value="solo" required><span>👤 Je suis seul (indépendant)</span></label>
+          <label class="radio-item"><input type="radio" name="team" value="2-5"><span>👥 2 à 5 personnes</span></label>
+          <label class="radio-item"><input type="radio" name="team" value="6-15"><span>👥 6 à 15 personnes</span></label>
+          <label class="radio-item"><input type="radio" name="team" value="15+"><span>🏢 Plus de 15 personnes</span></label>
+        </div>
+      </div>
+
+      <!-- Q4 : Défi principal -->
+      <div class="q-group">
+        <label class="q-label"><span class="num">4</span>Quel est ton défi #1 aujourd'hui ?<span class="required">*</span></label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="pain" value="ressaisie" required><span>📝 Trop de ressaisie au bureau</span></label>
+          <label class="radio-item"><input type="radio" name="pain" value="devis"><span>⏳ Mes devis traînent trop longtemps</span></label>
+          <label class="radio-item"><input type="radio" name="pain" value="erreurs"><span>❌ Erreurs de mesures sur chantier</span></label>
+          <label class="radio-item"><input type="radio" name="pain" value="papier"><span>📄 Carnets papier perdus ou illisibles</span></label>
+          <label class="radio-item"><input type="radio" name="pain" value="autre"><span>💡 Autre — j'expliquerai à Michel</span></label>
+        </div>
+      </div>
+
+      <!-- Q5 : WhatsApp -->
+      <div class="q-group">
+        <label class="q-label" for="whatsapp"><span class="num">5</span>Ton numéro WhatsApp<span class="required">*</span></label>
+        <span class="q-help">Michel t'appellera sur ce numéro. Format : +32 496 12 34 56</span>
+        <input type="tel" id="whatsapp" name="whatsapp" placeholder="+32 ..." required autocomplete="tel" inputmode="tel">
+      </div>
+
+      <!-- Q6 : Email -->
+      <div class="q-group">
+        <label class="q-label" for="email"><span class="num">6</span>Ton email pro<span class="required">*</span></label>
+        <span class="q-help">Pour t'envoyer la confirmation et le compte-rendu</span>
+        <input type="email" id="email" name="email" placeholder="toi@tonentreprise.be" required autocomplete="email">
+      </div>
+
+      <!-- Q7 : Question technique métier (anti-démarcheur) -->
+      <div class="q-group">
+        <label class="q-label"><span class="num">7</span>Petite question métier 🔧<span class="required">*</span></label>
+        <span class="q-help">Ça nous aide à filtrer les démarcheurs qui ne connaissent rien aux châssis</span>
+        <select id="pareclose" name="pareclose" required>
+          <option value="">— Choisis la bonne réponse —</option>
+          <option value="a">Une pareclose, c'est un type d'ouverture (à la française, oscillo-battant, etc.)</option>
+          <option value="b">Une pareclose, c'est la baguette qui maintient le vitrage dans le châssis</option>
+          <option value="c">Une pareclose, c'est un joint d'étanchéité entre le dormant et l'ouvrant</option>
+          <option value="d">Une pareclose, c'est la mesure de la diagonale d'une baie</option>
+        </select>
+      </div>
+
+      <div class="error-box" id="errorBox"></div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        Réserver mon appel WhatsApp
+      </button>
+
+      <p class="form-footer-note">
+        En envoyant ce formulaire, tu acceptes que Michel te contacte sur WhatsApp au numéro fourni.
+        Aucune inscription à une newsletter. Tes données ne sont ni vendues ni partagées.
+      </p>
+    </form>
+
+  </div>
+
+  <!-- ===== SUCCESS VIEW ===== -->
+  <div id="successView" class="success-view">
+    <div class="check">✅</div>
+    <h2>Merci <span id="successName">!</span></h2>
+    <p>Ta demande d'appel WhatsApp est bien enregistrée.</p>
+    <p><strong>Michel te contacte dans les 24-48h ouvrées</strong> sur le numéro que tu as indiqué.</p>
+    <p style="margin-top:16px">📧 Un email de confirmation arrive à <strong id="successEmail"></strong></p>
+
+    <div class="redirect-note">
+      Tu peux dès maintenant <a href="https://apps.apple.com/fr/app/mesurech%C3%A2ssis/id6776357930" target="_blank" style="color:var(--orange)">télécharger l'app gratuitement sur l'App Store</a> pour tester avant l'appel.
+    </div>
+  </div>
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  © 2026 MesureChâssis — <a href="/">mesurechassis.com</a> · <a href="mailto:info@mesurechassis.com">info@mesurechassis.com</a>
+</footer>
+
+<script>
+/* ================================================
+   FORMULAIRE — Validation client + redirection Calendly
+   ================================================ */
+
+const CALENDLY_URL = "https://calendly.com/michelpezzuto/appel-whatsapp-15min";
+// ⚠️ Michel : remplace cette URL par l'URL exacte de ton event Calendly de 15-20 min
+// dédié aux appels WhatsApp. Voir instructions dans README.
+
+function submitForm(e) {
+  e.preventDefault();
+  const errorBox = document.getElementById('errorBox');
+  const submitBtn = document.getElementById('submitBtn');
+  errorBox.classList.remove('active');
+
+  // Récupération des données
+  const form = document.getElementById('qualifForm');
+  const data = new FormData(form);
+  const fullname   = (data.get('fullname')||'').trim();
+  const company    = (data.get('company')||'').trim();
+  const team       = data.get('team');
+  const pain       = data.get('pain');
+  const whatsapp   = (data.get('whatsapp')||'').trim();
+  const email      = (data.get('email')||'').trim();
+  const pareclose  = data.get('pareclose');
+  const honeypot   = (data.get('website')||'').trim();
+
+  // ==== 1. Anti-bot honeypot ====
+  if (honeypot.length > 0) {
+    // Un vrai humain ne remplit jamais ce champ (invisible)
+    console.warn('[Anti-bot] Honeypot triggered');
+    // On fait semblant que ça marche pour ne pas alerter le bot
+    document.getElementById('formView').style.display = 'none';
+    document.getElementById('successView').classList.add('active');
+    return false;
+  }
+
+  // ==== 2. Question technique pareclose ====
+  if (pareclose !== 'b') {
+    showError("❌ Mauvaise réponse à la question métier. Une pareclose, c'est la baguette qui maintient le vitrage dans le châssis. Si tu es menuisier, réessaie !");
+    return false;
+  }
+
+  // ==== 3. Validation numéro WhatsApp ====
+  const cleanPhone = whatsapp.replace(/[\s\.\-\(\)]/g, '');
+  if (!/^\+?[0-9]{9,15}$/.test(cleanPhone)) {
+    showError("❌ Le numéro WhatsApp n'est pas valide. Utilise le format international : +32 496 12 34 56");
+    return false;
+  }
+
+  // Validation email basique
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showError("❌ L'email n'est pas valide.");
+    return false;
+  }
+
+  // ==== 4. Tracking conversion ====
+  if (window.mftpTrackConversion) {
+    window.mftpTrackConversion('reserver_form_submit');
+  }
+
+  // ==== 5. Ouvrir Calendly avec paramètres préremplis ====
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '⏳ Envoi en cours...';
+
+  // Construction de l'URL Calendly avec préremplissage
+  const painLabels = {
+    ressaisie:'Ressaisie bureau',
+    devis:'Devis lents',
+    erreurs:'Erreurs mesures',
+    papier:'Carnets papier perdus',
+    autre:'Autre'
+  };
+  const teamLabels = {
+    'solo':'Indépendant',
+    '2-5':'2-5 personnes',
+    '6-15':'6-15 personnes',
+    '15+':'15+ personnes'
+  };
+
+  const notes = [
+    'WhatsApp : ' + whatsapp,
+    'Entreprise : ' + company,
+    'Taille : ' + (teamLabels[team]||team),
+    'Défi #1 : ' + (painLabels[pain]||pain),
+    'Pré-qualifié via formulaire mesurechassis.com'
+  ].join(' | ');
+
+  const params = new URLSearchParams({
+    name: fullname,
+    email: email,
+    a1: notes,           // Custom Q1 (à configurer dans Calendly)
+    a2: whatsapp,        // Custom Q2 = numéro WhatsApp
+    utm_source: 'reserver_form',
+    utm_medium: 'website',
+    utm_campaign: 'whatsapp_call'
+  });
+
+  const finalURL = CALENDLY_URL + '?' + params.toString();
+
+  // Afficher l'écran de succès + rediriger vers Calendly
+  document.getElementById('successName').textContent = fullname.split(' ')[0] + ' !';
+  document.getElementById('successEmail').textContent = email;
+  document.getElementById('formView').style.display = 'none';
+  document.getElementById('successView').classList.add('active');
+
+  // Sauvegarde locale (au cas où)
+  try {
+    const record = { fullname, company, team, pain, whatsapp, email, ts: Date.now() };
+    localStorage.setItem('mftp_reservation_last', JSON.stringify(record));
+  } catch(e) {}
+
+  // Redirection Calendly après 2.5 secondes (le temps que l'user voie le message)
+  setTimeout(() => {
+    window.location.href = finalURL;
+  }, 2500);
+
+  return false;
+}
+
+function showError(msg){
+  const errorBox = document.getElementById('errorBox');
+  errorBox.textContent = msg;
+  errorBox.classList.add('active');
+  errorBox.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+// Auto-format WhatsApp : ajoute +32 si l'user commence par 0
+document.getElementById('whatsapp').addEventListener('blur', function(){
+  let v = this.value.trim();
+  if (v && v.startsWith('04') && !v.startsWith('+')) {
+    // Numéro belge sans indicatif → on l'ajoute
+    this.value = '+32 ' + v.substring(1);
+  }
+});
+</script>
+
+</body>
+</html>
