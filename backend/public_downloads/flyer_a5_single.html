@@ -82,11 +82,12 @@
     font-weight: 500;
   }
   .flag {
-    background: linear-gradient(180deg, #000 33%, #FDDA24 33% 66%, #EF3340 66%);
-    width: 14px; height: 10px;
+    background: linear-gradient(90deg, #000 33.33%, #FDDA24 33.33% 66.66%, #EF3340 66.66%);
+    width: 15px; height: 12px;
     border-radius: 2px;
     display: inline-block;
     vertical-align: middle;
+    border: 1px solid rgba(255,255,255,0.15);
   }
   .badge-be {
     display: inline-flex;
@@ -165,41 +166,41 @@
 
   /* 3 ARGUMENTS */
   .args {
-    display: flex;
-    gap: 2.5mm;
-    margin-bottom: 4mm;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2mm;
+    margin-bottom: 3.5mm;
   }
   .arg {
-    flex: 1;
     background: #131318;
     border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 8px;
-    padding: 3mm 2.8mm;
+    border-radius: 7px;
+    padding: 2.2mm 2.2mm;
   }
   .arg-icon {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     background: rgba(255,90,0,0.18);
     color: #FF5A00;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 900;
-    margin-bottom: 2mm;
+    margin-bottom: 1.5mm;
   }
   .arg-title {
-    font-size: 10.5px;
+    font-size: 9.5px;
     font-weight: 800;
     color: #F5F5F5;
     line-height: 1.15;
-    margin-bottom: 1.2mm;
+    margin-bottom: 0.8mm;
   }
   .arg-desc {
-    font-size: 8.5px;
+    font-size: 7.5px;
     color: #9EA1AA;
-    line-height: 1.35;
+    line-height: 1.3;
   }
 
   /* QR BLOCK */
@@ -360,11 +361,11 @@
 
     <!-- HERO -->
     <div class="hero">
-      <div class="hero-eyebrow">Nouveau 2026 - Menuisiers pros - Wallonie - Bruxelles - Flandre</div>
+      <div class="hero-eyebrow">Création belge, par un menuisier belge, pour les menuisiers belges</div>
       <div class="hero-title">
-        Fini les carnets<br>
-        perdus dans<br>
-        le camion. <em>Enfin.</em>
+        Une semaine ?<br>
+        On vous fait passer<br>
+        à <em>une journée.</em>
       </div>
       <div class="hero-sub">
         Photographiez un cahier des charges, l'IA extrait vos 22 fenêtres
@@ -374,27 +375,42 @@
 
     <!-- FREE BANNER -->
     <div class="free-banner">
-      <div class="free-banner-eyebrow">Pionniers belges - places limitées</div>
+      <div class="free-banner-eyebrow">Pionniers belges - Application en phase bêta</div>
       <div class="free-banner-headline">100% GRATUIT</div>
-      <div class="free-banner-detail">Rejoignez les 50 premiers menuisiers - Sans carte, sans engagement</div>
+      <div class="free-banner-detail">Toutes les fonctionnalités. Sans carte, sans engagement.</div>
     </div>
 
-    <!-- 3 ARGUMENTS -->
+    <!-- 6 ARGUMENTS -->
     <div class="args">
       <div class="arg">
         <div class="arg-icon">AI</div>
-        <div class="arg-title">Relevé intelligent</div>
-        <div class="arg-desc">L'IA lit vos cahiers des charges PDF et extrait toutes les ouvertures.</div>
+        <div class="arg-title">Import IA</div>
+        <div class="arg-desc">PDF, Excel ou photo du cahier des charges. L'IA lit tout.</div>
+      </div>
+      <div class="arg">
+        <div class="arg-icon">▢</div>
+        <div class="arg-title">14 formes</div>
+        <div class="arg-desc">Carré, porte, trapèze, œil-de-bœuf, coulissant, cintré…</div>
       </div>
       <div class="arg">
         <div class="arg-icon">&#8595;</div>
-        <div class="arg-title">Export en 1 clic</div>
-        <div class="arg-desc">PDF client, Excel devis, CSV ERP. Directement depuis le chantier.</div>
+        <div class="arg-title">6 exports</div>
+        <div class="arg-desc">PDF client, Excel devis, CSV ERP. Directement du chantier.</div>
       </div>
       <div class="arg">
         <div class="arg-icon">&#8226;</div>
-        <div class="arg-title">Chantier hors-ligne</div>
+        <div class="arg-title">Hors-ligne</div>
         <div class="arg-desc">Cave, sous-sol, sans 4G : ça marche. Synchro auto au retour.</div>
+      </div>
+      <div class="arg">
+        <div class="arg-icon">☁</div>
+        <div class="arg-title">Sauvegarde</div>
+        <div class="arg-desc">Photos jointes à chaque ouverture. Rien à réécrire au bureau.</div>
+      </div>
+      <div class="arg">
+        <div class="arg-icon">🇧🇪</div>
+        <div class="arg-title">100% belge</div>
+        <div class="arg-desc">Support FR direct, serveurs en Belgique, conforme RGPD.</div>
       </div>
     </div>
 

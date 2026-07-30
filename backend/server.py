@@ -302,6 +302,51 @@ async def download_refonte_v3():
     )
 
 
+# 🖨️ Juillet 2026 — Flyer v2 (drapeau belge corrigé + tagline + 6 features)
+@api.get("/downloads/flyer-v2-a4")
+async def download_flyer_v2_a4():
+    """PDF A4 paysage — 2 flyers A5 côte à côte, prêts à imprimer + découper."""
+    path = "/app/backend/public_downloads/flyer_a4_2up.pdf"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Flyer introuvable")
+    return FileResponse(
+        path,
+        media_type="application/pdf",
+        filename="MesureChassis_Flyer_v2_A4_2up.pdf",
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+@api.get("/downloads/flyer-v2-a5")
+async def download_flyer_v2_a5():
+    """PDF A5 seul — pour impression unitaire (petits tirages atelier)."""
+    path = "/app/backend/public_downloads/flyer_a5_single.pdf"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Flyer introuvable")
+    return FileResponse(
+        path,
+        media_type="application/pdf",
+        filename="MesureChassis_Flyer_v2_A5.pdf",
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+@api.get("/downloads/flyer-v2-preview")
+async def download_flyer_v2_preview():
+    """Aperçu PNG haute définition du flyer (pour visualiser sans PDF)."""
+    path = "/app/backend/public_downloads/flyer_a4_2up.png"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Aperçu introuvable")
+    return FileResponse(
+        path,
+        media_type="image/png",
+        filename="MesureChassis_Flyer_v2_preview.png",
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+
+
 @api.get("/demo/chassisprime-a-uploader.zip")
 async def download_chassisprime_demo_zip():
     """ZIP à uploader via FileZilla dans le dossier www/ de mesurechassis.com."""
