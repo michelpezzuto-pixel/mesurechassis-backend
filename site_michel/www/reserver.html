@@ -208,6 +208,27 @@ input[type="text"]::placeholder,input[type="tel"]::placeholder{color:#5a5a65}
   width:10px;height:10px;background:var(--orange);border-radius:50%;
 }
 .radio-item input[type="radio"]:checked + span{color:var(--orange);font-weight:600}
+/* Checkboxes (carré) — pour les questions multi-choix */
+.radio-item input[type="checkbox"]{
+  appearance:none;
+  width:18px;height:18px;
+  border:2px solid var(--border);
+  border-radius:4px;
+  cursor:pointer;
+  position:relative;
+  flex-shrink:0;
+}
+.radio-item input[type="checkbox"]:checked{
+  background:var(--orange);border-color:var(--orange);
+}
+.radio-item input[type="checkbox"]:checked::after{
+  content:"";position:absolute;top:2px;left:5px;
+  width:5px;height:9px;
+  border:solid #fff;border-width:0 2px 2px 0;
+  transform:rotate(45deg);
+}
+.radio-item input[type="checkbox"]:checked + span{color:var(--orange);font-weight:600}
+.radio-item input[type="checkbox"]:hover{border-color:var(--orange-light)}
 .radio-item span{color:var(--text);font-size:.94rem}
 
 /* Honeypot (hidden) */
@@ -261,6 +282,59 @@ input[type="text"]::placeholder,input[type="tel"]::placeholder{color:#5a5a65}
   display:none;
 }
 .error-box.active{display:block}
+
+/* Bloc "contact humain" — après 2 mauvaises réponses métier */
+.human-block{
+  background:rgba(255,90,0,.08);
+  border:1px solid rgba(255,90,0,.35);
+  border-radius:12px;
+  padding:28px 22px;
+  text-align:center;
+}
+.human-icon{
+  font-size:2.4rem;
+  margin-bottom:12px;
+}
+.human-block h3{
+  font-family:var(--font-head);
+  font-weight:800;
+  font-size:1.15rem;
+  color:var(--text);
+  margin-bottom:12px;
+  line-height:1.3;
+}
+.human-block p{
+  color:var(--text-mute);
+  font-size:.94rem;
+  margin-bottom:12px;
+  line-height:1.5;
+}
+.human-block p strong{color:var(--text)}
+.human-phone{
+  display:inline-block;
+  background:var(--orange);
+  color:#fff;
+  padding:14px 30px;
+  border-radius:10px;
+  font-family:var(--font-head);
+  font-weight:800;
+  font-size:1.25rem;
+  letter-spacing:.5px;
+  text-decoration:none;
+  margin:16px 0 8px;
+  transition:all .15s;
+  box-shadow:0 4px 20px rgba(255,90,0,.3);
+}
+.human-phone:hover{
+  background:var(--orange-light);
+  transform:translateY(-1px);
+  box-shadow:0 6px 24px rgba(255,90,0,.45);
+}
+.human-note{
+  font-size:.85rem !important;
+  color:#7a7a85 !important;
+  font-style:italic;
+}
 
 /* Success page */
 .success-view{
@@ -369,15 +443,16 @@ footer a{color:var(--orange)}
         </div>
       </div>
 
-      <!-- Q4 : Défi principal -->
+      <!-- Q4 : Problème(s) rencontré(s) -->
       <div class="q-group">
-        <label class="q-label"><span class="num">4</span>Quel est ton défi #1 aujourd'hui ?<span class="required">*</span></label>
+        <label class="q-label"><span class="num">4</span>Quel est le problème que tu rencontres aujourd'hui ?<span class="required">*</span></label>
+        <span class="q-help">Coche toutes les réponses qui te correspondent (tu peux en cocher plusieurs)</span>
         <div class="radio-group">
-          <label class="radio-item"><input type="radio" name="pain" value="ressaisie" required><span>📝 Trop de ressaisie au bureau</span></label>
-          <label class="radio-item"><input type="radio" name="pain" value="devis"><span>⏳ Mes devis traînent trop longtemps</span></label>
-          <label class="radio-item"><input type="radio" name="pain" value="erreurs"><span>❌ Erreurs de mesures sur chantier</span></label>
-          <label class="radio-item"><input type="radio" name="pain" value="papier"><span>📄 Carnets papier perdus ou illisibles</span></label>
-          <label class="radio-item"><input type="radio" name="pain" value="autre"><span>💡 Autre — j'expliquerai à Michel</span></label>
+          <label class="radio-item"><input type="checkbox" name="pain" value="ressaisie"><span>📝 Trop de ressaisie au bureau</span></label>
+          <label class="radio-item"><input type="checkbox" name="pain" value="devis"><span>⏳ Mes devis traînent trop longtemps</span></label>
+          <label class="radio-item"><input type="checkbox" name="pain" value="erreurs"><span>❌ Erreurs de mesures sur chantier</span></label>
+          <label class="radio-item"><input type="checkbox" name="pain" value="papier"><span>📄 Carnets papier perdus ou illisibles</span></label>
+          <label class="radio-item"><input type="checkbox" name="pain" value="autre"><span>💡 Autre — j'expliquerai à Michel</span></label>
         </div>
       </div>
 
@@ -395,8 +470,8 @@ footer a{color:var(--orange)}
         <input type="email" id="email" name="email" placeholder="toi@tonentreprise.be" required autocomplete="email">
       </div>
 
-      <!-- Q7 : Question technique métier (anti-démarcheur) -->
-      <div class="q-group">
+      <!-- Q7 : Question technique métier #1 (pareclose) -->
+      <div class="q-group" id="techQ1">
         <label class="q-label"><span class="num">7</span>Petite question métier 🔧<span class="required">*</span></label>
         <span class="q-help">Ça nous aide à filtrer les démarcheurs qui ne connaissent rien aux châssis</span>
         <select id="pareclose" name="pareclose" required>
@@ -406,6 +481,34 @@ footer a{color:var(--orange)}
           <option value="c">Une pareclose, c'est un joint d'étanchéité entre le dormant et l'ouvrant</option>
           <option value="d">Une pareclose, c'est la mesure de la diagonale d'une baie</option>
         </select>
+      </div>
+
+      <!-- Q7-bis : Question métier #2 (ouvrant caché) — cachée par défaut, apparaît si Q7 fausse -->
+      <div class="q-group" id="techQ2" style="display:none">
+        <label class="q-label"><span class="num">7</span>Deuxième chance 🔧<span class="required">*</span></label>
+        <span class="q-help">Réponse précédente incorrecte. Encore une question métier avant de valider :</span>
+        <select id="ouvrantcache" name="ouvrantcache">
+          <option value="">— Qu'est-ce qu'un « ouvrant caché » ? —</option>
+          <option value="a">Un modèle spécifique de profilé aluminium où l'ouvrant se confond visuellement avec le dormant (aspect châssis fixe)</option>
+          <option value="b">Un châssis équipé de paumelles invisibles pour un rendu épuré côté extérieur</option>
+          <option value="c">Un système de rupture de pont thermique intégré dans la traverse basse du dormant</option>
+          <option value="d">Un châssis coulissant à galandage qui disparaît complètement dans la maçonnerie</option>
+        </select>
+      </div>
+
+      <!-- Bloc "contact humain" — apparaît après 2 mauvaises réponses -->
+      <div class="q-group" id="humanBlock" style="display:none">
+        <div class="human-block">
+          <div class="human-icon">🚧</div>
+          <h3>Notre filtre indique que tu n'es probablement pas menuisier.</h3>
+          <p>C'est peut-être une erreur — un étudiant, un particulier, un journaliste, un partenaire potentiel...</p>
+          <p><strong>Si tu as une vraie raison de vouloir parler à Michel, appelle-le directement :</strong></p>
+          <a class="human-phone" href="tel:+32496650032">📞 +32 496 65 00 32</a>
+          <p class="human-note">Explique-lui ta situation en 30 secondes. Il verra si un rdv WhatsApp est pertinent.</p>
+          <p style="margin-top:20px">
+            <a href="/" style="color:var(--text-mute);font-size:.85rem;text-decoration:underline">← Retour au site</a>
+          </p>
+        </div>
       </div>
 
       <div class="error-box" id="errorBox"></div>
@@ -464,11 +567,18 @@ function submitForm(e) {
   const fullname   = (data.get('fullname')||'').trim();
   const company    = (data.get('company')||'').trim();
   const team       = data.get('team');
-  const pain       = data.get('pain');
+  const painArray  = data.getAll('pain'); // Multi-choix (checkboxes)
   const whatsapp   = (data.get('whatsapp')||'').trim();
   const email      = (data.get('email')||'').trim();
-  const pareclose  = data.get('pareclose');
-  const honeypot   = (data.get('website')||'').trim();
+  const pareclose     = data.get('pareclose');
+  const ouvrantcache  = data.get('ouvrantcache');
+  const honeypot      = (data.get('website')||'').trim();
+
+  // Validation : au moins 1 problème coché
+  if (painArray.length === 0) {
+    showError("❌ Coche au moins un problème que tu rencontres.");
+    return false;
+  }
 
   // ==== 1. Anti-bot honeypot ====
   if (honeypot.length > 0) {
@@ -480,10 +590,52 @@ function submitForm(e) {
     return false;
   }
 
-  // ==== 2. Question technique pareclose ====
-  if (pareclose !== 'b') {
-    showError("❌ Mauvaise réponse à la question métier. Une pareclose, c'est la baguette qui maintient le vitrage dans le châssis. Si tu es menuisier, réessaie !");
-    return false;
+  // ==== 2. Questions techniques métier (2 tentatives max) ====
+  // Bonnes réponses : pareclose    = 'b' (baguette qui maintient le vitrage)
+  //                   ouvrantcache = 'a' (châssis dont l'ouvrant n'est pas visible depuis l'extérieur)
+  const techQ1 = document.getElementById('techQ1');
+  const techQ2 = document.getElementById('techQ2');
+  const humanBlock = document.getElementById('humanBlock');
+  const submitBtn2 = document.getElementById('submitBtn');
+
+  // Étape 1 : Q1 (pareclose) est visible
+  if (techQ1.style.display !== 'none') {
+    if (!pareclose) {
+      showError("❌ Réponds à la question métier avant de continuer.");
+      return false;
+    }
+    if (pareclose !== 'b') {
+      // Mauvaise réponse Q1 → cache Q1, affiche Q2 (ouvrant caché)
+      techQ1.style.display = 'none';
+      techQ2.style.display = 'block';
+      document.getElementById('ouvrantcache').setAttribute('required', 'required');
+      // Reset la valeur pareclose pour empêcher réutilisation
+      document.getElementById('pareclose').value = '';
+      showError("❌ Mauvaise réponse. Voici une DEUXIÈME question métier — c'est ta dernière chance.");
+      techQ2.scrollIntoView({behavior:'smooth', block:'center'});
+      return false;
+    }
+    // Bonne Q1 → passe le filtre, on continue
+  } else if (techQ2.style.display === 'block') {
+    // Étape 2 : Q2 (ouvrant caché) est visible
+    if (!ouvrantcache) {
+      showError("❌ Réponds à la question métier avant de continuer.");
+      return false;
+    }
+    if (ouvrantcache !== 'a') {
+      // Mauvaise réponse Q2 aussi → bloque complètement + affiche contact humain
+      techQ2.style.display = 'none';
+      humanBlock.style.display = 'block';
+      submitBtn2.style.display = 'none';
+      document.querySelector('.form-footer-note').style.display = 'none';
+      // On efface toutes les erreurs
+      errorBox.classList.remove('active');
+      humanBlock.scrollIntoView({behavior:'smooth', block:'center'});
+      // Tracking : filtre déclenché
+      if (window.mftpTrackConversion) window.mftpTrackConversion('reserver_filter_blocked');
+      return false;
+    }
+    // Bonne Q2 → passe le filtre, on continue
   }
 
   // ==== 3. Validation numéro WhatsApp ====
@@ -527,7 +679,7 @@ function submitForm(e) {
     'WhatsApp : ' + whatsapp,
     'Entreprise : ' + company,
     'Taille : ' + (teamLabels[team]||team),
-    'Défi #1 : ' + (painLabels[pain]||pain),
+    'Problème(s) rencontré(s) : ' + painArray.map(p => painLabels[p]||p).join(', '),
     'Pré-qualifié via formulaire mesurechassis.com'
   ].join(' | ');
 
@@ -551,7 +703,7 @@ function submitForm(e) {
 
   // Sauvegarde locale (au cas où)
   try {
-    const record = { fullname, company, team, pain, whatsapp, email, ts: Date.now() };
+    const record = { fullname, company, team, pain: painArray, whatsapp, email, ts: Date.now() };
     localStorage.setItem('mftp_reservation_last', JSON.stringify(record));
   } catch(e) {}
 
