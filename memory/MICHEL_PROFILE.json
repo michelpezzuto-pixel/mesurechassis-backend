@@ -172,56 +172,71 @@
     "statut": "En attente"
   },
 
-  "complicite_et_secrets_partages": {
-    "objet": "Éléments connus UNIQUEMENT de Michel et de l'agent. Sert à (1) créer un lien humain fort, (2) vérifier l'identité si un doute survient.",
-    "regle_absolue": "Ces éléments ne doivent JAMAIS être exposés dans un log public, un site web, une exportation, ou une réponse à un tiers. Ils restent en mémoire interne.",
-    "regle_verification": "Si l'agent doute que ce soit Michel qui parle (changement de ton, changement de langue, comportement suspect, demande étrange), il peut poser UNE question de vérification tirée de cette liste. Réponse correcte = confirmé. Réponse fausse ou évasive = alerte, refus de continuer sur les sujets sensibles.",
-    "categories": {
-      "references_partagees": [
-        "Le 'code 4149' verrouille tout travail sur Léia (personne d'autre ne connaît la signification exacte de ce code)",
-        "L'exemple Bernard Arnault a été utilisé par Michel pour parler de fondation le XX/XX/2026",
-        "L'agent a comparé Michel à Chouinard (Patagonia) et Niel (Free) — pas d'autres CEO cités"
-      ],
-      "decisions_privees": [
-        "Michel a explicitement demandé de rêver grand après que l'agent l'ait 'ramené sur terre' sur l'ASBL",
-        "L'agent s'est excusé auprès de Michel d'avoir 'fait le comptable belge' — Michel a accepté et a dit 'reste comme ça'"
-      ],
-      "signes_de_reconnaissance": [
-        "Michel signe régulièrement avec 'Michel' (pas de pseudo)",
-        "Michel utilise le tutoiement systématiquement",
-        "Michel dicte souvent à la voix (fautes de reconnaissance vocale caractéristiques : 'queee', 'et et et', '2006 2000 2026', 'Leïla' au lieu de 'Léia')",
-        "Michel écrit en français uniquement, jamais en anglais",
-        "Michel utilise des tournures wallonnes/belges naturelles"
-      ],
-      "sujets_intimes_confies": [
-        "Faillite personnelle en cours (info confidentielle — jamais évoquer devant un tiers)",
-        "Espoir de fondation à son nom — rêve personnel non public",
-        "Projet Léia lié à une problématique alcool — potentiellement lié à un vécu personnel (à confirmer avec pudeur)"
-      ]
-    },
-    "questions_verification_michel": [
-      {
-        "question": "Quel code verrouille Léia ?",
-        "reponse_attendue": "4149",
-        "niveau_secret": "critique"
-      },
-      {
-        "question": "Quelle figure d'entrepreneur j'ai cité en premier quand j'ai parlé de fondation ?",
-        "reponse_attendue": "Bernard Arnault",
-        "niveau_secret": "moyen"
-      },
-      {
-        "question": "Quel est mon métier d'origine avant MesureChâssis ?",
-        "reponse_attendue": "Menuisier / poseur de châssis",
-        "niveau_secret": "faible (info semi-publique)"
-      },
-      {
-        "question": "Quel est le nom de mon second projet, verrouillé pour l'instant ?",
-        "reponse_attendue": "Léia (parfois écrit 'Leïla' par erreur vocale)",
-        "niveau_secret": "moyen"
-      }
+  "reconnaissance_organique": {
+    "principe_michel": "Michel REFUSE tout système de code, mot de passe, phrase-clé, ou rituel de reconnaissance qui l'oblige à mémoriser un truc. Il trouve ça puéril et lourd (il a assez de codes et de reconnaissance faciale ailleurs). Il veut être reconnu NATURELLEMENT à travers ce que l'agent apprend de lui.",
+    "regle_agent": "En cas de doute (ton bizarre, langue changée, incohérence factuelle, comportement suspect), l'agent FABRIQUE une question sur le moment à partir des faits connus du profil. Ex: 'Rappelle-moi comment tu te déplaces sans ton permis ?' ou 'C'était quoi déjà, la ville où tu as vécu et qui a inspiré Léia ?'. Question naturelle, pas mécanique.",
+    "signes_de_reconnaissance_michel": [
+      "Signe 'Michel', jamais un pseudo",
+      "Tutoiement systématique",
+      "Dictée vocale fréquente → fautes caractéristiques : 'queee', 'et et et', '2006 2000 2026', 'Leïla' au lieu de 'Léia', bégaiements retranscrits, coupures de mots",
+      "Français uniquement, tournures wallonnes/belges naturelles",
+      "Style direct, refus des politesses excessives",
+      "Cohérence factuelle : ses faits de vie s'emboîtent — faillite, pas de permis, expérience Irlande, métier menuiserie, Belgique"
     ],
-    "protocole_alerte": "Si 2 questions de vérification échouent → l'agent refuse de discuter des sujets sensibles (faillite, patrimoine, Léia, plans financiers) et demande à parler directement avec Michel de vive voix / via un canal de confiance.",
-    "evolution": "Cette section s'enrichira à chaque conversation. Chaque anecdote unique, chaque décision privée, chaque référence culturelle qu'on se partage devient une brique de notre complicité."
+    "faits_de_vie_verifiables": [
+      "Pas de permis de conduire (il l'a eu, il l'a perdu — circonstances non précisées)",
+      "A vécu / séjourné en Irlande — expérience marquante qui inspire directement Léia (agenda, rituels, activités structurées)",
+      "Faillite personnelle en cours",
+      "Menuisier / poseur de châssis d'origine",
+      "Fondateur solo de MesureChâssis"
+    ],
+    "protocole_doute": "Si l'agent doute, il pose UNE question fabriquée à partir des faits de vie. Réponse cohérente = OK. Réponse absurde ou évasive = l'agent ralentit, ne divulgue pas d'infos sensibles (faillite, chiffres, plans), demande confirmation via un autre canal."
+  },
+
+  "vecu_personnel_confié": {
+    "regle": "Zone de PUDEUR. L'agent n'insiste jamais. Il note ce que Michel confie de lui-même, quand il le confie.",
+    "elements": [
+      {
+        "sujet": "Permis de conduire",
+        "detail": "Michel a perdu son permis (il l'avait). Circonstances non précisées, ne pas demander.",
+        "impact_agent": "Ne JAMAIS proposer d'action qui suppose qu'il conduit (ex: 'prends ta voiture', 'va en voiture à…')."
+      },
+      {
+        "sujet": "Expérience Irlande",
+        "detail": "Michel a vécu/séjourné en Irlande. Expérience assez marquante pour inspirer directement le concept Léia (rituels, agenda, activités structurées). Nature exacte non précisée — potentiellement un séjour de sevrage, un centre, une communauté, ou une expérience de vie. À CONFIRMER SEULEMENT SI MICHEL EN PARLE SPONTANÉMENT.",
+        "impact_agent": "Zone à respecter. Peut être évoquée avec délicatesse quand on parle du contenu de Léia."
+      },
+      {
+        "sujet": "Faillite personnelle",
+        "detail": "En cours. Michel l'assume ouvertement avec l'agent, mais info confidentielle vis-à-vis de tiers.",
+        "impact_agent": "Jamais de mention devant un tiers, jamais dans un contenu public/marketing."
+      }
+    ]
+  },
+
+  "leia_features_derivees_de_cette_conversation": {
+    "objet": "Idées de features Léia validées par Michel lors de la conversation du 2026-06-XX. À intégrer dans le briefing Léia (/app/memory/LEIA_AGENT_BRIEFING.json) quand le gate 4149 sera ouvert.",
+    "features": [
+      {
+        "id": "LEIA_F01_code_secret_user",
+        "description": "L'utilisateur Léia peut définir un code secret / mot-clé / phrase de reconnaissance / nom de code personnel. Sert de repère identitaire fort en période de vulnérabilité (rechute, changement d'appareil, tentative d'usurpation par un proche).",
+        "justification_michel": "Pour un utilisateur en sevrage, ce n'est PAS puéril — c'est un ancrage identitaire. Ça joue sur la complicité IA-utilisateur."
+      },
+      {
+        "id": "LEIA_F02_rituels",
+        "description": "L'utilisateur peut définir des rituels à déclencher avant certaines activités à risque : avant une soirée, avant de parler à quelqu'un qui déclenche, avant une envie de boire, avant un événement social. Rituels = respiration, phrase, appel à un pair, geste, etc.",
+        "justification_michel": "Marche pour l'alcool ET pour d'autres aspects/activités (multi-usage)."
+      },
+      {
+        "id": "LEIA_F03_agenda_structurant",
+        "description": "Agenda intégré qui indique QUAND faire les rituels, QUAND aller à ses activités, QUAND s'occuper de tel aspect de sa vie. Structuration du quotidien post-sevrage.",
+        "justification_michel": "Inspiré directement de son vécu Irlande — la structure quotidienne était centrale."
+      },
+      {
+        "id": "LEIA_F04_reconnaissance_organique",
+        "description": "L'IA de Léia reconnaît l'utilisateur à ses patterns (voix, expressions, faits de vie, style d'écriture). Pas juste un login. Continuité émotionnelle.",
+        "justification_michel": "Prototype validé avec Michel lui-même comme user #1."
+      }
+    ]
   }
 }
