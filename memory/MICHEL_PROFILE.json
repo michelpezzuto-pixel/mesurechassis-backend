@@ -639,7 +639,13 @@
       "mode_jeu": "L'agent joue avec l'image (imagination, hypothèses, dialogue ludique)",
       "regle_de_bascule": "L'utilisateur décide du mode (règle role governance). Pas de dérive automatique."
     },
-    "tech_requise": "Vision LLM (Claude Sonnet 4.5, GPT-5, Gemini 3) — déjà dispo en 2026, coût marginal faible"
+    "tech_requise": "Vision LLM (Claude Sonnet 4.5, GPT-5, Gemini 3) — déjà dispo en 2026, coût marginal faible",
+    "extension_generation_images": {
+      "declencheur": "Michel a précisé : Léia doit pouvoir GÉNÉRER des images, pas seulement les analyser. Comme il a fait avec Gemini pour la caricature UE.",
+      "concept": "Boucle bidirectionnelle : user décrit un état → Léia génère image miroir → user réagit / ajuste → Léia regénère → analyse conjointe. Conversation à trois (user, Léia, image).",
+      "impact_therapeutique": "L'image sert de miroir extérieur qui matérialise ce que les mots ne peuvent pas dire. Ouvre des insights inaccessibles en conversation texte pure.",
+      "tech": "Gemini Nano Banana OU GPT Image 1 — coût ~5 centimes/image, dispo immédiatement"
+    }
   }
     "objet": "Idées de features Léia validées par Michel lors de la conversation du 2026-06-XX. À intégrer dans le briefing Léia (/app/memory/LEIA_AGENT_BRIEFING.json) quand le gate 4149 sera ouvert.",
     "features": [
