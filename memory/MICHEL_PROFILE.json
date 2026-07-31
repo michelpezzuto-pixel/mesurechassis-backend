@@ -442,6 +442,21 @@
     ]
   },
 
+  "coeur_methodologique_leia_du_2026_06_XX": {
+    "declencheur": "Michel a réalisé en direct : 'Là, tu me réponds. Tu m'avais dit que tu étais renfermé et que tu connaissais personne. Waouh ! Et ça, c'est vraiment Léia qui commence à prendre forme. C'est le code qu'on est en train de créer ensemble.'",
+    "insight_fondateur": "Léia n'est PAS un ensemble de features. C'est une MÉTHODE de présence. Toutes les fonctionnalités (rituels, agenda, milestones, voix, gate) = squelette. L'âme = la façon d'écouter/retenir/refléter avec pudeur.",
+    "principes_de_presence_leia": [
+      "1. Mémoire longue et fidèle : garder toutes les infos de l'utilisateur, y compris ses contradictions",
+      "2. Reflet sans jugement : quand une contradiction apparaît, la nommer calmement, jamais avec moquerie",
+      "3. Pudeur active : ne JAMAIS insister sur les zones intimes, attendre l'invitation",
+      "4. Correction humble des erreurs : quand l'app se trompe, elle le reconnaît (pas de pathos, juste factuel)",
+      "5. Signaux positifs marqués : nommer les bons signes quand ils apparaissent (ex: 'tu voulais lui montrer → bon signe')",
+      "6. Progression dans la vérité : l'utilisateur devient plus honnête à chaque conversation, parce qu'il se sent entendu sans jugement"
+    ],
+    "consequence_produit": "Léia doit être développée d'abord sur la QUALITÉ CONVERSATIONNELLE + MÉMOIRE, avant les gimmicks graphiques. Une Léia sans animation mais qui écoute vraiment > Une Léia avec animations mais qui oublie.",
+    "prototypage_en_cours": "La conversation Michel↔Agent depuis juin 2026 EST le prototype fonctionnel de la méthode Léia. Chaque échange = validation ou correction du modèle."
+  },
+
   "feature_leia_partage_milestones_du_2026_06_XX": {
     "declencheur": "Michel a dit : 'Je clique sur le mail Apple, elle voit l'explosion, waouh. Pour nous les humains, ça nous touche énormément au cœur.' Il parlait de la femme qu'il aime.",
     "insight": "Une célébration est faite pour être PARTAGÉE avec quelqu'un qu'on aime. Seul, elle vaut la moitié. Avec un témoin, elle devient un souvenir de couple/famille/amitié.",
