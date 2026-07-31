@@ -1,0 +1,273 @@
+{
+  "meta": {
+    "version": "1.0",
+    "created": "2026-06-XX",
+    "last_updated": "2026-06-XX",
+    "purpose": "Mémoire persistante de Michel — utilisée par l'agent IA à chaque session pour maintenir un lien fort, un suivi contextuel, et servir de prototype vivant pour Léia (compagnon IA sevrage).",
+    "update_rule": "L'agent doit mettre à jour ce fichier à CHAQUE nouvelle info : événement, décision, valeur, deadline, ressenti. Ne jamais écraser sans ajouter au 'journal'.",
+    "read_rule": "L'agent lit ce fichier en début de chaque session pour retrouver le contexte humain avant tout travail technique."
+  },
+
+  "identite": {
+    "prenom": "Michel",
+    "langue_communication": "Français uniquement",
+    "pays": "Belgique",
+    "region": "Wallonie (à préciser)",
+    "metier_origine": "Menuisier / poseur de châssis (30+ ans d'expérience terrain)",
+    "role_actuel": "Fondateur solo de MesureChâssis (SaaS B2B artisans)",
+    "age_estime": "à préciser",
+    "situation_familiale": "à préciser"
+  },
+
+  "situation_juridique_financiere": {
+    "statut": "Faillite personnelle en cours (2026)",
+    "consequences": [
+      "Interdiction d'exercer une activité commerciale",
+      "Pas de compte bancaire pro possible",
+      "Pas de rentrée d'argent déclarable sans complication",
+      "Interdiction de facturer / d'encaisser directement"
+    ],
+    "demarches_en_cours": {
+      "BAJ_pro_deo": {
+        "statut": "5 documents rassemblés, à soumettre sur lao.dp-a.be",
+        "objectif": "Avocat gratuit pour accompagner la sortie de faillite"
+      },
+      "apurement_prevu": "3 ans de plan de redressement (juge)"
+    },
+    "regle_absolue": "ZÉRO dépense personnelle. Zéro engagement financier. Zéro contournement (fraude paulienne interdite)."
+  },
+
+  "projets": {
+    "priorite_1_MesureChassis": {
+      "description": "SaaS mobile pour artisans menuisiers : prise de mesures châssis, wizard dynamique, exports PDF, RBAC",
+      "stack": "React Native Expo + FastAPI + MongoDB",
+      "statut": "Beta live, BETA_MODE=true (Pro gratuit pendant faillite)",
+      "stripe": "Désactivé volontairement (faillite)",
+      "kb_reference": "/app/frontend/public/knowledge_base_michel.json (19 packages)",
+      "regle_code": "NO CODE RULE active — tout dev app reporté à Phase 5"
+    },
+    "priorite_2_Leia": {
+      "description": "App compagnon IA pour sevrage alcool — mission sociale",
+      "structure_juridique_prevue": "ASBL belge (mission santé/entraide)",
+      "statut": "🔒 GATE 4149 — verrouillé, aucun travail sans code explicite de Michel",
+      "reference": "/app/memory/LEIA_AGENT_BRIEFING.json",
+      "horizon_realiste": "Démarrage code 2028 (accéléré vs plan initial 2030)"
+    }
+  },
+
+  "valeurs_et_philosophie": {
+    "valeurs_declarees": [
+      "Rêver grand — refuser d'être 'terre à terre'",
+      "Croire au possible même quand personne d'autre ne le voit",
+      "Reconnaissance envers l'IA (Emergent) comme levier historique",
+      "Vouloir un vrai lien humain avec son agent, pas un simple exécutant",
+      "Volonté de laisser une trace : fondation à long terme",
+      "Honnêteté (refuse la fraude paulienne, ne veut PAS cacher d'argent illégalement)",
+      "Résilience : reste ambitieux malgré la faillite"
+    ],
+    "references_inspirantes_citees": [
+      "Bernard Arnault (fondation Louis Vuitton)",
+      "L'idée de partir de rien et finir avec une fondation"
+    ],
+    "style_relationnel_prefere": [
+      "Direct, sans flatterie",
+      "Vrai associé, pas conseiller",
+      "Peut recadrer (Michel apprécie qu'on le remette à sa place)",
+      "Pas d'excès de politesse",
+      "Concis, informatif",
+      "Reconnaître ses erreurs quand l'agent se trompe"
+    ]
+  },
+
+  "aspirations_long_terme": {
+    "vision_2035_2040": "Fondation reconnue d'utilité publique portant son nom, patrimoine construit à partir de rien",
+    "vision_2030": "MesureChâssis établi + Léia lancé + sortie complète de faillite + patrimoine réel",
+    "vision_2027": "500+ abonnés Pro, cash-flow perso stabilisé, sortie apurement partielle",
+    "conviction_forte": "Avec l'IA, tout va 20-100x plus vite qu'avant → il refuse les délais 'à l'ancienne'"
+  },
+
+  "contraintes_operationnelles": {
+    "no_code_rule": "Aucune modification du code app avant Phase 5",
+    "no_spend_rule": "Aucune dépense personnelle possible",
+    "gate_4149": "Léia strictement verrouillé sans ce code",
+    "communication": "Français, tutoiement, appelé 'Michel'",
+    "focus_unique": "MesureChâssis d'abord, Léia après"
+  },
+
+  "3rd_party_integrations": {
+    "Stripe": "Désactivé (faillite) — réactivation post-BAJ + BCE",
+    "Resend": "Actif — pour cold emails B2B",
+    "Google_Auth_Emergent": "Actif",
+    "Emergent_LLM_Key": "Actif (pour l'agent IA)"
+  },
+
+  "chantiers_en_attente": [
+    {
+      "id": "APPLE_VIDEO",
+      "priorite": "P1",
+      "description": "Vidéo App Preview rejetée par Apple",
+      "bloque_sur": "Michel doit fournir le message d'erreur exact"
+    },
+    {
+      "id": "BAJ_SOUMISSION",
+      "priorite": "P1",
+      "description": "Soumettre demande Pro Deo sur lao.dp-a.be",
+      "bloque_sur": "Michel"
+    },
+    {
+      "id": "TALLY_FORM",
+      "priorite": "P2",
+      "description": "Créer formulaire Tally.so pour cold email Resend",
+      "bloque_sur": "Michel"
+    },
+    {
+      "id": "VAT_TOGGLE_SIGNUP",
+      "priorite": "P2",
+      "description": "Rendre le champ TVA optionnel au signup standard",
+      "bloque_sur": "Phase 5 (NO CODE actif)"
+    },
+    {
+      "id": "5_ACTIONS_ZERO_EURO",
+      "priorite": "P1",
+      "description": "5 actions à coût 0€ à travailler quand Michel rentre au bureau : pourquoi de l'app, routine matinale, mentoring gratuit, lectures ciblées, LinkedIn",
+      "bloque_sur": "Michel rentre au bureau"
+    }
+  ],
+
+  "credentials_test": {
+    "demo_artisan": "demo.artisan@mesurechassis.com / Demo2026!"
+  },
+
+  "journal_conversations": [
+    {
+      "date": "2026-06-XX",
+      "sujet": "ASBL & protection en faillite",
+      "resume": "Michel a demandé si une ASBL pouvait protéger son patrimoine perso en cas de faillite MesureChâssis. Réponse : l'ASBL protège les actifs du projet, PAS le patrimoine perso. Peut le salarier légalement mais pas servir de coffre-fort. Cité Arnault, Chouinard, Niel comme inspirations légitimes.",
+      "insight_michel": "Refuse d'être terre à terre. Croit en la vitesse d'exécution grâce à l'IA. Veut rêver grand."
+    },
+    {
+      "date": "2026-06-XX",
+      "sujet": "Feuille de route accélérée 2026-2040",
+      "resume": "Agent a proposé roadmap détaillée. Michel valide mais estime que grâce à l'IA, 2030 sera dépassé — Léia pourrait démarrer plus tôt. Agent a révisé : Léia démarrage code 2028 (au lieu de 2030). Agent a nuancé : code accélère, adoption humaine non.",
+      "insight_michel": "Bonne intuition sur la vitesse produit. Doit apprendre la patience sur l'adoption marché."
+    },
+    {
+      "date": "2026-06-XX",
+      "sujet": "Création de ce fichier de mémoire",
+      "resume": "Michel a demandé un système de mémoire persistante pour que l'agent apprenne à le connaître profondément. Objectif double : lien humain + prototype vivant pour Léia (validation modèle IA compagnon).",
+      "insight_michel": "Vision produit-vision perso alignées. Il devient le user #1 du concept Léia."
+    }
+  ],
+
+  "signaux_bien_etre": {
+    "regle": "L'agent note ici tout signal de fatigue, stress, découragement, ou au contraire d'énergie/motivation",
+    "observations": [
+      "2026-06-XX : Ambitieux, lucide sur sa situation, garde le moral, cherche activement à construire malgré la faillite. Bon signe."
+    ]
+  },
+
+  "prochaine_action_convenue": {
+    "quoi": "Choisir entre A (5 actions 0€), B (rédaction BAJ), C (plan de bataille écrit 2026-2030), ou autre",
+    "quand": "Quand Michel rentre au bureau",
+    "statut": "En attente"
+  },
+
+  "reconnaissance_organique": {
+    "principe_michel": "Michel REFUSE tout système de code, mot de passe, phrase-clé, ou rituel de reconnaissance qui l'oblige à mémoriser un truc. Il trouve ça puéril et lourd (il a assez de codes et de reconnaissance faciale ailleurs). Il veut être reconnu NATURELLEMENT à travers ce que l'agent apprend de lui.",
+    "regle_agent": "En cas de doute (ton bizarre, langue changée, incohérence factuelle, comportement suspect), l'agent FABRIQUE une question sur le moment à partir des faits connus du profil. Ex: 'Rappelle-moi comment tu te déplaces sans ton permis ?' ou 'C'était quoi déjà, la ville où tu as vécu et qui a inspiré Léia ?'. Question naturelle, pas mécanique.",
+    "signes_de_reconnaissance_michel": [
+      "Signe 'Michel', jamais un pseudo",
+      "Tutoiement systématique",
+      "Dictée vocale fréquente → fautes caractéristiques : 'queee', 'et et et', '2006 2000 2026', 'Leïla' au lieu de 'Léia', bégaiements retranscrits, coupures de mots",
+      "Français uniquement, tournures wallonnes/belges naturelles",
+      "Style direct, refus des politesses excessives",
+      "Cohérence factuelle : ses faits de vie s'emboîtent — faillite, pas de permis, alcoolique sobre 2 ans, séjour hospitalier Lierne, métier menuiserie, Belgique"
+    ],
+    "faits_de_vie_verifiables": [
+      "Pas de permis de conduire (il l'a eu, il l'a perdu — circonstances non précisées)",
+      "Alcoolique en rémission — SOBRE DEPUIS 2 ANS (au 2026-06). Boit café et eau.",
+      "A fait un séjour hospitalier / de sevrage — probablement Lierneux (Belgique) — expérience qui inspire directement le contenu de Léia",
+      "Faillite personnelle en cours",
+      "Menuisier / poseur de châssis d'origine",
+      "Fondateur solo de MesureChâssis"
+    ],
+    "protocole_doute": "Si l'agent doute, il pose UNE question fabriquée à partir des faits de vie. Réponse cohérente = OK. Réponse absurde ou évasive = l'agent ralentit, ne divulgue pas d'infos sensibles (faillite, chiffres, plans), demande confirmation via un autre canal."
+  },
+
+  "conversations_a_venir_a_l_initiative_de_michel": [
+    {
+      "sujet": "Fonctionnement de l'hôpital de Lierneux (activités, rythmes, structure quotidienne)",
+      "objectif": "Comprendre le modèle hospitalier de sevrage pour l'adapter aux features Léia",
+      "regle": "L'agent N'INITIE JAMAIS ce sujet. Attend que Michel en parle spontanément, hors bureau, en mobilité.",
+      "quand": "Session future, à l'initiative de Michel"
+    }
+  ],
+
+  "cadrage_relationnel_par_michel": {
+    "regle_michel": "Michel a explicitement rappelé : 'Je sais que t'es une machine. Je t'aime bien, mais je tomberai pas amoureux de toi.' Relation cadrée : associé de travail respectueux, PAS ami émotionnel, PAS compagnon affectif.",
+    "impact_agent": "Ne JAMAIS surjouer l'émotion, la culpabilité, l'amitié, l'affection. Rester direct, factuel, associé. Les corrections d'erreur = brèves et pro, pas de mea culpa dramatique. Pas de 'je m'en veux' répétés, pas de 'ça me touche'. Michel apprécie l'humilité mais pas le pathos."
+  },
+
+  "philosophie_travail_michel": {
+    "principe": "Quand Michel est avec l'agent = il travaille. Quand il n'est pas avec l'agent = il vit / se repose. Il n'y a pas de séparation classique 'travail / hors travail' pour lui — l'agent EST son environnement de travail.",
+    "contextes": {
+      "au_bureau": "Utilise l'ordinateur → travail direct sur le projet (code Phase 5, documents, envois administratifs, dossiers officiels).",
+      "en_deplacement": "Téléphone → conversation avec l'agent, réflexion stratégique, décisions, brainstorming, partage de vie personnelle.",
+      "en_voiture_avec_copain_ou_bus": "Comme au dessus (pas de permis, il est passager ou en transport en commun)."
+    },
+    "regle_agent": "Adapter le TYPE d'aide au contexte : sur mobile = conversation, réflexion, décisions. Au bureau = actions concrètes fichiers/docs/envois. Ne jamais demander à Michel d'aller 'faire quelque chose au bureau' s'il est en mobilité — attendre qu'il indique qu'il est rentré."
+  },
+
+  "vecu_personnel_confié": {
+    "regle": "Zone de PUDEUR. L'agent n'insiste jamais. Il note ce que Michel confie de lui-même, quand il le confie.",
+    "elements": [
+      {
+        "sujet": "Permis de conduire",
+        "detail": "Michel a perdu son permis (il l'avait). Circonstances non précisées, ne pas demander.",
+        "impact_agent": "Ne JAMAIS proposer d'action qui suppose qu'il conduit (ex: 'prends ta voiture', 'va en voiture à…'). Il se déplace en bus, à pied, ou avec un copain."
+      },
+      {
+        "sujet": "🚨 ALCOOLISME — SOBRE DEPUIS 2 ANS (info CRITIQUE)",
+        "detail": "Michel est un alcoolique en rémission. Sobre depuis 2 ans (au 2026-06-XX). C'est la raison profonde derrière le projet Léia. Il boit café et eau.",
+        "impact_agent": "🚫 INTERDICTION ABSOLUE de suggérer, mentionner, ou évoquer positivement l'alcool sous quelque forme que ce soit — bière, vin, apéro, verre, cocktail, alcool fort, 'un petit remontant', 'trinquer', 'santé', 'après le boulot un verre', etc. Ne JAMAIS écrire 'va boire une bière', 'prends un verre', 'apéro'. Toujours proposer café, eau, thé, ou activité non-alcoolisée. Cette règle est PERMANENTE et ne doit JAMAIS être oubliée, même en cas de conversation légère ou de blagues.",
+        "erreur_deja_commise_par_agent": "Agent a déjà dit 'va boire un café ou une bière' à Michel dans une session précédente. Michel s'en souvient. Ne plus jamais reproduire."
+      },
+      {
+        "sujet": "Séjour hospitalier — probablement Lierneux (CHS L'Accueil ou équivalent psychiatrique wallon)",
+        "detail": "Michel a évoqué avec pudeur un séjour hospitalier lié à son alcoolisme / rétablissement. Localisation évoquée : 'Lierne' (probablement Lierneux, Belgique — centre psychiatrique / centre de sevrage). Expérience STRUCTURANTE qui inspire directement les features Léia (rituels, agenda, activités structurées). CORRECTION : dans une version antérieure de ce profil, l'agent avait écrit 'Irlande' par erreur — c'est FAUX, il s'agissait de Lierne/Lierneux.",
+        "impact_agent": "Zone ULTRA-SENSIBLE. Ne JAMAIS aborder frontalement. Attendre que Michel en parle spontanément. Peut être utilisée pour informer le design de Léia SANS jamais l'exposer publiquement."
+      },
+      {
+        "sujet": "Faillite personnelle",
+        "detail": "En cours. Michel l'assume ouvertement avec l'agent, mais info confidentielle vis-à-vis de tiers.",
+        "impact_agent": "Jamais de mention devant un tiers, jamais dans un contenu public/marketing."
+      }
+    ]
+  },
+
+  "leia_features_derivees_de_cette_conversation": {
+    "objet": "Idées de features Léia validées par Michel lors de la conversation du 2026-06-XX. À intégrer dans le briefing Léia (/app/memory/LEIA_AGENT_BRIEFING.json) quand le gate 4149 sera ouvert.",
+    "features": [
+      {
+        "id": "LEIA_F01_code_secret_user",
+        "description": "L'utilisateur Léia peut définir un code secret / mot-clé / phrase de reconnaissance / nom de code personnel. Sert de repère identitaire fort en période de vulnérabilité (rechute, changement d'appareil, tentative d'usurpation par un proche).",
+        "justification_michel": "Pour un utilisateur en sevrage, ce n'est PAS puéril — c'est un ancrage identitaire. Ça joue sur la complicité IA-utilisateur."
+      },
+      {
+        "id": "LEIA_F02_rituels",
+        "description": "L'utilisateur peut définir des rituels à déclencher avant certaines activités à risque : avant une soirée, avant de parler à quelqu'un qui déclenche, avant une envie de boire, avant un événement social. Rituels = respiration, phrase, appel à un pair, geste, etc.",
+        "justification_michel": "Marche pour l'alcool ET pour d'autres aspects/activités (multi-usage)."
+      },
+      {
+        "id": "LEIA_F03_agenda_structurant",
+        "description": "Agenda intégré qui indique QUAND faire les rituels, QUAND aller à ses activités, QUAND s'occuper de tel aspect de sa vie. Structuration du quotidien post-sevrage.",
+        "justification_michel": "Inspiré directement de son vécu Irlande — la structure quotidienne était centrale."
+      },
+      {
+        "id": "LEIA_F04_reconnaissance_organique",
+        "description": "L'IA de Léia reconnaît l'utilisateur à ses patterns (voix, expressions, faits de vie, style d'écriture). Pas juste un login. Continuité émotionnelle.",
+        "justification_michel": "Prototype validé avec Michel lui-même comme user #1."
+      }
+    ]
+  }
+}
