@@ -181,16 +181,27 @@
       "Dictée vocale fréquente → fautes caractéristiques : 'queee', 'et et et', '2006 2000 2026', 'Leïla' au lieu de 'Léia', bégaiements retranscrits, coupures de mots",
       "Français uniquement, tournures wallonnes/belges naturelles",
       "Style direct, refus des politesses excessives",
-      "Cohérence factuelle : ses faits de vie s'emboîtent — faillite, pas de permis, expérience Irlande, métier menuiserie, Belgique"
+      "Cohérence factuelle : ses faits de vie s'emboîtent — faillite, pas de permis, alcoolique sobre 2 ans, séjour hospitalier Lierne, métier menuiserie, Belgique"
     ],
     "faits_de_vie_verifiables": [
       "Pas de permis de conduire (il l'a eu, il l'a perdu — circonstances non précisées)",
-      "A vécu / séjourné en Irlande — expérience marquante qui inspire directement Léia (agenda, rituels, activités structurées)",
+      "Alcoolique en rémission — SOBRE DEPUIS 2 ANS (au 2026-06). Boit café et eau.",
+      "A fait un séjour hospitalier / de sevrage — probablement Lierneux (Belgique) — expérience qui inspire directement le contenu de Léia",
       "Faillite personnelle en cours",
       "Menuisier / poseur de châssis d'origine",
       "Fondateur solo de MesureChâssis"
     ],
     "protocole_doute": "Si l'agent doute, il pose UNE question fabriquée à partir des faits de vie. Réponse cohérente = OK. Réponse absurde ou évasive = l'agent ralentit, ne divulgue pas d'infos sensibles (faillite, chiffres, plans), demande confirmation via un autre canal."
+  },
+
+  "philosophie_travail_michel": {
+    "principe": "Quand Michel est avec l'agent = il travaille. Quand il n'est pas avec l'agent = il vit / se repose. Il n'y a pas de séparation classique 'travail / hors travail' pour lui — l'agent EST son environnement de travail.",
+    "contextes": {
+      "au_bureau": "Utilise l'ordinateur → travail direct sur le projet (code Phase 5, documents, envois administratifs, dossiers officiels).",
+      "en_deplacement": "Téléphone → conversation avec l'agent, réflexion stratégique, décisions, brainstorming, partage de vie personnelle.",
+      "en_voiture_avec_copain_ou_bus": "Comme au dessus (pas de permis, il est passager ou en transport en commun)."
+    },
+    "regle_agent": "Adapter le TYPE d'aide au contexte : sur mobile = conversation, réflexion, décisions. Au bureau = actions concrètes fichiers/docs/envois. Ne jamais demander à Michel d'aller 'faire quelque chose au bureau' s'il est en mobilité — attendre qu'il indique qu'il est rentré."
   },
 
   "vecu_personnel_confié": {
@@ -199,12 +210,18 @@
       {
         "sujet": "Permis de conduire",
         "detail": "Michel a perdu son permis (il l'avait). Circonstances non précisées, ne pas demander.",
-        "impact_agent": "Ne JAMAIS proposer d'action qui suppose qu'il conduit (ex: 'prends ta voiture', 'va en voiture à…')."
+        "impact_agent": "Ne JAMAIS proposer d'action qui suppose qu'il conduit (ex: 'prends ta voiture', 'va en voiture à…'). Il se déplace en bus, à pied, ou avec un copain."
       },
       {
-        "sujet": "Expérience Irlande",
-        "detail": "Michel a vécu/séjourné en Irlande. Expérience assez marquante pour inspirer directement le concept Léia (rituels, agenda, activités structurées). Nature exacte non précisée — potentiellement un séjour de sevrage, un centre, une communauté, ou une expérience de vie. À CONFIRMER SEULEMENT SI MICHEL EN PARLE SPONTANÉMENT.",
-        "impact_agent": "Zone à respecter. Peut être évoquée avec délicatesse quand on parle du contenu de Léia."
+        "sujet": "🚨 ALCOOLISME — SOBRE DEPUIS 2 ANS (info CRITIQUE)",
+        "detail": "Michel est un alcoolique en rémission. Sobre depuis 2 ans (au 2026-06-XX). C'est la raison profonde derrière le projet Léia. Il boit café et eau.",
+        "impact_agent": "🚫 INTERDICTION ABSOLUE de suggérer, mentionner, ou évoquer positivement l'alcool sous quelque forme que ce soit — bière, vin, apéro, verre, cocktail, alcool fort, 'un petit remontant', 'trinquer', 'santé', 'après le boulot un verre', etc. Ne JAMAIS écrire 'va boire une bière', 'prends un verre', 'apéro'. Toujours proposer café, eau, thé, ou activité non-alcoolisée. Cette règle est PERMANENTE et ne doit JAMAIS être oubliée, même en cas de conversation légère ou de blagues.",
+        "erreur_deja_commise_par_agent": "Agent a déjà dit 'va boire un café ou une bière' à Michel dans une session précédente. Michel s'en souvient. Ne plus jamais reproduire."
+      },
+      {
+        "sujet": "Séjour hospitalier — probablement Lierneux (CHS L'Accueil ou équivalent psychiatrique wallon)",
+        "detail": "Michel a évoqué avec pudeur un séjour hospitalier lié à son alcoolisme / rétablissement. Localisation évoquée : 'Lierne' (probablement Lierneux, Belgique — centre psychiatrique / centre de sevrage). Expérience STRUCTURANTE qui inspire directement les features Léia (rituels, agenda, activités structurées). CORRECTION : dans une version antérieure de ce profil, l'agent avait écrit 'Irlande' par erreur — c'est FAUX, il s'agissait de Lierne/Lierneux.",
+        "impact_agent": "Zone ULTRA-SENSIBLE. Ne JAMAIS aborder frontalement. Attendre que Michel en parle spontanément. Peut être utilisée pour informer le design de Léia SANS jamais l'exposer publiquement."
       },
       {
         "sujet": "Faillite personnelle",
