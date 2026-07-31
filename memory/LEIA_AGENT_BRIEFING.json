@@ -79,16 +79,30 @@
 
   "michel_context": {
     "situation_perso": "En faillite personnelle BE, pas de BCE, avocat BAJ en cours, projet MesureChâssis en parallèle (SaaS B2B menuiserie)",
-    "compatibilite_faillite": "STRUCTURE ASBL COMPATIBLE — un failli peut être fondateur/administrateur d'ASBL en BE (activité non commerciale). À valider formellement avec BAJ.",
-    "budget_disponible": "0 € — tout doit être gratuit / subventionné / bénévole",
-    "actions_actionnables_maintenant_sans_code": [
-      "Formaliser statuts ASBL (modèle Loi 27/06/1921 sur ASBL, réforme CSA 2019)",
-      "Identifier cofondateurs : au moins 2 personnes physiques + 1 partenaire médical/clinique",
-      "Rédiger dossier de contact CHS Lierneux (si contact réel) ou identifier centres addictologie BE",
-      "Cartographier subventions accessibles : AVIQ, INAMI, Fondation Roi Baudouin, Loterie Nationale, EU4Health",
-      "Rédiger vision produit détaillée (déjà bien avancée dans ce briefing)",
-      "Choisir stack technique cible (React Native ? Flutter ? Native ?)"
-    ]
+    "histoire_personnelle_lierneux": "Michel a été alcoolique. 3 séjours au CHS Lierneux. Sobre depuis le 26 juin 2024 (~2 ans en 2026). Parti en bons termes, connaît tout le personnel. Vrai contact potentiel pour partenariat futur, PAS un exemple hypothétique.",
+    "gate_4149_explication": "Code numérique auto-verrou fixé par Michel lui-même. TANT QUE MICHEL NE DIT PAS '4149' EXPLICITEMENT, l'agent NE DOIT PAS écrire une seule ligne de code pour Léia. Phase idéation pure, économise les crédits Emergent. À respecter strictement.",
+    "compatibilite_faillite": "STRUCTURE ASBL COMPATIBLE POST-FAILLITE UNIQUEMENT. Un failli peut être fondateur/administrateur d'ASBL en BE (activité non commerciale), MAIS tout revenu personnel pendant faillite passe par curateur. À valider formellement avec BAJ.",
+    "arbitrage_ordre_projets": "TRANCHÉ PAR MICHEL le 2026-08-01 : MesureChâssis reste priorité #1, Léia est un projet POST-MesureChâssis. Ne PAS mélanger les deux, ne pas suggérer de synergies business. Léia = phase idéation lente, on parle pas d'exécution."
+  },
+
+  "AVERTISSEMENT_LEGAL_ASBL_ET_FAILLITE": {
+    "priorite": "P0 CRITIQUE",
+    "regle_du_hibou_applicable": "Sa dette, toute sa dette, rien que sa dette",
+    "danger_signale_par_agent_2026-08-01": "Michel a évoqué 'utiliser une ASBL pour protéger mon argent si ça fonctionne bien'. L'agent doit CATÉGORIQUEMENT signaler que ceci est ILLÉGAL PENDANT LA FAILLITE.",
+    "ce_qui_est_INTERDIT_pendant_faillite": [
+      "Transférer patrimoine personnel vers ASBL pour échapper créanciers = fraude paulienne (art. XX.173 et suivants CDE) — annulable et pénal",
+      "Cacher revenus personnels via ASBL = organisation d'insolvabilité (art. XX.176 CDE) — sanctions pénales",
+      "Rémunération déguisée en 'frais' = requalification fiscale + pénal",
+      "Toute manœuvre visant à soustraire actifs au curateur"
+    ],
+    "ce_qui_est_LEGAL_post_faillite_effacee": [
+      "Créer ASBL pour porter projet social (ex: Léia santé publique alcool)",
+      "ASBL encaisse dons/subventions/revenus B2B (exonérations IPP sous conditions)",
+      "ASBL peut rémunérer Michel pour travail (salaire raisonnable déclaré)",
+      "ASBL détient patrimoine propre (matériel, comptes, IP GPLv3)",
+      "Coexistence ASBL Léia + SRL MesureChâssis = deux véhicules distincts, deux finalités"
+    ],
+    "action_agent_si_michel_derive": "Rappeler cet avertissement fermement. Ne PAS aider à construire un montage illégal. Prioriser sortie propre de faillite."
   },
 
   "synergies_avec_MesureChâssis": {
