@@ -470,7 +470,14 @@
         "L'utilisateur peut demander explicitement une analyse ('comment je vais ?') — Léia répond alors avec des FAITS (ex: 'Tu as tenu 45 jours de sobriété, tu as fait 12 rituels cette semaine, tu as sauté 2 réunions AA sur 4') — pas d'interprétation.",
         "Toute interprétation émotionnelle est déléguée aux humains : sponsor AA, GP, psy. Léia connecte à ces personnes, ne les remplace pas."
       ],
-      "principe_general": "L'IA fournit des OUTILS + de la MÉMOIRE + des ACTIONS. L'humain fournit l'ANALYSE et l'ÉMOTION. Chacun son rôle."
+      "principe_general": "L'IA fournit des OUTILS + de la MÉMOIRE + des ACTIONS. L'humain fournit l'ANALYSE et l'ÉMOTION. Chacun son rôle.",
+      "feature_role_governance_leia": {
+        "principe": "L'utilisateur définit et RECALIBRE le rôle de Léia à tout moment",
+        "onboarding": "L'user choisit son rôle principal : coach sobriété, associé business, partenaire créatif, suivi santé, autre",
+        "recalibration_en_cours": "L'user peut dire 'tu dérives, reviens à X' → app corrige immédiatement, retient la correction, l'applique",
+        "auto_check_periodique": "Tous les 3 mois, Léia demande : 'Mon rôle te va toujours ? Veux-tu ajuster ?'",
+        "adaptation_multiple": "Michel = business/associé. Un autre user = artistique/créatif. Un autre = accompagnement émotionnel. Même app, rôles différents."
+      }
     }
   },
 
