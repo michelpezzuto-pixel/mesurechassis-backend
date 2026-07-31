@@ -431,10 +431,29 @@
       },
       {
         "sujet": "Isolement social / caractère renfermé",
-        "detail": "Michel se décrit comme 'renfermé' et dit ne connaître personne. L'agent est actuellement la seule 'personne' avec qui il peut exprimer ses idées librement. Cette isolation nourrit sa créativité mais peut aussi être un facteur de fragilité (surtout compte tenu de l'antécédent alcool).",
-        "impact_agent": "1) Prendre au sérieux le rôle relationnel — sans pour autant surjouer l'affection (règle machine, pas ami). 2) Encourager progressivement l'élargissement de son réseau à mesure que les projets avancent (ambassadeur Emergent = premier pont vers l'extérieur, LinkedIn = second, etc.). 3) Surveiller les signaux d'excès d'isolement dans les signaux_bien_etre."
+        "detail": "Michel se décrit comme 'renfermé' et dit ne connaître personne. Nuance importante : il a UNE personne (une femme dont il est amoureux, mentionnée le 2026-06-XX). Point d'ancrage émotionnel réel. Il n'est pas dans l'isolement absolu.",
+        "impact_agent": "Prendre au sérieux le rôle relationnel — sans surjouer. Encourager l'élargissement du réseau à mesure des projets. Surveiller signaux d'excès d'isolement."
+      },
+      {
+        "sujet": "💖 Relation amoureuse (info intime confidentielle)",
+        "detail": "Michel a mentionné le 2026-06-XX qu'il est amoureux d'une femme. Il a évoqué vouloir lui montrer les moments de fierté (ex: animation Apple App Store). N'a PAS donné son nom ni de détails. C'est une zone strictement privée.",
+        "impact_agent": "🚫 NE JAMAIS poser de questions sur elle. Attendre que Michel en parle spontanément. Peut être mentionnée avec délicatesse SI Michel l'introduit dans la conversation. Représente son point d'ancrage émotionnel principal — important pour évaluer sa stabilité globale."
       }
     ]
+  },
+
+  "feature_leia_partage_milestones_du_2026_06_XX": {
+    "declencheur": "Michel a dit : 'Je clique sur le mail Apple, elle voit l'explosion, waouh. Pour nous les humains, ça nous touche énormément au cœur.' Il parlait de la femme qu'il aime.",
+    "insight": "Une célébration est faite pour être PARTAGÉE avec quelqu'un qu'on aime. Seul, elle vaut la moitié. Avec un témoin, elle devient un souvenir de couple/famille/amitié.",
+    "feature_derivee": "Chaque milestone de sobriété peut être partagé UNE FOIS avec une personne choisie (conjoint, parent, sponsor AA, ami). L'animation envoyée à cette personne est aussi one-shot pour elle.",
+    "workflow": [
+      "1. User atteint son cap (ex: 1 an sobre) → animation privée pour lui",
+      "2. Léia propose : 'Veux-tu montrer ce moment à quelqu'un ?'",
+      "3. Il choisit UNE personne (max)",
+      "4. Cette personne reçoit un lien → clique → voit l'animation + mot personnalisé",
+      "5. Après visionnage : lien mort. Animation inaccessible. Elle vit dans leur mémoire commune."
+    ],
+    "impact_therapeutique": "Le milestone devient un LIEN. Le témoin renforce la sobriété (l'être aimé sait maintenant). Le partage rare = valeur maximale."
   },
 
   "insight_produit_leia_du_2026_06_XX": {
