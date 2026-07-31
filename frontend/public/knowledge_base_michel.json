@@ -1,0 +1,281 @@
+{
+  "_meta": {
+    "purpose": "Knowledge base thématique pour Michel — mapping stratégies fiscales/juridiques avec équivalents BELGES",
+    "source_input": "Guide Lézard Finance 2026-2027 (droit FRANÇAIS — non applicable tel quel)",
+    "target_jurisdiction": "Belgique (Wallonie)",
+    "user_context": "Michel — faillite personnelle en cours, pas de BCE, solo founder SaaS B2B",
+    "usage_protocol": "Quand user pose une question stratégique, agent identifie le package concerné, cite son ID (ex: PKG_HOLDING_BE), puis répond avec l'équivalent BE applicable",
+    "created": "2026-08-01",
+    "language": "fr-BE"
+  },
+
+  "PACKAGES_INDEX": {
+    "PKG_FAILLITE_BE": "Faillite personnelle, excusabilité, PRJ, sortie de faillite (SPÉCIFIQUE MICHEL)",
+    "PKG_STATUTS_BE": "Choix de forme sociétaire en BE (indépendant complémentaire, SRL, SA, SC)",
+    "PKG_REMUNERATION_BE": "Optimisation rémunération dirigeant (salaire vs dividende vs frais)",
+    "PKG_HOLDING_BE": "Structure holding + régime RDT (équivalent mère-fille FR)",
+    "PKG_IMMO_BE": "Investissement immobilier via société + démembrement + SCI équivalent BE",
+    "PKG_TRANSMISSION_BE": "Transmission entreprise + donation + succession (équivalent Pacte Dutreil)",
+    "PKG_INNOVATION_BE": "R&D, tax shelter, aides innovation (équivalent JEI/CIR/CII)",
+    "PKG_AIDES_WALLONIE": "Subventions Région Wallonne, SOWALFIN, chèques entreprise (URGENT pour Michel)",
+    "PKG_TVA_BE": "Régime TVA belge (franchise 25k€, assujetti, exemption)",
+    "PKG_PATRIMOINE_PROTECTION_BE": "Protection patrimoine personnel (régime matrimonial, déclaration insaisissabilité BE)",
+    "PKG_TRESORERIE_BE": "Placement trésorerie société (compte à terme, SICAV, tax shelter)"
+  },
+
+  "PKG_FAILLITE_BE": {
+    "title": "Faillite personnelle & sortie de faillite — Belgique",
+    "priority_for_michel": "P0 — situation actuelle",
+    "cadre_legal": [
+      "Livre XX du Code de droit économique (CDE) — Insolvabilité",
+      "Loi du 11 août 2017 sur la continuité des entreprises (LCE)",
+      "Art. XX.173 CDE — effacement des dettes (ex-excusabilité)"
+    ],
+    "concepts_cles": {
+      "faillite_personne_physique": "Le failli personne physique peut demander l'effacement du solde des dettes (ancien 'excusabilité') → repartir à zéro",
+      "PRJ": "Procédure de Réorganisation Judiciaire — alternative à la faillite quand entreprise viable mais en difficulté (accord amiable, collectif, ou transfert)",
+      "reglement_collectif_dettes": "Pour particuliers non commerçants — médiateur de dettes, plan sur 5 à 7 ans"
+    },
+    "specifique_michel": {
+      "statut": "faillite en cours, pas encore effacée",
+      "impact_immediat": [
+        "Pas de BCE possible tant que faillite pas clôturée",
+        "Pas de facturation légale possible aujourd'hui",
+        "Stripe désactivé (dépendant BCE)",
+        "Impossibilité d'être gérant SRL/administrateur SA sans autorisation tribunal"
+      ],
+      "leviers_actifs": [
+        "BAJ (Bureau d'Aide Juridique) — pro deo → dossier en cours sur lao.dp-a.be",
+        "Attendre effacement dettes via curateur",
+        "Une fois effacement obtenu → BCE possible → réactivation Stripe"
+      ]
+    },
+    "actions_agent": "Ne jamais suggérer de créer une société avant clôture faillite. Prioriser dossier BAJ."
+  },
+
+  "PKG_STATUTS_BE": {
+    "title": "Choix de forme sociétaire en Belgique",
+    "equivalence_FR_vers_BE": {
+      "micro-entreprise_FR": "Indépendant complémentaire/principal + régime de franchise TVA (25 000 € CA en BE depuis 2025)",
+      "SASU_FR": "SRL unipersonnelle (Société à Responsabilité Limitée) — depuis réforme CDE 2019, SRL a remplacé SPRL et n'exige plus de capital minimum",
+      "EURL_FR": "SRL unipersonnelle également — pas de distinction SASU/EURL en BE",
+      "SAS_FR": "SA (Société Anonyme) ou SRL selon taille"
+    },
+    "regimes_impots_societes_BE": {
+      "ISOC_PME": "20% sur les premiers 100 000 € de bénéfice (conditions PME : petite société art. 1:24 CSA)",
+      "ISOC_standard": "25% au-delà (contre 15% jusqu'à 42 500 € puis 25% en France)"
+    },
+    "conditions_taux_reduit_20": [
+      "Petite société (art. 1:24 CSA)",
+      "Rémunération dirigeant minimum 45 000 €/an (ou égale au bénéfice imposable si inférieur à 45k€)",
+      "Pas plus de 50% du capital détenu par autres sociétés"
+    ],
+    "specifique_michel": "Ne peut PAS créer de société tant que faillite non clôturée + BCE non obtenue. Une fois débloqué → SRL unipersonnelle recommandée pour SaaS solo."
+  },
+
+  "PKG_REMUNERATION_BE": {
+    "title": "Optimisation rémunération dirigeant en BE",
+    "equivalence_FR_vers_BE": {
+      "arbitrage_salaire_dividende_FR_Strategie_5": "Équivalent BE : arbitrage rémunération dirigeant vs VVPRbis + réserve de liquidation"
+    },
+    "leviers_belges_uniques": {
+      "reserve_de_liquidation": {
+        "mecanisme": "Société met en réserve du bénéfice après impôt + paie 10% de taxe anticipative → après 5 ans, dividende sortie à 5% seulement (au lieu de 30%). Taux effectif total ~13,64% vs 30% classique",
+        "reference_legale": "Art. 184quater CIR 92"
+      },
+      "VVPRbis": {
+        "mecanisme": "Dividendes soumis à précompte mobilier réduit à 15% (au lieu de 30%) si actions émises après 01/07/2013 et détenues 3 ans (SRL/PME)",
+        "condition": "Nouveaux apports en numéraire, actions nominatives, pleinement libérées"
+      },
+      "avantages_toute_nature_ATN": {
+        "voiture_societe": "Calcul forfaitaire selon CO2 et valeur catalogue — attention réforme 2026 défavorable aux thermiques",
+        "logement": "Forfait selon RC (revenu cadastral) x coefficient",
+        "gsm_internet": "Forfait ATN 3€/mois GSM + 5€/mois internet fixe"
+      }
+    },
+    "strategie_optimale_solo_founder": [
+      "Rémunération dirigeant à 45 000 € brut/an (pour taux ISOC réduit 20%)",
+      "Réserve de liquidation sur le reste du bénéfice",
+      "Sortie 5 ans plus tard à 13,64% effectif au lieu de 30%"
+    ],
+    "specifique_michel": "Inapplicable jusqu'à sortie de faillite. À activer Phase post-BCE."
+  },
+
+  "PKG_HOLDING_BE": {
+    "title": "Holding belge & régime RDT",
+    "equivalence_FR_vers_BE": {
+      "regime_mere_fille_FR_Art_216_CGI": "Régime RDT (Revenus Définitivement Taxés) en BE — Art. 202 CIR 92",
+      "quote_part_FR_5%": "En BE : exonération 100% des dividendes reçus par la holding (vs 95% en FR)"
+    },
+    "conditions_RDT_BE": [
+      "Participation minimum 10% OU valeur d'acquisition ≥ 2,5 M€",
+      "Détention pleine propriété continue minimum 1 an",
+      "Filiale soumise à un impôt sur les bénéfices analogue à l'ISOC belge"
+    ],
+    "avantage_vs_FR": "Exonération 100% (vs 95% FR) → holding BE encore plus favorable qu'en France",
+    "cas_usage": [
+      "Détenir plusieurs sociétés d'exploitation",
+      "Faire remonter dividendes sans double imposition",
+      "Réinvestir dans nouvelles filiales ou immo"
+    ],
+    "specifique_michel": "Structure cible à long terme post-faillite si MesureChâssis scale. Trop tôt aujourd'hui."
+  },
+
+  "PKG_IMMO_BE": {
+    "title": "Investissement immobilier en Belgique",
+    "equivalence_FR_vers_BE": {
+      "SCI_a_IS_FR_Strategie_10": "Équivalent BE : SRL patrimoniale ou SC (Société en Commandite) détenant l'immeuble",
+      "demembrement_FR_Strategie_11": "Démembrement usufruit/nue-propriété EXISTE en BE et est très utilisé — cadre fiscal spécifique (art. 47 CIR 92 et suivants)"
+    },
+    "specificites_BE": {
+      "TVA_immo_neuf": "21% sur immobilier neuf (revente ou construction dans les 2 ans) — récupérable via société",
+      "droits_enregistrement_Wallonie": "12,5% (résidence principale : abattement possible)",
+      "droits_Bruxelles": "12,5% avec abattement 200k€ pour résidence principale",
+      "revenu_cadastral": "Base imposition foncière belge — RC indexé"
+    },
+    "strategie_demembrement_dirigeant": {
+      "description": "Société achète usufruit temporaire 15-20 ans (~40-50% valeur), dirigeant achète nue-propriété (~50-60%). Société amortit l'usufruit + déduit intérêts emprunt. À l'échéance, dirigeant récupère pleine propriété sans impôt supplémentaire.",
+      "attention_BE": "Fisc belge très vigilant sur valorisation usufruit — utiliser méthode Ruysseveldt ou évaluation économique, pas tables fiscales article 47 CIR"
+    },
+    "specifique_michel": "0 dépense possible en immo aujourd'hui. À reconsidérer 3-5 ans après sortie faillite + trésorerie SaaS."
+  },
+
+  "PKG_TRANSMISSION_BE": {
+    "title": "Transmission d'entreprise en Belgique",
+    "equivalence_FR_vers_BE": {
+      "Pacte_Dutreil_FR_Strategie_20_abattement_75%": "En BE : régime de transmission d'entreprise familiale — taux 0% en Flandre, 0% en Wallonie (sous conditions), 3% à Bruxelles"
+    },
+    "conditions_Wallonie_0%": [
+      "Société active (pas patrimoniale)",
+      "Détention par famille depuis 5 ans",
+      "Maintien activité 5 ans post-donation",
+      "Maintien emploi (ETP) 5 ans"
+    ],
+    "vs_France": "BE beaucoup plus avantageux que Pacte Dutreil FR (75% abattement) → BE = 0% possible",
+    "specifique_michel": "Non pertinent aujourd'hui. À revoir dans 10-15 ans si succession de MesureChâssis à envisager."
+  },
+
+  "PKG_INNOVATION_BE": {
+    "title": "Innovation, R&D, tax shelter en Belgique",
+    "equivalence_FR_vers_BE": {
+      "JEI_FR_Strategie_18": "Équivalent BE : dispense partielle du précompte professionnel R&D (80% pour chercheurs) — Art. 275/3 CIR 92",
+      "CIR_CII_FR_Strategie_19": "Équivalent BE : déduction pour investissement + crédit d'impôt R&D (30% ou déduction majorée)"
+    },
+    "leviers_belges_pour_SaaS": {
+      "dispense_precompte_R&D": {
+        "mecanisme": "80% du précompte professionnel des salariés/dirigeants affectés à R&D non versé au fisc",
+        "conditions": "Diplôme master scientifique/technique OU projet R&D reconnu par Belspo"
+      },
+      "deduction_pour_brevets_IP_BOX": {
+        "nouveau_regime": "Deduction Revenus d'Innovation (DRI) — Art. 205/1 CIR 92",
+        "avantage": "85% des revenus de brevets/logiciels/droits IP exonérés d'ISOC",
+        "applicable_SaaS": "OUI — logiciels développés par la société sont éligibles"
+      },
+      "tax_shelter_startup": {
+        "mecanisme": "Investisseurs particuliers reçoivent 30-45% de réduction d'impôt sur leur investissement",
+        "conditions": "Startup <4 ans (micro) ou <10 ans (scale-up), certaines conditions taille"
+      }
+    },
+    "specifique_michel_MesureChâssis": {
+      "eligibilite_potentielle": [
+        "DRI sur revenus logiciel MesureChâssis (85% exonération ISOC)",
+        "Dispense précompte R&D si Michel se déclare 'dirigeant R&D' avec profil technique justifiable",
+        "Tax shelter startup (post-création société)"
+      ],
+      "blocage_actuel": "Nécessite existence société → post-faillite/BCE"
+    }
+  },
+
+  "PKG_AIDES_WALLONIE": {
+    "title": "Aides Région Wallonne — Michel EN A BESOIN AUJOURD'HUI",
+    "priority_for_michel": "P0 — actionnable maintenant sans BCE (certaines aides accessibles aux porteurs de projet)",
+    "organismes_cles": {
+      "SOWALFIN": "Financement PME Wallonie — prêts, garanties, coaching",
+      "1890": "Numéro guichet unique création entreprise Wallonie",
+      "Cheques_entreprises": "Aides jusqu'à 15 000 € pour conseil/formation/digitalisation",
+      "Digital_Wallonia": "Programme digitalisation PME",
+      "NGE_2020_NextGenerationEU": "Fonds européens gérés en région pour numérique"
+    },
+    "aides_specifiques_potentielles_MesureChâssis": [
+      "Chèque coaching création entreprise (post-BCE)",
+      "Chèque digital (post-BCE)",
+      "Subvention Digital Wallonia PME SaaS",
+      "Prêt SOWALFIN (post-BCE et sortie faillite)"
+    ],
+    "actionable_maintenant_sans_BCE": {
+      "coaching_1890": "Rencontrer conseiller 1890 gratuitement pour préparer post-faillite",
+      "job_yourself_BW": "Structure d'accompagnement porteurs projet (test activité sans créer société)",
+      "SMartBE": "Coopérative activités — permet facturer via elle en attendant BCE (à explorer selon règles faillite)"
+    },
+    "actions_agent": "À creuser en priorité avec Michel dès qu'il veut avancer sur monétisation. Ne pas suggérer d'aides payantes."
+  },
+
+  "PKG_TVA_BE": {
+    "title": "Régime TVA belge",
+    "franchise_TVA_2025": "Seuil 25 000 € CA HTVA (relevé de 15 000 € à 25 000 € au 01/01/2025)",
+    "vs_France": "BE beaucoup plus bas que FR (37 500 € services / 91 900 € marchandises)",
+    "impact_micro_entrepreneur_BE": "Passage rapide au régime TVA normal → obligation d'assujettissement dès 25k€",
+    "specifique_michel_SaaS": "MesureChâssis vend SaaS B2B → clients pro belges paient TVA 21%, TVA récupérable par eux. Pas de frein commercial. Assujettissement conseillé dès démarrage post-BCE."
+  },
+
+  "PKG_PATRIMOINE_PROTECTION_BE": {
+    "title": "Protection patrimoine personnel dirigeant BE",
+    "equivalence_FR_vers_BE": {
+      "declaration_insaisissabilite_FR_Strategie_13": "Équivalent BE : déclaration d'insaisissabilité de la résidence principale de l'indépendant — Art. 72 à 83 LCE / loi 25/04/2007",
+      "condition": "Passer devant notaire, coût ~1500€",
+      "effet": "Créanciers pro ne peuvent saisir la résidence principale",
+      "specifique_michel": "TROP TARD — faillite déjà déclarée. Aurait dû être fait avant démarrage. À faire au prochain cycle."
+    },
+    "regimes_matrimoniaux_BE": {
+      "separation_biens": "Protection conjoint contre créanciers pro",
+      "communaute_reduite_acquets": "Régime par défaut BE — moins protecteur"
+    }
+  },
+
+  "PKG_TRESORERIE_BE": {
+    "title": "Placement trésorerie société en BE",
+    "equivalence_FR_vers_BE": {
+      "DAT_OPCVM_FR_Strategie_16": "Équivalent BE : comptes à terme banques belges, SICAV monétaires, fonds obligataires"
+    },
+    "leviers_specifiques_BE": {
+      "reserve_liquidation": "PKG_REMUNERATION_BE → mécanisme unique BE, mieux qu'un placement classique",
+      "compte_courant_associe_CCA": "Existe en BE, intérêts plafonnés au taux du marché (attention art. 55 CIR 92)"
+    },
+    "specifique_michel": "Non pertinent aujourd'hui — pas de trésorerie société."
+  },
+
+  "STRATEGIES_INAPPLICABLES_EN_BE": {
+    "titre": "Stratégies du guide Lézard NON transposables en BE",
+    "liste": [
+      "ARE / ARCE / ACRE (dispositifs France Travail français) → équivalent BE : allocations chômage ONEM + prime AVIQ, mais règles totalement différentes",
+      "Micro-entreprise avec abattement 34/50/71% → n'existe pas en BE, pas d'abattement forfaitaire",
+      "Pacte Dutreil → BE a son propre régime, mieux (0% possible)",
+      "Cumul emploi-retraite libéralisé français → BE a règles différentes (limites de cumul selon âge)",
+      "Contrats Madelin → équivalent BE : PLCI (Pension Libre Complémentaire Indépendants) et EIP (Engagement Individuel de Pension)",
+      "CESU préfinancé → n'existe pas en BE, équivalent : titres-services (secteur aide à domicile uniquement)"
+    ]
+  },
+
+  "PROTOCOL_AGENT_USAGE": {
+    "quand_user_pose_question_strategique": [
+      "1. Identifier package concerné par mots-clés",
+      "2. Citer explicitement le package (ex: 'C'est dans PKG_HOLDING_BE')",
+      "3. Donner l'équivalent BE de la stratégie FR si mentionnée",
+      "4. Filtrer selon situation Michel (faillite active = beaucoup inapplicable court terme)",
+      "5. Toujours signaler si stratégie applicable MAINTENANT ou POST-FAILLITE uniquement"
+    ],
+    "mots_cles_declencheurs": {
+      "immobilier / immo / investir maison / SCI / démembrement": "PKG_IMMO_BE",
+      "holding / dividende / mère fille / RDT": "PKG_HOLDING_BE",
+      "salaire dirigeant / rémunération / VVPR / dividende / réserve liquidation": "PKG_REMUNERATION_BE",
+      "innovation / R&D / brevet / IP / tax shelter": "PKG_INNOVATION_BE",
+      "subvention / aide / Wallonie / SOWALFIN / chèque": "PKG_AIDES_WALLONIE",
+      "faillite / excusabilité / effacement / PRJ / BAJ": "PKG_FAILLITE_BE",
+      "TVA / assujetti / franchise": "PKG_TVA_BE",
+      "SRL / SA / statut / société / créer entreprise": "PKG_STATUTS_BE",
+      "protection / résidence / patrimoine / insaisissabilité / mariage": "PKG_PATRIMOINE_PROTECTION_BE",
+      "transmission / succession / donation / Dutreil": "PKG_TRANSMISSION_BE",
+      "trésorerie / placement / DAT / SICAV": "PKG_TRESORERIE_BE"
+    }
+  }
+}

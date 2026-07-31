@@ -160,7 +160,31 @@
     "linkedin_banner": "/app/frontend/public/banner/linkedin_banner_v1.png",
     "context_json_previous": "/app/frontend/public/mesurechassis_context_reset_2026-07-31.json",
     "resume_html_user_facing": "/app/frontend/public/resume_michel_agent.html",
-    "handoff_json_agent_facing": "/app/frontend/public/agent_handoff_michel.json"
+    "handoff_json_agent_facing": "/app/frontend/public/agent_handoff_michel.json",
+    "knowledge_base_belge": "/app/frontend/public/knowledge_base_michel.json"
+  },
+
+  "KNOWLEDGE_BASE_PROTOCOL": {
+    "file": "/app/frontend/public/knowledge_base_michel.json",
+    "purpose": "Michel a demandé un système de packages thématiques pour classer les stratégies juridiques/fiscales/business. Quand il pose une question, l'agent DOIT identifier le PKG concerné et le citer explicitement.",
+    "packages_disponibles": [
+      "PKG_FAILLITE_BE",
+      "PKG_STATUTS_BE",
+      "PKG_REMUNERATION_BE",
+      "PKG_HOLDING_BE",
+      "PKG_IMMO_BE",
+      "PKG_TRANSMISSION_BE",
+      "PKG_INNOVATION_BE",
+      "PKG_AIDES_WALLONIE",
+      "PKG_TVA_BE",
+      "PKG_PATRIMOINE_PROTECTION_BE",
+      "PKG_TRESORERIE_BE"
+    ],
+    "jurisdiction": "Belgique — TOUJOURS mapper les stratégies FR reçues vers équivalents BE",
+    "sources_deja_integrees": [
+      "Guide Lézard Finance 2026-2027 (droit FR) — mappé vers équivalents BE le 2026-08-01"
+    ],
+    "regle_reponse": "Toujours citer le PKG_XXX_BE en début de réponse quand user pose question stratégique. Filtrer selon contexte faillite active de Michel."
   },
 
   "INTEGRATIONS_STATE": {
