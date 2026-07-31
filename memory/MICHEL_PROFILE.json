@@ -41,7 +41,7 @@
     "priorite_1_MesureChassis": {
       "description": "SaaS mobile pour artisans menuisiers : prise de mesures châssis, wizard dynamique, exports PDF, RBAC",
       "stack": "React Native Expo + FastAPI + MongoDB",
-      "statut": "Beta live, BETA_MODE=true (Pro gratuit pendant faillite)",
+      "statut": "🟢 LIVE SUR L'APP STORE (juin 2026) — VALIDÉE PAR APPLE. BETA_MODE=true (Pro gratuit pendant faillite)",
       "stripe": "Désactivé volontairement (faillite)",
       "kb_reference": "/app/frontend/public/knowledge_base_michel.json (19 packages)",
       "regle_code": "NO CODE RULE active — tout dev app reporté à Phase 5"
