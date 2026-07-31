@@ -303,6 +303,45 @@
     "consequence_briefing_leia": "Ce reframe doit être intégré au briefing Léia (/app/memory/LEIA_AGENT_BRIEFING.json) quand le gate 4149 sera ouvert. Il change potentiellement le persona principal, le tone of voice, et le go-to-market."
   },
 
+  "safety_by_design_leia_du_2026_06_XX": {
+    "declencheur": "Michel a soulevé le risque de dépendance à l'IA compagnon, surtout chez les jeunes, avec perte de sociabilité. Il propose un gate d'accès (type numéro médical) et un modèle gratuit.",
+    "risque_documente": {
+      "cas_Character_ai_2024": "Suicide ado 14 ans après attachement bot — procès en cours",
+      "etudes_Replika_2023": "40% users declarent sentiments amoureux bot, 15% s'isolent plus",
+      "WHO_2025": "Dépendance numérique aux IA relationnelles = risque santé mentale émergent",
+      "reglementation_UE_2027": "Projets CNIL/RGPD pour imposer limites d'engagement aux IA compagnons"
+    },
+    "principe_fondateur": "Léia est un PONT, pas une DESTINATION. Comme une prothèse : portée le temps de réapprendre à marcher, rangée après. Métrique de succès = diminution du besoin de Léia dans le temps.",
+    "garde_fous_obligatoires_v1": [
+      {"id": "SF01_plafond_temps", "description": "Plafond quotidien 30-60min max. Coupure automatique. Modèle posologie médicale."},
+      {"id": "SF02_metrique_inversee", "description": "L'app mesure la diminution du besoin, PAS le temps passé. Un bon user s'en passe de plus en plus."},
+      {"id": "SF03_nudges_humains", "description": "À chaque session : proposition d'appeler un vrai humain (sponsor AA, ami, famille, ligne d'écoute)."},
+      {"id": "SF04_parrainage_J30", "description": "À J+30, connexion obligatoire à un sponsor AA/CAA humain ou GP. Sinon l'app se réduit à ses fonctions basiques (agenda seulement)."},
+      {"id": "SF05_detecteur_dependance", "description": "Algo repère patterns compulsifs (100+ msg/jour, réveils nocturnes, isolement croissant) → l'app alerte elle-même l'utilisateur et propose de réduire."},
+      {"id": "SF06_sortie_honorable", "description": "À 6-12 mois, l'app propose cérémonie de départ : 'Tu n'as plus besoin de moi.' Modèle thérapie brève."}
+    ],
+    "gate_acces_options_belgique": [
+      "Option A : Numéro INAMI médecin prescripteur (ultra propre, mais friction GP)",
+      "Option B : Auto-déclaration AUDIT (test OMS de dépendance) + registre national (simple mais tricheries)",
+      "Option C : Partenariat CAA/AA/centres sevrage (excellent, mais 18 mois à monter)",
+      "Option D : Numéro mutuelle + attestation médicale scannée (bon compromis)",
+      "RECO : Combinaison B + A (auto-déclaration AUDIT + option prescrit par médecin)"
+    ],
+    "modele_economique_gratuit_pour_user": {
+      "cout_reel_par_user_mois": "2-5€ d'API IA (Claude/GPT en 2026)",
+      "cout_10k_users_actifs": "20-50 k€/mois",
+      "sources_financement_prevues": [
+        "ASBL + subsides Région wallonne (Croix-Rouge, mutualités) → 100-300 k€/an",
+        "INAMI Article 56 (remboursement digital-health, en discussion 2027)",
+        "Mutuelles (Solidaris, Partenamut, Christian) — intégration offres bien-être",
+        "Pharma responsable (Lundbeck nalméfène, Otsuka aripiprazole) — sponsoring santé mentale",
+        "Fondations (Roi Baudouin, Pierre & Marie Curie)",
+        "B2B2C : employeurs paient via assurances collectives"
+      ],
+      "resultat_cible": "User = 0€. Léia = financée par mutuelles + subsides + fondations. Modèle Télé-Accueil / SOS Amitié."
+    }
+  },
+
   "leia_features_derivees_de_cette_conversation": {
     "objet": "Idées de features Léia validées par Michel lors de la conversation du 2026-06-XX. À intégrer dans le briefing Léia (/app/memory/LEIA_AGENT_BRIEFING.json) quand le gate 4149 sera ouvert.",
     "features": [
