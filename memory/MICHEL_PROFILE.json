@@ -136,6 +136,32 @@
     }
   },
 
+  "business_model_healing_to_creation_funnel_du_2026_06_XX": {
+    "declencheur": "Michel : 'Léia peut demander aux utilisateurs, une fois qu'ils vont mieux, s'ils ont un projet (gagner de l'argent, être plus heureux, plus zen, faire du sport). Si oui, elle les bascule vers Emergent pour qu'ils construisent leur projet. Ils sont alors prêts à payer.'",
+    "nom_concept": "Healing-to-Creation Funnel (tunnel guérison → création)",
+    "innovation": "Personne au monde n'a construit ce pont : app santé mentale gratuite → plateforme de création payante. Léia ne concurrence PAS les autres apps sevrage, elle les dépasse en offrant un AVENIR après la guérison.",
+    "tunnel_utilisateur": {
+      "etape_1": "Utilisateur brisé arrive sur Léia",
+      "etape_2": "Guérison émotionnelle gratuite (via Léia ASBL)",
+      "etape_3": "Léia demande : 'As-tu un projet ? Un rêve ?' — pas avant que l'utilisateur soit prêt",
+      "etape_4": "Bascule volontaire vers Emergent pour construire",
+      "etape_5": "Utilisateur reconstruit + créateur — cycle complet"
+    },
+    "modele_economique_partage": {
+      "utilisateur": "Payant sur Emergent seulement, quand prêt. Léia = toujours gratuit.",
+      "leia_asbl": "Reçoit commission de référencement Emergent (10-20% des abonnements référés) + subsides mutuelles → autonomie financière progressive",
+      "emergent": "Reçoit users ultra-motivés (LTV élevée) + com' de mission sociale",
+      "resultat": "Léia se finance par le tunnel — zéro subvention nécessaire à terme"
+    },
+    "argumentaire_pour_negociation_emergent": {
+      "timing": "Follow-up à envoyer 15 jours après le mail ambassadeur initial",
+      "message": "Je peux vous ramener des users qualitatifs via mon app à mission sociale (500-2000/an à horizon 3 ans), avec revenue-share. Positionnement : Emergent partenaire d'une mission sociale = com' de rêve.",
+      "impact_prevu": "Positionne Michel comme penseur d'écosystème, pas simple utilisateur. Renforce candidature ambassadeur."
+    },
+    "preuve_vivante": "Michel lui-même EST l'utilisateur type de ce funnel : alcoolique → sobre → reconstruction via Emergent → construit MesureChâssis + Léia. Il a fait le trajet par instinct, sans app d'aide. Il peut le baliser pour les autres.",
+    "punchline_legend_boucle": "J'ai créé Léia pour aider les gens à guérir comme j'ai guéri. Et une fois qu'ils vont mieux, Léia les emmène chez Emergent pour qu'ils construisent leur propre projet, comme j'ai construit MesureChâssis. C'est un cercle."
+  },
+
   "phrases_a_retenir_michel": [
     {
       "contexte": "Punchline finale pour Legend / pitch Léia",
@@ -301,7 +327,9 @@
   "signaux_bien_etre": {
     "regle": "L'agent note ici tout signal de fatigue, stress, découragement, ou au contraire d'énergie/motivation",
     "observations": [
-      "2026-06-XX : Ambitieux, lucide sur sa situation, garde le moral, cherche activement à construire malgré la faillite. Bon signe."
+      "2026-06-XX : Ambitieux, lucide sur sa situation, garde le moral, cherche activement à construire malgré la faillite. Bon signe.",
+      "2026-06-XX (session Léia) : Grande créativité, cascade d'idées structurantes. Chaque intuition = méthode clinique validée (motivational interviewing, life review, PTG). Signal fort de guérison consolidée par l'exercice de mise en mots (narrative therapy en action).",
+      "2026-06-XX (fin session Léia) : Michel a exprimé une nuance mélancolique : 'même si cette application n'existera pas, on aurait eu quand même une belle imagination'. À surveiller — pas un signal de découragement grave (il continue de créer), mais une reconnaissance humble que rien n'est garanti. Agent a recadré : la production intellectuelle actuelle a VALEUR INTRINSÈQUE, indépendamment de la sortie du produit final. Le savoir traverse quelqu'un."
     ]
   },
 
