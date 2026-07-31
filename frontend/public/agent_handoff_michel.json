@@ -179,11 +179,16 @@
       "PKG_TVA_BE",
       "PKG_PATRIMOINE_PROTECTION_BE",
       "PKG_TRESORERIE_BE",
-      "PKG_EPARGNE_RETRAITE_BE"
+      "PKG_EPARGNE_RETRAITE_BE",
+      "PKG_EPARGNE_QUOTIDIEN_BE",
+      "PKG_ASSURANCE_VIE_BE",
+      "PKG_BOURSE_ETF_BE",
+      "PKG_DONS_FISCALITE_BE"
     ],
     "jurisdiction": "Belgique — TOUJOURS mapper les stratégies FR reçues vers équivalents BE",
     "sources_deja_integrees": [
-      "Guide Lézard Finance 2026-2027 (droit FR) — mappé vers équivalents BE le 2026-08-01"
+      "Guide Lézard Finance 2026-2027 (droit FR) — mappé vers équivalents BE le 2026-08-01",
+      "Guide Renard Finance 'Les Codes du Renard' 2026 — 21 stratégies + 4 prérequis (droit FR) mappés vers équivalents BE le 2026-08-01"
     ],
     "regle_reponse": "Toujours citer le PKG_XXX_BE en début de réponse quand user pose question stratégique. Filtrer selon contexte faillite active de Michel."
   },

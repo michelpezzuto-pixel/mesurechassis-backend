@@ -21,7 +21,11 @@
     "PKG_TVA_BE": "Régime TVA belge (franchise 25k€, assujetti, exemption)",
     "PKG_PATRIMOINE_PROTECTION_BE": "Protection patrimoine personnel (régime matrimonial, déclaration insaisissabilité BE)",
     "PKG_TRESORERIE_BE": "Placement trésorerie société (compte à terme, SICAV, tax shelter)",
-    "PKG_EPARGNE_RETRAITE_BE": "Épargne-pension, PLCI, EIP, CPTI, épargne long terme (équivalent PER FR)"
+    "PKG_EPARGNE_RETRAITE_BE": "Épargne-pension, PLCI, EIP, CPTI, épargne long terme (équivalent PER FR)",
+    "PKG_EPARGNE_QUOTIDIEN_BE": "Livrets réglementés, cashback, chèques-repas, éco-chèques, négociation abonnements (Loi Ducarme)",
+    "PKG_ASSURANCE_VIE_BE": "Branche 21/23, taxe prime 2%, précompte 30%, différences vs assurance-vie FR",
+    "PKG_BOURSE_ETF_BE": "Compte-titres, TOB, précompte mobilier 30%, OLO, ETF accessibles (PEA n'existe PAS en BE)",
+    "PKG_DONS_FISCALITE_BE": "Réduction 45% dons associations agréées (équivalent Coluche FR mais 45% vs 75%)"
   },
 
   "PKG_FAILLITE_BE": {
@@ -126,17 +130,33 @@
     "title": "Investissement immobilier en Belgique",
     "equivalence_FR_vers_BE": {
       "SCI_a_IS_FR_Strategie_10": "Équivalent BE : SRL patrimoniale ou SC (Société en Commandite) détenant l'immeuble",
-      "demembrement_FR_Strategie_11": "Démembrement usufruit/nue-propriété EXISTE en BE et est très utilisé — cadre fiscal spécifique (art. 47 CIR 92 et suivants)"
+      "demembrement_FR_Strategie_11": "Démembrement usufruit/nue-propriété EXISTE en BE et est très utilisé — cadre fiscal spécifique (art. 47 CIR 92 et suivants)",
+      "Loi_Lemoine_FR_Strategie_8": "Équivalent BE : Loi Ducarme du 22/04/2019 — permet de changer l'assurance solde restant dû (ASRD) à tout moment sans frais, si équivalence de garanties",
+      "contestation_taxe_fonciere_FR_Strategie_9": "Équivalent BE : contestation du revenu cadastral (RC) auprès de l'administration Mesures et Évaluations. Le RC sert de base au précompte immobilier (taxe foncière BE)",
+      "SCPI_nue_propriete_FR_Strategie_12": "Équivalent BE : SIR (Sociétés Immobilières Réglementées, ex-Sicafi) type Cofinimmo, Aedifica, WDP. Démembrement possible mais moins standardisé qu'en FR"
     },
     "specificites_BE": {
       "TVA_immo_neuf": "21% sur immobilier neuf (revente ou construction dans les 2 ans) — récupérable via société",
       "droits_enregistrement_Wallonie": "12,5% (résidence principale : abattement possible)",
       "droits_Bruxelles": "12,5% avec abattement 200k€ pour résidence principale",
-      "revenu_cadastral": "Base imposition foncière belge — RC indexé"
+      "revenu_cadastral": "Base imposition foncière belge — RC indexé (coefficient 2,1763 en 2026)",
+      "precompte_immobilier_wallonie": "1,25% du RC indexé × additionnels communaux/provinciaux (peut atteindre 40-50% du RC selon commune)"
     },
     "strategie_demembrement_dirigeant": {
       "description": "Société achète usufruit temporaire 15-20 ans (~40-50% valeur), dirigeant achète nue-propriété (~50-60%). Société amortit l'usufruit + déduit intérêts emprunt. À l'échéance, dirigeant récupère pleine propriété sans impôt supplémentaire.",
       "attention_BE": "Fisc belge très vigilant sur valorisation usufruit — utiliser méthode Ruysseveldt ou évaluation économique, pas tables fiscales article 47 CIR"
+    },
+    "loi_ducarme_ASRD": {
+      "reference": "Loi du 22/04/2019 modifiant Livre VII Code Droit Économique",
+      "avantage": "Changement assurance solde restant dû à tout moment, sans frais, gain 3 000-10 000€ sur durée prêt",
+      "condition": "Équivalence de garanties avec contrat initial (décès, ITT, invalidité)",
+      "actionnable_michel": "NON — pas de crédit hypo actuel"
+    },
+    "contestation_revenu_cadastral": {
+      "procedure": "Réclamation écrite dans les 2 mois de la réception avertissement-extrait de rôle, auprès de l'Administration Générale de la Documentation Patrimoniale",
+      "motifs_valables": ["Surface erronée", "Confort surévalué (WC, chauffage central, salle de bain)", "Éléments inexistants", "Comparaison avec biens similaires"],
+      "gain_estime": "100-400 €/an de précompte immobilier + rappel années précédentes",
+      "risque": "Réévaluation à la hausse si travaux non déclarés — audit préalable obligatoire"
     },
     "specifique_michel": "0 dépense possible en immo aujourd'hui. À reconsidérer 3-5 ans après sortie faillite + trésorerie SaaS."
   },
@@ -315,6 +335,133 @@
     ]
   },
 
+  "PKG_EPARGNE_QUOTIDIEN_BE": {
+    "title": "Épargne quotidienne & optimisation dépenses courantes — BE",
+    "source_FR_mappee": "Guide Renard Thème 1 (Stratégies 01-04) : LEP, Cashback, PEE abondement, Négociation abonnements",
+    "actionable_faillite_active": "OUI pour cashback + négociation abonnements. Gratuit, immédiat, pas de risque saisie curateur.",
+    "dispositifs_BE": {
+      "livret_epargne_reglemente": {
+        "equivalent_FR_LEP": "N'existe PAS en BE. Le livret d'épargne réglementé belge = ~0,50% taux + 0,25% prime fidélité",
+        "avantage_fiscal": "Précompte mobilier exonéré jusqu'à 1 020 €/an d'intérêts (montant 2026, indexé). Au-delà : 15% précompte",
+        "reference_legale": "Art. 21 al. 1 CIR 92",
+        "vs_LEP_FR": "BE beaucoup MOINS avantageux (0,50% vs 2,5% LEP FR)"
+      },
+      "cashback_BE": {
+        "plateformes_BE": ["iGraal BE", "Widilo BE (déploiement 2025)", "Poulpeo BE", "Deliveroo Plus cashback", "Colruyt Xtra"],
+        "cartes_bancaires_cashback": ["KBC/CBC Cashback Card", "Belfius Optimum", "Curve (multi-cartes)"],
+        "estimation": "300-800 €/an pour foyer avec 2 000-2 500€ dépenses/mois",
+        "risque_pour_michel_en_faillite": "AUCUN — cashback = remboursement de dépenses, pas saisissable. À utiliser."
+      },
+      "cheques_repas_eco_cheques": {
+        "cheques_repas": "Employeur donne max 8€/jour presté (7€ patron + 1,09€ salarié). Exonéré cotisations sociales + IPP",
+        "eco_cheques": "Max 250 €/an, exonéré cotisations + IPP",
+        "cadeaux_entreprise": "Max 40 €/an/travailleur pour occasions (Noël, St-Nicolas), exonéré",
+        "vs_PEE_FR": "Pas d'équivalent au PEE avec abondement 300%. BE utilise chèques-repas + éco-chèques + bonus salarial CCT 90 (max ~4 100 €/an exonéré charges sociales, taxé à 33% employeur + 13,07% salarié)"
+      },
+      "negociation_abonnements_BE": {
+        "cadre_legal": "Loi Ducarme du 04/04/2019 — permet résiliation contrats télécom/énergie à tout moment après 1er anniversaire, sans frais",
+        "cibles_prioritaires": ["Proximus", "Telenet", "Orange", "Base", "assurance auto (Ethias/AG/Axa/Allianz)", "assurance habitation", "mutuelle privée", "fournisseurs énergie Engie/Luminus/TotalEnergies/Mega"],
+        "outils_comparaison": ["cwape.be", "brugel.brussels", "vreg.be (Flandre)", "test-achats.be"],
+        "estimation": "400-1 000 €/an de gains sur foyer moyen",
+        "actionable_michel": "OUI immédiatement. Pas de dépense, pas de risque curateur."
+      },
+      "cadeau_curateur_faillite": "ATTENTION Michel : si tu récupères du cashback pendant faillite, techniquement ça enrichit ton patrimoine → à discuter avec curateur/avocat BAJ si sommes significatives. Petits montants (< quelques centaines €) généralement tolérés au titre du minimum vital."
+    }
+  },
+
+  "PKG_ASSURANCE_VIE_BE": {
+    "title": "Assurance-vie belge — Branche 21 & 23",
+    "source_FR_mappee": "Guide Renard PRÉREQUIS 2 — Assurance-vie après 8 ans",
+    "constat": "Système BE TRÈS différent du FR. Pas d'abattement 4600€/9200€/an. Pas d'exo 152 500€ hors succession.",
+    "branches_BE": {
+      "branche_21": {
+        "nature": "Assurance-vie à taux garanti (capital + intérêt minimum garantis par l'assureur)",
+        "taxe_prime": "2% sur chaque versement",
+        "precompte_mobilier": "30% sur les intérêts",
+        "exoneration": "Aucun précompte SI contrat >8 ans ET couverture décès ≥130% du capital versé ET pas de rachat avant 8 ans",
+        "vs_FR": "MOINS souple : pas d'abattement annuel comme FR 4600€"
+      },
+      "branche_23": {
+        "nature": "Assurance-vie liée à des fonds d'investissement (unités de compte)",
+        "taxe_prime": "2% sur chaque versement",
+        "fiscalite_gains": "PAS de précompte mobilier sur les plus-values (avantage majeur vs compte-titres) SI pas de garantie de rendement",
+        "risque": "Perte en capital possible",
+        "vs_FR": "Similaire aux UC françaises mais fiscalité gains PLUS favorable en BE"
+      }
+    },
+    "transmission_succession_BE": {
+      "droits_succession_wallonie": "Ligne directe : 3% à 30% selon tranche. Autres : 20% à 80%",
+      "planning_succession": "Assurance-vie BE ≠ hors succession comme FR. Les capitaux versés au décès entrent dans la succession, sauf montages spécifiques (donation avec réserve d'usufruit, contrat AB-BC)",
+      "conclusion": "BE offre MOINS d'avantages successoraux via assurance-vie que FR"
+    },
+    "specifique_michel": "Inutilisable en faillite. À reconsidérer post-clôture faillite si constitution patrimoine."
+  },
+
+  "PKG_BOURSE_ETF_BE": {
+    "title": "Bourse, ETF, compte-titres — Belgique",
+    "source_FR_mappee": "Guide Renard PRÉREQUIS 4 (PEA) + Stratégie 21 (ETF/CTO)",
+    "constat_majeur": "LE PEA N'EXISTE PAS EN BELGIQUE. Aucun équivalent d'enveloppe défiscalisée pour actions.",
+    "fiscalite_investissement_BE": {
+      "compte_titres_ordinaire_CTO": "Seule enveloppe possible en BE",
+      "TOB_taxe_operations_bourse": {
+        "achat_ETF_capitalisant": "1,32% (max 4 000€)",
+        "achat_ETF_distribuant_UE": "0,12% (max 1 300€)",
+        "achat_actions_individuelles": "0,35% (max 1 600€)",
+        "achat_obligations": "0,12%",
+        "note": "TOB payée par le broker si résident BE, à déclarer soi-même si broker étranger (Trade Republic, Interactive Brokers, Degiro)"
+      },
+      "precompte_mobilier_dividendes": "30% flat sur tous les dividendes reçus (BE ou étrangers)",
+      "plus_values_actions_particulier": "EXONÉRÉES en BE (spéculation normale) — c'est le POINT FORT belge vs FR (Flat Tax 30%)",
+      "plus_values_speculatives": "33% si transactions considérées comme spéculatives (fisc juge au cas par cas)",
+      "taxe_compte_titres_2024": "0,15% par an sur comptes-titres > 1 000 000 € (peu concerné par Michel)"
+    },
+    "OLO_equivalent_OAT_FR": {
+      "nom_complet": "Obligations Linéaires (Belgian OLOs)",
+      "emetteur": "Royaume de Belgique via Agence de la Dette",
+      "achat_direct": "Via broker (Bolero, Keytrade, Degiro) ou via banque",
+      "achat_particuliers": "Bons d'État émis 4x/an (mars, juin, sept, déc) accessibles dès 100€",
+      "fiscalite": "Précompte 30% sur les coupons",
+      "vs_OAT_FR": "Mécanisme identique, rendement souvent proche (Belgique = même notation qu'à peu près)"
+    },
+    "ETF_accessibles_BE": {
+      "brokers_low_cost": ["Bolero (KBC)", "Keytrade Bank", "Degiro", "Trade Republic BE", "MeDirect", "Saxo"],
+      "ETF_populaires": ["iShares MSCI World IWDA", "Vanguard FTSE All-World VWCE", "Amundi Prime Global", "iShares Core S&P 500"],
+      "strategie_DCA": "Applicable même en BE — versements mensuels programmés, focus long terme"
+    },
+    "specifique_michel": {
+      "faillite_active": "IMPOSSIBLE — patrimoine sous contrôle curateur",
+      "post_faillite": "Compte-titres + ETF capitalisant World = stratégie basique optimale. Pas d'enveloppe fiscale magique en BE, donc c'est simple mais efficace."
+    }
+  },
+
+  "PKG_DONS_FISCALITE_BE": {
+    "title": "Dons & réduction fiscale — Belgique",
+    "source_FR_mappee": "Guide Renard Stratégie 18 — Réduction Coluche 75%",
+    "constat": "BE MOINS généreux que FR sur les dons. Taux fixe 45%, pas de 75% Coluche.",
+    "dispositif_BE": {
+      "reduction_fiscale_dons": "45% du montant du don",
+      "seuil_minimum": "40 € cumulés par organisme par an",
+      "plafond_maximum": "Le plus bas entre : 10% du revenu net imposable OU 397 850 € (max absolu 2026)",
+      "reference_legale": "Art. 145/33 CIR 92",
+      "organismes_eligibles": [
+        "Institutions culturelles agréées (musées, opéras)",
+        "Universités et hautes écoles reconnues",
+        "Recherche scientifique agréée",
+        "Aide aux victimes de guerre/catastrophes",
+        "Œuvres sociales agréées par arrêté royal",
+        "Croix-Rouge Belgique",
+        "Restos du Cœur BE",
+        "Damiaanactie",
+        "SOS Villages d'Enfants BE"
+      ],
+      "attestation_fiscale": "Automatique via fisc — les organismes agréés déclarent directement à FiscoNetPlus",
+      "declaration": "Case 1394 (partenaire 2394) déclaration IPP"
+    },
+    "cas_pratique": "Don 1 000 € → réduction impôt 450 € → coût net réel 550 €",
+    "vs_France": "France 75% jusqu'à 2 000€ = coût net 500€/2000€ don. Belgique 45% = coût net 1 100€/2 000€ don. FR nettement plus favorable.",
+    "specifique_michel": "Non prioritaire aujourd'hui (probablement pas ou peu d'impôt à payer en faillite). À reconsidérer si revenus imposables futurs."
+  },
+
   "STRATEGIES_INAPPLICABLES_EN_BE": {
     "titre": "Stratégies du guide Lézard NON transposables en BE",
     "liste": [
@@ -347,7 +494,12 @@
       "protection / résidence / patrimoine / insaisissabilité / mariage": "PKG_PATRIMOINE_PROTECTION_BE",
       "transmission / succession / donation / Dutreil": "PKG_TRANSMISSION_BE",
       "trésorerie / placement / DAT / SICAV": "PKG_TRESORERIE_BE",
-      "retraite / pension / PER / épargne pension / PLCI / EIP / CPTI / long terme": "PKG_EPARGNE_RETRAITE_BE"
+      "retraite / pension / PER / épargne pension / PLCI / EIP / CPTI / long terme": "PKG_EPARGNE_RETRAITE_BE",
+      "cashback / abonnement / négociation / Proximus / Ducarme / éco-chèque / chèque repas / LEP": "PKG_EPARGNE_QUOTIDIEN_BE",
+      "assurance-vie / branche 21 / branche 23 / précompte assurance / TAB": "PKG_ASSURANCE_VIE_BE",
+      "PEA / ETF / bourse / compte-titres / OLO / TOB / Trade Republic / Bolero / Keytrade": "PKG_BOURSE_ETF_BE",
+      "don / donation / association / Coluche / Restos du Coeur / réduction fiscale don": "PKG_DONS_FISCALITE_BE",
+      "cadastre / revenu cadastral / précompte immobilier / assurance solde restant dû / Lemoine / Ducarme ASRD": "PKG_IMMO_BE"
     }
   }
 }
