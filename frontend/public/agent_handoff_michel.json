@@ -186,7 +186,8 @@
       "PKG_BOURSE_ETF_BE",
       "PKG_DONS_FISCALITE_BE",
       "PKG_DROITS_DEFENSE_BE",
-      "PKG_PHILOSOPHIE_PATRIMONIALE"
+      "PKG_PHILOSOPHIE_PATRIMONIALE",
+      "PKG_PROJET_LEIA"
     ],
     "jurisdiction": "Belgique — TOUJOURS mapper les stratégies FR reçues vers équivalents BE",
     "sources_deja_integrees": [

@@ -27,7 +27,8 @@
     "PKG_BOURSE_ETF_BE": "Compte-titres, TOB, précompte mobilier 30%, OLO, ETF accessibles (PEA n'existe PAS en BE)",
     "PKG_DONS_FISCALITE_BE": "Réduction 45% dons associations agréées (équivalent Coluche FR mais 45% vs 75%)",
     "PKG_DROITS_DEFENSE_BE": "Défense créancier/huissier/arnaques : prescriptions BE, frais recouvrement, solde insaisissable, RGPD, phishing (CRITIQUE pour Michel)",
-    "PKG_PHILOSOPHIE_PATRIMONIALE": "Principes universels de construction patrimoniale : 3 tiers Talmud, investir en soi, patience, intégrité, communauté, héritage (source: Le Code Juif de l'Investissement 2026)"
+    "PKG_PHILOSOPHIE_PATRIMONIALE": "Principes universels de construction patrimoniale : 3 tiers Talmud, investir en soi, patience, intégrité, communauté, héritage (source: Le Code Juif de l'Investissement 2026)",
+    "PKG_PROJET_LEIA": "Projet secondaire Michel : compagnon numérique sevrage alcool, ASBL BE, Zero-Knowledge / Local-First, GPLv3, B2B2C institutions. Briefing complet: /app/memory/LEIA_AGENT_BRIEFING.json"
   },
 
   "PKG_FAILLITE_BE": {

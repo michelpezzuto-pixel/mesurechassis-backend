@@ -1,0 +1,147 @@
+{
+  "_meta": {
+    "note": "Fichier créé le 2026-08-01 par l'agent Emergent principal après réception du briefing de Michel. Le fichier original n'existait pas dans ce pod (autre session).",
+    "source": "Briefing transmis par Michel via chat le 2026-08-01",
+    "gate": "4149 — signification à clarifier avec Michel"
+  },
+
+  "one_liner": "Léia est un compagnon de vie numérique, privé par conception (Zero-Knowledge / Local-First), open source (GPLv3), conçu comme un bien commun de santé publique pour accompagner le sevrage de l'alcool, et qui sert de socle technologique à des institutions de soin via des modules payants (Program Packs) financés par un modèle ASBL.",
+
+  "vision_and_identity": {
+    "mission": "Créer un bien commun numérique de santé publique pour accompagner le sevrage addictif. Périmètre actuel STRICTEMENT limité à l'alcool (extensible plus tard).",
+    "core_promise": "Confidentialité radicale. Par défaut, aucune donnée personnelle ne quitte le téléphone. L'IA appartient à l'utilisateur.",
+    "philosophy": "Léia est un 'Compagnon de Vie', PAS un outil de captation d'attention. Anti dark-patterns.",
+    "license": "GPLv3",
+    "governance": "ASBL / Fondation (à but non lucratif)"
+  },
+
+  "how_it_works_daily": {
+    "step_1_onboarding": "Langue → verrou local (PIN/biométrie, aucun compte, rien en ligne) → choix 'arrêter l'alcool' → identité/voix de Léia → contrat de confidentialité. Léia collecte en dialogue (jamais formulaire) : consommation, prix moyen. Tout reste sur le téléphone.",
+    "step_2_home_deterministic": "Écran d'accueil = calcul pur (jamais l'IA) : compteur jours abstinence, économies, timeline santé, paliers, pivot J+21 'Manque' → 'Liberté'.",
+    "step_3_chat_social_brain": "Chat via quick-replies/texte/voix (TTS/STT locaux). Léia répond avec empathie. SCRIPTÉE aujourd'hui, LLM demain. Contrat d'Actions JSON = zéro hallucination sur les chiffres.",
+    "step_4_rythm_ritual": "À venir : briefing matin, débriefing soir.",
+    "step_5_sos": "Bouton SOS : respiration, distraction, dialogue de crise.",
+    "step_6_invisible_principle": "Off-ramp : Léia s'efface quand l'utilisateur va mieux. Succès = ne plus avoir besoin d'elle."
+  },
+
+  "technical_architecture": {
+    "principle": "Séparation STRICTE entre deux composants.",
+    "social_brain_llm": "Dialogue, empathie, mirroring, slot-filling. Ne calcule JAMAIS. Options : LLM 100% local OU cloud opt-in.",
+    "deterministic_engine": "Source unique de vérité pour TOUS les calculs (dates, jours, économies, paliers 30j/60j/90j/6mois/1an/3ans/5ans/10ans, pivot J+21).",
+    "action_contract": "Interface JSON stricte : LLM pilote Moteur sans halluciner un chiffre."
+  },
+
+  "financing_model_ASBL": {
+    "governing_entity": "ASBL / Fondation (but non lucratif)",
+    "iron_rule": "L'UTILISATEUR EN SEVRAGE NE PAIE JAMAIS. Socle Léia gratuit et open source à vie. Zéro pub, zéro tracking.",
+    "model_type": "B2B2C : Léia = socle neutre. Institutions = clients payants. Usager = bénéficiaire gratuit.",
+    "what_is_free": ["Code (GPLv3)", "Usage de base pour toute personne en sevrage", "Moteur, suivi, SOS, chat de base"],
+    "what_is_monetized": ["Program Packs (méthodes/formations/témoignages)", "Certification packs", "Services premium institution (IA cloud, voix premium)"],
+    "money_flow": "Institution paie intégration/certification méthode → revenus ASBL → reversés institutions pour mission sociale + pérennité socle.",
+    "premium_intent": "Le mainteneur finance la qualité, MAIS coût porté par institutions/ASBL, jamais par l'usager."
+  },
+
+  "program_packs": {
+    "definition": "Un 'Program' = PACK DE DONNÉES déclaratif (JSON + assets), JAMAIS du code exécutable.",
+    "contents": ["Manifeste (institution, version, langues)", "Overrides persona/ton de Léia", "Schéma de slots", "Paramètres de protocole moteur", "Contenus localisés", "Contacts redirection sécurité"],
+    "safety": "Pack SIGNÉ + VALIDÉ contre JSON Schema strict. Moteur déterministe reste unique source de vérité.",
+    "privacy": "Pack = MÉTHODE (pas de données perso). Zero-Knowledge intact."
+  },
+
+  "local_rag": {
+    "key_rule": "Ingestion CÔTÉ INSTITUTION (amont, hors-ligne), PAS sur le téléphone.",
+    "pipeline": "audio → transcription (Whisper) → curation OBLIGATOIRE formateur → chunks + métadonnées → embeddings pré-calculés + extraits audio → Program Pack.",
+    "on_device": "Petit modèle embeddings multilingue (~50-120 Mo). Anti-hallucination : si pas dans le programme → renvoie au formateur.",
+    "best_start": "RAG 'récupération seule' : Léia CITE ou fait ÉCOUTER extrait audio réel du formateur.",
+    "copyright_rgpd": ["Contenu libre de droits/CC ou licencié uniquement", "Import livres par utilisateur, RAG 100% local", "Témoignages = consentement explicite + anonymisation"]
+  },
+
+  "ethics_safety": {
+    "off_ramp": "Léia incite reconnexion humaine et s'efface quand usager va mieux. Off-ramp PROGRESSIF.",
+    "domain_restriction": "Léia = compagne sevrage/bien-être UNIQUEMENT.",
+    "vital_safety": "Jamais conseil médical/posologie. Détection détresse → bascule aide humaine/urgences.",
+    "locked_prompt": "Règles morales verrouillées par le mainteneur.",
+    "smartwatch": "Notifications haptiques discrètes. Nécessite build natif Apple Watch / Wear OS."
+  },
+
+  "open_decisions": [
+    "LLM local strict vs cloud hybride opt-in",
+    "Auth : 100% local (PIN/biométrie) par défaut ; compte optionnel pour sauvegarde chiffrée client",
+    "Périmètre : alcool d'abord (confirmé), multi-addictions plus tard"
+  ],
+
+  "hard_constraints": [
+    "Zero-Knowledge / Local-First par défaut",
+    "L'usager en sevrage ne paie JAMAIS",
+    "Open source GPLv3 pour le socle",
+    "Phase idéation uniquement (pas de code) — verrou 4149"
+  ],
+
+  "michel_context": {
+    "situation_perso": "En faillite personnelle BE, pas de BCE, avocat BAJ en cours, projet MesureChâssis en parallèle (SaaS B2B menuiserie)",
+    "compatibilite_faillite": "STRUCTURE ASBL COMPATIBLE — un failli peut être fondateur/administrateur d'ASBL en BE (activité non commerciale). À valider formellement avec BAJ.",
+    "budget_disponible": "0 € — tout doit être gratuit / subventionné / bénévole",
+    "actions_actionnables_maintenant_sans_code": [
+      "Formaliser statuts ASBL (modèle Loi 27/06/1921 sur ASBL, réforme CSA 2019)",
+      "Identifier cofondateurs : au moins 2 personnes physiques + 1 partenaire médical/clinique",
+      "Rédiger dossier de contact CHS Lierneux (si contact réel) ou identifier centres addictologie BE",
+      "Cartographier subventions accessibles : AVIQ, INAMI, Fondation Roi Baudouin, Loterie Nationale, EU4Health",
+      "Rédiger vision produit détaillée (déjà bien avancée dans ce briefing)",
+      "Choisir stack technique cible (React Native ? Flutter ? Native ?)"
+    ]
+  },
+
+  "synergies_avec_MesureChâssis": {
+    "business": "Zéro synergie directe (menuiserie B2B vs addictologie B2B2C)",
+    "strategique_personnel": "ASBL Léia = vitrine morale post-faillite. Accélère sortie faillite + crédibilise Michel + réseau institutionnel (Lierneux, AVIQ) transférable",
+    "architecture_technique_TRANSFERABLE": [
+      "Pattern Moteur Déterministe → applicable à MesureChâssis (calculs mesures/prix/marges sans halluciner)",
+      "Contrat d'Actions JSON → format LLM ↔ Moteur applicable partout",
+      "Program Packs signés → PARFAIT pour roadmap MesureChâssis 'Import PDF fournisseurs universel' (Reynaers, Aliplast, Deceuninck = packs JSON à la demande)",
+      "Argument Zero-Knowledge / Local-First → transférable comme argument commercial MesureChâssis vers artisans (vos données ne quittent JAMAIS votre téléphone)"
+    ]
+  },
+
+  "risques_bloqueurs": [
+    "Compétence médicale indispensable (partenaire clinique OBLIGATOIRE — sevrage = risque vital)",
+    "Cycle de vente institutions publiques BE = 6-18 mois",
+    "RAG local sur mobile bas de gamme = challenge technique réel",
+    "Attention/temps de Michel partagé avec MesureChâssis",
+    "Gate 4149 → signification à clarifier"
+  ],
+
+  "financement_publique_BE_actionnable": {
+    "AVIQ_Wallonie": {
+      "nom_complet": "Agence pour une Vie de Qualité",
+      "champ": "Santé, bien-être, addictions",
+      "actions": "Consulter aviq.be section subventions/appels à projets"
+    },
+    "INAMI": {
+      "champ": "Assurance maladie-invalidité fédéral",
+      "actions": "Projets pilotes santé numérique éligibles"
+    },
+    "Fondation_Roi_Baudouin": {
+      "champ": "Fondation d'utilité publique BE, appels à projets santé publique et innovation sociale",
+      "actions": "kbs-frb.be — projets 5k-50k € possibles"
+    },
+    "Loterie_Nationale": {
+      "champ": "Financement projets solidaires",
+      "actions": "Enveloppe santé publique et prévention"
+    },
+    "EU4Health": {
+      "champ": "Programme UE santé 2021-2027",
+      "actions": "Appels à propositions HaDEA — projets santé mentale/addictions éligibles",
+      "montants": "50k € à plusieurs M€"
+    },
+    "Cocof_Bruxelles": {
+      "champ": "Commission communautaire française Bruxelles, secteur santé",
+      "actions": "Subsides projets pilotes"
+    }
+  },
+
+  "prochaine_action_recommandee": {
+    "priorite_1": "Clarifier avec Michel : (a) contact réel CHS Lierneux ou pas ? (b) signification 'gate 4149' ? (c) séquencement Léia vs MesureChâssis ?",
+    "priorite_2": "Vérifier avec avocat BAJ que Michel peut légalement fonder/administrer une ASBL en BE pendant sa faillite",
+    "priorite_3": "Rédiger un dossier de projet AVIQ Wallonie / Fondation Roi Baudouin (mission santé publique alcool + innovation privacy-first)"
+  }
+}
