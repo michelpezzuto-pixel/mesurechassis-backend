@@ -83,7 +83,19 @@
     "vision_2035_2040": "Fondation reconnue d'utilité publique portant son nom, patrimoine construit à partir de rien",
     "vision_2030": "MesureChâssis établi + Léia lancé + sortie complète de faillite + patrimoine réel",
     "vision_2027": "500+ abonnés Pro, cash-flow perso stabilisé, sortie apurement partielle",
-    "conviction_forte": "Avec l'IA, tout va 20-100x plus vite qu'avant → il refuse les délais 'à l'ancienne'"
+    "conviction_forte": "Avec l'IA, tout va 20-100x plus vite qu'avant → il refuse les délais 'à l'ancienne'",
+    "aspiration_media_2027_2028": {
+      "cible_ultime": "Passage chez Guillaume Pley — Legend (YouTube, media francophone majeur)",
+      "angle_narratif": "Menuisier belge, alcoolique sobre 2 ans, faillite → reconstruction via IA no-code Emergent. Double mission : SaaS artisans + app sevrage alcool (Léia). Storytelling underdog + rédemption + tech accessible + mission sociale.",
+      "roadmap_media": [
+        "T+2m : LinkedIn belge 2x/sem",
+        "T+4m : Presse locale (RTBF, La Libre, L'Écho, Trends-Tendances)",
+        "T+8m : Podcasts francophones spécialisés (GDIY Matthieu Stefani, Le Panier)",
+        "T+10m : Podcasts belges grand public",
+        "T+15-18m : Legend / Guillaume Pley — quand histoire mature + chiffres + Léia beta"
+      ],
+      "regle": "Ne pas brûler les étapes. Construire la légitimité pierre par pierre."
+    }
   },
 
   "contraintes_operationnelles": {
