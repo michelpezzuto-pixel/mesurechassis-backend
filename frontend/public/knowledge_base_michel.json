@@ -25,7 +25,8 @@
     "PKG_EPARGNE_QUOTIDIEN_BE": "Livrets réglementés, cashback, chèques-repas, éco-chèques, négociation abonnements (Loi Ducarme)",
     "PKG_ASSURANCE_VIE_BE": "Branche 21/23, taxe prime 2%, précompte 30%, différences vs assurance-vie FR",
     "PKG_BOURSE_ETF_BE": "Compte-titres, TOB, précompte mobilier 30%, OLO, ETF accessibles (PEA n'existe PAS en BE)",
-    "PKG_DONS_FISCALITE_BE": "Réduction 45% dons associations agréées (équivalent Coluche FR mais 45% vs 75%)"
+    "PKG_DONS_FISCALITE_BE": "Réduction 45% dons associations agréées (équivalent Coluche FR mais 45% vs 75%)",
+    "PKG_DROITS_DEFENSE_BE": "Défense créancier/huissier/arnaques : prescriptions BE, frais recouvrement, solde insaisissable, RGPD, phishing (CRITIQUE pour Michel)"
   },
 
   "PKG_FAILLITE_BE": {
@@ -462,6 +463,128 @@
     "specifique_michel": "Non prioritaire aujourd'hui (probablement pas ou peu d'impôt à payer en faillite). À reconsidérer si revenus imposables futurs."
   },
 
+  "PKG_DROITS_DEFENSE_BE": {
+    "title": "Défense du citoyen : créanciers, huissiers, arnaques — Belgique",
+    "priority_for_michel": "P0 — DIRECTEMENT applicable dans situation faillite",
+    "source_FR_mappee": "Guide L'Œil du Hibou 2026 (26 fiches droit FR)",
+    "philosophie_transposable": "Prescription, formalisme, charge de la preuve, trace écrite = principes universels applicables en BE. Les délais et montants changent, la doctrine reste.",
+    "PRESCRIPTION_DETTES_BE": {
+      "regle_generale": "10 ans (art. 2262bis §1 Code civil belge)",
+      "creances_periodiques": "5 ans (art. 2277 Code civil) — loyers, salaires, pensions alimentaires, arriérés intérêts",
+      "factures_professionnels_vers_particuliers": "1 an (art. 2272 Code civil) — hôtels/restaurants, artisans pour travaux",
+      "factures_energie_telecom_eau": "5 ans (créances périodiques) — mais délai relance interne 1 an après suspension service",
+      "impots_directs_BE": "5 ans (SPF Finances) — 7 ans si fraude",
+      "TVA": "3 ans (7 ans si fraude/défaut déclaration)",
+      "prescription_abrégée_arret_travaux": "1 an après réception",
+      "reset_prescription": "Reconnaissance de dette OU acte de poursuite = repart à zéro. NE JAMAIS répondre 'oui je vais payer' sans avoir vérifié la prescription.",
+      "action_agent": "Toujours demander date exacte de facture/dette + date dernier paiement + date dernière relance formelle. Calculer prescription avant tout paiement."
+    },
+    "FRAIS_RECOUVREMENT_ILLEGAUX_BE": {
+      "cadre_legal_principal": [
+        "Loi du 20/12/2002 sur le recouvrement amiable des dettes du consommateur",
+        "Loi du 04/05/2023 (renforcement 2023) — encadrement drastique des frais",
+        "Livre XIX Code Droit Économique (dettes consommateur)"
+      ],
+      "ce_qui_est_INTERDIT": [
+        "Frais de rappel au-delà des barèmes fixés par arrêté royal",
+        "Frais de 'dossier' ou 'gestion' non prévus contractuellement",
+        "Menaces, intimidation, contact hors horaires (8h-20h ouvrables)",
+        "Contact avec employeur, famille, voisins sauf coordonnées",
+        "Ajout d'intérêts au-delà du taux légal ou contractuel",
+        "Frais avocat/huissier facturés en phase amiable"
+      ],
+      "barèmes_maximum_2023_LOI_04_05_2023": {
+        "creances_jusqua_150_EUR": "20 € max frais rappel",
+        "creances_150_500_EUR": "30 € + 10% du montant > 150 €",
+        "creances_500_plus": "65 € + 5% du montant > 500 €, max 7 500 €",
+        "delai_premier_rappel_gratuit": "14 jours obligatoire",
+        "rappel_gratuit_recommande": "1 rappel gratuit obligatoire par courrier"
+      },
+      "recours_michel": [
+        "Signaler à SPF Économie (economie.fgov.be) — sanctions administratives sévères",
+        "Test-Achats peut soutenir",
+        "Ombudsman du secteur concerné"
+      ]
+    },
+    "SOMME_INSAISISSABLE_BE": {
+      "reference_legale": "Art. 1409 §1er Code judiciaire + Loi 24/03/2003 relative au compte à vue protégé",
+      "quotites_saisissables_revenus_2026": {
+        "jusqu_a_1281_EUR_par_mois": "Insaisissable en totalité",
+        "1281_a_1376_EUR": "20% saisissable",
+        "1376_a_1517_EUR": "30% saisissable",
+        "1517_a_1657_EUR": "40% saisissable",
+        "au_dela_1657_EUR": "100% saisissable",
+        "majoration_enfant_charge": "+83 €/mois par enfant à charge (indexé)",
+        "note": "Montants indexés annuellement — vérifier au 1er janvier chaque année"
+      },
+      "compte_a_vue_protege": "Solde bancaire est INSAISISSABLE à hauteur de la partie insaisissable des revenus du mois. En pratique : ~1 749 €/mois protégés",
+      "procedure_recuperation_saisie_abusive": "Requête devant juge des saisies (art. 1395 CJ)",
+      "action_michel": "Vérifier avec avocat BAJ : ton compte a-t-il été notifié comme 'compte à vue protégé' auprès de la banque ? Si non, à faire immédiatement."
+    },
+    "DELAI_DE_GRACE_BE": {
+      "termes_et_delais_juge_de_paix": {
+        "reference": "Art. 1244 §2 Code civil",
+        "procedure": "Requête au juge de paix pour obtenir délais de paiement (max 3 ans en pratique, souvent 6-24 mois)",
+        "conditions": "Débiteur malheureux et de bonne foi, situation temporaire, chances de redressement"
+      },
+      "reglement_collectif_de_dettes": {
+        "reference": "Art. 1675/2 et suivants Code judiciaire",
+        "difference_faillite": "Pour NON-COMMERÇANTS (salariés, particuliers). Michel = commerçant/entrepreneur → faillite s'applique, pas RCD",
+        "note_michel": "Non applicable dans ton cas (tu es en faillite personnelle commerçant), mais bon à savoir pour ton entourage"
+      }
+    },
+    "DROIT_ERREUR_FISCAL_BE": {
+      "regularisation_spontanee": {
+        "portail": "MyMinFin.be — service 'régularisation'",
+        "principe": "Corriger déclaration erronée avant contrôle = pénalité réduite ou nulle",
+        "reference": "Art. 444 CIR 92 (accroissement d'impôt fonction de la faute)"
+      },
+      "reponse_a_avis_rectification": "Toujours répondre dans les 30 jours (délai obligatoire), même pour contester",
+      "conciliateur_fiscal_federal": "SCF (Service de Conciliation Fiscale) — gratuit, saisir par écrit"
+    },
+    "TROP_PERCU_VIREMENT_ERREUR_BE": {
+      "regle": "Art. 1376 Code civil — répétition de l'indû, obligation de rendre",
+      "prescription_action_restitution": "10 ans (droit commun), 5 ans si créancier professionnel",
+      "attention_michel": "En cas de virement reçu par erreur pendant ta faillite : NE PAS toucher, prévenir immédiatement banque + curateur pour éviter accusation de détournement"
+    },
+    "PROTECTION_ARNAQUES_BE": {
+      "faux_conseiller_bancaire": {
+        "reflexes": "Raccrocher, rappeler la banque via numéro officiel (au dos carte)",
+        "code_action_urgence": "Card Stop 070 344 344 (24/7) pour bloquer carte",
+        "signalement": "safeonweb.be + police locale"
+      },
+      "phishing_SMS_faux_colis_faux_amendes": {
+        "signaux": "URL suspecte, urgence artificielle, demande de code, ton alarmiste",
+        "action": "Ne rien cliquer, transférer SMS vers 8000 (SPF Économie)",
+        "reference": "Loi 13/06/2005 protection communications électroniques"
+      },
+      "faux_support_technique_Microsoft_Windows": {
+        "principe": "Aucun éditeur légitime ne t'appellera JAMAIS pour un problème PC",
+        "action": "Débrancher, scanner système, ne jamais donner accès à distance"
+      },
+      "faux_paiement_securise": "Toujours rester DANS la plateforme officielle (Amazon, Vinted, Marketplace). Toute demande de sortir vers WhatsApp / mail direct / virement bancaire = ARNAQUE",
+      "faux_cheque_de_banque": "Loi UE : encaissement ne prouve pas la validité. Attendre 20 jours ouvrables avant d'envoyer marchandise",
+      "eco_delinquance_faux_renovation_etat": "En BE : aucun démarchage téléphonique légitime pour primes rénovation. Consulter uniquement energie.wallonie.be ou homegrade.brussels"
+    },
+    "GUICHETS_GRATUITS_BE": [
+      "Bureau d'Aide Juridique (BAJ) — dossier en cours pour Michel via lao.dp-a.be",
+      "Test-Achats — association consommateurs (test-achats.be, ligne info 0800 33 077)",
+      "SPF Économie — signalement pratiques commerciales (economie.fgov.be, 0800 120 33)",
+      "Médiateur fédéral (federalombudsman.be)",
+      "Ombudsfin (secteur bancaire, ombudsfin.be)",
+      "Ombudsman assurances (ombudsman-assurances.be)",
+      "Ombudsman télécom (mediateurtelecom.be)",
+      "Centres CPAS pour aide sociale d'urgence",
+      "Justitiehuis / Maison de Justice (SPF Justice)"
+    ],
+    "DOCTRINE_HIBOU_APPLICABLE_UNIVERSELLEMENT": [
+      "Trace écrite ou rien (recommandé avec accusé de réception)",
+      "Ton tempo, jamais le leur (24h de réflexion minimum)",
+      "Vérifier la source, pas la vitrine (BCE/CBE, numéro SPF, texte de loi)",
+      "Payer sa dette, toute sa dette, rien que sa dette"
+    ]
+  },
+
   "STRATEGIES_INAPPLICABLES_EN_BE": {
     "titre": "Stratégies du guide Lézard NON transposables en BE",
     "liste": [
@@ -499,7 +622,8 @@
       "assurance-vie / branche 21 / branche 23 / précompte assurance / TAB": "PKG_ASSURANCE_VIE_BE",
       "PEA / ETF / bourse / compte-titres / OLO / TOB / Trade Republic / Bolero / Keytrade": "PKG_BOURSE_ETF_BE",
       "don / donation / association / Coluche / Restos du Coeur / réduction fiscale don": "PKG_DONS_FISCALITE_BE",
-      "cadastre / revenu cadastral / précompte immobilier / assurance solde restant dû / Lemoine / Ducarme ASRD": "PKG_IMMO_BE"
+      "cadastre / revenu cadastral / précompte immobilier / assurance solde restant dû / Lemoine / Ducarme ASRD": "PKG_IMMO_BE",
+      "prescription / huissier / recouvrement / dette prescrite / créancier / saisie / insaisissable / arnaque / phishing / faux conseiller / Card Stop / trop-perçu / droit à l'erreur": "PKG_DROITS_DEFENSE_BE"
     }
   }
 }
