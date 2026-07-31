@@ -203,7 +203,27 @@
       "reference": "Positive Engagement (Judson Brewer, Yale)",
       "regle_leia": "L'utilisateur ouvre Léia POUR faire une action dans la vie réelle (réunion AA, appel proche, gratitude), PAS pour 'être dans l'app'. App = outil, jamais but."
     },
-    "insight_michel_incarnation": "Michel EST la preuve vivante de sa philosophie : il regarde son alcoolisme + faillite + déchéance sans les fuir, et construit MesureChâssis+Léia PRÉCISÉMENT parce qu'il ne cache pas ça. Son propre parcours = validation de la méthode."
+    "insight_michel_incarnation": "Michel EST la preuve vivante de sa philosophie : il regarde son alcoolisme + faillite + déchéance sans les fuir, et construit MesureChâssis+Léia PRÉCISÉMENT parce qu'il ne cache pas ça. Son propre parcours = validation de la méthode.",
+    "principe_one_shot_joy_du_2026_06_XX": {
+      "declencheur": "Michel a observé que l'email Apple 'MesureChâssis est disponible' déclenche une animation d'explosion/confettis MAIS uniquement à la première ouverture. Impossible de la rejouer. Il trouve ça 'génial'.",
+      "nom_design_pattern": "One-Shot Joy / Ephemeral Celebration",
+      "principe": "Certains moments doivent être RARES par conception. Rareté = valeur. Anti-Duolingo (qui banalise les célébrations par surabondance).",
+      "application_leia": {
+        "regle": "Les milestones de sobriété/reconstruction dans Léia = animations UNIQUES par étape, IMPOSSIBLES à rejouer",
+        "milestones_proposes": [
+          "J1 sobriété : aube qui se lève",
+          "S1 : arbre qui pousse",
+          "M1 : galaxie qui s'ouvre",
+          "M6 : montagne conquise",
+          "1 an : LA PLUS BELLE (moment de vie majeur, impossible à retrouver)",
+          "2 ans : signature exclusive",
+          "5 ans, 10 ans... : chaque anniversaire = animation unique jamais vue avant"
+        ],
+        "regle_absolue": "Aucune rejouabilité. Aucun farming possible. L'émotion vient de l'irrécupérabilité.",
+        "impact_marketing": "Les utilisateurs se rappelleront de leur animation 1 an même 15 ans plus tard. C'est ça, la vraie émotion tech."
+      },
+      "opposition_a_apps_engagement_agressives": "Duolingo, Habitica, MyFitnessPal → animations récurrentes, dévaluées par la répétition. Léia → l'inverse : moins souvent, mais gravé dans la mémoire."
+    }
   },
 
   "observation_lecture_michel": {
