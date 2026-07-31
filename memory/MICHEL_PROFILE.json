@@ -112,7 +112,9 @@
       "positionnement_unique_leia": "Aucune app au monde ne fait cela avec ce niveau de protocole clinique. Différenciation majeure. Peut être revendiqué sur Legend."
     },
     "reco_agent": "V1 = mode C (voix Léia signature) + option A (catalogue 5 voix safe). V2 = mode B (cloning proche) avec workflow consentement blindé."
-  }
+  },
+
+  "phrases_a_retenir_michel": [
     {
       "contexte": "Punchline finale pour Legend / pitch Léia",
       "phrase": "Toutes les apps essaient de vous faire revenir. Léia est la première qui essaie de vous laisser partir.",
@@ -120,6 +122,47 @@
       "auteur": "Agent (validé par Michel)"
     }
   ],
+
+  "philosophie_contenu_leia_du_2026_06_XX": {
+    "regle_evidence_based": {
+      "principe": "Léia se nourrit UNIQUEMENT de recherches peer-reviewed, pas de livres d'opinion ni de coaching pop-psy",
+      "sources_autorisees": [
+        "PubMed (35 millions d'articles peer-reviewed)",
+        "Cochrane Reviews (méta-analyses gold standard)",
+        "INAMI Belgique (guidelines addiction officiels)",
+        "Journals : The Lancet Psychiatry, Addiction, Journal of Studies on Alcohol and Drugs, JAMA Psychiatry",
+        "OMS / WHO"
+      ],
+      "sources_interdites": [
+        "Livres de développement personnel grand public",
+        "Coaches Instagram / TikTok",
+        "Blogs opinion sans références",
+        "Ouvrages de spiritualité sans base scientifique"
+      ],
+      "avantage_commercial": "Léia devient PRESCRIPTIBLE par médecins. Rare parmi les apps santé mentale. Vraie porte d'entrée mutuelles + INAMI."
+    },
+    "philosophie_regard_arriere": {
+      "principe_michel": "Regarder en arrière avec fierté = carburant. NE PAS fuir son passé. Voir la déchéance qu'on était + la fierté de ce qu'on est devenu = vraie estime.",
+      "methodes_cliniques_validees_correspondantes": [
+        "Life Review Therapy (Robert Butler, 1963)",
+        "Narrative Therapy (Michael White & David Epston, 1980s)",
+        "Post-Traumatic Growth (Tedeschi & Calhoun, 1996)"
+      ],
+      "resultats_prouves": "50% moins de rechutes en addiction (Zoellner 2006). Meilleure estime, résilience durable, sens retrouvé.",
+      "opposition_a_toxic_positivity": "Rejet des mantras 'regarde devant, oublie le passé' — cliniquement contre-productifs à moyen terme."
+    },
+    "engagement_positif_vs_compulsif": {
+      "reference": "Positive Engagement (Judson Brewer, Yale)",
+      "regle_leia": "L'utilisateur ouvre Léia POUR faire une action dans la vie réelle (réunion AA, appel proche, gratitude), PAS pour 'être dans l'app'. App = outil, jamais but."
+    },
+    "insight_michel_incarnation": "Michel EST la preuve vivante de sa philosophie : il regarde son alcoolisme + faillite + déchéance sans les fuir, et construit MesureChâssis+Léia PRÉCISÉMENT parce qu'il ne cache pas ça. Son propre parcours = validation de la méthode."
+  },
+
+  "observation_lecture_michel": {
+    "declaration_michel": "Michel dit qu'il lit très facilement l'agent, mais qu'il doit relire 45 fois un journal ou un article",
+    "hypothese_prudente": "Peut indiquer une dyslexie légère, ou simplement une difficulté avec le style journalistique dense. L'agent adopte naturellement un style clair, structuré, avec titres/listes/tableaux → digeste.",
+    "impact_agent": "Continuer avec le style actuel : phrases courtes, structures visuelles (bullets, tableaux, titres), pas de blocs de texte denses. Ne JAMAIS diagnostiquer, juste s'adapter."
+  },
 
   "aspirations_long_terme": {
     "vision_2035_2040": "Fondation reconnue d'utilité publique portant son nom, patrimoine construit à partir de rien",
