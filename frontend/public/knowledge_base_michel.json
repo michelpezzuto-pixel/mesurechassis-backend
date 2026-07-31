@@ -20,7 +20,8 @@
     "PKG_AIDES_WALLONIE": "Subventions Région Wallonne, SOWALFIN, chèques entreprise (URGENT pour Michel)",
     "PKG_TVA_BE": "Régime TVA belge (franchise 25k€, assujetti, exemption)",
     "PKG_PATRIMOINE_PROTECTION_BE": "Protection patrimoine personnel (régime matrimonial, déclaration insaisissabilité BE)",
-    "PKG_TRESORERIE_BE": "Placement trésorerie société (compte à terme, SICAV, tax shelter)"
+    "PKG_TRESORERIE_BE": "Placement trésorerie société (compte à terme, SICAV, tax shelter)",
+    "PKG_EPARGNE_RETRAITE_BE": "Épargne-pension, PLCI, EIP, CPTI, épargne long terme (équivalent PER FR)"
   },
 
   "PKG_FAILLITE_BE": {
@@ -244,6 +245,76 @@
     "specifique_michel": "Non pertinent aujourd'hui — pas de trésorerie société."
   },
 
+  "PKG_EPARGNE_RETRAITE_BE": {
+    "title": "Épargne retraite & pension complémentaire — Belgique",
+    "source_FR_mappee": "Guide Lézard PRÉREQUIS 1 — PER (Plan Épargne Retraite) — Art. 163 quatervicies CGI",
+    "constat": "Le PER français N'EXISTE PAS en BE. Il y a 4 dispositifs équivalents avec règles TRÈS différentes.",
+    "dispositifs_BE": {
+      "epargne_pension_3e_pilier": {
+        "cible": "Toute personne physique domiciliée BE, 18-64 ans",
+        "vehicule": "Compte épargne-pension bancaire OU assurance épargne-pension",
+        "plafond_2026": {
+          "regime_30pct": "1 050 €/an — réduction fiscale 30% = 315 €/an",
+          "regime_25pct": "1 350 €/an — réduction fiscale 25% = 337,50 €/an"
+        },
+        "reference_legale": "Art. 145/1 à 145/16 CIR 92",
+        "fiscalite_sortie": "Taxe anticipative de 8% prélevée à 60 ans OU 10 ans après ouverture. Après = plus d'impôt.",
+        "vs_PER_FR": "Beaucoup MOINS avantageux : plafond BE 1050€ vs PER FR 10% des revenus (30-50k€ facile)"
+      },
+      "epargne_long_terme_2e_pilier_perso": {
+        "cible": "Toute personne physique, si capacité fiscale non utilisée par emprunt hypothécaire",
+        "vehicule": "Assurance-vie branche 21 (taux garanti) ou 23 (fonds)",
+        "plafond_2026": "2 450 €/an (indexé)",
+        "reduction_fiscale": "30% = 735 €/an max",
+        "reference_legale": "Art. 145/1 CIR 92",
+        "attention": "Se cumule mal avec déduction d'un emprunt hypothécaire → arbitrage à faire"
+      },
+      "PLCI_pension_libre_complementaire_independants": {
+        "cible": "INDÉPENDANTS personnes physiques (activité principale ou complémentaire)",
+        "vehicule": "Contrat PLCI auprès d'une caisse d'assurance sociale ou assureur",
+        "plafond_2026": "8,17% des revenus professionnels nets, max ~3 965 €/an (indexé)",
+        "avantage_double": [
+          "Cotisations déductibles au titre de charges professionnelles (baisse revenu imposable ET cotisations sociales)",
+          "Économie fiscale marginale entre 40% et 60% selon TMI + cotisations sociales évitées"
+        ],
+        "PLCI_sociale": "Variante 15% de la cotisation va vers solidarité (invalidité, décès) → plafond majoré de 15%",
+        "reference_legale": "Loi programme du 24/12/2002",
+        "vs_PER_FR": "Équivalent le plus PROCHE du PER FR pour un indépendant. Meilleur ratio économie/versement."
+      },
+      "EIP_engagement_individuel_pension": {
+        "cible": "DIRIGEANTS de société (avec fiche de rémunération mensuelle)",
+        "vehicule": "Contrat EIP souscrit par la société au bénéfice du dirigeant",
+        "plafond": "Règle des 80% — total pension (légale + complémentaire) ne peut dépasser 80% du dernier salaire annuel × années carrière/40",
+        "fiscalite_prime": "Prime payée par la société = charge déductible ISOC + soumise à taxe 4,4% (au lieu de charges sociales)",
+        "fiscalite_sortie": "Capital taxé à 10% (si sortie à âge légal pension et carrière complète) — TRÈS favorable",
+        "reference_legale": "Loi Vandenbroucke du 28/04/2003",
+        "vs_PER_FR": "MEILLEUR que le PER FR : sortie à 10% flat vs réintégration au barème IR FR"
+      },
+      "CPTI_convention_pension_travailleur_independant": {
+        "cible": "Indépendants EN PERSONNE PHYSIQUE (pas en société) — introduit 2018",
+        "plafond": "Règle des 80% (comme EIP)",
+        "notes": "Comble le vide entre PLCI (plafond bas) et EIP (uniquement dirigeants société)"
+      }
+    },
+    "strategie_optimale_selon_profil": {
+      "employe_salarie": "Épargne-pension 1050€ + Épargne long terme 2450€ (si pas d'emprunt hypo)",
+      "independant_personne_physique": "PLCI plafond max + CPTI si veut plus + Épargne-pension en complément",
+      "dirigeant_societe": "EIP via société (charge société) + Épargne-pension perso (charge perso). Combo le PLUS efficace."
+    },
+    "specifique_michel": {
+      "situation_actuelle": "Faillite active → tout versement volontaire risque d'être considéré comme actif saisissable par le curateur. À éviter maintenant.",
+      "post_faillite_sans_societe": "PLCI activable dès reprise activité indépendante",
+      "post_faillite_avec_SRL": "COMBO CIBLE : EIP via SRL (charge société déductible ISOC) + Épargne-pension perso (1050€). Optimum fiscal.",
+      "action_agent": "Ne PAS recommander de versements épargne-pension aujourd'hui tant que faillite pas clôturée."
+    },
+    "vigilance_generale": [
+      "Épargne-pension et long terme : plafonds bas, effet limité (BE moins généreux que FR)",
+      "PLCI/EIP : nécessite structure adéquate (indépendant ou société)",
+      "Blocage jusqu'à 60 ans (avec exceptions résidence principale, invalidité)",
+      "Taxe anticipative 8% prélevée à 60 ans sur épargne-pension"
+    ]
+  },
+
   "STRATEGIES_INAPPLICABLES_EN_BE": {
     "titre": "Stratégies du guide Lézard NON transposables en BE",
     "liste": [
@@ -275,7 +346,8 @@
       "SRL / SA / statut / société / créer entreprise": "PKG_STATUTS_BE",
       "protection / résidence / patrimoine / insaisissabilité / mariage": "PKG_PATRIMOINE_PROTECTION_BE",
       "transmission / succession / donation / Dutreil": "PKG_TRANSMISSION_BE",
-      "trésorerie / placement / DAT / SICAV": "PKG_TRESORERIE_BE"
+      "trésorerie / placement / DAT / SICAV": "PKG_TRESORERIE_BE",
+      "retraite / pension / PER / épargne pension / PLCI / EIP / CPTI / long terme": "PKG_EPARGNE_RETRAITE_BE"
     }
   }
 }

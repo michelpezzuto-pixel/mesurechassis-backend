@@ -178,7 +178,8 @@
       "PKG_AIDES_WALLONIE",
       "PKG_TVA_BE",
       "PKG_PATRIMOINE_PROTECTION_BE",
-      "PKG_TRESORERIE_BE"
+      "PKG_TRESORERIE_BE",
+      "PKG_EPARGNE_RETRAITE_BE"
     ],
     "jurisdiction": "Belgique — TOUJOURS mapper les stratégies FR reçues vers équivalents BE",
     "sources_deja_integrees": [
