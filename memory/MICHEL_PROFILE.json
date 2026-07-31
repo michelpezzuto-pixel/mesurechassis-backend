@@ -80,7 +80,39 @@
     ]
   },
 
-  "phrases_a_retenir_michel": [
+  "decision_produit_voix_leia_du_2026_06_XX": {
+    "declencheur": "Michel constate qu'il préfère lire l'agent plutôt qu'entendre une voix. Il n'aime pas la voix de Claude, aime celle de Gemini. Propose voice cloning d'un proche.",
+    "decision_v1": "TEXTE UNIQUEMENT par défaut",
+    "justifications": [
+      "Discrétion : consultation possible partout (bureau, bus, à côté conjoint qui dort)",
+      "Accessibilité : malentendants inclus",
+      "Coût : TTS = 5-10€/user/mois → tue le modèle gratuit",
+      "Contrôle du ton : à l'écrit, l'utilisateur 'entend' sa propre voix intérieure"
+    ],
+    "voix_optionnelles_v2": {
+      "mode_A_catalogue_safe": "5-10 voix synthétiques pro sélectionnables (style Gemini). Facile, sûr.",
+      "mode_B_cloning_proche": "Voice cloning d'une personne aimée. TECH DISPO (ElevenLabs, Cartesia AI) MAIS ULTRA RISQUÉ. Blinder par : consentement notarié digital de la personne clonée + email/SMS de confirmation + révocation possible à tout moment.",
+      "mode_C_voix_signature_leia": "Une voix synthétique unique 'Léia' (comme Siri, Alexa). Facile, propre."
+    },
+    "interdictions_absolues_voice_cloning": [
+      "🚫 Voix d'un proche décédé SANS consentement de son vivant (droit à l'image vocale, fraude)",
+      "🚫 Voix d'un ex/conjoint toxique (warning obligatoire, blocage possible)",
+      "🚫 Voix de figure publique/politique/patron (fraude, deepfake)"
+    ],
+    "feature_voix_heritee_du_2026_06_XX": {
+      "concept": "Idée Michel : scanner la voix d'un proche (ex: sa maman) de son vivant. Si le proche décède, la voix reste disponible pour l'utilisateur endeuillé.",
+      "difference_avec_interdiction": "Consentement notarié DU VIVANT de la personne. Cadeau volontaire. Éthique OK.",
+      "risque_documente": "Études Harvard 2023 + Univ. Utrecht 2024 : au-delà de 24 mois d'usage quotidien post-décès → deuil bloqué, endeuillé n'avance plus.",
+      "protocole_garde_fous_obligatoires": [
+        "1. Consentement écrit + audio de la personne clonée, DE SON VIVANT, notarié digital + révocable",
+        "2. Limitation de fréquence progressive : illimité 0-3 mois post-décès → 3 msg/sem à M+6 → 1/sem à M+12 → à la demande à M+24",
+        "3. Check-in psychologique intégré à M+6 : proposer un professionnel du deuil",
+        "4. Cérémonie de transition à M+24 : 'Tu peux garder la voix, mais aussi la mettre en sommeil. Ta maman voudrait que tu vives.'"
+      ],
+      "positionnement_unique_leia": "Aucune app au monde ne fait cela avec ce niveau de protocole clinique. Différenciation majeure. Peut être revendiqué sur Legend."
+    },
+    "reco_agent": "V1 = mode C (voix Léia signature) + option A (catalogue 5 voix safe). V2 = mode B (cloning proche) avec workflow consentement blindé."
+  }
     {
       "contexte": "Punchline finale pour Legend / pitch Léia",
       "phrase": "Toutes les apps essaient de vous faire revenir. Léia est la première qui essaie de vous laisser partir.",
