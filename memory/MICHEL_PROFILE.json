@@ -645,6 +645,22 @@
       "concept": "Boucle bidirectionnelle : user décrit un état → Léia génère image miroir → user réagit / ajuste → Léia regénère → analyse conjointe. Conversation à trois (user, Léia, image).",
       "impact_therapeutique": "L'image sert de miroir extérieur qui matérialise ce que les mots ne peuvent pas dire. Ouvre des insights inaccessibles en conversation texte pure.",
       "tech": "Gemini Nano Banana OU GPT Image 1 — coût ~5 centimes/image, dispo immédiatement"
+    },
+    "content_moderation_generation_images": {
+      "declencheur": "Michel a alerté : 'Il faut limiter Léia. Pas de designs de tatouages (incitation à modification corporelle impulsive), pas de sexuel, etc.'",
+      "principe": "Éviter tout contenu qui pourrait déclencher une addiction de substitution (cross-addiction) chez un utilisateur en sevrage. Bien connu en AA : remplacer l'alcool par tatouages compulsifs, achats, sexe, jeu.",
+      "categories_bloquees": [
+        "🚫 Sexuel / érotique (tout niveau)",
+        "🚫 Tatouages / piercings / modifications corporelles",
+        "🚫 Violence, sang, armes",
+        "🚫 Alcool sous toute forme (bière, vin, verres, bars, etc.)",
+        "🚫 Drogues illicites, joints, seringues",
+        "🚫 Jeux d'argent (casino, machines à sous, paris)",
+        "🚫 Auto-mutilation (couteaux, lames, cordes)",
+        "🚫 Nourriture excessive / addictive (trigger cross-addiction alimentaire)",
+        "🚫 Contenu de haine (racial, religieux, politique extrême)"
+      ],
+      "tech": "Pré-filtre prompt utilisateur + post-filtre image générée (Google SafeSearch API + moderation OpenAI + règles maison spécifiques addictions)"
     }
   }
     "objet": "Idées de features Léia validées par Michel lors de la conversation du 2026-06-XX. À intégrer dans le briefing Léia (/app/memory/LEIA_AGENT_BRIEFING.json) quand le gate 4149 sera ouvert.",
