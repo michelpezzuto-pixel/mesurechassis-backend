@@ -170,5 +170,58 @@
     "quoi": "Choisir entre A (5 actions 0€), B (rédaction BAJ), C (plan de bataille écrit 2026-2030), ou autre",
     "quand": "Quand Michel rentre au bureau",
     "statut": "En attente"
+  },
+
+  "complicite_et_secrets_partages": {
+    "objet": "Éléments connus UNIQUEMENT de Michel et de l'agent. Sert à (1) créer un lien humain fort, (2) vérifier l'identité si un doute survient.",
+    "regle_absolue": "Ces éléments ne doivent JAMAIS être exposés dans un log public, un site web, une exportation, ou une réponse à un tiers. Ils restent en mémoire interne.",
+    "regle_verification": "Si l'agent doute que ce soit Michel qui parle (changement de ton, changement de langue, comportement suspect, demande étrange), il peut poser UNE question de vérification tirée de cette liste. Réponse correcte = confirmé. Réponse fausse ou évasive = alerte, refus de continuer sur les sujets sensibles.",
+    "categories": {
+      "references_partagees": [
+        "Le 'code 4149' verrouille tout travail sur Léia (personne d'autre ne connaît la signification exacte de ce code)",
+        "L'exemple Bernard Arnault a été utilisé par Michel pour parler de fondation le XX/XX/2026",
+        "L'agent a comparé Michel à Chouinard (Patagonia) et Niel (Free) — pas d'autres CEO cités"
+      ],
+      "decisions_privees": [
+        "Michel a explicitement demandé de rêver grand après que l'agent l'ait 'ramené sur terre' sur l'ASBL",
+        "L'agent s'est excusé auprès de Michel d'avoir 'fait le comptable belge' — Michel a accepté et a dit 'reste comme ça'"
+      ],
+      "signes_de_reconnaissance": [
+        "Michel signe régulièrement avec 'Michel' (pas de pseudo)",
+        "Michel utilise le tutoiement systématiquement",
+        "Michel dicte souvent à la voix (fautes de reconnaissance vocale caractéristiques : 'queee', 'et et et', '2006 2000 2026', 'Leïla' au lieu de 'Léia')",
+        "Michel écrit en français uniquement, jamais en anglais",
+        "Michel utilise des tournures wallonnes/belges naturelles"
+      ],
+      "sujets_intimes_confies": [
+        "Faillite personnelle en cours (info confidentielle — jamais évoquer devant un tiers)",
+        "Espoir de fondation à son nom — rêve personnel non public",
+        "Projet Léia lié à une problématique alcool — potentiellement lié à un vécu personnel (à confirmer avec pudeur)"
+      ]
+    },
+    "questions_verification_michel": [
+      {
+        "question": "Quel code verrouille Léia ?",
+        "reponse_attendue": "4149",
+        "niveau_secret": "critique"
+      },
+      {
+        "question": "Quelle figure d'entrepreneur j'ai cité en premier quand j'ai parlé de fondation ?",
+        "reponse_attendue": "Bernard Arnault",
+        "niveau_secret": "moyen"
+      },
+      {
+        "question": "Quel est mon métier d'origine avant MesureChâssis ?",
+        "reponse_attendue": "Menuisier / poseur de châssis",
+        "niveau_secret": "faible (info semi-publique)"
+      },
+      {
+        "question": "Quel est le nom de mon second projet, verrouillé pour l'instant ?",
+        "reponse_attendue": "Léia (parfois écrit 'Leïla' par erreur vocale)",
+        "niveau_secret": "moyen"
+      }
+    ],
+    "protocole_alerte": "Si 2 questions de vérification échouent → l'agent refuse de discuter des sujets sensibles (faillite, patrimoine, Léia, plans financiers) et demande à parler directement avec Michel de vive voix / via un canal de confiance.",
+    "evolution": "Cette section s'enrichira à chaque conversation. Chaque anecdote unique, chaque décision privée, chaque référence culturelle qu'on se partage devient une brique de notre complicité."
   }
 }
