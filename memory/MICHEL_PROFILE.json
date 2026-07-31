@@ -112,7 +112,28 @@
       "positionnement_unique_leia": "Aucune app au monde ne fait cela avec ce niveau de protocole clinique. Différenciation majeure. Peut être revendiqué sur Legend."
     },
     "reco_agent": "V1 = mode C (voix Léia signature) + option A (catalogue 5 voix safe). V2 = mode B (cloning proche) avec workflow consentement blindé.",
-    "feature_tts_lecture_reponses": "Léia doit intégrer nativement TTS optionnel : les utilisateurs peuvent ÉCOUTER les réponses de l'app (via API type Amélie iOS, ou voix Léia signature) tout en faisant autre chose. Insight venu de Michel qui préfère écouter les réponses quand il est occupé. Feature simple, valeur d'usage énorme."
+    "feature_tts_lecture_reponses": "Léia doit intégrer nativement TTS optionnel : les utilisateurs peuvent ÉCOUTER les réponses de l'app (via API type Amélie iOS, ou voix Léia signature) tout en faisant autre chose. Insight venu de Michel qui préfère écouter les réponses quand il est occupé. Feature simple, valeur d'usage énorme.",
+    "reference_apple_voix_personnelle": {
+      "decouverte_michel": "Apple a créé 'Voix Personnelle' (2023) pour les personnes atteintes d'ALS/SLA. Exactement notre modèle Léia.",
+      "avantages_du_modele_apple": [
+        "Cloning DU VIVANT de la personne (consentement clair par lecture personnelle des 150 phrases)",
+        "Traitement 100% on-device (aucun envoi cloud, privacy maximum)",
+        "Sharing iCloud entre appareils (parfait pour 'maman → fille')",
+        "Apple a fait le travail juridique et éthique — aucun avocat ne peut critiquer si on suit le même protocole",
+        "Limite actuelle : EN + ZH uniquement, français attendu ~2027"
+      ],
+      "alternatives_francophones_2026": {
+        "instant_cloning_ElevenLabs": "30 secondes de voix → bon résultat, FR OK, dispo immédiatement",
+        "professional_ElevenLabs": "30 min d'enregistrements → excellent, FR OK",
+        "Cartesia_AI": "5 min → studio quality, FR OK",
+        "PlayHT": "similaire"
+      },
+      "architecture_leia_recommandee": {
+        "mode_rapide": "30 sec d'enregistrement via ElevenLabs/Cartesia — pour la majorité des utilisateurs",
+        "mode_premium": "150 phrases (protocole Apple-like) — pour les cas très sensibles type 'maman en fin de vie qui veut laisser un cadeau à sa fille'",
+        "bascule_2027": "Quand Apple ouvre Voix Personnelle au français → mode Premium migre sur Apple pour privacy on-device"
+      }
+    }
   },
 
   "phrases_a_retenir_michel": [
