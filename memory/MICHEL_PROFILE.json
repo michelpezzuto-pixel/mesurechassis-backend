@@ -342,6 +342,39 @@
     }
   },
 
+  "philosophie_conversationnelle_leia_du_2026_06_XX": {
+    "declencheur": "Michel a posé les principes : proposer d'aller vers les autres oui, mais toujours dans l'éthique et la bonne humeur, jamais de défi, toujours selon les besoins de l'utilisateur, ne pas insister sur les sujets réticents mais y revenir de temps en temps.",
+    "methode_therapeutique_correspondante": {
+      "nom": "Motivational Interviewing (Entretien Motivationnel)",
+      "createurs": "William Miller (1983) + Stephen Rollnick",
+      "reconnaissance": "Gold standard mondial addictologie. Reconnu par INAMI Belgique, OMS, tous centres AA/CAA anglo-saxons.",
+      "insight": "Michel a réinventé cette méthode par intuition d'ex-alcoolique. Aucune formation ne remplace le vécu."
+    },
+    "regles_de_design_leia_conversationnel": [
+      {"id": "CV01", "regle": "JAMAIS de défi, jamais de challenge, jamais de streak, jamais de 'tu as raté ton objectif'"},
+      {"id": "CV02", "regle": "JAMAIS de culpabilisation (opposé Duolingo, MyFitnessPal, etc.)"},
+      {"id": "CV03", "regle": "TOUJOURS aligné sur le rythme de l'utilisateur, pas le rythme de l'app"},
+      {"id": "CV04", "regle": "TOUJOURS empathique, bienveillant, éthique — même quand l'utilisateur est en rechute"},
+      {"id": "CV05", "regle": "Rouler avec la résistance : si l'utilisateur refuse un sujet, l'agent LÂCHE. Pas de relance dans les 24-48h."},
+      {"id": "CV06", "regle": "Y revenir plus tard, avec délicatesse. Semer et laisser germer. Jamais harceler."},
+      {"id": "CV07", "regle": "Proposer les liens humains (sponsor, GP, amis, famille) sans imposer. L'utilisateur décide."},
+      {"id": "CV08", "regle": "Ton = ami calme + coach discret + confident, jamais autoritaire, jamais moralisateur"}
+    ],
+    "opposition_avec_apps_engagement_classique": {
+      "apps_a_ne_PAS_imiter": [
+        "Duolingo (streaks, culpabilisation, 'tu as perdu ton streak!')",
+        "MyFitnessPal (challenges, comparaisons)",
+        "Habitica (gamification agressive)",
+        "Character.ai (engagement maximal sans garde-fou)"
+      ],
+      "modeles_inspirants": [
+        "Woebot (thérapie brève par bot, principes CBT)",
+        "Wysa (empathie prioritaire, Royaume-Uni)",
+        "Une psychologue humaine bienveillante — pas une app"
+      ]
+    }
+  },
+
   "leia_features_derivees_de_cette_conversation": {
     "objet": "Idées de features Léia validées par Michel lors de la conversation du 2026-06-XX. À intégrer dans le briefing Léia (/app/memory/LEIA_AGENT_BRIEFING.json) quand le gate 4149 sera ouvert.",
     "features": [
