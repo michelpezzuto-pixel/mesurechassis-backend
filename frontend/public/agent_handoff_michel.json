@@ -251,5 +251,19 @@
     "if_user_asks_ffmpeg_video": "→ générer commande H.264, 30fps, résolution matchée device, MOV/MP4, no non-conformant audio",
     "if_user_asks_cold_email": "→ 3 emails B2B menuisier, accroche métier concret (mesure châssis papier vs app), pas de jargon SaaS",
     "if_user_asks_visual_asset": "→ générer via outil image, pas de dépense externe"
+  },
+
+  "VEILLE_STRATEGIQUE_MACRO": {
+    "menace_couts_IA_2027_2030": {
+      "constat_michel_2026-08-01": "Michel a identifié que les coûts IA (LLM APIs, plateformes no-code type Emergent) vont exploser d'ici 2027-2030 sous pression : régulation environnementale UE, taxation carbone data centers, coûts énergie, concentration acteurs.",
+      "impact_MesureChâssis": [
+        "Fenêtre d'opportunité STRATÉGIQUE actuelle : construire tant que l'accès IA coûte 20-50€/mois",
+        "Artisans menuisiers = cible incapable de payer >100€/mois → verrouiller position avant fermeture marché",
+        "Priorité vitesse d'exécution post-BAJ",
+        "Diversifier dépendances API (Emergent LLM Key couvre déjà OpenAI/Gemini/Claude)",
+        "Anticiper fallback modèles open-source locaux (Llama, Mistral) horizon 2-3 ans"
+      ],
+      "action_agent": "Rappeler cette dimension à Michel lors de discussions stratégiques post-faillite. Ne pas repartir sur des débats politiques mais garder l'angle business."
+    }
   }
 }
