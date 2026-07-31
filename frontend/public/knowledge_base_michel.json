@@ -582,7 +582,39 @@
       "Ton tempo, jamais le leur (24h de réflexion minimum)",
       "Vérifier la source, pas la vitrine (BCE/CBE, numéro SPF, texte de loi)",
       "Payer sa dette, toute sa dette, rien que sa dette"
-    ]
+    ],
+    "NOUVEAUTE_2026_BNPL_CCD2": {
+      "titre": "Encadrement du paiement fractionné (Buy Now Pay Later) — Belgique 20 novembre 2026",
+      "loi": "Loi belge adoptée à la Chambre le 09/07/2026, transposition directive UE 2023/2225 (CCD2)",
+      "entree_en_vigueur": "20 novembre 2026",
+      "impact_principal": "Le BNPL (paiement fractionné, différé, en 3-4 fois même sans frais) entre désormais dans le champ du crédit à la consommation (Livre VII CDE)",
+      "obligations_nouvelles_prestataires": [
+        "Évaluation obligatoire de la solvabilité du consommateur",
+        "Information précontractuelle complète (SECCI)",
+        "Vérification identité + âge",
+        "Interdiction stricte octroi aux mineurs (sanctions Inspection économique)",
+        "Enregistrement à la Centrale des Crédits aux Particuliers (BNB)"
+      ],
+      "consequence_retard_paiement": {
+        "clarification": "Il n'y a PAS de 'taxe' au sens strict — le mot est trompeur",
+        "ce_qui_se_passe_reellement": [
+          "Intérêts moratoires légaux (~5,25% en 2026)",
+          "Frais de recouvrement encadrés par Loi 04/05/2023 (barèmes stricts)",
+          "Fichage à la CCP de la BNB — inscription au fichier négatif = blocage crédit futur pendant plusieurs années",
+          "Traitement comme défaut de crédit classique (huissier, cession créance, etc.)"
+        ]
+      },
+      "exceptions": [
+        "Paiements différés gratuits accordés directement par le vendeur sans tiers financeur, remboursés dans délai limité",
+        "Certains crédits < 200€ (règles allégées)",
+        "B2B (les entreprises ne sont PAS concernées — CCD2 = consommateurs uniquement)"
+      ],
+      "impact_MesureChâssis": {
+        "modele_actuel": "Abonnement SaaS mensuel B2B → PAS concerné (B2B + service au mois, pas avance)",
+        "attention_future": "Si option 'annuel payable en 12x sans frais' proposée à indépendants personnes physiques → à faire valider par juriste"
+      },
+      "impact_michel_personnel": "Zéro impact direct (situation faillite = pas de crédit accessible de toute façon). À connaître pour conseils entourage et pour anticiper évolution modèle SaaS post-faillite."
+    }
   },
 
   "STRATEGIES_INAPPLICABLES_EN_BE": {
