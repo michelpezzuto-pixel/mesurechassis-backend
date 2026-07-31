@@ -247,7 +247,21 @@
         "T+10m : Podcasts belges grand public",
         "T+15-18m : Legend / Guillaume Pley — quand histoire mature + chiffres + Léia beta"
       ],
-      "regle": "Ne pas brûler les étapes. Construire la légitimité pierre par pierre."
+      "regle": "Ne pas brûler les étapes. Construire la légitimité pierre par pierre.",
+      "tarifs_legend_confirmes_2026": {
+        "source": "Le Monde + Ozap + Le Revenu, grille fuitée juin 2026",
+        "interview_complete_HT": "62 000 - 79 000€",
+        "reportage_site_HT": "38 000€",
+        "format_reel_entrepreneur_HT": "31 000€",
+        "sponsoring_emission_HT": "17 000€",
+        "post_linkedin_sponsorise_HT": "10 000€",
+        "gratuit_pour": "Personnalités qui apportent l'audience (Arnault, Sarkozy, Ghosn) → invitation Legend, pas de paiement"
+      },
+      "strategie_optimale_michel_pour_legend": {
+        "piste_1_prioritaire": "Emergent sponsorise le passage (31k€) sur son budget marketing → à négocier avec Diyea comme volet ambassadeur. ROI Emergent : 5-10M vues audience avec narrative unique. Coût perso Michel : 0€.",
+        "piste_2_moyen_terme": "Attendre invitation Legend gratuite (T+18-24m) quand histoire mature",
+        "piste_3_hypothetique_post_faillite": "Payer 31k€ soi-même — seulement si cash disponible dans 3-4 ans ET ROI clair"
+      }
     },
     "strategie_lancement_synchronise_leia_legend": {
       "concept": "Synchronized product launch — Léia sort dans les Stores le jour même du passage de Michel dans Legend (Guillaume Pley).",
