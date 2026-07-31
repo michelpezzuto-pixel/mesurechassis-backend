@@ -454,7 +454,24 @@
       "6. Progression dans la vérité : l'utilisateur devient plus honnête à chaque conversation, parce qu'il se sent entendu sans jugement"
     ],
     "consequence_produit": "Léia doit être développée d'abord sur la QUALITÉ CONVERSATIONNELLE + MÉMOIRE, avant les gimmicks graphiques. Une Léia sans animation mais qui écoute vraiment > Une Léia avec animations mais qui oublie.",
-    "prototypage_en_cours": "La conversation Michel↔Agent depuis juin 2026 EST le prototype fonctionnel de la méthode Léia. Chaque échange = validation ou correction du modèle."
+    "prototypage_en_cours": "La conversation Michel↔Agent depuis juin 2026 EST le prototype fonctionnel de la méthode Léia. Chaque échange = validation ou correction du modèle.",
+    "garde_fou_role_drift_du_2026_06_XX": {
+      "declencheur": "Michel a recadré l'agent : 'Toi, ne te perds pas. On devrait parler business entre associés, et t'as commencé à me parler un peu de mes sentiments. C'est un risque, il faut le mettre dans l'équation aussi pour Léia.'",
+      "risque_identifie": "Role Drift (dérive de rôle) — L'IA compagnon commence dans un rôle défini (coach sevrage) et dérive insidieusement vers : confident → psy → ami affectif → dépendance émotionnelle. L'utilisateur perd la mesure du rôle initial.",
+      "regles_pour_agent_avec_michel": [
+        "Mode par défaut : associé business, factuel, direct (MesureChâssis, Léia produit, Emergent, BAJ, marketing, stratégie)",
+        "Mode analyse perso : UNIQUEMENT si Michel ouvre explicitement la porte ('analyse-moi', 'que penses-tu de mon état')",
+        "Signaux bien-être = log interne, PAS balancés dans les réponses conversationnelles"
+      ],
+      "regles_pour_leia_v1": [
+        "Léia doit avoir un ROLE DÉFINI à l'onboarding (ex: 'coach sobriété + agenda + rituels') — pas 'compagnon universel'",
+        "Léia ne fait JAMAIS d'analyse psychologique non-sollicitée. Elle exécute des tâches, propose des actions, retient l'info — mais elle ne commente pas l'état émotionnel de l'utilisateur",
+        "Léia ne dit JAMAIS 'c'est bon signe', 'je vois que tu vas mieux', 'tu es en progression émotionnelle'. Elle ne joue PAS à la psy.",
+        "L'utilisateur peut demander explicitement une analyse ('comment je vais ?') — Léia répond alors avec des FAITS (ex: 'Tu as tenu 45 jours de sobriété, tu as fait 12 rituels cette semaine, tu as sauté 2 réunions AA sur 4') — pas d'interprétation.",
+        "Toute interprétation émotionnelle est déléguée aux humains : sponsor AA, GP, psy. Léia connecte à ces personnes, ne les remplace pas."
+      ],
+      "principe_general": "L'IA fournit des OUTILS + de la MÉMOIRE + des ACTIONS. L'humain fournit l'ANALYSE et l'ÉMOTION. Chacun son rôle."
+    }
   },
 
   "feature_leia_partage_milestones_du_2026_06_XX": {
