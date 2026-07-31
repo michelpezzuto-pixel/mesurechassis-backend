@@ -139,7 +139,8 @@
       "Config prix & marges (import Excel template menuisier)",
       "Générateur devis PDF pro",
       "Sens d'ouverture DIN",
-      "Intégration Billit API"
+      "Intégration Billit API",
+      "Dunning / gestion impayés Stripe : J-3 rappel amical, J0 prélèvement, J+1/+3 retry auto, J+7 warning in-app, J+10 suspension totale accès. Conforme Loi BE 04/05/2023 (rappel gratuit + délai 14j + frais plafonnés + traçabilité). B2B exempté CCD2."
     ],
     "P2": [
       "Feature #17 : séparation mesure ouverture vs mesure châssis (picker wheel)",
