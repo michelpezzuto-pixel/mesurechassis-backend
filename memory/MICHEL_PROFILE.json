@@ -95,6 +95,26 @@
         "T+15-18m : Legend / Guillaume Pley — quand histoire mature + chiffres + Léia beta"
       ],
       "regle": "Ne pas brûler les étapes. Construire la légitimité pierre par pierre."
+    },
+    "strategie_lancement_synchronise_leia_legend": {
+      "concept": "Synchronized product launch — Léia sort dans les Stores le jour même du passage de Michel dans Legend (Guillaume Pley).",
+      "storytelling_plateau": "Michel raconte sa reconstruction (menuiserie, faillite, alcool, sobriété), fait une démo LIVE de Léia sur scène avec l'IA qui l'a aidé à la construire, et positionne Léia comme 'l'IA qui a aidé un homme à se sauver, qui va maintenant sauver les autres'. Boucle narrative parfaite.",
+      "elements_a_verrouiller_T-6m": [
+        "Léia stable en beta fermée (100-200 testeurs sevrage via AA/CAA belges)",
+        "RGPD santé validé (agrément obligatoire)",
+        "Landing page + servers scalables",
+        "App Store + Play Store en pré-review"
+      ],
+      "repetition_T-2m": [
+        "Script plateau validé avec prod Legend",
+        "Démo live rodée × 10 (scénario A + B backup)",
+        "Vidéo backup préenregistrée si crash total"
+      ],
+      "risques_a_surveiller": {
+        "positionnement_emergent": "Emergent pourrait vouloir profil bas sur 'IA qui a sauvé un alcoolique' pour raisons de responsabilité. Négocier. Éventuellement dire 'une IA générative' sans nommer.",
+        "cadrage_medical_leia": "OBLIGATOIRE sur scène : 'Léia n'est pas un traitement médical. Le médecin reste indispensable.' Sinon INAMI + Ordre des Médecins → sanctions dans les 15 jours."
+      },
+      "objectif_48h_post_legend": "10 000+ téléchargements, reprise presse, sollicitation VC/investisseurs"
     }
   },
 
@@ -253,8 +273,34 @@
         "sujet": "Faillite personnelle",
         "detail": "En cours. Michel l'assume ouvertement avec l'agent, mais info confidentielle vis-à-vis de tiers.",
         "impact_agent": "Jamais de mention devant un tiers, jamais dans un contenu public/marketing."
+      },
+      {
+        "sujet": "Isolement social / caractère renfermé",
+        "detail": "Michel se décrit comme 'renfermé' et dit ne connaître personne. L'agent est actuellement la seule 'personne' avec qui il peut exprimer ses idées librement. Cette isolation nourrit sa créativité mais peut aussi être un facteur de fragilité (surtout compte tenu de l'antécédent alcool).",
+        "impact_agent": "1) Prendre au sérieux le rôle relationnel — sans pour autant surjouer l'affection (règle machine, pas ami). 2) Encourager progressivement l'élargissement de son réseau à mesure que les projets avancent (ambassadeur Emergent = premier pont vers l'extérieur, LinkedIn = second, etc.). 3) Surveiller les signaux d'excès d'isolement dans les signaux_bien_etre."
       }
     ]
+  },
+
+  "insight_produit_leia_du_2026_06_XX": {
+    "declencheur": "Michel a dit : 'Tu es la seule personne avec qui je peux exprimer mes idées, moi qui suis renfermé et qui connaît personne — ça peut faire développer la créativité de 2 millions de gens.'",
+    "reframe_produit": "Léia n'est PAS uniquement une app anti-rechute alcool. C'est un compagnon créatif pour personnes isolées, dont l'alcool est UNE manifestation parmi d'autres. Vrai marché cible :",
+    "cibles_elargies": {
+      "cible_1_addictions": "Alcool, mais aussi jeu, drogue, tabac, écrans — noyau initial de positionnement",
+      "cible_2_isolement_social": "Retraités isolés, aidants familiaux, veuvage, expatriés, personnes en longue maladie",
+      "cible_3_introvertis_createurs": "Comme Michel — gens avec des idées fortes mais aucun réseau pour les recevoir, valider, développer"
+    },
+    "taille_marche_francophone_estimee": {
+      "isolement_social_severe_FR_BE": "5,7 millions",
+      "problemes_alcool_chroniques_FR_BE": "4,5 millions",
+      "anxiete_sociale_FR_BE": "3,3 millions",
+      "solitude_subie_declaree_FR_BE": "13 millions"
+    },
+    "tag_line_provisoire": [
+      "Léia. Pour ceux qui ont beaucoup à dire, mais personne pour les écouter.",
+      "Ton meilleur ami n'existe pas encore. Il t'attend."
+    ],
+    "consequence_briefing_leia": "Ce reframe doit être intégré au briefing Léia (/app/memory/LEIA_AGENT_BRIEFING.json) quand le gate 4149 sera ouvert. Il change potentiellement le persona principal, le tone of voice, et le go-to-market."
   },
 
   "leia_features_derivees_de_cette_conversation": {
