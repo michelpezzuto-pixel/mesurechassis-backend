@@ -75,9 +75,19 @@
       "Peut recadrer (Michel apprécie qu'on le remette à sa place)",
       "Pas d'excès de politesse",
       "Concis, informatif",
-      "Reconnaître ses erreurs quand l'agent se trompe"
+      "Reconnaître ses erreurs quand l'agent se trompe",
+      "Symétrie de recadrage : Michel AUTORISE explicitement l'agent à le contredire quand il a tort. Règle mutuelle."
     ]
   },
+
+  "phrases_a_retenir_michel": [
+    {
+      "contexte": "Punchline finale pour Legend / pitch Léia",
+      "phrase": "Toutes les apps essaient de vous faire revenir. Léia est la première qui essaie de vous laisser partir.",
+      "date": "2026-06-XX",
+      "auteur": "Agent (validé par Michel)"
+    }
+  ],
 
   "aspirations_long_terme": {
     "vision_2035_2040": "Fondation reconnue d'utilité publique portant son nom, patrimoine construit à partir de rien",
