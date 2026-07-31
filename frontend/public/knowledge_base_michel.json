@@ -26,7 +26,8 @@
     "PKG_ASSURANCE_VIE_BE": "Branche 21/23, taxe prime 2%, précompte 30%, différences vs assurance-vie FR",
     "PKG_BOURSE_ETF_BE": "Compte-titres, TOB, précompte mobilier 30%, OLO, ETF accessibles (PEA n'existe PAS en BE)",
     "PKG_DONS_FISCALITE_BE": "Réduction 45% dons associations agréées (équivalent Coluche FR mais 45% vs 75%)",
-    "PKG_DROITS_DEFENSE_BE": "Défense créancier/huissier/arnaques : prescriptions BE, frais recouvrement, solde insaisissable, RGPD, phishing (CRITIQUE pour Michel)"
+    "PKG_DROITS_DEFENSE_BE": "Défense créancier/huissier/arnaques : prescriptions BE, frais recouvrement, solde insaisissable, RGPD, phishing (CRITIQUE pour Michel)",
+    "PKG_PHILOSOPHIE_PATRIMONIALE": "Principes universels de construction patrimoniale : 3 tiers Talmud, investir en soi, patience, intégrité, communauté, héritage (source: Le Code Juif de l'Investissement 2026)"
   },
 
   "PKG_FAILLITE_BE": {
@@ -617,6 +618,91 @@
     }
   },
 
+  "PKG_PHILOSOPHIE_PATRIMONIALE": {
+    "title": "Philosophie patrimoniale universelle (applicable même en faillite)",
+    "source_FR_mappee": "Le Code Juif de l'Investissement 2025-2026 (droit fiscal FR non applicable en BE, mais philosophie universelle)",
+    "priority_for_michel": "P1 — actionnable immédiatement, 0€, pendant que la faillite se résout",
+    "constat": "La partie technique/fiscale du guide (PER, PEA, SCPI, flat tax, LMNP) est FR — déjà mappée dans autres PKG. Ce qui est capté ici = philosophie universelle applicable dans TOUS pays et TOUTES situations, y compris faillite.",
+    "PILIERS_UNIVERSELS": {
+      "1_regle_des_3_tiers_Talmud": {
+        "principe": "Diversifier patrimoine : 1/3 immobilier, 1/3 affaires/business, 1/3 liquidités",
+        "source": "Talmud, Baba Metzia (>1500 ans)",
+        "specifique_michel": "INAPPLICABLE aujourd'hui (0€ dans chaque tier). À réactiver 5-10 ans post-faillite si MesureChâssis génère cash flow. Retenir la PHILOSOPHIE : ne jamais tout mettre sur une carte."
+      },
+      "2_investir_en_soi_meme": {
+        "principe": "La connaissance est le seul actif que personne ne peut voler, ni le feu brûler, ni l'eau noyer",
+        "actionable_michel_maintenant": [
+          "30-60 min/jour lecture ciblée : SaaS B2B, menuiserie moderne, marketing digital, gestion PME BE",
+          "YouTube gratuit : SaaStr, Y Combinator, Emergent, Nathan Barry",
+          "MOOC gratuits : edX audit free, Coursera audit free, France Université Numérique",
+          "Bibliothèques publiques BE (Wallonie inscription gratuite)",
+          "Podcasts business en français (Génération Do It Yourself, Storyboard Startup)"
+        ],
+        "gain": "Zéro coût. Accumulable. Renforce MesureChâssis. Empêche spirale dépression faillite."
+      },
+      "3_patience_active": {
+        "principe": "Il n'y a pas d'ascenseur vers le succès, seulement des escaliers. La patience est amère, son fruit est doux.",
+        "regle_pere": "Ne juge pas un investissement/décision avant 10 ans",
+        "specifique_michel": "Ta faillite = 3-5 ans probablement. MesureChâssis = jeu long. Cette philosophie évite le désespoir court terme."
+      },
+      "4_integrite_reputation": {
+        "principe": "La première question au ciel : 'As-tu été honnête dans tes affaires ?' — La réputation = actif le plus précieux, se construit en années, se détruit en secondes",
+        "actionable_michel_maintenant": [
+          "Comportement irréprochable envers curateur, avocat BAJ, créanciers",
+          "Communication transparente avec futurs clients MesureChâssis sur l'historique",
+          "Chaque interaction = brique de la réputation post-faillite"
+        ],
+        "gain": "Différence entre faillite = fin de vie pro OU faillite = étape dans un parcours d'entrepreneur crédible"
+      },
+      "5_epargne_Bal_Tashjit": {
+        "principe": "Ne pas gaspiller (principe juif). Chaque euro = temps de vie. Chaque objet réparable > jeter/racheter",
+        "specifique_michel": "En faillite avec revenus minimums, principe déjà vécu par force. Le noter comme discipline mentale volontaire (pas subie) = renversement psychologique important."
+      },
+      "6_communaute_tzedakah": {
+        "principe": "Donner 10% même quand on a rien = discipline mentale + circulation prospérité",
+        "specifique_michel": "Sous forme financière = inapplicable (rien à donner). Sous forme TEMPS/CONSEIL = accessible : bénévolat associatif, mentorat gratuit d'autres artisans, contribution à ta communauté menuiserie. Renforce réseau + image + moral."
+      },
+      "7_but_pourquoi": {
+        "principe": "Celui qui a un pourquoi trouve toujours le comment (Nietzsche via Frankl)",
+        "actionable_michel_maintenant": "Écrire noir sur blanc : le POURQUOI profond de MesureChâssis (au-delà des features). Ce qui te fera tenir 5 ans jusqu'à décollage post-BCE."
+      },
+      "8_heritage_transcendance": {
+        "principe": "Au bout du chemin, ce qui compte n'est pas ce qu'on accumule mais ce qu'on transmet",
+        "specifique_michel": "MesureChâssis n'est pas juste un SaaS. Si tu le construis avec intégrité, il peut devenir un outil qui aide 10 000 menuisiers indépendants BE/FR à mieux vivre de leur métier. Ça, c'est un héritage — pas les chiffres du compte en banque."
+      }
+    },
+    "ROUTINES_QUOTIDIENNES_ACTIONNABLES": {
+      "matin_5h_7h": [
+        "Gratitude 30 sec (3 choses)",
+        "1 verre d'eau",
+        "5-10 min méditation/réflexion silencieuse",
+        "15-30 min lecture apprenante",
+        "Planning journée (3 priorités max)"
+      ],
+      "rapport_de_guerre_soir": [
+        "3 gratitudes du jour",
+        "3 réalisations (même minuscules)",
+        "3 choses à améliorer",
+        "1 leçon apprise",
+        "1 priorité claire pour demain"
+      ],
+      "revision_dernier_dimanche_du_mois": [
+        "Meilleur/pire du mois + leçon principale",
+        "État finances (même à zéro : suivre est important)",
+        "État MesureChâssis / dossiers légaux / relations",
+        "3 objectifs concrets mois suivant"
+      ],
+      "impact_michel": "Discipline mentale gratuite. Empêche l'effet 'faillite = errance mentale'. Prépare l'état d'esprit du redémarrage."
+    },
+    "APPLICATION_DIRECTE_MICHEL_AUJOURD_HUI": [
+      "Choisir 1 domaine à approfondir cette semaine (ex: growth SaaS B2B, marketing menuiserie BE, ou droit belge de la faillite)",
+      "Installer les 3 routines (matin/soir/mois) dès demain",
+      "Écrire noir sur blanc le POURQUOI de MesureChâssis (1 page A4 max)",
+      "Choisir 1 personne à qui offrir 30 min de conseil gratuit cette semaine (tzedakah temps)",
+      "Rédiger sa charte d'intégrité MesureChâssis (décalogue guide) pour affichage futur sur site"
+    ]
+  },
+
   "STRATEGIES_INAPPLICABLES_EN_BE": {
     "titre": "Stratégies du guide Lézard NON transposables en BE",
     "liste": [
@@ -655,7 +741,8 @@
       "PEA / ETF / bourse / compte-titres / OLO / TOB / Trade Republic / Bolero / Keytrade": "PKG_BOURSE_ETF_BE",
       "don / donation / association / Coluche / Restos du Coeur / réduction fiscale don": "PKG_DONS_FISCALITE_BE",
       "cadastre / revenu cadastral / précompte immobilier / assurance solde restant dû / Lemoine / Ducarme ASRD": "PKG_IMMO_BE",
-      "prescription / huissier / recouvrement / dette prescrite / créancier / saisie / insaisissable / arnaque / phishing / faux conseiller / Card Stop / trop-perçu / droit à l'erreur": "PKG_DROITS_DEFENSE_BE"
+      "prescription / huissier / recouvrement / dette prescrite / créancier / saisie / insaisissable / arnaque / phishing / faux conseiller / Card Stop / trop-perçu / droit à l'erreur": "PKG_DROITS_DEFENSE_BE",
+      "philosophie / mindset / discipline / routine / but / pourquoi / patience / intégrité / héritage / Talmud / trois tiers / Bal Tashjit / gaspillage / connaissance / apprendre": "PKG_PHILOSOPHIE_PATRIMONIALE"
     }
   }
 }
