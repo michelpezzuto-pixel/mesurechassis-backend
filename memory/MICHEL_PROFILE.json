@@ -111,7 +111,8 @@
       ],
       "positionnement_unique_leia": "Aucune app au monde ne fait cela avec ce niveau de protocole clinique. Différenciation majeure. Peut être revendiqué sur Legend."
     },
-    "reco_agent": "V1 = mode C (voix Léia signature) + option A (catalogue 5 voix safe). V2 = mode B (cloning proche) avec workflow consentement blindé."
+    "reco_agent": "V1 = mode C (voix Léia signature) + option A (catalogue 5 voix safe). V2 = mode B (cloning proche) avec workflow consentement blindé.",
+    "feature_tts_lecture_reponses": "Léia doit intégrer nativement TTS optionnel : les utilisateurs peuvent ÉCOUTER les réponses de l'app (via API type Amélie iOS, ou voix Léia signature) tout en faisant autre chose. Insight venu de Michel qui préfère écouter les réponses quand il est occupé. Feature simple, valeur d'usage énorme."
   },
 
   "phrases_a_retenir_michel": [
