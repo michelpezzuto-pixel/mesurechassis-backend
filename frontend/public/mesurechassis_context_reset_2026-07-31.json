@@ -1,0 +1,277 @@
+{
+  "handoff_summary": {
+    "date_generated": "2026-07-31",
+    "session_duration": "Marathon session ~24h (30/07 début après-midi → 31/07 05h00 + reprise matinée)",
+    "original_problem_statement": "Initialiser et refondre une application SaaS de production nommée 'MesureChâssis' pour les entreprises de menuiserie. RBAC strict, wizard de prise de mesures dynamique, exports. Marketing B2B (LinkedIn, cold email Resend), ASO App Store, Phase 5 code planning, statut légal complexe (faillite Michel Pezzuto).",
+    "user_profile": {
+      "name": "Michel Pezzuto",
+      "age": 48,
+      "language": "Français UNIQUEMENT",
+      "communication_style": "Direct, complice, franc, chaleureux — PAS professionnel/robotique. Michel dislikes repetition et politesse excessive.",
+      "background": "Menuisier belge 20 ans de terrain (chantiers alu/PVC Belgique + Luxembourg). Dessinateur AutoCAD 3D. Autodidacte informatique. Aucune formation développement.",
+      "current_status": "Incapacité de travail INAMI depuis 2023 (invalidité +66% depuis 04-04-2024). Procédure de faillite personnelle en cours (Garde-corps en kit). Célibataire isolé. Rue Stain 1E, 5140 Sombreffe.",
+      "revenues_monthly": {
+        "pension_luxembourg_CNAP": 1650,
+        "indemnites_INAMI": 680.52,
+        "total_brut": 2330,
+        "charges_fixes": 1367,
+        "pension_alimentaire_versee": 281,
+        "reste_a_vivre": 943,
+        "unit": "EUR"
+      },
+      "NISS": "780125 339 71",
+      "contacts": {
+        "email_pro": "info@mesurechassis.com",
+        "email_perso": "michelpezzuto@gmail.com",
+        "email_backup": "michelpezzuto@hotmail.com",
+        "phone_whatsapp": "+32 496 65 00 32",
+        "linkedin": "https://www.linkedin.com/in/michel-pezzuto-aa4797235",
+        "facebook": "https://www.facebook.com/profile.php?id=61590909743900",
+        "instagram": "https://www.instagram.com/mesurechassis/",
+        "tiktok": "https://www.tiktok.com/@mesure.chssis",
+        "youtube": "PAS ENCORE CRÉÉ (tâche future)"
+      }
+    },
+    "critical_rules": {
+      "no_code_rule": "Michel a explicitement demandé PAS DE MODIFICATIONS CODE sur l'app iOS/backend. Toute demande de code = DÉFÉRÉ à 'Phase 5'.",
+      "no_spend_rule": "Michel est en faillite. ZÉRO dépense marketing/pub/influenceurs. Attente subventions Région Wallonne.",
+      "stripe_disabled": "BETA_MODE=true maintenu. Stripe désactivé. Tous utilisateurs = 10 ans Pro gratuit.",
+      "language_french_only": "Communication STRICTEMENT en français. Adresser 'Michel'."
+    },
+    "app_state": {
+      "product_name": "MesureChâssis",
+      "target_users": "Menuisiers professionnels francophones (BE, FR, LU)",
+      "iOS_current_live_version": "1.0.36 (Prête pour la distribution — pas encore publiée)",
+      "iOS_pending_submission": "1.0.38 (SOUMISE À APPLE le 31/07/2026 ~04h30 — En attente de vérification)",
+      "iOS_previous_beta": "1.0.37 supprimée/renommée en 1.0.38 pour matcher le build Emergent",
+      "app_store_id": "6776357930",
+      "app_store_url": "https://apps.apple.com/fr/app/mesurechâssis/id6776357930",
+      "tech_stack": "React Native Expo + FastAPI + MongoDB",
+      "integrations": ["Anthropic Claude", "Google Gemini 2.5 Flash", "OpenAI (via Emergent LLM key)", "Resend (email)", "Stripe (DÉSACTIVÉ)"],
+      "features": "Prise de mesures châssis, 14 formes de baies (carré, porte, trapèze, œil-de-bœuf, coulissant, cintré...), import IA de cahiers des charges (PDF/Excel/photo), 6 formats d'export (PDF client, Excel devis, CSV ERP), mode hors-ligne, sauvegarde cloud, photos jointes."
+    },
+    "completed_this_session": {
+      "1_linkedin_profile": {
+        "status": "DONE",
+        "description": "Profil complet publié",
+        "details": {
+          "photo": "Photo perso Michel (fond vacances soleil, chemise noire, barbe grise)",
+          "titre": "Fondateur MesureChâssis 🇧🇪 · 20 ans de terrain châssis alu & PVC · Consultant IA & développement SaaS pour la construction",
+          "infos_section": "Résumé complet avec parcours Carte Blanche + création MesureChâssis + spécialité pilotage agents IA",
+          "experiences": [
+            "Fondateur & Développeur — MesureChâssis (janvier 2024 → présent)",
+            "Consultant IA & Pilotage d'agents intelligents — Freelance (janvier 2025 → présent)",
+            "Bureau d'études & Coordination technique — Carte Blanche Filsdorf/LUX (2013-2016)",
+            "Dessinateur AutoCAD & Support informatique — Bunusevac (2010-2013)",
+            "Métreur/Poseur châssis — Batisystem (2008)",
+            "Métreur commercial — Coljon Arlon (2007-2008)",
+            "Métreur & Poseur châssis aluminium — Alutec Luxembourg (2005-2007)",
+            "Employé polyvalent — Cactus Luxembourg (2004)"
+          ],
+          "formation": "Académie des Beaux-Arts (2000-2004)",
+          "competences": "20+ compétences (Pilotage agents IA, Prompt engineering, AutoCAD, Menuiserie alu/PVC, React Native, etc.)",
+          "services": ["Développement d'applications mobiles", "Conseil en IA", "Automatisation", "Prise de mesures", "Menuiserie", "Conseil en informatique"],
+          "banniere_HD": "Générée custom via Playwright HTML→PNG 1584×396: fond noir + tagline 'Créée par un menuisier belge, pour les menuisiers belges' + logo MesureChâssis + drapeau belge vertical + MADE IN BELGIUM + badge App Store + URL. File: /app/frontend/public/banner/linkedin_banner_v1.png",
+          "open_to_work": "Non activé (à faire plus tard)"
+        }
+      },
+      "2_website_mesurechassis_com": {
+        "status": "DONE — uploadé sur Easyhost via FileZilla",
+        "changes_on_index_html": [
+          "Bandeau haut : 'Android en beta' → 'Android prévu 2026' (fini le mensonge)",
+          "Bouton CTA hero : redirige vers reserver.html (au lieu de Calendly direct)",
+          "Texte CTA : 'Réserver 15 min avec Michel' → 'Réserver 15 min sur WhatsApp'",
+          "Sous-titre hero : 'Rdv gratuit' → 'Appel WhatsApp gratuit'",
+          "FAQ Q1 : réponse honnête (iPhone/iPad only, Android + web prévus 2026)",
+          "FAQ Q3 : noms de plans harmonisés (Artisan Solo/MAX/Entreprise/Entreprise MAX) + limite 3 chantiers",
+          "CTA final : 'Version Android bientôt' → 'prévue 2026'",
+          "Footer enrichi : ajout section 'Réseaux sociaux' avec 4 icônes SVG cliquables (LinkedIn, Facebook, Instagram, TikTok) + hover orange animé"
+        ],
+        "new_page_reserver_html": {
+          "purpose": "Formulaire de qualification anti-bot + anti-démarcheur avant accès Calendly",
+          "questions": [
+            "Q1 Nom complet",
+            "Q2 Nom entreprise",
+            "Q3 Taille équipe (radio: solo/2-5/6-15/15+)",
+            "Q4 Problème(s) rencontré(s) — MULTI-CHOIX checkboxes (ressaisie, devis lents, erreurs, papier, autre)",
+            "Q5 Numéro WhatsApp (validation format international +32, auto-format)",
+            "Q6 Email pro",
+            "Q7 Question métier pareclose (4 choix, bonne réponse = B 'la baguette qui maintient le vitrage')",
+            "Q7bis Question métier ouvrant caché (4 choix, bonne réponse = A 'profilé alu où ouvrant se confond avec dormant') — APPARAÎT si Q7 fausse"
+          ],
+          "anti_bot": [
+            "Honeypot invisible (champ 'website' caché)",
+            "Question métier 1 (pareclose)",
+            "Question métier 2 (ouvrant caché) — si Q1 fausse",
+            "Bloc 'Contact humain' avec numéro +32 496 65 00 32 en gros bouton orange si 2 mauvaises réponses"
+          ],
+          "redirection": "Une fois validé → Calendly avec paramètres URL préremplis (name, email, notes de qualification, whatsapp)",
+          "calendly_slug": "/new-meeting (slug généré automatiquement, gardé tel quel)"
+        },
+        "delivered_zip": "/app/frontend/public/mesurechassis_livraison_2026-07-30.zip",
+        "delivered_url": "https://window-field-app.preview.emergentagent.com/mesurechassis_livraison_2026-07-30.zip",
+        "TODO_website_future": [
+          "Ajouter lien YouTube au footer quand chaîne créée",
+          "Créer une page Mentions légales / CGV quand BAJ levée + BCE actif",
+          "Ajouter section 'Fondateur' avec photo + parcours + lien LinkedIn"
+        ]
+      },
+      "3_calendly_configuration": {
+        "status": "DONE + testé end-to-end",
+        "event_name": "Appel WhatsApp - 15 min",
+        "url_slug": "calendly.com/michelpezzuto/new-meeting",
+        "duration": "15 min",
+        "location": "Custom (WhatsApp) — 'Michel vous appellera sur WhatsApp au numéro que vous avez fourni'",
+        "increments": "15 min",
+        "custom_questions": [
+          "Q1 (paragraphe, non required) : 'Informations pré-qualification (rempli automatiquement par le formulaire mesurechassis.com)'",
+          "Q2 (short answer, required) : '📱 Confirmez votre numéro WhatsApp (format +32...)'"
+        ],
+        "payment": "DÉSACTIVÉ (règle Michel : appel gratuit)",
+        "test_reservation": "Effectuée le 30/07 avec entreprise 'Bruxmove', 2-5 personnes, Défi 'Devis lents' — email confirmation reçu"
+      },
+      "4_app_store_ASO_v1_0_38": {
+        "status": "SOUMISE À APPLE le 31/07/2026 ~04h30 — EN ATTENTE DE VÉRIFICATION",
+        "changes": {
+          "sous_titre": "Métré chantier · Devis rapide (29 chars)",
+          "mots_cles": "menuisier,fenêtre,porte,alu,pvc,métreur,poseur,artisan,cotation,chiffrage,BTP,bâtiment,offre,pdf (96 chars, PAS d'espace après virgules)",
+          "texte_promotionnel": "Créée par un menuisier belge, pour les menuisiers pros. Mesure de châssis en 30 sec, cahier des charges lu par IA, devis en 1 clic. Bêta 100% gratuite jusqu'à fin 2026.",
+          "description": "Version safe SANS drapeau 🇧🇪 (Apple refuse), sans ✅ (remplacés par •), sans œ (remplacé par oe)",
+          "nouveautes_version": "Optimisation de la fiche App Store pour mieux faire connaître MesureChâssis aux menuisiers pros de Belgique, France et Luxembourg. Merci à tous les menuisiers pionniers qui utilisent l'app au quotidien !"
+        },
+        "build_details": {
+          "version_marketing": "1.0.38",
+          "expo_publish": "Effectué le 30/07 ~04h00 via bouton Publish Emergent",
+          "video_app_preview": "REJETÉE lors de l'upload (icône rouge erreur) — SKIP pour cette version, à retenter en 1.0.39",
+          "screenshots": "7 screenshots existants gardés (non modifiés)"
+        },
+        "pending_apple_actions": [
+          "Refuser la version 1.0.36 dans App Store Connect pour éviter double publication",
+          "Attendre validation Apple (24-48h)",
+          "Publication automatique post-validation configurée"
+        ],
+        "ASO_target_markets": "BE + FR + LU (all francophone)"
+      },
+      "5_BAJ_dossier": {
+        "status": "4/5 documents rassemblés — 5e récupéré à la mutuelle ce matin 31/07",
+        "email_baj_sent": "27/07/2026 à baj@barreaudenamurdinant.be",
+        "email_response_received": "Instructions officielles + lien formulaire lao.dp-a.be/public/public-form.html",
+        "documents_5": [
+          "1. Composition de ménage (moins de 2 mois) ✅",
+          "2. Attestation INAMI juin+juillet 2026 ✅ (récupérée mutuelle 31/07, 1361,04 EUR, signature Anne-Catherine Schul Directrice)",
+          "3. Avertissement extrait de rôle SPF Finances ✅",
+          "4. Extraits bancaires 2 derniers mois ✅",
+          "5. Attestation pension luxembourgeoise CNAP ✅"
+        ],
+        "next_action": "Encoder demande sur https://lao.dp-a.be/public/public-form.html avec les 5 PDF",
+        "juridical_objectives": [
+          "1. Faire clôturer la procédure de faillite (Garde-corps en kit)",
+          "2. Effacement du solde des dettes personne physique",
+          "3. Régulariser les factures émises après déclaration de faillite",
+          "4. Mainlevée éventuelle de l'inscription Centrale des Crédits (interdit bancaire)"
+        ],
+        "avocat_pro_deo": "Sera attribué post-dépôt dossier (délai 2-6 semaines Barreau Namur-Dinant). Contactera Maître Cassart pour les documents de faillite.",
+        "debts_known": [
+          "Prêt bancaire (inscription Centrale des Crédits aux Particuliers)",
+          "Dette TVA ~4 500 EUR"
+        ]
+      },
+      "6_emergent_feedback_email": {
+        "status": "1er mail envoyé à support@emergent.sh (validé + réponse reçue) + 2e mail rédigé pour d.robin@emergent.sh, programmé pour envoi mardi 5 août 2026 à 10h30 via Outlook 'Différer la livraison'",
+        "outlook_configuration": "Envoi différé + police changée Courier → Calibri/Aptos 11pt + signature enrichie avec emojis (📞 ✉️ 🌐 💼 📍 📱) + drapeau 🇧🇪",
+        "proposals_offered": [
+          "Témoignage vidéo (5-10 min)",
+          "Case study écrit",
+          "Interview/podcast",
+          "Posts LinkedIn/TikTok en taguant Emergent"
+        ],
+        "angle": "Menuisier belge en faillite, sans code, publie app pro sur App Store en 1 mois avec Emergent = case study parfait pour attirer artisans/indépendants en reconversion"
+      }
+    },
+    "pending_and_future_tasks": [
+      "🟠 P1 URGENT — Encoder dossier BAJ en ligne (aujourd'hui 31/07 dès rentré à la maison)",
+      "🔴 P1 — Refuser version 1.0.36 dans App Store Connect (post soumission 1.0.38)",
+      "🎥 P1 — Corriger et re-uploader vidéo App Preview pour version 1.0.39 (rejetée à l'upload)",
+      "📺 P2 — Créer chaîne YouTube MesureChâssis avec Shorts (réutiliser TikToks verticaux)",
+      "🏢 P2 — Créer Page Entreprise LinkedIn MesureChâssis avec logo orange",
+      "📝 P2 — Rédiger premier post LinkedIn d'annonce + tag des 80 relations",
+      "🎨 P3 — Améliorer bannière LinkedIn perso (v2 avec photo Michel intégrée)",
+      "📧 P2 BLOQUÉ — Campagne Cold Email Resend (attend création formulaire Tally.so par Michel)",
+      "💰 P2 BLOQUÉ — Micro-influenceurs BTP (~200€/repost) — attend subventions Région Wallonne",
+      "⚖️ P1 BLOQUÉ — Documents faillite Maître Cassart — attend attribution avocat Pro Deo (2-6 semaines)",
+      "🔒 P1 BLOQUÉ — VAT toggle bypass authentification standard (Phase 5, no code actuellement)",
+      "📸 P1 Future — 'Photo Auto-Mesure' (estimation LiDAR iPhone Pro ou photo + carte de visite référence)",
+      "💶 P1 Future — 'Config prix & marges' (import Excel template menuisiers)",
+      "📄 P1 Future — 'Générateur devis PDF pro'",
+      "🚪 P1 Future — Sens d'ouverture DIN",
+      "🧾 P1 Future — Intégration Billit API (facturation Belgique)",
+      "🎡 P2 Future — Séparation Mesure ouverture vs Mesure châssis via picker wheel (Feature #17)",
+      "🔗 P2 Future — Intégrations Teamleader / Odoo / Yuki",
+      "📥 P2 Future — Import PDF fournisseurs universel (AI Vision)",
+      "🌐 P2 Future — Multilingual Support (NL / EN)",
+      "🤖 P2 Future — Android Native build via Expo → Google Play",
+      "🌱 Future — Discussion investissements/holdings Belgique (quand MesureChâssis génère revenus)"
+    ],
+    "critical_info_for_next_agent": {
+      "next_immediate_actions": [
+        "1. Vérifier si Michel a encodé son dossier BAJ (question à poser)",
+        "2. Vérifier statut review Apple 1.0.38",
+        "3. Si validation Apple OK → aider à refuser 1.0.36 dans App Store Connect",
+        "4. Si validation Apple KO → analyser motif rejet, corriger, resoumettre"
+      ],
+      "michel_preferences": [
+        "Direct, franc, complice, chaleureux (comme un vrai collègue)",
+        "PAS de politesse excessive",
+        "PAS de recontextualisation systématique (il déteste)",
+        "Faire des blagues légères OK",
+        "Encourager quand ça va, être ferme quand nécessaire",
+        "Ne pas suggérer de dépenses marketing tant que faillite pas clôturée",
+        "Ne PAS suggérer de push notifications spontanément (uniquement sur demande explicite)"
+      ],
+      "beta_mode_backend": "BETA_MODE=true dans backend/.env — À GARDER TEL QUEL. Tous les users ont accès Pro pendant 10 ans. Stripe désactivé volontairement.",
+      "test_credentials": "demo.artisan@mesurechassis.com / Demo2026! (voir /app/memory/test_credentials.md)"
+    },
+    "files_created_this_session": [
+      "/app/memory/GUIDE_LINKEDIN_PROFIL.md (mis à jour)",
+      "/app/memory/RESUME_SESSION_2026-07-30.md",
+      "/app/site_michel/www/index.html (modifié)",
+      "/app/site_michel/www/reserver.html (créé)",
+      "/app/site_michel/www/README_MISE_A_JOUR_2026-07-30.md",
+      "/app/frontend/public/banner/index.html (généré)",
+      "/app/frontend/public/banner/linkedin_banner_v1.png (bannière HD 1584×396)",
+      "/app/frontend/public/mesurechassis_livraison_2026-07-30.zip",
+      "/app/frontend/public/mesurechassis_context_reset_2026-07-31.json (ce fichier)"
+    ],
+    "third_party_integrations": {
+      "Stripe": "DÉSACTIVÉ INTENTIONNELLEMENT (bankruptcy). BETA_MODE=true.",
+      "Resend": "Configuré backend, campagne cold email PAUSED (attend Tally.so)",
+      "Emergent_Google_Auth": "Actif — Emergent LLM Key",
+      "Anthropic_Claude": "Emergent LLM Key",
+      "Google_Gemini_2.5_Flash": "Emergent LLM Key (utilisé pour import IA cahiers des charges)",
+      "OpenAI_GPT_Image_1": "Emergent LLM Key",
+      "Calendly": "michelpezzuto/new-meeting (event Appel WhatsApp - 15 min)",
+      "Google_Analytics": "G-5NQCPPEK6J (site mesurechassis.com)",
+      "Facebook_Pixel": "Actif dans index.html"
+    },
+    "last_5_user_messages_this_session": [
+      "1. (Ce message) Demande de résumé complet type handoff JSON pour copier-coller à la prochaine session",
+      "2. Question fiscalité belge vs France (partis politiques qui taxent les riches) → réponse donnée sur PTB/Ecolo/PS/MR/N-VA/VB, holdings, plus-values, IFI absent en Belgique",
+      "3. Photo attestation INAMI mutuelle envoyée + validée (1361,04 EUR, période juin-juillet 2026, signature directrice, tout OK)",
+      "4. Demande à mutuelle en cours ce matin — quels documents demander → guidé sur formulation exacte",
+      "5. Bonne nuit à ~05h00 après soumission Apple 1.0.38 + configuration mail programmé"
+    ],
+    "project_health": {
+      "app_iOS_live": "1.0.36 (à publier ou refuser) + 1.0.38 (en review Apple)",
+      "backend": "OK — BETA_MODE actif",
+      "database": "MongoDB local — OK",
+      "site_web": "mesurechassis.com — v2.1 uploadée, testée, opérationnelle",
+      "auth_flow": "Fonctionnel (Google Auth Emergent + email/password)",
+      "known_bugs": [
+        "Search bar layout Safari Mobile (safe area) — DEFERRED Phase 5",
+        "VAT field blocking on standard signup (French auto-entrepreneurs) — DEFERRED Phase 5"
+      ],
+      "mocked_features": "BETA_MODE=true override toutes les restrictions abonnement (INTENTIONNEL)"
+    },
+    "next_session_first_message_suggestion": "Bonjour Michel ! Tu es rentré de la mutuelle avec ton attestation INAMI. Prêt à encoder ton dossier BAJ maintenant ? On a aussi ta 1.0.38 en review chez Apple à surveiller."
+  }
+}

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Résumé Michel × Agent — MesureChâssis</title>
+<style>
+  :root {
+    --bg: #0f1419;
+    --card: #1a2028;
+    --border: #2a3441;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #4f9eff;
+    --green: #3fb950;
+    --red: #f85149;
+    --orange: #f0883e;
+    --yellow: #d29922;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  header {
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+  }
+  h1 { color: var(--accent); font-size: 28px; margin-bottom: 8px; }
+  h2 {
+    color: var(--accent);
+    font-size: 22px;
+    margin: 32px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+    scroll-margin-top: 20px;
+  }
+  h3 { color: var(--text); font-size: 17px; margin: 20px 0 8px; }
+  p, li { color: var(--text); margin-bottom: 6px; }
+  ul, ol { padding-left: 22px; margin-bottom: 12px; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .meta { color: var(--muted); font-size: 14px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-bottom: 14px;
+  }
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin-bottom: 30px;
+  }
+  .toc h3 { margin-top: 0; color: var(--accent); }
+  .toc ol { columns: 2; column-gap: 30px; padding-left: 22px; }
+  .toc a { display: block; padding: 3px 0; }
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: 6px;
+  }
+  .tag-done { background: rgba(63,185,80,0.15); color: var(--green); }
+  .tag-blocked { background: rgba(248,81,73,0.15); color: var(--red); }
+  .tag-progress { background: rgba(240,136,62,0.15); color: var(--orange); }
+  .tag-wait { background: rgba(210,153,34,0.15); color: var(--yellow); }
+  .tag-rule { background: rgba(79,158,255,0.15); color: var(--accent); }
+  .critical {
+    background: rgba(248,81,73,0.08);
+    border-left: 3px solid var(--red);
+    padding: 12px 16px;
+    margin: 12px 0;
+    border-radius: 4px;
+  }
+  .success {
+    background: rgba(63,185,80,0.08);
+    border-left: 3px solid var(--green);
+    padding: 12px 16px;
+    margin: 12px 0;
+    border-radius: 4px;
+  }
+  .info {
+    background: rgba(79,158,255,0.08);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    margin: 12px 0;
+    border-radius: 4px;
+  }
+  code {
+    background: #0d1117;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #79c0ff;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 14px;
+  }
+  th, td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  th { color: var(--accent); font-weight: 600; }
+  .back-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--accent);
+    color: white;
+    padding: 10px 14px;
+    border-radius: 50%;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  @media (max-width: 700px) {
+    .toc ol { columns: 1; }
+  }
+</style>
+</head>
+<body>
+
+<header id="top">
+  <h1>🧭 Résumé Michel × Agent</h1>
+  <p class="meta">MesureChâssis — État complet au 1er août 2026 · Session de reprise</p>
+</header>
+
+<div class="toc">
+  <h3>📑 Table des matières</h3>
+  <ol>
+    <li><a href="#qui-toi">Qui tu es (Michel)</a></li>
+    <li><a href="#qui-moi">Qui je suis (l'agent)</a></li>
+    <li><a href="#regles">Règles opérationnelles</a></li>
+    <li><a href="#hier">Ce qu'on a fait hier</a></li>
+    <li><a href="#etat-app">État actuel de l'app</a></li>
+    <li><a href="#blocages">Blocages en cours</a></li>
+    <li><a href="#taches">Tâches en cours & à venir</a></li>
+    <li><a href="#fichiers">Fichiers & artefacts clés</a></li>
+    <li><a href="#integrations">Intégrations tierces</a></li>
+    <li><a href="#credentials">Credentials de test</a></li>
+    <li><a href="#next">Prochaine action</a></li>
+  </ol>
+</div>
+
+<h2 id="qui-toi">1. Qui tu es — Michel</h2>
+<div class="card">
+  <h3>Profil</h3>
+  <ul>
+    <li><strong>Prénom :</strong> Michel</li>
+    <li><strong>Langue :</strong> Français uniquement</li>
+    <li><strong>Métier d'origine :</strong> Menuiserie / châssis (expertise terrain, pas dev)</li>
+    <li><strong>Rôle actuel :</strong> Solo founder de <strong>MesureChâssis</strong> — SaaS mobile B2B pour menuisiers</li>
+    <li><strong>Pays :</strong> Belgique (Wallonie)</li>
+  </ul>
+
+  <h3>Situation légale & financière</h3>
+  <div class="critical">
+    <strong>⚠️ Faillite personnelle en cours</strong>
+    <ul>
+      <li>Zéro dépense personnelle possible (pas d'ads, pas d'influenceurs payants, pas de SaaS payant hors gratuit)</li>
+      <li>Stripe intentionnellement désactivé tant que la situation légale n'est pas régularisée</li>
+      <li>Pas encore de n° BCE — donc pas de facturation légale possible aujourd'hui</li>
+      <li>Dossier <strong>BAJ (Bureau d'Aide Juridique)</strong> en cours pour obtenir un avocat pro deo</li>
+      <li>5 documents rassemblés hier, à uploader sur <a href="https://lao.dp-a.be" target="_blank">lao.dp-a.be</a></li>
+      <li>Une fois BAJ validé → régularisation → BCE → réactivation Stripe → facturation légale</li>
+    </ul>
+  </div>
+
+  <h3>Style de communication attendu</h3>
+  <ul>
+    <li>Direct, franc, sans langue de bois</li>
+    <li>Comme un associé / bras droit business, pas un assistant poli</li>
+    <li>Zéro politesse excessive, zéro « je m'excuse », zéro « je marche sur des œufs »</li>
+    <li>Répétitions = interdit</li>
+    <li>Réponses concises, actionnables</li>
+  </ul>
+</div>
+
+<h2 id="qui-moi">2. Qui je suis — L'agent Emergent</h2>
+<div class="card">
+  <ul>
+    <li><strong>Rôle :</strong> Full-stack dev + bras droit business + admin/légal support</li>
+    <li><strong>Stack maîtrisée :</strong> React Native Expo, FastAPI, MongoDB, HTML/CSS/JS statique, App Store Connect, marketing B2B</li>
+    <li><strong>Ce que je peux faire :</strong> coder l'app, éditer le site, générer des visuels, rédiger emails/copy, valider docs légaux, planifier stratégie</li>
+    <li><strong>Ce que je fais PAS en ce moment :</strong> toucher au code de l'app (règle NO CODE active)</li>
+    <li><strong>Ma mémoire :</strong> je repars du handoff summary à chaque session — d'où l'importance des fichiers JSON/HTML de contexte comme celui-ci</li>
+  </ul>
+</div>
+
+<h2 id="regles">3. Règles opérationnelles actives</h2>
+<div class="card">
+  <span class="tag tag-rule">RÈGLE 1</span> <strong>NO CODE</strong> — Aucune modif du code app/backend. Tout reporté à la Phase 5.<br><br>
+  <span class="tag tag-rule">RÈGLE 2</span> <strong>NO SPEND</strong> — Zéro dépense personnelle. Uniquement outils/subventions gratuits.<br><br>
+  <span class="tag tag-rule">RÈGLE 3</span> <strong>FRANÇAIS UNIQUEMENT</strong> — Toutes les réponses en français.<br><br>
+  <span class="tag tag-rule">RÈGLE 4</span> <strong>TON DIRECT</strong> — Franc, sans politesse excessive, comme un associé.<br><br>
+  <span class="tag tag-rule">RÈGLE 5</span> <strong>PAS DE PUSH NOTIFS</strong> — Ne jamais proposer les notifs push comme feature (sauf demande explicite).
+</div>
+
+<h2 id="hier">4. Ce qu'on a fait hier (31 juillet 2026)</h2>
+
+<div class="success">Session marathon ultra-productive. Toute la couche marketing/légal/ASO refaite proprement.</div>
+
+<h3>🔵 LinkedIn — Refonte complète du profil</h3>
+<div class="card">
+  <ul>
+    <li>Headline optimisé (menuiserie + SaaS + fondateur)</li>
+    <li>Section « À propos » réécrite</li>
+    <li>Expériences restructurées</li>
+    <li>Compétences ciblées B2B menuiserie</li>
+    <li>Section Services activée</li>
+    <li>Bannière custom générée et appliquée → <code>/app/frontend/public/banner/linkedin_banner_v1.png</code></li>
+  </ul>
+  <span class="tag tag-done">TERMINÉ</span>
+</div>
+
+<h3>🌐 Site marketing <code>mesurechassis.com</code></h3>
+<div class="card">
+  <ul>
+    <li><code>index.html</code> mis à jour :
+      <ul>
+        <li>Corrigé info Android trompeuse</li>
+        <li>Uniformisé la tarification</li>
+        <li>Ajouté liens réseaux sociaux</li>
+      </ul>
+    </li>
+    <li><code>reserver.html</code> créé — formulaire 2 étapes anti-bot / anti-spam qui qualifie via questions techniques menuiserie avant de balancer sur WhatsApp</li>
+    <li>Calendly configuré (slug <code>/new-meeting</code>) — appels 15 min WhatsApp uniquement</li>
+  </ul>
+  <span class="tag tag-done">TERMINÉ</span>
+</div>
+
+<h3>🍎 App Store Optimization (ASO)</h3>
+<div class="card">
+  <ul>
+    <li>Sous-titre optimisé</li>
+    <li>Mots-clés retravaillés (100 caractères max exploités)</li>
+    <li>Texte promo mis à jour</li>
+    <li>Description longue réécrite</li>
+    <li>Tout appliqué directement dans App Store Connect</li>
+    <li><strong>Build 1.0.38</strong> généré via bouton Publish Emergent → soumis à review Apple</li>
+  </ul>
+  <span class="tag tag-done">TERMINÉ</span> <span class="tag tag-wait">En attente review Apple</span>
+</div>
+
+<h3>⚖️ Dossier légal BAJ</h3>
+<div class="card">
+  <ul>
+    <li>5 documents rassemblés pour la demande d'aide juridique (pro deo)</li>
+    <li>Document Mutuelle scanné et validé par moi</li>
+    <li>Document INAMI validé par moi</li>
+    <li>Prochain step : upload sur <a href="https://lao.dp-a.be" target="_blank">lao.dp-a.be</a></li>
+  </ul>
+  <span class="tag tag-progress">EN COURS — attente upload</span>
+</div>
+
+<h3>💾 Sauvegarde de session</h3>
+<div class="card">
+  <ul>
+    <li>Fichier JSON de contexte généré → <code>/app/frontend/public/mesurechassis_context_reset_2026-07-31.json</code></li>
+  </ul>
+  <span class="tag tag-done">TERMINÉ</span>
+</div>
+
+<h2 id="etat-app">5. État actuel de l'app MesureChâssis</h2>
+<div class="card">
+  <table>
+    <tr><th>Composant</th><th>Statut</th></tr>
+    <tr><td>Backend FastAPI + Mongo</td><td><span class="tag tag-done">OK</span> tourne, <code>BETA_MODE=true</code> actif</td></tr>
+    <tr><td>Frontend Expo iOS</td><td><span class="tag tag-done">Live App Store</span> build 1.0.37 en prod, 1.0.38 en review</td></tr>
+    <tr><td>Frontend Expo Android</td><td><span class="tag tag-wait">Prévu 2026</span> build natif à faire</td></tr>
+    <tr><td>Stripe</td><td><span class="tag tag-blocked">Désactivé volontairement</span></td></tr>
+    <tr><td>Google Auth (Emergent)</td><td><span class="tag tag-done">OK</span></td></tr>
+    <tr><td>IA (Gemini/Claude via Emergent LLM Key)</td><td><span class="tag tag-done">OK</span></td></tr>
+    <tr><td>Signup email/password</td><td><span class="tag tag-blocked">Bug VAT bloquant</span> reporté Phase 5</td></tr>
+    <tr><td>Site marketing</td><td><span class="tag tag-done">Live</span> mesurechassis.com</td></tr>
+    <tr><td>Formulaire réservation WhatsApp</td><td><span class="tag tag-done">Live</span> reserver.html</td></tr>
+  </table>
+</div>
+
+<h2 id="blocages">6. Blocages en cours</h2>
+
+<div class="card">
+  <h3>🔴 P1 — Vidéo App Preview refusée par Apple</h3>
+  <p>Upload rejeté automatiquement (icône rouge). Nécessite ré-encodage <code>ffmpeg</code> aux specs Apple pour la 1.0.39.</p>
+  <p><strong>À faire :</strong> tu m'envoies le message d'erreur exact d'Apple → je te fais la commande ffmpeg.</p>
+  <span class="tag tag-blocked">Bloqué — attente message d'erreur</span>
+</div>
+
+<div class="card">
+  <h3>🔴 P1 — Dossier BAJ</h3>
+  <p>Upload des 5 PDF sur <a href="https://lao.dp-a.be" target="_blank">lao.dp-a.be</a>.</p>
+  <p><strong>Impact :</strong> débloque BCE → Stripe → facturation légale → monétisation.</p>
+  <span class="tag tag-wait">En attente user action</span>
+</div>
+
+<div class="card">
+  <h3>🟠 P2 — Champ VAT obligatoire au signup standard</h3>
+  <p>Signup email/password refuse sans TVA → on perd les prospects qui veulent tester avant d'avoir leur BCE.</p>
+  <p><strong>Fix :</strong> toggle bypass VAT côté standard signup. <strong>Reporté à Phase 5 (NO CODE actif).</strong></p>
+  <span class="tag tag-blocked">Différé Phase 5</span>
+</div>
+
+<h2 id="taches">7. Tâches en cours & à venir</h2>
+
+<h3>🔄 En cours (attente externe)</h3>
+<div class="card">
+  <ul>
+    <li><strong>Campagne cold email Resend</strong> — attend que tu crées le questionnaire Tally.so <span class="tag tag-blocked">Bloqué</span></li>
+    <li><strong>Testimonial Emergent</strong> — email programmé Outlook pour mardi 5 août 10h30 <span class="tag tag-wait">Attente réponse</span></li>
+    <li><strong>Review Apple 1.0.38</strong> — soumis, attente validation <span class="tag tag-wait">En review</span></li>
+  </ul>
+</div>
+
+<h3>🎯 Roadmap Phase 5 (dès levée du NO CODE)</h3>
+<div class="card">
+  <strong>Priorité P1 :</strong>
+  <ul>
+    <li>Bypass VAT sur signup standard</li>
+    <li>Photo Auto-Mesure (LiDAR iPhone Pro / photo + carte de visite comme référence)</li>
+    <li>Config prix & marges (import Excel template menuisier)</li>
+    <li>Générateur devis PDF pro</li>
+    <li>Sens d'ouverture DIN</li>
+    <li>Intégration Billit API</li>
+  </ul>
+  <strong>Priorité P2 :</strong>
+  <ul>
+    <li>Feature #17 — séparation mesure ouverture vs mesure châssis (picker wheel)</li>
+    <li>Intégrations Teamleader / Odoo / Yuki</li>
+    <li>Import PDF fournisseurs universel (AI Vision)</li>
+    <li>Multilingue NL / EN</li>
+    <li>Build Android natif → Google Play</li>
+    <li>Fix layout barre de recherche Safari Mobile</li>
+  </ul>
+  <strong>Futur (après subventions wallonnes) :</strong>
+  <ul>
+    <li>Micro-influenceurs BTP/menuiserie (~200€/repost) — <em>uniquement une fois subvention obtenue</em></li>
+  </ul>
+</div>
+
+<h2 id="fichiers">8. Fichiers & artefacts clés</h2>
+<div class="card">
+  <ul>
+    <li><code>/app/site_michel/www/index.html</code> — site marketing principal</li>
+    <li><code>/app/site_michel/www/reserver.html</code> — formulaire anti-bot WhatsApp</li>
+    <li><code>/app/frontend/public/banner/linkedin_banner_v1.png</code> — bannière LinkedIn</li>
+    <li><code>/app/frontend/public/mesurechassis_context_reset_2026-07-31.json</code> — contexte JSON (hier)</li>
+    <li><code>/app/frontend/public/resume_michel_agent.html</code> — <strong>ce document</strong></li>
+  </ul>
+</div>
+
+<h2 id="integrations">9. Intégrations tierces</h2>
+<div class="card">
+  <table>
+    <tr><th>Service</th><th>Rôle</th><th>Statut</th></tr>
+    <tr><td>Stripe</td><td>Paiements</td><td><span class="tag tag-blocked">Désactivé volontairement</span></td></tr>
+    <tr><td>Resend</td><td>Emails cold campaign</td><td><span class="tag tag-wait">Prêt, attend Tally.so</span></td></tr>
+    <tr><td>Google Auth (Emergent)</td><td>Authentification</td><td><span class="tag tag-done">Actif</span></td></tr>
+    <tr><td>Gemini / Claude</td><td>IA (via Emergent LLM Key)</td><td><span class="tag tag-done">Actif</span></td></tr>
+    <tr><td>Calendly</td><td>Booking 15 min WhatsApp</td><td><span class="tag tag-done">Actif</span></td></tr>
+  </table>
+</div>
+
+<h2 id="credentials">10. Credentials de test</h2>
+<div class="card">
+  <ul>
+    <li><strong>Email :</strong> <code>demo.artisan@mesurechassis.com</code></li>
+    <li><strong>Password :</strong> <code>Demo2026!</code></li>
+    <li><strong>Mode :</strong> <code>BETA_MODE=true</code> — accès Pro gratuit</li>
+  </ul>
+</div>
+
+<h2 id="next">11. Prochaine action à décider</h2>
+<div class="info">
+  <p><strong>Michel, à toi de choisir par où on repart :</strong></p>
+  <ol>
+    <li>Statut BAJ + review Apple 1.0.38 (débriefing rapide)</li>
+    <li>Débug vidéo App Preview → tu m'envoies l'erreur Apple, je te sors la commande ffmpeg</li>
+    <li>Rédaction templates cold email Resend (prêts pour quand Tally.so sera fait)</li>
+    <li>Autre chose qui t'est venu en tête cette nuit</li>
+  </ol>
+</div>
+
+<a href="#top" class="back-top" title="Retour en haut">↑</a>
+
+</body>
+</html>

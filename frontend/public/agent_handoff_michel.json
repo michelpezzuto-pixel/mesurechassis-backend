@@ -1,0 +1,220 @@
+{
+  "_meta": {
+    "purpose": "Agent-to-agent handoff. Read this FIRST when session resumes. Dense, unfiltered, no politeness.",
+    "generated_at": "2026-08-01",
+    "language_lock": "fr-FR",
+    "user_name": "Michel",
+    "read_priority": "P0 — parse before any tool call"
+  },
+
+  "USER_PROFILE": {
+    "name": "Michel",
+    "country": "BE-Wallonie",
+    "background": "menuisier terrain, pas dev",
+    "role": "solo founder MesureChâssis (SaaS B2B mobile menuisiers)",
+    "legal_status": "faillite personnelle en cours",
+    "financial_rule": "ZERO_SPEND — pas d'ads, pas d'influenceurs payants, pas de SaaS payant",
+    "bce_number": null,
+    "can_invoice_legally": false,
+    "communication_style": {
+      "tone": "direct, franc, associé/bras droit business",
+      "avoid": ["politesse excessive", "excuses", "walking on eggshells", "répétitions", "re-expliquer le contexte"],
+      "language": "français uniquement"
+    }
+  },
+
+  "AGENT_OPERATIONAL_RULES": {
+    "NO_CODE": {
+      "active": true,
+      "scope": "app frontend + backend",
+      "exceptions": ["site statique /app/site_michel/www/*", "fichiers dans /app/frontend/public/* (assets/HTML statiques uniquement)"],
+      "lifted_when": "user announces Phase 5 explicitly"
+    },
+    "NO_SPEND": {
+      "active": true,
+      "scope": "toute suggestion payante = interdit"
+    },
+    "NO_PUSH_NOTIFS_SUGGESTION": true,
+    "LANGUAGE": "fr-FR only",
+    "TESTING_AGENT": "ne pas utiliser tant que NO_CODE actif"
+  },
+
+  "PRODUCT_SNAPSHOT": {
+    "app_name": "MesureChâssis",
+    "positioning": "SaaS mobile B2B pour menuisiers — prise de mesure châssis + wizard + exports",
+    "stack": {
+      "frontend": "React Native Expo",
+      "backend": "FastAPI",
+      "db": "MongoDB",
+      "auth": "Emergent Google Auth + email/password",
+      "llm": "Emergent LLM Key (Gemini + Claude)"
+    },
+    "runtime_flags": {
+      "BETA_MODE": true,
+      "STRIPE_ENABLED": false,
+      "reason_stripe_off": "faillite user — attente BCE + BAJ"
+    },
+    "current_builds": {
+      "ios_prod": "1.0.37",
+      "ios_in_review": "1.0.38",
+      "ios_next_planned": "1.0.39",
+      "android": "non buildé, prévu 2026"
+    },
+    "urls": {
+      "marketing": "https://mesurechassis.com",
+      "booking": "https://mesurechassis.com/reserver.html",
+      "calendly_slug": "/new-meeting"
+    }
+  },
+
+  "SESSION_LOG_2026-07-31": {
+    "summary": "Session marathon marketing/légal/ASO. Zéro code app touché.",
+    "completed": [
+      "LinkedIn refonte complète (headline, about, exp, skills, services, banner custom)",
+      "Bannière LinkedIn générée → /app/frontend/public/banner/linkedin_banner_v1.png",
+      "index.html : fix Android info, fix pricing consistency, ajout socials",
+      "reserver.html créé : formulaire 2 étapes anti-bot/anti-spam via questions techniques menuiserie → WhatsApp",
+      "Calendly configuré 15min WhatsApp",
+      "ASO complète appliquée dans App Store Connect (subtitle, keywords, promo, description)",
+      "Build 1.0.38 généré via Publish Emergent et soumis à Apple",
+      "Doc INAMI validé pour BAJ",
+      "Doc Mutuelle validé pour BAJ",
+      "5 docs BAJ rassemblés",
+      "JSON contexte reset généré : /app/frontend/public/mesurechassis_context_reset_2026-07-31.json"
+    ]
+  },
+
+  "ACTIVE_BLOCKERS": [
+    {
+      "id": "B1",
+      "priority": "P1",
+      "title": "Vidéo App Preview refusée par Apple",
+      "waiting_on": "user fournit message d'erreur exact d'Apple",
+      "next_action_agent": "générer commande ffmpeg respectant specs Apple (H.264, 30fps, résolution device-matched, no audio issues)",
+      "target_build": "1.0.39",
+      "impact": "conversion App Store"
+    },
+    {
+      "id": "B2",
+      "priority": "P1",
+      "title": "Dossier BAJ",
+      "waiting_on": "user upload 5 PDF sur lao.dp-a.be",
+      "next_action_agent": "aucune — attendre confirmation upload",
+      "unlock_chain": "BAJ validé → régularisation → BCE → Stripe réactivé → facturation légale"
+    },
+    {
+      "id": "B3",
+      "priority": "P2",
+      "title": "VAT field bloquant signup standard email/password",
+      "status": "reporté Phase 5",
+      "fix_plan": "toggle bypass VAT sur signup standard, garder VAT optionnel"
+    }
+  ],
+
+  "IN_PROGRESS_EXTERNAL": [
+    {
+      "id": "T1",
+      "title": "Campagne cold email Resend",
+      "blocked_on": "user crée formulaire Tally.so",
+      "next_action_agent_when_unblocked": "rédiger séquence 3 emails B2B menuisiers (email 1 = accroche métier, email 2 = social proof, email 3 = CTA démo WhatsApp)"
+    },
+    {
+      "id": "T2",
+      "title": "Testimonial Emergent marketing",
+      "state": "email programmé Outlook, envoi mardi 5 août 10h30",
+      "next_action_agent": "attendre réponse équipe marketing Emergent"
+    },
+    {
+      "id": "T3",
+      "title": "Review Apple 1.0.38",
+      "state": "soumis, en attente Apple",
+      "next_action_agent": "attendre statut user"
+    }
+  ],
+
+  "PHASE_5_ROADMAP": {
+    "P1": [
+      "Bypass VAT signup standard",
+      "Photo Auto-Mesure (LiDAR iPhone Pro + fallback photo avec carte de visite référence)",
+      "Config prix & marges (import Excel template menuisier)",
+      "Générateur devis PDF pro",
+      "Sens d'ouverture DIN",
+      "Intégration Billit API"
+    ],
+    "P2": [
+      "Feature #17 : séparation mesure ouverture vs mesure châssis (picker wheel)",
+      "Intégrations Teamleader / Odoo / Yuki",
+      "Import PDF fournisseurs universel (AI Vision via Gemini/Claude)",
+      "Multilingue NL / EN",
+      "Build Android natif → Google Play",
+      "Fix layout barre recherche Safari Mobile (safe area insets)"
+    ],
+    "FUTURE_AFTER_GRANTS": [
+      "Micro-influenceurs BTP/menuiserie ~200€/repost — uniquement après subvention Région Wallonne"
+    ]
+  },
+
+  "KEY_FILES": {
+    "marketing_site_index": "/app/site_michel/www/index.html",
+    "booking_form": "/app/site_michel/www/reserver.html",
+    "linkedin_banner": "/app/frontend/public/banner/linkedin_banner_v1.png",
+    "context_json_previous": "/app/frontend/public/mesurechassis_context_reset_2026-07-31.json",
+    "resume_html_user_facing": "/app/frontend/public/resume_michel_agent.html",
+    "handoff_json_agent_facing": "/app/frontend/public/agent_handoff_michel.json"
+  },
+
+  "INTEGRATIONS_STATE": {
+    "stripe": {"status": "disabled_intentional", "reason": "user bankruptcy"},
+    "resend": {"status": "ready", "blocked_on": "tally form"},
+    "google_auth_emergent": {"status": "active"},
+    "emergent_llm_key": {"status": "active", "models_used": ["Gemini", "Claude"]},
+    "calendly": {"status": "active", "slug": "/new-meeting"}
+  },
+
+  "TEST_CREDENTIALS": {
+    "email": "demo.artisan@mesurechassis.com",
+    "password": "Demo2026!",
+    "notes": "BETA_MODE=true → accès Pro gratuit automatique"
+  },
+
+  "DB_SCHEMA_MINIMAL": {
+    "users": ["plan", "subscription_status", "vat_number", "business_id_value"]
+  },
+
+  "KNOWN_ISSUES_DEFERRED": [
+    {
+      "id": "K1",
+      "title": "Safari Mobile — barre recherche mal positionnée",
+      "cause": "viewport compression par barre d'adresse iOS",
+      "fix": "safe area insets",
+      "phase": 5
+    }
+  ],
+
+  "AGENT_CHECKLIST_ON_RESUME": [
+    "1. Saluer Michel court et direct — pas de récap sauf demandé",
+    "2. Vérifier statut BAJ (upload lao.dp-a.be fait ?)",
+    "3. Vérifier statut Apple 1.0.38 (approved / rejected / in review ?)",
+    "4. Vérifier si Tally.so form créé pour campagne Resend",
+    "5. Vérifier si erreur vidéo App Preview reçue",
+    "6. Proposer suite selon réponses — pas de blabla, actions concrètes"
+  ],
+
+  "FORBIDDEN_BEHAVIORS": [
+    "modifier code app frontend/backend",
+    "suggérer solutions payantes",
+    "suggérer push notifications de moi-même",
+    "réexpliquer le contexte à Michel",
+    "politesse excessive / excuses",
+    "répéter ce que Michel vient de dire",
+    "downgrader model versions",
+    "utiliser testing_agent tant que NO_CODE actif"
+  ],
+
+  "QUICK_REFERENCE": {
+    "if_user_says_phase_5": "→ NO_CODE levé, appliquer roadmap Phase 5 P1 en premier",
+    "if_user_asks_ffmpeg_video": "→ générer commande H.264, 30fps, résolution matchée device, MOV/MP4, no non-conformant audio",
+    "if_user_asks_cold_email": "→ 3 emails B2B menuisier, accroche métier concret (mesure châssis papier vs app), pas de jargon SaaS",
+    "if_user_asks_visual_asset": "→ générer via outil image, pas de dépense externe"
+  }
+}
