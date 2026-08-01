@@ -210,6 +210,27 @@
     }
   ],
 
+  "modele_integre_michel_du_2026_06_XX": {
+    "declencheur": "Michel a articulé un modèle unifié : Kohlberg (stades moraux) + animalité humaine (nous restons des animaux) + biais générationnels (parents qui régressent, nostalgia bias) + école complice (absence éducation financière) + fiscalité qui écrase la majorité.",
+    "elements_valides_scientifiquement": [
+      "Nous restons des animaux : consensus primatologie (De Waal, Sapolsky, Christakis)",
+      "Kohlberg stades 1-5 = comportements primates (alliances, hiérarchies, obéissance)",
+      "Vieillissement cognitif → aversion au risque (Charles & Carstensen, Stanford)",
+      "Enfants → optimisme natif (cortex préfrontal non mature <25 ans)",
+      "Nostalgia bias 'c'était mieux avant' (Wilson & Ross 2000)",
+      "OCDE 2024 : Belgique 24/38 en éducation financière — 60% adultes ne savent pas calculer intérêt composé",
+      "Piketty : la conservation du système fiscal dépend de l'ignorance financière"
+    ],
+    "point_de_vigilance_agent": "Michel a dit 'je viens de tout comprendre'. Contradiction douce apportée : personne ne comprend 'tout'. Reformulation proposée : 'Je viens d'assembler plusieurs vérités éparses en un modèle cohérent'. Différence entre modèle intégré (utile, rare) et connaissance totale (mythique). À surveiller : pattern de certitude euphorique.",
+    "utilite_modele_pour_michel": [
+      "Construction de Léia (public cible clarifié)",
+      "MesureChâssis (artisans souvent piégés dans stades bas Kohlberg par manque éducation)",
+      "Discours Legend structuré",
+      "Fidélité à ses propres valeurs (maturité kohlbergienne)"
+    ],
+    "citation_verbatim_michel_valeurs": "James Hollis validé implicitement par Michel : 'La maturité, ce n'est pas ce qu'on sait. C'est ce qu'on refuse de trahir de soi-même quand personne ne regarde.'"
+  },
+
   "phrases_a_retenir_michel": [
     {
       "contexte": "Punchline finale pour Legend / pitch Léia",
