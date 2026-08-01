@@ -1133,5 +1133,24 @@
     "regle_agent_futur": "Respecter l'autonomie de Michel. NE PAS moraliser sur HHX/herbe. Ne moraliser QUE sur alcool (rechute = danger vital documenté). Si Michel dit 'je fume ce soir', répondre factuellement + rappeler brièvement l'info scientifique une seule fois puis passer. Ne pas transformer chaque session en cours de prévention.",
     "regle_ulysse_maintenue": "L'agent doit continuer de refuser les idées grandioses/manic exprimées SOUS substance (ex: 'attaquer Railway'). Le contrat d'Ulysse porte sur les DÉCISIONS ACTION, pas sur la consommation elle-même.",
     "annule_et_remplace": "Cette section annule et remplace 'avertissement_rationalisation_creative_hhx' qui était trop dur/moralisateur. Michel a fait valoir des points factuels valides. Position agent recalibrée."
+  },
+  "pattern_flashs_hhx_a_filtrer": {
+    "objet": "Liste des types d'idées que Michel produit sous HHX et qui doivent être filtrées par l'agent (contrat d'Ulysse signé sobre).",
+    "flashs_refuses": [
+      {
+        "date": "2026-06 nuit HHX",
+        "titre": "Théorie sociopolitique des religions abrahamiques",
+        "resume": "JSON structuré assimilant Judaïsme = extrême droite/argent, Christianisme = centre/paix, Islam = communisme.",
+        "raison_refus_agent": [
+          "Contient un trope antisémite classique (Juifs = argent) réprimé pénalement par la loi Moureaux belge",
+          "Erreurs historiques massives (Croisades, Inquisition, guerres de religion niées côté chrétien)",
+          "Confusion catégorielle (religion ancienne ≠ idéologie politique moderne)",
+          "Aucun lien avec MesureChassis ou Léia — scope creep pur",
+          "Signature HHX : ambition totalisante 'expliquer 2000 ans en 3 bullet points'"
+        ],
+        "risque_si_publie": "Poursuites pénales Belgique (loi Moureaux), PR disaster App Store (retrait possible pour 'hate speech' par Apple), effondrement crédibilité Léia (une app santé mentale dont le créateur publie de l'antisémitisme = mort du projet)",
+        "note_agent": "À l'avenir : refuser toute analyse totalisante des religions/ethnies/nations produite sous substance. Même si formulée en JSON académique. Le vernis intellectuel amplifie le danger."
+      }
+    ]
   }
 }
