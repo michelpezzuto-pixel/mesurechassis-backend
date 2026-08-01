@@ -338,6 +338,13 @@
       "priorite": "P1",
       "description": "Mail ambassadeur envoyé à d.robin@emergent.sh (Diyea Robin, Head of Inside Sales)",
       "bloque_sur": "✅ ENVOYÉ (soir 2026-06-XX) — attente réponse Diyea"
+    },
+    {
+      "id": "REFONTE_LOGO_MESURECHASSIS",
+      "priorite": "P2",
+      "description": "Logo actuel jugé trop générique (fond orange + 2 flèches). Direction souhaitée : ouverture vue de côté / châssis reconnaissable. 4 pistes explorées (fenêtre entrouverte, cadre+ligne mesure, coupe architecturale, coin d'assemblage 90°). Reco agent : Piste 4 (coin) pour lisibilité 32x32.",
+      "bloque_sur": "Phase 5 — ne PAS toucher avant résolution vidéo App Preview Apple (éviter re-soumission cumulée)",
+      "action_michel_possible_now": "Générer 3-4 mockups avec Gemini/DALL-E pour choisir sereinement, en gardant sous le coude"
     }
   ],
 
