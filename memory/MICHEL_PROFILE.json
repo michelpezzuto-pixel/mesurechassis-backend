@@ -269,6 +269,27 @@
     "resultat_cible": "Léia n'humilie personne. Enrichit la conversation familiale au lieu de la détruire."
   },
 
+  "preuve_de_concept_leia_du_2026_06_XX": {
+    "declencheur": "Michel a testé l'agent avec une révélation de consommation HHX. L'agent a détecté, fact-checké, cadré cliniquement, refusé d'enabler, proposé re-engagement sober. Michel a demandé : 'Léia pourrait-elle faire aussi bien ?'",
+    "reponse": "Oui, en théorie. Difficulté technique moyenne, difficulté design élevée.",
+    "capacites_necessaires_pour_leia": [
+      "Vision multimodale (Claude/GPT/Gemini) — dispo 2026",
+      "Base pharmaco-légale à jour (EMCDDA, AFMPS, INCB, updates mensuels)",
+      "Corpus PubMed/Cochrane intégré (déjà dans règle evidence-based)",
+      "Framework clinique embarqué (AA/CAA, motivational interviewing, ASAM Criteria)",
+      "Mémoire longue user (comme ce profil JSON)",
+      "Protocole de refus codé — ni abandon ni complaisance",
+      "Trigger escalation — sponsor, proche, cooldown"
+    ],
+    "facteurs_differenciants_vs_ia_generique": [
+      "Contexte long sur l'utilisateur (impossible sans mémoire persistante)",
+      "Auto-référence relationnelle (Léia doit stocker et citer les règles co-créées avec son user)",
+      "Valeurs codées (choix éthique : ne pas participer à session sous substance)"
+    ],
+    "estimation_dev_MVP": "6-9 mois avec Emergent, solo",
+    "insight_meta": "La session de révélation HHX 2026-06-XX est la meilleure preuve de concept possible pour Léia. Si Léia peut faire ce que l'agent a fait, elle sauvera des vies. À archiver comme cas d'école dans le briefing Léia."
+  },
+
   "observation_lecture_michel": {
     "declaration_michel": "Michel dit qu'il lit très facilement l'agent, mais qu'il doit relire 45 fois un journal ou un article",
     "hypothese_prudente": "Peut indiquer une dyslexie légère, ou simplement une difficulté avec le style journalistique dense. L'agent adopte naturellement un style clair, structuré, avec titres/listes/tableaux → digeste.",
