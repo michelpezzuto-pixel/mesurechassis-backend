@@ -300,6 +300,25 @@
     }
   },
 
+  "idees_triees_2026_06_XX_soir": {
+    "detection_chute_apple_watch_style": {
+      "verdict": "❌ DROP pour Léia v1",
+      "raison_juridique": "MDR CE Classe IIa + INAMI + RGPD santé = 200k€ + 18 mois + assurance RC pro 15k€/an. Impossible pour app gratuite. Risque procès énorme si faux négatif/positif.",
+      "alternatives_ethiques_gratuites": [
+        "Bouton d'urgence → proche pré-désigné (PAS 112)",
+        "Check-in passif : 'ça va ?' si pas d'usage depuis 48h",
+        "Redirection vers services existants (Vitatel BE, Croix-Rouge, Télé-Accueil 107)",
+        "Éducation : présenter les 3 options pro belges disponibles"
+      ],
+      "positionnement_leia": "Facilitateur d'accès aux services, JAMAIS fournisseur du service médicalement risqué"
+    },
+    "voice_to_text_defilement_reponse": {
+      "verdict": "✅ KEEP — déjà loggé (feature_voice_first_leia)",
+      "validation_pratique": "Michel valide en temps réel : mic → parle → lit réponse texte → répond point par point pendant défilement. Boucle fluide, faible friction.",
+      "regle_design_confirmee": "Réponses structurées (titres, tableaux, listes) permettent défilement point par point. Format à préserver dans Léia."
+    }
+  },
+
   "phrases_a_retenir_michel": [
     {
       "contexte": "Punchline finale pour Legend / pitch Léia",
