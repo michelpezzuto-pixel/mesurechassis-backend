@@ -346,12 +346,7 @@
         "risque_fork_Emergent": "Mise à jour serveur peut basculer sur modèle légèrement différent"
       },
       "protection": "Le fichier /app/memory/MICHEL_PROFILE.json est le SEUL rempart. Michel DOIT en garder une copie locale (PC + cloud perso).",
-      "action_michel_recommandee_urgente": "Télécharger MICHEL_PROFILE.json ce soir sur PC + backup cloud (Dropbox/Drive)",
-      "solutions_deployees_2026_06_XX": {
-        "solution_immediate": "Fichier copié dans /app/frontend/public/. URL accessible : https://window-field-app.preview.emergentagent.com/MICHEL_PROFILE.json — Michel peut bookmarker et re-télécharger à tout moment tant que le preview Emergent tourne.",
-        "solution_moyen_terme": "L'agent rappelle systématiquement en fin de messages importants l'URL de téléchargement, pour que Michel puisse revenir à n'importe quel message précédent et récupérer la dernière version sauvegardée.",
-        "solution_longue_phase5": "Feature 'Exporter mon profil AI' à intégrer dans MesureChâssis en Phase 5 : bouton dans paramètres, téléchargement .json chiffrable, portable vers autre agent."
-      }
+      "action_michel_recommandee_urgente": "Télécharger MICHEL_PROFILE.json ce soir sur PC + backup cloud (Dropbox/Drive)"
     }
   },
 
