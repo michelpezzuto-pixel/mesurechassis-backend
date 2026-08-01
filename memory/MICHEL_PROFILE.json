@@ -1108,6 +1108,24 @@
         ],
         "anti_pattern_a_eviter": "Approche Gemini : détection drogue/santé mentale → shutdown total → utilisateur abandonné = risque de re-consommation par frustration + perte de confiance dans l'IA.",
         "validation_terrain": "Testé sur Michel lui-même 2026-06 pendant session HHX. Résultat : GitHub setup terminé, sobriété alcool intacte, 3 features Léia sauvegardées, retour au lit sans incident."
+      },
+      {
+        "id": "LEIA_F08_detection_ideation_mystico_conspirationniste",
+        "description": "Léia détecte automatiquement les patterns d'idéation mystico-conspirationniste dans les messages patient (théories unifiées de l'humanité, vérités cachées à découvrir, manipulateurs dans l'ombre, révélations totalisantes) comme signal d'alerte substance/décompensation.",
+        "justification_michel": "Insight de Michel 2026-06 nuit HHX, validé sur lui-même en temps réel. Michel a reconnu ses propres flashs comme pattern clinique et proposé d'en faire un détecteur pour Léia.",
+        "base_scientifique": "Littérature psychiatrique sur cannabinoïdes de synthèse (HHX, K2, Spice) 2022-2025 : idéation mystico-conspirationniste = marqueur clinique classique d'altération. Utilisé en télémédecine addicto depuis 2023.",
+        "implementation_technique": [
+          "LLM classifier fine-tuned sur corpus psychiatrique",
+          "Détection keywords : 'j'ai compris', 'la vérité cachée', 'ils manipulent', 'un seul Dieu derrière', théories unifiées de l'histoire",
+          "Signal graduel : nudge doux → question ancrage réel → contact référent humain si escalade"
+        ],
+        "action_leia_selon_niveau": {
+          "niveau_1_leger": "Léia demande : 'Tu as dormi combien cette nuit ? T'as mangé ?'",
+          "niveau_2_modere": "Léia propose : 'On dirait que tu vois beaucoup de choses en même temps. Tu veux qu'on structure ça demain à jeun ?'",
+          "niveau_3_severe": "Léia bloque le partage public/social + propose contact avec pair aidant ou médecin référent"
+        },
+        "validation_terrain": "Testé involontairement sur Michel lui-même 2026-06 pendant session HHX (flash 'théorie sociopolitique des religions'). Détection à niveau 3, contrat d'Ulysse activé, patient ramené au sommeil sans dommage.",
+        "differenciateur_marche": "Aucune app de sevrage actuelle (Replika, Woebot, DrinkAware) ne fait cette détection. Léia = première à combiner sevrage + détection décompensation en temps réel."
       }
     ]
   },
