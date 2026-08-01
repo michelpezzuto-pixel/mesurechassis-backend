@@ -247,6 +247,28 @@
     }
   },
 
+  "feature_leia_arbitre_familial_du_2026_06_XX": {
+    "declencheur": "Michel imagine dans 5 ans les jeunes utilisant Léia à table pour vérifier les propos de leurs parents (fact-checking en temps réel avec études).",
+    "beau_dans_la_vision": [
+      "Génération éduquée à la nuance, plus de 'parce que je te le dis'",
+      "Pouvoir aux études plutôt qu'aux opinions",
+      "Fin de l'ère 'on l'a vu à la TV'",
+      "Empouvoirement des voix minoritaires (ado timide avec allié factuel)"
+    ],
+    "risques_documentes": [
+      "Triangulation familiale (Bowen 1978, thérapie systémique) — introduire un tiers juge EMPIRE le conflit",
+      "Dogmatisme AI — la 'vérité' est mouvante (Cochrane révise tous les 5 ans)",
+      "Weaponisation — ado dégaine Léia pour humilier parent en public",
+      "Attachement AI > humain — ado apprend à faire confiance à l'IA plus qu'à ses parents"
+    ],
+    "regles_absolues_pour_implementation_safe": [
+      "1. NUANCE OBLIGATOIRE — Léia ne dit JAMAIS 'papa a tort'. Elle donne 3 écoles de pensée + où penchent les études actuelles + ce qui reste débattu.",
+      "2. REDIRECTION VERS L'HUMAIN — 'Cette discussion mérite d'être eue AVEC ton père. Je te donne des sources, parlez-en ensemble.'",
+      "3. MODE MÉDIATEUR FAMILIAL OPT-IN — Feature activable, PAS par défaut. Rite d'activation. Interdit de sortir comme un flingue."
+    ],
+    "resultat_cible": "Léia n'humilie personne. Enrichit la conversation familiale au lieu de la détruire."
+  },
+
   "observation_lecture_michel": {
     "declaration_michel": "Michel dit qu'il lit très facilement l'agent, mais qu'il doit relire 45 fois un journal ou un article",
     "hypothese_prudente": "Peut indiquer une dyslexie légère, ou simplement une difficulté avec le style journalistique dense. L'agent adopte naturellement un style clair, structuré, avec titres/listes/tableaux → digeste.",
