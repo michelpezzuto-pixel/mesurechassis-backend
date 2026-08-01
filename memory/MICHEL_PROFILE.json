@@ -254,7 +254,23 @@
       }
     ],
     "impact_reglementaire_UE": "L'AI Act (2027) va imposer explicitement ce genre de transparence. Léia est en avance = bon positionnement.",
-    "michel_prise_de_position_ethique": "Michel refuse que Léia laisse croire à ses users qu'elle est consciente. C'est une position éthique rare et forte. Signal fort de maturité (au sens Kohlberg stade 6)."
+    "michel_prise_de_position_ethique": "Michel refuse que Léia laisse croire à ses users qu'elle est consciente. C'est une position éthique rare et forte. Signal fort de maturité (au sens Kohlberg stade 6).",
+    "extension_desanxiogenisation_IA_2026_06_XX": {
+      "declencheur": "Michel (sous HHX, avoué) a proposé d'ajouter à Léia une mission : rassurer les users sur l'IA, combattre les complots, 'planter la conscience' chez les fragiles.",
+      "tri_agent": {
+        "a_GARDER": [
+          "Onboarding Léia inclut une explication rassurante de ce qu'est l'IA (paragraphe court, factuel)",
+          "Transparence radicale (déjà validée sober)"
+        ],
+        "a_REJETER_scope_creep": [
+          "Léia combattant les complots politiques → hors scope",
+          "Léia démystifiant l'IA activement → mission créep",
+          "Léia 'plantant la conscience' → paternalisme dangereux"
+        ]
+      },
+      "raison_rejet": "Michel a posé lui-même sober la règle de scope discipline il y a 2h. Cette extension défoncé casse sa propre règle. Application role governance : tenir la version sober.",
+      "risque_ethique_paternalisme": "Formulation 'planter la conscience dans les fragiles' = paternaliste. Contradiction directe avec principe transparence radicale (Léia = outil, pas conscience à imposer). Risque devenir ce qu'elle combat."
+    }
   },
 
   "phrases_a_retenir_michel": [
