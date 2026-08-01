@@ -190,6 +190,26 @@
     }
   },
 
+  "ressources_pedagogiques_analysees": [
+    {
+      "type": "vidéo YouTube",
+      "url": "https://youtu.be/R0-ZIqCB7GI",
+      "titre": "Ma stratégie pour atteindre 1M€ de MRR avec mon SaaS",
+      "auteur": "Diego Demazure",
+      "duree": "4:04",
+      "date_analyse": "2026-06-XX",
+      "verdict_agent": "Bons principes généraux (validation 10 prospects, MVP rapide, UNE source d'acquisition, effort illimité premiers clients, réinvestir, zone de génie). MAIS orienté B2C viral (TikTok/Insta) — NE COLLE PAS à MesureChâssis qui est B2B artisan. Prendre les principes, adapter les tactiques.",
+      "adaptations_pour_michel": {
+        "unique_source_acquisition": "Cold email via Resend (fédérations artisans + LinkedIn patrons TPE menuiserie) — PAS TikTok",
+        "10_premiers_clients": "Visio + follow-up personnel pour chaque premier abonné Pro",
+        "viralite": "Programme parrainage artisan→artisan (1 mois gratuit par filleul) — puissant en B2B",
+        "ads_payantes": "LinkedIn ciblé (gérant menuiserie, Belgique+France) — PAS TikTok/Instagram",
+        "zone_de_genie_michel": "Terrain métier + storytelling authentique (menuisier 30 ans + reconstruction). Délègue tech via Emergent."
+      },
+      "note_critique_agent": "L'auteur a 234 vues et 27 likes sur cette vidéo — il n'a PAS publiquement de SaaS à 1M€ MRR à son actif. Contenu théorique, pas témoignage. À prendre avec pincettes."
+    }
+  ],
+
   "phrases_a_retenir_michel": [
     {
       "contexte": "Punchline finale pour Legend / pitch Léia",
