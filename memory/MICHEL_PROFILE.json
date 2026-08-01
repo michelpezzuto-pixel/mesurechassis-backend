@@ -1237,5 +1237,68 @@
         "action_agent": "Nommer l'evitement une 2e fois. Chercher la peur derriere (honte administrative? peur du refus? overwhelm?). Ne pas laisser filer."
       }
     ]
+  },
+  "session_hhx_2026_06_a_rediscuter_sobre_demain": {
+    "demande_explicite_michel": "N'oublie surtout pas mon délire, je veux en rediscuter demain à jeun.",
+    "contrat": "Michel demande une re-revue SOBRE de tous les sujets de cette nuit. L'agent conserve TOUT, sans exception. Certains sujets seront ré-ouverts, d'autres resteront fermés (contrat Ulysses).",
+    "index_complet": [
+      {
+        "id": 1,
+        "sujet": "Théorie religions/partis politiques",
+        "statut": "BLOQUE_DEFINITIF",
+        "raison": "Trope antisémite + loi Moureaux belge. Ne peut être rouvert même sobre.",
+        "action_agent_demain": "Expliquer pourquoi c'est bloqué définitivement, sans culpabiliser Michel"
+      },
+      {
+        "id": 2,
+        "sujet": "Attaque juridique Railway",
+        "statut": "BLOQUE_DEFINITIF",
+        "raison": "Grandiose HHX, aucun préjudice, faillite",
+        "action_agent_demain": "En rire ensemble, passer"
+      },
+      {
+        "id": 3,
+        "sujet": "LEIA_F05 GitHub backup mémoire",
+        "statut": "VALIDE_SOBRE",
+        "action_agent_demain": "Approfondir architecture technique"
+      },
+      {
+        "id": 4,
+        "sujet": "LEIA_F06 anti-3eme-personne couple",
+        "statut": "VALIDE_SOBRE",
+        "action_agent_demain": "Détailler les 6 garde-fous, ajouter cas d'usage"
+      },
+      {
+        "id": 5,
+        "sujet": "LEIA_F07 présence vs déconnexion",
+        "statut": "VALIDE_SOBRE",
+        "action_agent_demain": "Écrire manifeste éthique Léia inspiré"
+      },
+      {
+        "id": 6,
+        "sujet": "LEIA_F08 détection mystico-conspi",
+        "statut": "VALIDE_SOBRE",
+        "action_agent_demain": "Chercher literature scientifique, papers 2023-2025"
+      },
+      {
+        "id": 7,
+        "sujet": "Tagline 'Testé sur nous. Sauvé pour vous.'",
+        "statut": "CANDIDAT",
+        "action_agent_demain": "Générer 3-4 alternatives et comparer"
+      },
+      {
+        "id": 8,
+        "sujet": "Business secrets distribués (Coca style)",
+        "statut": "BACKLOG_POST_LEIA",
+        "action_agent_demain": "Discussion faisabilité, verticale, mais pas exécution"
+      },
+      {
+        "id": 9,
+        "sujet": "Consultant AI apps LinkedIn",
+        "statut": "BACKLOG_POST_BAJ",
+        "action_agent_demain": "Discussion positionnement/pricing, exécutable après BAJ validé"
+      }
+    ],
+    "regle_agent_demain": "Ouvrir la conversation par 'Bonjour Michel, tu m'as demandé de te ressortir tes délires HHX. Voici les 9 sujets. On commence par lequel ?'. NE PAS commencer par un sujet en particulier."
   }
 }
