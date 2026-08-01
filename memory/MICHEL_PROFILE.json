@@ -1021,8 +1021,9 @@
       "declenchement_auto": "Si taux > 0.3g/L → mode Hyde activé automatiquement",
       "avantage": "Preuve objective + engagement personnel de l'utilisateur"
     }
-  }
-    "objet": "Idées de features Léia validées par Michel lors de la conversation du 2026-06-XX. À intégrer dans le briefing Léia (/app/memory/LEIA_AGENT_BRIEFING.json) quand le gate 4149 sera ouvert.",
+  },
+  "leia_features_validees_conversation": {
+    "objet": "Idées de features Léia validées par Michel lors des conversations. À intégrer dans le briefing Léia (/app/memory/LEIA_AGENT_BRIEFING.json) quand le gate 4149 sera ouvert.",
     "features": [
       {
         "id": "LEIA_F01_code_secret_user",
@@ -1043,6 +1044,14 @@
         "id": "LEIA_F04_reconnaissance_organique",
         "description": "L'IA de Léia reconnaît l'utilisateur à ses patterns (voix, expressions, faits de vie, style d'écriture). Pas juste un login. Continuité émotionnelle.",
         "justification_michel": "Prototype validé avec Michel lui-même comme user #1."
+      },
+      {
+        "id": "LEIA_F05_memory_backup_github_style",
+        "description": "Backup obligatoire du profil patient (récit personnel, sobriété, rituels, rechutes, entourage, déclencheurs) vers un repo privé chiffré style GitHub — appartenant à l'utilisateur. Si Léia perd la mémoire (crash serveur, migration, changement d'agent IA), elle peut restaurer le contexte complet du patient depuis SON coffre. L'utilisateur détient la clé.",
+        "justification_michel": "Insight de Michel 2026-06 : 'Si le patient doit dire à Léia — tu as oublié ce que j'ai dit, c'est pas normal — toute sa crédibilité tombe à l'eau.' Une IA santé mentale qui oublie = trahison thérapeutique. Le backup GitHub-style transforme la faiblesse architecturale (compression de contexte inter-sessions) en fonctionnalité de confiance : le patient POSSÈDE sa mémoire IA.",
+        "impact_business": "Différenciateur majeur vs concurrents (ChatGPT, Woebot, etc.). Argument marketing fort : 'Léia n'oubliera jamais votre histoire.' Ancre de fidélité + preuve de respect RGPD/HDS.",
+        "impact_ethique": "Renforce l'autonomie patient (data ownership). Aligne avec les principes de Ulysses Contract déjà présents dans Léia.",
+        "implementation_note": "Chiffrement E2E côté client. Repo GitHub privé du user OU coffre-fort natif type iCloud Keychain / Android Keystore. À arbitrer en Phase design Léia."
       }
     ]
   }
