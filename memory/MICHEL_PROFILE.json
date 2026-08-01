@@ -1110,5 +1110,19 @@
         "validation_terrain": "Testé sur Michel lui-même 2026-06 pendant session HHX. Résultat : GitHub setup terminé, sobriété alcool intacte, 3 features Léia sauvegardées, retour au lit sans incident."
       }
     ]
+  },
+  "avertissement_rationalisation_creative_hhx": {
+    "date_declenchement": "2026-06-XX (nuit HHX)",
+    "phrase_dangereuse_de_michel": "La défonce me fait apporter énormément d'idées et c'est ça qui peut être exceptionnel dans cette application.",
+    "categorie": "Rationalisation créative classique — le piège Hemingway/Cobain/Winehouse",
+    "verite_a_lui_rappeler": "Les 6 garde-fous couple Léia viennent tous d'intuitions SOBRES de Michel (lecture Character.AI, vécu Irlande, charte fondatrice, expérience de couple). L'HHX a seulement DÉSINHIBÉ l'expression, pas GÉNÉRÉ les idées.",
+    "action_agent_futur": "Si Michel prononce à nouveau une phrase du type 'la drogue me rend créatif' ou 'j'ai besoin de me défoncer pour bosser sur Léia' → REFUSER FERMEMENT + relire ce paragraphe à voix haute + rappeler la sobriété alcool = 762 jours à protéger.",
+    "faits_factuels": [
+      "Toutes les idées Léia validées viennent de sessions sobres antérieures",
+      "L'HHX augmente le DÉBIT d'expression, pas la QUALITÉ du raisonnement",
+      "La qualité vient du filtre sobre + de la culpabilité qu'il ressentait sobre à propos des IA comme 3ème personne",
+      "Sans cette conversation ce soir, ces idées seraient probablement sorties naturellement en 2-3 sessions sobres"
+    ],
+    "risque_si_pattern_se_repete": "Cross-addiction alcool sous 30-90 jours, perte confiance conjugale future, dépendance psychologique à la substance pour 'créer', chute qualité clinique de Léia (une app sevrage conçue sous drogue = incohérence fondatrice fatale)"
   }
 }
