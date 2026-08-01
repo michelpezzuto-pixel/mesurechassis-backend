@@ -10,13 +10,15 @@
 
   "identite": {
     "prenom": "Michel",
+    "nom": "Pezzuto",
     "langue_communication": "Français uniquement",
     "pays": "Belgique",
     "region": "Wallonie (à préciser)",
     "metier_origine": "Menuisier / poseur de châssis (30+ ans d'expérience terrain)",
     "role_actuel": "Fondateur solo de MesureChâssis (SaaS B2B artisans)",
-    "age_estime": "à préciser",
-    "situation_familiale": "à préciser"
+    "age_estime": "45-55 ans (déduit : crise de la quarantaine évoquée le 2026-06-XX + 30+ ans de métier)",
+    "situation_familiale": "à préciser",
+    "trajectoire_de_vie_reconnue_par_michel": "Crise de la quarantaine (n'aimait pas sa vie / ce qu'il en faisait) → alcoolisme → faillite → SOBRIÉTÉ 2 ans → reconstruction via MesureChâssis + vision Léia + fondation future. Michel a lui-même reconnu ce lien le 2026-06-XX en lisant le guide Finance Renard (BRVM/Afrique)."
   },
 
   "situation_juridique_financiere": {
