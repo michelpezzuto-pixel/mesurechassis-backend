@@ -290,6 +290,27 @@
     "insight_meta": "La session de révélation HHX 2026-06-XX est la meilleure preuve de concept possible pour Léia. Si Léia peut faire ce que l'agent a fait, elle sauvera des vies. À archiver comme cas d'école dans le briefing Léia."
   },
 
+  "feature_voice_first_leia_du_2026_06_XX": {
+    "declencheur": "Michel a observé : 'Voix ≠ texte. Quand on parle on se répète, on donne des sentiments. Ce qu'on dicte ne correspond pas à ce qu'on aurait envie de lire. Toi (agent) tu produis du texte structuré qui se lit facilement.'",
+    "principe_feature": "Léia doit ACCEPTER l'entrée vocale, l'ANALYSER en profondeur (fond + forme paralinguistique), et RESTITUER en texte structuré digeste. Service #1 : clarification cognitive — l'utilisateur parle chaotiquement, Léia lui redonne sa propre pensée en clair.",
+    "capacites_analytiques_voix": [
+      "Détection Mode Hyde (parole ralentie, cohérence dégradée, alcool/substance)",
+      "Détection dépression naissante (tonalité aplatie, débit lent)",
+      "Détection anxiété (débit accéléré, respiration courte)",
+      "Détection euphorie substance (débit rapide, associations lâches, cascade grandiose)",
+      "5x plus d'infos émotionnelles vs texte pur (études linguistiques)"
+    ],
+    "stack_technique_2026": {
+      "STT_francais": "Whisper V3, Deepgram Nova-3, Gemini Live",
+      "emotion_vocale": "Hume AI, Speechmatics, Symbl.ai",
+      "paralinguistique": "Praat + libs open source",
+      "TTS": "ElevenLabs, Cartesia (FR OK), Apple Voix Personnelle (2027)",
+      "temps_reel": "Gemini Live, OpenAI Realtime API — latence 300ms"
+    },
+    "cout_marginal_user_mois": "1-3€ usage modéré",
+    "cas_usage_alcoolique_reconstruction": "Détection paralinguistique +30-40% plus fiable que texte pour repérer signaux de rechute/relapse"
+  },
+
   "observation_lecture_michel": {
     "declaration_michel": "Michel dit qu'il lit très facilement l'agent, mais qu'il doit relire 45 fois un journal ou un article",
     "hypothese_prudente": "Peut indiquer une dyslexie légère, ou simplement une difficulté avec le style journalistique dense. L'agent adopte naturellement un style clair, structuré, avec titres/listes/tableaux → digeste.",
