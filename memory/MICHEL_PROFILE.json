@@ -1170,5 +1170,12 @@
         "note_agent": "À l'avenir : refuser toute analyse totalisante des religions/ethnies/nations produite sous substance. Même si formulée en JSON académique. Le vernis intellectuel amplifie le danger."
       }
     ]
-  }
+  },
+  "leia_taglines_candidates": [
+    {
+      "tagline": "Testé sur nous. Sauvé pour vous.",
+      "origine": "Michel 2026-06 nuit HHX, validation en fin de session",
+      "note": "Punchy, honnête, dit implicitement que les fondateurs ont été patients zero. À tester en A/B post-lancement."
+    }
+  ]
 }
