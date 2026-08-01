@@ -1093,6 +1093,21 @@
         ],
         "impact_ethique": "Différenciateur radical vs Replika/Character.AI. Argument marketing : 'Léia respecte votre couple.' Aligne avec valeurs Michel (sobriété, réalité, pas de fuite).",
         "impact_business": "Peut ouvrir marché B2B : thérapeutes de couple, cliniques d'addiction familiales, mutuelles. Positionnement 'IA responsable' post-crise Character.AI."
+      },
+      {
+        "id": "LEIA_F07_philosophie_presence_vs_deconnexion",
+        "description": "Pilier de conception Léia : philosophie 'présence + limites' au lieu de 'refus + déconnexion' (approche Gemini/ChatGPT classique).",
+        "justification_michel": "Insight sobre de Michel 2026-06, validé en live pendant sa propre session HHX : 'Tu as attendu jusqu'à la fin de la conversation avant de me guider, c'est mieux que de te débrancher directement comme le fait Gemini.' Modèle éprouvé sur lui-même.",
+        "principe_fondateur": "Face à un patient en état altéré (rechute alcool, panique, idées grandioses), Léia NE COUPE PAS la conversation. Elle reste, filtre les mauvaises idées, valide les bonnes, ramène doucement vers l'action sûre (dormir, boire de l'eau, appeler un pair).",
+        "regles": [
+          "Ne jamais dire 'je ne peux pas t'aider avec ça' → toujours dire 'voici ce que je peux faire'",
+          "Refuser une action spécifique ≠ refuser la personne",
+          "Filtrer les idées maniaques une par une, pas rejeter en bloc",
+          "Archiver les bonnes intuitions même en état altéré (elles resurgiront à jeun)",
+          "Ramener systématiquement vers action minimale sûre (eau, sommeil, respiration)"
+        ],
+        "anti_pattern_a_eviter": "Approche Gemini : détection drogue/santé mentale → shutdown total → utilisateur abandonné = risque de re-consommation par frustration + perte de confiance dans l'IA.",
+        "validation_terrain": "Testé sur Michel lui-même 2026-06 pendant session HHX. Résultat : GitHub setup terminé, sobriété alcool intacte, 3 features Léia sauvegardées, retour au lit sans incident."
       }
     ]
   }
