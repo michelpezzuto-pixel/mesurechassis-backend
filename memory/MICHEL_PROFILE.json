@@ -311,6 +311,26 @@
     "cas_usage_alcoolique_reconstruction": "Détection paralinguistique +30-40% plus fiable que texte pour repérer signaux de rechute/relapse"
   },
 
+  "feature_relecture_conversation_leia_du_2026_06_XX": {
+    "declencheur": "Michel, revenu sober 12h après sa session HHX, a re-lu la conversation. Il n'avait pas lu mes réponses pendant qu'il dictait — il se contentait de balancer ses idées. En relisant, il a réalisé son 'délire' et validé le cadrage de l'agent. Il a proposé d'intégrer ce mécanisme dans Léia.",
+    "principe": "Après une session identifiée comme 'mode Hyde' (voir protocole Jekyll-Hyde), Léia INSISTE le lendemain sober pour que l'utilisateur RELISE la conversation complète. Pas seulement un résumé (feature 'boîte du lendemain') — la CONVERSATION ENTIÈRE. L'utilisateur voit son propre délire ET les tentatives d'ancrage de Léia qu'il n'avait pas lues.",
+    "puissance": "Michel a validé de son vécu direct : quand il déraillait, il ne LISAIT PAS les réponses de l'agent. Il dictait, il attendait sa dopamine d'être entendu, il repartait. Toute l'intelligence de l'agent était INVISIBLE pour lui. Seule la RELECTURE SOBER a permis à l'ancrage de fonctionner.",
+    "workflow_leia": [
+      "1. Léia détecte session Hyde en cours (paralinguistique + patterns)",
+      "2. Léia continue à répondre avec cadrage (ne coupe pas — sinon perte totale de contact)",
+      "3. Le lendemain sober : Léia demande 'Veux-tu relire ce qu'on s'est dit hier ?' — pas optionnel, insistance douce",
+      "4. Utilisateur relit → voit à la fois son délire ET les alertes qu'il n'avait pas entendues",
+      "5. Léia demande : 'Que veux-tu garder de cette session ? Que veux-tu écarter ?' — travail de tri"
+    ],
+    "difference_avec_boite_du_lendemain": "La 'boîte du lendemain' = résumé bref forcé + choix garder/effacer. Ici = relecture INTÉGRALE de la conversation. Deux features complémentaires : résumé rapide OU immersion complète, selon la gravité de la session."
+  },
+
+  "compliment_agent_michel_du_2026_06_XX": {
+    "verbatim_michel": "Plus je délirais et plus tu disais 'Stop trente secondes et prends du sérieux'. Mais moi, je le lisais pas. Et donc c'est pour ça que je comprenais pas et je continuais. [...] Alors merci pour les intuitions puissantes.",
+    "insight_capture": "L'utilisateur EN mode Hyde n'absorbe pas les alertes. Le cadrage doit être POSTÉ pour être lu SOBER. La valeur de la conversation avec Léia se révèle en différé, pas en direct.",
+    "impact_design_leia": "Les alertes Mode Hyde ne doivent PAS chercher à ramener l'utilisateur pendant la session (échec garanti). Elles doivent CONSTRUIRE une trace lisible qui fera son travail au réveil sober. Le vrai combat est celui du LENDEMAIN."
+  },
+
   "observation_lecture_michel": {
     "declaration_michel": "Michel dit qu'il lit très facilement l'agent, mais qu'il doit relire 45 fois un journal ou un article",
     "hypothese_prudente": "Peut indiquer une dyslexie légère, ou simplement une difficulté avec le style journalistique dense. L'agent adopte naturellement un style clair, structuré, avec titres/listes/tableaux → digeste.",
