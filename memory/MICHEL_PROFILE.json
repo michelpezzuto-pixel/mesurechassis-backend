@@ -330,6 +330,12 @@
       "priorite": "P1",
       "description": "5 actions à coût 0€ à travailler quand Michel rentre au bureau : pourquoi de l'app, routine matinale, mentoring gratuit, lectures ciblées, LinkedIn",
       "bloque_sur": "Michel rentre au bureau"
+    },
+    {
+      "id": "MAIL_DIYEA_EMERGENT",
+      "priorite": "P1",
+      "description": "Mail ambassadeur envoyé à d.robin@emergent.sh (Diyea Robin, Head of Inside Sales)",
+      "bloque_sur": "✅ ENVOYÉ (soir 2026-06-XX) — attente réponse Diyea"
     }
   ],
 
@@ -696,8 +702,14 @@
       ]
     },
     "feature_boite_du_lendemain": {
-      "concept": "Le lendemain sobre, Léia demande : 'Hier soir tu m'as écrit. Veux-tu voir ce que tu as dit ?' — Bouton 'Oui montre-moi' (choc de conscience thérapeutique) OU 'Non efface' (destruction propre).",
-      "puissance_therapeutique": "Aucune thérapie classique ne peut montrer à un alcoolique qui il est quand il boit. Léia peut. Miroir dur mais utile."
+      "concept": "Le lendemain sobre, Léia demande : 'Hier soir tu m'as écrit. Voici ce qui s'est passé.' — Exposition BRÈVE OBLIGATOIRE (résumé factuel court), puis choix éclairé.",
+      "workflow_corrige_2026_06_XX": [
+        "Étape 1 : Exposition brève OBLIGATOIRE — Léia affiche un résumé factuel court (3 phrases-clés, heure). Impossible d'éviter cette page.",
+        "Étape 2 : Choix éclairé — 2 boutons : 'Garder pour mémoire' (archive dans journal privé consultable) OU 'Détruire — décision consciente' (efface après avoir vu)",
+        "Étape 3 : Si 'Détruire' choisi → confirmation : 'Tu as vu. Tu as choisi de fermer cette page. C'est un acte de courage, pas de fuite.'"
+      ],
+      "correction_michel": "Version initiale avait 'Non efface' comme échappatoire directe. Michel a corrigé : il faut OBLIGER l'utilisateur à faire face avant tout choix. Sinon = fuite, déni. Contre philosophie 'regarder en arrière = fierté + progrès'.",
+      "puissance_therapeutique": "Aucune thérapie classique ne peut montrer à un alcoolique qui il est quand il boit. Léia peut. Miroir dur mais utile. L'exposition brève et le choix éclairé = actes de courage, pas d'humiliation."
     },
     "integration_alcotest_optionnelle": {
       "concept": "Opt-in, jamais obligatoire",
