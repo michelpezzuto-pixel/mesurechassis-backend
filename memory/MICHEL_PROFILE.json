@@ -316,6 +316,13 @@
       "verdict": "✅ KEEP — déjà loggé (feature_voice_first_leia)",
       "validation_pratique": "Michel valide en temps réel : mic → parle → lit réponse texte → répond point par point pendant défilement. Boucle fluide, faible friction.",
       "regle_design_confirmee": "Réponses structurées (titres, tableaux, listes) permettent défilement point par point. Format à préserver dans Léia."
+    },
+    "timing_adoption_leia_analogie_hamburger": {
+      "verdict": "✅ KEEP — insight équilibré et factuellement solide",
+      "analogie_michel": "Le hamburger — au début mangé au couteau/fourchette (1900-1920), normalisé à la main seulement en 1948 avec McDonald's. Il faut du temps pour intégrer un nouveau format d'interaction.",
+      "cadre_scientifique": "Diffusion of Innovations (Everett Rogers, 1962) — 5 phases : Innovators 2.5%, Early Adopters 13.5%, Early Majority 34%, Late Majority 34%, Laggards 16%.",
+      "positionnement_leia": "Aujourd'hui (2026) = Early Majority pour l'IA conversationnelle. Léia lancée 2028 = Late Majority → utilisateurs cible déjà familiers avec parler à une IA. Timing idéal.",
+      "correction_pessimisme_precedent": "Le pessimisme 'Léia va flopper car les gens ne savent pas prompter' est réfuté par cet insight. Timing = un des meilleurs atouts du projet."
     }
   },
 
