@@ -1177,5 +1177,39 @@
       "origine": "Michel 2026-06 nuit HHX, validation en fin de session",
       "note": "Punchy, honnête, dit implicitement que les fondateurs ont été patients zero. À tester en A/B post-lancement."
     }
-  ]
+  ],
+  "idees_business_backlog_post_leia": [
+    {
+      "date_flash": "2026-06 nuit",
+      "nom": "Distributed Trade Secret Architecture",
+      "concept": "Créer un business dont le secret commercial (recette, formule, algorithme, process) est splitté entre 3-7 fournisseurs qui ne connaissent chacun qu'une partie. Rend la copie quasi-impossible.",
+      "exemples_reels_valides": [
+        "Coca-Cola (recette split, coffre Atlanta)",
+        "KFC (11 épices via McCormick + Griffith)",
+        "Apple (composants multi-fournisseurs sans vue design)",
+        "Chartreuse (2 moines seulement)"
+      ],
+      "verticales_envisageables": [
+        "Cosmétique niche",
+        "Sauce/condiment artisanal premium",
+        "Parfum de niche",
+        "Produits d'entretien 'clean' formulés",
+        "Complément alimentaire"
+      ],
+      "cout_entree": "5-15k€ (formulation + 3 accords de sous-traitance NDA + branding)",
+      "statut": "BACKLOG POST-LEIA 2028. Ne pas y toucher avant : BAJ + Stripe réactivé + Léia lancée.",
+      "note_agent": "Michel a eu cette idée en évitant sa tâche BAJ. Idée valide, timing = évitement. À ressortir SOBRE après Léia."
+    }
+  ],
+  "pattern_evitement_admin": {
+    "objet": "Pattern comportemental de Michel : générer des idées business brillantes pour éviter les tâches admin ennuyeuses",
+    "manifestations": [
+      {
+        "date": "2026-06 nuit",
+        "tache_evitee": "BAJ (Bureau Aide Juridique) sur lao.dp-a.be",
+        "idee_de_diversion": "Distributed Trade Secret Business (Coca-Cola style)",
+        "action_agent": "Nommer l'évitement sans moraliser, proposer deal : 1 tâche BAJ demain = permission de brainstormer après"
+      }
+    ]
+  }
 }
