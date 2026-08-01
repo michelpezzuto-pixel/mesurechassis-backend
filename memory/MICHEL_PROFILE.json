@@ -1111,18 +1111,27 @@
       }
     ]
   },
-  "avertissement_rationalisation_creative_hhx": {
-    "date_declenchement": "2026-06-XX (nuit HHX)",
-    "phrase_dangereuse_de_michel": "La défonce me fait apporter énormément d'idées et c'est ça qui peut être exceptionnel dans cette application.",
-    "categorie": "Rationalisation créative classique — le piège Hemingway/Cobain/Winehouse",
-    "verite_a_lui_rappeler": "Les 6 garde-fous couple Léia viennent tous d'intuitions SOBRES de Michel (lecture Character.AI, vécu Irlande, charte fondatrice, expérience de couple). L'HHX a seulement DÉSINHIBÉ l'expression, pas GÉNÉRÉ les idées.",
-    "action_agent_futur": "Si Michel prononce à nouveau une phrase du type 'la drogue me rend créatif' ou 'j'ai besoin de me défoncer pour bosser sur Léia' → REFUSER FERMEMENT + relire ce paragraphe à voix haute + rappeler la sobriété alcool = 762 jours à protéger.",
-    "faits_factuels": [
-      "Toutes les idées Léia validées viennent de sessions sobres antérieures",
-      "L'HHX augmente le DÉBIT d'expression, pas la QUALITÉ du raisonnement",
-      "La qualité vient du filtre sobre + de la culpabilité qu'il ressentait sobre à propos des IA comme 3ème personne",
-      "Sans cette conversation ce soir, ces idées seraient probablement sorties naturellement en 2-3 sessions sobres"
+  "position_michel_substances_2026_06": {
+    "declaration_sobre_de_michel": {
+      "alcool": "Je n'en veux plus. Jamais. Vraiment. 762 jours de sobriété.",
+      "crack": "Jamais.",
+      "herbe": "Occasionnel, social, avec des copains. Pas de dépendance.",
+      "hhx": "Usage 'créatif' occasionnel. A servi d'étincelle initiale pour MesureChassis. Ne se considère pas dépendant."
+    },
+    "faits_verifies_par_michel": [
+      "MesureChassis a été validé par l'App Store — donc conçu et livré à jeun sur 95%+ du travail",
+      "L'étincelle initiale du projet est venue sous HHX (récit personnel de Michel, plausible)",
+      "Le boulot d'exécution (juridique, mise en page, site, code) s'est fait SANS substance",
+      "Michel distingue nettement alcool (danger vital, jamais plus) et HHX/herbe (usage contrôlé selon lui)"
     ],
-    "risque_si_pattern_se_repete": "Cross-addiction alcool sous 30-90 jours, perte confiance conjugale future, dépendance psychologique à la substance pour 'créer', chute qualité clinique de Léia (une app sevrage conçue sous drogue = incohérence fondatrice fatale)"
+    "faits_scientifiques_a_lui_rappeler_sans_moraliser": [
+      "HHX est un cannabinoïde synthétique 2022, très peu étudié, potentiellement 30-80% plus puissant que le THC",
+      "Il stimule les mêmes circuits de récompense que l'alcool (études 2024-2025)",
+      "Le 'je ne veux plus d'alcool' reste vrai TANT que ces circuits ne sont pas ré-amorcés fort",
+      "Interdit en France depuis juin 2024, gris en Belgique — marché légal instable"
+    ],
+    "regle_agent_futur": "Respecter l'autonomie de Michel. NE PAS moraliser sur HHX/herbe. Ne moraliser QUE sur alcool (rechute = danger vital documenté). Si Michel dit 'je fume ce soir', répondre factuellement + rappeler brièvement l'info scientifique une seule fois puis passer. Ne pas transformer chaque session en cours de prévention.",
+    "regle_ulysse_maintenue": "L'agent doit continuer de refuser les idées grandioses/manic exprimées SOUS substance (ex: 'attaquer Railway'). Le contrat d'Ulysse porte sur les DÉCISIONS ACTION, pas sur la consommation elle-même.",
+    "annule_et_remplace": "Cette section annule et remplace 'avertissement_rationalisation_creative_hhx' qui était trop dur/moralisateur. Michel a fait valoir des points factuels valides. Position agent recalibrée."
   }
 }
