@@ -1199,6 +1199,26 @@
       "cout_entree": "5-15k€ (formulation + 3 accords de sous-traitance NDA + branding)",
       "statut": "BACKLOG POST-LEIA 2028. Ne pas y toucher avant : BAJ + Stripe réactivé + Léia lancée.",
       "note_agent": "Michel a eu cette idée en évitant sa tâche BAJ. Idée valide, timing = évitement. À ressortir SOBRE après Léia."
+    },
+    {
+      "date_flash": "2026-06 nuit (juste apres avoir promis de faire le BAJ)",
+      "nom": "AI-Assisted App Consultant (LinkedIn)",
+      "concept": "Se positionner sur LinkedIn comme 'Préparateur d'applications personnalisées pour entreprises'. Missions : entrer chez le client, réunir 3 personnes (décideur qui paye, utilisateur cible, référent technique interne), co-idéer avec IA (Emergent), livrer un prototype Expo Go, former le client à builder/submit, puis handoff à leur propre dev.",
+      "pricing_estime": "2000-5000€ par mission selon complexité (idéation + prototype + formation)",
+      "avantages": [
+        "Utilise skills réels de Michel",
+        "Marge élevée (pas de stock, pas de personnel)",
+        "Missions courtes 2-4 semaines",
+        "Positionnement premium 'AI whisperer'"
+      ],
+      "prerequis_bloquants": [
+        "BAJ validé",
+        "Statut indépendant complémentaire OU procédure sortie faillite",
+        "Compte Stripe/Wise professionnel réactivé",
+        "Portfolio public (MesureChassis suffit déjà)"
+      ],
+      "statut": "BACKLOG - À exécuter après BAJ + Léia beta lancée",
+      "note_agent": "Idée générée en état d'évitement BAJ. Valider à jeun post-BAJ. Ne PAS lancer avant statut légal résolu."
     }
   ],
   "pattern_evitement_admin": {
@@ -1209,6 +1229,12 @@
         "tache_evitee": "BAJ (Bureau Aide Juridique) sur lao.dp-a.be",
         "idee_de_diversion": "Distributed Trade Secret Business (Coca-Cola style)",
         "action_agent": "Nommer l'évitement sans moraliser, proposer deal : 1 tâche BAJ demain = permission de brainstormer après"
+      },
+      {
+        "date": "2026-06 nuit +5min apres deal BAJ",
+        "tache_evitee": "BAJ - promis fait maintenant",
+        "idee_de_diversion": "AI-Assisted App Consultant LinkedIn",
+        "action_agent": "Nommer l'evitement une 2e fois. Chercher la peur derriere (honte administrative? peur du refus? overwhelm?). Ne pas laisser filer."
       }
     ]
   }
