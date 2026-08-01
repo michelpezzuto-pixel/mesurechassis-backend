@@ -662,6 +662,49 @@
       ],
       "tech": "Pré-filtre prompt utilisateur + post-filtre image générée (Google SafeSearch API + moderation OpenAI + règles maison spécifiques addictions)"
     }
+  },
+
+  "protocole_jekyll_hyde_du_2026_06_XX": {
+    "declencheur": "Michel : 'Si l'utilisateur utilise Léia alors qu'il a bu, l'app risque de confondre sa personnalité sobre et sa personnalité ivre. Docteur Jekyll et Mister Hyde. Il faut détecter et bloquer, sinon on détruit sa personnalité.'",
+    "reference_ethique": "Digital Ulysses Contract — l'utilisateur sobre passe un contrat avec lui-même pour se protéger de lui-même quand il ne le sera plus. Léia = le mât d'Ulysse.",
+    "detection_mode_hyde": {
+      "signaux": [
+        "Vitesse de frappe anormale (accélération puis ralentissement)",
+        "Fautes de dictée vocale multipliées",
+        "Ponctuation chaotique",
+        "Volatilité émotionnelle brusque (colère → tristesse → euphorie)",
+        "Cohérence syntaxique dégradée",
+        "Répétitions",
+        "Heure suspecte (2h-5h)"
+      ],
+      "precision_2026": "80-90% de détection fiable (études Twitter DUI tweets)"
+    },
+    "comportement_leia_mode_hyde": {
+      "leia_fait": [
+        "Réponse courte, chaleureuse : 'Je suis là. Bois de l'eau. Dors. On se reparle demain.'",
+        "Refus toute décision importante (suppression données, annulation parrainage)",
+        "Cooldown 6h ou jusqu'aux signaux sobriété",
+        "Message pré-défini au sponsor/proche (SI autorisé sobre)",
+        "Range la conversation en QUARANTAINE (pas mémoire principale)"
+      ],
+      "leia_ne_fait_pas": [
+        "❌ Conversation profonde",
+        "❌ Modifier paramètres",
+        "❌ Enregistrer en mémoire principale",
+        "❌ Apprendre de cette conversation",
+        "❌ Faire la morale"
+      ]
+    },
+    "feature_boite_du_lendemain": {
+      "concept": "Le lendemain sobre, Léia demande : 'Hier soir tu m'as écrit. Veux-tu voir ce que tu as dit ?' — Bouton 'Oui montre-moi' (choc de conscience thérapeutique) OU 'Non efface' (destruction propre).",
+      "puissance_therapeutique": "Aucune thérapie classique ne peut montrer à un alcoolique qui il est quand il boit. Léia peut. Miroir dur mais utile."
+    },
+    "integration_alcotest_optionnelle": {
+      "concept": "Opt-in, jamais obligatoire",
+      "hardware": "BACtrack Mobile Pro ou Alcohoot — 50-100€, Bluetooth iPhone",
+      "declenchement_auto": "Si taux > 0.3g/L → mode Hyde activé automatiquement",
+      "avantage": "Preuve objective + engagement personnel de l'utilisateur"
+    }
   }
     "objet": "Idées de features Léia validées par Michel lors de la conversation du 2026-06-XX. À intégrer dans le briefing Léia (/app/memory/LEIA_AGENT_BRIEFING.json) quand le gate 4149 sera ouvert.",
     "features": [
