@@ -224,7 +224,26 @@
         "regle_absolue": "Aucune rejouabilité. Aucun farming possible. L'émotion vient de l'irrécupérabilité.",
         "impact_marketing": "Les utilisateurs se rappelleront de leur animation 1 an même 15 ans plus tard. C'est ça, la vraie émotion tech."
       },
-      "opposition_a_apps_engagement_agressives": "Duolingo, Habitica, MyFitnessPal → animations récurrentes, dévaluées par la répétition. Léia → l'inverse : moins souvent, mais gravé dans la mémoire."
+      "opposition_a_apps_engagement_agressives": "Duolingo, Habitica, MyFitnessPal → animations récurrentes, dévaluées par la répétition. Léia → l'inverse : moins souvent, mais gravé dans la mémoire.",
+      "extension_mesurechassis_activation_moment": {
+        "declencheur": "Michel a proposé d'appliquer le principe one-shot joy à MesureChâssis : quand l'utilisateur confirme ses infos post-paiement (TVA, entreprise), une explosion apparaît avec 'Vous avez maintenant accès à votre app'. Ne rejoue jamais.",
+        "concept_ux": "Activation moment — moment magique où le user réalise qu'il a vraiment accès au produit. Boîtes qui maîtrisent (Slack, Notion, Superhuman) → rétention 2-3x supérieure.",
+        "workflow": [
+          "1. User s'inscrit + paie",
+          "2. Reçoit mail 'Confirmez vos infos' (TVA, entreprise)",
+          "3. Complète et valide dans l'app",
+          "4. EXPLOSION one-shot + message 'Bienvenue. Votre compte est actif.'",
+          "5. Animation cachée à jamais (backend: first_activation_seen = true)"
+        ],
+        "benefices": [
+          "Ancre le paiement dans un souvenir positif (vs douleur prélèvement)",
+          "Marque le 'avant/après' — signal cognitif d'appartenance",
+          "Bouche-à-oreille organique gratuit ('tu verras quand tu paies')",
+          "Cohérence identité MesureChâssis + Léia (ADN émotionnel commun)"
+        ],
+        "tech_phase5": "Backend flag + Lottie animation frontend (20-50ko). Effort dev : 4-6h en Phase 5.",
+        "statut": "🔒 Verrouillé Phase 5 (NO CODE actif sauf logo)"
+      }
     }
   },
 
