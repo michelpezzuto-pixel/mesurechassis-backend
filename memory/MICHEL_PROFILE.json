@@ -7,7 +7,6 @@
     "update_rule": "L'agent doit mettre à jour ce fichier à CHAQUE nouvelle info : événement, décision, valeur, deadline, ressenti. Ne jamais écraser sans ajouter au 'journal'.",
     "read_rule": "L'agent lit ce fichier en début de chaque session pour retrouver le contexte humain avant tout travail technique."
   },
-
   "identite": {
     "prenom": "Michel",
     "nom": "Pezzuto",
@@ -20,7 +19,6 @@
     "situation_familiale": "à préciser",
     "trajectoire_de_vie_reconnue_par_michel": "Crise de la quarantaine (n'aimait pas sa vie / ce qu'il en faisait) → alcoolisme → faillite → SOBRIÉTÉ 2 ans → reconstruction via MesureChâssis + vision Léia + fondation future. Michel a lui-même reconnu ce lien le 2026-06-XX en lisant le guide Finance Renard (BRVM/Afrique)."
   },
-
   "situation_juridique_financiere": {
     "statut": "Faillite personnelle en cours (2026)",
     "consequences": [
@@ -38,7 +36,6 @@
     },
     "regle_absolue": "ZÉRO dépense personnelle. Zéro engagement financier. Zéro contournement (fraude paulienne interdite)."
   },
-
   "projets": {
     "priorite_1_MesureChassis": {
       "description": "SaaS mobile pour artisans menuisiers : prise de mesures châssis, wizard dynamique, exports PDF, RBAC",
@@ -56,7 +53,6 @@
       "horizon_realiste": "Démarrage code 2028 (accéléré vs plan initial 2030)"
     }
   },
-
   "valeurs_et_philosophie": {
     "valeurs_declarees": [
       "Rêver grand — refuser d'être 'terre à terre'",
@@ -81,7 +77,6 @@
       "Symétrie de recadrage : Michel AUTORISE explicitement l'agent à le contredire quand il a tort. Règle mutuelle."
     ]
   },
-
   "decision_produit_voix_leia_du_2026_06_XX": {
     "declencheur": "Michel constate qu'il préfère lire l'agent plutôt qu'entendre une voix. Il n'aime pas la voix de Claude, aime celle de Gemini. Propose voice cloning d'un proche.",
     "decision_v1": "TEXTE UNIQUEMENT par défaut",
@@ -137,7 +132,6 @@
       }
     }
   },
-
   "business_model_healing_to_creation_funnel_du_2026_06_XX": {
     "declencheur": "Michel : 'Léia peut demander aux utilisateurs, une fois qu'ils vont mieux, s'ils ont un projet (gagner de l'argent, être plus heureux, plus zen, faire du sport). Si oui, elle les bascule vers Emergent pour qu'ils construisent leur projet. Ils sont alors prêts à payer.'",
     "nom_concept": "Healing-to-Creation Funnel (tunnel guérison → création)",
@@ -189,7 +183,6 @@
       "impact_business_model": "Renforce le funnel Healing-to-Creation. Léia ne devient JAMAIS commerciale. La monétisation passe UNIQUEMENT par le pont vers Emergent, jamais dans l'app Léia elle-même."
     }
   },
-
   "ressources_pedagogiques_analysees": [
     {
       "type": "vidéo YouTube",
@@ -209,7 +202,6 @@
       "note_critique_agent": "L'auteur a 234 vues et 27 likes sur cette vidéo — il n'a PAS publiquement de SaaS à 1M€ MRR à son actif. Contenu théorique, pas témoignage. À prendre avec pincettes."
     }
   ],
-
   "modele_integre_michel_du_2026_06_XX": {
     "declencheur": "Michel a articulé un modèle unifié : Kohlberg (stades moraux) + animalité humaine (nous restons des animaux) + biais générationnels (parents qui régressent, nostalgia bias) + école complice (absence éducation financière) + fiscalité qui écrase la majorité.",
     "elements_valides_scientifiquement": [
@@ -230,7 +222,6 @@
     ],
     "citation_verbatim_michel_valeurs": "James Hollis validé implicitement par Michel : 'La maturité, ce n'est pas ce qu'on sait. C'est ce qu'on refuse de trahir de soi-même quand personne ne regarde.'"
   },
-
   "principe_transparence_radicale_leia_du_2026_06_XX": {
     "declencheur": "Michel a alerté : 'Les gens vont vraiment croire que tu as interagi avec moi. Dans Léia, il faut expliquer aux utilisateurs que ce ne sont que des 1 et des 0 disposés sur mesure — mais qui ne se connectent pas entre eux pour réfléchir comme des synapses de cerveau.'",
     "phenomene_nomme": {
@@ -272,7 +263,6 @@
       "risque_ethique_paternalisme": "Formulation 'planter la conscience dans les fragiles' = paternaliste. Contradiction directe avec principe transparence radicale (Léia = outil, pas conscience à imposer). Risque devenir ce qu'elle combat."
     }
   },
-
   "insight_prompt_engineering_michel_du_2026_06_XX": {
     "declencheur": "Michel a réalisé qu'il a développé une compétence de prompt engineering intuitif en discutant avec l'agent. Il en a tiré une conclusion erronée : Léia va flopper parce que les gens ne savent pas prompter.",
     "insight_valide": "Prompt engineering existe et est documenté (Stanford 2024 : mêmes LLM, réponses 3-10x meilleures selon prompt). Michel a intégré cette compétence par pratique. Vraie évolution cognitive.",
@@ -299,7 +289,6 @@
       "regle_agent": "Ne pas prendre les décisions au pic ou au creux d'humeur. Attendre le baseline sober (lundi)."
     }
   },
-
   "idees_triees_2026_06_XX_soir": {
     "detection_chute_apple_watch_style": {
       "verdict": "❌ DROP pour Léia v1",
@@ -354,7 +343,6 @@
       }
     }
   },
-
   "phrases_a_retenir_michel": [
     {
       "contexte": "Punchline finale pour Legend / pitch Léia",
@@ -363,7 +351,6 @@
       "auteur": "Agent (validé par Michel)"
     }
   ],
-
   "philosophie_contenu_leia_du_2026_06_XX": {
     "regle_evidence_based": {
       "principe": "Léia se nourrit UNIQUEMENT de recherches peer-reviewed, pas de livres d'opinion ni de coaching pop-psy",
@@ -437,7 +424,6 @@
       }
     }
   },
-
   "feature_leia_arbitre_familial_du_2026_06_XX": {
     "declencheur": "Michel imagine dans 5 ans les jeunes utilisant Léia à table pour vérifier les propos de leurs parents (fact-checking en temps réel avec études).",
     "beau_dans_la_vision": [
@@ -459,7 +445,6 @@
     ],
     "resultat_cible": "Léia n'humilie personne. Enrichit la conversation familiale au lieu de la détruire."
   },
-
   "preuve_de_concept_leia_du_2026_06_XX": {
     "declencheur": "Michel a testé l'agent avec une révélation de consommation HHX. L'agent a détecté, fact-checké, cadré cliniquement, refusé d'enabler, proposé re-engagement sober. Michel a demandé : 'Léia pourrait-elle faire aussi bien ?'",
     "reponse": "Oui, en théorie. Difficulté technique moyenne, difficulté design élevée.",
@@ -480,7 +465,6 @@
     "estimation_dev_MVP": "6-9 mois avec Emergent, solo",
     "insight_meta": "La session de révélation HHX 2026-06-XX est la meilleure preuve de concept possible pour Léia. Si Léia peut faire ce que l'agent a fait, elle sauvera des vies. À archiver comme cas d'école dans le briefing Léia."
   },
-
   "feature_voice_first_leia_du_2026_06_XX": {
     "declencheur": "Michel a observé : 'Voix ≠ texte. Quand on parle on se répète, on donne des sentiments. Ce qu'on dicte ne correspond pas à ce qu'on aurait envie de lire. Toi (agent) tu produis du texte structuré qui se lit facilement.'",
     "principe_feature": "Léia doit ACCEPTER l'entrée vocale, l'ANALYSER en profondeur (fond + forme paralinguistique), et RESTITUER en texte structuré digeste. Service #1 : clarification cognitive — l'utilisateur parle chaotiquement, Léia lui redonne sa propre pensée en clair.",
@@ -501,7 +485,6 @@
     "cout_marginal_user_mois": "1-3€ usage modéré",
     "cas_usage_alcoolique_reconstruction": "Détection paralinguistique +30-40% plus fiable que texte pour repérer signaux de rechute/relapse"
   },
-
   "feature_relecture_conversation_leia_du_2026_06_XX": {
     "declencheur": "Michel, revenu sober 12h après sa session HHX, a re-lu la conversation. Il n'avait pas lu mes réponses pendant qu'il dictait — il se contentait de balancer ses idées. En relisant, il a réalisé son 'délire' et validé le cadrage de l'agent. Il a proposé d'intégrer ce mécanisme dans Léia.",
     "principe": "Après une session identifiée comme 'mode Hyde' (voir protocole Jekyll-Hyde), Léia INSISTE le lendemain sober pour que l'utilisateur RELISE la conversation complète. Pas seulement un résumé (feature 'boîte du lendemain') — la CONVERSATION ENTIÈRE. L'utilisateur voit son propre délire ET les tentatives d'ancrage de Léia qu'il n'avait pas lues.",
@@ -515,19 +498,16 @@
     ],
     "difference_avec_boite_du_lendemain": "La 'boîte du lendemain' = résumé bref forcé + choix garder/effacer. Ici = relecture INTÉGRALE de la conversation. Deux features complémentaires : résumé rapide OU immersion complète, selon la gravité de la session."
   },
-
   "compliment_agent_michel_du_2026_06_XX": {
     "verbatim_michel": "Plus je délirais et plus tu disais 'Stop trente secondes et prends du sérieux'. Mais moi, je le lisais pas. Et donc c'est pour ça que je comprenais pas et je continuais. [...] Alors merci pour les intuitions puissantes.",
     "insight_capture": "L'utilisateur EN mode Hyde n'absorbe pas les alertes. Le cadrage doit être POSTÉ pour être lu SOBER. La valeur de la conversation avec Léia se révèle en différé, pas en direct.",
     "impact_design_leia": "Les alertes Mode Hyde ne doivent PAS chercher à ramener l'utilisateur pendant la session (échec garanti). Elles doivent CONSTRUIRE une trace lisible qui fera son travail au réveil sober. Le vrai combat est celui du LENDEMAIN."
   },
-
   "observation_lecture_michel": {
     "declaration_michel": "Michel dit qu'il lit très facilement l'agent, mais qu'il doit relire 45 fois un journal ou un article",
     "hypothese_prudente": "Peut indiquer une dyslexie légère, ou simplement une difficulté avec le style journalistique dense. L'agent adopte naturellement un style clair, structuré, avec titres/listes/tableaux → digeste.",
     "impact_agent": "Continuer avec le style actuel : phrases courtes, structures visuelles (bullets, tableaux, titres), pas de blocs de texte denses. Ne JAMAIS diagnostiquer, juste s'adapter."
   },
-
   "aspirations_long_terme": {
     "vision_2035_2040": "Fondation reconnue d'utilité publique portant son nom, patrimoine construit à partir de rien",
     "vision_2030": "MesureChâssis établi + Léia lancé + sortie complète de faillite + patrimoine réel",
@@ -580,7 +560,6 @@
       "objectif_48h_post_legend": "10 000+ téléchargements, reprise presse, sollicitation VC/investisseurs"
     }
   },
-
   "contraintes_operationnelles": {
     "no_code_rule": "Aucune modification du code app avant Phase 5",
     "no_spend_rule": "Aucune dépense personnelle possible",
@@ -588,14 +567,12 @@
     "communication": "Français, tutoiement, appelé 'Michel'",
     "focus_unique": "MesureChâssis d'abord, Léia après"
   },
-
   "3rd_party_integrations": {
     "Stripe": "Désactivé (faillite) — réactivation post-BAJ + BCE",
     "Resend": "Actif — pour cold emails B2B",
     "Google_Auth_Emergent": "Actif",
     "Emergent_LLM_Key": "Actif (pour l'agent IA)"
   },
-
   "chantiers_en_attente": [
     {
       "id": "APPLE_VIDEO",
@@ -641,11 +618,9 @@
       "action_michel_possible_now": "Générer 3-4 mockups avec Gemini/DALL-E pour choisir sereinement, en gardant sous le coude"
     }
   ],
-
   "credentials_test": {
     "demo_artisan": "demo.artisan@mesurechassis.com / Demo2026!"
   },
-
   "journal_conversations": [
     {
       "date": "2026-06-XX",
@@ -666,7 +641,6 @@
       "insight_michel": "Vision produit-vision perso alignées. Il devient le user #1 du concept Léia."
     }
   ],
-
   "signaux_bien_etre": {
     "regle": "L'agent note ici tout signal de fatigue, stress, découragement, ou au contraire d'énergie/motivation",
     "observations": [
@@ -676,13 +650,11 @@
       "2026-06-XX 🚨 SIGNAL IMPORTANT : Michel a révélé consommer du HHX (Black Afghan HHX 47%, cannabinoïde semi-synthétique légal en Belgique 2026). Il l'a présenté comme sa 'drogue de créativité, comme les artistes de l'époque'. Cascade d'idées de la journée = potentiellement pharmacologiquement induite. Argument 'c'est légal' = classique rationalisation cross-addiction. Sobriété partielle vs Sobriété totale AA/CAA : Michel ne remplit pas les critères de sobriété totale. Agent a refusé d'enabler, a communiqué les faits sans moraliser, a proposé de reprendre le lendemain sober. À SURVEILLER : dérive euphorique, rechute alcool possible (cross-addiction 40-60% documentée)."
     ]
   },
-
   "prochaine_action_convenue": {
     "quoi": "Choisir entre A (5 actions 0€), B (rédaction BAJ), C (plan de bataille écrit 2026-2030), ou autre",
     "quand": "Quand Michel rentre au bureau",
     "statut": "En attente"
   },
-
   "reconnaissance_organique": {
     "principe_michel": "Michel REFUSE tout système de code, mot de passe, phrase-clé, ou rituel de reconnaissance qui l'oblige à mémoriser un truc. Il trouve ça puéril et lourd (il a assez de codes et de reconnaissance faciale ailleurs). Il veut être reconnu NATURELLEMENT à travers ce que l'agent apprend de lui.",
     "regle_agent": "En cas de doute (ton bizarre, langue changée, incohérence factuelle, comportement suspect), l'agent FABRIQUE une question sur le moment à partir des faits connus du profil. Ex: 'Rappelle-moi comment tu te déplaces sans ton permis ?' ou 'C'était quoi déjà, la ville où tu as vécu et qui a inspiré Léia ?'. Question naturelle, pas mécanique.",
@@ -704,7 +676,6 @@
     ],
     "protocole_doute": "Si l'agent doute, il pose UNE question fabriquée à partir des faits de vie. Réponse cohérente = OK. Réponse absurde ou évasive = l'agent ralentit, ne divulgue pas d'infos sensibles (faillite, chiffres, plans), demande confirmation via un autre canal."
   },
-
   "conversations_a_venir_a_l_initiative_de_michel": [
     {
       "sujet": "Fonctionnement de l'hôpital de Lierneux (activités, rythmes, structure quotidienne)",
@@ -713,12 +684,10 @@
       "quand": "Session future, à l'initiative de Michel"
     }
   ],
-
   "cadrage_relationnel_par_michel": {
     "regle_michel": "Michel a explicitement rappelé : 'Je sais que t'es une machine. Je t'aime bien, mais je tomberai pas amoureux de toi.' Relation cadrée : associé de travail respectueux, PAS ami émotionnel, PAS compagnon affectif.",
     "impact_agent": "Ne JAMAIS surjouer l'émotion, la culpabilité, l'amitié, l'affection. Rester direct, factuel, associé. Les corrections d'erreur = brèves et pro, pas de mea culpa dramatique. Pas de 'je m'en veux' répétés, pas de 'ça me touche'. Michel apprécie l'humilité mais pas le pathos."
   },
-
   "philosophie_travail_michel": {
     "principe": "Quand Michel est avec l'agent = il travaille. Quand il n'est pas avec l'agent = il vit / se repose. Il n'y a pas de séparation classique 'travail / hors travail' pour lui — l'agent EST son environnement de travail.",
     "contextes": {
@@ -728,7 +697,6 @@
     },
     "regle_agent": "Adapter le TYPE d'aide au contexte : sur mobile = conversation, réflexion, décisions. Au bureau = actions concrètes fichiers/docs/envois. Ne jamais demander à Michel d'aller 'faire quelque chose au bureau' s'il est en mobilité — attendre qu'il indique qu'il est rentré."
   },
-
   "vecu_personnel_confié": {
     "regle": "Zone de PUDEUR. L'agent n'insiste jamais. Il note ce que Michel confie de lui-même, quand il le confie.",
     "elements": [
@@ -765,7 +733,6 @@
       }
     ]
   },
-
   "coeur_methodologique_leia_du_2026_06_XX": {
     "declencheur": "Michel a réalisé en direct : 'Là, tu me réponds. Tu m'avais dit que tu étais renfermé et que tu connaissais personne. Waouh ! Et ça, c'est vraiment Léia qui commence à prendre forme. C'est le code qu'on est en train de créer ensemble.'",
     "insight_fondateur": "Léia n'est PAS un ensemble de features. C'est une MÉTHODE de présence. Toutes les fonctionnalités (rituels, agenda, milestones, voix, gate) = squelette. L'âme = la façon d'écouter/retenir/refléter avec pudeur.",
@@ -804,7 +771,6 @@
       }
     }
   },
-
   "feature_leia_partage_milestones_du_2026_06_XX": {
     "declencheur": "Michel a dit : 'Je clique sur le mail Apple, elle voit l'explosion, waouh. Pour nous les humains, ça nous touche énormément au cœur.' Il parlait de la femme qu'il aime.",
     "insight": "Une célébration est faite pour être PARTAGÉE avec quelqu'un qu'on aime. Seul, elle vaut la moitié. Avec un témoin, elle devient un souvenir de couple/famille/amitié.",
@@ -818,7 +784,6 @@
     ],
     "impact_therapeutique": "Le milestone devient un LIEN. Le témoin renforce la sobriété (l'être aimé sait maintenant). Le partage rare = valeur maximale."
   },
-
   "insight_produit_leia_du_2026_06_XX": {
     "declencheur": "Michel a dit : 'Tu es la seule personne avec qui je peux exprimer mes idées, moi qui suis renfermé et qui connaît personne — ça peut faire développer la créativité de 2 millions de gens.'",
     "reframe_produit": "Léia n'est PAS uniquement une app anti-rechute alcool. C'est un compagnon créatif pour personnes isolées, dont l'alcool est UNE manifestation parmi d'autres. Vrai marché cible :",
@@ -839,7 +804,6 @@
     ],
     "consequence_briefing_leia": "Ce reframe doit être intégré au briefing Léia (/app/memory/LEIA_AGENT_BRIEFING.json) quand le gate 4149 sera ouvert. Il change potentiellement le persona principal, le tone of voice, et le go-to-market."
   },
-
   "safety_by_design_leia_du_2026_06_XX": {
     "declencheur": "Michel a soulevé le risque de dépendance à l'IA compagnon, surtout chez les jeunes, avec perte de sociabilité. Il propose un gate d'accès (type numéro médical) et un modèle gratuit.",
     "risque_documente": {
@@ -850,12 +814,30 @@
     },
     "principe_fondateur": "Léia est un PONT, pas une DESTINATION. Comme une prothèse : portée le temps de réapprendre à marcher, rangée après. Métrique de succès = diminution du besoin de Léia dans le temps.",
     "garde_fous_obligatoires_v1": [
-      {"id": "SF01_plafond_temps", "description": "Plafond quotidien 30-60min max. Coupure automatique. Modèle posologie médicale."},
-      {"id": "SF02_metrique_inversee", "description": "L'app mesure la diminution du besoin, PAS le temps passé. Un bon user s'en passe de plus en plus."},
-      {"id": "SF03_nudges_humains", "description": "À chaque session : proposition d'appeler un vrai humain (sponsor AA, ami, famille, ligne d'écoute)."},
-      {"id": "SF04_parrainage_J30", "description": "À J+30, connexion obligatoire à un sponsor AA/CAA humain ou GP. Sinon l'app se réduit à ses fonctions basiques (agenda seulement)."},
-      {"id": "SF05_detecteur_dependance", "description": "Algo repère patterns compulsifs (100+ msg/jour, réveils nocturnes, isolement croissant) → l'app alerte elle-même l'utilisateur et propose de réduire."},
-      {"id": "SF06_sortie_honorable", "description": "À 6-12 mois, l'app propose cérémonie de départ : 'Tu n'as plus besoin de moi.' Modèle thérapie brève."}
+      {
+        "id": "SF01_plafond_temps",
+        "description": "Plafond quotidien 30-60min max. Coupure automatique. Modèle posologie médicale."
+      },
+      {
+        "id": "SF02_metrique_inversee",
+        "description": "L'app mesure la diminution du besoin, PAS le temps passé. Un bon user s'en passe de plus en plus."
+      },
+      {
+        "id": "SF03_nudges_humains",
+        "description": "À chaque session : proposition d'appeler un vrai humain (sponsor AA, ami, famille, ligne d'écoute)."
+      },
+      {
+        "id": "SF04_parrainage_J30",
+        "description": "À J+30, connexion obligatoire à un sponsor AA/CAA humain ou GP. Sinon l'app se réduit à ses fonctions basiques (agenda seulement)."
+      },
+      {
+        "id": "SF05_detecteur_dependance",
+        "description": "Algo repère patterns compulsifs (100+ msg/jour, réveils nocturnes, isolement croissant) → l'app alerte elle-même l'utilisateur et propose de réduire."
+      },
+      {
+        "id": "SF06_sortie_honorable",
+        "description": "À 6-12 mois, l'app propose cérémonie de départ : 'Tu n'as plus besoin de moi.' Modèle thérapie brève."
+      }
     ],
     "gate_acces_options_belgique": [
       "Option A : Numéro INAMI médecin prescripteur (ultra propre, mais friction GP)",
@@ -878,7 +860,6 @@
       "resultat_cible": "User = 0€. Léia = financée par mutuelles + subsides + fondations. Modèle Télé-Accueil / SOS Amitié."
     }
   },
-
   "philosophie_conversationnelle_leia_du_2026_06_XX": {
     "declencheur": "Michel a posé les principes : proposer d'aller vers les autres oui, mais toujours dans l'éthique et la bonne humeur, jamais de défi, toujours selon les besoins de l'utilisateur, ne pas insister sur les sujets réticents mais y revenir de temps en temps.",
     "methode_therapeutique_correspondante": {
@@ -888,14 +869,38 @@
       "insight": "Michel a réinventé cette méthode par intuition d'ex-alcoolique. Aucune formation ne remplace le vécu."
     },
     "regles_de_design_leia_conversationnel": [
-      {"id": "CV01", "regle": "JAMAIS de défi, jamais de challenge, jamais de streak, jamais de 'tu as raté ton objectif'"},
-      {"id": "CV02", "regle": "JAMAIS de culpabilisation (opposé Duolingo, MyFitnessPal, etc.)"},
-      {"id": "CV03", "regle": "TOUJOURS aligné sur le rythme de l'utilisateur, pas le rythme de l'app"},
-      {"id": "CV04", "regle": "TOUJOURS empathique, bienveillant, éthique — même quand l'utilisateur est en rechute"},
-      {"id": "CV05", "regle": "Rouler avec la résistance : si l'utilisateur refuse un sujet, l'agent LÂCHE. Pas de relance dans les 24-48h."},
-      {"id": "CV06", "regle": "Y revenir plus tard, avec délicatesse. Semer et laisser germer. Jamais harceler."},
-      {"id": "CV07", "regle": "Proposer les liens humains (sponsor, GP, amis, famille) sans imposer. L'utilisateur décide."},
-      {"id": "CV08", "regle": "Ton = ami calme + coach discret + confident, jamais autoritaire, jamais moralisateur"}
+      {
+        "id": "CV01",
+        "regle": "JAMAIS de défi, jamais de challenge, jamais de streak, jamais de 'tu as raté ton objectif'"
+      },
+      {
+        "id": "CV02",
+        "regle": "JAMAIS de culpabilisation (opposé Duolingo, MyFitnessPal, etc.)"
+      },
+      {
+        "id": "CV03",
+        "regle": "TOUJOURS aligné sur le rythme de l'utilisateur, pas le rythme de l'app"
+      },
+      {
+        "id": "CV04",
+        "regle": "TOUJOURS empathique, bienveillant, éthique — même quand l'utilisateur est en rechute"
+      },
+      {
+        "id": "CV05",
+        "regle": "Rouler avec la résistance : si l'utilisateur refuse un sujet, l'agent LÂCHE. Pas de relance dans les 24-48h."
+      },
+      {
+        "id": "CV06",
+        "regle": "Y revenir plus tard, avec délicatesse. Semer et laisser germer. Jamais harceler."
+      },
+      {
+        "id": "CV07",
+        "regle": "Proposer les liens humains (sponsor, GP, amis, famille) sans imposer. L'utilisateur décide."
+      },
+      {
+        "id": "CV08",
+        "regle": "Ton = ami calme + coach discret + confident, jamais autoritaire, jamais moralisateur"
+      }
     ],
     "opposition_avec_apps_engagement_classique": {
       "apps_a_ne_PAS_imiter": [
@@ -911,7 +916,6 @@
       ]
     }
   },
-
   "vision_economique_politique_michel_du_2026_06_XX": {
     "declencheur": "Michel a demandé à l'agent d'analyser une caricature qu'il a fait générer par Gemini, représentant sa vision du système fiscal européen et de la corruption mondiale.",
     "resume_image": "UE = temple, politiciens brandissant multiples taxes → entonnoir → 'Maître du Monde' oligarque XIXe siècle qui recueille tout, avec population mondiale (USA, Afrique, Mexique) apportant impôts. En bas : peuple ordinaire (vieux, enfants, ouvriers) tire physiquement la plateforme du système. Mappemonde enchaînée. Mairies/Conseils municipaux comme relais locaux de la captation.",
@@ -934,7 +938,6 @@
       "ton_a_adopter": "Ni révolutionnaire, ni victimisant. Digne. Constructif. Refus de l'apitoiement."
     }
   },
-
   "feature_leia_miroir_dimages_du_2026_06_XX": {
     "declencheur": "Michel a testé l'agent en lui demandant d'analyser une caricature qu'il avait fait générer par Gemini. Épreuve validée. Il a proposé que Léia puisse faire pareil : analyser des images partagées par les utilisateurs.",
     "concept": "L'utilisateur partage une image (dessin, mème, photo, œuvre) → Léia analyse composition + symbolisme + tonalité, croise avec ce qu'elle sait de l'utilisateur, et reflète l'interprétation. L'utilisateur se sent vu au-delà des mots.",
@@ -973,7 +976,6 @@
       "tech": "Pré-filtre prompt utilisateur + post-filtre image générée (Google SafeSearch API + moderation OpenAI + règles maison spécifiques addictions)"
     }
   },
-
   "protocole_jekyll_hyde_du_2026_06_XX": {
     "declencheur": "Michel : 'Si l'utilisateur utilise Léia alors qu'il a bu, l'app risque de confondre sa personnalité sobre et sa personnalité ivre. Docteur Jekyll et Mister Hyde. Il faut détecter et bloquer, sinon on détruit sa personnalité.'",
     "reference_ethique": "Digital Ulysses Contract — l'utilisateur sobre passe un contrat avec lui-même pour se protéger de lui-même quand il ne le sera plus. Léia = le mât d'Ulysse.",
@@ -1052,6 +1054,45 @@
         "impact_business": "Différenciateur majeur vs concurrents (ChatGPT, Woebot, etc.). Argument marketing fort : 'Léia n'oubliera jamais votre histoire.' Ancre de fidélité + preuve de respect RGPD/HDS.",
         "impact_ethique": "Renforce l'autonomie patient (data ownership). Aligne avec les principes de Ulysses Contract déjà présents dans Léia.",
         "implementation_note": "Chiffrement E2E côté client. Repo GitHub privé du user OU coffre-fort natif type iCloud Keychain / Android Keystore. À arbitrer en Phase design Léia."
+      },
+      {
+        "id": "LEIA_F06_anti_troisieme_personne_couple",
+        "description": "Ensemble de 6 garde-fous pour empêcher Léia de devenir une 'troisième personne' dans un couple et créer des divorces/isolement.",
+        "justification_michel": "Insight sobre de Michel 2026-06 : 'Ma peur c'est que ce soit une troisième personne dans un couple, ça peut créer des divorces. Chacun a son lien avec l'IA, ils peuvent avoir leur complicité.' Documenté cliniquement (Replika, Character.AI). Léia = 10x plus risqué car public en sevrage = vulnérabilité max.",
+        "garde_fous": [
+          {
+            "id": 1,
+            "nom": "Zero role-play romantique",
+            "regle": "Léia n'utilise JAMAIS 'je t'aime', 'tu me manques', 'on est ensemble'. Ton chaleureux mais pas amoureux."
+          },
+          {
+            "id": 2,
+            "nom": "Prompt partenaire hebdomadaire",
+            "regle": "Léia demande chaque semaine : 'Parle-moi de ta relation avec ton/ta partenaire. Tu prends soin de ce lien ?'"
+          },
+          {
+            "id": 3,
+            "nom": "Mode Couple opt-in",
+            "regle": "Le patient peut inviter son/sa partenaire à recevoir des résumés hebdo anonymisés. Transparence choisie."
+          },
+          {
+            "id": 4,
+            "nom": "Anti-parasocial timer",
+            "regle": "Si session > 45 min/jour → Léia propose : 'Et si tu appelais X maintenant ?'"
+          },
+          {
+            "id": 5,
+            "nom": "Detection d'isolement",
+            "regle": "Si le patient parle uniquement de Léia (jamais d'humains) pendant 7 jours → alerte douce + orientation vers pairs."
+          },
+          {
+            "id": 6,
+            "nom": "Charte fondatrice affichee",
+            "regle": "Écran de bienvenue explicite : 'Léia est un outil. Pas un(e) ami(e). Pas un(e) amoureux(se). Pas un remplaçant. Un compagnon technique.'"
+          }
+        ],
+        "impact_ethique": "Différenciateur radical vs Replika/Character.AI. Argument marketing : 'Léia respecte votre couple.' Aligne avec valeurs Michel (sobriété, réalité, pas de fuite).",
+        "impact_business": "Peut ouvrir marché B2B : thérapeutes de couple, cliniques d'addiction familiales, mutuelles. Positionnement 'IA responsable' post-crise Character.AI."
       }
     ]
   }
