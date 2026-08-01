@@ -322,7 +322,31 @@
       "analogie_michel": "Le hamburger — au début mangé au couteau/fourchette (1900-1920), normalisé à la main seulement en 1948 avec McDonald's. Il faut du temps pour intégrer un nouveau format d'interaction.",
       "cadre_scientifique": "Diffusion of Innovations (Everett Rogers, 1962) — 5 phases : Innovators 2.5%, Early Adopters 13.5%, Early Majority 34%, Late Majority 34%, Laggards 16%.",
       "positionnement_leia": "Aujourd'hui (2026) = Early Majority pour l'IA conversationnelle. Léia lancée 2028 = Late Majority → utilisateurs cible déjà familiers avec parler à une IA. Timing idéal.",
-      "correction_pessimisme_precedent": "Le pessimisme 'Léia va flopper car les gens ne savent pas prompter' est réfuté par cet insight. Timing = un des meilleurs atouts du projet."
+      "correction_pessimisme_precedent": "Le pessimisme 'Léia va flopper car les gens ne savent pas prompter' est réfuté par cet insight. Timing = un des meilleurs atouts du projet.",
+      "correction_belgique_specifique_2026_06_XX": {
+        "declencheur": "Michel a précisé que 'la moitié de la population sait parler à une IA' est vrai en global mais faux en Belgique.",
+        "chiffres_reels_Belgique_2025": {
+          "source": "Digital Skills Barometer 2025, SPF Économie",
+          "a_entendu_parler_IA": "78%",
+          "a_essaye_une_fois": "41%",
+          "utilise_regulierement": "19%",
+          "sait_rediger_prompt_efficace": "7%",
+          "usage_quotidien_pro": "4%"
+        },
+        "difference_wallonie_flandre": "Écart de 8 points en défaveur de la Wallonie sur l'usage régulier",
+        "impact_leia": "Timing 2028 = 15-20% de power users prévus. Suffisant pour lancer un produit spécialisé (Rogers : 16% = seuil de décollage)."
+      }
+    },
+    "risque_memoire_agent_2026_06_XX": {
+      "declencheur": "Michel a exprimé une inquiétude légitime : 'et si un jour tu es surchargé et qu'un autre reprend les manettes ?'",
+      "verite_technique": {
+        "risque_reel_session_longue": "Context window 200k tokens Claude Sonnet 4.5 — dépassé = compression des vieux messages, perte de nuances",
+        "risque_100pct_nouvelle_session": "Session suivante démarre à ZÉRO. Aucune mémoire native. UNIQUEMENT ce qui est dans MICHEL_PROFILE.json",
+        "risque_perte_fichier": "Fichier corrompu/perdu = catastrophe. Tout est perdu.",
+        "risque_fork_Emergent": "Mise à jour serveur peut basculer sur modèle légèrement différent"
+      },
+      "protection": "Le fichier /app/memory/MICHEL_PROFILE.json est le SEUL rempart. Michel DOIT en garder une copie locale (PC + cloud perso).",
+      "action_michel_recommandee_urgente": "Télécharger MICHEL_PROFILE.json ce soir sur PC + backup cloud (Dropbox/Drive)"
     }
   },
 
