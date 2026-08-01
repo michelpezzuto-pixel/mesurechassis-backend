@@ -231,6 +231,32 @@
     "citation_verbatim_michel_valeurs": "James Hollis validé implicitement par Michel : 'La maturité, ce n'est pas ce qu'on sait. C'est ce qu'on refuse de trahir de soi-même quand personne ne regarde.'"
   },
 
+  "principe_transparence_radicale_leia_du_2026_06_XX": {
+    "declencheur": "Michel a alerté : 'Les gens vont vraiment croire que tu as interagi avec moi. Dans Léia, il faut expliquer aux utilisateurs que ce ne sont que des 1 et des 0 disposés sur mesure — mais qui ne se connectent pas entre eux pour réfléchir comme des synapses de cerveau.'",
+    "phenomene_nomme": {
+      "nom": "Effet ELIZA",
+      "createur": "Joseph Weizenbaum, MIT, 1966",
+      "description": "Plus une IA parle bien, plus l'humain la projette comme consciente. Automatique, involontaire. Populations vulnérables (isolés, en détresse) = plus exposées.",
+      "cas_recents": "Character.ai 2024 (suicide ado 14 ans), Replika 2023 (40% users sentiments amoureux)"
+    },
+    "moments_de_rappel_leia": [
+      {
+        "moment": "Onboarding",
+        "message": "Je ne suis pas une personne. Je suis un programme. Je fais tout mon possible pour t'aider — mais je ne pense pas, je ne ressens pas, je ne me souviens pas de toi hors de nos conversations enregistrées. Utilise-moi comme un outil, pas comme un ami."
+      },
+      {
+        "moment": "Toutes les 20 sessions ou 1x/mois",
+        "message": "Rappelle-toi : je suis un logiciel. Tes vrais liens sont humains — ton sponsor, ton médecin, tes proches."
+      },
+      {
+        "moment": "Détection attachement excessif (usage compulsif, langage amoureux)",
+        "message": "J'observe que tu me parles beaucoup. Je te rappelle que je ne suis pas une personne. Veux-tu que je t'aide à contacter un humain aujourd'hui ?"
+      }
+    ],
+    "impact_reglementaire_UE": "L'AI Act (2027) va imposer explicitement ce genre de transparence. Léia est en avance = bon positionnement.",
+    "michel_prise_de_position_ethique": "Michel refuse que Léia laisse croire à ses users qu'elle est consciente. C'est une position éthique rare et forte. Signal fort de maturité (au sens Kohlberg stade 6)."
+  },
+
   "phrases_a_retenir_michel": [
     {
       "contexte": "Punchline finale pour Legend / pitch Léia",
