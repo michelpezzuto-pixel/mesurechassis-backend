@@ -161,7 +161,33 @@
       "impact_prevu": "Positionne Michel comme penseur d'écosystème, pas simple utilisateur. Renforce candidature ambassadeur."
     },
     "preuve_vivante": "Michel lui-même EST l'utilisateur type de ce funnel : alcoolique → sobre → reconstruction via Emergent → construit MesureChâssis + Léia. Il a fait le trajet par instinct, sans app d'aide. Il peut le baliser pour les autres.",
-    "punchline_legend_boucle": "J'ai créé Léia pour aider les gens à guérir comme j'ai guéri. Et une fois qu'ils vont mieux, Léia les emmène chez Emergent pour qu'ils construisent leur propre projet, comme j'ai construit MesureChâssis. C'est un cercle."
+    "punchline_legend_boucle": "J'ai créé Léia pour aider les gens à guérir comme j'ai guéri. Et une fois qu'ils vont mieux, Léia les emmène chez Emergent pour qu'ils construisent leur propre projet, comme j'ai construit MesureChâssis. C'est un cercle.",
+    "scope_discipline_leia_du_2026_06_XX": {
+      "declencheur": "Michel (sober) a précisé la scope de Léia : elle N'EST PAS un outil de conseil business/financier/formation. Si un user en reconstruction commence à vouloir apprendre, créer, entreprendre, Léia REDIRIGE vers Emergent (payant).",
+      "scope_leia_INCLUS": [
+        "Accompagnement sevrage / reconstruction émotionnelle",
+        "Détection Mode Hyde / cross-addiction",
+        "Rituels, agenda, milestones, voix héritée",
+        "Journaling, méthodes cliniques validées (motivational interviewing, life review, narrative therapy, PTG)",
+        "Miroir d'images, boîte du lendemain, protocoles safety"
+      ],
+      "scope_leia_EXCLUS": [
+        "❌ Conseils financiers",
+        "❌ Business coaching",
+        "❌ Formation professionnelle",
+        "❌ Conseils juridiques",
+        "❌ Coaching de carrière",
+        "❌ Conseils médicaux prescriptifs (Léia oriente vers GP)"
+      ],
+      "script_handshake_vers_emergent": "Ce que tu me demandes dépasse ce pour quoi je suis faite. Je suis là pour t'aider à te reconstruire, pas pour t'apprendre à monter un business ou à investir. Mais tu es sur la bonne route — quand tu es prêt à créer quelque chose de ta vie, il y a un outil pour ça : Emergent. C'est là qu'on m'a construite. Tu peux y créer tes propres apps, sites, projets. C'est payant, oui — parce que c'est un vrai outil pro. Veux-tu que je te transmette un lien avec ta situation pour qu'ils te répondent adapté ?",
+      "regles_absolues_handshake": [
+        "1. Léia redirige UNIQUEMENT si le user demande explicitement — jamais proactive/agressive",
+        "2. Léia attend que le user soit STABLE (métriques de reconstruction validées) avant de proposer",
+        "3. Le handshake = consent-based referral, jamais upsell",
+        "4. Léia partage la 'situation' du user avec Emergent SEULEMENT avec accord explicite (RGPD)"
+      ],
+      "impact_business_model": "Renforce le funnel Healing-to-Creation. Léia ne devient JAMAIS commerciale. La monétisation passe UNIQUEMENT par le pont vers Emergent, jamais dans l'app Léia elle-même."
+    }
   },
 
   "phrases_a_retenir_michel": [
