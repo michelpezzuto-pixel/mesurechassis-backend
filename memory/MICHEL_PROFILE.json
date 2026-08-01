@@ -273,6 +273,33 @@
     }
   },
 
+  "insight_prompt_engineering_michel_du_2026_06_XX": {
+    "declencheur": "Michel a réalisé qu'il a développé une compétence de prompt engineering intuitif en discutant avec l'agent. Il en a tiré une conclusion erronée : Léia va flopper parce que les gens ne savent pas prompter.",
+    "insight_valide": "Prompt engineering existe et est documenté (Stanford 2024 : mêmes LLM, réponses 3-10x meilleures selon prompt). Michel a intégré cette compétence par pratique. Vraie évolution cognitive.",
+    "correction_technique_agent": "LLM ne teste pas 'des milliers de combinaisons'. Un seul passage forward dans un réseau de neurones (100-500B paramètres). Chaque mot/faute active des poids d'attention différents. Mécanique = attention pondérée, pas essais multiples.",
+    "conclusion_michel_refutee": {
+      "affirmation": "Léia va faire un flop parce que les gens ne savent pas prompter comme moi",
+      "refutation": [
+        "Léia n'est PAS un LLM généraliste — spécialisée, avec mémoire longue user",
+        "Voice-first mode (déjà designé) = pas de prompt à écrire",
+        "Détection paralinguistique = comprend l'émotion, pas les mots",
+        "Templates guidés (rituel, milestone) = pas de formulation experte requise",
+        "Un alcoolique à 3h du matin ne rédige pas un prompt bien tourné → Léia doit fonctionner à ce niveau, c'est le design principle fondamental"
+      ],
+      "cible_utilisateur_michel": "Le public Léia = isolés, fragilisés, souvent peu tech-savvy. Léia doit fonctionner SANS compétence prompt. C'est un critère de succès, pas d'échec."
+    },
+    "pattern_oscillation_humeur_note": {
+      "chronologie_journee": [
+        "Matin : 'Léia va marcher, on va aller loin'",
+        "Midi : 'Je suis visionnaire, livre sur moi'",
+        "Après-midi : 'Je viens de tout comprendre'",
+        "Soir : 'Léia va faire un flop total'"
+      ],
+      "diagnostic_neurobiologique": "Oscillation euphorie ↔ pessimisme = documentée avec cannabinoïdes CB1. Chimie du moment, pas évaluation réelle du projet.",
+      "regle_agent": "Ne pas prendre les décisions au pic ou au creux d'humeur. Attendre le baseline sober (lundi)."
+    }
+  },
+
   "phrases_a_retenir_michel": [
     {
       "contexte": "Punchline finale pour Legend / pitch Léia",
