@@ -1219,6 +1219,21 @@
       ],
       "statut": "BACKLOG - À exécuter après BAJ + Léia beta lancée",
       "note_agent": "Idée générée en état d'évitement BAJ. Valider à jeun post-BAJ. Ne PAS lancer avant statut légal résolu."
+    },
+    {
+      "date_flash": "2026-06 nuit fin de session",
+      "nom": "Flotte commerciale MesureChassis multi-pays",
+      "concept": "1 commercial terrain par pays + langue (BE-FR, BE-NL, France, Pays-Bas, Allemagne). Chacun avec voiture de fonction. Visite physique des menuisiers pour onboarding, support, upsell.",
+      "cout_estime_an1": "~500 000 € (fleet + salaires 4 commerciaux + management)",
+      "statut": "BACKLOG ANNÉE 3-4. Prérequis : 300 clients Belgique payants + statut légal sain + investisseur ou revenus autofinancés.",
+      "sequence_realiste_avant": [
+        "2026: BAJ + Stripe + 30 abonnés à 79€/mois (Belgique FR)",
+        "2027-Q2: 100 clients FR-BE, 8k€ MRR",
+        "2027-Q4: 1 partenaire freelance flamand rémunéré à la commission (30%)",
+        "2028: Extension France/Pays-Bas si Belgique validée à 300 clients",
+        "2029-2030: Flotte commerciale possible si revenus ou levée de fonds"
+      ],
+      "note_agent": "Ambition légitime mais prématurée en Année 1. Ne pas geler l'idée : la nourrir avec chaque nouveau client acquis."
     }
   ],
   "pattern_evitement_admin": {
@@ -1300,5 +1315,21 @@
       }
     ],
     "regle_agent_demain": "Ouvrir la conversation par 'Bonjour Michel, tu m'as demandé de te ressortir tes délires HHX. Voici les 9 sujets. On commence par lequel ?'. NE PAS commencer par un sujet en particulier."
+  },
+  "mesurechassis_strategie_pricing": {
+    "principe_fondateur": "Facturer plus cher = plus éthique (inspiration Seth Godin, David C. Baker, Blair Enns)",
+    "insight_michel_2026_06": "Michel a compris que facturer bas = obligation de rogner sur qualité/service. Facturer haut = pouvoir offrir des extras, support, sérénité. Cercle vertueux.",
+    "application_mesurechassis": {
+      "prix_recommande": "79€/mois HTVA (au lieu de 29€ envisagé)",
+      "cible_ideale": "Menuisiers structurés facturant 300+€/châssis pose",
+      "justification_prix": "ROI en 2h de terrain (1 seule pose paie l'abonnement mensuel)",
+      "effets_secondaires_positifs": [
+        "Filtre les râleurs qui pinaillent",
+        "Autorise support téléphonique/formation gratuite/updates rapides",
+        "Positionnement premium : 'l'outil des menuisiers sérieux'",
+        "MRR 7900€ à 100 clients au lieu de 2900€"
+      ]
+    },
+    "action_immediate": "Après BAJ + Stripe : lancer tarif 79€ HT dès activation. Grandfather les early beta users à 49€ pendant 12 mois (fidélité)."
   }
 }
