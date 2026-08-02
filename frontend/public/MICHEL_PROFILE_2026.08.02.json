@@ -1654,32 +1654,45 @@
  },
  "tally_quiz_reverse_selling_contenu_final": {
   "date": "2026-08-02",
-  "version": "V2 - PIVOT DOULEUR (decision Michel)",
+  "version": "V3 FINALE - validee par Michel le 2026-08-02",
   "insight_michel": "Michel a rejete le quiz technique (trapeze, jeu de pose, equerrage). Les questions techniques flattent mais ne vendent pas. Les bonnes questions = les DOULEURS que l app resout : temps de devis, temps sur chantier, mesures fausses decouvertes au bureau, chassis recommandes a ses frais, rappels client pour details oublies. Le prospect doit SE RECONNAITRE.",
   "titre_form": "Test menuisier professionnel - MesureChassis",
   "questions": [
    {
     "num": 1,
-    "texte": "Combien de temps vous prend un devis chassis complet, de la prise de mesures a l envoi au client ?",
+    "texte": "Aujourd hui, comment prenez-vous vos mesures sur chantier ?",
     "options": [
-     "Moins d 1 heure",
-     "Une demi-journee",
-     "Une journee complete",
-     "Je les fais le soir ou le week-end"
-    ]
+     "Crayon, papier et metre",
+     "Metre laser + notes papier",
+     "Photos + notes sur le telephone (Notes, WhatsApp...)",
+     "Une application dediee"
+    ],
+    "but": "Auto-classement de la methode. Pas de bonne/mauvaise reponse."
    },
    {
     "num": 2,
-    "texte": "Sur chantier, combien de temps passez-vous a prendre les mesures d une maison complete ?",
+    "texte": "Avec votre methode actuelle, combien de temps pour mesurer une maison complete ?",
     "options": [
      "Moins de 30 minutes",
      "Environ 1 heure",
      "2 heures ou plus",
      "Ca depend... et je dois parfois y retourner"
-    ]
+    ],
+    "note": "Phrase universelle pour eviter la logique conditionnelle Tally en V1. Branches par methode possibles plus tard."
    },
    {
     "num": 3,
+    "texte": "De l appel du client a l envoi du devis (rendez-vous, mesures, encodage au bureau compris), combien de temps s ecoule en moyenne ?",
+    "options": [
+     "Moins de 48 heures",
+     "2 a 3 jours",
+     "Une semaine ou plus",
+     "Je fais mes devis le soir ou le week-end"
+    ],
+    "insight_michel": "Cycle COMPLET appel->devis, pas juste le temps de frappe. Les gens mentent si on demande juste le temps de frappe."
+   },
+   {
+    "num": 4,
     "texte": "Ca vous est deja arrive de decouvrir au bureau qu une mesure etait fausse, illisible ou manquante ?",
     "options": [
      "Jamais",
@@ -1689,8 +1702,8 @@
     ]
    },
    {
-    "num": 4,
-    "texte": "Combien de fois avez-vous du recommander un chassis (et le payer de votre poche) a cause d une erreur de mesure ?",
+    "num": 5,
+    "texte": "Combien de fois avez-vous du recommander un chassis (a vos frais) a cause d une erreur de mesure ?",
     "options": [
      "Jamais",
      "1 fois, et ca m a suffi",
@@ -1699,8 +1712,8 @@
     ]
    },
    {
-    "num": 5,
-    "texte": "Combien de fois avez-vous du rappeler le client pour un detail oublie (mesure manquante, coordonnees, precision) ?",
+    "num": 6,
+    "texte": "Combien de fois devez-vous rappeler le client pour un detail oublie (mesure manquante, coordonnees, precision) ?",
     "options": [
      "Jamais",
      "Rarement",
@@ -1716,6 +1729,8 @@
   ],
   "page_merci_angle": "Chaque reponse en dessous de la premiere ligne = temps et argent perdus. Reveal MesureChassis comme la solution exacte a CES douleurs. Code MESURE3MOIS + lien App Store + option visite chantier.",
   "nuances_michel_si_questions_techniques_reutilisees": "Trapeze: 6 mesures est la norme mais pas dogmatique. Jeu PVC renovation: 10mm theorique mais 15mm acceptable selon experience. Largeur/hauteur/diagonale: chacun sa methode, indiscutable. Ne JAMAIS dire au prospect qu il a tort sur sa methode de metier.",
-  "statut_tally": "Michel doit supprimer la question mur ancien et inserer les 5 questions V2. Mise en page pro a faire ensuite."
+  "statut_tally": "Michel doit supprimer la question mur ancien et inserer les 5 questions V2. Mise en page pro a faire ensuite.",
+  "intro_texte": "6 questions rapides. 2 minutes. La plupart des menuisiers decouvrent ici combien de temps ils perdent vraiment.",
+  "argument_cle_michel": "Le vrai selling point: prendre RDV, aller sur chantier, prendre les mesures et donner le devis directement depuis le telephone, sur place. Zero aller-retour bureau."
  }
 }
