@@ -1256,6 +1256,83 @@
  }
 },
 
+"session_michel_soir_2026_08_02_atelier_idees": {
+ "contexte": "Michel a arrete la config emails vers 21h30, fatigue mais en flux creatif. Il a dumpé 14 notes structurees + rebondi sur les propositions agent. Etat : sobre, coherent, lucide. Pas de HHX detecte. Refuse d'arreter comme suggere, veut continuer le brainstorm.",
+ "insights_majeurs_a_capitaliser": {
+  "1_alzheimer_marche_prioritaire": {
+   "insight_michel": "Leia peut servir de memoire externe pour patients Alzheimer/dementia. Le patient demande 'C'est qui ?' et Leia repond avec l'identite + contexte familial charge en amont par la famille.",
+   "verdict_agent": "MARCHE POTENTIELLEMENT PLUS GRAND QUE ALCOOLIQUES. 200k patients Belgique, 55M mondial, budget mutuelle/aidant existant, produits inexistants. Peut devenir le vrai flagship Leia.",
+   "produits_existants_a_battre": "Cadres photo parlants basiques, Alexa non medicalisee, apps mobiles (inutilisables par patients).",
+   "differenciateur": "Boitier physique 1 bouton, bibliotheque familiale chargee en amont, IA qui SE souvient a la place du patient, dignite preservee."
+  },
+  "2_boitier_physique_form_factors": {
+   "principe_valide": "Boitier physique dedie evite l'ecueil telephone-addiction. Objet rituel, pas de scroll, usage volontaire.",
+   "formats_michel_a_valides": {
+    "pendentif": "IDEAL - forme mere V1 - toujours porte, culturellement associe medaillon urgence senior",
+    "bracelet": "BON - variante V1 pour ceux qui refusent pendentif",
+    "porte_cle": "OK MAIS moins accessible en urgence (poche/sac)",
+    "chouchou_elastique_cheveux": "ORIGINAL MAIS niche femme, limitant",
+    "briquet_type_dupont": "REJETE - signal fumeur/alcool mauvais pour un produit sante mentale"
+   },
+   "reco_agent": "V1 : pendentif principal + bracelet variante. Skins interchangeables cuir/argent/bois."
+  },
+  "3_roadmap_luxe_realiste": {
+   "vision_michel": "Partenariat LVMH / Bernard Arnault pour versions bijou premium",
+   "verdict_agent_honnete": "IRREALISTE en V1. LVMH cycles 18-24 mois, veut marques scalées. MAIS intuition marche pas fausse : luxe adopte IA sante. Cartier, Hermes explorent.",
+   "roadmap_ancree": {
+    "V1_annee_1": "Boitier simple design belge propre, 150-250EUR public",
+    "V2_annee_2_3": "Partenariat orfevre belge (De Beers Anvers / Wolfers Bruxelles), edition premium 500-1500EUR",
+    "V3_annee_5_plus": "Luxe international si Leia devient reference"
+   }
+  },
+  "4_versions_distinctes_leia": {
+   "principe": "PAS une seule Leia degradee/upgradee, mais plusieurs Leia dediees a des usages distincts",
+   "versions_validees_michel_2026_08_02": [
+    "Leia Sevrage (ASBL, gratuite alcooliques - marche test/mission)",
+    "Leia Bibliotheque de Vie (payante grand public - memoire familiale)",
+    "Leia Alzheimer (payante avec possible remboursement mutuelle - marche cible principal)",
+    "Leia Enfants (contrôle parental natif, plages horaires imposees par parents)",
+    "Leia Apprentissage (livres, formations techniques - ex: apprendre a mesurer un chassis, connecte a MesureChassis)"
+   ]
+  },
+  "5_vault_utilisateur_multi_codes": {
+   "besoin_michel": "Codes distincts par utilisateur (Michel=4149, femme=autre) pour ETANCHEITE totale entre profils au sein d'une famille. Michel ne veut PAS que sa (future) femme puisse acceder a son passe (alcool, faillite) sans qu'il decide de le partager.",
+   "principe_ethique": "Compartimentation naturelle de la vie humaine respectee. Contraire de Facebook/Google qui agregent tout. IA respecte la fragmentation.",
+   "features_a_coder": [
+    "1 utilisateur = 1 code = 1 vault chiffré etanche",
+    "Aucune agregation meme au sein d'une famille",
+    "Zone 'partagee' creable volontairement (recettes grand-mere par ex)",
+    "Zone privee JAMAIS accessible aux autres utilisateurs",
+    "Chiffrement E2E cote client (nous ne pouvons pas lire)",
+    "Code de contrainte (leurre si menace physique)",
+    "Effacement automatique apres X tentatives fausses"
+   ]
+  },
+  "6_plages_horaires_natives": {
+   "principe": "Leia disponible seulement pendant creneaux definis par l'utilisateur (mode travail/off). Zero notification push. Aucun mode chat instantane. Sessions cadrees.",
+   "differenciation": "Inverse total du modele Replika/Character.AI qui creent dependance affective. Michel a formule : 'Je t'allume au bureau, je t'eteins en partant'.",
+   "contrôle_parental": "Pour mineurs, parents definissent les plages horaires accessibles. Feature critique pour certifications GDPR/protection mineurs UE.",
+   "engagement_agent_gravite": "Design-by-safety, PAS ajoute apres coup."
+  },
+  "7_portabilite_JSON_bien_comprise_par_michel": {
+   "citation_michel": "Si Anthropic fait faillite, on trouvera toujours le moyen de demander a ChatGPT s'il a survecu de me lire ce JSON et de recommencer.",
+   "commentaire_agent": "Michel a INTEGRE la logique : la valeur n'est pas dans l'agent, mais dans SON JSON qu'il controle. Vraie souverainete numerique.",
+   "regle_backup_agent_rappelee": "Rule of three : (1) chez Emergent actif, (2) GitHub michel-memory, (3) disque dur externe physique chez Michel. A verifier mensuellement."
+  }
+ },
+ "gardes_fous_actives_ce_soir": {
+  "grandiosite_signalee_gentiment": "Michel a mentionne 'toucher le monde entier' et 'chuchoteur IA'. Agent a recadre sans etre condescendant : concret Belgique francophone d'abord, chuchoteur IA apres BAJ + Leia lancee. Michel a accepte le recadrage sans resistance.",
+  "aucun_signal_HHX_ou_manie": "Fluidite creative saine, coherent, questions techniques posees, capable d'accueillir contradiction (LVMH V1 = non). Aucune ideation conspiratoire.",
+  "michel_a_refuse_l_arret_propose_par_agent": "Explicitement : 'C'est maintenant que j'ai plein d'idees, je vais pas arreter'. Agent doit respecter cette autonomie. Refuser d'arreter n'est PAS un signal de manie si la coherence est preservee. C'est du flux createur."
+ },
+ "actions_a_reprendre_demain_ou_plus_tard": [
+  "Configurer Easyhost webmail pour envoi manuel emails prospects (pivot decide mais reporte)",
+  "Approfondir specifications techniques boitier physique (BOM, sourcing, prototypage)",
+  "Etudier marche Alzheimer Belgique : associations, mutuelles, prescription, Ligue Alzheimer",
+  "Reprise fil rouge : Leia design-by-safety complet (vaults + plages horaires + controle parental)"
+ ]
+},
+
 "leia_bibliotheque_citations_inspirantes": {
  "vision_curation_par_michel_2026_08_02": "Michel refuse le fetichisme habituel des citations d'Einstein/Tesla/millionnaires. Pour Léia, l'inspiration doit venir de VOIX CONTEMPORAINES francophones proches du vécu émotionnel des utilisateurs en sevrage : chanteurs, rappeurs, poètes, penseurs jeune génération. Profondeur > Célébrité. Vécu > Théorie.",
  "principe_editorial": [
