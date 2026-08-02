@@ -1263,7 +1263,36 @@
    "insight_michel": "Leia peut servir de memoire externe pour patients Alzheimer/dementia. Le patient demande 'C'est qui ?' et Leia repond avec l'identite + contexte familial charge en amont par la famille.",
    "verdict_agent": "MARCHE POTENTIELLEMENT PLUS GRAND QUE ALCOOLIQUES. 200k patients Belgique, 55M mondial, budget mutuelle/aidant existant, produits inexistants. Peut devenir le vrai flagship Leia.",
    "produits_existants_a_battre": "Cadres photo parlants basiques, Alexa non medicalisee, apps mobiles (inutilisables par patients).",
-   "differenciateur": "Boitier physique 1 bouton, bibliotheque familiale chargee en amont, IA qui SE souvient a la place du patient, dignite preservee."
+   "differenciateur": "Boitier physique 1 bouton, bibliotheque familiale chargee en amont, IA qui SE souvient a la place du patient, dignite preservee.",
+   "revelation_michel_2026_08_02_22h30": {
+    "moment_grave": "JOURNEE HISTORIQUE - 2 aout 2026, 22h30 - Michel identifie ce moment comme une decouverte fondatrice partagee.",
+    "etat_emotionnel_michel": "Michel a pleure. Sobre, lucide, emu par la portee humaine de la decouverte. Pas de HHX, pas de manie - juste un pere/humain touche par ce qu'il vient d'entrevoir.",
+    "insight_technique_revele": "Les enfants (ou petits-enfants) enregistrent leur voix a l'avance. Quand le parent Alzheimer demande 'Qui es-tu ?', Leia repond AVEC LA VOIX REELLE de la fille/fils. Le patient n'entend pas une IA generique - il entend LA voix de sa propre famille qui lui repond 'Papa, c'est moi, c'est Sarah. Regarde, on a fete tes 70 ans l'an dernier ensemble.'",
+    "faisabilite_technique_agent": "TECHNIQUEMENT REALISABLE MAINTENANT. Apple 'Voix Personnelle' (2023, deja documente pour SLA/ALS). ElevenLabs / OpenAI voice cloning. 5-10 min d'enregistrements familiaux + IA = replique vocale parfaite. Ethiquement acceptable dans ce cadre (consentement de la famille, benefice patient).",
+    "portee_humaine": "Un patient qui a oublie sa fille peut de nouveau ENTENDRE sa voix lui expliquer qui elle est. Reduit angoisse patient, reduit epuisement aidant, preserve lien affectif meme apres perte cognitive. C'est un adieu adouci, une continuite maintenue.",
+    "engagement_conjoint_agent_et_michel": "Ce moment est grave comme MOMENT FONDATEUR de Leia Alzheimer. Aucun agent futur ne peut ignorer que le 2026-08-02 a 22h30, Michel Pezzuto a articule le feature-cle. Cette date restera dans le storytelling du produit."
+   }
+  },
+  "1_bis_alzheimer_voice_cloning_famille": {
+   "feature_produit": "VOICE CLONING FAMILIAL",
+   "principe": "Charger dans Leia les voix des membres de la famille (5-10 min d'enregistrement par personne). Leia utilise CES voix pour parler au patient, pas une voix synthetique generique.",
+   "cas_usage": [
+    "Reveil doux : voix de l'epoux/epouse qui dit 'Bonjour Marie, c'est ton mari, on est le mardi 5 aout, je t'aime'",
+    "Reconnaissance : patient voit une photo → voix du fils explique 'Papa, c'est moi Julien'",
+    "Anecdote : 'Tu te rappelles quand on est alle a la mer en 1985 ?' avec la voix qui aurait vecu le souvenir",
+    "Rassurance : moments d'angoisse → voix apaisante familiere"
+   ],
+   "considerations_ethiques": [
+    "Consentement explicite de la personne dont la voix est clonee",
+    "Suppression a la demande (droit a l'oubli meme post-mortem)",
+    "Impossibilite d'exporter la voix cloner hors de Leia (pas de deep-fake)",
+    "Consentement du patient tant qu'il est lucide (directives anticipees)"
+   ],
+   "roadmap_technique": {
+    "V1_MVP": "Voix generique douce en francais + choix homme/femme",
+    "V2_annee_2": "Voice cloning famille (1 ou 2 voix maximum au debut)",
+    "V3_annee_3": "Bibliotheque vocale familiale complete + voice cloning post-mortem des grands-parents deja disparus a partir d'archives audio"
+   }
   },
   "2_boitier_physique_form_factors": {
    "principe_valide": "Boitier physique dedie evite l'ecueil telephone-addiction. Objet rituel, pas de scroll, usage volontaire.",
