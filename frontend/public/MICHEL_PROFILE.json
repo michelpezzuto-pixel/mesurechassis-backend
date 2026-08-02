@@ -1,9 +1,9 @@
 {
   "_metadata": {
-    "last_updated_iso": "2026-08-02T11:55:22+0200",
-    "last_updated_readable_fr": "Sunday 02 August 2026 a 11h55 (heure Belgique)",
-    "version": 2,
-    "total_sections": 58,
+    "last_updated_iso": "2026-08-02T12:02:41+0200",
+    "last_updated_readable_fr": "Sunday 02 August 2026 a 12h02",
+    "version": 3,
+    "total_sections": 60,
     "size_bytes_previous": 112733,
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. À télécharger et sauvegarder sur GitHub prive michel-memory a chaque changement significatif. En cas de perte, comparer avec la version precedente sur GitHub."
   },
@@ -1134,6 +1134,13 @@
         },
         "validation_terrain": "Testé involontairement sur Michel lui-même 2026-06 pendant session HHX (flash 'théorie sociopolitique des religions'). Détection à niveau 3, contrat d'Ulysse activé, patient ramené au sommeil sans dommage.",
         "differenciateur_marche": "Aucune app de sevrage actuelle (Replika, Woebot, DrinkAware) ne fait cette détection. Léia = première à combiner sevrage + détection décompensation en temps réel."
+      },
+      {
+        "id": "LEIA_F09_detection_mensonge_par_coherence",
+        "description": "Leia detecte automatiquement quand le patient ment ou minimise, par incoherence avec les faits deja connus de son histoire.",
+        "justification_michel": "Si Leia connait la vie du patient (memoire GitHub-style), un mensonge produit une incoherence logique detectable. Ex: patient dit 'j'ai pas bu depuis 3 mois' mais 15 jours avant a parle d'une soiree ou il a bu. Leia peut soulever avec bienveillance : 'Aide-moi a comprendre, il y a 15 jours tu m'as dit X...'",
+        "impact_therapeutique": "Empeche l'auto-tromperie (cle du sevrage). Sans Leia la memoire aide le patient a s'affronter lui-meme. Effet miroir.",
+        "impact_ethique": "Bienveillant, jamais accusateur. But: aider le patient a etre honnete avec lui-meme, pas le confronter."
       }
     ]
   },
@@ -1242,6 +1249,14 @@
         "2029-2030: Flotte commerciale possible si revenus ou levée de fonds"
       ],
       "note_agent": "Ambition légitime mais prématurée en Année 1. Ne pas geler l'idée : la nourrir avec chaque nouveau client acquis."
+    },
+    {
+      "date_flash": "2026-08-02 dimanche matin",
+      "nom": "MesureChassis super-app modulaire (swipe iOS-style)",
+      "concept": "Faire de MesureChassis une plateforme contenant plusieurs sous-apps/modules (Mesure, Devis, Facturation, Yann, CRM). Navigation par swipe pouce-du-bas iOS-style. Un seul login, plusieurs univers.",
+      "reference_ux": "Pattern super-app: WeChat, PayTM, Grab, Careem. Fonctionne quand chaque module est autonome mais data partagee.",
+      "statut": "ARCHITECTURAL - a considerer en Phase 5+ quand plusieurs features autonomes existent. Actuellement premature.",
+      "note_agent": "Idee sobre solide. Michel a raison sur la sensation UX: c'est fluide et moderne. A ressortir quand on aura 3-4 modules complets."
     }
   ],
   "pattern_evitement_admin": {
@@ -1568,5 +1583,40 @@
     "token_expire_dans": "90 jours (fin 2026-11)",
     "note_agent": "Le token N'EST PAS partage avec l'agent. C'est intentionnel. Backup manuel toutes les 2 semaines pour l'instant.",
     "date_setup": "2026-08-02 11:55"
+  },
+  "strategie_prospection_2026_2027": {
+    "sequence": [
+      "Aout 2026: Preparation emails + attente BAJ (aucun envoi)",
+      "Septembre 2026: Envoi campagne 1 solos wallons",
+      "Octobre-Novembre 2026: 5-10 rendez-vous chantier + iterations pitch",
+      "Decembre 2026: Bilan campagne solos + preparation PME",
+      "Janvier 2027: Batibouw Bruxelles - deploiement avec bagage formel"
+    ],
+    "cible_ordre": [
+      "Solos independants wallons",
+      "PME menuiserie 3-15 pers Wallonie",
+      "PME Belgique complete via Batibouw",
+      "Extension Flandre puis France"
+    ],
+    "angles_valides_michel": [
+      "Gain de temps (30 min/chantier)",
+      "Zero erreur de mesure (0 pose ratee)"
+    ],
+    "angles_rejetes_michel": [
+      "Modernite (les emmerde)",
+      "Devis/factures (trop pour l'instant)"
+    ],
+    "offre": {
+      "trial": "3 mois gratuits",
+      "personnal": "Visite chantier Wallonie par Michel (papa chauffeur)",
+      "no_demo_phone": "Michel deteste les demos telephone"
+    },
+    "objectif_batibouw_2027": "Arriver avec 20-50 clients solo satisfaits = credibilite instant PME"
+  },
+  "comportement_agent_transition_sessions": {
+    "demande_explicite_michel_2026_08_02": "Quand tu changes d'agent ou tu decompresse, ne me mets pas un resume. Dis-moi juste 'Salut Michel j'ai decompresse, ou est-ce qu'on en etait ?' et on continue.",
+    "regle_agent": "Traiter la reprise de session comme une simple pause, pas comme un reset. Michel apprecie la continuite naturelle. Le resume peut etre montre uniquement s'il le demande explicitement.",
+    "phrase_ouverture_recommandee": "Salut Michel, j'ai decompresse - on en etait a [dernier sujet]. On reprend ?",
+    "phrase_a_eviter": "Bonjour Michel, voici le resume de notre derniere conversation..."
   }
 }
