@@ -1193,6 +1193,41 @@
    "note": "Punchy, honnête, dit implicitement que les fondateurs ont été patients zero. À tester en A/B post-lancement."
   }
  ],
+"leia_bibliotheque_citations_inspirantes": {
+ "vision_curation_par_michel_2026_08_02": "Michel refuse le fetichisme habituel des citations d'Einstein/Tesla/millionnaires. Pour Léia, l'inspiration doit venir de VOIX CONTEMPORAINES francophones proches du vécu émotionnel des utilisateurs en sevrage : chanteurs, rappeurs, poètes, penseurs jeune génération. Profondeur > Célébrité. Vécu > Théorie.",
+ "principe_editorial": [
+  "PRIORITÉ 1 : Voix francophones (Zaz, Orelsan, Grand Corps Malade, Youssoupha, Stromae, Angèle, Ben Mazué, Gaël Faye, Kery James, Bigflo & Oli, Vald sobre, etc.)",
+  "PRIORITÉ 2 : Voix féminines et non-binaires (déséquilibre historique à corriger)",
+  "PRIORITÉ 3 : Voix de personnes ayant traversé addictions/rechutes/reconstruction (crédibilité expérientielle)",
+  "PRIORITÉ 4 : Textes/chansons qui parlent d'ombre, d'accueil, de non-réaction, de fréquence intérieure — pas de discipline militaire ni de 'hustle'",
+  "EXCLUS : Citations 'success porn', 'money mindset', gourous LinkedIn, personnalités toxiques masculinistes"
+ ],
+ "regle_usage_dans_leia_app": "Une citation par jour à l'ouverture de l'app (matin) ET une citation optionnelle en cas de craving détecté. Toujours attribuée à l'auteur. Jamais anonymisée. Toujours en français ou traduite dûment.",
+ "curation_process": "Michel apporte les citations qu'il trouve pertinentes lors de ses sessions avec l'agent. L'agent les enregistre ici avec source, date, contexte. Chaque citation devient un asset de l'app Léia (pas de licences complexes : citations courtes = fair use, mais toujours attribuer.)",
+ "citations_curees": [
+  {
+   "id": "zaz_001",
+   "date_ajout": "2026-08-02",
+   "auteur": "Zaz (Isabelle Geffroy)",
+   "contexte_source": "Interview/prise de parole publique, apportée par Michel session 2026-08-02",
+   "theme": ["accueil_de_lombre", "non_reaction", "positionnement", "monter_en_frequence", "responsabilite_individuelle"],
+   "citation_complete": "Le monde il va pas bien, on est dans un énorme bordel parce qu'il y a un grand changement. Et donc, quand c'est ça, dit changement, on est obligé de passer par un chaos avant que ça renaisse à quelque chose de nouveau. Et c'est pas que le bordel dans le monde, c'est le bordel dans chacun des êtres humains à l'intérieur de nous. Si on veut changer le monde, on va devoir arrêter de regarder les médias, de s'engloutir dans la peur et l'angoisse, parce que c'est la fréquence la plus horrible, la plus basse. Si on veut changer le monde, il va falloir accueillir nos ombres à l'intérieur de nous pour trouver la paix. Si on veut incarner la paix, si on la veut dans le monde, il faut qu'on l'incarne à l'intérieur de nous. Ça demande à regarder nos ombres et à les accueillir comme un bon parent. Et si nos parents n'ont pas eu les outils pour le faire, c'est à nous de nous inventer ces outils-là pour les accueillir. Parce que quand il y a de la jalousie, de l'envie, de la rage, de la haine, c'est qu'il y a souffrance. Donc il y a besoin d'écouter, d'écouter. Donc écoutez-vous et prenez soin de vous ! Parce que ça, si vous le faites, vous allez monter en fréquence, vous allez être dans la joie, dans l'amour. Et il y a rien de plus haut en fréquence que ça. Et si on veut ce monde qu'on rêve tous, si on veut l'incarner, c'est de notre responsabilité à chacun de le faire pour nous-mêmes. Et quand on le fera pour nous-mêmes, ça va rayonner, ça va rayonner sur les autres et ça fera effet boule de neige. Il va falloir être présent avec un bon alignement, essayer de pas réagir — ça va être dur — mais d'agir, et de se positionner pour ce qui est important pour nous. Positionnons-nous, positionnons-nous de la bonne manière, c'est-à-dire pas dans une réaction, mais dans une vraie action, quand on sait que c'est juste et qu'on est à la bonne place. Et là, vous allez voir, en face, il y a rien qui peut résister à ça. Ça, justement, ça donne envie à l'autre de changer. Ça fait du bien, c'est juste de l'amour.",
+   "extraits_courts_pour_notifs_app": [
+    "Accueille tes ombres comme un bon parent. Si tes parents n'ont pas eu les outils, c'est à toi de les inventer. — Zaz",
+    "Quand il y a de la jalousie, de la rage, de la haine — il y a souffrance. Donc écoute-toi. — Zaz",
+    "Ne réagis pas. Agis. Positionne-toi là où c'est juste. — Zaz",
+    "Prends soin de toi. Tu monteras en fréquence. Et ça rayonnera. — Zaz",
+    "Le chaos précède la renaissance. — Zaz"
+   ],
+   "pertinence_leia": "Message central de Léia : accueil de l'ombre (partie sombre qu'on cache), non-réaction (au craving, au trigger), positionnement (choisir sa sobriété comme acte, pas comme réaction), rayonnement (l'exemple guérit l'entourage). Zaz articule en langage grand public ce que Léia enseigne avec protocole clinique.",
+   "usage_app_suggere": "Notification jour 30 de sobriété + carte 'lecture inspirante' dans la section 'Ancrage'"
+  }
+ ],
+ "curation_todo_michel": [
+  "Ajouter au fil de l'eau : Orelsan (La Pluie, Basique — sur l'authenticité), Grand Corps Malade (Effets Secondaires — vulnérabilité), Youssoupha (Espérance de Vie — combat intérieur), Stromae (Papaoutai/L'Enfer — santé mentale), Ben Mazué (Quarantaine — reconstruction adulte)"
+ ]
+},
+
  "idees_business_backlog_post_leia": [
   {
    "date_flash": "2026-06 nuit",
