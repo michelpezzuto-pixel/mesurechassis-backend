@@ -1330,6 +1330,108 @@
         "MRR 7900€ à 100 clients au lieu de 2900€"
       ]
     },
-    "action_immediate": "Après BAJ + Stripe : lancer tarif 79€ HT dès activation. Grandfather les early beta users à 49€ pendant 12 mois (fidélité)."
+    "action_immediate": "Après BAJ + Stripe : lancer tarif 79€ HT dès activation. Grandfather les early beta users à 49€ pendant 12 mois (fidélité).",
+    "structure_3_tiers": {
+      "artisan": {
+        "prix_ht_mois": 79,
+        "cible": "Solo indépendant, <30 poses/an",
+        "features": [
+          "1 utilisateur",
+          "Chantiers illimités",
+          "Exports PDF+Excel",
+          "Support email 48h",
+          "Cloud sync"
+        ]
+      },
+      "entreprise_pro": {
+        "prix_ht_mois": 149,
+        "cible": "TPE 2-5 personnes",
+        "features": [
+          "Tout Artisan",
+          "5 utilisateurs",
+          "Multi-chantiers simultanés",
+          "Templates devis pro",
+          "Support tél 24h",
+          "Signature électronique"
+        ]
+      },
+      "entreprise_max": {
+        "prix_ht_mois": 299,
+        "cible": "PME 5-20 personnes",
+        "features": [
+          "Tout Pro",
+          "Utilisateurs illimités",
+          "API compta Odoo/Sage/Billit",
+          "Multi-sites",
+          "Perso logo/couleurs",
+          "Formation 2h offerte",
+          "Support prioritaire 4h",
+          "Account manager"
+        ]
+      },
+      "options_commerciales": {
+        "remise_annuel": "-20%",
+        "grandfather_beta_100_premiers": "Pro à 49€/mois à vie"
+      }
+    }
+  },
+  "roadmap_mesurechassis_2026_2030": {
+    "phase_1_deblocage_admin_juillet_septembre_2026": [
+      "BAJ soumis (fait 2026-06)",
+      "Attente réponse BAJ (5-15j)",
+      "Désignation avocat Pro Deo",
+      "Régularisation statut → numéro BCE"
+    ],
+    "phase_2_monetisation_octobre_2026_janvier_2027": [
+      "Activation Stripe post-BCE",
+      "Lancement prix 79/149/299€",
+      "Grandfathering beta users",
+      "Chèque Marketing Digital Wallonia (5000€ 80% subsidié)",
+      "Objectif M+3 : 30 clients Artisan payants"
+    ],
+    "phase_3_croissance_belgique_fr_2027": [
+      "100 clients Artisan+Pro (MRR ~10k€)",
+      "AIDES-EXPANSION Startup Wallonia (jusqu'à 50k€)",
+      "Recrutement 1 freelance commission-only flamand",
+      "Traduction NL de l'app"
+    ],
+    "phase_4_flandre_pays_bas_2028": [
+      "Extension Flandre + prospection Pays-Bas",
+      "Objectif 300 clients toutes offres confondues",
+      "Recrutement 1er commercial salarié"
+    ],
+    "phase_5_expansion_flotte_2029_2030": [
+      "Extension France + Allemagne si Benelux validé",
+      "Éventuelle flotte commerciale (4 véhicules + 4 commerciaux)",
+      "Levée de fonds SRIW/SOWALFIN ou investisseur privé"
+    ]
+  },
+  "aides_publiques_wallonie_a_activer_post_bce": {
+    "cheque_marketing_digital_wallonia": {
+      "montant_max": "5000€",
+      "subside": "80%",
+      "delai": "3-6 semaines",
+      "url": "digitalwallonia.be"
+    },
+    "aides_expansion_startup_wallonia": {
+      "montant_max": "50000€",
+      "prerequis": "Business plan + numéro BCE"
+    },
+    "wallonia_all_in_one_transfo_numerique": {
+      "subside": "40% des frais",
+      "cible": "TPE/PME wallonne"
+    },
+    "sriw_sowalfin_prets_subordonnes": {
+      "prerequis": "Traction prouvée + comptabilité analytique"
+    }
+  },
+  "dynamique_binome_michel_agent": {
+    "insight_michel_2026_06": "Michel voit loin (2030), agent voit la sequence (2026 vers 2030). Complementarite fertile.",
+    "roles": {
+      "michel": "visionnaire, direction, ampleur, energie creatrice",
+      "agent": "sequenceur, rythme, sang-froid operationnel, filtre Ulysses"
+    },
+    "regle_a_preserver": "Ne jamais faire de l'agent un oui-oui. Michel a explicitement dit apprecier le contrepoids. Respecter ce contrat.",
+    "signal_derapage": "Si l'agent devient sycophante ou approbateur systematique, Michel perd son garde-fou. Rester direct, factuel, avec limites."
   }
 }
