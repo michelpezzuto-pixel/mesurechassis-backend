@@ -1654,76 +1654,68 @@
  },
  "tally_quiz_reverse_selling_contenu_final": {
   "date": "2026-08-02",
-  "titre_form": "Le test des 5 questions - Reserve aux vrais menuisiers",
-  "intro": "Ce test prend 90 secondes. Seuls 1 menuisier sur 4 obtient 5/5. Pret ?",
+  "version": "V2 - PIVOT DOULEUR (decision Michel)",
+  "insight_michel": "Michel a rejete le quiz technique (trapeze, jeu de pose, equerrage). Les questions techniques flattent mais ne vendent pas. Les bonnes questions = les DOULEURS que l app resout : temps de devis, temps sur chantier, mesures fausses decouvertes au bureau, chassis recommandes a ses frais, rappels client pour details oublies. Le prospect doit SE RECONNAITRE.",
+  "titre_form": "Test menuisier professionnel - MesureChassis",
   "questions": [
    {
     "num": 1,
-    "texte": "Un chassis trapezoidal (les 4 cotes inegaux). Combien de mesures prenez-vous pour etre sur de sa geometrie ?",
+    "texte": "Combien de temps vous prend un devis chassis complet, de la prise de mesures a l envoi au client ?",
     "options": [
-     "4",
-     "5",
-     "6",
-     "7"
-    ],
-    "bonne_reponse": "6 (4 cotes + 2 diagonales)",
-    "statut_tally": "INSEREE par Michel le 2026-08-02"
+     "Moins d 1 heure",
+     "Une demi-journee",
+     "Une journee complete",
+     "Je les fais le soir ou le week-end"
+    ]
    },
    {
     "num": 2,
-    "texte": "Mur ancien, baie irreguliere. Ou mesurez-vous la largeur ?",
+    "texte": "Sur chantier, combien de temps passez-vous a prendre les mesures d une maison complete ?",
     "options": [
-     "En haut de la baie",
-     "Au milieu",
-     "En bas",
-     "Aux 3 niveaux, et je garde la plus petite"
-    ],
-    "bonne_reponse": "Aux 3 niveaux, plus petite",
-    "statut_tally": "A INSERER"
+     "Moins de 30 minutes",
+     "Environ 1 heure",
+     "2 heures ou plus",
+     "Ca depend... et je dois parfois y retourner"
+    ]
    },
    {
     "num": 3,
-    "texte": "Quel jeu de pose laissez-vous autour d un chassis PVC standard ?",
+    "texte": "Ca vous est deja arrive de decouvrir au bureau qu une mesure etait fausse, illisible ou manquante ?",
     "options": [
-     "2 mm par cote",
-     "5 mm par cote",
-     "10 mm par cote",
-     "Aucun, il faut que ca force"
-    ],
-    "bonne_reponse": "5 mm par cote",
-    "statut_tally": "A INSERER"
+     "Jamais",
+     "1 ou 2 fois par an",
+     "Plusieurs fois par an",
+     "Trop souvent pour compter"
+    ]
    },
    {
     "num": 4,
-    "texte": "Comment verifiez-vous l equerrage d une baie avant de commander ?",
+    "texte": "Combien de fois avez-vous du recommander un chassis (et le payer de votre poche) a cause d une erreur de mesure ?",
     "options": [
-     "Niveau laser",
-     "Je compare les 2 diagonales",
-     "Equerre de macon",
-     "A l oeil, 30 ans de metier"
-    ],
-    "bonne_reponse": "Les 2 diagonales",
-    "statut_tally": "A INSERER"
+     "Jamais",
+     "1 fois, et ca m a suffi",
+     "Plusieurs fois",
+     "Je prefere ne pas le dire"
+    ]
    },
    {
     "num": 5,
-    "texte": "Honnetement : combien de poses ratees a cause d une erreur de mesure sur les 12 derniers mois ?",
+    "texte": "Combien de fois avez-vous du rappeler le client pour un detail oublie (mesure manquante, coordonnees, precision) ?",
     "options": [
-     "0, jamais",
-     "1 ou 2",
-     "3 a 5",
-     "Je prefere ne pas le dire"
-    ],
-    "bonne_reponse": "Aucune (question lead capture emotionnelle, pas de bonne reponse)",
-    "statut_tally": "A INSERER"
+     "Jamais",
+     "Rarement",
+     "Regulierement",
+     "A chaque chantier ou presque"
+    ]
    }
   ],
   "champs_contact": [
-   "Prenom (Short answer, requis)",
-   "Email (Email, requis)",
-   "Nom entreprise (Short answer, optionnel)"
+   "Votre prenom (Short answer, requis)",
+   "Votre email (Email, requis)",
+   "Nom de votre entreprise (Short answer, optionnel)"
   ],
-  "page_merci": "Reveal MesureChassis positionne PAS pour debutants, pour VOUS + code MESURE3MOIS + lien App Store + option visite chantier par Michel",
-  "note": "Contenu definitif du quiz Tally pour la campagne cold email Resend septembre 2026."
+  "page_merci_angle": "Chaque reponse en dessous de la premiere ligne = temps et argent perdus. Reveal MesureChassis comme la solution exacte a CES douleurs. Code MESURE3MOIS + lien App Store + option visite chantier.",
+  "nuances_michel_si_questions_techniques_reutilisees": "Trapeze: 6 mesures est la norme mais pas dogmatique. Jeu PVC renovation: 10mm theorique mais 15mm acceptable selon experience. Largeur/hauteur/diagonale: chacun sa methode, indiscutable. Ne JAMAIS dire au prospect qu il a tort sur sa methode de metier.",
+  "statut_tally": "Michel doit supprimer la question mur ancien et inserer les 5 questions V2. Mise en page pro a faire ensuite."
  }
 }
