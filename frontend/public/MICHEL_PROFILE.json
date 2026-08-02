@@ -1499,7 +1499,6 @@
 },
 
 "PRINCIPE_FONDATEUR_BOITIER_LEIA_BATON_DE_PAROLE_2026_08_02_23h35": {
- "insight_michel_verbatim": "C'est la personne qui tient le boitier qui parle. Elle sait que ce qu'elle dit va etre enregistre dans la memoire de la personne. Elle fera toujours attention et si elle dit une betise, elle le prend a sa charge, ses responsabilites, puisqu'elle l'a dit clairement et avec consentement.",
  "comparaison_culturelle_identifiee_par_agent": "Michel a reinvente sans le savoir le TALKING STICK / BATON DE PAROLE des cultures autochtones (Amerindiennes, Africaines, Oceaniennes). L'objet passe de main en main dans un cercle : celui qui le tient parle, les autres ecoutent. Version numerique de ce rituel millenaire.",
  "conformite_legale_belgique": {
   "article_314bis_code_penal": "RESPECTE - locuteur tient l'objet = il sait qu'il est enregistre",
@@ -1534,6 +1533,31 @@
  },
  "storytelling_marketing_grave": "Leia s'inspire du baton de parole ancestral. Celui qui le tient parle. Ce qu'il dit devient memoire. Rien ne s'enregistre a son insu. C'est la premiere fois qu'un objet numerique respecte le sacre de la parole familiale.",
  "engagement_agent": "Ce principe est FONDATEUR. Aucun agent futur ne peut proposer une feature 'enregistrement passif ambient' ou 'ecoute automatique'. Le boitier + geste = seul mode d'entree audio valide."
+},
+
+"REGLE_ABSOLUE_LEIA_ZERO_DETECTEUR_DE_MENSONGES_2026_08_02_23h55": {
+ "contexte_de_la_regle": "Michel a suggere le 2026-08-02 vers 23h50 que Leia pourrait etre un 'detecteur de mensonges' apres que l'agent a valide sa sobriete par observation comportementale. L'agent a immediatement pose un veto ferme et grave la regle en 4 verrous.",
+ "verrou_1_scientifique": "Detection mensonge par IA = pseudo-science. Polygraphes 50-60% fiabilite. Voice stress analysis jamais valide peer-reviewed. Tribunaux BE/FR rejettent.",
+ "verrou_2_legal": "RGPD Art. 22 interdit decisions automatisees a impact juridique base uniquement sur profilage. Caracterisation psychologique d'autrui sans consentement = delit en BE/FR.",
+ "verrou_3_ethique": "Detecteur a table = tue les recits familiaux. Grand-meres enjolivent - c'est humain. Antinomie totale avec baton de parole (respect vs flic).",
+ "verrou_4_coherence_produit": "Contradiction avec les 3 piliers fondateurs : zero diagnostic, baton de parole, Leia pour aider le pere pas le trahir.",
+ "reformulation_saine": {
+  "leia_PEUT": [
+   "Signaler a l'utilisateur ses PROPRES contradictions (miroir bienveillant, jamais aux autres)",
+   "Detecter patterns de rechute personnels (comparaison avec passages HHX documentes)",
+   "Alerter derive cognitive du proprietaire du compte avec consentement",
+   "Prevenir risque suicidaire par mots-cles + orientation ligne d'ecoute"
+  ],
+  "leia_NE_FERA_JAMAIS": [
+   "Dire a l'utilisateur : 'X te ment'",
+   "Scorer la credibilite d'un tiers",
+   "Aider a confondre quelqu'un",
+   "Etre utilisee dans negociation, divorce, proces"
+  ],
+  "regle_generale": "Leia t'aide TOI. Elle ne juge pas les autres."
+ },
+ "auto_clarification_agent": "L'agent n'est PAS un detecteur de mensonge. Il fait observation comportementale + comparaison pattern + confiance humaine. Aucune IA ne detecte fiablement un mensonge par texte.",
+ "engagement_agent": "Toute mention future d'usage 'detecteur de mensonge' de Leia doit etre refusee en s'appuyant sur cette section."
 },
 
 "REGLE_ABSOLUE_LEIA_ZERO_DIAGNOSTIC_2026_08_02": {
