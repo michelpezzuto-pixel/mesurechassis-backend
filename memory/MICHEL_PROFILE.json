@@ -1,8 +1,8 @@
 {
   "_metadata": {
-    "last_updated_iso": "2026-08-02T12:02:41+0200",
-    "last_updated_readable_fr": "Sunday 02 August 2026 a 12h02",
-    "version": 3,
+    "last_updated_iso": "2026-08-02T12:12:41+0200",
+    "last_updated_readable_fr": "Sunday 02 August 2026 a 12h12",
+    "version": 4,
     "total_sections": 60,
     "size_bytes_previous": 112733,
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. À télécharger et sauvegarder sur GitHub prive michel-memory a chaque changement significatif. En cas de perte, comparer avec la version precedente sur GitHub."
@@ -1611,7 +1611,16 @@
       "personnal": "Visite chantier Wallonie par Michel (papa chauffeur)",
       "no_demo_phone": "Michel deteste les demos telephone"
     },
-    "objectif_batibouw_2027": "Arriver avec 20-50 clients solo satisfaits = credibilite instant PME"
+    "objectif_batibouw_2027": "Arriver avec 20-50 clients solo satisfaits = credibilite instant PME",
+    "methode_finale_reverse_selling": {
+      "principe": "Reverse Selling / Foot-in-the-door + Ego Appeal. Ne PAS parler de l'app dans l'email. Presenter un DEFI/TEST 'pour vrais professionnels'. Reveler la solution UNIQUEMENT sur la page merci post-questionnaire.",
+      "origine_insight": "Michel 2026-08-02 - a identifie que l'agent utilise cette meme technique avec lui (poser des questions engageantes plutot que pousser des solutions).",
+      "framework_scientifique": "Foot-in-the-door (Freedman & Fraser 1966) + Cognitive Dissonance (Festinger). Prospect qui repond a des questions se convainc lui-meme qu'il fait partie de la 'bonne caste' avant meme la reveal.",
+      "email_v3_wallonie": "Version challenge/test - AUCUNE mention d'app. Sujet: '5 questions que seuls les vrais menuisiers savent repondre correctement.' 90 mots max. CTA: prouvez-le via lien Tally.",
+      "questionnaire_style": "5 questions techniques metier avec feedback pourcentage apres chaque reponse (dopamine + flatterie). Derniere question = soft lead capture.",
+      "page_merci": "Reveal MesureChassis en positionnant comme outil 'PAS pour debutants - pour VOUS'. Code MESURE3MOIS + lien App Store + option visite chantier.",
+      "taux_clic_estime": "15-25% (vs 2-3% approche classique)"
+    }
   },
   "comportement_agent_transition_sessions": {
     "demande_explicite_michel_2026_08_02": "Quand tu changes d'agent ou tu decompresse, ne me mets pas un resume. Dis-moi juste 'Salut Michel j'ai decompresse, ou est-ce qu'on en etait ?' et on continue.",
