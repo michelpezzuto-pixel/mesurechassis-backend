@@ -1512,7 +1512,16 @@
       "Contenu ajoute a la base : guides PDF, videos, FAQ ?",
       "Nom 'Yann' garde ou nom neutre ?"
     ],
-    "statut": "Concept fondamental de MesureChassis. A implementer en Phase 5 code des reactivation."
+    "statut": "Concept fondamental de MesureChassis. A implementer en Phase 5 code des reactivation.",
+    "decisions_design_2026_06": {
+      "personnalisation_user": "Config demande prenom + nom. Yann appelle user par prenom. Yann demande si tutoiement ou vouvoiement.",
+      "perimetre_evolutif": "Yann n'est configure QUE pour les fonctionnalites deja construites dans l'app. Si feature n'existe pas encore (ex: devis), Yann ne repond pas. Extension progressive avec chaque nouvelle feature.",
+      "workflow_apprentissage": "Michel + agent construisent une feature ensemble → Yann est informe de son fonctionnement → user pose question → Yann repond.",
+      "anti_hallucination": "Si Yann pas sur a 100%, mail obligatoire a Michel. HUMAIN TOUJOURS DANS LA BOUCLE. Non-negociable.",
+      "philosophie_michel": "Humains dirigent, IA connait les lois, humains jouent a l'instinct. Complementarite obligatoire.",
+      "base_connaissance_initiale": "A definir plus tard avec Michel. Pas maintenant.",
+      "nom_yann": "Confirme, on garde"
+    }
   },
   "alternatives_legales_pret_ami_archivees": {
     "contexte": "Michel avait propose un montage bancaire manipulateur pour aider son meilleur ami. Alternatives legales valides retenues sur son accord 2026-06 matin.",
