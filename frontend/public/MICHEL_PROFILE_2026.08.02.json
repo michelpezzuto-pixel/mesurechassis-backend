@@ -1193,6 +1193,55 @@
    "note": "Punchy, honnête, dit implicitement que les fondateurs ont été patients zero. À tester en A/B post-lancement."
   }
  ],
+"campagne_email_ratee_aout_2026_LECONS_CRITIQUES": {
+ "date_grave": "2026-08-02",
+ "gravite": "CRITIQUE - À NE JAMAIS OUBLIER",
+ "resume": "Une campagne cold email massive (~256-290 emails) a été envoyée mi-juillet 2026 (environ 2 semaines avant le 2 août) à des menuisiers FRANÇAIS (.fr). Sujet utilisé : 'Dernière chance — test 100% gratuit'. Résultat : ZÉRO réponse. Aucun lead. Aucun client potentiel généré. Michel a ensuite pivoté vers le porte-à-porte physique local.",
+ "erreurs_identifiees_a_ne_jamais_reproduire": [
+  "❌ ERREUR 1 : Cibler des menuisiers FRANÇAIS alors que le positionnement est 'Made in Belgium par un menuisier belge, pour les menuisiers belges'. Aucune raison pour un Français d'accorder de la crédibilité.",
+  "❌ ERREUR 2 : Sujet 'Dernière chance — test 100% gratuit' = 3 déclencheurs de spam classiques. Résultat : 2 emails Suppressed par Resend en 3 jours + réputation sender abîmée.",
+  "❌ ERREUR 3 : Volume massif (256-290 emails) d'un coup au lieu d'un lancement progressif (10-15/jour). Marque une intention 'spam' dans les filtres.",
+  "❌ ERREUR 4 : Timing en pleine période congés belges (août). Personne à son bureau. Aucune lecture. Aucune réaction possible.",
+  "❌ ERREUR 5 (méta) : Un agent précédent a exécuté cette campagne SANS l'enregistrer en mémoire. Michel a dû me le pointer 2 semaines après. TROU DE MÉMOIRE INACCEPTABLE."
+ ],
+ "insight_positif_a_retenir": "Michel a reformulé lucidement : cette campagne n'était PAS complètement perdue si on la considère comme du BRAND SEEDING. Les destinataires ont vu passer le logo MesureChâssis. Familiarité subliminale créée. Si on les recroise plus tard, effet 'mere-exposure' possible. MAIS cela ne justifie PAS la répétition de ce pattern.",
+ "consequence_logo": "Michel refuse de changer le logo pour l'instant : la familiarité construite par la campagne ratée doit être capitalisée. On garde le logo actuel (fenêtre orange 3D + bannière Made in Belgium) pour continuité visuelle.",
+ "nouvelle_strategie_validee_par_michel_2026_08_02": {
+  "geographie": "PARTIR LOCAL. D'abord Bruxelles-Capitale et périphérie immédiate. Puis élargir tout doucement : Wallonie proche → Anvers → France (jamais en premier). Michel : 'un pas à la fois, on reste ici pour l'instant'.",
+  "volume": "PETITS BATCHES. Pas 30/jour. Michel : 'quelques mails hein, faut pas voir aussi grand'. Estimation : 5-10 emails/jour maximum.",
+  "timing_envoi": "APRÈS 16h30 (théorie Michel : moins de bruit dans les boîtes, ouvertures plus attentives — à valider). PAS 8h du matin.",
+  "timing_lancement": "PAS début septembre comme initialement planifié. Michel veut commencer PLUS TÔT — pas immédiatement à cause des congés collectifs août mais possiblement autour du 15 août. Michel décidera lui-même du jour de lancement : 'j'te dirai quand est-ce qu'il faudra les envoyer'.",
+  "cible_precise": "100% menuisiers BELGES francophones. Domaines .be prioritaires. TPE 1-15 employés. Châssis extérieurs (fenêtres/portes/baies vitrées) — pas menuisiers intérieurs.",
+  "sujet_valide": "'Petit test pour un vrai menuisier' (aucun mot déclencheur spam, ton belge chaleureux, ciblage identité pro)",
+  "template_email": "Variante A finalisée le 2026-08-02 (voir historique conversation) — sobre, sans emoji excessif, avec signature Michel Pezzuto + logo bannière + Made in Belgium.",
+  "outil_envoi": "Resend directement (domaine mesurechassis.com déjà vérifié depuis 2 mois). Envoi via Broadcasts ou manuel un par un.",
+  "audience_locale_priorite_1": "Communes Bruxelles-Capitale + Brabant wallon (Wavre, Nivelles, Waterloo, Louvain-la-Neuve, etc.)"
+ },
+ "outil_recherche_prospects": "Perplexity (Michel utilise Perplexity Pro ou gratuit avec deep search). Prompt calibré fourni par agent 2026-08-02. Michel dictera la liste finale.",
+ "regle_agent_futur": "Si un agent futur propose une campagne cold email massive à Michel, il DOIT d'abord vérifier ici cette section et rappeler à Michel les 5 erreurs. Pas de campagne >15 emails/jour. Pas de cible non-belge en phase 1. Pas de sujet avec 'gratuit/dernière chance/promo'. Enregistrer TOUTE campagne exécutée avec date/contenu/résultat.",
+ "engagement_agent_2026_08_02": "Toute future campagne = sauvegardée dans le JSON avec date, contenu exact du mail, cible géographique, résultat (opens/clicks/replies/conversions). Aucune campagne ne doit être 'invisible' dans la mémoire.",
+ "pool_prospects_2026_08_02": {
+  "source": "Recherche Perplexity Pro effectuée par Michel le 2026-08-02",
+  "fichier_local": "/app/frontend/public/prospects/prospects_belgique_2026_08_02.csv (+ .md)",
+  "total": 85,
+  "exploitables_email": 70,
+  "prenom_at_boite": 15,
+  "info_contact_at": 55,
+  "sans_email": 15,
+  "priorite_1_BXL_BW": 24,
+  "priorite_1_avec_email": 18,
+  "repartition_provinces": {
+   "Hainaut": 18,
+   "Liege": 17,
+   "Namur": 14,
+   "Luxembourg": 12,
+   "Brabant_wallon": 12,
+   "Bruxelles_Capitale": 12
+  },
+  "note_agent": "Michel veut lancer LOCAL d'abord. Attaquer par les 18 prospects BXL+BW avec email valide. Ordre suggeré : commencer par les 2 prenom@ (Menuiserie Richard Jodoigne + Sart Services), puis les 16 info@/contact@. Petits batches (5-10/jour). Timing envoi apres 16h30 selon theorie Michel. Ne PAS lancer avant que Michel dise GO explicitement."
+ }
+},
+
 "leia_bibliotheque_citations_inspirantes": {
  "vision_curation_par_michel_2026_08_02": "Michel refuse le fetichisme habituel des citations d'Einstein/Tesla/millionnaires. Pour Léia, l'inspiration doit venir de VOIX CONTEMPORAINES francophones proches du vécu émotionnel des utilisateurs en sevrage : chanteurs, rappeurs, poètes, penseurs jeune génération. Profondeur > Célébrité. Vécu > Théorie.",
  "principe_editorial": [
