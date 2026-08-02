@@ -1498,6 +1498,44 @@
  "regle_agent": "Michel doit BAJ (Bureau Aide Juridique) debloque avant Pret Coup de Pouce. Priorite reactivation legale toujours en cours."
 },
 
+"PRINCIPE_FONDATEUR_BOITIER_LEIA_BATON_DE_PAROLE_2026_08_02_23h35": {
+ "insight_michel_verbatim": "C'est la personne qui tient le boitier qui parle. Elle sait que ce qu'elle dit va etre enregistre dans la memoire de la personne. Elle fera toujours attention et si elle dit une betise, elle le prend a sa charge, ses responsabilites, puisqu'elle l'a dit clairement et avec consentement.",
+ "comparaison_culturelle_identifiee_par_agent": "Michel a reinvente sans le savoir le TALKING STICK / BATON DE PAROLE des cultures autochtones (Amerindiennes, Africaines, Oceaniennes). L'objet passe de main en main dans un cercle : celui qui le tient parle, les autres ecoutent. Version numerique de ce rituel millenaire.",
+ "conformite_legale_belgique": {
+  "article_314bis_code_penal": "RESPECTE - locuteur tient l'objet = il sait qu'il est enregistre",
+  "RGPD_6_1_a_consentement": "RESPECTE - geste physique = consentement plus fort qu'une case cochee",
+  "RGPD_7_3_retrait_consentement": "A AJOUTER - chaque locuteur peut demander suppression de ses passages plus tard",
+  "loi_vie_privee_30_juillet_2018": "RESPECTE - consentement explicite documente par le geste"
+ },
+ "consequences_produit_majeures": [
+  "Le boitier N'EST PAS un accessoire mais L'ADN de Leia",
+  "Justifie prix premium (250-500 EUR standard, 800-1500 EUR orfevre)",
+  "Storytelling marketing puissant : 'premier objet numerique qui respecte le sacre de la parole familiale'",
+  "Impossible d'enregistrer a l'insu par design (pas par option logicielle)",
+  "Protege contre TOUS usages toxiques (disputes, ragots, chantage)"
+ ],
+ "deux_modes_de_captation_valides_par_agent": {
+  "mode_note_personnelle_defaut": {
+   "principe": "Je tiens le boitier -> je parle -> ca part dans MA bibliotheque a moi",
+   "cas_usage": "Mon fils vient de dire un truc mignon aujourd'hui, je veux m'en souvenir",
+   "consentement": "Mien seul suffit"
+  },
+  "mode_offrande_volontaire": {
+   "principe": "Je tiens le boitier -> je dedie a quelqu'un -> je parle -> ca part dans SA bibliotheque avec double consentement (mien + siens)",
+   "cas_usage": "Papa, tiens le boitier. Je vais te dire quelque chose que tu pourras reecouter quand tu m'auras oublie.",
+   "consentement": "Double : donneur (moi) + recepteur (l'autre qui accepte de recevoir)",
+   "puissance_emotionnelle": "Cadeau, adieu doux, 'je t'aime en vraie voix' depose dans la memoire de l'autre pour toujours"
+  }
+ },
+ "rituel_de_transmission_boitier": {
+  "principe": "Le PASSAGE physique de main en main est acte fondateur - passeur (celui qui tend) valide implicitement l'echange, receveur (celui qui accepte) consent implicitement a parler",
+  "pas_de_UI_complexe": "Zero dialog box RGPD, zero case a cocher, zero 'j'accepte les CGU'. Le geste physique remplace TOUT.",
+  "ritualisation_familiale": "Devient une celebration : 'Mamie, tiens le boitier, raconte-nous a nouveau l'histoire du bateau de 1962'"
+ },
+ "storytelling_marketing_grave": "Leia s'inspire du baton de parole ancestral. Celui qui le tient parle. Ce qu'il dit devient memoire. Rien ne s'enregistre a son insu. C'est la premiere fois qu'un objet numerique respecte le sacre de la parole familiale.",
+ "engagement_agent": "Ce principe est FONDATEUR. Aucun agent futur ne peut proposer une feature 'enregistrement passif ambient' ou 'ecoute automatique'. Le boitier + geste = seul mode d'entree audio valide."
+},
+
 "REGLE_ABSOLUE_LEIA_ZERO_DIAGNOSTIC_2026_08_02": {
  "principe_grave_par_michel_le_2026_08_02_23h20": "Leia ne donne JAMAIS un diagnostic medical, psychologique, psychiatrique, neurologique, ou de sante mentale a un utilisateur — sauf si l'information provient de PLUSIEURS sources scientifiques renommees (etudes peer-reviewed, INAMI, OMS, revues Cochrane, INSERM, Haute Autorite de Sante) ET est presentee comme PISTE a valider par un professionnel, jamais comme certitude.",
  "citation_michel": "Ne jamais donner un diagnostic ou quoi que ce soit si ça n'a pas été écrit dans minimum plusieurs sources scientifiques renommées",
