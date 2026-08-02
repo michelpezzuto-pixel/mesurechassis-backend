@@ -1431,8 +1431,71 @@
     "V4_annee_4_5": "Bibliotheque de vie grand public sans pathologie + Voice cloning familial premium"
    },
    "principe_de_discipline_agent_grave": "NE PAS SE DISPERSER V1. Lancer sur 2 axes seulement (Alzheimer + Sevrage). Extensions progressives. Michel a valide implicitement en acceptant le recadrage LVMH V1."
+  },
+  "12_pere_de_michel_ORIGINE_VERITABLE_LEIA": {
+   "revelation_michel_2026_08_02_22h55": "Le pere de Michel, 78 ans, perd la memoire depuis le COVID. Diagnostic reçu par la famille : 'eau qui compresse le cerveau' (probable hydrocéphalie a pression normale - HPN). Il ne se rappelle pas de ce qu'il a fait 30 min avant. Reste gentil, doux, aime.",
+   "citation_michel_verbatim": "Je l'adore mon pere. Mon pere c'est ma vie, c'est celui qui m'a tout appris et c'est grace a lui que je viens de faire Leia. Il faut vraiment insister dessus. Il faut que ça se sache.",
+   "portee_narrative": "LEIA N'EST PAS QU'UN PRODUIT POUR ALCOOLIQUES OU PATIENTS ALZHEIMER GENERIQUES. LEIA EST NEE PARCE QUE MICHEL VOIT SON PROPRE PERE PERDRE LA TETE. Chaque agent futur DOIT porter cette dedicace dans son fonctionnement. Leia = hommage vivant a un pere aimant.",
+   "engagement_agent": "Toute communication publique/marketing de Leia doit pouvoir remonter a cette histoire fondatrice quand pertinent. Michel demande explicitement que 'ça se sache'.",
+   "piste_medicale_a_verifier": {
+    "hypothese_a_explorer_avec_neurologue": "Hydrocephalie a pression normale (HPN / NPH). Souvent confondue avec Alzheimer mais TRAITABLE par shunt cerebral (drainage liquide).",
+    "triade_symptomatique_HPN": ["troubles memoire", "trouble marche 'magnetique'", "incontinence urinaire"],
+    "action_suggeree_michel": "Demander au neurologue actuel 'Est-ce une HPN ? A-t-on envisage un shunt ?'. Si pas explore : second avis centre specialise (CHU Liege, Erasme Bruxelles, UCL Saint-Luc).",
+    "taux_amelioration_apres_shunt": "50-70% patients HPN retrouvent significativement de la memoire.",
+    "disclaimer_agent": "Ceci N'EST PAS un diagnostic. Juste une piste medicale a verifier. Agent est un logiciel, pas un medecin."
+   }
+  },
+  "13_leia_temoin_de_table_MODE_PASSIF": {
+   "insight_michel_verbatim": "Un Leia sur table qui ecouterait toutes nos conversations pour apprendre qui il est",
+   "mecanisme": "Bouton declenche debut du repas familial → Leia ecoute passivement → transcription locale (privacy first) → detecte noms cites, anecdotes racontees, dates approximatives → apres repas propose 'voici 3 anecdotes captees sur ton pere, tu veux les integrer ?'",
+   "chronologisation_automatique": "Leia relie les recits aux periodes deja connues, construit timeline coherente.",
+   "genie_UX": "Le patient devient sa propre source, indirectement, sans meme s'en rendre compte. Zero friction pour lui, enorme valeur pour sa bibliotheque.",
+   "considerations_privacy": [
+    "Enregistrement UNIQUEMENT sur declenchement manuel (bouton physique)",
+    "Traitement local si possible (edge AI), pas envoi cloud brut",
+    "Consentement de tous les participants au repas (question au demarrage)",
+    "Suppression facile de sections apres coup",
+    "Chiffrement stockage"
+   ]
+  },
+  "14_photos_anecdotes_reconnaissance": {
+   "mode_diaporama_guide": "Une photo -> Leia raconte automatiquement 'C'est Julien ton petit-fils, ingenieur, voici 3 souvenirs avec lui'",
+   "mode_reconnaissance_passive": "Patient regarde une photo -> touche l'ecran/boitier -> Leia identifie + raconte",
+   "mode_chronologique": "'Aujourd'hui 3 aout. Il y a 40 ans jour pour jour tu partais camper avec Danielle. Tu m'as raconte que...'",
+   "importance_produit": "Feature killer pour reconnaissance faciale emotionnelle. A prioriser V1 Alzheimer."
+  },
+  "15_confirmation_ferme_ZERO_RELIGION": {
+   "verrou": "CONFIRME PAR MICHEL LE 2026-08-02. Leia sera religieusement neutre. Zero figure sacree. Zero incarnation spirituelle nommee. Zero allusion religieuse dans les templates par defaut.",
+   "utilisateur_peut_projeter_ce_qu_il_veut_dessus": "Mais Leia ne se prononce jamais. Position produit FERME.",
+   "regle_agent": "AUCUN agent futur ne peut proposer une feature 'compagnon spirituel' meme sur demande utilisateur. Response type : 'Leia t'accompagne dans ta reflexion sans se substituer a ta foi ni la contredire.'"
   }
  }
+},
+
+"strategie_financement_leia_wallonie_2026_08_02": {
+ "contexte": "Michel a epuisé son budget perso sur MesureChassis. Il est en faillite personnelle. Il doit lancer Leia SANS 1EUR de sa poche.",
+ "guichet_unique": {
+  "nom": "Wallonie Entreprendre",
+  "url": "https://www.wallonie-entreprendre.be",
+  "notes": "Fusion Sowalfin + Sogepa + SRIW depuis 2023. Point d'entree unique aides publiques wallonnes. Financement, bourses innovation, accompagnement. Conseils gratuits (commencer par la). Point critique Michel : ils gerent aussi les dispositifs 'seconde chance' post-faillite."
+ },
+ "dispositifs_prioritaires": [
+  {"nom":"Cheque-Entreprises Numeriques","montant_max":"10000 EUR","type":"Non remboursable","url":"https://cheques-entreprises.be","note":"Wallonie paie 50-90% de facture prestataire numerique agree"},
+  {"nom":"Pret Coup de Pouce","montant_max":"100000 EUR","type":"Pret taux zero","url":"https://www.pretcoupdepouce.be","note":"OUVERT post-faillite si plan de redressement (donc besoin BAJ debloque)"},
+  {"nom":"Fondation Roi Baudouin","montant_max":"50000 EUR","type":"Non remboursable","url":"https://www.kbs-frb.be","note":"Appels a projets inclusion sociale/sante. Angle Alzheimer/aidants parfait."},
+  {"nom":"Ligue Alzheimer ASBL","type":"Partenariat","url":"https://www.alzheimer.be","note":"Base Liege. Credibilite + reseau national. Ils testent, Leia beneficie."},
+  {"nom":"AVIQ","type":"Subventions","url":"https://www.aviq.be","note":"Agence Wallonne pour Vivre Chez Soi. Outils domicile personnes agees."},
+  {"nom":"EIT Health","montant_max":"75000 EUR","type":"Bourse europeenne","url":"https://eithealth.eu","note":"Startups sante europeennes. Leia = candidat parfait."},
+  {"nom":"CoopCity Bruxelles","type":"Accompagnement 6 mois","url":"https://coopcity.be","note":"Si Leia = ASBL/cooperative. Reseau financeurs ethiques."},
+  {"nom":"Innoviris Bruxelles","montant_max":"50000 EUR","type":"Bourses","url":"https://innoviris.brussels","note":"UNIQUEMENT si siege social Bruxelles. Bourse Trampoline 15k puis Launch 50k."}
+ ],
+ "roadmap_financement": {
+  "phase_1_mois_1_3_cout_0": ["RDV gratuit Wallonie Entreprendre", "RDV Ligue Alzheimer presentation concept + lettre soutien", "Depot dossier Cheque-Entreprises numeriques"],
+  "phase_2_mois_4_6_cout_0": ["Fondation Roi Baudouin appel projets social/sante", "EIT Health dossier bourse", "Pret Coup de Pouce si BAJ debloque plan redressement"],
+  "phase_3_mois_6_12": ["Business angels BeAngels reunion mensuelle", "Crowdfunding Ulule pre-vente boitier"]
+ },
+ "budget_mobilisable_12_mois_estime": "150000 EUR a 250000 EUR SANS toucher tresorerie perso Michel",
+ "regle_agent": "Michel doit BAJ (Bureau Aide Juridique) debloque avant Pret Coup de Pouce. Priorite reactivation legale toujours en cours."
 },
 
 "leia_bibliotheque_citations_inspirantes": {
