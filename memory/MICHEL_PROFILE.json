@@ -1433,5 +1433,60 @@
     },
     "regle_a_preserver": "Ne jamais faire de l'agent un oui-oui. Michel a explicitement dit apprecier le contrepoids. Respecter ce contrat.",
     "signal_derapage": "Si l'agent devient sycophante ou approbateur systematique, Michel perd son garde-fou. Rester direct, factuel, avec limites."
+  },
+  "session_2026_06_matin_notes_michel": {
+    "contexte": "Michel a pris des notes sober la veille au soir puis les partage le lendemain matin. Autorise l'agent a filtrer le meilleur.",
+    "bloc_1_equipe_commerciale": {
+      "statut": "VALIDE_PHASE_3_2027_PLUS",
+      "elements_valides": [
+        "Recrutement multilingue (FR + langue pays + menuiserie)",
+        "Formation vente + reunions annuelles avion paye",
+        "Feature LLM geolocalise 'menuisiers autour de moi'",
+        "Structure hierarchique commerciale",
+        "CRM interne notifications remontant au responsable"
+      ],
+      "nuance": "Application 100% sur-mesure par commercial trop couteuse en maintenance. Preferer modules optionnels activables."
+    },
+    "bloc_2_prix_ui_differenciee": {
+      "statut": "FAISABLE_DEJA_TECHNIQUEMENT",
+      "note": "RBAC deja moitie implemente dans MesureChassis. Activation Phase 5 code.",
+      "roles_prevus": [
+        "admin",
+        "commercial",
+        "artisan_solo",
+        "entreprise_pro",
+        "entreprise_max"
+      ]
+    },
+    "bloc_3_demarrage_wallonie_papa_chauffeur": {
+      "statut": "PEPITE_A_EXECUTER_DES_BAJ_VALIDE",
+      "elements": [
+        "Papa conduit (pas de permis Michel)",
+        "1 voiture, pas de flotte",
+        "Michel seul commercial",
+        "Wallonie exclusivement Phase 1",
+        "Objectif: decrocher 1er rendez-vous cette semaine"
+      ],
+      "action_agent": "Preparer 5 emails B2B menuisiers wallons cette semaine post-BAJ. Preparer pitch commercial court."
+    },
+    "bloc_4_pret_bancaire_surprise_ami": {
+      "statut": "BLOQUE_DEFINITIF",
+      "raisons_legales": [
+        "Art 490bis Code penal belge - abus de confiance (6mois-5ans prison)",
+        "Art XX.99 Code eco - faillite = interdiction de garantir un pret",
+        "Faux en ecriture pour la banque",
+        "Coercition financiere si retention dividendes"
+      ],
+      "impulsion_saine_sous_jacente": "Aider son meilleur ami a se constituer un capital sans qu'il y pense",
+      "alternatives_legales_proposees": [
+        "ETF a son nom, cadeau surprise 10 ans plus tard (12k€ nets, zero mensonge)",
+        "Pacte epargne commun transparent (65 chacun/mois, ETF ouvert a son nom)",
+        "Testament olographe avec livret ETF a son nom"
+      ]
+    },
+    "bloc_5_leia_pour_yann": {
+      "statut": "A_CLARIFIER",
+      "question_michel": "Qui est Yann ? Ton meilleur ami du bloc 4 ? Quelqu'un d'autre ?"
+    }
   }
 }
