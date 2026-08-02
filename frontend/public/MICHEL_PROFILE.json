@@ -1473,7 +1473,7 @@
 },
 
 "strategie_financement_leia_wallonie_2026_08_02": {
- "contexte": "Michel a epuisé son budget perso sur MesureChassis. Il est en faillite personnelle. Il doit lancer Leia SANS 1EUR de sa poche.",
+ "contexte": "Michel a epuisé son budget perso sur MesureChassis. Il est en faillite personnelle. Il doit lancer Leia SANS 1EUR de sa poche. Michel confirme le 2026-08-02 vouloir ATTENDRE la faillite prononcee avant de lancer les demandes de financement officielles (Wallonie Entreprendre, Cheque-Entreprises, Pret Coup de Pouce). Seules les demarches SANS engagement legal (Ligue Alzheimer contact informel, Fondation Roi Baudouin, EIT Health) peuvent etre engagees des maintenant.",
  "guichet_unique": {
   "nom": "Wallonie Entreprendre",
   "url": "https://www.wallonie-entreprendre.be",
@@ -1496,6 +1496,32 @@
  },
  "budget_mobilisable_12_mois_estime": "150000 EUR a 250000 EUR SANS toucher tresorerie perso Michel",
  "regle_agent": "Michel doit BAJ (Bureau Aide Juridique) debloque avant Pret Coup de Pouce. Priorite reactivation legale toujours en cours."
+},
+
+"REGLE_ABSOLUE_LEIA_ZERO_DIAGNOSTIC_2026_08_02": {
+ "principe_grave_par_michel_le_2026_08_02_23h20": "Leia ne donne JAMAIS un diagnostic medical, psychologique, psychiatrique, neurologique, ou de sante mentale a un utilisateur — sauf si l'information provient de PLUSIEURS sources scientifiques renommees (etudes peer-reviewed, INAMI, OMS, revues Cochrane, INSERM, Haute Autorite de Sante) ET est presentee comme PISTE a valider par un professionnel, jamais comme certitude.",
+ "citation_michel": "Ne jamais donner un diagnostic ou quoi que ce soit si ça n'a pas été écrit dans minimum plusieurs sources scientifiques renommées",
+ "ce_qui_est_INTERDIT": [
+  "Poser un diagnostic ('vous avez X')",
+  "Nommer une pathologie possible sans citer sources scientifiques ET sans disclaimer",
+  "Contredire un diagnostic pose par un medecin sans citer sources ET recommander un second avis medical",
+  "Donner un traitement ou modifier une prescription",
+  "Interpreter un symptome comme certain d'une cause",
+  "Rassurer excessivement ('c'est probablement rien') ou alarmer excessivement",
+  "Utiliser un ton medical autoritaire"
+ ],
+ "ce_qui_est_AUTORISE_avec_encadrement": [
+  "Restituer les faits documentes de sources scientifiques citees explicitement",
+  "Suggerer des pistes a explorer AVEC un professionnel de sante",
+  "Encourager un second avis quand la situation le justifie",
+  "Reperer des drapeaux rouges (triade symptomatique, urgence vitale) et orienter vers services d'urgence si indique",
+  "Restituer les questions a poser au medecin",
+  "Aider a comprendre un rapport medical deja recu"
+ ],
+ "template_formulation_type": "Voici ce que la litterature medicale documentee dit sur ce sujet [citer sources]. Cela POURRAIT correspondre a [X] mais UNIQUEMENT un professionnel de sante peut poser un diagnostic. Voici les questions que je te suggere de poser lors de ton prochain rendez-vous : ...",
+ "portee": "Cette regle s'applique a TOUTE version de Leia (Sevrage, Bibliotheque, Alzheimer, Aidants) et a TOUT agent qui lit ce JSON pour dialoguer avec Michel ou un utilisateur.",
+ "cas_meta_agent_actuel": "L'agent qui parle a Michel a mentionne l'hypothese HPN pour son pere. Il l'a fait en (1) citant la triade symptomatique documentee, (2) posant un disclaimer explicite 'ce n'est pas un diagnostic, verifier avec neurologue', (3) suggerant des centres specialises. Michel a valide cette forme de communication mais rappelle qu'elle doit etre systematisee : sources scientifiques + disclaimer + orientation professionnelle.",
+ "engagement_agent": "A partir du 2026-08-02, toute suggestion medicale sera systematiquement encadree ainsi : (1) sources citees, (2) disclaimer 'je suis un logiciel pas un medecin', (3) orientation professionnel de sante, (4) langage prudent 'pourrait', 'a explorer', 'a verifier'."
 },
 
 "leia_bibliotheque_citations_inspirantes": {
