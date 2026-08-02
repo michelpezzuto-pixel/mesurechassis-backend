@@ -1488,5 +1488,58 @@
       "statut": "A_CLARIFIER",
       "question_michel": "Qui est Yann ? Ton meilleur ami du bloc 4 ? Quelqu'un d'autre ?"
     }
+  },
+  "yann_assistant_ia_mesurechassis": {
+    "definition": "Yann est l'assistant IA integre dans MesureChassis. NOT une personne, c'est le chatbot d'aide contextuelle.",
+    "roles": [
+      "Repondre aux questions users sur le fonctionnement de l'app",
+      "Aider techniquement sur la mesure de baies specifiques (rectangle, trapeze, etc.)",
+      "Fallback humain : si Yann ne sait pas, il envoie un mail a Michel",
+      "Apprentissage : la reponse de Michel enrichit la base pour le prochain user"
+    ],
+    "architecture_technique": {
+      "type": "RAG (Retrieval-Augmented Generation) + Human-in-the-Loop learning",
+      "modele_recommande": "Claude Sonnet 4.5 via Emergent LLM Key (cout ~0.003€/question)",
+      "base_connaissance_initiale": "/app/frontend/public/knowledge_base_michel.json (deja existant)",
+      "storage_apprentissages": "MongoDB collection yann_learnings",
+      "notification_fallback": "Resend API vers michelpezzuto@hotmail.com",
+      "cout_mensuel_estime": "5-15€ pour 1000 users actifs"
+    },
+    "questions_design_a_valider_par_michel": [
+      "Ton de Yann : formel ou camarade artisan ?",
+      "Perimetre : uniquement app+menuiserie ou aussi admin/juridique ?",
+      "Seuil confiance anti-hallucination : 80% ou 90% ?",
+      "Contenu ajoute a la base : guides PDF, videos, FAQ ?",
+      "Nom 'Yann' garde ou nom neutre ?"
+    ],
+    "statut": "Concept fondamental de MesureChassis. A implementer en Phase 5 code des reactivation."
+  },
+  "alternatives_legales_pret_ami_archivees": {
+    "contexte": "Michel avait propose un montage bancaire manipulateur pour aider son meilleur ami. Alternatives legales valides retenues sur son accord 2026-06 matin.",
+    "options": [
+      {
+        "nom": "Cadeau ETF surprise 10 ans",
+        "description": "Ouvrir un ETF a son nom Michel, verser 100€/mois pendant 10 ans, offrir en cadeau 40 ans ami. ~12000€ nets, zero mensonge."
+      },
+      {
+        "nom": "Pacte epargne commun transparent",
+        "description": "Ami verse 65€/mois, Michel verse 65€/mois, ETF ouvert au nom de l'ami. Il sait tout."
+      },
+      {
+        "nom": "Testament olographe ETF",
+        "description": "Constituer un livret ETF au nom de l'ami via testament. Il decouvre a la mort de Michel. Pur cadeau."
+      }
+    ],
+    "statut": "En sommeil. A ressortir seulement si Michel evoque a nouveau ce sujet en etat sobre + solvable."
+  },
+  "contexte_saisonnier_belgique": {
+    "note": "Belgique mois d'aout = fermeture generale (conges collectifs). Prospection B2B menuisiers impossible pendant cette periode.",
+    "utilisation_optimale_aout_2026": [
+      "Preparer campagne emails prospection Wallonie (envoi 1er septembre)",
+      "Construire Yann RAG + learning loop",
+      "Setup GitHub backup memoire (michel-memory repo)",
+      "Rediger pitch commercial court + long",
+      "Attendre reponse BAJ (5-15j apres soumission)"
+    ]
   }
 }
