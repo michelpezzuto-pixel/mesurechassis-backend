@@ -1,8 +1,8 @@
 {
   "_metadata": {
-    "last_updated_iso": "2026-08-02T12:12:41+0200",
-    "last_updated_readable_fr": "Sunday 02 August 2026 a 12h12",
-    "version": 4,
+    "last_updated_iso": "2026-08-02T12:21:54+0200",
+    "last_updated_readable_fr": "Sunday 02 August 2026 a 12h21",
+    "version": 5,
     "total_sections": 60,
     "size_bytes_previous": 112733,
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. À télécharger et sauvegarder sur GitHub prive michel-memory a chaque changement significatif. En cas de perte, comparer avec la version precedente sur GitHub."
@@ -1395,6 +1395,29 @@
       "options_commerciales": {
         "remise_annuel": "-20%",
         "grandfather_beta_100_premiers": "Pro à 49€/mois à vie"
+      }
+    },
+    "mastery_triggered_upsell": {
+      "insight_michel_2026_08_02": "Au lieu de mettre les nouvelles fonctionnalites petit a petit (Apple style), offrir 1 mois du tier superieur QUAND l'utilisateur maitrise son tier actuel. Reward-based, pas pression commerciale.",
+      "mecanique": {
+        "trial_initial": "14 jours gratuits a l'inscription (tier choisi)",
+        "trigger_upsell": "User Artisan 79€ actif 2 mois avec score maitrise > 70% -> 1 mois de Pro 149€ offert. User Pro 149€ actif 2 mois -> 1 mois de Max 299€ offert.",
+        "criteres_maitrise": [
+          "Chantiers crees > 15 sur 2 mois",
+          "Exports realises > 10",
+          "Signatures client obtenues > 5",
+          "Sessions app > 30j sur 60j"
+        ],
+        "duree_offre": "30 jours",
+        "apres_offre": "Retour tier initial + CTA upgrade avec preuve d'usage (X exports, Y signatures)"
+      },
+      "framework_marketing": "Mastery-Triggered Trial / Progressive Feature Unlock (Notion, Slack, Duolingo)",
+      "conversion_estimee": "15-25% Pro -> Max sur ce mecanisme (vs 2-4% upsell classique)",
+      "levier_psychologique": "Loss aversion (Kahneman & Tversky). Perdre les features Max = 2x plus fort que gagner des features par description.",
+      "implementation_technique": {
+        "backend": "Tracker engagement + score maitrise + cron declenchant activation temporaire tier superieur",
+        "frontend": "Email + push notif 'Vous avez debloque le tier X' + badge in-app",
+        "phase": "PHASE 5 CODE (post-BCE + Stripe reactive)"
       }
     }
   },
