@@ -1,9 +1,9 @@
 {
   "_metadata": {
-    "last_updated_iso": "2026-08-02T11:26:54+0200",
-    "last_updated_readable_fr": "Sunday 02 August 2026 à 11h26 (heure Belgique)",
-    "version": 1,
-    "total_sections": 56,
+    "last_updated_iso": "2026-08-02T11:55:22+0200",
+    "last_updated_readable_fr": "Sunday 02 August 2026 a 11h55 (heure Belgique)",
+    "version": 2,
+    "total_sections": 58,
     "size_bytes_previous": 112733,
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. À télécharger et sauvegarder sur GitHub prive michel-memory a chaque changement significatif. En cas de perte, comparer avec la version precedente sur GitHub."
   },
@@ -1558,5 +1558,15 @@
       "Rediger pitch commercial court + long",
       "Attendre reponse BAJ (5-15j apres soumission)"
     ]
+  },
+  "github_backup_setup": {
+    "repo_url": "github.com/michel-mesurechassis2026/michel-memory",
+    "visibilite": "Private",
+    "fichier_dans_repo": "MICHEL_PROFILE_2026.08.02.json",
+    "convention_nommage": "MICHEL_PROFILE_YYYY.MM.DD.json",
+    "token_local_filename_michel": "Token gitub2026.08.26.txt (stocke sur bureau PC Michel, jamais dans le chat)",
+    "token_expire_dans": "90 jours (fin 2026-11)",
+    "note_agent": "Le token N'EST PAS partage avec l'agent. C'est intentionnel. Backup manuel toutes les 2 semaines pour l'instant.",
+    "date_setup": "2026-08-02 11:55"
   }
 }
