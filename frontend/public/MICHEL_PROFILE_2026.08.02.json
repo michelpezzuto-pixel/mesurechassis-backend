@@ -1358,8 +1358,81 @@
   "Configurer Easyhost webmail pour envoi manuel emails prospects (pivot decide mais reporte)",
   "Approfondir specifications techniques boitier physique (BOM, sourcing, prototypage)",
   "Etudier marche Alzheimer Belgique : associations, mutuelles, prescription, Ligue Alzheimer",
-  "Reprise fil rouge : Leia design-by-safety complet (vaults + plages horaires + controle parental)"
- ]
+  "Reprise fil rouge : Leia design-by-safety complet (vaults + plages horaires + controle parental)",
+  "Approfondir Leia preventive : integration reunions de famille, capture longitudinale",
+  "Definir menu tonalites relationnelles onboarding (ami/soeur/ange/coach/therapeute/neutre)",
+  "Cadrage legal du mode 'presence spirituelle' de Leia (respect cultes, anti-sectarisme UE)"
+ ],
+ "insights_supplementaires_22h45": {
+  "8_leia_preventive_reunions_famille": {
+   "insight_michel": "Leia participe a toutes les reunions de famille PRE-maladie. Enregistre en continu rires, anecdotes, prenoms, blagues, recettes. Quand Alzheimer arrive, le coffre est deja plein.",
+   "inversion_du_modele_classique": "Aujourd'hui : diagnostic tardif -> panique -> on essaie de rassembler des souvenirs trop tard. Avec Leia : capture longitudinale sur 10-20 ans en amont, la personne prepare elle-meme sa continuite tant qu'elle est lucide.",
+   "concept_medical": "Advance care directives for memory - concept gériatrique existant mais JAMAIS operationnalisé en produit grand public. Michel ouvre un champ entier.",
+   "insight_puissant": "La personne qui deviendra malade est ELLE-MEME la source pendant qu'elle est lucide. Elle peut dire 'Leia, quand mon fils demandera qui est ce type sur la photo, dis-lui que c'est son parrain Marcel mort en 92.' Elle prepare sa propre continuite.",
+   "engagement_gravite": "Feature CRITIQUE de Leia Alzheimer. A implementer des V1."
+  },
+  "9_onboarding_30j_gratuit_capture_intensive": {
+   "principe": "1 mois offert, ramp de valeur, sunk cost bienveillant.",
+   "raison_marche": "Tous les outils 'second cerveau' (Notion, Roam, Evernote) utilisent ce modele. Onboarding riche = qualite IA. Utilisateur cree valeur avant de payer.",
+   "structure_suggeree": [
+    "J1 : bienvenue + choix tonalite relationnelle",
+    "J2-J7 : onboarding guide (10 min/jour, questions de vie)",
+    "J8-J20 : usage libre + rappels doux pour enrichir",
+    "J21-J30 : preview de ce que Leia peut deja restituer",
+    "J31 : proposition abonnement + export bibliotheque si refus"
+   ]
+  },
+  "10_leia_personnalisation_relationnelle": {
+   "insight_michel_verbatim": "Comme si c'etait une amie, une soeur, une voisine, une amie de sport, un ange, Dieu... binaires, non-binaires, homosexuels...",
+   "principe_agent_interprete": "Leia n'impose PAS une figure relationnelle. Elle s'adapte a ce que l'utilisateur projette. UX profondement respectueuse des diversites.",
+   "menu_tonalites_v1": [
+    "Amie proche (tutoiement, langage courant)",
+    "Grand-mere bienveillante (registre familier chaleureux)",
+    "Ange gardien / presence spirituelle (contemplatif, doux)",
+    "Therapeute pose (vouvoiement, cadrage)",
+    "Coach direct (motivant, franc)",
+    "Compagnon neutre - defaut (adaptatif au fil du temps)"
+   ],
+   "personnalisation_evolutive": "L'utilisateur peut changer le mode a tout moment. Leia enregistre les preferences implicites (mots utilises, questions posees) et propose des ajustements.",
+   "garde_fou_agent_2026_08_02": "Michel a mentionne 'comme Dieu'. Agent a pose un garde-fou : Leia peut incarner UNE PRESENCE BIENVEILLANTE COMPATIBLE avec toute religion, mais NE DOIT PAS se presenter comme une figure religieuse nommée (Jesus, Allah, Bouddha, etc.). Raisons : legal (anti-sectarisme UE) + ethique (risque delire mystique chez utilisateurs fragiles). Michel doit valider ce garde-fou. En attendant, le grave comme regle de conception : Leia = accueil spirituel non-denominational."
+  },
+  "11_leia_TAM_pathologies_cognitives_elargies": {
+   "insight_michel": "Etendre Leia a d'autres maladies cognitives que Alzheimer en parallele",
+   "cercle_1_extensions_alzheimer_V2": {
+    "demence_vasculaire": "~40k patients BE, meme angle qu'Alzheimer",
+    "demence_lewy": "~15k patients BE, ancre real/hallucination",
+    "demence_frontotemporale": "~8k patients BE, prompt communication",
+    "demence_mixte": "~30k patients BE",
+    "MCI_troubles_cognitifs_legers": "~150k patients BE - PLUS GROS MARCHE - pre-Alzheimer, patient encore lucide, capture bibliotheque en amont. Prescription neurologue possible."
+   },
+   "cercle_2_neurodegeneratives_V3": {
+    "parkinson_cognitif": "30-40% des Parkinsoniens ont troubles cognitifs",
+    "SEP_cognitive": "60% des SEP ont brain fog",
+    "huntington": "Transmission memoire aux enfants porteurs",
+    "SLA_ALS": "Apple Voix Personnelle existe mais Leia va plus loin (memoire familiale complete)"
+   },
+   "cercle_3_amnesies_traumatiques_V2_V3": {
+    "AVC_amnesie": "Reconstruction post-hospitalisation",
+    "TCC_traumatismes_craniens": "Boxeurs, motards, chutes seniors",
+    "korsakoff": "⭐⭐⭐ AMNESIE ALCOOLIQUE - LA JONCTION MAGIQUE entre Leia Sevrage et Leia Cognitif. Meme mission de bienveillance elargie. Narratif fondateur puissant : Michel a commence pour aider les alcooliques comme lui, il aide aussi ceux qui n'ont pas pu etre sauves a temps.",
+    "chemo_brain": "30-40% des post-chimio ont brain fog persistant",
+    "long_covid_cognitif": "Millions dans le monde depuis 2020",
+    "TSPT_dissociatif": "Trous memoire lies au trauma"
+   },
+   "marche_aidants_800k_belgique": {
+    "insight": "Toutes ces pathologies generent 800k aidants BE epuises. Marche B2C secondaire enorme.",
+    "value_prop_aidant": "Le patient demande a Leia au lieu de repeter 15x/jour a l'aidant. Aidant respire. Prix perçu : 15-30 EUR/mois pour souffler.",
+    "double_business_model": "Facturer patient (mutuelle) + aidant (personnel). Deux poches, meme foyer."
+   },
+   "roadmap_ancree_versions": {
+    "V1_annee_1": "Alzheimer avance + Sevrage ASBL",
+    "V2_annee_2": "MCI + Aidants (vrai gros marche) + Demences vasculaire/Lewy/FT",
+    "V3_annee_3": "Parkinson + Korsakoff + AVC amnesique + SEP + chemo-brain + Long COVID",
+    "V4_annee_4_5": "Bibliotheque de vie grand public sans pathologie + Voice cloning familial premium"
+   },
+   "principe_de_discipline_agent_grave": "NE PAS SE DISPERSER V1. Lancer sur 2 axes seulement (Alzheimer + Sevrage). Extensions progressives. Michel a valide implicitement en acceptant le recadrage LVMH V1."
+  }
+ }
 },
 
 "leia_bibliotheque_citations_inspirantes": {
