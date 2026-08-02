@@ -1238,7 +1238,21 @@
    "Brabant_wallon": 12,
    "Bruxelles_Capitale": 12
   },
-  "note_agent": "Michel veut lancer LOCAL d'abord. Attaquer par les 18 prospects BXL+BW avec email valide. Ordre suggeré : commencer par les 2 prenom@ (Menuiserie Richard Jodoigne + Sart Services), puis les 16 info@/contact@. Petits batches (5-10/jour). Timing envoi apres 16h30 selon theorie Michel. Ne PAS lancer avant que Michel dise GO explicitement."
+  "note_agent": "Michel veut lancer LOCAL d'abord. Michel a decide le 2026-08-02 (soir) de NE PAS attendre le 15 aout. Envoi immediat avec strategie 'seeding pendant conges' : emails s'accumulent dans inbox, prospects voient le mail frais a la reprise. Relances planifiees ~7-10 jours apres. Petits batches (2-5/jour). Timing envoi apres 16h30 selon theorie Michel. Ordre : commencer par les 5 prenom@ prioritaires (Sart Services / Menuiserie Richard / WEPKA / Menuiserie Decharneux / Only-Wood).",
+  "batch_1_ajoute_2026_08_02_soir": {
+   "source": "Second search Perplexity Pro par Michel, meme jour",
+   "total_apres_fusion": 118,
+   "nouveaux_uniques_batch2": 33,
+   "priorite_1_BXL_BW_total": 35,
+   "priorite_1_BXL_BW_avec_email": 28,
+   "top_prenom_at_BXL_BW": [
+    "Menuiserie Decharneux (Genappe) - menuiserie@decharneux.be",
+    "WEPKA SRL (Grez-Doiceau) - k.depauw@wepka.be",
+    "Menuiserie Richard (Jodoigne) - menuiserie.richard@skynet.be",
+    "Sart Services (Sart-Dames-Avelines) - fabian@sartservices.be",
+    "ONLY-WOOD SRL (Jette) - formulaire uniquement, pas d'email direct"
+   ]
+  }
  }
 },
 
