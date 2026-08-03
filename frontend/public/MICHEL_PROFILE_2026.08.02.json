@@ -2267,5 +2267,29 @@
    "compromis_propose": "9h00 = appel medecin traitant (10 min). 9h15 = retour intense sur Leia toute la journee.",
    "engagement_michel": "Il a promis de s'occuper du pere en pleine journee. Agent doit relancer si non fait."
   }
+ },
+ "idees_testees_puis_rejetees_a_froid": {
+  "principe_agent": "Section reservee aux idees que Michel a proposees et qu'il a lui-meme abandonnees apres re-validation a froid. A garder en memoire pour eviter que Michel (ou un agent futur) repropose la meme idee sans savoir qu'elle a deja ete pesee.",
+  "idee_bundling_MesureChassis_Leia_200_premiers": {
+   "date_proposition": "2026-08-02 soir (Michel en debut de montee HHX)",
+   "date_rejet_a_froid": "2026-08-03 matin (Michel sobre)",
+   "formulation_initiale_michel": "Si Leia fonctionne, alors je lance MesureChassis et les 200 premieres personnes qui ont fait confiance a l'application l'auront gratuitement toute la vie",
+   "raisons_du_rejet_a_froid": [
+    "Cibles produits differentes (menuisier pro vs famille patient Alzheimer/sevrage)",
+    "Message brouille (productivite pro + sante cognitive = marque confuse)",
+    "'Gratuit a vie' engagement trop lourd (10+ ans de couts marginaux)",
+    "Timing prematuré (Leia n'existe pas encore, MesureChassis vient de lancer)"
+   ],
+   "revelation_emotionnelle_michel_matin_2026_08_03": "L'idee etait pilotee par de la RANCUNE/JALOUSIE. Une firme au Luxembourg avec laquelle Michel etait parti en mauvais accord lui a repondu que MesureChassis n'allait pas reussir et qu'il devait arreter d'envoyer des mails. Michel a alors pense 'Ah mais eux ne l'auront pas gratuit'. A froid il reconnait : 'C'est purile, c'est les gamins qui font ca'.",
+   "decision_strategie_finale_michel": "Tout le monde a la version gratuite (5 couvertures/fonctionnalites) de MesureChassis. Les gens qui veulent l'application complete la payent. On est une entreprise, pas des marchands de tapis. Modele FREEMIUM confirme.",
+   "instruction_agent_futur": "Si Michel repropose une variante de bundling MesureChassis + Leia, l'agent DOIT lui rappeler cette section et lui demander : 'Est-ce que la nouvelle idee est differente en substance ou tu es en train de te re-emballer sur une piste deja pesee ?'"
+  }
+ },
+ "strategie_freemium_MesureChassis_confirmee_2026_08_03": {
+  "modele": "FREEMIUM classique",
+  "version_gratuite": "5 couvertures/fonctionnalites de base pour tous les menuisiers",
+  "version_payante": "Application complete pour ceux qui veulent aller plus loin",
+  "principe_michel_verbatim": "On est une entreprise, on n'est pas des marchands de tapis. Pas de cadeaux basés sur qui a été gentil ou pas.",
+  "date_validation": "2026-08-03 matin, sobre"
  }
 }
