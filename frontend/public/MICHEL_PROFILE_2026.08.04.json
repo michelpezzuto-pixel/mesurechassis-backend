@@ -3316,7 +3316,7 @@
    "nationalite": "Belgique",
    "genre": "Homme",
    "etat_civil": "Divorce",
-   "numero_registre_national": "A COMPLETER PAR MICHEL - format 78.01.25-XXX.XX (au dos carte identite)",
+   "numero_registre_national": "780125.339.71",
    "statut_maladie": "En maladie / invalidite. Inscrit mutuelle chretienne (Belgique)."
   },
   "coordonnees": {
@@ -3356,14 +3356,17 @@
     "pension_alimentaire_versee": 281,
     "telephone_internet": 80,
     "abonnements_essentiels": 150,
-    "TOTAL_charges_fixes_mensuelles": 1097
+    "TOTAL_charges_fixes_mensuelles": 1148,
+    "transport_bus": 1,
+    "transport_train": 50
    },
    "biens_immobiliers": "A DOCUMENTER (aucun probable, en faillite)",
    "sommes_argent": "A DOCUMENTER (extraits BNP + Revolut fournis)",
-   "materiel_roulant": "A DOCUMENTER",
+   "materiel_roulant": "Aucun. Utilise transports en commun uniquement (bus + train).",
    "aide_de_tiers": "A DOCUMENTER",
    "revenus_moins_pension_alimentaire_EUR": 2062,
-   "reste_a_vivre_apres_charges_EUR": 1246
+   "reste_a_vivre_apres_charges_EUR": 1246,
+   "assurances": "Aucune (ni voiture ni habitation)"
   },
   "statut_legal": {
    "faillite_personnelle": "En cours (jugement pas en possession de Michel, a solliciter au greffe tribunal de l'entreprise par l'avocat designe)",
@@ -3403,7 +3406,6 @@
   },
   "BAJ_competent": "Barreau de Namur - Dinant (juridiction 5140 Sombreffe)",
   "TODO_completions_futures": [
-   "Numero Registre National complet (Michel a fournir)",
    "Nom et coordonnees du curateur",
    "Beneficiaires exacts de la pension alimentaire",
    "Reference du jugement de faillite (date, tribunal, numero role)"
