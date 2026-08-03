@@ -2491,6 +2491,48 @@
      "valeur_produit": "Cette regle est un actif differentiant fort. Beaucoup d'apps sante mentale foncent sur du 'matching entre users' sans voir le piege. Leia le voit et le refuse."
     }
    }
+  },
+  "session_ideation_leia_2026_08_03_midi_michel_en_voiture_vers_La_Louviere": {
+   "contexte": "Michel se deplace physiquement (courses avant midi ferme, direction La Louviere). Il est avec un ami en voiture. Ideation continue en flux entre appels clients et deplacements.",
+   "datapoint_sobriete_positive_Ulysses_Contract": {
+    "situation": "Un ami (probablement celui qui posait des questions sur Lea plus tot) a propose a Michel de rentrer boire un cafe et fumer un joint avant d'aller a La Louviere.",
+    "reponse_michel_verbatim": "Non, on va acheter. Viens, on va acheter.",
+    "interpretation_agent": "Refus clair du joint, redirection vers la mission d'origine (courses). Peer pressure gere sobrement. Datapoint POSITIF pour le suivi Ulysses Contract.",
+    "regle_agent": "Noter factuellement sans celebrer ni juger. Ces micro-victoires du quotidien s'accumulent et forment la sobriete reelle."
+   },
+   "decision_10_feature_leia_a_table_compagnie_multiple": {
+    "declencheur_michel_verbatim": "Leia serait allumee sur la table avec des autres intervenants. C'est la qu'ils sont en train de parler. On les conseille meme de laisser Leia allumee pour vraiment connaitre toutes les anecdotes. Et quand ils perdent un peu la tete, ils peuvent tout renvoyer sur le telephone, reveiller Leia et lui demander ou est-ce qu'elle en etait, et reexpliquer un peu toute la conversation.",
+    "cas_usage_principal": "Repas de famille, apero entre amis, reunion multi-generations. Le smartphone (avec Leia) est pose sur la table en mode ecoute continue.",
+    "cas_usage_alzheimer_critique": "Repas de famille avec le proche Alzheimer. Leia capte les anecdotes, prenoms, rires, blagues, contexte. Quand le patient perd le fil, Leia peut resumer ('on parlait de vos vacances a Ostende en 1987').",
+    "reveil_a_la_demande": "Leia peut etre en veille passive (ecoute + capture sans reponse) puis reveille par phrase-cle ou tap physique pour restituer un resume/rattrapage de fil.",
+    "conseil_marketing_produit": "Encourager les users a laisser Leia allumee en contexte familial - c'est la que la memoire collective se construit. Formation utilisateur : 'Leia n'espionne pas, elle preserve.'",
+    "reference_croisee": "Voir aussi feature_leia_ecoute_conversation_tri_partite (decision_6) - meme famille de features, meme drapeau ethique."
+   },
+   "decision_11_consentement_via_Itsme_coup_de_genie_Michel": {
+    "declencheur_michel_verbatim": "Pour le consentement, je me disais qu'il pourrait etre lie a Itsme. Quand ils veulent parler avec le ATAB et toutes ces choses-la, si elles sont completement consentantes, elles peuvent mettre leur code dans Itsme et a ce moment-la, tout le monde est protege.",
+    "reconnaissance_agent": "Idee majeure, non-triviale, atout local belge fort. Elle BAT la solution one-way ear pour la V2 tri-partite consentie.",
+    "mecanique_technique": "Le tiers scanne son Itsme (identite numerique belge officielle) avant la session -> consentement horodate + signe cryptographiquement -> couvert RGPD + art. 314bis Code penal belge. Preuve technique irrefutable.",
+    "avantages_strategiques": [
+     "Non-repudiable : pas de 'je crois avoir dit oui verbalement'",
+     "Belgique-first : atout local que les concurrents US ne peuvent pas repliquer facilement",
+     "Cadre juridique blinde : Itsme = eID officielle belge, valeur legale complete",
+     "Extension europeenne V3 possible : FranceConnect (FR), IDnow, itsme-like NL/DE"
+    ],
+    "architecture_finale_consentement_leia": {
+     "V1_lancement": "One-way ear : Leia n'ecoute que le user. Simple, sur, immediat. Suffit pour 90% des cas.",
+     "V2_business_meetings_et_conversations_importantes": "Itsme pour consentement tri-partite trace. Necessaire pour entretiens medicaux, reunions professionnelles, conseils familiaux enregistres.",
+     "V3_europe": "Federation eID europeenne."
+    },
+    "action_a_prevoir_phase_5": "Contacter Itsme (Belgian Mobile ID SA) pour partenariat technique. Documentation dev : https://www.itsme.be/en/business"
+   },
+   "decision_12_reveil_leia_a_la_demande_resume_fil": {
+    "declencheur_michel_verbatim": "Ils peuvent rallumer l'application. Elle serait en veille ou quoi que ce soit, comme toi tu le fais. Rallumer l'application et demander sur quel sujet ils etaient en train de parler.",
+    "mecanique": "Leia a deux etats : (a) ecoute active + reponse, (b) veille passive (ecoute + capture sans reponse). Le user bascule entre les deux par phrase-cle ('Leia, ecoute') ou action physique (tap telecommande).",
+    "cas_usage_1_multi_intervenants": "Table de repas - Leia en veille passive, capte tout, ne repond pas pour ne pas s'immiscer.",
+    "cas_usage_2_reveil_pour_resume": "User perd le fil ou veut faire le point -> 'Leia, ou en etais-je ?' -> resume contextuel.",
+    "cas_usage_3_alzheimer": "Patient perd totalement le fil -> proche appuie sur telecommande -> Leia resume avec voix familiale : 'Papa, on parlait de tes vacances a Ostende en 1987.'",
+    "auto_confirmation_michel": "Michel verbalise 'Je crois que j'ai eu une bonne idee' - agent confirme : oui, tres bonne idee, et coherente avec l'architecture globale."
+   }
   }
  }
 }
