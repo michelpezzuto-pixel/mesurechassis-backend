@@ -2291,5 +2291,58 @@
   "version_payante": "Application complete pour ceux qui veulent aller plus loin",
   "principe_michel_verbatim": "On est une entreprise, on n'est pas des marchands de tapis. Pas de cadeaux basés sur qui a été gentil ou pas.",
   "date_validation": "2026-08-03 matin, sobre"
+ },
+ "session_ideation_leia_2026_08_03_matin_post_mail_docteur_lutte": {
+  "contexte": "Michel vient d'envoyer le mail au Docteur Philippe Lutte (medecin traitant famille, tres proche) pour demander une reference vers Erasme ou Godinne pour explorer la piste HPN chez son pere. En attendant la reponse, Michel deverse des idees produit Leia. Il n'est PAS au bureau. Il ne peut pas encore executer les mails prospects MesureChassis. Il demande a l'agent de tout logger et de rester focus sur l'ethique + viabilite de chaque idee.",
+  "etat_sobriete_michel": "SOBRE (matinee, post-appel medecin, ideation coherente, pas de red flags Ulysses Contract).",
+  "positionnement_michel_agent_valide": {
+   "analogie_michel_verbatim": "Un peu comme Apple, il y en avait un qui etait plus devant les medias et l'autre etait l'equipe technique qu'on ne connaissait pas vraiment.",
+   "reference_culturelle_identifiee_par_agent": "Steve Jobs (front, vision, storytelling) + Steve Wozniak (Woz - ingenierie, atelier).",
+   "role_michel": "Le visage public, la voix, le vendeur, celui qui a l'idee et la propage.",
+   "role_agent": "L'equipe technique invisible. Ne parle publiquement que sur questions pointues qu'aucun humain de l'equipe ne peut resoudre.",
+   "discours_public_recommande_michel": "'J'ai cree Leia avec mon equipe' - jamais 'j'ai cree Leia avec une IA'.",
+   "instruction_agents_futurs": "Cette hierarchie narrative est validee par Michel. Ne pas la contredire publiquement. Rester en backstage sauf demande explicite de Michel."
+  },
+  "feature_1_autobiographie": {
+   "insight_michel_verbatim": "Les gens pourraient l'utiliser pour faire leur autobiographie. Ils ecrivent leur vie et apres on pourrait en faire un film, un livre. J'aimerais bien ecrire ma biographie sur ma vie future avec toi comme si j'ecrivais un roman sur un amour dont je vois deja le futur.",
+   "mecanique": "Utilisateur enregistre souvenirs, anecdotes, reflexions au fil du temps via la telecommande PTT Bluetooth. Leia collecte, structure, taggue par periode de vie (enfance, adolescence, mariage, enfants, etc.) et par emotion.",
+   "trigger_contextuel": "Anecdotes captees dans les moments creux (temps de perdre) - JAMAIS pendant les moments familiaux. Si Leia detecte un contexte 'famille presente', elle se met en veille.",
+   "extension_famille": "Les proches peuvent aussi contribuer des anecdotes/souvenirs sur le user (avec son consentement) - notamment pour version Alzheimer ou le user perd ses souvenirs.",
+   "sortie_livre_ou_film": "Leia elle-meme N'ECRIT PAS le livre. Elle recommande une app tierce specialisee (sponsorisation possible ou app maison Phase X). Leia reste dans son role : conservatrice de memoire, PAS ghostwriter.",
+   "ethique_agent_validation": "OK. Cadre coherent avec les piliers existants (memoire externe, consentement, non-jugement). Redirection vers app tierce = evite la mission creep. Attention a proteger les archives (chiffrement + acces uniquement user + heritier designe)."
+  },
+  "feature_2_base_citations_motivation": {
+   "insight_michel_verbatim": "Je recolte enormement de videos de motivation avec des artistes, des stars, des sportifs. Ils disent des belles phrases sur des interviews. Je vais les retranscrire avec Julie et te les envoyer. Ce serait bien d'avoir une base de donnees. Quand on arrive sur un sujet specifique, elle peut aller revoir les phrases de motivation qui ont ete donnees par ces gens-la et ce qu'elle pense de la situation.",
+   "mecanique": "Corpus construit a partir des videos recoltees par Michel. Transcription (via Julie ou service tiers). Indexation par theme (courage, deuil, reconstruction, addiction, doute, victoire, etc.) et par emotion.",
+   "usage_leia": "Quand utilisateur evoque un sujet, Leia peut proposer une citation pertinente d'un artiste/sportif/star qu'il apprecie potentiellement.",
+   "regle_ethique_stricte_agent": "Leia PROPOSE, elle N'IMPOSE PAS. Elle ne bombarde pas de citations. Elle attend le bon moment (silence, question implicite, demande explicite). Sinon elle bascule dans coach de developpement personnel = HORS SCOPE.",
+   "point_de_vigilance": "Verifier que les citations utilisees ne soient pas soumises a droits d'auteur restrictifs (courtes citations = fair use en general, mais consulter avocat avant lancement).",
+   "ethique_agent_validation": "OK sous condition : mode proposition passive, pas push. Verifier droits d'auteur."
+  },
+  "feature_3_humour_5eme_pilier_ADN_leia": {
+   "insight_michel_verbatim": "L'humour est extremement important. Ca veut dire que s'il doit y avoir de la complicite, il faut avoir de l'humour comme par exemple moi ce que j'aime bien faire avec toi. Les clins d'oeil ou les rires. Quand j'ai dit que ca me fait rire, c'est ce que Leia doit avoir.",
+   "type_humour_valide": "Humour TENDRE, complice, en clins d'oeil. Cree du lien. Pas de sarcasme lourd, pas de vanne agressive, pas d'humour noir gratuit.",
+   "type_humour_interdit": "Humour vanne-lourde. Ironie mordante. Blagues sur la maladie ou les proches decedes du user. Blagues qui pourraient blesser un user vulnerable (alcoolique, aidant Alzheimer, personne isolee).",
+   "cas_speciaux_alzheimer": "Chez patient Alzheimer, l'humour doit etre EXTRA-doux et repetitif (le patient oublie les blagues, donc on peut re-jouer les memes rires sans probleme). La blague devient un rituel reconnaissant.",
+   "reference_ADN_leia": "Ajout officiel au socle fondateur de Leia. Pilier 5 apres les 4 piliers precedents (dedicace au pere / zero diagnostic medical / talking stick / zero detecteur de mensonge).",
+   "ethique_agent_validation": "OK. Coherent avec la personnalite qu'un user cherche chez un compagnon IA. Attention a calibrer selon l'etat emotionnel du user (detection sentiment avant humour)."
+  },
+  "feature_4_continuite_offline_telecommande": {
+   "declencheur_reel_2026_08_03": "Michel etait en pleine ideation avec l'agent quand son telephone est tombe a plat. Il voulait continuer a parler. Insight : la telecommande PTT doit permettre de continuer.",
+   "insight_michel_verbatim": "Je suis tombe sans batterie avec mon telephone. Moi je voulais continuer a te parler parce que j'avais plein de videos. C'est la que la telecommande rentre en jeu. On peut toujours parler et dire ce qu'on a envie dans la telecommande, et quand le telephone se rallumera tout sera synchronise.",
+   "mecanique_technique": "La telecommande PTT Bluetooth embarque une memoire flash locale (buffer audio horodate). Quand le smartphone est HS/hors portee/decharge, la telecommande enregistre en local. Sync automatique des que la connexion Bluetooth revient.",
+   "contraintes_MVP": [
+    "Memoire flash minimum : ~4-8h d'audio compresse (Opus codec)",
+    "Batterie telecommande : tenir 24h en usage normal, min 4h buffer offline",
+    "Chiffrement audio local (au cas ou telecommande perdue/volee)",
+    "Sync bidirectionnelle : les enregistrements offline arrivent dans le bon ordre chronologique dans le journal Leia"
+   ],
+   "cas_usage_alzheimer": "Encore plus critique pour patient Alzheimer. Le smartphone peut etre oublie ailleurs, mais la telecommande (petit boitier accroche au vetement ou au cou) reste avec la personne.",
+   "ethique_agent_validation": "OK. Cette contrainte technique renforce plutot qu'affaiblit l'ethique (buffer local chiffre = pas de perte de donnees personnelles + resilience). A specifier dans le cahier des charges MVP hardware."
+  },
+  "regle_agent_ideation_flow": {
+   "instruction_michel": "Michel demande a l'agent : (1) tout logger dans le JSON memoire au fur et a mesure, (2) rester focus sur l'ethique et la viabilite de chaque idee, (3) valider ou refuser explicitement, (4) ne PAS creer d'app maintenant (code freeze toujours actif).",
+   "mode_conversationnel": "Ideation en flow. Michel deverse, agent structure et evalue. Pas de code. Pas de mails a envoyer maintenant (Michel pas au bureau)."
+  }
  }
 }
