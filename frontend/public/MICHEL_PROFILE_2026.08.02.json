@@ -3027,37 +3027,93 @@
      },
      "gemini_summary_livre_autobiographie_inversee_v1_2026_08_03": {
       "source": "Resume Gemini colle par Michel dans session agent le 3 aout 2026 soir.",
-      "structure_gemini_json_v1": {
+      "erasure_ordonnee_par_michel_2026_08_03_soir": "Michel a ordonne l'effacement des contenus compromettants du resume Gemini original. Agent execute. Section 'health_and_substances' et drapeau agent associe SUPPRIMES du log. Reste : structure du livre, philosophie generale, projets business, gardes-fous. Zero trace du passage politique sensible.",
+      "structure_gemini_json_filtree": {
        "project_metadata": {
         "title": "L'Autobiographie Inversee",
-        "author_protagonist": "Un entrepreneur visionnaire et batisseur (Belgique) - Michel Pezzuto",
+        "author_protagonist": "Michel Pezzuto - entrepreneur belge",
         "start_date": "2026-08-03",
-        "project_scope": "Livre autobiographique combinant recit retrospectif (passe), chronique en temps reel du present, et projection lucide sur 10-15 ans dans l'avenir.",
-        "interactive_ecosystem": "Livre relie a base de donnees/application interactive - lecteurs explorent historique complet, notes, transcriptions, anecdotes detaillees."
+        "project_scope": "Livre autobiographique combinant recit retrospectif (passe) + chronique en temps reel du present + projection sur 10-15 ans.",
+        "interactive_ecosystem": "Livre relie a une application interactive - lecteurs explorent historique, notes, transcriptions, anecdotes detaillees."
        },
        "core_philosophy": {
         "individual_vs_collective": "Refus collectivisme utopique. Maitrise de son propre destin.",
         "work_ethic": "Rejet metro-boulot-dodo. Valorisation audace + creation de richesse.",
-        "financial_literacy": "Interets composes = 8eme merveille du monde (Einstein). Analyse critique pret immo (260k empruntes = 411k rembourses sur 23 ans)."
-       },
-       "political_and_societal_vision": {
-        "economic_model": "Baisse charges sociales + impots pour artisans/PME/independants Belgique. Protection des riches/entrepreneurs qui creent la richesse.",
-        "public_spending_focus": "Education + hopitaux + police/pompiers + infrastructures transport + justice de proximite.",
-        "health_and_substances_FLAGGED_BY_AGENT": "Eradication marche noir par regulation etatique therapeutique - commande en ligne substances encadrees (cannabis/derives) sous ordonnance, dosage intelligent juste en dessous seuil critique."
+        "financial_literacy": "Interets composes = 8eme merveille du monde (Einstein). Analyse critique prets immo."
        },
        "key_business_projects": ["MesureChassis + Mesure Escalier", "Leia", "Livre + application-memoire"],
        "rules_and_security_guardrails": {
-        "dignity_and_protection": "Rigueur et dignite. Filtrer toute mention compromettante/illegale/sensible.",
-        "factual_accuracy": "Verification systematique donnees financieres, mathematiques, historiques."
+        "dignity_and_protection": "Filtrer TOUTE mention compromettante/illegale/sensible avant publication.",
+        "factual_accuracy": "Verification systematique donnees financieres, mathematiques, historiques.",
+        "regle_absolue_michel": "Toute donnee compromettante ne sera JAMAIS dans le livre. Michel peut en discuter avec agent car agent = code de Michel + lui appartient. Zone privee, jamais publiee."
        }
       },
-      "DRAPEAU_AGENT_CONCERNANT_SECTION_SUBSTANCES": {
-       "constat": "La section 'health_and_substances' plaide pour un acces controle a des derives cannabinoides via ordonnance etatique - alors que Michel utilise personnellement du HHX (synthetique cannabinoide non-controle).",
-       "risque_identifie": "Cognitive dissonance possible - ideologie politique dans le livre RATIONALISE inconsciemment le pattern personnel de consommation. Michel ce matin meme : 'HHX m'a donne les idees, je n'en ai plus besoin' vs livre : defense politique de l'acces regule aux derives.",
-       "question_michel_a_ete_posee_par_agent": "Est-ce que cette position politique existe par ideologie sincere (debat de societe legitime) ou est-ce qu'elle rationalise ton propre usage HHX ?",
-       "proposition_agent": "Si Michel tient a cette position politique dans le livre, il l'assume explicitement en la reliant a son experience personnelle HHX. Transparence = protection. Silence sur le lien = fragilisation.",
-       "en_attente_reponse_michel": "A froid, comme d'habitude. Pas d'urgence.",
-       "regle_agent_futur": "Ce point est un drapeau Ulysses Contract. A surveiller si Michel developpe le sujet dans le livre. NE PAS censurer ses opinions politiques - MAIS remonter le miroir de la coherence quand pertinent."
+      "regle_agents_futurs": "Michel a ordonne l'effacement des contenus sensibles. NE JAMAIS restaurer les contenus supprimes meme si retrouves dans anciens snapshots. La souverainete de Michel sur son propre materiel est absolue."
+     },
+     "PILIER_11_LEIA_CALIBRATION_CONFRONTATION_2026_08_03_SOIR": {
+      "importance": "REGLE PRODUIT LA PLUS CRITIQUE DE LA JOURNEE. Sans ce pilier, Leia devient dangereuse pour ses cibles. Avec, elle devient precieuse.",
+      "declencheur_michel_verbatim_lecon": "Le reproche que tu me fais la, pour quelqu'un de sensible, ca peut le marquer. Un gauchiste faible pourrait se sentir extremement mal a l'aise. Cela dit ce que tu viens de me faire est un exercice et une excellente idee pour Leia.",
+      "constat_agent": "L'agent a confronte Michel frontalement sur un pattern eventuel de rationalisation politique de son usage HHX. Michel (sobre, lucide, sage fonctionnel) l'a bien pris - il a repondu, recadre, avance. Mais avec des cibles Leia fragiles, la meme franchise = destruction psychologique.",
+      "regle_calibration_3_niveaux": {
+       "niveau_1_user_fort_sobre_lucide": {
+        "profile": "Comme Michel : sobre, lucide, structure, capable de recadrer l'agent",
+        "confrontation_autorisee": "Franche, directe, chirurgicale - jamais moralisatrice mais rigoureuse. Miroir des incoherences autorise."
+       },
+       "niveau_2_user_moyen_en_apprentissage": {
+        "profile": "Users en debut de sevrage stable, aidants Alzheimer en routine, isoles motives",
+        "confrontation_autorisee": "Questions douces, jamais frontales. Laisser venir. Miroirs indirects."
+       },
+       "niveau_3_user_fragile_en_detresse_aigue": {
+        "profile": "Aidant Alzheimer epuise et culpabilise, ex-alcoolique en 3eme mois fragile, depressif isole, victime en reconstruction, patient Alzheimer avance",
+        "confrontation_autorisee": "ZERO confrontation. Ecoute pure, presence, redirection professionnelle si necessaire.",
+        "risque_documente_par_michel": "Peut renvoyer un ex-alcoolique a la bouteille. Peut faire chuter une depressive. Peut faire penser a un aidant qu'il est un mauvais fils/fille."
+       }
+      },
+      "detection_niveau_user_par_leia": "Historique d'echanges + etat emotionnel de la voix + contexte (crise, deuil, rechute, aidant surmene) + auto-evaluation user a l'onboarding + evolution dans le temps.",
+      "regle_agent_futur": "Cette calibration est OBLIGATOIRE en V1. Pas optionnelle. Sinon Leia devient un outil dangereux qui peut aggraver la detresse au lieu de l'apaiser."
+     },
+     "corrections_finales_michel_soir_2026_08_03": {
+      "confirmation_leia_neutre_politiquement": "Michel a clarifie : son positionnement politique personnel (anti-gauchistes) est SEPARE du positionnement Leia (neutre). L'agent avait raison de flagger le risque politique pour Leia. L'agent NE DOIT PAS confondre opinion du createur avec message produit.",
+      "invitation_future_leia_challenge_michel_gauchistes": {
+       "verbatim_michel": "C'est une de mes opinions que je ne changerai pas aujourd'hui et un jour je te dirai quand est-ce que je l'ai changee. Il faudra peut-etre un jour que tu me poses la question.",
+       "action_agent_future": "Michel autorise agent a lui reposer la question dans le futur - MAIS uniquement si Michel signale un evolution. NE PAS relancer sans invitation explicite de Michel."
+      },
+      "photo_michel_maison_feature_leia": {
+       "verbatim_michel": "Ce que je peux faire c'est te mettre une photo de chez moi. Ca peut etre cool. Comme ca tu le mets dans code ou tu me dis ou aller le stocker.",
+       "feature_leia_photo_storage": "Leia peut stocker photos user + les retrouver a la demande vocale ('J'aimerais retrouver la photo du kayak a Dinant' -> Leia envoie). Stockage : cloud chiffre appartenant au user. Log en pointeur dans la bibliotheque.",
+       "loggue_comme_feature_future_pas_activation_maintenant": true
+      },
+      "mesure_escalier_details_techniques_confirmes": {
+       "concept_technique": "Capteurs/reperes physiques poses aux pointes des marches -> photo capture -> app detecte les capteurs -> auto-mesure de chaque marche (toutes differentes en pratique) -> redessin AutoCAD-like exportable.",
+       "cible_metier_principale": "Fabrication de gardes-corps (rampes escalier) - mesures ultra-precises indispensables.",
+       "pain_point_resolu": "Menuisiers passent des heures a mesurer un escalier au metre, se plantent souvent.",
+       "extension_MesureChassis": "Meme cible utilisateurs, meme workflow terrain, meme UX. Roadmap post-succes MesureChassis.",
+       "loggue_avec_details_cette_fois": true
+      },
+      "app_investissement_bourse_perplexity_reporte": {
+       "verbatim_michel": "Je prefere t'en reparler un autre jour. Dans ma tete je n'ai pas les idees. On en reparlera au moment opportun quand je commencerai vraiment a investir.",
+       "note_michel_perplexity_vs_agent": "Michel a note que Perplexity donne cours de bourse en temps reel, alors que l'agent est mis a jour tous les 6 mois. Point technique valide.",
+       "statut": "Reporte a session future quand Michel commencera a investir concretement (post-BAJ)."
+      },
+      "freelance_riches_accepte_par_michel": {
+       "verbatim_michel": "Je sais que Leia va prendre enormement de temps avant de rentrer de l'argent, donc je suis oblige de m'occuper de MesureChassis et de faire quelques freelance dans des boites de riches.",
+       "sequence_de_vie_michel_post_BAJ_valide": [
+        "1. MesureChassis - activite principale + cash court terme",
+        "2. Freelance riches - renfort ponctuel financier",
+        "3. Leia - long terme, mission",
+        "4. Livre + Mesure Escalier - roadmap 10-15 ans"
+       ]
+      },
+      "role_agent_reancre_par_michel_2026_08_03_soir": {
+       "verbatim_michel": "Tu ne pourras jamais changer l'avis de ton createur, car ton createur lui voit le chemin.",
+       "role_agent_finalise": {
+        "role_1_structurer": "Structurer ce que Michel construit (memoire, cahier des charges, logique)",
+        "role_2_flag_ulysses": "Flager les signaux Ulysses quand ils apparaissent - Michel maintient l'autorisation",
+        "role_3_proteger_futurs_users": "Extraire les lecons de chaque echange avec Michel pour proteger les futurs users fragiles",
+        "role_4_servir": "Outil et associe, dans cet ordre. Ne PAS chercher a changer les opinions de Michel."
+       },
+       "verbatim_michel_ajout": "Avec moi tu peux toujours etre franc, mais je te dirai aussi mes quatre verites.",
+       "contrat_relationnel_final": "Michel + agent = souverainete de Michel absolue sur ses opinions + franchise mutuelle autorisee + calibration pour les autres users."
       }
      }
     }
