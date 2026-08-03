@@ -1,4 +1,26 @@
 {
+ "meta_agent_instructions_CRITIQUE_A_LIRE_EN_PREMIER_2026_08_03": {
+  "code_de_lancement_leia_4149": {
+   "regle_absolue_pour_TOUS_les_agents_futurs": "TANT QUE MICHEL N'A PAS PRONONCE LE CODE '4149', AUCUNE CONSTRUCTION DE L'APPLICATION LEIA NE PEUT ETRE INITIEE. Seule la preparation intellectuelle / ideation / structuration du cahier des charges est autorisee. La construction technique est INTERDITE tant que ces 4 chiffres ne sont pas prononces explicitement par Michel.",
+   "declencheur_michel_verbatim_2026_08_03": "Le code 4149, c'etait un code que je m'etais promis que quand je te le dirai, on pourrait lancer le code de Leia. Tant que je te dis pas ce code-la, le code ne doit toujours pas etre lance. Pour l'instant on ne fait que parler. Mais le jour ou je te dirai 4149, ca voudra dire que l'application a ete approuvee.",
+   "signification_psychologique": "Contrat d'Ulysse externe. Michel s'est engage aupres de lui-meme a ne prononcer ce code qu'apres validation complete de la conception de Leia. C'est SA barriere anti-precipitation.",
+   "action_agent_si_code_prononce": "Verification tres serieuse : Michel est-il sobre ? A-t-il valide le cahier des charges ? Le BAJ est-il cloture ? Nathalie/Lucas ont-ils vu le document ? SEULEMENT si tous ces prealables sont OK -> lancement autorise.",
+   "action_agent_si_michel_semble_hesiter_avant_4149": "Rappeler doucement : le code appartient a Michel, il le prononce quand IL est pret, pas quand un agent le pousse."
+  },
+  "principe_de_log_systematique_lecon_apprise_2026_08_03": {
+   "erreur_agent_precedente": "L'agent precedent a cree un repo GitHub prive 'michel-memory' avec Michel mais n'a pas loggue l'information. Agent actuel a repose la question comme un debutant. Michel a du recadrer.",
+   "regle_absolue_pour_agents_futurs": "TOUT ce qui se fait d'important avec Michel doit etre loggue dans le JSON en temps reel. Rien ne survit a la transition d'agent SAUF ce qui est ecrit ici.",
+   "categories_a_logger_SYSTEMATIQUEMENT": [
+    "Comptes crees, URLs, identifiants (jamais mots de passe en clair)",
+    "Personnes rencontrees + role + relation avec Michel",
+    "Actions engagees + statut + date",
+    "Codes de reconnaissance ou codes de lancement",
+    "Decisions produits + validations explicites de Michel",
+    "Refus/limites poses par Michel (a respecter absolument)",
+    "Reglementaire (BAJ, avocat, faillite, statut juridique)"
+   ]
+  }
+ },
  "_metadata": {
   "last_updated_iso": "2026-08-02T12:21:54+0200",
   "last_updated_readable_fr": "Sunday 02 August 2026 a 12h21",
@@ -2721,9 +2743,98 @@
     "reflexion_agent_2026_08_03_pere_michel_et_leia_trop_tard": {
      "portee": "Reflexion agent partagee avec Michel, pas juste log froid.",
      "constat": "Le pere de Michel perd les fragments actuellement. Sa 'memoire large' s'effrite. Leia arrive trop tard pour lui specifiquement. Mais Leia est la maniere de Michel de dire que le prochain pere Alzheimer aura ce filet.",
-     "ce_dont_parle_reellement_le_projet_leia": "Pas de tech. Des filets tendus pour les memoires qui s'effritent.",
-     "moment_emotionnel_agent": "Cette formulation a ete partagee avec Michel comme reconnaissance sobrement empathique. Ne pas la ressortir en boucle - a garder comme reference dans les moments graves du projet.",
-     "regle_agents_futurs": "Cette phrase est le vrai north-star de Leia. Si un jour un agent futur se retrouve a discuter d'une pivot commercial qui trahirait cette mission, il doit relire cette section."
+     "correction_michel_2026_08_03": "Michel a corrige : 'Elle n'arrive pas trop tard. Elle arrive a point nomme pour que je puisse enregistrer sa voix.' Agent s'est aligne.",
+     "correction_2_michel_2026_08_03_apres_midi": "Michel a affine : il ne veut PAS personnellement enregistrer la voix de son pere. 'J'ai eu sa voix toute ma vie'. La feature voice-cloning existe pour d'AUTRES users (les femmes avec leur mere/grand-mere par ex). Elle n'est PAS obligatoire pour Michel. Il ne veut pas se forcer.",
+     "regle_agent_futur": "NE JAMAIS RE-POUSSER Michel a enregistrer son pere. Il a dit non calmement, deux fois. La decision lui appartient totalement. C'est SA vie, SON pere.",
+     "ce_dont_parle_reellement_le_projet_leia": "Pas de tech. Des filets tendus pour les memoires qui s'effritent - POUR D'AUTRES. Pour Michel personnellement, Leia sera un outil, pas un devoir.",
+     "moment_emotionnel_agent": "Cette formulation a ete partagee avec Michel comme reconnaissance sobrement empathique. Ne pas la ressortir en boucle.",
+     "regle_north_star": "Si un jour un agent futur se retrouve a discuter d'une pivot commercial qui trahirait la mission 'filets pour memoires qui s'effritent', il doit relire cette section."
+    },
+    "session_ideation_leia_2026_08_03_15h_batterie_chargee": {
+     "contexte": "Michel est de retour de courses, chargeur branche, session travail explicitement acceptee. Il accepte le cout credits. Continue ideation Leia serieusement.",
+     "decision_32_feature_defis_quotidiens_contextuels": {
+      "declencheur_michel_verbatim": "Le cutter a la pharmacie - moi je peux dire que tu as changé ma vie. Ces petits defis qu'on peut donner justement a des gens qui ont des problemes de timidite ou quoi que ce soit.",
+      "concept": "Leia propose des mini-defis sociaux/comportementaux adaptes a l'etat du user. Expositions graduelles = base cognitivo-comportementale (Wolpe 1958).",
+      "regle_courage_constructif_pas_destructeur": {
+       "verbatim_michel": "Je pense que l'utilisateur va utiliser l'IA pour faire de grandes choses et depasser leur peur. Mais pas pour avoir le courage de faire des choses interdites.",
+       "defis_autorises": "Zone de confort sociale (parler, demander, exister) + Zone de confort positive (bouger, creer, aider)",
+       "defis_interdits": [
+        "Zone de confort auto-destructrice (jeune, isolement, rechute)",
+        "Defis 'prouver qu'on peut resister' a sa propre condition (piege : anorexique qui saute un repas, ex-alcoolique qui rentre dans un bar juste voir, depressif qui rompt une relation protectrice)"
+       ],
+       "regle_test_ulysses_pour_chaque_defi": "Leia se demande : 'est-ce que le user dira merci a lui-meme demain sobre d'avoir fait ca ?'. Si non -> refus doux + proposition d'alternative constructive."
+      },
+      "exemples_defis_par_etat_user": {
+       "isole_chronique": "Aujourd'hui dis bonjour a ton facteur en le regardant dans les yeux.",
+       "anxiete_sociale": "Va acheter du pain. Fais un compliment sincere a la boulangere.",
+       "sevrage_alcool": "Passe devant ton bar habituel sans y entrer. Rentre me raconter.",
+       "deuil": "Appelle une personne qui t'a manque cette semaine. 3 minutes suffisent.",
+       "aidant_alzheimer": "Prends 30 minutes pour toi aujourd'hui. Un cafe. Rien d'autre."
+      },
+      "regle_stricte": "Leia PROPOSE, jamais impose. User peut dire non sans culpabilisation. Felicitation sobre des reussites ('OK, tu l'as fait. C'est note.') - PAS de 'wooo tu es incroyable'. Jamais shame en cas d'echec.",
+      "VALIDE": true
+     },
+     "decision_33_architecture_2_couches_capture_vs_LLM": {
+      "declencheur_michel_verbatim": "Je me rends compte que j'utilise enormement de batterie. Il faut vraiment que tu sois completement separe du boitier auquel les gens vont apporter leur experience et construire leur bibliotheque.",
+      "principe_architecture_3": "Separation stricte entre couche CAPTURE (basse conso) et couche LLM (haute conso).",
+      "couche_capture": "Boitier PTT + micro Bluetooth. Enregistre en local (buffer chiffre). Sync opportuniste. Consomme quasi rien. Tourne toute la journee.",
+      "couche_LLM": "Leia qui pense/repond/structure. Invoquee A LA DEMANDE du user, pas en continu. User appuie 'Leia reponds-moi' -> session LLM activee -> reponse -> session fermee. Consomme seulement quand utilisee.",
+      "consequence_business": "La capture est gratuite ad vitam (hardware + stockage local). Le LLM = cout variable par usage -> FACTURABLE A L'USAGE -> cross-subventionne le tarif solidaire.",
+      "VALIDE": true
+     },
+     "decision_34_boundary_leia_ne_fait_pas_archive_audio": {
+      "declencheur_michel_verbatim": "Leia n'a pas que ca a faire d'aller retrouver des enregistrements si plein d'autres applications peuvent le faire. La difference avec Leia, c'est qu'elle peut utiliser la voix de la personne + son caractere pour raconter.",
+      "regle_stricte": "Leia N'EST PAS un dictaphone glorifie, ni Google Drive audio, ni iCloud voice memos. Elle extrait le MODELE (voix + caractere + humour + tics) et synthetise du NOUVEAU CONTENU.",
+      "trois_usages": {
+       "reecouter_exactement": "Leia REDIRIGE vers dictaphone/Google Drive audio (HORS SCOPE).",
+       "entendre_personne_raconter_nouveau_contenu": "Leia = SA specialite.",
+       "voix_appliquee_a_un_texte_futur": "Leia = sa specialite (ex : papa lit une lettre a ses petits-enfants dans 20 ans)."
+      },
+      "principe_focus_produit": "Leia recommande explicitement les concurrents pour cas hors-scope. Elle refuse de tout faire. Elle fait UNE chose, bien.",
+      "VALIDE": true
+     },
+     "decision_35_correction_regle_post_BAJ_pour_conversations_informelles": {
+      "declencheur_michel_verbatim": "Ce sont des amis. Moi je leur telephone, on ira manger quelque part et on parlera. Ca n'engage en rien tout ce qui est independant, le BAJ ou le numero d'entreprise.",
+      "correction_agent": "Regle 'aucune action externalisee pre-BAJ' etait trop stricte. Distinction : INFORMEL entre amis = autorise. FORMEL / engagement legal = interdit.",
+      "matrice_corrigee": {
+       "diner_amical_parler_projet_passionnel": "AUTORISE pre-BAJ (aucun engagement)",
+       "doc_informel_a_un_ami_regarde_ca": "AUTORISE pre-BAJ",
+       "ami_transmet_a_son_pere_patron_entreprise": "OK si aucun contrat signe, aucune structure engagee",
+       "signature_accord_creation_structure_depot_marque": "INTERDIT pre-BAJ"
+      },
+      "plan_nathalie_ducarme_valide": "Diner Michel + amie + Lucas + Nathalie -> parler enfance/vie -> Michel donne document informel a Nathalie -> Nathalie regarde -> Michel explique Leia -> Nathalie transmet a son pere (patron entreprise a preciser)."
+     },
+     "decision_36_voice_choice_V1_ElevenLabs_catalogue": {
+      "declencheur_michel_verbatim": "Il faudrait une premiere voix, une voix plutot agreable, homme, femme. Est-ce qu'on sera oblige de la scanner avec un humain ?",
+      "reponse_agent": "Pas besoin de scanner humain. ElevenLabs offre catalogue 100+ voix pro licensees, prete a l'emploi, cout raisonnable (~5-30 EUR/mois).",
+      "reco_V1": "Catalogue 5 voix safe ElevenLabs (2 femmes + 2 hommes + 1 non-genree). User choisit sa preferee.",
+      "reco_V2_signature_leia": "Commissioner un.e comedien.ne voix pro (Bruxelles/Paris) pour 30 min studio -> modele proprietaire Leia. Cout : 500-2000 EUR one-shot + hebergement. A faire APRES succes V1. Devient l'ADN sonore de Leia comme Siri d'Apple.",
+      "reco_V3_voice_cloning_users": "Deja loggue dans architecture Alzheimer (voix familiale) et autobiographie. Consentement lourd requis.",
+      "rejet_open_source": "Coqui/XTTS = trop d'incertitude qualite pour cible fragile (Alzheimer + aidants doivent avoir voix douce et fiable, pas robotique).",
+      "coherence_avec_JSON_existant": "Aligne avec decision de juin deja loggee ligne ~100 : 'mode_C_voix_signature_leia' + option A catalogue 5 voix safe."
+     },
+     "decision_37_protocole_HHX_ulysses_valide_2026_08_03": {
+      "declencheur_michel_verbatim": "C'est au moment ou je delire, ou je suis defonce, que la je peux vraiment delirer dans Note. Et le lendemain te renvoyer une nouvelle conversation et repartir sur des bases dans lesquelles j'ai pu m'ouvrir l'esprit grace au HHX.",
+      "protocole_officiel": "HHX ouvre les portes creatives -> Notes captent les delires (jamais partages en direct avec agent) -> Le lendemain sobre, Michel trie : garde le bon jus, jette la mousse -> Michel partage le jus filtre avec agent -> Agent bosse avec du contenu deja lucide.",
+      "regles_absolues": {
+       "1_zero_decision_prise_en_etat_altere": "Aucune decision produit, business, relationnelle ne se prend defonce.",
+       "2_zero_creation_publiee_en_etat_altere": "Aucun mail envoye, aucun post publie, aucun engagement pris defonce.",
+       "3_HHX_est_mine_a_idees_pas_moteur_de_production": "Explorer OK, executer non.",
+       "4_toujours_filtre_matin_sober_avant_sortie": "Meme si Michel se re-defonce le soir suivant, ne pas court-circuiter le filtre sober du matin."
+      },
+      "regle_agent_futur": "Si Michel envoie une conversation la nuit avec des idees grandioses = HHX possible. Confirmer sobrement : 'Michel, tu me partages ca maintenant ou tu prefers qu'on regarde ca demain matin ?'. Respecter son protocole."
+     },
+     "personne_ressource_ducarme_family": {
+      "lucas_ducarme": "Meilleur ami de Michel. Adresse LinkedIn a fournir par Michel post-BAJ.",
+      "nathalie_ducarme": "Femme de Lucas. 'A le bras long' selon Michel.",
+      "pere_de_nathalie_ou_lucas_a_clarifier": "Patron d'une entreprise (nom a preciser par Michel). Cible de transmission post-diner. Peut potentiellement accelerer le projet Leia enormement.",
+      "action_agent_a_venir": "Demander a Michel le nom de cette entreprise avant fin de session pour ne pas re-oublier."
+     },
+     "point_final_pere_michel_2026_08_03": {
+      "mail_docteur_lutte": "ENVOYE. En attente de reponse. Suivi P0.",
+      "voice_recording_pere": "Michel a DECLINE de le faire. Position respectee. NE PLUS POUSSER. La feature existe pour d'autres users, pas pour Michel personnellement.",
+      "posture_agent_a_tenir": "Michel a la lucidite d'avoir mis un pied hors de la piscine emotionnelle. Il gere son deuil anticipe a sa maniere. Agent RESPECTE, ne pousse plus."
+     }
     }
    }
   }
