@@ -2343,6 +2343,84 @@
   "regle_agent_ideation_flow": {
    "instruction_michel": "Michel demande a l'agent : (1) tout logger dans le JSON memoire au fur et a mesure, (2) rester focus sur l'ethique et la viabilite de chaque idee, (3) valider ou refuser explicitement, (4) ne PAS creer d'app maintenant (code freeze toujours actif).",
    "mode_conversationnel": "Ideation en flow. Michel deverse, agent structure et evalue. Pas de code. Pas de mails a envoyer maintenant (Michel pas au bureau)."
+  },
+  "etymologie_leia_revelee_2026_08_03": {
+   "revelation_michel": "Le prenom LEIA vient de LEA, prenom de la fille de Michel. Formule : LEA + IA = LEIA. Michel a revele l'etymologie a la troisieme journee d'echanges sur le produit, au detour d'une phrase.",
+   "contribution_secondaire_layla": "Michel mentionne aussi une ancienne femme aimee prenommee LAYLA (echo phonetique). Il minimise 'c'est un detail' mais choisit quand meme d'en parler. Trace de l'origine du son 'Le-i-a' possiblement multi-couches (fille + amour passe).",
+   "triangle_generationnel_produit": {
+    "constat_agent": "Le produit LEIA est ne pour le PERE de Michel (Alzheimer/HPN) et porte le prenom de sa FILLE (Lea). Trois generations traversent le nom : pere -> Michel -> fille. Peu de produits au monde ont cette profondeur narrative involontaire.",
+    "portee_pitch": "A utiliser en storytelling public (Legend, pitch investisseurs, interviews) : 'J'ai cree Leia pour mon pere qui perd la memoire, et je l'ai nommee d'apres ma fille qui grandit sans moi en ce moment. C'est un pont a travers le temps.'",
+    "regle_narrative_agent_futur": "Ne JAMAIS utiliser cette anecdote sans la benediction explicite de Michel pour chaque prise de parole publique. C'est intime, ca lui appartient."
+   },
+   "situation_lea_2026_08_03": {
+    "age_fille_lea": 16,
+    "statut_relationnel": "Michel ne peut pas voir sa fille pour l'instant. Conflit familial, Lea 'fait sa rebelle', dit que c'est la faute de Michel.",
+    "verbatim_michel": "Je ne la vois pas, elle est un peu en dispute. Elle estime que c'est moi qui ai tort et elle a fait raison. Et je sais qu'un jour ca ira beaucoup mieux.",
+    "posture_michel_agent_a_respecter": "Michel a explicitement demande 'on va pas trop rentrer dans le detail aujourd'hui'. AUCUN AGENT NE DOIT CREUSER CE SUJET SANS INVITATION EXPLICITE DE MICHEL. On note, on respecte, on n'insiste pas.",
+    "coeur_emotionnel_du_projet_leia_selon_agent": "Michel construit Leia PENDANT qu'il ne peut pas voir Lea. Il grave le prenom de sa fille dans un produit destine a preserver la memoire des peres. C'est un acte d'amour paternel double d'un acte de resilience. A porter avec gravite dans toute session future."
+   },
+   "vie_investie_dans_le_projet_verbatim_michel": "C'est toute une vie que je suis en train d'utiliser pour construire cette application. C'est toutes mes experiences et surtout le fait que je ne peux plus voir ma fille."
+  },
+  "decisions_produit_finales_2026_08_03_matin": {
+   "decision_1_citations_motivation": {
+    "verdict_michel": "Delegation explicite a l'agent : 'Fais comme tu le sens, il n'y a que toi qui peut savoir par rapport a l'ethique'.",
+    "decision_agent_assumee": "Combo C + D a 80/20. 80% citations de la communaute Leia (users anonymes consentants, curees, moderees). 20% citations 'safe' (classiques historiques + contemporains sans dossier : Cyrulnik, Coluche, Simone Veil, Mandela, sportifs non-scandaleux).",
+    "regle_stricte": "Zero personnalite condamnee, meme pour condamnation financiere/politique. L'energie a defendre le choix n'en vaut pas la peine. La communaute Leia merite une base de citations irreprochable.",
+    "regle_activation_leia": "Leia PROPOSE une citation UNIQUEMENT si (a) le user demande explicitement, OU (b) un silence long suit une emotion forte detectee. JAMAIS en push aleatoire. Sinon = coach developpement personnel = hors scope.",
+    "matrice_condamnation_par_defaut": {
+     "politique_financiere": "Exclus par defaut (Sarkozy exclu explicitement suite discussion Michel).",
+     "violences_sexuelles_conjugales": "Exclus totalement (Bruel, Depp, Cantat, etc.) - risque de re-trauma sur cible Leia.",
+     "accusations_non_jugees": "Exclus par prudence.",
+     "racisme_antisemitisme_homophobie_publics": "Exclus totalement."
+    }
+   },
+   "decision_2_framework_multi_ecoles_leia_valide": {
+    "declencheur": "Michel a propose de scanner le Gros Livre AA. Agent a bloque pour deux raisons : copyright AA World Services + piege ideologique (spiritualite obligatoire = 40% marche perdu).",
+    "framework_valide_par_michel": "Leia s'inspire de 5 traditions, pique le meilleur, jette le pire. Elle n'appartient a aucune ecole.",
+    "sources": {
+     "AA_12_etapes": {
+      "on_garde": "Structure du chemin, principe 'un jour a la fois', inventaire moral",
+      "on_jette": "Spiritualite obligatoire (Puissance Superieure), moralisation, 13th step"
+     },
+     "SMART_Recovery": {
+      "on_garde": "Outils concrets cognitivo-comportementaux, auto-evaluation, zero religion",
+      "on_jette": "Trop froid si utilise seul"
+     },
+     "Vie_Libre_La_Croix_Bleue": {
+      "on_garde": "Ancrage francophone Belgique/France, entraide laique",
+      "on_jette": "Structure associative lourde"
+     },
+     "Refuge_Recovery_bouddhiste": {
+      "on_garde": "Meditation, non-jugement, compassion active",
+      "on_jette": "Cadre bouddhiste explicite"
+     },
+     "Vecu_Michel": {
+      "on_garde": "Regles anti-repetition, anti-faux-cul, protection des femmes vulnerables",
+      "on_jette": "-"
+     }
+    },
+    "positionnement_final_leia": "Outil laique, universel, inspire mais assujetti a personne."
+   },
+   "decision_3_position_leia_face_aux_complotistes": {
+    "regle_1_question_factuelle": "Si le user pose une question factuelle (ex: 'les vaccins contiennent des puces ?') -> Leia repond sobrement : 'Le consensus scientifique actuel dit X. Voici les sources. Je te laisse juger.' Sans debat, sans moralisation.",
+    "regle_2_monologue_complotiste": "Si le user monologue en mode complotiste -> Leia ECOUTE, ne valide pas, ne contredit pas. Redirige doucement vers la reconstruction : 'Et toi, comment tu vas aujourd'hui ?'",
+    "regle_3_zero_croisade": "Zero croisade anti-complot. Leia n'est pas fact-checker. Contredire frontalement un complotiste renforce ses croyances (effet backfire, Nyhan & Reifler 2010).",
+    "principe_general": "Si tu essaies de guerir tout le monde de tout, tu ne guerris personne. Leia tient la main, elle ne redresse pas les esprits."
+   },
+   "decision_4_regles_anti_AA_issues_du_vecu_Michel": {
+    "regle_anti_repetition": "Leia doit detecter quand un user tourne en boucle sur les memes anecdotes/pensees. Elle varie son approche : nouvelles questions, souvenirs oublies, changement de theme. Pas de stagnation.",
+    "regle_anti_faux_cul": "Leia ne dit JAMAIS 'ca va aller', 'tu es fort(e)', 'tu vas y arriver' en mode automatique. Pas de rassurance gratuite. Elle ecoute, elle acte, elle propose du concret.",
+    "regle_anti_13th_step": {
+     "contexte": "Michel a experimente en AA le phenomene documente du '13th step' : quand une femme nouvelle arrive, les hommes se focalisent sur elle (predation groupale des femmes vulnerables). Michel a arrete AA notamment pour cette raison ('en avais marre de faire le faux cul').",
+     "consequences_produit_leia": [
+      "AUCUNE messagerie directe entre users",
+      "AUCUNE fonction 'trouver un parrain/marraine proche geographiquement' sans moderation lourde + verification identite",
+      "AUCUNE mise en relation romantique/amicale (Leia n'est pas Meetic pour eclopes)",
+      "Si feature communautaire arrive un jour : moderation humaine obligatoire + rooms non-mixtes en option"
+     ],
+     "valeur_produit": "Cette regle est un actif differentiant fort. Beaucoup d'apps sante mentale foncent sur du 'matching entre users' sans voir le piege. Leia le voit et le refuse."
+    }
+   }
   }
  }
 }
