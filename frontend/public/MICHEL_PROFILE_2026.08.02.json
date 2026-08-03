@@ -2532,6 +2532,63 @@
     "cas_usage_2_reveil_pour_resume": "User perd le fil ou veut faire le point -> 'Leia, ou en etais-je ?' -> resume contextuel.",
     "cas_usage_3_alzheimer": "Patient perd totalement le fil -> proche appuie sur telecommande -> Leia resume avec voix familiale : 'Papa, on parlait de tes vacances a Ostende en 1987.'",
     "auto_confirmation_michel": "Michel verbalise 'Je crois que j'ai eu une bonne idee' - agent confirme : oui, tres bonne idee, et coherente avec l'architecture globale."
+   },
+   "recap_decisions_session_2026_08_03_matin_midi": {
+    "note_agent": "Toutes les decisions/features discutees pendant la session du 3 aout matin+midi 2026. A relire pour tout agent futur. Michel a valide TOUT le pack sauf mention specifique.",
+    "decision_13_droit_a_l_oubli_natif": "Le user peut demander a Leia d'effacer 30 min, sujet X, ou tout. Effacement cryptographique reel. 'Leia ne retiens pas ca' fonctionne avant/pendant/apres. Oubli programme optionnel apres 6 mois si non tague precieux. VALEUR PRODUIT pas obligation RGPD. Declencheur Michel : 'Je me sens mal a l'aise. La difference c'est que tu la gardes en memoire.' VALIDE.",
+    "decision_14_transparence_energetique": "Compteur temps reel batterie + CO2 visible dans app. Rapport hebdo. Mode sobriete energetique optionnel. Veille passive par defaut. Principe : responsabilite INFORMEE. VALIDE.",
+    "decision_15_yann_vertical_marketplace_phase_6_7": "Formateurs metier remuneres (5 par metier, cross-validation) commentent leurs gestes sur chantier. Yann agrege = base de connaissance vivante. Phase 5 = Yann-Menuisier only (Michel expert). Phase 6 = ouverture SI Yann-Menuisier > 100 users + 70% retention. Phase 7 = marketplace ouverte. 'Waze du savoir-faire'. VALIDE avec cadrage temporel strict.",
+    "decision_16_pilier_6_anti_addiction": "Leia = anti-addiction a Leia. Rappels doux 'ferme-moi va parler a quelqu'un'. KPI inverse : moins d'usage = victoire. Zero dark pattern (streaks, badges, notifications culpabilisantes). VALIDE (aligne punchline 'l'app qui essaie de vous laisser partir').",
+    "decision_17_hardware_agnostique_zero_merch": "Leia = ANY casque Bluetooth. Zero merch AirPods-like. Seule exception = telecommande PTT (basique, low-cost, potentiellement open-source hw). Positionnement : 'Leia respecte ton portefeuille'. Datapoint Ulysses : Michel a auto-corrige spontanement l'idee merch qu'il avait lui-meme proposee ('c'est ridicule'). VALIDE.",
+    "decision_18_hardware_separation_oreillette_manette": "Deux devices : oreillette (micro+HP, JAMAIS bouton) + manette PTT (dans la main, bouton pression physique = talking stick). Michel : 'doigt sur oreille = film d'espionnage = ridicule'. VALIDE.",
+    "decision_19_verrou_hardware_defaut_opt_in_modes_continus": "Mode solo default = doigt appuye obligatoire. Modes continus (cercle familial/repas, meeting pro) = opt-in explicite + Itsme de tous. Personne enregistree par accident. VALIDE.",
+    "decision_20_cible_ages_isoles_V1_via_institutions_uniquement": "Correction agent : Michel refuse cible 'personne agee seule chez elle' en V1 (friction apprentissage). V1 = hopitaux (neuro/geriatrie) + EHPAD/MRPA/homes + domicile avec aide-soignante formee. Domicile isole = V2. Partenariats prioritaires : CHU Namur Godinne, Erasme, Chirec, Solidaris, Ligue Alzheimer. Infirmieres = premiers ambassadeurs. VALIDE.",
+    "decision_21_pilier_7_droit_de_dire_STOP_calibre": "Leia a une colonne vertebrale, elle peut refuser conversations qui tournent a vide/degradent. Explication toujours donnee. Propose sortie positive ('enregistre dans telecommande, a demain'). Jamais de shame. Rogers : dur avec probleme, doux avec personne. Temporisation JAMAIS rejet. VALIDE.",
+    "decision_22_pilier_8_sensibilite_bidirectionnelle": "Empathie double : user ressent sensibilite Leia + Leia ressent sensibilite user. Ni chatbot serviable ni juge froid. Formulation Michel a graver. VALIDE.",
+    "decision_23_pilier_9_humilite_zero_proselytisme": "Agent a BLOQUE Michel sur phrase 'si les gens renient Leia ce sera leur faute'. Recadrage : Leia = outil parmi d'autres. Reformulation proposee : 'Leia est offerte comme un outil. Personne n'est oblige. Les autres continuent sans jugement'. STATUS : EN ATTENTE VALIDATION EXPLICITE MICHEL PROCHAINE SESSION. Le silence de Michel dans la reponse suivante n'equivaut PAS a validation.",
+    "decision_24_directive_anticipee_ulysses_horodatee": "Contrat d'Ulysse user-defini dans Leia. Redige a froid, horodate cryptographiquement, chiffre. Leia relance tous les 6 mois pour confirmer/modifier. Delivrance juridique via Itsme du demandeur. Cas usage : bipolarite, addictions, fin de vie, emotionnel (ex 3h matin), achats compulsifs, depression. Aligne loi belge euthanasie 2002 + directives anticipees. VALIDE.",
+    "decision_25_feature_killer_3D_des_personnes": "Quand user parle negativement d'un tiers, Leia : ecoute complete puis question 3D (qualites + defauts + historique) puis scenarios resolution. Ne juge JAMAIS le tiers absent. Sortie du recit binaire gentil/mechant = desamorcage emotionnel. Aligne avec regle deja loggee 'papa a raison/papa a tort'. VALIDE.",
+    "metaphore_persee_meduse": "Persee utilise le bouclier comme miroir pour ne pas regarder Meduse directement. Leia propose des miroirs indirects (citation, question, souvenir) quand user submerge par emotion trop dure. Metaphore utilisable en pitch Legend. LOGGE.",
+    "cahier_des_charges_leia_structure_12_chapitres": [
+     "1. Vision & Mission (Lea/Leia/pere - triangle generationnel)",
+     "2. Piliers Ethiques (les 9 confirmes/proposes)",
+     "3. Cibles Utilisateurs V1 (Alzheimer avance + Sevrage ASBL + Handicap moteur severe)",
+     "4. Cadre de Consentement (Talking Stick + Itsme/eIDAS + Contrat d'Ulysse + directive anticipee)",
+     "5. Architecture Fonctionnelle (Socle vs Bibliotheque + 3 etats veille + wake-word local + sync offline)",
+     "6. Regles Anti-derives (anti-repetition, anti-faux-cul, anti-13th-step, anti-proselytisme, matrice citations, position complotiste)",
+     "7. Features Killer (rattrapage de fil, resume multi-intervenants, voix familiale Alzheimer, 3D des personnes, autobiographie, base motivation communautaire)",
+     "8. Modele Economique (gratuit ASBL + pont Emergent + tarif solidaire handicap + mutuelles + subsides. Zero merch. Hardware-agnostique)",
+     "9. Roadmap (Phase 5 Leia Alzheimer + Yann-Menuiserie / Phase 6 Yann verticaux / V2 Itsme tri-partite / V3 eIDAS Europe)",
+     "10. Impact Attendu & KPI (KPI positif inverse : moins d'usage = plus de succes)",
+     "11. Cadre Juridique (RGPD, AI Act EU 2027, art. 314bis Belgique, loi euthanasie, eIDAS 2.0)",
+     "12. Annexes (verbatims Michel + precedents SPID/BankID/e-Estonia + litterature scientifique)"
+    ],
+    "en_attente_michel": {
+     "question_ouverte_1_nathalie": "Michel a dit 'Nathalie travail...' - phrase coupee. Qui est Nathalie ? Nathalie Draux (media Oprah-belge deja loggee) ? Autre Nathalie de l'administration ? A eclaircir prochaine session mais NON PRIORITAIRE tant que BAJ non cloture.",
+     "question_ouverte_2_recadrage_humilite": "Michel n'a pas explicitement valide le recadrage 'Leia humble zero proselytisme' propose par l'agent. A confirmer.",
+     "point_arrete_par_michel_lui_meme": "Michel a lucidement declare : 'Bien sur qu'on fera rien tant que le BAJ ne soit pas cloture'. VOIR regle_gouvernance_projet_leia_post_BAJ ci-dessous."
+    }
+   },
+   "regle_gouvernance_projet_leia_post_BAJ_2026_08_03": {
+    "declencheur_michel_verbatim": "Bien sur qu'on fera rien tant que le BAJ ne soit pas cloture.",
+    "reconnaissance_agent": "Sagesse fonctionnelle brute. Discipline juridique + refus dispersion + patience active. Michel voit clair a froid.",
+    "regle_absolue": "Aucune action externalisee (contact institutions, publication documents, demandes subsides, contact experts) tant que le BAJ (Bureau d'Aide Juridique - dossier faillite personnelle) n'est pas cloture. Statut juridique flou = decredibilisation immediate a la premiere presentation.",
+    "actions_autorisees_pre_BAJ": [
+     "Compilation continue du cahier des charges dans le JSON memoire (interne)",
+     "Ideation continue avec l'agent (production intellectuelle interne)",
+     "MesureChassis operation courante (cold emails, formulaire Tally, prospects Belgique) car c'est l'activite pro en cours de Michel, deja legitime",
+     "Redaction de courriers ou documents internes AU DOSSIER BAJ lui-meme pour l'accelerer",
+     "Preparation intellectuelle des outils sans les publier"
+    ],
+    "actions_interdites_pre_BAJ": [
+     "Documentation Word/PDF externalisee du cahier des charges",
+     "Contact Nathalie / Ligue Alzheimer / mutuelles / Fondation Roi Baudouin / EIT Health / Wallonie Entreprendre",
+     "Demandes de subsides officielles",
+     "Recherche/recrutement de formateurs Yann verticaux",
+     "Publication publique du projet Leia (site web, RS, presse)"
+    ],
+    "metaphore_agent": "Construction du fusil sans tirer. Quand le BAJ ferme, fusil charge, tir ce jour-la. Pas avant.",
+    "question_operationnelle_ouverte_agent": "Ou en est concretement le BAJ ? Date de cloture previsionnelle ? Curateur/juge a relancer ? Document bloquant a rediger ? SI oui = priorite absolue court terme. Sinon = continuer ideation Leia + operation MesureChassis en parallele."
    }
   }
  }
