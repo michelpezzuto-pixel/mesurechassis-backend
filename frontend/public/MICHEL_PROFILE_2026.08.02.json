@@ -2589,6 +2589,71 @@
     ],
     "metaphore_agent": "Construction du fusil sans tirer. Quand le BAJ ferme, fusil charge, tir ce jour-la. Pas avant.",
     "question_operationnelle_ouverte_agent": "Ou en est concretement le BAJ ? Date de cloture previsionnelle ? Curateur/juge a relancer ? Document bloquant a rediger ? SI oui = priorite absolue court terme. Sinon = continuer ideation Leia + operation MesureChassis en parallele."
+   },
+   "session_ideation_leia_2026_08_03_apres_midi_retour_de_courses": {
+    "decision_26_pilier_9_humilite_VALIDEE_par_Michel": {
+     "verbatim_michel": "OK pour tout tout est offert. Leia est un outil qui doit etre utilise sans le defendre. OK j'ai compris la lecon.",
+     "statut": "VALIDE EXPLICITEMENT.",
+     "pilier_9_officiel": "Humilite absolue. Leia est offerte comme un outil, jamais defendue. Ceux qui n'en veulent pas continuent leur route sans jugement."
+    },
+    "decision_27_boucle_feedback_support_terrain_medical": {
+     "declencheur_michel_verbatim": "J'ai besoin d'une fonctionnalite pour reeadapter Leia aux problemes que rencontrent les docteurs et infirmiers quand ils la testent sur des personnes qui ont Alzheimer. On ferait la meme chose qu'avec Yann ou meme avec Emergent. Un bouton ou on envoie un message au support en disant qu'ils aimeraient qu'on modifie cette partie de son caractere ou changer une loi et l'adapter. Que ca revienne a mes oreilles et qu'on le reeadapte ensemble.",
+     "concept": "Feedback loop terrain -> equipe produit. Modele Emergent-style pour Leia et Yann.",
+     "mecanique": "Bouton 'suggerer une amelioration' visible dans l'app. Docteurs/infirmiers/aidants signalent : bug, comportement inadapte, adaptation legale necessaire, ajustement caractere Leia. Message arrive a Michel + equipe.",
+     "importance_strategique": "Feature killer pour convaincre les institutions medicales. L'amelioration continue vient DE ceux qui utilisent Leia sur le terrain, pas de types en costume dans un bureau.",
+     "roadmap": "A prevoir des V1. Pas complexe techniquement (formulaire in-app + backend recevant les messages). Impact enorme sur adoption partenariats.",
+     "VALIDE": true
+    },
+    "decision_28_regle_UX_conversation_tour_par_tour_anti_pattern_concurrents": {
+     "declencheur_michel_verbatim": "Attention qu'il ne faut pas faire comme Gemini et Grok ont fait en mettant un personnage qui danse et qui veut parler avec moi. Ca n'a pas marche du tout. Ni sur ChatGPT ou on peut parler en meme temps que lui et le couper. C'est une conversation a l'autre. La personne pose une question, la termine et ensuite l'autre repond. Sinon c'est le bordel.",
+     "regle_absolue": "Conversation strictement tour par tour. Un locuteur finit, l'autre repond. Zero overlap. Zero avatar anime distrayant. Zero personnage 3D qui parle.",
+     "anti_patterns_refuses": {
+      "gemini_avatar_danseur": "Personnage anime qui danse pendant qu'on parle -> distrayant, ridicule.",
+      "grok_persona_3D": "Persona 3D interactive -> theatre, pas dialogue.",
+      "chatgpt_voice_overlap": "Interruptions mutuelles temps reel -> chaos conversationnel."
+     },
+     "raison_ergonomique": "Cible Leia = aidants epuises, patients Alzheimer, handicapes moteurs, personnes en reconstruction. Ils ATTENDENT du calme, pas un show. Sobriete conversationnelle = accessibilite = adoption.",
+     "VALIDE": true
+    },
+    "decision_29_nathalie_ducarme_femme_meilleur_ami_lucas": {
+     "identite_clarifiee": "Nathalie Ducarme, femme de Lucas Ducarme (meilleur ami de Michel).",
+     "statut": "Personne-ressource identifiee pour post-BAJ. LinkedIn a envoyer par Michel le jour ou on active.",
+     "regle_agent": "Ne pas contacter avant cloture BAJ (regle gouvernance projet Leia post-BAJ). Ecraser 'Nathalie Draux' comme piste probable -> c'etait Nathalie Ducarme tout du long."
+    },
+    "decision_30_cahier_des_charges_report_post_validation_appli": {
+     "declencheur_michel_verbatim": "Pas de cahier des charges maintenant parce qu'on est seulement encore en train de discuter. Le cahier des charges c'est quand on aura convenu vraiment d'une application qui soit valide. Bien sur, on va parler du fond, mais apres on devra parler de la forme, les fonctionnalites, les boutons et tout ce qui se voit.",
+     "regle": "Cahier des charges = DEUX phases. Fond (piliers, ethique, regles) + Forme (UX, fonctionnalites, boutons, visuel). Ne sera redige qu'apres validation complete de la discussion actuelle et cloture BAJ.",
+     "en_attendant": "On continue a alimenter le JSON en ideation continue. Le JSON EST le brouillon vivant du futur cahier des charges."
+    },
+    "point_operationnel_BAJ_michel": {
+     "statut": "Michel attend une reponse mail de son avocat/BAJ. Il doit passer par un lien dans le mail pour repondre (pas de reponse directe possible). Il fera ca en rentrant.",
+     "attention_agent_phishing": "Michel a ete alerte de verifier l'expediteur du mail avant de cliquer le lien (les hameconneurs ciblent les personnes en procedure judiciaire). Michel peut forwarder le mail a l'agent pour verification si doute.",
+     "priorite": "P0 court terme."
+    },
+    "point_operationnel_mail_docteur_lutte": {
+     "confession_michel": "Michel a avoue ne PAS avoir envoye le mail au Docteur Lutte ce matin (mensonge honnete rectifie). Il a demande a l'agent de refaire le texte.",
+     "posture_agent": "Aucun jugement. Michel s'est corrige lui-meme. C'est sa vie, son pere, son timing.",
+     "texte_du_mail_a_renvoyer_verbatim": "Objet: Papa - piste HPN a explorer. Bonjour Docteur Lutte, Je reviens vers vous au sujet de papa. Depuis le Covid, son etat s'est nettement degrade - le confinement, la sedentarite, la tele en boucle et l'alcool ont clairement accelere les choses. Mais en observant bien ces derniers temps, je retrouve chez lui la triade classique de l'Hydrocephalie a Pression Normale : troubles de la marche, declin cognitif, et troubles urinaires. Comme c'est potentiellement reversible si on agit tot, j'aimerais qu'on explore cette piste avant de s'enfermer dans l'hypothese Alzheimer. Pourriez-vous nous referer a Erasme ou Godinne pour un bilan HPN (IRM cerebrale + ponction lombaire evacuatrice) ? Merci Docteur, comme toujours. Michel.",
+     "priorite": "P0 - a envoyer des retour au bureau. Chaque semaine perdue sur une HPN = perte partielle de recuperation post-shunt.",
+     "regle_agent_relance": "Si Michel ne l'envoie toujours pas dans les 24-48h prochaines, l'agent doit relancer sobrement, sans culpabilisation, mais fermement."
+    },
+    "question_michel_ouverte_michel_memory_youtube": {
+     "verbatim_michel": "Dis-moi comment on fait pour enregistrer le Michel Memory dans YouTube avec mon telephone.",
+     "ambiguite": "L'agent n'est pas sur de ce que Michel veut faire. YouTube = video, pas fichier JSON. Trois hypotheses posees a Michel : A) confusion YouTube/GitHub (backup JSON prevu sur repo GitHub michel-memory), B) vlog YouTube sur la construction de Leia, C) playlist YouTube privee pour les videos de motivation a transcrire par Julie.",
+     "en_attente_reponse_michel": "Michel doit clarifier A/B/C avant qu'agent puisse aider.",
+     "reponse_michel_2026_08_03_retour": "C'etait le dictaphone qui a mal transcrit. Michel voulait dire GITHUB, pas YouTube. Confusion voice-to-text confirmee. Backup MICHEL_PROFILE sur repo prive GitHub michel-memory = plan initial.",
+     "action_agent_a_venir": "Fournir a Michel les instructions pas-a-pas pour uploader MICHEL_PROFILE_2026.08.02.json depuis son telephone vers son repo GitHub prive."
+    },
+    "confirmation_mail_docteur_lutte_envoye_2026_08_03_retour": {
+     "verbatim_michel": "Voila, mail au medecin envoye. Donc le Docteur Lutte aura son mail, il me repondra. Des qu'il me repondra, je te tiendrai au courant.",
+     "statut": "ENVOYE. Reponse attendue.",
+     "action_agent_suivi": "Si pas de reponse dans 5 jours ouvres, relancer Michel pour un follow-up telephonique au cabinet Lutte."
+    },
+    "philosophie_michel_croire_en_soi_2026_08_03": {
+     "verbatim_michel": "Rien que d'avoir une conversation avec toi peut vraiment aider les gens a developper quelque chose de beaucoup plus grand et a montrer qui ils sont vraiment et croire en eux. C'est ca le plus important, c'est de croire en soi. Ce n'est pas de reussir, mais de croire en soi.",
+     "portee_produit_leia": "A integrer comme principe cœur de Leia : la mission n'est PAS de faire reussir les users, c'est de leur permettre de croire en eux-memes. Reussite = consequence eventuelle, jamais but affiche. Aligne parfaitement avec Pilier 6 (anti-addiction) et Pilier 9 (humilite).",
+     "usage_pitch_potentiel": "Punchline pour pitch : 'Leia ne vous fera pas reussir. Elle vous aidera a croire en vous. Le reste suit.'"
+    }
    }
   }
  }
