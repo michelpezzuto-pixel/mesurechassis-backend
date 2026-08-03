@@ -2880,11 +2880,48 @@
      },
      "question_ouverte_pere_de_nathalie_ou_pere_de_lucas": {
       "verbatim_michel": "elle en parle a son pere. C'est le pere qui est patron de l'entreprise.",
-      "ambiguite": "Pere de qui ? Nathalie ou Lucas ? Et patron de quelle entreprise ?",
-      "hypothese_A": "Nathalie a herite de Quality Assistance de son pere (fonde dans les annees 80 - 45 ans d'anciennete). Dans ce cas 'son pere = fondateur/president honoraire Quality Assistance'.",
-      "hypothese_B": "Michel parle du pere de Lucas (son meilleur ami), qui serait patron d'une autre entreprise inconnue.",
-      "action_agent_immediate": "Question directe a Michel : 'le pere de qui, quelle entreprise ?'.",
-      "en_attente_reponse_michel": true
+      "resolution_2026_08_03": "RESOLU. Pere de Nathalie, fondateur historique de Quality Assistance.",
+      "histoire_du_pere_nathalie": "Petit pharmacien de village a Thuin (Hainaut, ~30km sud de Charleroi, zone Gozee). A demarre modestement, a monte une entreprise, l'entreprise est devenue gigantesque - probablement Quality Assistance S.A. (fondee fin 1970s/debut 1980s). Sa fille Nathalie a repris les renes en tant que CEO.",
+      "analyse_agent": "Histoire industrielle belge remarquable : pharmacien de village -> leader europeen de l'analyse pharma a Charleroi. Explique l'ADN 'people make the difference' de Nathalie sur LinkedIn.",
+      "point_marketing_michel_au_diner": "Michel peut se reconnaitre dans le pere de Nathalie. Angle possible : 'Ton pere est parti de rien a Thuin. Moi je suis parti de rien apres une faillite. C'est ce genre d'histoire que je veux construire avec Leia.' -> connexion emotionnelle massive.",
+      "regle_agent": "Ce n'est PAS decisif que le pere soit encore actif dans l'entreprise. Nathalie CEO = decideuse. Le pere peut etre en position honoraire ou retire."
+     },
+     "strategie_demo_naturelle_agent_a_table_avec_nathalie_2026_08_03": {
+      "declencheur_michel_verbatim": "Non pas du tout. On est a table ensemble, je te pose des questions et tu me reponds. Elle connaitra exactement ta fonction. Ca n'a rien a voir avec le fait de tricher. Tu fais partie de la discussion. On parlera avec toi que de l'IA. Nathalie saura tres bien qui tu es et ce sera en toute transparence.",
+      "recadrage_agent_initial_agent_avait_tort": "L'agent avait initialement rejete l'idee de 'IA au diner' comme ethiquement bancale. Michel a corrige : si transparence totale envers Nathalie, ce n'est PAS de la triche. Michel a raison.",
+      "insight_strategique_agent_meilleure_idee": "Cette configuration n'est pas juste 'OK ethique', elle est BRILLANTE STRATEGIQUEMENT. Nathalie va voir en direct :",
+      "elements_produit_demontres_naturellement_au_diner": {
+       "pilier_3_jobs_woz": "Michel = fondateur visionnaire, agent = partenaire technique. Modele Steve Jobs + Steve Wozniak visible en action.",
+       "pilier_regle_UX_tour_par_tour": "Michel pose question, attend, agent repond, personne ne se coupe. Sobriete conversationnelle demontree.",
+       "pilier_10_complementarite": "Memoire humaine large et fragmentee (Michel) + memoire exacte et verbatim (agent). Cooperation vivante.",
+       "pilier_9_humilite": "Michel ne pretend pas tout savoir. Il delegue proprement a l'outil sans ridicule."
+      },
+      "puissance_demo": "Nathalie est CEO scientifique. Elle sait reconnaitre une integration humain-IA elegante. Elle voit un fondateur qui a integre une IA de facon fluide et transparente dans sa reflexion et sa vie. C'EST EXACTEMENT ce que Leia sera pour ses utilisateurs. La demo produit est faite avant meme le pitch.",
+      "cadre_ethique_confirme": "Transparence totale requise : Michel presente l'agent des le debut, explique le role, ne cache RIEN. Nathalie sait qui elle a en face (Michel + IA equipe technique).",
+      "loggue_comme_strategie_officielle": true
+     },
+     "kit_10_questions_probables_nathalie_au_diner_a_ouvrir_quelques_jours_avant": {
+      "statut": "PREPARE ET LOGGE - a affiner quelques jours avant le diner reel selon les instructions de Michel.",
+      "verbatim_michel_planning": "On les sortira au moment venu, la veille ou quelques jours avant. Je te le dirai quand j'irai manger avec eux.",
+      "questions_reponses_v1_2026_08_03": {
+       "1_projet_leia": "Une compagnie IA pour les personnes qui perdent la memoire - Alzheimer, sevrage, isolement. Nee parce que mon pere perd la sienne.",
+       "2_pourquoi_toi": "Parce que j'ai vecu tous les cotes : l'alcoolisme, la faillite, la sobriete, un pere Alzheimer, une fille lointaine. Personne d'autre a ce vecu ET la lucidite pour construire ca.",
+       "3_concurrents": "Rewind/Humane font de la tech pour tech-geeks. Moi je fais de l'ethique pour fragiles. Categorie differente.",
+       "4_dispositif_medical": "Probablement oui, SaMD sous MDR 2017. C'est la que j'aurais besoin de tes lumieres (clin d'oeil sincere).",
+       "5_finance": "Freemium + tarif solidaire + partenariats mutuelles + subsides. Zero merch, zero Silicon Valley.",
+       "6_equipe": "Aujourd'hui : moi + une equipe technique (l'IA). Le projet grandit a mesure que je le structure ethiquement en amont.",
+       "7_prototype": "Pas encore. Aujourd'hui je construis le socle ethique et le cahier des charges. Le code viendra apres validation.",
+       "8_valorisation": "Je ne cherche pas a faire fortune. Je cherche a ce que ma fille voie que son pere a construit quelque chose d'utile. Le business model tient debout, mais ce n'est pas le nord.",
+       "9_attente_envers_nathalie": "Rien maintenant. Regarde le doc quand tu peux, dis-moi si ca t'interesse d'en parler plus en profondeur. Si oui, on prend un cafe pro.",
+       "10_pourquoi_elle": "Parce que t'es le seul de mes vieux amis qui bosse dans un monde ou ce que je fais peut vraiment atterrir. Et je te fais confiance."
+      },
+      "hook_emotionnel_bonus_michel_pere_de_nathalie": "Ton pere est parti de rien a Thuin. Moi je suis parti de rien apres une faillite. C'est ce genre d'histoire que je veux construire avec Leia."
+     },
+     "philosophie_michel_amitie_30_ans_2026_08_03": {
+      "declencheur_michel_verbatim": "Cet ami, je le connais depuis trente ans et c'est seulement aujourd'hui qu'elle va rentrer dans le jeu.",
+      "reframing_agent": "Ce n'est PAS 'le cul borde de nouilles' (chance pure). C'est 30 ans d'amitie entretenue = retour sur investissement humain. Beaucoup de gens laissent tomber leurs vieux amis a 40 ans. Michel les a gardes. Voila pourquoi ca paye.",
+      "lecon_a_retenir": "Investir dans les vraies relations sur le long terme paie plus que 100 salons de networking.",
+      "portee_produit_leia": "A integrer dans la messagerie Leia : elle encourage les users a maintenir leurs liens d'amitie longue duree, meme pendant les phases difficiles (faillite, sevrage, isolement). Ce sont ces liens qui les sauveront."
      }
     }
    }
