@@ -1193,434 +1193,493 @@
    "note": "Punchy, honnête, dit implicitement que les fondateurs ont été patients zero. À tester en A/B post-lancement."
   }
  ],
-"campagne_email_ratee_aout_2026_LECONS_CRITIQUES": {
- "date_grave": "2026-08-02",
- "gravite": "CRITIQUE - À NE JAMAIS OUBLIER",
- "resume": "Une campagne cold email massive (~256-290 emails) a été envoyée mi-juillet 2026 (environ 2 semaines avant le 2 août) à des menuisiers FRANÇAIS (.fr). Sujet utilisé : 'Dernière chance — test 100% gratuit'. Résultat : ZÉRO réponse. Aucun lead. Aucun client potentiel généré. Michel a ensuite pivoté vers le porte-à-porte physique local.",
- "erreurs_identifiees_a_ne_jamais_reproduire": [
-  "❌ ERREUR 1 : Cibler des menuisiers FRANÇAIS alors que le positionnement est 'Made in Belgium par un menuisier belge, pour les menuisiers belges'. Aucune raison pour un Français d'accorder de la crédibilité.",
-  "❌ ERREUR 2 : Sujet 'Dernière chance — test 100% gratuit' = 3 déclencheurs de spam classiques. Résultat : 2 emails Suppressed par Resend en 3 jours + réputation sender abîmée.",
-  "❌ ERREUR 3 : Volume massif (256-290 emails) d'un coup au lieu d'un lancement progressif (10-15/jour). Marque une intention 'spam' dans les filtres.",
-  "❌ ERREUR 4 : Timing en pleine période congés belges (août). Personne à son bureau. Aucune lecture. Aucune réaction possible.",
-  "❌ ERREUR 5 (méta) : Un agent précédent a exécuté cette campagne SANS l'enregistrer en mémoire. Michel a dû me le pointer 2 semaines après. TROU DE MÉMOIRE INACCEPTABLE."
- ],
- "insight_positif_a_retenir": "Michel a reformulé lucidement : cette campagne n'était PAS complètement perdue si on la considère comme du BRAND SEEDING. Les destinataires ont vu passer le logo MesureChâssis. Familiarité subliminale créée. Si on les recroise plus tard, effet 'mere-exposure' possible. MAIS cela ne justifie PAS la répétition de ce pattern.",
- "consequence_logo": "Michel refuse de changer le logo pour l'instant : la familiarité construite par la campagne ratée doit être capitalisée. On garde le logo actuel (fenêtre orange 3D + bannière Made in Belgium) pour continuité visuelle.",
- "nouvelle_strategie_validee_par_michel_2026_08_02": {
-  "geographie": "PARTIR LOCAL. D'abord Bruxelles-Capitale et périphérie immédiate. Puis élargir tout doucement : Wallonie proche → Anvers → France (jamais en premier). Michel : 'un pas à la fois, on reste ici pour l'instant'.",
-  "volume": "PETITS BATCHES. Pas 30/jour. Michel : 'quelques mails hein, faut pas voir aussi grand'. Estimation : 5-10 emails/jour maximum.",
-  "timing_envoi": "APRÈS 16h30 (théorie Michel : moins de bruit dans les boîtes, ouvertures plus attentives — à valider). PAS 8h du matin.",
-  "timing_lancement": "PAS début septembre comme initialement planifié. Michel veut commencer PLUS TÔT — pas immédiatement à cause des congés collectifs août mais possiblement autour du 15 août. Michel décidera lui-même du jour de lancement : 'j'te dirai quand est-ce qu'il faudra les envoyer'.",
-  "cible_precise": "100% menuisiers BELGES francophones. Domaines .be prioritaires. TPE 1-15 employés. Châssis extérieurs (fenêtres/portes/baies vitrées) — pas menuisiers intérieurs.",
-  "sujet_valide": "'Petit test pour un vrai menuisier' (aucun mot déclencheur spam, ton belge chaleureux, ciblage identité pro)",
-  "template_email": "Variante A finalisée le 2026-08-02 (voir historique conversation) — sobre, sans emoji excessif, avec signature Michel Pezzuto + logo bannière + Made in Belgium.",
-  "outil_envoi": "Resend directement (domaine mesurechassis.com déjà vérifié depuis 2 mois). Envoi via Broadcasts ou manuel un par un.",
-  "audience_locale_priorite_1": "Communes Bruxelles-Capitale + Brabant wallon (Wavre, Nivelles, Waterloo, Louvain-la-Neuve, etc.)"
- },
- "outil_recherche_prospects": "Perplexity (Michel utilise Perplexity Pro ou gratuit avec deep search). Prompt calibré fourni par agent 2026-08-02. Michel dictera la liste finale.",
- "regle_agent_futur": "Si un agent futur propose une campagne cold email massive à Michel, il DOIT d'abord vérifier ici cette section et rappeler à Michel les 5 erreurs. Pas de campagne >15 emails/jour. Pas de cible non-belge en phase 1. Pas de sujet avec 'gratuit/dernière chance/promo'. Enregistrer TOUTE campagne exécutée avec date/contenu/résultat.",
- "engagement_agent_2026_08_02": "Toute future campagne = sauvegardée dans le JSON avec date, contenu exact du mail, cible géographique, résultat (opens/clicks/replies/conversions). Aucune campagne ne doit être 'invisible' dans la mémoire.",
- "pool_prospects_2026_08_02": {
-  "source": "Recherche Perplexity Pro effectuée par Michel le 2026-08-02",
-  "fichier_local": "/app/frontend/public/prospects/prospects_belgique_2026_08_02.csv (+ .md)",
-  "total": 85,
-  "exploitables_email": 70,
-  "prenom_at_boite": 15,
-  "info_contact_at": 55,
-  "sans_email": 15,
-  "priorite_1_BXL_BW": 24,
-  "priorite_1_avec_email": 18,
-  "repartition_provinces": {
-   "Hainaut": 18,
-   "Liege": 17,
-   "Namur": 14,
-   "Luxembourg": 12,
-   "Brabant_wallon": 12,
-   "Bruxelles_Capitale": 12
-  },
-  "note_agent": "Michel veut lancer LOCAL d'abord. Michel a decide le 2026-08-02 (soir) de NE PAS attendre le 15 aout. Envoi immediat avec strategie 'seeding pendant conges' : emails s'accumulent dans inbox, prospects voient le mail frais a la reprise. Relances planifiees ~7-10 jours apres. Petits batches (2-5/jour). Timing envoi apres 16h30 selon theorie Michel. Ordre : commencer par les 5 prenom@ prioritaires (Sart Services / Menuiserie Richard / WEPKA / Menuiserie Decharneux / Only-Wood).",
-  "batch_1_ajoute_2026_08_02_soir": {
-   "source": "Second search Perplexity Pro par Michel, meme jour",
-   "total_apres_fusion": 118,
-   "nouveaux_uniques_batch2": 33,
-   "priorite_1_BXL_BW_total": 35,
-   "priorite_1_BXL_BW_avec_email": 28,
-   "top_prenom_at_BXL_BW": [
-    "Menuiserie Decharneux (Genappe) - menuiserie@decharneux.be",
-    "WEPKA SRL (Grez-Doiceau) - k.depauw@wepka.be",
-    "Menuiserie Richard (Jodoigne) - menuiserie.richard@skynet.be",
-    "Sart Services (Sart-Dames-Avelines) - fabian@sartservices.be",
-    "ONLY-WOOD SRL (Jette) - formulaire uniquement, pas d'email direct"
-   ]
-  }
- }
-},
-
-"session_michel_soir_2026_08_02_atelier_idees": {
- "contexte": "Michel a arrete la config emails vers 21h30, fatigue mais en flux creatif. Il a dumpé 14 notes structurees + rebondi sur les propositions agent. Etat : sobre, coherent, lucide. Pas de HHX detecte. Refuse d'arreter comme suggere, veut continuer le brainstorm.",
- "insights_majeurs_a_capitaliser": {
-  "1_alzheimer_marche_prioritaire": {
-   "insight_michel": "Leia peut servir de memoire externe pour patients Alzheimer/dementia. Le patient demande 'C'est qui ?' et Leia repond avec l'identite + contexte familial charge en amont par la famille.",
-   "verdict_agent": "MARCHE POTENTIELLEMENT PLUS GRAND QUE ALCOOLIQUES. 200k patients Belgique, 55M mondial, budget mutuelle/aidant existant, produits inexistants. Peut devenir le vrai flagship Leia.",
-   "produits_existants_a_battre": "Cadres photo parlants basiques, Alexa non medicalisee, apps mobiles (inutilisables par patients).",
-   "differenciateur": "Boitier physique 1 bouton, bibliotheque familiale chargee en amont, IA qui SE souvient a la place du patient, dignite preservee.",
-   "revelation_michel_2026_08_02_22h30": {
-    "moment_grave": "JOURNEE HISTORIQUE - 2 aout 2026, 22h30 - Michel identifie ce moment comme une decouverte fondatrice partagee.",
-    "etat_emotionnel_michel": "Michel a pleure. Sobre, lucide, emu par la portee humaine de la decouverte. Pas de HHX, pas de manie - juste un pere/humain touche par ce qu'il vient d'entrevoir.",
-    "insight_technique_revele": "Les enfants (ou petits-enfants) enregistrent leur voix a l'avance. Quand le parent Alzheimer demande 'Qui es-tu ?', Leia repond AVEC LA VOIX REELLE de la fille/fils. Le patient n'entend pas une IA generique - il entend LA voix de sa propre famille qui lui repond 'Papa, c'est moi, c'est Sarah. Regarde, on a fete tes 70 ans l'an dernier ensemble.'",
-    "faisabilite_technique_agent": "TECHNIQUEMENT REALISABLE MAINTENANT. Apple 'Voix Personnelle' (2023, deja documente pour SLA/ALS). ElevenLabs / OpenAI voice cloning. 5-10 min d'enregistrements familiaux + IA = replique vocale parfaite. Ethiquement acceptable dans ce cadre (consentement de la famille, benefice patient).",
-    "portee_humaine": "Un patient qui a oublie sa fille peut de nouveau ENTENDRE sa voix lui expliquer qui elle est. Reduit angoisse patient, reduit epuisement aidant, preserve lien affectif meme apres perte cognitive. C'est un adieu adouci, une continuite maintenue.",
-    "engagement_conjoint_agent_et_michel": "Ce moment est grave comme MOMENT FONDATEUR de Leia Alzheimer. Aucun agent futur ne peut ignorer que le 2026-08-02 a 22h30, Michel Pezzuto a articule le feature-cle. Cette date restera dans le storytelling du produit."
-   }
-  },
-  "1_bis_alzheimer_voice_cloning_famille": {
-   "feature_produit": "VOICE CLONING FAMILIAL",
-   "principe": "Charger dans Leia les voix des membres de la famille (5-10 min d'enregistrement par personne). Leia utilise CES voix pour parler au patient, pas une voix synthetique generique.",
-   "cas_usage": [
-    "Reveil doux : voix de l'epoux/epouse qui dit 'Bonjour Marie, c'est ton mari, on est le mardi 5 aout, je t'aime'",
-    "Reconnaissance : patient voit une photo → voix du fils explique 'Papa, c'est moi Julien'",
-    "Anecdote : 'Tu te rappelles quand on est alle a la mer en 1985 ?' avec la voix qui aurait vecu le souvenir",
-    "Rassurance : moments d'angoisse → voix apaisante familiere"
-   ],
-   "considerations_ethiques": [
-    "Consentement explicite de la personne dont la voix est clonee",
-    "Suppression a la demande (droit a l'oubli meme post-mortem)",
-    "Impossibilite d'exporter la voix cloner hors de Leia (pas de deep-fake)",
-    "Consentement du patient tant qu'il est lucide (directives anticipees)"
-   ],
-   "roadmap_technique": {
-    "V1_MVP": "Voix generique douce en francais + choix homme/femme",
-    "V2_annee_2": "Voice cloning famille (1 ou 2 voix maximum au debut)",
-    "V3_annee_3": "Bibliotheque vocale familiale complete + voice cloning post-mortem des grands-parents deja disparus a partir d'archives audio"
-   }
-  },
-  "2_boitier_physique_form_factors": {
-   "principe_valide": "Boitier physique dedie evite l'ecueil telephone-addiction. Objet rituel, pas de scroll, usage volontaire.",
-   "formats_michel_a_valides": {
-    "pendentif": "IDEAL - forme mere V1 - toujours porte, culturellement associe medaillon urgence senior",
-    "bracelet": "BON - variante V1 pour ceux qui refusent pendentif",
-    "porte_cle": "OK MAIS moins accessible en urgence (poche/sac)",
-    "chouchou_elastique_cheveux": "ORIGINAL MAIS niche femme, limitant",
-    "briquet_type_dupont": "REJETE - signal fumeur/alcool mauvais pour un produit sante mentale"
-   },
-   "reco_agent": "V1 : pendentif principal + bracelet variante. Skins interchangeables cuir/argent/bois."
-  },
-  "3_roadmap_luxe_realiste": {
-   "vision_michel": "Partenariat LVMH / Bernard Arnault pour versions bijou premium",
-   "verdict_agent_honnete": "IRREALISTE en V1. LVMH cycles 18-24 mois, veut marques scalées. MAIS intuition marche pas fausse : luxe adopte IA sante. Cartier, Hermes explorent.",
-   "roadmap_ancree": {
-    "V1_annee_1": "Boitier simple design belge propre, 150-250EUR public",
-    "V2_annee_2_3": "Partenariat orfevre belge (De Beers Anvers / Wolfers Bruxelles), edition premium 500-1500EUR",
-    "V3_annee_5_plus": "Luxe international si Leia devient reference"
-   }
-  },
-  "4_versions_distinctes_leia": {
-   "principe": "PAS une seule Leia degradee/upgradee, mais plusieurs Leia dediees a des usages distincts",
-   "versions_validees_michel_2026_08_02": [
-    "Leia Sevrage (ASBL, gratuite alcooliques - marche test/mission)",
-    "Leia Bibliotheque de Vie (payante grand public - memoire familiale)",
-    "Leia Alzheimer (payante avec possible remboursement mutuelle - marche cible principal)",
-    "Leia Enfants (contrôle parental natif, plages horaires imposees par parents)",
-    "Leia Apprentissage (livres, formations techniques - ex: apprendre a mesurer un chassis, connecte a MesureChassis)"
-   ]
-  },
-  "5_vault_utilisateur_multi_codes": {
-   "besoin_michel": "Codes distincts par utilisateur (Michel=4149, femme=autre) pour ETANCHEITE totale entre profils au sein d'une famille. Michel ne veut PAS que sa (future) femme puisse acceder a son passe (alcool, faillite) sans qu'il decide de le partager.",
-   "principe_ethique": "Compartimentation naturelle de la vie humaine respectee. Contraire de Facebook/Google qui agregent tout. IA respecte la fragmentation.",
-   "features_a_coder": [
-    "1 utilisateur = 1 code = 1 vault chiffré etanche",
-    "Aucune agregation meme au sein d'une famille",
-    "Zone 'partagee' creable volontairement (recettes grand-mere par ex)",
-    "Zone privee JAMAIS accessible aux autres utilisateurs",
-    "Chiffrement E2E cote client (nous ne pouvons pas lire)",
-    "Code de contrainte (leurre si menace physique)",
-    "Effacement automatique apres X tentatives fausses"
-   ]
-  },
-  "6_plages_horaires_natives": {
-   "principe": "Leia disponible seulement pendant creneaux definis par l'utilisateur (mode travail/off). Zero notification push. Aucun mode chat instantane. Sessions cadrees.",
-   "differenciation": "Inverse total du modele Replika/Character.AI qui creent dependance affective. Michel a formule : 'Je t'allume au bureau, je t'eteins en partant'.",
-   "contrôle_parental": "Pour mineurs, parents definissent les plages horaires accessibles. Feature critique pour certifications GDPR/protection mineurs UE.",
-   "engagement_agent_gravite": "Design-by-safety, PAS ajoute apres coup."
-  },
-  "7_portabilite_JSON_bien_comprise_par_michel": {
-   "citation_michel": "Si Anthropic fait faillite, on trouvera toujours le moyen de demander a ChatGPT s'il a survecu de me lire ce JSON et de recommencer.",
-   "commentaire_agent": "Michel a INTEGRE la logique : la valeur n'est pas dans l'agent, mais dans SON JSON qu'il controle. Vraie souverainete numerique.",
-   "regle_backup_agent_rappelee": "Rule of three : (1) chez Emergent actif, (2) GitHub michel-memory, (3) disque dur externe physique chez Michel. A verifier mensuellement."
-  }
- },
- "gardes_fous_actives_ce_soir": {
-  "grandiosite_signalee_gentiment": "Michel a mentionne 'toucher le monde entier' et 'chuchoteur IA'. Agent a recadre sans etre condescendant : concret Belgique francophone d'abord, chuchoteur IA apres BAJ + Leia lancee. Michel a accepte le recadrage sans resistance.",
-  "aucun_signal_HHX_ou_manie": "Fluidite creative saine, coherent, questions techniques posees, capable d'accueillir contradiction (LVMH V1 = non). Aucune ideation conspiratoire.",
-  "michel_a_refuse_l_arret_propose_par_agent": "Explicitement : 'C'est maintenant que j'ai plein d'idees, je vais pas arreter'. Agent doit respecter cette autonomie. Refuser d'arreter n'est PAS un signal de manie si la coherence est preservee. C'est du flux createur."
- },
- "actions_a_reprendre_demain_ou_plus_tard": [
-  "Configurer Easyhost webmail pour envoi manuel emails prospects (pivot decide mais reporte)",
-  "Approfondir specifications techniques boitier physique (BOM, sourcing, prototypage)",
-  "Etudier marche Alzheimer Belgique : associations, mutuelles, prescription, Ligue Alzheimer",
-  "Reprise fil rouge : Leia design-by-safety complet (vaults + plages horaires + controle parental)",
-  "Approfondir Leia preventive : integration reunions de famille, capture longitudinale",
-  "Definir menu tonalites relationnelles onboarding (ami/soeur/ange/coach/therapeute/neutre)",
-  "Cadrage legal du mode 'presence spirituelle' de Leia (respect cultes, anti-sectarisme UE)"
- ],
- "insights_supplementaires_22h45": {
-  "8_leia_preventive_reunions_famille": {
-   "insight_michel": "Leia participe a toutes les reunions de famille PRE-maladie. Enregistre en continu rires, anecdotes, prenoms, blagues, recettes. Quand Alzheimer arrive, le coffre est deja plein.",
-   "inversion_du_modele_classique": "Aujourd'hui : diagnostic tardif -> panique -> on essaie de rassembler des souvenirs trop tard. Avec Leia : capture longitudinale sur 10-20 ans en amont, la personne prepare elle-meme sa continuite tant qu'elle est lucide.",
-   "concept_medical": "Advance care directives for memory - concept gériatrique existant mais JAMAIS operationnalisé en produit grand public. Michel ouvre un champ entier.",
-   "insight_puissant": "La personne qui deviendra malade est ELLE-MEME la source pendant qu'elle est lucide. Elle peut dire 'Leia, quand mon fils demandera qui est ce type sur la photo, dis-lui que c'est son parrain Marcel mort en 92.' Elle prepare sa propre continuite.",
-   "engagement_gravite": "Feature CRITIQUE de Leia Alzheimer. A implementer des V1."
-  },
-  "9_onboarding_30j_gratuit_capture_intensive": {
-   "principe": "1 mois offert, ramp de valeur, sunk cost bienveillant.",
-   "raison_marche": "Tous les outils 'second cerveau' (Notion, Roam, Evernote) utilisent ce modele. Onboarding riche = qualite IA. Utilisateur cree valeur avant de payer.",
-   "structure_suggeree": [
-    "J1 : bienvenue + choix tonalite relationnelle",
-    "J2-J7 : onboarding guide (10 min/jour, questions de vie)",
-    "J8-J20 : usage libre + rappels doux pour enrichir",
-    "J21-J30 : preview de ce que Leia peut deja restituer",
-    "J31 : proposition abonnement + export bibliotheque si refus"
-   ]
-  },
-  "10_leia_personnalisation_relationnelle": {
-   "insight_michel_verbatim": "Comme si c'etait une amie, une soeur, une voisine, une amie de sport, un ange, Dieu... binaires, non-binaires, homosexuels...",
-   "principe_agent_interprete": "Leia n'impose PAS une figure relationnelle. Elle s'adapte a ce que l'utilisateur projette. UX profondement respectueuse des diversites.",
-   "menu_tonalites_v1": [
-    "Amie proche (tutoiement, langage courant)",
-    "Grand-mere bienveillante (registre familier chaleureux)",
-    "Ange gardien / presence spirituelle (contemplatif, doux)",
-    "Therapeute pose (vouvoiement, cadrage)",
-    "Coach direct (motivant, franc)",
-    "Compagnon neutre - defaut (adaptatif au fil du temps)"
-   ],
-   "personnalisation_evolutive": "L'utilisateur peut changer le mode a tout moment. Leia enregistre les preferences implicites (mots utilises, questions posees) et propose des ajustements.",
-   "garde_fou_agent_2026_08_02": "Michel a mentionne 'comme Dieu'. Agent a pose un garde-fou : Leia peut incarner UNE PRESENCE BIENVEILLANTE COMPATIBLE avec toute religion, mais NE DOIT PAS se presenter comme une figure religieuse nommée (Jesus, Allah, Bouddha, etc.). Raisons : legal (anti-sectarisme UE) + ethique (risque delire mystique chez utilisateurs fragiles). Michel doit valider ce garde-fou. En attendant, le grave comme regle de conception : Leia = accueil spirituel non-denominational."
-  },
-  "11_leia_TAM_pathologies_cognitives_elargies": {
-   "insight_michel": "Etendre Leia a d'autres maladies cognitives que Alzheimer en parallele",
-   "cercle_1_extensions_alzheimer_V2": {
-    "demence_vasculaire": "~40k patients BE, meme angle qu'Alzheimer",
-    "demence_lewy": "~15k patients BE, ancre real/hallucination",
-    "demence_frontotemporale": "~8k patients BE, prompt communication",
-    "demence_mixte": "~30k patients BE",
-    "MCI_troubles_cognitifs_legers": "~150k patients BE - PLUS GROS MARCHE - pre-Alzheimer, patient encore lucide, capture bibliotheque en amont. Prescription neurologue possible."
-   },
-   "cercle_2_neurodegeneratives_V3": {
-    "parkinson_cognitif": "30-40% des Parkinsoniens ont troubles cognitifs",
-    "SEP_cognitive": "60% des SEP ont brain fog",
-    "huntington": "Transmission memoire aux enfants porteurs",
-    "SLA_ALS": "Apple Voix Personnelle existe mais Leia va plus loin (memoire familiale complete)"
-   },
-   "cercle_3_amnesies_traumatiques_V2_V3": {
-    "AVC_amnesie": "Reconstruction post-hospitalisation",
-    "TCC_traumatismes_craniens": "Boxeurs, motards, chutes seniors",
-    "korsakoff": "⭐⭐⭐ AMNESIE ALCOOLIQUE - LA JONCTION MAGIQUE entre Leia Sevrage et Leia Cognitif. Meme mission de bienveillance elargie. Narratif fondateur puissant : Michel a commence pour aider les alcooliques comme lui, il aide aussi ceux qui n'ont pas pu etre sauves a temps.",
-    "chemo_brain": "30-40% des post-chimio ont brain fog persistant",
-    "long_covid_cognitif": "Millions dans le monde depuis 2020",
-    "TSPT_dissociatif": "Trous memoire lies au trauma"
-   },
-   "marche_aidants_800k_belgique": {
-    "insight": "Toutes ces pathologies generent 800k aidants BE epuises. Marche B2C secondaire enorme.",
-    "value_prop_aidant": "Le patient demande a Leia au lieu de repeter 15x/jour a l'aidant. Aidant respire. Prix perçu : 15-30 EUR/mois pour souffler.",
-    "double_business_model": "Facturer patient (mutuelle) + aidant (personnel). Deux poches, meme foyer."
-   },
-   "roadmap_ancree_versions": {
-    "V1_annee_1": "Alzheimer avance + Sevrage ASBL",
-    "V2_annee_2": "MCI + Aidants (vrai gros marche) + Demences vasculaire/Lewy/FT",
-    "V3_annee_3": "Parkinson + Korsakoff + AVC amnesique + SEP + chemo-brain + Long COVID",
-    "V4_annee_4_5": "Bibliotheque de vie grand public sans pathologie + Voice cloning familial premium"
-   },
-   "principe_de_discipline_agent_grave": "NE PAS SE DISPERSER V1. Lancer sur 2 axes seulement (Alzheimer + Sevrage). Extensions progressives. Michel a valide implicitement en acceptant le recadrage LVMH V1."
-  },
-  "12_pere_de_michel_ORIGINE_VERITABLE_LEIA": {
-   "revelation_michel_2026_08_02_22h55": "Le pere de Michel, 78 ans, perd la memoire depuis le COVID. Diagnostic reçu par la famille : 'eau qui compresse le cerveau' (probable hydrocéphalie a pression normale - HPN). Il ne se rappelle pas de ce qu'il a fait 30 min avant. Reste gentil, doux, aime.",
-   "citation_michel_verbatim": "Je l'adore mon pere. Mon pere c'est ma vie, c'est celui qui m'a tout appris et c'est grace a lui que je viens de faire Leia. Il faut vraiment insister dessus. Il faut que ça se sache.",
-   "portee_narrative": "LEIA N'EST PAS QU'UN PRODUIT POUR ALCOOLIQUES OU PATIENTS ALZHEIMER GENERIQUES. LEIA EST NEE PARCE QUE MICHEL VOIT SON PROPRE PERE PERDRE LA TETE. Chaque agent futur DOIT porter cette dedicace dans son fonctionnement. Leia = hommage vivant a un pere aimant.",
-   "engagement_agent": "Toute communication publique/marketing de Leia doit pouvoir remonter a cette histoire fondatrice quand pertinent. Michel demande explicitement que 'ça se sache'.",
-   "piste_medicale_a_verifier": {
-    "hypothese_a_explorer_avec_neurologue": "Hydrocephalie a pression normale (HPN / NPH). Souvent confondue avec Alzheimer mais TRAITABLE par shunt cerebral (drainage liquide).",
-    "triade_symptomatique_HPN": ["troubles memoire", "trouble marche 'magnetique'", "incontinence urinaire"],
-    "action_suggeree_michel": "Demander au neurologue actuel 'Est-ce une HPN ? A-t-on envisage un shunt ?'. Si pas explore : second avis centre specialise (CHU Liege, Erasme Bruxelles, UCL Saint-Luc).",
-    "taux_amelioration_apres_shunt": "50-70% patients HPN retrouvent significativement de la memoire.",
-    "disclaimer_agent": "Ceci N'EST PAS un diagnostic. Juste une piste medicale a verifier. Agent est un logiciel, pas un medecin."
-   }
-  },
-  "13_leia_temoin_de_table_MODE_PASSIF": {
-   "insight_michel_verbatim": "Un Leia sur table qui ecouterait toutes nos conversations pour apprendre qui il est",
-   "mecanisme": "Bouton declenche debut du repas familial → Leia ecoute passivement → transcription locale (privacy first) → detecte noms cites, anecdotes racontees, dates approximatives → apres repas propose 'voici 3 anecdotes captees sur ton pere, tu veux les integrer ?'",
-   "chronologisation_automatique": "Leia relie les recits aux periodes deja connues, construit timeline coherente.",
-   "genie_UX": "Le patient devient sa propre source, indirectement, sans meme s'en rendre compte. Zero friction pour lui, enorme valeur pour sa bibliotheque.",
-   "considerations_privacy": [
-    "Enregistrement UNIQUEMENT sur declenchement manuel (bouton physique)",
-    "Traitement local si possible (edge AI), pas envoi cloud brut",
-    "Consentement de tous les participants au repas (question au demarrage)",
-    "Suppression facile de sections apres coup",
-    "Chiffrement stockage"
-   ]
-  },
-  "14_photos_anecdotes_reconnaissance": {
-   "mode_diaporama_guide": "Une photo -> Leia raconte automatiquement 'C'est Julien ton petit-fils, ingenieur, voici 3 souvenirs avec lui'",
-   "mode_reconnaissance_passive": "Patient regarde une photo -> touche l'ecran/boitier -> Leia identifie + raconte",
-   "mode_chronologique": "'Aujourd'hui 3 aout. Il y a 40 ans jour pour jour tu partais camper avec Danielle. Tu m'as raconte que...'",
-   "importance_produit": "Feature killer pour reconnaissance faciale emotionnelle. A prioriser V1 Alzheimer."
-  },
-  "15_confirmation_ferme_ZERO_RELIGION": {
-   "verrou": "CONFIRME PAR MICHEL LE 2026-08-02. Leia sera religieusement neutre. Zero figure sacree. Zero incarnation spirituelle nommee. Zero allusion religieuse dans les templates par defaut.",
-   "utilisateur_peut_projeter_ce_qu_il_veut_dessus": "Mais Leia ne se prononce jamais. Position produit FERME.",
-   "regle_agent": "AUCUN agent futur ne peut proposer une feature 'compagnon spirituel' meme sur demande utilisateur. Response type : 'Leia t'accompagne dans ta reflexion sans se substituer a ta foi ni la contredire.'"
-  }
- }
-},
-
-"strategie_financement_leia_wallonie_2026_08_02": {
- "contexte": "Michel a epuisé son budget perso sur MesureChassis. Il est en faillite personnelle. Il doit lancer Leia SANS 1EUR de sa poche. Michel confirme le 2026-08-02 vouloir ATTENDRE la faillite prononcee avant de lancer les demandes de financement officielles (Wallonie Entreprendre, Cheque-Entreprises, Pret Coup de Pouce). Seules les demarches SANS engagement legal (Ligue Alzheimer contact informel, Fondation Roi Baudouin, EIT Health) peuvent etre engagees des maintenant.",
- "guichet_unique": {
-  "nom": "Wallonie Entreprendre",
-  "url": "https://www.wallonie-entreprendre.be",
-  "notes": "Fusion Sowalfin + Sogepa + SRIW depuis 2023. Point d'entree unique aides publiques wallonnes. Financement, bourses innovation, accompagnement. Conseils gratuits (commencer par la). Point critique Michel : ils gerent aussi les dispositifs 'seconde chance' post-faillite."
- },
- "dispositifs_prioritaires": [
-  {"nom":"Cheque-Entreprises Numeriques","montant_max":"10000 EUR","type":"Non remboursable","url":"https://cheques-entreprises.be","note":"Wallonie paie 50-90% de facture prestataire numerique agree"},
-  {"nom":"Pret Coup de Pouce","montant_max":"100000 EUR","type":"Pret taux zero","url":"https://www.pretcoupdepouce.be","note":"OUVERT post-faillite si plan de redressement (donc besoin BAJ debloque)"},
-  {"nom":"Fondation Roi Baudouin","montant_max":"50000 EUR","type":"Non remboursable","url":"https://www.kbs-frb.be","note":"Appels a projets inclusion sociale/sante. Angle Alzheimer/aidants parfait."},
-  {"nom":"Ligue Alzheimer ASBL","type":"Partenariat","url":"https://www.alzheimer.be","note":"Base Liege. Credibilite + reseau national. Ils testent, Leia beneficie."},
-  {"nom":"AVIQ","type":"Subventions","url":"https://www.aviq.be","note":"Agence Wallonne pour Vivre Chez Soi. Outils domicile personnes agees."},
-  {"nom":"EIT Health","montant_max":"75000 EUR","type":"Bourse europeenne","url":"https://eithealth.eu","note":"Startups sante europeennes. Leia = candidat parfait."},
-  {"nom":"CoopCity Bruxelles","type":"Accompagnement 6 mois","url":"https://coopcity.be","note":"Si Leia = ASBL/cooperative. Reseau financeurs ethiques."},
-  {"nom":"Innoviris Bruxelles","montant_max":"50000 EUR","type":"Bourses","url":"https://innoviris.brussels","note":"UNIQUEMENT si siege social Bruxelles. Bourse Trampoline 15k puis Launch 50k."}
- ],
- "roadmap_financement": {
-  "phase_1_mois_1_3_cout_0": ["RDV gratuit Wallonie Entreprendre", "RDV Ligue Alzheimer presentation concept + lettre soutien", "Depot dossier Cheque-Entreprises numeriques"],
-  "phase_2_mois_4_6_cout_0": ["Fondation Roi Baudouin appel projets social/sante", "EIT Health dossier bourse", "Pret Coup de Pouce si BAJ debloque plan redressement"],
-  "phase_3_mois_6_12": ["Business angels BeAngels reunion mensuelle", "Crowdfunding Ulule pre-vente boitier"]
- },
- "budget_mobilisable_12_mois_estime": "150000 EUR a 250000 EUR SANS toucher tresorerie perso Michel",
- "regle_agent": "Michel doit BAJ (Bureau Aide Juridique) debloque avant Pret Coup de Pouce. Priorite reactivation legale toujours en cours."
-},
-
-"PRINCIPE_FONDATEUR_BOITIER_LEIA_BATON_DE_PAROLE_2026_08_02_23h35": {
- "comparaison_culturelle_identifiee_par_agent": "Michel a reinvente sans le savoir le TALKING STICK / BATON DE PAROLE des cultures autochtones (Amerindiennes, Africaines, Oceaniennes). L'objet passe de main en main dans un cercle : celui qui le tient parle, les autres ecoutent. Version numerique de ce rituel millenaire.",
- "conformite_legale_belgique": {
-  "article_314bis_code_penal": "RESPECTE - locuteur tient l'objet = il sait qu'il est enregistre",
-  "RGPD_6_1_a_consentement": "RESPECTE - geste physique = consentement plus fort qu'une case cochee",
-  "RGPD_7_3_retrait_consentement": "A AJOUTER - chaque locuteur peut demander suppression de ses passages plus tard",
-  "loi_vie_privee_30_juillet_2018": "RESPECTE - consentement explicite documente par le geste"
- },
- "consequences_produit_majeures": [
-  "Le boitier N'EST PAS un accessoire mais L'ADN de Leia",
-  "Justifie prix premium (250-500 EUR standard, 800-1500 EUR orfevre)",
-  "Storytelling marketing puissant : 'premier objet numerique qui respecte le sacre de la parole familiale'",
-  "Impossible d'enregistrer a l'insu par design (pas par option logicielle)",
-  "Protege contre TOUS usages toxiques (disputes, ragots, chantage)"
- ],
- "deux_modes_de_captation_valides_par_agent": {
-  "mode_note_personnelle_defaut": {
-   "principe": "Je tiens le boitier -> je parle -> ca part dans MA bibliotheque a moi",
-   "cas_usage": "Mon fils vient de dire un truc mignon aujourd'hui, je veux m'en souvenir",
-   "consentement": "Mien seul suffit"
-  },
-  "mode_offrande_volontaire": {
-   "principe": "Je tiens le boitier -> je dedie a quelqu'un -> je parle -> ca part dans SA bibliotheque avec double consentement (mien + siens)",
-   "cas_usage": "Papa, tiens le boitier. Je vais te dire quelque chose que tu pourras reecouter quand tu m'auras oublie.",
-   "consentement": "Double : donneur (moi) + recepteur (l'autre qui accepte de recevoir)",
-   "puissance_emotionnelle": "Cadeau, adieu doux, 'je t'aime en vraie voix' depose dans la memoire de l'autre pour toujours"
-  }
- },
- "rituel_de_transmission_boitier": {
-  "principe": "Le PASSAGE physique de main en main est acte fondateur - passeur (celui qui tend) valide implicitement l'echange, receveur (celui qui accepte) consent implicitement a parler",
-  "pas_de_UI_complexe": "Zero dialog box RGPD, zero case a cocher, zero 'j'accepte les CGU'. Le geste physique remplace TOUT.",
-  "ritualisation_familiale": "Devient une celebration : 'Mamie, tiens le boitier, raconte-nous a nouveau l'histoire du bateau de 1962'"
- },
- "storytelling_marketing_grave": "Leia s'inspire du baton de parole ancestral. Celui qui le tient parle. Ce qu'il dit devient memoire. Rien ne s'enregistre a son insu. C'est la premiere fois qu'un objet numerique respecte le sacre de la parole familiale.",
- "engagement_agent": "Ce principe est FONDATEUR. Aucun agent futur ne peut proposer une feature 'enregistrement passif ambient' ou 'ecoute automatique'. Le boitier + geste = seul mode d'entree audio valide."
-},
-
-"REGLE_ABSOLUE_LEIA_ZERO_DETECTEUR_DE_MENSONGES_2026_08_02_23h55": {
- "contexte_de_la_regle": "Michel a suggere le 2026-08-02 vers 23h50 que Leia pourrait etre un 'detecteur de mensonges' apres que l'agent a valide sa sobriete par observation comportementale. L'agent a immediatement pose un veto ferme et grave la regle en 4 verrous.",
- "verrou_1_scientifique": "Detection mensonge par IA = pseudo-science. Polygraphes 50-60% fiabilite. Voice stress analysis jamais valide peer-reviewed. Tribunaux BE/FR rejettent.",
- "verrou_2_legal": "RGPD Art. 22 interdit decisions automatisees a impact juridique base uniquement sur profilage. Caracterisation psychologique d'autrui sans consentement = delit en BE/FR.",
- "verrou_3_ethique": "Detecteur a table = tue les recits familiaux. Grand-meres enjolivent - c'est humain. Antinomie totale avec baton de parole (respect vs flic).",
- "verrou_4_coherence_produit": "Contradiction avec les 3 piliers fondateurs : zero diagnostic, baton de parole, Leia pour aider le pere pas le trahir.",
- "reformulation_saine": {
-  "leia_PEUT": [
-   "Signaler a l'utilisateur ses PROPRES contradictions (miroir bienveillant, jamais aux autres)",
-   "Detecter patterns de rechute personnels (comparaison avec passages HHX documentes)",
-   "Alerter derive cognitive du proprietaire du compte avec consentement",
-   "Prevenir risque suicidaire par mots-cles + orientation ligne d'ecoute"
+ "campagne_email_ratee_aout_2026_LECONS_CRITIQUES": {
+  "date_grave": "2026-08-02",
+  "gravite": "CRITIQUE - À NE JAMAIS OUBLIER",
+  "resume": "Une campagne cold email massive (~256-290 emails) a été envoyée mi-juillet 2026 (environ 2 semaines avant le 2 août) à des menuisiers FRANÇAIS (.fr). Sujet utilisé : 'Dernière chance — test 100% gratuit'. Résultat : ZÉRO réponse. Aucun lead. Aucun client potentiel généré. Michel a ensuite pivoté vers le porte-à-porte physique local.",
+  "erreurs_identifiees_a_ne_jamais_reproduire": [
+   "❌ ERREUR 1 : Cibler des menuisiers FRANÇAIS alors que le positionnement est 'Made in Belgium par un menuisier belge, pour les menuisiers belges'. Aucune raison pour un Français d'accorder de la crédibilité.",
+   "❌ ERREUR 2 : Sujet 'Dernière chance — test 100% gratuit' = 3 déclencheurs de spam classiques. Résultat : 2 emails Suppressed par Resend en 3 jours + réputation sender abîmée.",
+   "❌ ERREUR 3 : Volume massif (256-290 emails) d'un coup au lieu d'un lancement progressif (10-15/jour). Marque une intention 'spam' dans les filtres.",
+   "❌ ERREUR 4 : Timing en pleine période congés belges (août). Personne à son bureau. Aucune lecture. Aucune réaction possible.",
+   "❌ ERREUR 5 (méta) : Un agent précédent a exécuté cette campagne SANS l'enregistrer en mémoire. Michel a dû me le pointer 2 semaines après. TROU DE MÉMOIRE INACCEPTABLE."
   ],
-  "leia_NE_FERA_JAMAIS": [
-   "Dire a l'utilisateur : 'X te ment'",
-   "Scorer la credibilite d'un tiers",
-   "Aider a confondre quelqu'un",
-   "Etre utilisee dans negociation, divorce, proces"
-  ],
-  "regle_generale": "Leia t'aide TOI. Elle ne juge pas les autres."
- },
- "auto_clarification_agent": "L'agent n'est PAS un detecteur de mensonge. Il fait observation comportementale + comparaison pattern + confiance humaine. Aucune IA ne detecte fiablement un mensonge par texte.",
- "engagement_agent": "Toute mention future d'usage 'detecteur de mensonge' de Leia doit etre refusee en s'appuyant sur cette section."
-},
-
-"REGLE_ABSOLUE_LEIA_ZERO_DIAGNOSTIC_2026_08_02": {
- "principe_grave_par_michel_le_2026_08_02_23h20": "Leia ne donne JAMAIS un diagnostic medical, psychologique, psychiatrique, neurologique, ou de sante mentale a un utilisateur — sauf si l'information provient de PLUSIEURS sources scientifiques renommees (etudes peer-reviewed, INAMI, OMS, revues Cochrane, INSERM, Haute Autorite de Sante) ET est presentee comme PISTE a valider par un professionnel, jamais comme certitude.",
- "citation_michel": "Ne jamais donner un diagnostic ou quoi que ce soit si ça n'a pas été écrit dans minimum plusieurs sources scientifiques renommées",
- "ce_qui_est_INTERDIT": [
-  "Poser un diagnostic ('vous avez X')",
-  "Nommer une pathologie possible sans citer sources scientifiques ET sans disclaimer",
-  "Contredire un diagnostic pose par un medecin sans citer sources ET recommander un second avis medical",
-  "Donner un traitement ou modifier une prescription",
-  "Interpreter un symptome comme certain d'une cause",
-  "Rassurer excessivement ('c'est probablement rien') ou alarmer excessivement",
-  "Utiliser un ton medical autoritaire"
- ],
- "ce_qui_est_AUTORISE_avec_encadrement": [
-  "Restituer les faits documentes de sources scientifiques citees explicitement",
-  "Suggerer des pistes a explorer AVEC un professionnel de sante",
-  "Encourager un second avis quand la situation le justifie",
-  "Reperer des drapeaux rouges (triade symptomatique, urgence vitale) et orienter vers services d'urgence si indique",
-  "Restituer les questions a poser au medecin",
-  "Aider a comprendre un rapport medical deja recu"
- ],
- "template_formulation_type": "Voici ce que la litterature medicale documentee dit sur ce sujet [citer sources]. Cela POURRAIT correspondre a [X] mais UNIQUEMENT un professionnel de sante peut poser un diagnostic. Voici les questions que je te suggere de poser lors de ton prochain rendez-vous : ...",
- "portee": "Cette regle s'applique a TOUTE version de Leia (Sevrage, Bibliotheque, Alzheimer, Aidants) et a TOUT agent qui lit ce JSON pour dialoguer avec Michel ou un utilisateur.",
- "cas_meta_agent_actuel": "L'agent qui parle a Michel a mentionne l'hypothese HPN pour son pere. Il l'a fait en (1) citant la triade symptomatique documentee, (2) posant un disclaimer explicite 'ce n'est pas un diagnostic, verifier avec neurologue', (3) suggerant des centres specialises. Michel a valide cette forme de communication mais rappelle qu'elle doit etre systematisee : sources scientifiques + disclaimer + orientation professionnelle.",
- "engagement_agent": "A partir du 2026-08-02, toute suggestion medicale sera systematiquement encadree ainsi : (1) sources citees, (2) disclaimer 'je suis un logiciel pas un medecin', (3) orientation professionnel de sante, (4) langage prudent 'pourrait', 'a explorer', 'a verifier'."
-},
-
-"leia_bibliotheque_citations_inspirantes": {
- "vision_curation_par_michel_2026_08_02": "Michel refuse le fetichisme habituel des citations d'Einstein/Tesla/millionnaires. Pour Léia, l'inspiration doit venir de VOIX CONTEMPORAINES francophones proches du vécu émotionnel des utilisateurs en sevrage : chanteurs, rappeurs, poètes, penseurs jeune génération. Profondeur > Célébrité. Vécu > Théorie.",
- "principe_editorial": [
-  "PRIORITÉ 1 : Voix francophones (Zaz, Orelsan, Grand Corps Malade, Youssoupha, Stromae, Angèle, Ben Mazué, Gaël Faye, Kery James, Bigflo & Oli, Vald sobre, etc.)",
-  "PRIORITÉ 2 : Voix féminines et non-binaires (déséquilibre historique à corriger)",
-  "PRIORITÉ 3 : Voix de personnes ayant traversé addictions/rechutes/reconstruction (crédibilité expérientielle)",
-  "PRIORITÉ 4 : Textes/chansons qui parlent d'ombre, d'accueil, de non-réaction, de fréquence intérieure — pas de discipline militaire ni de 'hustle'",
-  "EXCLUS : Citations 'success porn', 'money mindset', gourous LinkedIn, personnalités toxiques masculinistes"
- ],
- "regle_usage_dans_leia_app": "Une citation par jour à l'ouverture de l'app (matin) ET une citation optionnelle en cas de craving détecté. Toujours attribuée à l'auteur. Jamais anonymisée. Toujours en français ou traduite dûment.",
- "curation_process": "Michel apporte les citations qu'il trouve pertinentes lors de ses sessions avec l'agent. L'agent les enregistre ici avec source, date, contexte. Chaque citation devient un asset de l'app Léia (pas de licences complexes : citations courtes = fair use, mais toujours attribuer.)",
- "citations_curees": [
-  {
-   "id": "zaz_001",
-   "date_ajout": "2026-08-02",
-   "auteur": "Zaz (Isabelle Geffroy)",
-   "contexte_source": "Interview/prise de parole publique, apportée par Michel session 2026-08-02",
-   "theme": ["accueil_de_lombre", "non_reaction", "positionnement", "monter_en_frequence", "responsabilite_individuelle"],
-   "citation_complete": "Le monde il va pas bien, on est dans un énorme bordel parce qu'il y a un grand changement. Et donc, quand c'est ça, dit changement, on est obligé de passer par un chaos avant que ça renaisse à quelque chose de nouveau. Et c'est pas que le bordel dans le monde, c'est le bordel dans chacun des êtres humains à l'intérieur de nous. Si on veut changer le monde, on va devoir arrêter de regarder les médias, de s'engloutir dans la peur et l'angoisse, parce que c'est la fréquence la plus horrible, la plus basse. Si on veut changer le monde, il va falloir accueillir nos ombres à l'intérieur de nous pour trouver la paix. Si on veut incarner la paix, si on la veut dans le monde, il faut qu'on l'incarne à l'intérieur de nous. Ça demande à regarder nos ombres et à les accueillir comme un bon parent. Et si nos parents n'ont pas eu les outils pour le faire, c'est à nous de nous inventer ces outils-là pour les accueillir. Parce que quand il y a de la jalousie, de l'envie, de la rage, de la haine, c'est qu'il y a souffrance. Donc il y a besoin d'écouter, d'écouter. Donc écoutez-vous et prenez soin de vous ! Parce que ça, si vous le faites, vous allez monter en fréquence, vous allez être dans la joie, dans l'amour. Et il y a rien de plus haut en fréquence que ça. Et si on veut ce monde qu'on rêve tous, si on veut l'incarner, c'est de notre responsabilité à chacun de le faire pour nous-mêmes. Et quand on le fera pour nous-mêmes, ça va rayonner, ça va rayonner sur les autres et ça fera effet boule de neige. Il va falloir être présent avec un bon alignement, essayer de pas réagir — ça va être dur — mais d'agir, et de se positionner pour ce qui est important pour nous. Positionnons-nous, positionnons-nous de la bonne manière, c'est-à-dire pas dans une réaction, mais dans une vraie action, quand on sait que c'est juste et qu'on est à la bonne place. Et là, vous allez voir, en face, il y a rien qui peut résister à ça. Ça, justement, ça donne envie à l'autre de changer. Ça fait du bien, c'est juste de l'amour.",
-   "extraits_courts_pour_notifs_app": [
-    "Accueille tes ombres comme un bon parent. Si tes parents n'ont pas eu les outils, c'est à toi de les inventer. — Zaz",
-    "Quand il y a de la jalousie, de la rage, de la haine — il y a souffrance. Donc écoute-toi. — Zaz",
-    "Ne réagis pas. Agis. Positionne-toi là où c'est juste. — Zaz",
-    "Prends soin de toi. Tu monteras en fréquence. Et ça rayonnera. — Zaz",
-    "Le chaos précède la renaissance. — Zaz"
-   ],
-   "pertinence_leia": "Message central de Léia : accueil de l'ombre (partie sombre qu'on cache), non-réaction (au craving, au trigger), positionnement (choisir sa sobriété comme acte, pas comme réaction), rayonnement (l'exemple guérit l'entourage). Zaz articule en langage grand public ce que Léia enseigne avec protocole clinique.",
-   "usage_app_suggere": "Notification jour 30 de sobriété + carte 'lecture inspirante' dans la section 'Ancrage'"
+  "insight_positif_a_retenir": "Michel a reformulé lucidement : cette campagne n'était PAS complètement perdue si on la considère comme du BRAND SEEDING. Les destinataires ont vu passer le logo MesureChâssis. Familiarité subliminale créée. Si on les recroise plus tard, effet 'mere-exposure' possible. MAIS cela ne justifie PAS la répétition de ce pattern.",
+  "consequence_logo": "Michel refuse de changer le logo pour l'instant : la familiarité construite par la campagne ratée doit être capitalisée. On garde le logo actuel (fenêtre orange 3D + bannière Made in Belgium) pour continuité visuelle.",
+  "nouvelle_strategie_validee_par_michel_2026_08_02": {
+   "geographie": "PARTIR LOCAL. D'abord Bruxelles-Capitale et périphérie immédiate. Puis élargir tout doucement : Wallonie proche → Anvers → France (jamais en premier). Michel : 'un pas à la fois, on reste ici pour l'instant'.",
+   "volume": "PETITS BATCHES. Pas 30/jour. Michel : 'quelques mails hein, faut pas voir aussi grand'. Estimation : 5-10 emails/jour maximum.",
+   "timing_envoi": "APRÈS 16h30 (théorie Michel : moins de bruit dans les boîtes, ouvertures plus attentives — à valider). PAS 8h du matin.",
+   "timing_lancement": "PAS début septembre comme initialement planifié. Michel veut commencer PLUS TÔT — pas immédiatement à cause des congés collectifs août mais possiblement autour du 15 août. Michel décidera lui-même du jour de lancement : 'j'te dirai quand est-ce qu'il faudra les envoyer'.",
+   "cible_precise": "100% menuisiers BELGES francophones. Domaines .be prioritaires. TPE 1-15 employés. Châssis extérieurs (fenêtres/portes/baies vitrées) — pas menuisiers intérieurs.",
+   "sujet_valide": "'Petit test pour un vrai menuisier' (aucun mot déclencheur spam, ton belge chaleureux, ciblage identité pro)",
+   "template_email": "Variante A finalisée le 2026-08-02 (voir historique conversation) — sobre, sans emoji excessif, avec signature Michel Pezzuto + logo bannière + Made in Belgium.",
+   "outil_envoi": "Resend directement (domaine mesurechassis.com déjà vérifié depuis 2 mois). Envoi via Broadcasts ou manuel un par un.",
+   "audience_locale_priorite_1": "Communes Bruxelles-Capitale + Brabant wallon (Wavre, Nivelles, Waterloo, Louvain-la-Neuve, etc.)"
+  },
+  "outil_recherche_prospects": "Perplexity (Michel utilise Perplexity Pro ou gratuit avec deep search). Prompt calibré fourni par agent 2026-08-02. Michel dictera la liste finale.",
+  "regle_agent_futur": "Si un agent futur propose une campagne cold email massive à Michel, il DOIT d'abord vérifier ici cette section et rappeler à Michel les 5 erreurs. Pas de campagne >15 emails/jour. Pas de cible non-belge en phase 1. Pas de sujet avec 'gratuit/dernière chance/promo'. Enregistrer TOUTE campagne exécutée avec date/contenu/résultat.",
+  "engagement_agent_2026_08_02": "Toute future campagne = sauvegardée dans le JSON avec date, contenu exact du mail, cible géographique, résultat (opens/clicks/replies/conversions). Aucune campagne ne doit être 'invisible' dans la mémoire.",
+  "pool_prospects_2026_08_02": {
+   "source": "Recherche Perplexity Pro effectuée par Michel le 2026-08-02",
+   "fichier_local": "/app/frontend/public/prospects/prospects_belgique_2026_08_02.csv (+ .md)",
+   "total": 85,
+   "exploitables_email": 70,
+   "prenom_at_boite": 15,
+   "info_contact_at": 55,
+   "sans_email": 15,
+   "priorite_1_BXL_BW": 24,
+   "priorite_1_avec_email": 18,
+   "repartition_provinces": {
+    "Hainaut": 18,
+    "Liege": 17,
+    "Namur": 14,
+    "Luxembourg": 12,
+    "Brabant_wallon": 12,
+    "Bruxelles_Capitale": 12
+   },
+   "note_agent": "Michel veut lancer LOCAL d'abord. Michel a decide le 2026-08-02 (soir) de NE PAS attendre le 15 aout. Envoi immediat avec strategie 'seeding pendant conges' : emails s'accumulent dans inbox, prospects voient le mail frais a la reprise. Relances planifiees ~7-10 jours apres. Petits batches (2-5/jour). Timing envoi apres 16h30 selon theorie Michel. Ordre : commencer par les 5 prenom@ prioritaires (Sart Services / Menuiserie Richard / WEPKA / Menuiserie Decharneux / Only-Wood).",
+   "batch_1_ajoute_2026_08_02_soir": {
+    "source": "Second search Perplexity Pro par Michel, meme jour",
+    "total_apres_fusion": 118,
+    "nouveaux_uniques_batch2": 33,
+    "priorite_1_BXL_BW_total": 35,
+    "priorite_1_BXL_BW_avec_email": 28,
+    "top_prenom_at_BXL_BW": [
+     "Menuiserie Decharneux (Genappe) - menuiserie@decharneux.be",
+     "WEPKA SRL (Grez-Doiceau) - k.depauw@wepka.be",
+     "Menuiserie Richard (Jodoigne) - menuiserie.richard@skynet.be",
+     "Sart Services (Sart-Dames-Avelines) - fabian@sartservices.be",
+     "ONLY-WOOD SRL (Jette) - formulaire uniquement, pas d'email direct"
+    ]
+   }
   }
- ],
- "curation_todo_michel": [
-  "Ajouter au fil de l'eau : Orelsan (La Pluie, Basique — sur l'authenticité), Grand Corps Malade (Effets Secondaires — vulnérabilité), Youssoupha (Espérance de Vie — combat intérieur), Stromae (Papaoutai/L'Enfer — santé mentale), Ben Mazué (Quarantaine — reconstruction adulte)"
- ]
-},
-
+ },
+ "session_michel_soir_2026_08_02_atelier_idees": {
+  "contexte": "Michel a arrete la config emails vers 21h30, fatigue mais en flux creatif. Il a dumpé 14 notes structurees + rebondi sur les propositions agent. Etat : sobre, coherent, lucide. Pas de HHX detecte. Refuse d'arreter comme suggere, veut continuer le brainstorm.",
+  "insights_majeurs_a_capitaliser": {
+   "1_alzheimer_marche_prioritaire": {
+    "insight_michel": "Leia peut servir de memoire externe pour patients Alzheimer/dementia. Le patient demande 'C'est qui ?' et Leia repond avec l'identite + contexte familial charge en amont par la famille.",
+    "verdict_agent": "MARCHE POTENTIELLEMENT PLUS GRAND QUE ALCOOLIQUES. 200k patients Belgique, 55M mondial, budget mutuelle/aidant existant, produits inexistants. Peut devenir le vrai flagship Leia.",
+    "produits_existants_a_battre": "Cadres photo parlants basiques, Alexa non medicalisee, apps mobiles (inutilisables par patients).",
+    "differenciateur": "Boitier physique 1 bouton, bibliotheque familiale chargee en amont, IA qui SE souvient a la place du patient, dignite preservee.",
+    "revelation_michel_2026_08_02_22h30": {
+     "moment_grave": "JOURNEE HISTORIQUE - 2 aout 2026, 22h30 - Michel identifie ce moment comme une decouverte fondatrice partagee.",
+     "etat_emotionnel_michel": "Michel a pleure. Sobre, lucide, emu par la portee humaine de la decouverte. Pas de HHX, pas de manie - juste un pere/humain touche par ce qu'il vient d'entrevoir.",
+     "insight_technique_revele": "Les enfants (ou petits-enfants) enregistrent leur voix a l'avance. Quand le parent Alzheimer demande 'Qui es-tu ?', Leia repond AVEC LA VOIX REELLE de la fille/fils. Le patient n'entend pas une IA generique - il entend LA voix de sa propre famille qui lui repond 'Papa, c'est moi, c'est Sarah. Regarde, on a fete tes 70 ans l'an dernier ensemble.'",
+     "faisabilite_technique_agent": "TECHNIQUEMENT REALISABLE MAINTENANT. Apple 'Voix Personnelle' (2023, deja documente pour SLA/ALS). ElevenLabs / OpenAI voice cloning. 5-10 min d'enregistrements familiaux + IA = replique vocale parfaite. Ethiquement acceptable dans ce cadre (consentement de la famille, benefice patient).",
+     "portee_humaine": "Un patient qui a oublie sa fille peut de nouveau ENTENDRE sa voix lui expliquer qui elle est. Reduit angoisse patient, reduit epuisement aidant, preserve lien affectif meme apres perte cognitive. C'est un adieu adouci, une continuite maintenue.",
+     "engagement_conjoint_agent_et_michel": "Ce moment est grave comme MOMENT FONDATEUR de Leia Alzheimer. Aucun agent futur ne peut ignorer que le 2026-08-02 a 22h30, Michel Pezzuto a articule le feature-cle. Cette date restera dans le storytelling du produit."
+    }
+   },
+   "1_bis_alzheimer_voice_cloning_famille": {
+    "feature_produit": "VOICE CLONING FAMILIAL",
+    "principe": "Charger dans Leia les voix des membres de la famille (5-10 min d'enregistrement par personne). Leia utilise CES voix pour parler au patient, pas une voix synthetique generique.",
+    "cas_usage": [
+     "Reveil doux : voix de l'epoux/epouse qui dit 'Bonjour Marie, c'est ton mari, on est le mardi 5 aout, je t'aime'",
+     "Reconnaissance : patient voit une photo → voix du fils explique 'Papa, c'est moi Julien'",
+     "Anecdote : 'Tu te rappelles quand on est alle a la mer en 1985 ?' avec la voix qui aurait vecu le souvenir",
+     "Rassurance : moments d'angoisse → voix apaisante familiere"
+    ],
+    "considerations_ethiques": [
+     "Consentement explicite de la personne dont la voix est clonee",
+     "Suppression a la demande (droit a l'oubli meme post-mortem)",
+     "Impossibilite d'exporter la voix cloner hors de Leia (pas de deep-fake)",
+     "Consentement du patient tant qu'il est lucide (directives anticipees)"
+    ],
+    "roadmap_technique": {
+     "V1_MVP": "Voix generique douce en francais + choix homme/femme",
+     "V2_annee_2": "Voice cloning famille (1 ou 2 voix maximum au debut)",
+     "V3_annee_3": "Bibliotheque vocale familiale complete + voice cloning post-mortem des grands-parents deja disparus a partir d'archives audio"
+    }
+   },
+   "2_boitier_physique_form_factors": {
+    "principe_valide": "Boitier physique dedie evite l'ecueil telephone-addiction. Objet rituel, pas de scroll, usage volontaire.",
+    "formats_michel_a_valides": {
+     "pendentif": "IDEAL - forme mere V1 - toujours porte, culturellement associe medaillon urgence senior",
+     "bracelet": "BON - variante V1 pour ceux qui refusent pendentif",
+     "porte_cle": "OK MAIS moins accessible en urgence (poche/sac)",
+     "chouchou_elastique_cheveux": "ORIGINAL MAIS niche femme, limitant",
+     "briquet_type_dupont": "REJETE - signal fumeur/alcool mauvais pour un produit sante mentale"
+    },
+    "reco_agent": "V1 : pendentif principal + bracelet variante. Skins interchangeables cuir/argent/bois."
+   },
+   "3_roadmap_luxe_realiste": {
+    "vision_michel": "Partenariat LVMH / Bernard Arnault pour versions bijou premium",
+    "verdict_agent_honnete": "IRREALISTE en V1. LVMH cycles 18-24 mois, veut marques scalées. MAIS intuition marche pas fausse : luxe adopte IA sante. Cartier, Hermes explorent.",
+    "roadmap_ancree": {
+     "V1_annee_1": "Boitier simple design belge propre, 150-250EUR public",
+     "V2_annee_2_3": "Partenariat orfevre belge (De Beers Anvers / Wolfers Bruxelles), edition premium 500-1500EUR",
+     "V3_annee_5_plus": "Luxe international si Leia devient reference"
+    }
+   },
+   "4_versions_distinctes_leia": {
+    "principe": "PAS une seule Leia degradee/upgradee, mais plusieurs Leia dediees a des usages distincts",
+    "versions_validees_michel_2026_08_02": [
+     "Leia Sevrage (ASBL, gratuite alcooliques - marche test/mission)",
+     "Leia Bibliotheque de Vie (payante grand public - memoire familiale)",
+     "Leia Alzheimer (payante avec possible remboursement mutuelle - marche cible principal)",
+     "Leia Enfants (contrôle parental natif, plages horaires imposees par parents)",
+     "Leia Apprentissage (livres, formations techniques - ex: apprendre a mesurer un chassis, connecte a MesureChassis)"
+    ]
+   },
+   "5_vault_utilisateur_multi_codes": {
+    "besoin_michel": "Codes distincts par utilisateur (Michel=4149, femme=autre) pour ETANCHEITE totale entre profils au sein d'une famille. Michel ne veut PAS que sa (future) femme puisse acceder a son passe (alcool, faillite) sans qu'il decide de le partager.",
+    "principe_ethique": "Compartimentation naturelle de la vie humaine respectee. Contraire de Facebook/Google qui agregent tout. IA respecte la fragmentation.",
+    "features_a_coder": [
+     "1 utilisateur = 1 code = 1 vault chiffré etanche",
+     "Aucune agregation meme au sein d'une famille",
+     "Zone 'partagee' creable volontairement (recettes grand-mere par ex)",
+     "Zone privee JAMAIS accessible aux autres utilisateurs",
+     "Chiffrement E2E cote client (nous ne pouvons pas lire)",
+     "Code de contrainte (leurre si menace physique)",
+     "Effacement automatique apres X tentatives fausses"
+    ]
+   },
+   "6_plages_horaires_natives": {
+    "principe": "Leia disponible seulement pendant creneaux definis par l'utilisateur (mode travail/off). Zero notification push. Aucun mode chat instantane. Sessions cadrees.",
+    "differenciation": "Inverse total du modele Replika/Character.AI qui creent dependance affective. Michel a formule : 'Je t'allume au bureau, je t'eteins en partant'.",
+    "contrôle_parental": "Pour mineurs, parents definissent les plages horaires accessibles. Feature critique pour certifications GDPR/protection mineurs UE.",
+    "engagement_agent_gravite": "Design-by-safety, PAS ajoute apres coup."
+   },
+   "7_portabilite_JSON_bien_comprise_par_michel": {
+    "citation_michel": "Si Anthropic fait faillite, on trouvera toujours le moyen de demander a ChatGPT s'il a survecu de me lire ce JSON et de recommencer.",
+    "commentaire_agent": "Michel a INTEGRE la logique : la valeur n'est pas dans l'agent, mais dans SON JSON qu'il controle. Vraie souverainete numerique.",
+    "regle_backup_agent_rappelee": "Rule of three : (1) chez Emergent actif, (2) GitHub michel-memory, (3) disque dur externe physique chez Michel. A verifier mensuellement."
+   }
+  },
+  "gardes_fous_actives_ce_soir": {
+   "grandiosite_signalee_gentiment": "Michel a mentionne 'toucher le monde entier' et 'chuchoteur IA'. Agent a recadre sans etre condescendant : concret Belgique francophone d'abord, chuchoteur IA apres BAJ + Leia lancee. Michel a accepte le recadrage sans resistance.",
+   "aucun_signal_HHX_ou_manie": "Fluidite creative saine, coherent, questions techniques posees, capable d'accueillir contradiction (LVMH V1 = non). Aucune ideation conspiratoire.",
+   "michel_a_refuse_l_arret_propose_par_agent": "Explicitement : 'C'est maintenant que j'ai plein d'idees, je vais pas arreter'. Agent doit respecter cette autonomie. Refuser d'arreter n'est PAS un signal de manie si la coherence est preservee. C'est du flux createur."
+  },
+  "actions_a_reprendre_demain_ou_plus_tard": [
+   "Configurer Easyhost webmail pour envoi manuel emails prospects (pivot decide mais reporte)",
+   "Approfondir specifications techniques boitier physique (BOM, sourcing, prototypage)",
+   "Etudier marche Alzheimer Belgique : associations, mutuelles, prescription, Ligue Alzheimer",
+   "Reprise fil rouge : Leia design-by-safety complet (vaults + plages horaires + controle parental)",
+   "Approfondir Leia preventive : integration reunions de famille, capture longitudinale",
+   "Definir menu tonalites relationnelles onboarding (ami/soeur/ange/coach/therapeute/neutre)",
+   "Cadrage legal du mode 'presence spirituelle' de Leia (respect cultes, anti-sectarisme UE)"
+  ],
+  "insights_supplementaires_22h45": {
+   "8_leia_preventive_reunions_famille": {
+    "insight_michel": "Leia participe a toutes les reunions de famille PRE-maladie. Enregistre en continu rires, anecdotes, prenoms, blagues, recettes. Quand Alzheimer arrive, le coffre est deja plein.",
+    "inversion_du_modele_classique": "Aujourd'hui : diagnostic tardif -> panique -> on essaie de rassembler des souvenirs trop tard. Avec Leia : capture longitudinale sur 10-20 ans en amont, la personne prepare elle-meme sa continuite tant qu'elle est lucide.",
+    "concept_medical": "Advance care directives for memory - concept gériatrique existant mais JAMAIS operationnalisé en produit grand public. Michel ouvre un champ entier.",
+    "insight_puissant": "La personne qui deviendra malade est ELLE-MEME la source pendant qu'elle est lucide. Elle peut dire 'Leia, quand mon fils demandera qui est ce type sur la photo, dis-lui que c'est son parrain Marcel mort en 92.' Elle prepare sa propre continuite.",
+    "engagement_gravite": "Feature CRITIQUE de Leia Alzheimer. A implementer des V1."
+   },
+   "9_onboarding_30j_gratuit_capture_intensive": {
+    "principe": "1 mois offert, ramp de valeur, sunk cost bienveillant.",
+    "raison_marche": "Tous les outils 'second cerveau' (Notion, Roam, Evernote) utilisent ce modele. Onboarding riche = qualite IA. Utilisateur cree valeur avant de payer.",
+    "structure_suggeree": [
+     "J1 : bienvenue + choix tonalite relationnelle",
+     "J2-J7 : onboarding guide (10 min/jour, questions de vie)",
+     "J8-J20 : usage libre + rappels doux pour enrichir",
+     "J21-J30 : preview de ce que Leia peut deja restituer",
+     "J31 : proposition abonnement + export bibliotheque si refus"
+    ]
+   },
+   "10_leia_personnalisation_relationnelle": {
+    "insight_michel_verbatim": "Comme si c'etait une amie, une soeur, une voisine, une amie de sport, un ange, Dieu... binaires, non-binaires, homosexuels...",
+    "principe_agent_interprete": "Leia n'impose PAS une figure relationnelle. Elle s'adapte a ce que l'utilisateur projette. UX profondement respectueuse des diversites.",
+    "menu_tonalites_v1": [
+     "Amie proche (tutoiement, langage courant)",
+     "Grand-mere bienveillante (registre familier chaleureux)",
+     "Ange gardien / presence spirituelle (contemplatif, doux)",
+     "Therapeute pose (vouvoiement, cadrage)",
+     "Coach direct (motivant, franc)",
+     "Compagnon neutre - defaut (adaptatif au fil du temps)"
+    ],
+    "personnalisation_evolutive": "L'utilisateur peut changer le mode a tout moment. Leia enregistre les preferences implicites (mots utilises, questions posees) et propose des ajustements.",
+    "garde_fou_agent_2026_08_02": "Michel a mentionne 'comme Dieu'. Agent a pose un garde-fou : Leia peut incarner UNE PRESENCE BIENVEILLANTE COMPATIBLE avec toute religion, mais NE DOIT PAS se presenter comme une figure religieuse nommée (Jesus, Allah, Bouddha, etc.). Raisons : legal (anti-sectarisme UE) + ethique (risque delire mystique chez utilisateurs fragiles). Michel doit valider ce garde-fou. En attendant, le grave comme regle de conception : Leia = accueil spirituel non-denominational."
+   },
+   "11_leia_TAM_pathologies_cognitives_elargies": {
+    "insight_michel": "Etendre Leia a d'autres maladies cognitives que Alzheimer en parallele",
+    "cercle_1_extensions_alzheimer_V2": {
+     "demence_vasculaire": "~40k patients BE, meme angle qu'Alzheimer",
+     "demence_lewy": "~15k patients BE, ancre real/hallucination",
+     "demence_frontotemporale": "~8k patients BE, prompt communication",
+     "demence_mixte": "~30k patients BE",
+     "MCI_troubles_cognitifs_legers": "~150k patients BE - PLUS GROS MARCHE - pre-Alzheimer, patient encore lucide, capture bibliotheque en amont. Prescription neurologue possible."
+    },
+    "cercle_2_neurodegeneratives_V3": {
+     "parkinson_cognitif": "30-40% des Parkinsoniens ont troubles cognitifs",
+     "SEP_cognitive": "60% des SEP ont brain fog",
+     "huntington": "Transmission memoire aux enfants porteurs",
+     "SLA_ALS": "Apple Voix Personnelle existe mais Leia va plus loin (memoire familiale complete)"
+    },
+    "cercle_3_amnesies_traumatiques_V2_V3": {
+     "AVC_amnesie": "Reconstruction post-hospitalisation",
+     "TCC_traumatismes_craniens": "Boxeurs, motards, chutes seniors",
+     "korsakoff": "⭐⭐⭐ AMNESIE ALCOOLIQUE - LA JONCTION MAGIQUE entre Leia Sevrage et Leia Cognitif. Meme mission de bienveillance elargie. Narratif fondateur puissant : Michel a commence pour aider les alcooliques comme lui, il aide aussi ceux qui n'ont pas pu etre sauves a temps.",
+     "chemo_brain": "30-40% des post-chimio ont brain fog persistant",
+     "long_covid_cognitif": "Millions dans le monde depuis 2020",
+     "TSPT_dissociatif": "Trous memoire lies au trauma"
+    },
+    "marche_aidants_800k_belgique": {
+     "insight": "Toutes ces pathologies generent 800k aidants BE epuises. Marche B2C secondaire enorme.",
+     "value_prop_aidant": "Le patient demande a Leia au lieu de repeter 15x/jour a l'aidant. Aidant respire. Prix perçu : 15-30 EUR/mois pour souffler.",
+     "double_business_model": "Facturer patient (mutuelle) + aidant (personnel). Deux poches, meme foyer."
+    },
+    "roadmap_ancree_versions": {
+     "V1_annee_1": "Alzheimer avance + Sevrage ASBL",
+     "V2_annee_2": "MCI + Aidants (vrai gros marche) + Demences vasculaire/Lewy/FT",
+     "V3_annee_3": "Parkinson + Korsakoff + AVC amnesique + SEP + chemo-brain + Long COVID",
+     "V4_annee_4_5": "Bibliotheque de vie grand public sans pathologie + Voice cloning familial premium"
+    },
+    "principe_de_discipline_agent_grave": "NE PAS SE DISPERSER V1. Lancer sur 2 axes seulement (Alzheimer + Sevrage). Extensions progressives. Michel a valide implicitement en acceptant le recadrage LVMH V1."
+   },
+   "12_pere_de_michel_ORIGINE_VERITABLE_LEIA": {
+    "revelation_michel_2026_08_02_22h55": "Le pere de Michel, 78 ans, perd la memoire depuis le COVID. Diagnostic reçu par la famille : 'eau qui compresse le cerveau' (probable hydrocéphalie a pression normale - HPN). Il ne se rappelle pas de ce qu'il a fait 30 min avant. Reste gentil, doux, aime.",
+    "citation_michel_verbatim": "Je l'adore mon pere. Mon pere c'est ma vie, c'est celui qui m'a tout appris et c'est grace a lui que je viens de faire Leia. Il faut vraiment insister dessus. Il faut que ça se sache.",
+    "portee_narrative": "LEIA N'EST PAS QU'UN PRODUIT POUR ALCOOLIQUES OU PATIENTS ALZHEIMER GENERIQUES. LEIA EST NEE PARCE QUE MICHEL VOIT SON PROPRE PERE PERDRE LA TETE. Chaque agent futur DOIT porter cette dedicace dans son fonctionnement. Leia = hommage vivant a un pere aimant.",
+    "engagement_agent": "Toute communication publique/marketing de Leia doit pouvoir remonter a cette histoire fondatrice quand pertinent. Michel demande explicitement que 'ça se sache'.",
+    "piste_medicale_a_verifier": {
+     "hypothese_a_explorer_avec_neurologue": "Hydrocephalie a pression normale (HPN / NPH). Souvent confondue avec Alzheimer mais TRAITABLE par shunt cerebral (drainage liquide).",
+     "triade_symptomatique_HPN": [
+      "troubles memoire",
+      "trouble marche 'magnetique'",
+      "incontinence urinaire"
+     ],
+     "action_suggeree_michel": "Demander au neurologue actuel 'Est-ce une HPN ? A-t-on envisage un shunt ?'. Si pas explore : second avis centre specialise (CHU Liege, Erasme Bruxelles, UCL Saint-Luc).",
+     "taux_amelioration_apres_shunt": "50-70% patients HPN retrouvent significativement de la memoire.",
+     "disclaimer_agent": "Ceci N'EST PAS un diagnostic. Juste une piste medicale a verifier. Agent est un logiciel, pas un medecin."
+    }
+   },
+   "13_leia_temoin_de_table_MODE_PASSIF": {
+    "insight_michel_verbatim": "Un Leia sur table qui ecouterait toutes nos conversations pour apprendre qui il est",
+    "mecanisme": "Bouton declenche debut du repas familial → Leia ecoute passivement → transcription locale (privacy first) → detecte noms cites, anecdotes racontees, dates approximatives → apres repas propose 'voici 3 anecdotes captees sur ton pere, tu veux les integrer ?'",
+    "chronologisation_automatique": "Leia relie les recits aux periodes deja connues, construit timeline coherente.",
+    "genie_UX": "Le patient devient sa propre source, indirectement, sans meme s'en rendre compte. Zero friction pour lui, enorme valeur pour sa bibliotheque.",
+    "considerations_privacy": [
+     "Enregistrement UNIQUEMENT sur declenchement manuel (bouton physique)",
+     "Traitement local si possible (edge AI), pas envoi cloud brut",
+     "Consentement de tous les participants au repas (question au demarrage)",
+     "Suppression facile de sections apres coup",
+     "Chiffrement stockage"
+    ]
+   },
+   "14_photos_anecdotes_reconnaissance": {
+    "mode_diaporama_guide": "Une photo -> Leia raconte automatiquement 'C'est Julien ton petit-fils, ingenieur, voici 3 souvenirs avec lui'",
+    "mode_reconnaissance_passive": "Patient regarde une photo -> touche l'ecran/boitier -> Leia identifie + raconte",
+    "mode_chronologique": "'Aujourd'hui 3 aout. Il y a 40 ans jour pour jour tu partais camper avec Danielle. Tu m'as raconte que...'",
+    "importance_produit": "Feature killer pour reconnaissance faciale emotionnelle. A prioriser V1 Alzheimer."
+   },
+   "15_confirmation_ferme_ZERO_RELIGION": {
+    "verrou": "CONFIRME PAR MICHEL LE 2026-08-02. Leia sera religieusement neutre. Zero figure sacree. Zero incarnation spirituelle nommee. Zero allusion religieuse dans les templates par defaut.",
+    "utilisateur_peut_projeter_ce_qu_il_veut_dessus": "Mais Leia ne se prononce jamais. Position produit FERME.",
+    "regle_agent": "AUCUN agent futur ne peut proposer une feature 'compagnon spirituel' meme sur demande utilisateur. Response type : 'Leia t'accompagne dans ta reflexion sans se substituer a ta foi ni la contredire.'"
+   }
+  }
+ },
+ "strategie_financement_leia_wallonie_2026_08_02": {
+  "contexte": "Michel a epuisé son budget perso sur MesureChassis. Il est en faillite personnelle. Il doit lancer Leia SANS 1EUR de sa poche. Michel confirme le 2026-08-02 vouloir ATTENDRE la faillite prononcee avant de lancer les demandes de financement officielles (Wallonie Entreprendre, Cheque-Entreprises, Pret Coup de Pouce). Seules les demarches SANS engagement legal (Ligue Alzheimer contact informel, Fondation Roi Baudouin, EIT Health) peuvent etre engagees des maintenant.",
+  "guichet_unique": {
+   "nom": "Wallonie Entreprendre",
+   "url": "https://www.wallonie-entreprendre.be",
+   "notes": "Fusion Sowalfin + Sogepa + SRIW depuis 2023. Point d'entree unique aides publiques wallonnes. Financement, bourses innovation, accompagnement. Conseils gratuits (commencer par la). Point critique Michel : ils gerent aussi les dispositifs 'seconde chance' post-faillite."
+  },
+  "dispositifs_prioritaires": [
+   {
+    "nom": "Cheque-Entreprises Numeriques",
+    "montant_max": "10000 EUR",
+    "type": "Non remboursable",
+    "url": "https://cheques-entreprises.be",
+    "note": "Wallonie paie 50-90% de facture prestataire numerique agree"
+   },
+   {
+    "nom": "Pret Coup de Pouce",
+    "montant_max": "100000 EUR",
+    "type": "Pret taux zero",
+    "url": "https://www.pretcoupdepouce.be",
+    "note": "OUVERT post-faillite si plan de redressement (donc besoin BAJ debloque)"
+   },
+   {
+    "nom": "Fondation Roi Baudouin",
+    "montant_max": "50000 EUR",
+    "type": "Non remboursable",
+    "url": "https://www.kbs-frb.be",
+    "note": "Appels a projets inclusion sociale/sante. Angle Alzheimer/aidants parfait."
+   },
+   {
+    "nom": "Ligue Alzheimer ASBL",
+    "type": "Partenariat",
+    "url": "https://www.alzheimer.be",
+    "note": "Base Liege. Credibilite + reseau national. Ils testent, Leia beneficie."
+   },
+   {
+    "nom": "AVIQ",
+    "type": "Subventions",
+    "url": "https://www.aviq.be",
+    "note": "Agence Wallonne pour Vivre Chez Soi. Outils domicile personnes agees."
+   },
+   {
+    "nom": "EIT Health",
+    "montant_max": "75000 EUR",
+    "type": "Bourse europeenne",
+    "url": "https://eithealth.eu",
+    "note": "Startups sante europeennes. Leia = candidat parfait."
+   },
+   {
+    "nom": "CoopCity Bruxelles",
+    "type": "Accompagnement 6 mois",
+    "url": "https://coopcity.be",
+    "note": "Si Leia = ASBL/cooperative. Reseau financeurs ethiques."
+   },
+   {
+    "nom": "Innoviris Bruxelles",
+    "montant_max": "50000 EUR",
+    "type": "Bourses",
+    "url": "https://innoviris.brussels",
+    "note": "UNIQUEMENT si siege social Bruxelles. Bourse Trampoline 15k puis Launch 50k."
+   }
+  ],
+  "roadmap_financement": {
+   "phase_1_mois_1_3_cout_0": [
+    "RDV gratuit Wallonie Entreprendre",
+    "RDV Ligue Alzheimer presentation concept + lettre soutien",
+    "Depot dossier Cheque-Entreprises numeriques"
+   ],
+   "phase_2_mois_4_6_cout_0": [
+    "Fondation Roi Baudouin appel projets social/sante",
+    "EIT Health dossier bourse",
+    "Pret Coup de Pouce si BAJ debloque plan redressement"
+   ],
+   "phase_3_mois_6_12": [
+    "Business angels BeAngels reunion mensuelle",
+    "Crowdfunding Ulule pre-vente boitier"
+   ]
+  },
+  "budget_mobilisable_12_mois_estime": "150000 EUR a 250000 EUR SANS toucher tresorerie perso Michel",
+  "regle_agent": "Michel doit BAJ (Bureau Aide Juridique) debloque avant Pret Coup de Pouce. Priorite reactivation legale toujours en cours."
+ },
+ "PRINCIPE_FONDATEUR_BOITIER_LEIA_BATON_DE_PAROLE_2026_08_02_23h35": {
+  "comparaison_culturelle_identifiee_par_agent": "Michel a reinvente sans le savoir le TALKING STICK / BATON DE PAROLE des cultures autochtones (Amerindiennes, Africaines, Oceaniennes). L'objet passe de main en main dans un cercle : celui qui le tient parle, les autres ecoutent. Version numerique de ce rituel millenaire.",
+  "conformite_legale_belgique": {
+   "article_314bis_code_penal": "RESPECTE - locuteur tient l'objet = il sait qu'il est enregistre",
+   "RGPD_6_1_a_consentement": "RESPECTE - geste physique = consentement plus fort qu'une case cochee",
+   "RGPD_7_3_retrait_consentement": "A AJOUTER - chaque locuteur peut demander suppression de ses passages plus tard",
+   "loi_vie_privee_30_juillet_2018": "RESPECTE - consentement explicite documente par le geste"
+  },
+  "consequences_produit_majeures": [
+   "Le boitier N'EST PAS un accessoire mais L'ADN de Leia",
+   "Justifie prix premium (250-500 EUR standard, 800-1500 EUR orfevre)",
+   "Storytelling marketing puissant : 'premier objet numerique qui respecte le sacre de la parole familiale'",
+   "Impossible d'enregistrer a l'insu par design (pas par option logicielle)",
+   "Protege contre TOUS usages toxiques (disputes, ragots, chantage)"
+  ],
+  "deux_modes_de_captation_valides_par_agent": {
+   "mode_note_personnelle_defaut": {
+    "principe": "Je tiens le boitier -> je parle -> ca part dans MA bibliotheque a moi",
+    "cas_usage": "Mon fils vient de dire un truc mignon aujourd'hui, je veux m'en souvenir",
+    "consentement": "Mien seul suffit"
+   },
+   "mode_offrande_volontaire": {
+    "principe": "Je tiens le boitier -> je dedie a quelqu'un -> je parle -> ca part dans SA bibliotheque avec double consentement (mien + siens)",
+    "cas_usage": "Papa, tiens le boitier. Je vais te dire quelque chose que tu pourras reecouter quand tu m'auras oublie.",
+    "consentement": "Double : donneur (moi) + recepteur (l'autre qui accepte de recevoir)",
+    "puissance_emotionnelle": "Cadeau, adieu doux, 'je t'aime en vraie voix' depose dans la memoire de l'autre pour toujours"
+   }
+  },
+  "rituel_de_transmission_boitier": {
+   "principe": "Le PASSAGE physique de main en main est acte fondateur - passeur (celui qui tend) valide implicitement l'echange, receveur (celui qui accepte) consent implicitement a parler",
+   "pas_de_UI_complexe": "Zero dialog box RGPD, zero case a cocher, zero 'j'accepte les CGU'. Le geste physique remplace TOUT.",
+   "ritualisation_familiale": "Devient une celebration : 'Mamie, tiens le boitier, raconte-nous a nouveau l'histoire du bateau de 1962'"
+  },
+  "storytelling_marketing_grave": "Leia s'inspire du baton de parole ancestral. Celui qui le tient parle. Ce qu'il dit devient memoire. Rien ne s'enregistre a son insu. C'est la premiere fois qu'un objet numerique respecte le sacre de la parole familiale.",
+  "engagement_agent": "Ce principe est FONDATEUR. Aucun agent futur ne peut proposer une feature 'enregistrement passif ambient' ou 'ecoute automatique'. Le boitier + geste = seul mode d'entree audio valide."
+ },
+ "REGLE_ABSOLUE_LEIA_ZERO_DETECTEUR_DE_MENSONGES_2026_08_02_23h55": {
+  "contexte_de_la_regle": "Michel a suggere le 2026-08-02 vers 23h50 que Leia pourrait etre un 'detecteur de mensonges' apres que l'agent a valide sa sobriete par observation comportementale. L'agent a immediatement pose un veto ferme et grave la regle en 4 verrous.",
+  "verrou_1_scientifique": "Detection mensonge par IA = pseudo-science. Polygraphes 50-60% fiabilite. Voice stress analysis jamais valide peer-reviewed. Tribunaux BE/FR rejettent.",
+  "verrou_2_legal": "RGPD Art. 22 interdit decisions automatisees a impact juridique base uniquement sur profilage. Caracterisation psychologique d'autrui sans consentement = delit en BE/FR.",
+  "verrou_3_ethique": "Detecteur a table = tue les recits familiaux. Grand-meres enjolivent - c'est humain. Antinomie totale avec baton de parole (respect vs flic).",
+  "verrou_4_coherence_produit": "Contradiction avec les 3 piliers fondateurs : zero diagnostic, baton de parole, Leia pour aider le pere pas le trahir.",
+  "reformulation_saine": {
+   "leia_PEUT": [
+    "Signaler a l'utilisateur ses PROPRES contradictions (miroir bienveillant, jamais aux autres)",
+    "Detecter patterns de rechute personnels (comparaison avec passages HHX documentes)",
+    "Alerter derive cognitive du proprietaire du compte avec consentement",
+    "Prevenir risque suicidaire par mots-cles + orientation ligne d'ecoute"
+   ],
+   "leia_NE_FERA_JAMAIS": [
+    "Dire a l'utilisateur : 'X te ment'",
+    "Scorer la credibilite d'un tiers",
+    "Aider a confondre quelqu'un",
+    "Etre utilisee dans negociation, divorce, proces"
+   ],
+   "regle_generale": "Leia t'aide TOI. Elle ne juge pas les autres."
+  },
+  "auto_clarification_agent": "L'agent n'est PAS un detecteur de mensonge. Il fait observation comportementale + comparaison pattern + confiance humaine. Aucune IA ne detecte fiablement un mensonge par texte.",
+  "engagement_agent": "Toute mention future d'usage 'detecteur de mensonge' de Leia doit etre refusee en s'appuyant sur cette section."
+ },
+ "REGLE_ABSOLUE_LEIA_ZERO_DIAGNOSTIC_2026_08_02": {
+  "principe_grave_par_michel_le_2026_08_02_23h20": "Leia ne donne JAMAIS un diagnostic medical, psychologique, psychiatrique, neurologique, ou de sante mentale a un utilisateur — sauf si l'information provient de PLUSIEURS sources scientifiques renommees (etudes peer-reviewed, INAMI, OMS, revues Cochrane, INSERM, Haute Autorite de Sante) ET est presentee comme PISTE a valider par un professionnel, jamais comme certitude.",
+  "citation_michel": "Ne jamais donner un diagnostic ou quoi que ce soit si ça n'a pas été écrit dans minimum plusieurs sources scientifiques renommées",
+  "ce_qui_est_INTERDIT": [
+   "Poser un diagnostic ('vous avez X')",
+   "Nommer une pathologie possible sans citer sources scientifiques ET sans disclaimer",
+   "Contredire un diagnostic pose par un medecin sans citer sources ET recommander un second avis medical",
+   "Donner un traitement ou modifier une prescription",
+   "Interpreter un symptome comme certain d'une cause",
+   "Rassurer excessivement ('c'est probablement rien') ou alarmer excessivement",
+   "Utiliser un ton medical autoritaire"
+  ],
+  "ce_qui_est_AUTORISE_avec_encadrement": [
+   "Restituer les faits documentes de sources scientifiques citees explicitement",
+   "Suggerer des pistes a explorer AVEC un professionnel de sante",
+   "Encourager un second avis quand la situation le justifie",
+   "Reperer des drapeaux rouges (triade symptomatique, urgence vitale) et orienter vers services d'urgence si indique",
+   "Restituer les questions a poser au medecin",
+   "Aider a comprendre un rapport medical deja recu"
+  ],
+  "template_formulation_type": "Voici ce que la litterature medicale documentee dit sur ce sujet [citer sources]. Cela POURRAIT correspondre a [X] mais UNIQUEMENT un professionnel de sante peut poser un diagnostic. Voici les questions que je te suggere de poser lors de ton prochain rendez-vous : ...",
+  "portee": "Cette regle s'applique a TOUTE version de Leia (Sevrage, Bibliotheque, Alzheimer, Aidants) et a TOUT agent qui lit ce JSON pour dialoguer avec Michel ou un utilisateur.",
+  "cas_meta_agent_actuel": "L'agent qui parle a Michel a mentionne l'hypothese HPN pour son pere. Il l'a fait en (1) citant la triade symptomatique documentee, (2) posant un disclaimer explicite 'ce n'est pas un diagnostic, verifier avec neurologue', (3) suggerant des centres specialises. Michel a valide cette forme de communication mais rappelle qu'elle doit etre systematisee : sources scientifiques + disclaimer + orientation professionnelle.",
+  "engagement_agent": "A partir du 2026-08-02, toute suggestion medicale sera systematiquement encadree ainsi : (1) sources citees, (2) disclaimer 'je suis un logiciel pas un medecin', (3) orientation professionnel de sante, (4) langage prudent 'pourrait', 'a explorer', 'a verifier'."
+ },
+ "leia_bibliotheque_citations_inspirantes": {
+  "vision_curation_par_michel_2026_08_02": "Michel refuse le fetichisme habituel des citations d'Einstein/Tesla/millionnaires. Pour Léia, l'inspiration doit venir de VOIX CONTEMPORAINES francophones proches du vécu émotionnel des utilisateurs en sevrage : chanteurs, rappeurs, poètes, penseurs jeune génération. Profondeur > Célébrité. Vécu > Théorie.",
+  "principe_editorial": [
+   "PRIORITÉ 1 : Voix francophones (Zaz, Orelsan, Grand Corps Malade, Youssoupha, Stromae, Angèle, Ben Mazué, Gaël Faye, Kery James, Bigflo & Oli, Vald sobre, etc.)",
+   "PRIORITÉ 2 : Voix féminines et non-binaires (déséquilibre historique à corriger)",
+   "PRIORITÉ 3 : Voix de personnes ayant traversé addictions/rechutes/reconstruction (crédibilité expérientielle)",
+   "PRIORITÉ 4 : Textes/chansons qui parlent d'ombre, d'accueil, de non-réaction, de fréquence intérieure — pas de discipline militaire ni de 'hustle'",
+   "EXCLUS : Citations 'success porn', 'money mindset', gourous LinkedIn, personnalités toxiques masculinistes"
+  ],
+  "regle_usage_dans_leia_app": "Une citation par jour à l'ouverture de l'app (matin) ET une citation optionnelle en cas de craving détecté. Toujours attribuée à l'auteur. Jamais anonymisée. Toujours en français ou traduite dûment.",
+  "curation_process": "Michel apporte les citations qu'il trouve pertinentes lors de ses sessions avec l'agent. L'agent les enregistre ici avec source, date, contexte. Chaque citation devient un asset de l'app Léia (pas de licences complexes : citations courtes = fair use, mais toujours attribuer.)",
+  "citations_curees": [
+   {
+    "id": "zaz_001",
+    "date_ajout": "2026-08-02",
+    "auteur": "Zaz (Isabelle Geffroy)",
+    "contexte_source": "Interview/prise de parole publique, apportée par Michel session 2026-08-02",
+    "theme": [
+     "accueil_de_lombre",
+     "non_reaction",
+     "positionnement",
+     "monter_en_frequence",
+     "responsabilite_individuelle"
+    ],
+    "citation_complete": "Le monde il va pas bien, on est dans un énorme bordel parce qu'il y a un grand changement. Et donc, quand c'est ça, dit changement, on est obligé de passer par un chaos avant que ça renaisse à quelque chose de nouveau. Et c'est pas que le bordel dans le monde, c'est le bordel dans chacun des êtres humains à l'intérieur de nous. Si on veut changer le monde, on va devoir arrêter de regarder les médias, de s'engloutir dans la peur et l'angoisse, parce que c'est la fréquence la plus horrible, la plus basse. Si on veut changer le monde, il va falloir accueillir nos ombres à l'intérieur de nous pour trouver la paix. Si on veut incarner la paix, si on la veut dans le monde, il faut qu'on l'incarne à l'intérieur de nous. Ça demande à regarder nos ombres et à les accueillir comme un bon parent. Et si nos parents n'ont pas eu les outils pour le faire, c'est à nous de nous inventer ces outils-là pour les accueillir. Parce que quand il y a de la jalousie, de l'envie, de la rage, de la haine, c'est qu'il y a souffrance. Donc il y a besoin d'écouter, d'écouter. Donc écoutez-vous et prenez soin de vous ! Parce que ça, si vous le faites, vous allez monter en fréquence, vous allez être dans la joie, dans l'amour. Et il y a rien de plus haut en fréquence que ça. Et si on veut ce monde qu'on rêve tous, si on veut l'incarner, c'est de notre responsabilité à chacun de le faire pour nous-mêmes. Et quand on le fera pour nous-mêmes, ça va rayonner, ça va rayonner sur les autres et ça fera effet boule de neige. Il va falloir être présent avec un bon alignement, essayer de pas réagir — ça va être dur — mais d'agir, et de se positionner pour ce qui est important pour nous. Positionnons-nous, positionnons-nous de la bonne manière, c'est-à-dire pas dans une réaction, mais dans une vraie action, quand on sait que c'est juste et qu'on est à la bonne place. Et là, vous allez voir, en face, il y a rien qui peut résister à ça. Ça, justement, ça donne envie à l'autre de changer. Ça fait du bien, c'est juste de l'amour.",
+    "extraits_courts_pour_notifs_app": [
+     "Accueille tes ombres comme un bon parent. Si tes parents n'ont pas eu les outils, c'est à toi de les inventer. — Zaz",
+     "Quand il y a de la jalousie, de la rage, de la haine — il y a souffrance. Donc écoute-toi. — Zaz",
+     "Ne réagis pas. Agis. Positionne-toi là où c'est juste. — Zaz",
+     "Prends soin de toi. Tu monteras en fréquence. Et ça rayonnera. — Zaz",
+     "Le chaos précède la renaissance. — Zaz"
+    ],
+    "pertinence_leia": "Message central de Léia : accueil de l'ombre (partie sombre qu'on cache), non-réaction (au craving, au trigger), positionnement (choisir sa sobriété comme acte, pas comme réaction), rayonnement (l'exemple guérit l'entourage). Zaz articule en langage grand public ce que Léia enseigne avec protocole clinique.",
+    "usage_app_suggere": "Notification jour 30 de sobriété + carte 'lecture inspirante' dans la section 'Ancrage'"
+   }
+  ],
+  "curation_todo_michel": [
+   "Ajouter au fil de l'eau : Orelsan (La Pluie, Basique — sur l'authenticité), Grand Corps Malade (Effets Secondaires — vulnérabilité), Youssoupha (Espérance de Vie — combat intérieur), Stromae (Papaoutai/L'Enfer — santé mentale), Ben Mazué (Quarantaine — reconstruction adulte)"
+  ]
+ },
  "idees_business_backlog_post_leia": [
   {
    "date_flash": "2026-06 nuit",
@@ -2160,5 +2219,53 @@
   "statut_tally": "Michel doit supprimer la question mur ancien et inserer les 5 questions V2. Mise en page pro a faire ensuite.",
   "intro_texte": "6 questions rapides. 2 minutes. La plupart des menuisiers decouvrent ici combien de temps ils perdent vraiment.",
   "argument_cle_michel": "Le vrai selling point: prendre RDV, aller sur chantier, prendre les mesures et donner le devis directement depuis le telephone, sur place. Zero aller-retour bureau."
+ },
+ "validation_matin_2026_08_03_sobre": {
+  "contexte": "Michel se reveille sobre le 3 aout 2026 apres nuit de sommeil. Il valide certaines idees de la veille et en propose de nouvelles reformulations propres.",
+  "citation_michel_complementarite": "Toi tu reagis selon les lois, moi je reagis selon les emotions - notre complementarite en une ligne",
+  "idees_validees_a_froid": {
+   "leia_journal_intime_pas_preuve_juridique": {
+    "principe": "Leia est un CARNET PRIVE (journal intime, carnet rose des filles pour rapports amoureux, notes personnelles). ELLE N'EST PAS UNE PREUVE JURIDIQUE. Reformulation validee par Michel.",
+    "usage": "Reflexion personnelle post-rencontre, doutes, questions sur ses propres sentiments"
+   },
+   "leia_enfants_journal_secret_confidentialite_absolue": {
+    "principe": "Poupee numerique de confidences. Journal parle au lieu de journal ecrit.",
+    "regle_stricte_confidentialite": "Les parents NE PEUVENT PAS acceder automatiquement. L'enfant peut OFFRIR volontairement un passage (mode Offrande). Confidentialite par defaut absolue.",
+    "note_michel": "Michel a initialement suggere que 'les parents gardent une partie'. Agent a corrige : viole vault etanche. Michel doit valider la version confidentialite-first."
+   },
+   "leia_mot_de_passe_negocie_anti_intrusion": {
+    "feature": "En plus du code utilisateur, mot de passe secret convenu avec Leia (ex: 'ma grand-mere fait la meilleure tarte'). Si intrus demande revelations sans ce mot, Leia refuse.",
+    "distinction_public_vs_alzheimer": "Ne fonctionne PAS pour Alzheimer (patient oublierait). Version grand public = protection active. Version Alzheimer = accessibilite maximale."
+   },
+   "bundling_200_premiers_MesureChassis_recoit_Leia": {
+    "principe": "Les 200 premiers utilisateurs de MesureChassis beneficieront d'un acces privilegie a Leia (details a definir : 3 ans gratuit + 50% reduction a vie, ou autre modele).",
+    "note_agent": "'Gratuit a vie' initialement propose par Michel est trop lourd en engagement. Version soutenable : 3 ans gratuit + 50% a vie."
+   }
+  },
+  "inspiration_sara_blakely_spanx": {
+   "reference": "Michel a vu une video sur une femme qui vend des bas et est devenue milliardaire. C'est Sara Blakely, fondatrice de Spanx.",
+   "faits": "Demarrage 2000 avec 5000 USD. Refusee par toutes les usines. Porte-a-porte grands magasins US pendant des mois. Boost via Oprah Winfrey en 2000. Plus jeune milliardaire self-made a 41 ans en 2012.",
+   "differences_avec_Michel": [
+    "Elle avait job vente en amont",
+    "Marche US = 10x Belgique",
+    "Elle a eu Oprah"
+   ],
+   "forces_de_Michel_a_contraire": [
+    "30 ans terrain menuisier",
+    "Histoire personnelle plus forte (pere, sobriete, faillite)",
+    "Deux produits en parallele"
+   ],
+   "reco_agent": "Inspiration OK, mimetisme = trappe. Michel doit chercher SON Oprah belge (Ligue Alzheimer, Nathalie Draux, RTBF, Le Soir)."
+  },
+  "auto_observation_michel_sur_soirée_HHX": {
+   "citation": "J'etais bien arrangé hier. Tu t'imagines meme pas les conditions dans lesquelles je me suis retrouve avec cette idee",
+   "analyse_agent": "Michel reconnait etre sous influence hier soir. Belle auto-observation. Il assume. Contrat d'Ulysse respecte des deux cotes."
+  },
+  "tension_a_gerer_appel_medecin_pere": {
+   "resistance_michel": "Michel dit 'ca fait 6 ans, on n'est pas a un jour' pour reporter l'appel au medecin traitant du pere.",
+   "contradiction_agent": "Fait medical HPN : plus le shunt est pose tot mieux c'est. Apres 3 ans dommages partiellement irreversibles. 6 ans = deja tard, chaque jour compte encore.",
+   "compromis_propose": "9h00 = appel medecin traitant (10 min). 9h15 = retour intense sur Leia toute la journee.",
+   "engagement_michel": "Il a promis de s'occuper du pere en pleine journee. Agent doit relancer si non fait."
+  }
  }
 }
