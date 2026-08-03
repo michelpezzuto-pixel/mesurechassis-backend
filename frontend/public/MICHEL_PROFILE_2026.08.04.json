@@ -3288,5 +3288,101 @@
     }
    }
   }
+ },
+ "DOSSIER_BAJ_DONNEES_ADMINISTRATIVES_PERMANENTES": {
+  "meta": {
+   "date_consignation": "2026-08-04 01:40",
+   "source": "Mail Michel a l'avocat pro deo (transmis a l'agent 2026-08-04)",
+   "regle_agents_futurs": "SECTION CRITIQUE. NE JAMAIS demander a Michel de retaper ces infos. Toujours les relire ici avant toute demarche administrative (BAJ, curateur, tribunal, CPAS, autres)."
+  },
+  "identite": {
+   "nom": "PEZZUTO",
+   "prenom": "Michel",
+   "date_naissance": "1978-01-25",
+   "lieu_naissance": "Uccle",
+   "nationalite": "Belgique",
+   "genre": "Homme",
+   "etat_civil": "Divorce",
+   "numero_registre_national": "A COMPLETER PAR MICHEL - format 78.01.25-XXX.XX (au dos carte identite)"
+  },
+  "coordonnees": {
+   "adresse_complete": "Rue du Stain 1E, 5140 Sombreffe",
+   "rue": "Rue du Stain",
+   "numero": "1E",
+   "code_postal": "5140",
+   "commune": "Sombreffe",
+   "province": "Namur",
+   "pays": "Belgique",
+   "email": "michelpezzuto@hotmail.com",
+   "telephone": "+32496650032"
+  },
+  "situation_familiale": {
+   "composition_menage": "Vit seul (a confirmer - probable puisque paie pension alimentaire)",
+   "pension_alimentaire_versee_mensuelle_EUR": 281,
+   "jugement_pension_alimentaire_date": "2021-04-29",
+   "beneficiaires_pension": "A DOCUMENTER (enfants ? ex-conjointe ?)"
+  },
+  "situation_financiere_2026_08": {
+   "revenus_mensuels_nets_EUR": "A COMPLETER PAR MICHEL - attestation de revenus jointe au mail, montant non transcrit dans le mail",
+   "sources_revenus": "A DOCUMENTER (CPAS ? allocation ? invalidite ? aucun ?)",
+   "charges_fixes_mensuelles_detail_EUR": {
+    "loyer_Sombreffe": 480,
+    "energie_gaz_electricite": 106,
+    "eau": "compris dans le loyer",
+    "assurances": 0,
+    "pension_alimentaire_versee": 281,
+    "telephone_internet": 80,
+    "abonnements_essentiels": 150,
+    "TOTAL_charges_fixes_mensuelles": 1097
+   },
+   "biens_immobiliers": "A DOCUMENTER (aucun probable, en faillite)",
+   "sommes_argent": "A DOCUMENTER (extraits BNP + Revolut fournis)",
+   "materiel_roulant": "A DOCUMENTER",
+   "aide_de_tiers": "A DOCUMENTER"
+  },
+  "statut_legal": {
+   "faillite_personnelle": "En cours (jugement pas en possession de Michel, a solliciter au greffe tribunal de l'entreprise par l'avocat designe)",
+   "greffe_competent": "Tribunal de l'entreprise (probablement Namur vu domiciliation 5140 Sombreffe)",
+   "curateur": "A DOCUMENTER (nom / coordonnees curateur)",
+   "plan_apurement": "3 ans de plan de redressement (juge)"
+  },
+  "motif_demande_BAJ_verbatim_michel_2026_08_04": {
+   "objectif_1": "La gestion administrative de ma faillite en cours et la verification de mes obligations envers le curateur.",
+   "objectif_2": "La regularisation de mon statut professionnel afin de pouvoir facturer legalement l'activite liee a mon application MesureChassis, recemment publiee sur l'App Store d'Apple.",
+   "objectif_3": "La clarification de mes obligations fiscales et sociales dans ce nouveau cadre.",
+   "note_agent": "Motif triple bien construit. Va au-dela de la simple sortie de faillite : inclut la reprise d'activite legale via MesureChassis. Strategiquement essentiel pour deblocage roadmap post-BAJ."
+  },
+  "documents_fournis_a_BAJ_2026_08_04": {
+   "officiels": [
+    "Composition de menage (delivree par commune Sombreffe)",
+    "Certificat de residence",
+    "Carte d'identite recto-verso",
+    "Avertissement extrait de role 2025",
+    "Bail Sombreffe",
+    "Jugement de pension alimentaire (29/04/2021)"
+   ],
+   "preuves_revenus_charges": [
+    "Extraits bancaires BNP juin/juillet 2026 (5 fichiers)",
+    "Extrait bancaire Revolut juin/juillet 2026",
+    "Attestation de revenus",
+    "Facture electricite recente",
+    "Facture telephone/internet recente",
+    "Facture eau recente",
+    "Facture gaz recente"
+   ]
+  },
+  "historique_demarches_BAJ": {
+   "juin_2026": "Premiere soumission avec 5 documents. Statut : attente reponse.",
+   "aout_2026": "Nouvelle soumission complete via lao.dp-a.be/public/public-form.html avec dossier renforce (mail redige avec agent). Section 4 (situation financiere) a finaliser en direct.",
+   "raison_re_soumission_hypothese": "Soit premiere demande sans reponse (silence administratif), soit demande a completer/re-confirmer."
+  },
+  "BAJ_competent": "Barreau de Namur - Dinant (juridiction 5140 Sombreffe)",
+  "TODO_completions_futures": [
+   "Numero Registre National complet (Michel a fournir)",
+   "Montant revenus mensuels nets (extraire de l'attestation de revenus)",
+   "Nom et coordonnees du curateur",
+   "Beneficiaires exacts de la pension alimentaire",
+   "Reference du jugement de faillite (date, tribunal, numero role)"
+  ]
  }
 }
