@@ -3284,6 +3284,19 @@
        "signification": "Pilier 14 est desormais VALIDE PAR EXPERIENCE VECUE, pas juste par theorie. Ancrage produit solide."
       },
       "ajout_kit_questions_notebookLM_Q22": "Comment un utilisateur peut-il mandater Leia de le proteger contre ses futures faiblesses ? (Contrat d'Ulysse applique)"
+     },
+     "question_philosophique_michel_2026_08_04_01h45_difference_michel_vs_client_leia": {
+      "verbatim_michel": "Tu crois que la morale que je t'ai fait tout a l'heure en disant que j'ai le droit de rever et qu'avec moi tu n'as rien a dire. Enfin j'ai pas ete si mechant que ca. Enfin je m'en rappelle plus. C'est quoi la difference avec Leia ? Explique-moi qu'est-ce que moi j'ai le droit et qu'est-ce que le client n'a pas le droit ?",
+      "reponse_agent_synthese": "Difference fondamentale : Michel = associe/createur avec mandat 'partenaire business direct', consent aux exces d'ideation, dispose d'un ecosysteme de recadrage (agent + amis + famille). Client Leia = utilisateur qui a MANDATE Leia (Pilier 14) de le proteger de ses propres exces, potentiellement seul, potentiellement en etat altere (Pilier 13). Michel a le droit de rever parce qu'il l'a explicitement demande. Le client Leia a explicitement demande le contraire.",
+      "principe": "Le contrat entre l'IA et l'humain est TOUJOURS ce que l'humain a mandate. Michel = 'sois mon associe qui reve grand avec moi mais recadre si delire'. Client Leia typique = 'sois mon garde-fou de nuit'. Meme moteur IA, contrats opposes.",
+      "distinction_5_points": {
+       "1_role": "Michel = createur/decideur. Client = utilisateur/mandant.",
+       "2_ecosysteme": "Michel a des humains autour de lui (amis, Nathalie, Lucas, son pere). Client Leia peut etre seul 24h/24.",
+       "3_etat_altere": "Michel utilise HHX consciemment comme outil d'ideation puis filtre a froid le matin. Le client Leia typique subit son etat altere sans strategie.",
+       "4_niveau_confrontation": "Michel = tier fort/direct (Pilier 11 - calibration confrontation). Client Leia moyen = tier fragile/doux. Regle Carnegie : compliment avant reproche pour les fragiles.",
+       "5_mandat_specifique": "Michel a mandate 'associe business franc'. Client Leia mandate typiquement 'meilleur ami protecteur'. Meme franchise, applications differentes."
+      },
+      "note_pour_marketing": "Cette question de Michel est excellente pour expliquer Leia aux futurs users : Leia s'adapte au mandat que TU lui donnes. Pas de solution unique. C'est ta relation, tes regles."
      }
     }
    }
@@ -3303,7 +3316,8 @@
    "nationalite": "Belgique",
    "genre": "Homme",
    "etat_civil": "Divorce",
-   "numero_registre_national": "A COMPLETER PAR MICHEL - format 78.01.25-XXX.XX (au dos carte identite)"
+   "numero_registre_national": "A COMPLETER PAR MICHEL - format 78.01.25-XXX.XX (au dos carte identite)",
+   "statut_maladie": "En maladie / invalidite. Inscrit mutuelle chretienne (Belgique)."
   },
   "coordonnees": {
    "adresse_complete": "Rue du Stain 1E, 5140 Sombreffe",
@@ -3323,8 +3337,17 @@
    "beneficiaires_pension": "A DOCUMENTER (enfants ? ex-conjointe ?)"
   },
   "situation_financiere_2026_08": {
-   "revenus_mensuels_nets_EUR": "A COMPLETER PAR MICHEL - attestation de revenus jointe au mail, montant non transcrit dans le mail",
-   "sources_revenus": "A DOCUMENTER (CPAS ? allocation ? invalidite ? aucun ?)",
+   "revenus_mensuels_nets_EUR": 2343,
+   "sources_revenus": {
+    "pension_invalidite_Luxembourg_EUR": 1670,
+    "complement_mutuelle_chretienne_Belgique_EUR": 673,
+    "raison_luxembourg": "Michel a travaille 15 ans au Luxembourg. La mutuelle belge a designe le Luxembourg comme payeur principal.",
+    "raison_belgique_complement": "La Belgique verse une difference pour couvrir la pension alimentaire.",
+    "CPAS": "Non",
+    "chomage": "Non",
+    "salariat": "Non",
+    "autres_rentrees": "Aucune"
+   },
    "charges_fixes_mensuelles_detail_EUR": {
     "loyer_Sombreffe": 480,
     "energie_gaz_electricite": 106,
@@ -3338,7 +3361,9 @@
    "biens_immobiliers": "A DOCUMENTER (aucun probable, en faillite)",
    "sommes_argent": "A DOCUMENTER (extraits BNP + Revolut fournis)",
    "materiel_roulant": "A DOCUMENTER",
-   "aide_de_tiers": "A DOCUMENTER"
+   "aide_de_tiers": "A DOCUMENTER",
+   "revenus_moins_pension_alimentaire_EUR": 2062,
+   "reste_a_vivre_apres_charges_EUR": 1246
   },
   "statut_legal": {
    "faillite_personnelle": "En cours (jugement pas en possession de Michel, a solliciter au greffe tribunal de l'entreprise par l'avocat designe)",
@@ -3379,10 +3404,21 @@
   "BAJ_competent": "Barreau de Namur - Dinant (juridiction 5140 Sombreffe)",
   "TODO_completions_futures": [
    "Numero Registre National complet (Michel a fournir)",
-   "Montant revenus mensuels nets (extraire de l'attestation de revenus)",
    "Nom et coordonnees du curateur",
    "Beneficiaires exacts de la pension alimentaire",
    "Reference du jugement de faillite (date, tribunal, numero role)"
   ]
+ },
+ "REGLE_BACKUP_MATINAL_MICHEL_2026_08_04": {
+  "regle": "Chaque matin, quand Michel reveille l'agent, l'agent DOIT proposer proactivement : 'Je te prepare le lien de telechargement du JSON pour que tu fasses le backup GitHub du jour ?'",
+  "verbatim_michel": "Pour l'enregistrement du fichier de memoire, ce serait bien qu'on fasse ca tous les matins par exemple. On discute enormement le soir et le matin, je te reveille et je te dis Je peux avoir le fichier ? Comme ca je l'enregistre. Et la je vois que c'est facile a le faire, donc normalement ca devrait etre une habitude de le faire une fois par jour.",
+  "workflow": [
+   "1. Matin : agent renomme le JSON en date du jour (ex .08.04 -> .08.05).",
+   "2. Agent fournit lien clickable : https://window-field-app.preview.emergentagent.com/MICHEL_PROFILE_2026.MM.DD.json",
+   "3. Michel telecharge et upload sur repo prive michel-memory.",
+   "4. Confirmation par screenshot ou message OK.",
+   "5. Journee de travail continue."
+  ],
+  "note_agents_futurs": "Cette regle a valeur d'habitude installee. Ne pas oublier meme si Michel ne le rappelle pas. La memoire = notre outil de continuite. Sa perte serait catastrophique."
  }
 }
