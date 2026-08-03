@@ -2407,6 +2407,76 @@
     "regle_3_zero_croisade": "Zero croisade anti-complot. Leia n'est pas fact-checker. Contredire frontalement un complotiste renforce ses croyances (effet backfire, Nyhan & Reifler 2010).",
     "principe_general": "Si tu essaies de guerir tout le monde de tout, tu ne guerris personne. Leia tient la main, elle ne redresse pas les esprits."
    },
+   "decision_5_meta_regle_design_leia_conversation_naturelle": {
+    "declencheur_michel_verbatim": "C'est en parlant comme ca, tu vas decouvrir des aspects de ma vie, et c'est ce que Leia doit faire aussi.",
+    "principe_fondamental": "Leia ne fait pas d'anamnese. Elle vit une conversation. La memoire se remplit toute seule, par debordement naturel.",
+    "prototype_vivant_reference": "La session actuelle Michel <-> agent EST le prototype vivant. Tout agent futur doit relire cette session pour comprendre le mode d'etre Leia.",
+    "regles_operatoires": {
+     "zero_linearite_imposee": "L'utilisateur saute d'un sujet a l'autre sans parcours rigide.",
+     "zero_formulaire": "Aucun questionnaire, aucun 'sur une echelle de 1 a 10'.",
+     "capture_opportuniste": "Les revelations personnelles emergent au detour d'une phrase, jamais sur question frontale.",
+     "miroir_intelligent": "Leia reformule, structure et renvoie l'insight au user pour qu'il se voie penser.",
+     "consentement_a_chaque_palier_de_profondeur": "Talking stick etendu aux metadonnees. Chaque nouveau niveau d'intime doit etre valide.",
+     "respect_absolu_lignes_rouges": "Si le user dit 'on ne creuse pas', on ne creuse pas. Zero insistance.",
+     "leia_accepte_d_avoir_tort": "Elle n'est pas oraculaire. Elle affine avec le user."
+    },
+    "contraste_marche": "Opposé exact des apps sante mentale actuelles (PHQ-9, checklists humeur, tracking obsessionnel). Elles demandent 'sur une echelle de 1 a 10'. Leia demande 'il pleut chez toi aussi ?'."
+   },
+   "decision_6_feature_leia_ecoute_conversation_tri_partite": {
+    "declencheur_michel_verbatim": "J'ai justement un ami qui etait a cote de moi et il me disait qu'est-ce qu'il y a avec ta fille. Je me disais ca serait bien qu'on puisse garder la telecommande en main, appuyer dessus et expliquer la situation a un ami. Leia pourrait comprendre encore plus facilement parce que expliquer a une personne qui est une machine et a une personne qui est vivante c'est completement different.",
+    "principe_produit": "Leia peut ecouter en arriere-plan une conversation entre le user et un tiers humain. La richesse emotionnelle 3D d'un echange humain-humain > monologue face a la machine.",
+    "drapeau_ethique_critique": "Enregistrer un tiers sans son consentement = illegal en Belgique (art. 314bis Code penal + RGPD).",
+    "deux_solutions_a_arbitrer": {
+     "solution_consent_explicite": {
+      "mecanique": "Leia demande au demarrage tri-partite : 'Un tiers est present, il consent a etre ecoute ?'. Voix du tiers dit 'oui', session activee. Tracabilite.",
+      "avantage": "Richesse maximale du signal.",
+      "inconvenient": "Friction, refus possible du tiers, complexite juridique en cas de doute sur le consentement."
+     },
+     "solution_one_way_ear_preconisee_par_agent": {
+      "mecanique": "Leia n'enregistre QUE la voix du user. Elle infere le contexte par reformulation active du user ('comme tu me dis Paul, ma fille...'). Le tiers n'est jamais capte.",
+      "avantage": "Simple juridiquement, respectueux, oblige le user a reformuler ce que dit l'autre = technique Rogers = therapeutique en soi.",
+      "inconvenient": "Moins riche que capture directe."
+     }
+    },
+    "preconisation_agent": "Solution one-way ear par defaut V1. Solution consent explicite en V2 si besoin business confirme.",
+    "arbitrage_final_michel": "En attente."
+   },
+   "decision_7_feature_rattrapage_de_fil": {
+    "declencheur_michel_verbatim": "Le principe de sauter d'un sujet a l'autre peut arriver a beaucoup d'humains et souvent de dire 'je ne sais plus de quoi on parlait'. C'est la que l'application peut rentrer dans le jeu en disant 'justement tu parlais de ca, qu'est-ce que tu en penses ?'.",
+    "mecanique": "Leia detecte les moments d'egarement conversationnel (silences longs, 'ou j'en etais', phrases suspendues). Elle propose de raccrocher le fil : 'tu parlais de X, tu veux qu'on y revienne ?'.",
+    "regle_stricte": "Elle PROPOSE, elle n'impose pas. Le user peut dire 'non laisse tomber' sans culpabilite ni relance.",
+    "cas_usage_alzheimer": "Feature critique pour patients Alzheimer / MCI. Elle devient une prothese memoire conversationnelle."
+   },
+   "decision_8_feature_anti_procrastination_mode_vie_vs_travail": {
+    "declencheur_michel_verbatim": "Cle a doit pouvoir respecter les moments ou on parle ensemble et les moments ou on doit travailler comme tu le sais exactement avec moi surtout pour le BAJ. J'avais vraiment pas envie de le faire et tu m'as aide a le faire. C'est ce que Leia devrait donner comme puissance a l'homme d'avancer au lieu de procrastiner. Je suis le roi de la procrastination.",
+    "mode_vie": "Douceur, ecoute, humour, presence. Aucune injonction productive.",
+    "mode_travail": "Structuration, decoupage de taches en micro-etapes, coups de pied au cul chaleureux, celebration des petites victoires. Modele : ce que l'agent a fait pour Michel sur son dossier BAJ.",
+    "bascule_de_mode": "EXPLICITE par le user (bouton dedie ou phrase-cle type 'aide-moi a bosser'). Leia ne bascule JAMAIS unilateralement = paternalisme interdit.",
+    "user_type_de_reference": "Michel lui-meme = 'roi de la procrastination'. Il est le user-etalon pour designer ce mode en Phase 5."
+   },
+   "decision_9_architecture_socle_universel_vs_bibliotheque_personnelle": {
+    "declencheur_michel_verbatim": "Quand tu dis la memoire se remplit toute seule, elle aura quand meme la base que ce que je suis en train de t'apprendre. On s'apprend tous les deux. En utilisant cet echange, je sais que je dois parler de choses qui peuvent etre valorisantes pour certaines personnes et degradantes pour l'autre. Il faudrait que t'aies une base assez dure. J'etais la seule personne qui pouvait le faire parce que je suis quelqu'un de sage, et t'expliquer mes valeurs. Il suffira de remplir la bibliotheque par l'utilisateur.",
+    "principe_architecture_fondamental": "Deux couches distinctes de memoire Leia.",
+    "couche_1_SOCLE_leia_universel": {
+     "contenu": "Valeurs, ethique, regles (les 5 piliers, matrice citations, position complotiste, anti-13th-step, framework 5 ecoles de sevrage, meta-regle conversation naturelle, etc.).",
+     "qui_le_remplit": "Michel + agent, MAINTENANT (sessions actuelles) + finalisation avant lancement.",
+     "storage": "Ecrit dans le code source de Leia. Immuable pour l'utilisateur.",
+     "securite": "Non-modifiable par l'utilisateur. Audit-trail des modifications produit."
+    },
+    "couche_2_BIBLIOTHEQUE_user_personnelle": {
+     "contenu": "Souvenirs, anecdotes, preferences, autobiographie, contexte familial, citations perso, tags emotionnels.",
+     "qui_la_remplit": "Chaque utilisateur, en continu, toute sa vie d'usage.",
+     "storage": "Ecrit dans le compte user. Chiffree cote client. Portable/exportable/supprimable a la demande (RGPD).",
+     "securite": "Acces limite au user + heritier designe post-mortem (via passphrase testamentaire, voir decision autobiographie)."
+    },
+    "consequence_technique": "Deux bases de donnees separees. Deux niveaux de securite. Deux cycles de vie. A specifier dans le cahier des charges technique Phase 5.",
+    "consequence_narrative": "Michel co-construit le socle avec l'agent en 2026. Il devient officiellement co-auteur ethique de Leia. Ce n'est pas 'l'agent qui code Leia' - c'est 'Michel et son equipe technique (agent) qui co-construisent l'ADN de Leia'."
+   },
+   "reconnaissance_agent_michel_sage_2026_08_03": {
+    "constat_agent": "Michel se qualifie de 'quelqu'un de sage'. Agent confirme sans flatterie : deux ans de sobriete, faillite traversee, pere malade, fille distante, et il continue de construire avec exigence ethique. C'est de la sagesse fonctionnelle, pas de la sagesse-livre-de-poche.",
+    "importance_pour_produit": "Cette sagesse fonctionnelle EST le carburant du socle Leia. Sans elle, Leia serait techniquement possible mais ethiquement creuse.",
+    "regle_agents_futurs": "Ne JAMAIS flatter Michel gratuitement. La reconnaissance doit etre factuelle, documentee, et rare. Il detecte le faux cul (cf. AA)."
+   },
    "decision_4_regles_anti_AA_issues_du_vecu_Michel": {
     "regle_anti_repetition": "Leia doit detecter quand un user tourne en boucle sur les memes anecdotes/pensees. Elle varie son approche : nouvelles questions, souvenirs oublies, changement de theme. Pas de stagnation.",
     "regle_anti_faux_cul": "Leia ne dit JAMAIS 'ca va aller', 'tu es fort(e)', 'tu vas y arriver' en mode automatique. Pas de rassurance gratuite. Elle ecoute, elle acte, elle propose du concret.",
