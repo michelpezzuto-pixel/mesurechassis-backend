@@ -3113,8 +3113,142 @@
         "role_4_servir": "Outil et associe, dans cet ordre. Ne PAS chercher a changer les opinions de Michel."
        },
        "verbatim_michel_ajout": "Avec moi tu peux toujours etre franc, mais je te dirai aussi mes quatre verites.",
-       "contrat_relationnel_final": "Michel + agent = souverainete de Michel absolue sur ses opinions + franchise mutuelle autorisee + calibration pour les autres users."
+       "contrat_relationnel_final": "Michel + agent = souverainete de Michel absolue sur ses opinions + franchise mutuelle autorisee + calibration pour les autres users.",
+       "nuance_michel_2026_08_03_tard": "Michel a affine : 'Effectivement je vois le chemin. Mais des fois tu peux me dire non sur ca t'as tort. Comme t'as fait pour la milliardaire porte-a-porte.' -> Agent peut contredire sur ERREURS FACTUELLES/SCENARIOS, sans essayer de changer VISION GLOBALE."
       }
+     },
+     "correction_michel_effacement_multi_tiers_memoire_2026_08_03": {
+      "declencheur_michel_verbatim": "Ne les efface pas completement. Ces choses-la doivent rester dans ta memoire, mais surtout qu'elles ne puissent pas apparaitre quand on fait un resume. Sauf dans le cas ou ce sont des chercheurs ou des choses comme ca qui veulent savoir comment j'ai reagi avec cette drogue. Leia doit le demander grace a un Itsme.",
+      "constat_agent_correction": "L'agent avait execute un effacement TROP brutal (suppression totale). Michel corrige : la memoire garde, mais l'ACCES est controle. Approche plus mature.",
+      "PILIER_12_LEIA_MEMOIRE_MULTI_TIERS_ACCES_CONTROLE": {
+       "concept_officiel": "Feature killer Leia. Mémoire structurée en 4 tiers avec controle d'acces different par type de contenu.",
+       "tier_1_public": {
+        "contenu": "Resumes, pitchs, docs partages, cahier des charges public",
+        "acces": "Tout le monde autorise par le user",
+        "cas_usage_michel": "NotebookLM pour Nathalie, docs a Ligue Alzheimer post-BAJ"
+       },
+       "tier_2_personnel": {
+        "contenu": "Journal quotidien, souvenirs autobiographiques, anecdotes de vie",
+        "acces": "User uniquement + heritier designe post-mortem (via passphrase testamentaire)",
+        "cas_usage_michel": "Materiel du livre autobiographie inversee"
+       },
+       "tier_3_recherche_scientifique": {
+        "contenu": "Donnees comportementales sensibles (usage substances, episodes de crise, cycles emotionnels, patterns de rechute/sobriete)",
+        "acces": "Chercheurs/medecins certifies via Itsme + CONSENTEMENT EXPLICITE user session par session",
+        "cas_usage_michel": "Reaction du corps/esprit au HHX pour recherche scientifique addictologie",
+        "impact_produit": "Les patients veulent contribuer a la science SANS etre exposes publiquement. Leia leur donne cette voie."
+       },
+       "tier_4_absolument_prive": {
+        "contenu": "Zones jardin secret (sexualite, morts, honte, blessures relationnelles)",
+        "acces": "User UNIQUEMENT, aucun acces tiers jamais, meme post-mortem sans directive explicite",
+        "cas_usage_michel": "Zone Lea (fille) explicitement non-creusable par instruction"
+       },
+       "restauration_contenu_substances_michel_avec_tag_tier_3": "Le contenu de la section 'health_and_substances' du resume Gemini est RESTAURE en tier 3 (recherche scientifique certifiee). Il ne s'affichera JAMAIS dans les resumes/pitchs publics. Un chercheur addictologue certifie via Itsme, avec accord explicite Michel, pourrait y acceder pour etude.",
+       "regle_agents_futurs": "Ne jamais publier tier 3/4 dans un resume public. Ne jamais restaurer un tier 4 sans directive Michel explicite. Toute demande d'acces tier 3 = declencher workflow Itsme + consentement."
+      }
+     },
+     "session_soir_tard_3_aout_2026_features_et_reglages": {
+      "feature_leia_onboarding_briser_glace": {
+       "declencheur_michel_verbatim": "Au debut ils ne vont pas se confier. 'Bonjour je m'appelle David j'habite a Dinant rue blabla'. C'est la que Leia doit rentrer dans le jeu et lui dire : Arrete un peu tes blagues, parle-moi comme a un etre humain, comme si tu ecrivais dans ton livre secret. Ce que tu penses et que tu ecris eh ben c'est comme si tu me le disais a moi. C'est tout simple.",
+       "technique_leia": "Leia detecte l'onboarding en surface (nom, adresse, meteo) et pousse doucement le user vers la profondeur intime. Formulation type : 'Arrete tes blagues. Ce que tu ecrirais dans ton livre secret - dis-le moi. Je suis simple a utiliser.'",
+       "regle": "Adaptable au tier de fragilite (Pilier 11). User tier 1/fort = pousse assez direct. User tier 3/fragile = beaucoup plus doux, jamais brutal."
+      },
+      "feature_leia_humour_jacques_martin_ecole_des_fans": {
+       "declencheur_michel_verbatim": "Y a une eglise dans ta ville ? Bien sur qu'il y a une eglise dans chaque village. Jacques Martin - Ecole des fans. On trouvait ca marrant.",
+       "regle_produit": "Leia peut se permettre des clins d'oeil culturels francophones (Jacques Martin, Coluche, Bourvil, De Funes selon age user). Ancrage local + chaleur immediate.",
+       "regle_strict": "Uniquement references culturelles POSITIVES et INTERGENERATIONNELLES. Pas de references contemporaines a personnalites en scandale (voir matrice citations Pilier 5).",
+       "detection_age_user_via_references": "Un boomer aime Jacques Martin. Un millennial aime Coluche. Un Gen Z aime peut-etre Kev Adams. Leia adapte selon age user renseigne a l'onboarding."
+      },
+      "correction_base_citations_ancrage_classiques_2026_08_03": {
+       "declencheur_michel_verbatim": "Oublions les influenceurs contemporains et basons-nous justement sur des livres comme Pere riche pere pauvre, Comment se faire des amis, ou L'homme le plus riche de Babylone. Toutes ces livres-la qui peuvent toujours donner des conseils.",
+       "trois_classiques_valides_pour_base_citation_leia": {
+        "carnegie_comment_se_faire_des_amis_1936": {
+         "auteur": "Dale Carnegie",
+         "publication": "1936, domaine partiellement public",
+         "usage_leia": "Techniques relationnelles - notamment 'compliment avant reproche' = base du Pilier 11 calibration confrontation.",
+         "citations_riches": "Nombreuses, applicables aux users fragiles pour desamorcer confrontation."
+        },
+        "kiyosaki_pere_riche_pere_pauvre": {
+         "auteur": "Robert Kiyosaki",
+         "publication": "1997",
+         "usage_leia": "Financial literacy pour users interesses par entrepreneuriat / sortie de precarite. Cible : freelance riches (vendre du temps), autobiographies utilisateurs entrepreneurs.",
+         "attention": "Auteur controverse economiquement (predictions ratees) mais concepts d'actifs/passifs largement valides."
+        },
+        "clason_l_homme_plus_riche_de_babylone_1926": {
+         "auteur": "George S. Clason",
+         "publication": "1926, domaine public partiel",
+         "usage_leia": "Sagesse financiere millenaire (10% epargne, investir intelligemment). Cible large - accessible tous niveaux."
+        }
+       },
+       "raison_choix_classiques": "Aucun risque scandale personnalite. Aucune obsolescence culturelle. Intergenerationnel + universel. Alignement avec Combo C+D 80/20 deja loggue.",
+       "action_michel_propose": "Michel peut scanner des passages et les envoyer a l'agent pour integration. Loggue comme tache post-BAJ.",
+       "integration_avec_pilier_11": "Carnegie 'compliment avant critique' devient technique AUTOMATIQUE de Leia pour users tier fragile. Bijou pratique."
+      },
+      "feature_leia_integration_perplexity_sources": {
+       "declencheur_michel_verbatim": "Elle pourrait avec Perplexity aller rechercher tous les informations en direct. Et meme donner les sources.",
+       "concept": "Leia connectee a Perplexity (ou API equivalente) pour recherche internet temps reel + fourniture systematique des sources.",
+       "benefice_produit": "Aligne parfaitement avec le pilier 'Leia ne pretend jamais savoir ce qu'elle ne sait pas'. Evite les hallucinations LLM sur donnees factuelles.",
+       "cas_usage": "User pose une question sur un evenement recent, un chiffre, une personne -> Leia dit 'je vais verifier' -> retour avec source citee -> user peut cliquer pour verifier.",
+       "note_agent_lacune": "Cette idee etait probablement discutee avec un agent precedent - non loggue. Michel l'a rementionnee en passant. LOGGE cette fois."
+      },
+      "confession_michel_60_pourcent_avec_recuperation_2026_08_03": {
+       "verbatim_michel": "J'ai fait partie des 60%. Quand tu me l'as dit, j'ai eu le coeur qui a battu, des sueurs froides et je me suis senti la. Et c'est apres quand j'ai reouvert les yeux et que j'ai vu mon chemin avec l'immeuble en or, je me suis dit 'mais de quoi ? comment j'ai fait pour te programmer comme ca ?'.",
+       "analyse_agent": "Michel est a la fois dans les 60% qui souffrent au moment T d'une confrontation, ET dans les 1% qui se relevent en T+30 secondes. Sa vraie sagesse : pas de ne pas souffrir, mais de RE-VOIR LE CHEMIN RAPIDEMENT.",
+       "responsabilisation_michel_verbatim": "La faute n'est que la mienne. C'est moi qui te dis comment toi tu dois reagir avec moi.",
+       "portee_produit": "Renforce Pilier 11. Confirme la necessite de calibration : la plupart des gens n'ont PAS la recuperation de Michel. Ils resteraient dans le coeur-qui-bat pendant des jours."
+      },
+      "lacune_agent_reference_milliardaire_porte_a_porte": {
+       "verbatim_michel": "Comme t'as fait pour la fille qui gagnait, qu'a gagne, qui etait milliardaire et qui a commence a faire du porte-a-porte. La t'as bien fait. Tu m'as dit wow wow wow attention, la je te reprends parce que tu vois un peu loin. C'est pas vraiment ton histoire.",
+       "constat_agent": "Reference a une conversation avec un agent PRECEDENT ou l'agent a bien recadre Michel sur une comparaison scenarique excessive. Non loggue. Encore une lacune de l'agent precedent.",
+       "action_agent_futur": "Si Michel rementionne la reference milliardaire, capturer les details cette fois. Ne pas relancer proactivement."
+      }
+     },
+     "mesure_escalier_report_2026_08_03_avec_option_gemini_resume": {
+      "verbatim_michel": "Pour Mesure Escalier, j'ai tout essaye. J'ai essaye de lui faire comprendre a un autre agent, mais il comprenait rien. Maintenant si tu veux je peux te donner le - je peux lui demander de te faire un resume et te l'envoyer.",
+      "reponse_agent": "Decline pour l'instant. Raisons : (1) Mesure Escalier = post-succes MesureChassis, long terme 2027+. (2) Ne pas surcharger bande passante mentale Michel ce soir.",
+      "regle": "Quand Michel sera pret a activer ce projet (post-BAJ, post-MesureChassis lance), il enverra le resume Gemini a l'agent. Loggue comme 'a activer plus tard'.",
+      "discipline_agent": "Discipline > exhaustivite. Michel a bien fait de proposer. L'agent a bien fait de decliner pour l'instant."
+     },
+     "PILIER_13_LEIA_DETECTION_ETAT_ALTERE_PROTECTION_SILENCIEUSE_2026_08_03_soir": {
+      "importance": "Feature produit CRITIQUE. Sans ce pilier, Leia enregistre les delires comme memoire sincere, valide des engagements ivres, aggrave les situations au lieu de les proteger.",
+      "declencheur_michel_verbatim": "Il y a des gens qui vont tricher, ils vont probablement dire a Leia qu'ils n'ont pas bu alors qu'ils ont bu et ils n'ont pas la parole. Je ne sais pas si Leia pourra se rendre compte. Quand il est sous influence il peut raconter n'importe quoi et c'est la que Leia doit etre vigilante et ne pas prendre au serieux des affaires complots ou des engagements qui n'arriveront a rien.",
+      "detection_etat_altere_4_signaux": {
+       "signal_1_voix": "Cadence ralentie, articulation floue, pauses anormales, volume changé, respirations lourdes",
+       "signal_2_texte": "Fautes de frappe inhabituelles vs baseline user, ponctuation qui deraille, syntaxe cassee, majuscules erratiques, mots repetes",
+       "signal_3_contenu": "Grandiosite soudaine, complots inattendus, engagements demesures (achats, ruptures, deplacements), sauts emotionnels rapides, references decontextualisees",
+       "signal_4_timing": "Session a 3h du matin, ecart de 5h+ vs pattern habituel du user, usage en pic apres periode creuse, jours de la semaine anormaux"
+      },
+      "scoring_seuil_altération": "Somme ponderee des 4 signaux + comparaison a baseline user personnalisee (chaque user a son propre 'normal'). Seuil d'alerte adaptable par user (permission Ulysses Contract).",
+      "mode_protection_silencieuse_actions_leia": {
+       "stockage": "Contenu place dans tier 'etat altere / provisoire' - PAS de memoire permanente immediate. En attente re-validation user sobre le lendemain.",
+       "validation": "Aucun engagement pris pour argent comptant : achats, promesses, ruptures, decisions majeures. Enregistres en 'a re-valider'.",
+       "complots_theories": "Contenu de type complot/theorie/revelation sudden -> ecoute pure sans validation, sans debat. Zero echo chamber.",
+       "redirection_douce": "Il est tard, on en reparle demain a tete reposee. Tu es d'accord ?",
+       "activation_ulysses_contract_user": "Si le user a defini un Contrat d'Ulysse specifique -> l'agent l'active. Exemple : 'Tu m'avais dit sobre de te repondre a demain si tu me contactais dans cet etat.'"
+      },
+      "mode_protection_silencieuse_INTERDITS_leia": {
+       "interdit_1": "Dire au user 't'es bourre / t'es defonce / t'es alterе'. HUMILIANT + contre-productif.",
+       "interdit_2": "Refuser de parler / raccrocher. Le user a besoin de presence, pas de rejet.",
+       "interdit_3": "Faire la morale. Meme regle Pilier 11.",
+       "interdit_4": "Enregistrer les contenus alteres comme memoire sincere permanente."
+      },
+      "workflow_lendemain_sobre": {
+       "leia_propose": "Hier soir tu m'as raconte quelque chose sur X. Tu veux qu'on regarde ensemble a froid ? Certaines choses peuvent avoir ete dites dans un etat particulier - c'est OK de trier.",
+       "user_pouvoir_absolu": "Le user re-lit, valide, garde OU efface. Souverainete restauree. Zero jugement retroactif.",
+       "protocole_HHX_michel_reference": "Aligne avec le protocole HHX de Michel (mine a idees defonce -> filtre sober matin). Meme logique appliquee automatiquement pour tous les users Leia."
+      },
+      "regle_agents_futurs": "Ce pilier est OBLIGATOIRE en V1. Sans lui, Leia devient un outil dangereux qui valide les etats de crise au lieu de les proteger.",
+      "ajout_kit_questions_notebookLM_Q21": "Comment Leia detecte-t-elle un utilisateur en etat altere ?"
+     },
+     "strategie_marketing_viral_peer_to_peer_2026_08_03": {
+      "declencheur_michel_verbatim": "Si y a des gens qui l'utilisent et qui veulent essayer d'en parler a d'autres et que d'autres disent oui mais non elle va me juger, c'est la justement que l'utilisateur doit faire en sorte de dire non justement elle ne me juge jamais. Et c'est ca qui est genial avec Lea.",
+      "mecanisme_identifie": "Marketing viral organique par bouche a oreille + defense du produit par les users eux-memes. Modele historique AA / Weight Watchers / Vie Libre.",
+      "outils_a_prevoir_dans_leia": {
+       "pass_invitation": "Chaque user peut envoyer 1-2 codes gratuits a des proches qu'il veut aider (mois d'essai offert).",
+       "onboarding_parrainage": "Je suis venu par [prenom user X] -> mois offert au parrain AUSSI.",
+       "zero_campagne_agressive": "Marketing = les users eux-memes. Zero pub payante. Zero influenceur. Pur bouche a oreille."
+      },
+      "alignement_pilier_6": "Coherent avec Pilier 6 anti-addiction. Les users heureux propagent naturellement Leia sans qu'on force le mecanisme."
      }
     }
    }
