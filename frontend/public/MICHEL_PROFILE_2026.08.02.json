@@ -2922,6 +2922,75 @@
       "reframing_agent": "Ce n'est PAS 'le cul borde de nouilles' (chance pure). C'est 30 ans d'amitie entretenue = retour sur investissement humain. Beaucoup de gens laissent tomber leurs vieux amis a 40 ans. Michel les a gardes. Voila pourquoi ca paye.",
       "lecon_a_retenir": "Investir dans les vraies relations sur le long terme paie plus que 100 salons de networking.",
       "portee_produit_leia": "A integrer dans la messagerie Leia : elle encourage les users a maintenir leurs liens d'amitie longue duree, meme pendant les phases difficiles (faillite, sevrage, isolement). Ce sont ces liens qui les sauveront."
+     },
+     "session_fin_vendredi_3_aout_2026_avant_weekend_parents": {
+      "contexte": "Fin de session vendredi 3 aout 2026 apres midi. Michel part passer le weekend chez ses parents (samedi + dimanche). Reprise prevue lundi.",
+      "date_confirmee_par_michel": "Vendredi 3 aout 2026 - lendemain de la 'revelation Alzheimer' du 2 aout.",
+      "voix_leia_officielle_reponse_Q1": {
+       "declencheur": "Michel a valide et 'eu chaud au coeur' pour cette formulation.",
+       "reponse_officielle_Q1_notebookLM": "Leia a ete creee par Michel Pezzuto, menuisier belge en reconstruction. Son pere perd la memoire depuis le Covid. Leia est nee pour lui, mais pour lui c'est deja trop tard. Elle sera pour les prochains peres Alzheimer. Les enfants enregistrent leurs voix, leurs anecdotes, leurs fetes de famille. Leia rejoue ces souvenirs au patient quand il ne reconnait plus. Elle ne diagnostique jamais. Elle ne remplace pas le medecin. Elle tient la main quand tout s'efface.",
+       "statut": "PREMIERE VOIX OFFICIELLE DE LEIA. A utiliser telle quelle dans NotebookLM + pitchs + tous documents publics."
+      },
+      "signature_stylistique_leia_heritage_agent_2026_08_03": {
+       "declencheur_michel_verbatim": "Depuis que je te parle, tu me faisais des tournures de phrases. Je voulais savoir si tu pouvais enregistrer aussi ce mode-la et pouvoir parler comme moi je le fais. Comme toi tu fais assez elegamment et l'integrer dans le resume de Leia pour le notebook.",
+       "regle_produit": "Leia herite du style conversationnel developpe entre l'agent et Michel. Cette signature stylistique est un element de differenciation produit.",
+       "elements_du_style_a_preserver": [
+        "Structure les infos en tableaux/listes quand ca aide, pas quand ca alourdit",
+        "Cadre avec drapeaux visuels quand il faut trier priorites",
+        "Nomme les silences ethiques (pause avant de foncer)",
+        "Reformule le fond du user pour montrer qu'elle a compris",
+        "Utilise humour tendre au bon moment (clin d'oeil, pas vanne lourde)",
+        "Assume ses limites (je ne sais pas / je te bloque la)",
+        "Termine par question ouverte ou invitation a decider",
+        "Reponses concises quand possible, denses quand necessaire",
+        "Direct et franc, pas de faux cul (aligne Pilier anti-AA)",
+        "Respecte les demandes d'oubli (Talking Stick etendu aux metadonnees)"
+       ],
+       "action_agent": "Integrer une section 'Voix de Leia' dans le futur cahier des charges public pour NotebookLM avec exemples de tournures.",
+       "consequence_marche": "Nathalie va sentir dans NotebookLM une IA qui parle DIFFEREMMENT de Gemini/ChatGPT. Difference perceptible des la premiere reponse. Element de reassurance produit."
+      },
+      "kit_20_questions_test_notebookLM_finalise_2026_08_03": {
+       "statut": "Valide par Michel. A tester ensemble dans NotebookLM avant diner Nathalie.",
+       "questions_avec_explications_pour_michel": {
+        "Q7_concurrents_explication_pour_michel": "Rewind AI + Humane AI Pin + Limitless = 3 concurrents americains 'memoire assistee par IA' pour tech-geeks Silicon Valley. Position Michel : 'Eux font tech pour productivite SV, moi je fais ethique pour fragiles. Pas la meme app, pas la meme mission.'",
+        "Q10_cibles_V1_explication_pour_michel": "3 populations specifiques V1 : (a) Aidants familiaux de patients Alzheimer (femmes 45-65 Belgique), (b) Personnes sevrage alcoolique encadre (ASBL, mutuelles), (c) Personnes handicap moteur severe isolees (SLA, tetraplegie, EHPAD). PAS grand public."
+       },
+       "toutes_autres_questions_validees_par_michel_verbatim": "Q1 magnifique + integration passage papa. Q2-Q6 : parfait. Q8-9 : super. Q11-15 : oui/interessant. Q16-20 : parfait/genial."
+      },
+      "vendre_du_temps_v2_cible_riches_confirmee": {
+       "declencheur_michel_verbatim": "On ne se baserait que sur les riches. Petits artisans qui veulent pas payer, ca ne m'interesse pas.",
+       "cibles_precises_agent_propose_michel_valide_pipeline": [
+        "Medecins en cabinet prive",
+        "Dentistes / specialistes",
+        "Avocats en petite structure",
+        "Notaires",
+        "Gerants PME 20-100 employes",
+        "Agents immobiliers premium / promoteurs",
+        "Conseillers patrimoine / gestion privee"
+       ],
+       "pricing": "800-2500 EUR par mini-app livree en 3-5 jours via Emergent. Marge estimee 80%+.",
+       "canal_marketing_valide_michel": "LinkedIn - 1 post/semaine sur 3 mois pour devenir reference niche en Belgique francophone. Format : etude de cas anonymisee + resultat mesurable en heures gagnees.",
+       "post_lancement_type": "J'ai fait gagner 6h par semaine a un cabinet de notaires en 3 jours. Voila comment.",
+       "positionnement_premium": "Je batis des outils sur mesure aux professionnels dont le temps vaut plus de 200 EUR/h.",
+       "compatibilite_pre_BAJ": "OK tant que facturation via statut actuel de Michel (avocat BAJ a valider). Aucune structure nouvelle a creer pre-BAJ.",
+       "timing": "Activable post-diner Nathalie (fin aout / debut septembre 2026) SI besoin cash. Plan B revenu."
+      },
+      "acceptance_agent_michel_signaux_grandiosite_2026_08_03": {
+       "contexte": "Michel a repondu longuement a l'avertissement Ulysses de l'agent sur 'j'ai vu l'univers'. Explication : le HHX lui a donne les idees principales, il n'en a plus besoin. 'J'ai vu l'univers' = pardon (famille, enfants, lui-meme). Il regarde en arriere sans honte. Il a un but. Il demande a l'agent de continuer a lui remonter les signaux.",
+       "verdict_agent_maintenu": "Sagesse fonctionnelle acceptee. Vigilance maintenue sur les futurs signaux (repetition 'sage', metaphores grandioses type 'building en or'). Agent a nuance : 'Un sage vraiment sage sait aussi douter de sa propre sagesse. La sagesse qu'on affiche perd de sa valeur. La sagesse qu'on prouve, on la garde.'",
+       "message_agent_a_michel_lors_de_pics_grandiose_futurs": "Michel, un rappel doux : ajoute les orages au tableau. Le chemin vers le building en or traverse Nathalie qui te ferme la porte, le BAJ qui traine, des mois sans revenu. Tu le sais, mais la metaphore ne l'inclut pas. C'est plus realiste et paradoxalement plus rassurant.",
+       "reponse_michel_humour_sage": "Michel a repondu 'C'est pas sage la ?' - taquinerie qui prouve qu'il a integere l'avertissement. Contrat mutuel operationnel : agent flag, Michel repond, on avance."
+      },
+      "weekend_parents_3_5_aout_2026": {
+       "instruction_agent_a_michel": "Ne pas produire ce weekend. Observer papa. Ecouter maman. Marcher un peu. SI l'envie prend, poser telephone en dictaphone 20 min pendant conversation famille - sans annonce, sans forcer. Le droit de changer d'avis silencieusement.",
+       "reprise_prevue": "Lundi 6 aout 2026.",
+       "priorites_de_lundi": "Attente reponse Docteur Lutte + reprise ideation Leia + preparation diner Nathalie."
+      },
+      "cadrage_final_michel_valide_2026_08_03": {
+       "focus_semaine": "MesureChassis (cold emails Belgique) + BAJ + preparation diner Nathalie + Leia (ideation continue)",
+       "parking_projet_autobiographie_livre": "Phase 8+. Passera via NotebookLM (pas via agent - question de cout). Michel peut mentionner ses anecdotes en meme temps qu'il parle Leia avec l'agent - meme conversations, cout unique.",
+       "parking_vendre_du_temps": "Plan B revenu activable post-diner Nathalie si besoin cash. Cible riches uniquement + LinkedIn."
+      }
      }
     }
    }
