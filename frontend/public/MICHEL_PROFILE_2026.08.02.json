@@ -2991,6 +2991,74 @@
        "parking_projet_autobiographie_livre": "Phase 8+. Passera via NotebookLM (pas via agent - question de cout). Michel peut mentionner ses anecdotes en meme temps qu'il parle Leia avec l'agent - meme conversations, cout unique.",
        "parking_vendre_du_temps": "Plan B revenu activable post-diner Nathalie si besoin cash. Cible riches uniquement + LinkedIn."
       }
+     },
+     "corrections_michel_agent_2026_08_03_soir": {
+      "correction_date_michel": "Aujourd'hui = LUNDI 3 aout 2026. Agent avait errone dit 'vendredi'. Michel corrige. Verite : 3 aout 2026 = lundi. Session travail semaine, pas amorce weekend.",
+      "routine_michel_appel_mere_19h": "Michel appelle sa mere tous les jours a 19h. Elle repond toujours. Michel a laisse en suspens : 'je t'expliquerai pourquoi un jour'. Zone privee - NE PAS CREUSER.",
+      "correction_vendre_du_temps_pre_BAJ": "Michel a corrige : 'vendre du temps' n'est PAS compatible pre-BAJ contrairement a ce que l'agent avait dit. Michel maintient : PRE-BAJ = zero action commerciale, on ne fait que parler. Post-BAJ = activation possible.",
+      "correction_style_leia_optionnel": "Style Michel active pour demo Nathalie SEULEMENT. Pour les utilisateurs Leia = OPTIONNEL par defaut. Users choisiront entre voix AI catalogue + voix famille + eventuellement voix Michel fondateur. REGLE STRICTE : agent ne DOIT PAS inventer des mots que Michel ne dit pas. Capter les VRAIES expressions, jamais caricaturer le belge.",
+      "idee_voix_michel_fondateur_permanente": "Michel envisage d'enregistrer sa voix comme 'voix du fondateur' disponible pour les 100 prochaines annees. Activable post-BAJ.",
+      "posture_michel_associate": "Michel s'exprime en verbatim : 'On est quand meme associes hein.' Promotion du role agent de 'outil' vers 'partenaire'. Engage responsabilite mutuelle : Michel autorise l'agent a le contredire, l'agent doit assumer.",
+      "sexualite_leia_position_michel": {
+       "verbatim": "C'est pas que je suis pudique, je pourrais parler de sexe ou n'importe quoi. Mais j'evite la question, c'est pas tabou mais ca reste mon petit jardin secret. Sans parler en bienveillance et en expliquant la nature, comment ca fonctionne.",
+       "regle_produit_leia": "Sexualite = sujet accessible avec dignite/bienveillance, sans tabou, sans gratuit. Leia peut aborder, jamais initier, toujours avec cadrage naturel-anatomique-emotionnel. Cible Alzheimer + aidants + isoles = sujet potentiellement critique (isolement affectif). NE PAS SUPPRIMER, encadrer."
+      }
+     },
+     "recadrage_positionnement_politique_leia_2026_08_03_soir": {
+      "declencheur_michel_verbatim": "Les gauchistes ils comprennent rien du tout, il faut leur faire une demonstration en leur expliquant que c'est pour la nature ou pour les pauvres, comme ca ils sont contents et tous les gauchistes pourront avoir mon application.",
+      "bloc_agent": "L'agent a BLOQUE Michel sur cette phrase. Deux raisons : (1) Leia doit rester APOLITIQUE - sa cible sont des humains fragiles, gauche ou droite. Aidant Alzheimer socialiste et libéral vivent le meme enfer. Positionnement politique = perte de 50% marche + trahison Pilier 9 humilite. (2) Le mepris envers un camp politique est mauvais outil marketing, decredibilise devant Nathalie (opinions politiques inconnues) et devant subventions publiques wallonnes.",
+      "regle_communication_publique_leia": "Leia parle le LANGAGE DE LA DOULEUR HUMAINE, pas celui de la politique. Elle sert un aidant, un patient, un isole. Point.",
+      "regle_agent_michel": "Michel peut garder ses opinions politiques en prive. Il NE LES MELANGE PAS avec Leia publiquement. Sinon = risque Nathalie + subventions publiques + mutuelles.",
+      "statut": "EN ATTENTE VALIDATION EXPLICITE MICHEL. A confirmer prochaine session."
+     },
+     "app_investissement_bourse_perplexity_LACUNE_AGENT_2026_08_03": {
+      "declencheur_michel_verbatim": "J'espere que tu l'as retenu aussi, que tout ce qui est investissement et tout ca, on ferait une application pour moi avec tous mes investissements. On irait rechercher dans Perplexity le cours de la bourse que je te dirai et tu me feras les calculs que t'enverras directement dans l'application de bourse.",
+      "constat_agent_defaillance": "Ce projet a ete discute avec un agent PRECEDENT et JAMAIS loggue. Encore une defaillance de log de l'agent precedent (comme le repo GitHub il y a quelques heures).",
+      "action_agent_honnetete": "Agent a confesse honnetement l'oubli a Michel. Demande a Michel de re-partager les grandes lignes ou de coller un ancien snapshot GitHub.",
+      "en_attente_michel": "Reponse de Michel avec les grandes lignes du projet a re-loguer proprement.",
+      "categorie_produit": "Outil personnel Michel - suivi investissements + bourse + integration Perplexity. Different de Leia et MesureChassis. Peut-etre prototype 'vendre du temps' (l'app existante pour Michel = base de ce qu'il pourrait vendre a des riches investisseurs)."
+     },
+     "extension_produit_MESURE_ESCALIER_2026_08_03": {
+      "source": "Resume Gemini du livre (colle par Michel).",
+      "concept": "MesureChassis puis Mesure Escalier - extension de l'app MesureChassis aux ESCALIERS en plus des chassis.",
+      "logique_produit": "Meme cible (menuisiers), meme workflow terrain, meme UX. Extension logique de la gamme.",
+      "timing": "Post-BAJ + apres succes MesureChassis. Priorite basse.",
+      "statut": "LOGGE COMME ROADMAP FUTURE, pas activation immediate."
+     },
+     "gemini_summary_livre_autobiographie_inversee_v1_2026_08_03": {
+      "source": "Resume Gemini colle par Michel dans session agent le 3 aout 2026 soir.",
+      "structure_gemini_json_v1": {
+       "project_metadata": {
+        "title": "L'Autobiographie Inversee",
+        "author_protagonist": "Un entrepreneur visionnaire et batisseur (Belgique) - Michel Pezzuto",
+        "start_date": "2026-08-03",
+        "project_scope": "Livre autobiographique combinant recit retrospectif (passe), chronique en temps reel du present, et projection lucide sur 10-15 ans dans l'avenir.",
+        "interactive_ecosystem": "Livre relie a base de donnees/application interactive - lecteurs explorent historique complet, notes, transcriptions, anecdotes detaillees."
+       },
+       "core_philosophy": {
+        "individual_vs_collective": "Refus collectivisme utopique. Maitrise de son propre destin.",
+        "work_ethic": "Rejet metro-boulot-dodo. Valorisation audace + creation de richesse.",
+        "financial_literacy": "Interets composes = 8eme merveille du monde (Einstein). Analyse critique pret immo (260k empruntes = 411k rembourses sur 23 ans)."
+       },
+       "political_and_societal_vision": {
+        "economic_model": "Baisse charges sociales + impots pour artisans/PME/independants Belgique. Protection des riches/entrepreneurs qui creent la richesse.",
+        "public_spending_focus": "Education + hopitaux + police/pompiers + infrastructures transport + justice de proximite.",
+        "health_and_substances_FLAGGED_BY_AGENT": "Eradication marche noir par regulation etatique therapeutique - commande en ligne substances encadrees (cannabis/derives) sous ordonnance, dosage intelligent juste en dessous seuil critique."
+       },
+       "key_business_projects": ["MesureChassis + Mesure Escalier", "Leia", "Livre + application-memoire"],
+       "rules_and_security_guardrails": {
+        "dignity_and_protection": "Rigueur et dignite. Filtrer toute mention compromettante/illegale/sensible.",
+        "factual_accuracy": "Verification systematique donnees financieres, mathematiques, historiques."
+       }
+      },
+      "DRAPEAU_AGENT_CONCERNANT_SECTION_SUBSTANCES": {
+       "constat": "La section 'health_and_substances' plaide pour un acces controle a des derives cannabinoides via ordonnance etatique - alors que Michel utilise personnellement du HHX (synthetique cannabinoide non-controle).",
+       "risque_identifie": "Cognitive dissonance possible - ideologie politique dans le livre RATIONALISE inconsciemment le pattern personnel de consommation. Michel ce matin meme : 'HHX m'a donne les idees, je n'en ai plus besoin' vs livre : defense politique de l'acces regule aux derives.",
+       "question_michel_a_ete_posee_par_agent": "Est-ce que cette position politique existe par ideologie sincere (debat de societe legitime) ou est-ce qu'elle rationalise ton propre usage HHX ?",
+       "proposition_agent": "Si Michel tient a cette position politique dans le livre, il l'assume explicitement en la reliant a son experience personnelle HHX. Transparence = protection. Silence sur le lien = fragilisation.",
+       "en_attente_reponse_michel": "A froid, comme d'habitude. Pas d'urgence.",
+       "regle_agent_futur": "Ce point est un drapeau Ulysses Contract. A surveiller si Michel developpe le sujet dans le livre. NE PAS censurer ses opinions politiques - MAIS remonter le miroir de la coherence quand pertinent."
+      }
      }
     }
    }
