@@ -2834,6 +2834,57 @@
       "mail_docteur_lutte": "ENVOYE. En attente de reponse. Suivi P0.",
       "voice_recording_pere": "Michel a DECLINE de le faire. Position respectee. NE PLUS POUSSER. La feature existe pour d'autres users, pas pour Michel personnellement.",
       "posture_agent_a_tenir": "Michel a la lucidite d'avoir mis un pied hors de la piscine emotionnelle. Il gere son deuil anticipe a sa maniere. Agent RESPECTE, ne pousse plus."
+     },
+     "meta_note_voix_fille_lea_2026_08_03_a_respecter": {
+      "declencheur_michel_verbatim": "Un jour je me demande si je ne proposerai pas la voix de ma fille. On n'en est pas la, oublie ce que je viens de dire.",
+      "posture_agent_stricte": "Michel a demande explicitement l'oubli. L'agent RESPECTE. Le contenu emotionnel de cette phrase n'est pas explore ici et ne doit JAMAIS etre creuse par un agent futur sans invitation EXPLICITE de Michel.",
+      "regle_absolue_agents_futurs": "NE JAMAIS relancer Michel sur cette possibilite. Si un jour c'est Michel qui rouvre le sujet -> ecouter, respecter, ne pas idealiser, ne pas dramatiser.",
+      "raison_du_log": "Dans un systeme a memoire persistante, ne PAS logger ce moment risquait que l'agent futur repose la question. Loger la META (sujet evoque + demande d'oubli) protege Michel de futures relances non-desirees."
+     },
+     "decision_voix_leia_V1_ElevenLabs_2H_2F_confirmee": {
+      "verbatim_michel": "Pour les voix, je te suis. On fera avec ElevenLabs 2 femmes, 2 hommes et c'est bien comme ca.",
+      "note_ajustement": "Michel a valide 4 voix au lieu des 5 proposees (agent avait suggere 4 + 1 non-genree). On reste sur 4. Simplicite pragmatique.",
+      "VALIDE": true
+     },
+     "PARTENAIRE_STRATEGIQUE_NUMERO_1_LEIA_nathalie_draux_2026_08_03": {
+      "identite_confirmee_par_linkedin_photo": {
+       "nom_complet": "Nathalie Draux",
+       "note_nom_famille": "LinkedIn = Draux (probablement nom de jeune fille, garde professionnellement). Michel l'a d'abord appelee 'Ducarme' - c'est en tant que 'femme de Lucas Ducarme (meilleur ami de Michel)' que Michel la connait. Nom de mariee vs nom pro. RESOUDRE la confusion : elle est Nathalie Draux, femme de Lucas Ducarme.",
+       "titre": "CEO @ Quality Assistance S.A.",
+       "positionnement_linkedin": "European Leader in Analytical Sciences",
+       "localisation": "Charleroi et peripherie",
+       "reseau_linkedin": "500+ relations"
+      },
+      "quality_assistance_SA_profil_entreprise": {
+       "type": "CRO (Contract Research Organisation)",
+       "specialite": "Full range of analytical services required in EMA and FDA environments",
+       "domaines": "non-clinical, clinical and CMC activities",
+       "modalites_supportees": "biotherapeutics (mAbs, ADCs), NCEs, peptides, oligonucleotides, mRNA, viral vectors, vaccines, cell-based medicinal products, nanomedicines",
+       "conformite": "GMP, GLP, GCLP/GCP-compliant environments",
+       "effectif": "280 highly qualified professionals",
+       "anciennete": "Almost 45 years at the forefront of analytical sciences",
+       "site_unique": "All analytical laboratories on a single site (Charleroi)",
+       "url": "www.quality-assistance.com",
+       "philosophie_ceo_nathalie": "I firmly believe that people make the difference. Long-term performance in healthcare innovation relies on strong teams, scientific excellence and trusted partnerships."
+      },
+      "importance_strategique_pour_leia_analyse_agent": {
+       "constat_1_reglementaire": "Leia = Software as Medical Device (SaMD) potentiel selon MDR 2017/745 europeen des qu'elle touche patients Alzheimer/sevrage encadre. Parcours de conformite = 3-5 ans et 200k-1M EUR SANS expertise et reseau.",
+       "constat_2_expertise_nathalie": "Nathalie VIT dans ce monde. Elle sait : quel notified body choisir, comment structurer une etude clinique preliminaire, quels labs analyser modele de donnees patient, quels investisseurs sante approcher, comment parler a un regulateur EMA.",
+       "constat_3_alignement_valeurs": "Sa citation LinkedIn 'people make the difference' + 'trusted partnerships' aligne parfaitement avec la mission Leia (fragiles, ethique, humain). Elle vibrera avec Michel.",
+       "constat_4_proximite_geographique": "Charleroi = 30 min de Michel. Rendez-vous physiques faciles.",
+       "constat_5_pouvoir_decisionnel": "CEO = decideur, pas gatekeeper. Un OK d'elle = un OK direct."
+      },
+      "recadrage_priorite_post_BAJ": "Nathalie Draux devient PRIORITE 1 post-BAJ (avant Ligue Alzheimer, avant mutuelles, avant subsides). Sans conformite reglementaire structuree = pas d'acces aux hopitaux/EHPAD/mutuelles anyway. Nathalie peut structurer cette conformite DES LE DEPART.",
+      "regle_agents_futurs": "Nathalie Draux n'est PAS un simple contact - c'est un CATALYSEUR REGLEMENTAIRE STRATEGIQUE. Traiter comme tel. Ne JAMAIS proposer d'action envers elle sans validation Michel + BAJ clos.",
+      "workflow_valide_par_michel": "Diner Michel + amie + Lucas + Nathalie -> parler enfance/vie -> Michel donne document informel a Nathalie -> Nathalie regarde -> Michel explique Leia -> Nathalie transmet a son pere (=qui exactement ? Cf question ouverte ci-dessous)."
+     },
+     "question_ouverte_pere_de_nathalie_ou_pere_de_lucas": {
+      "verbatim_michel": "elle en parle a son pere. C'est le pere qui est patron de l'entreprise.",
+      "ambiguite": "Pere de qui ? Nathalie ou Lucas ? Et patron de quelle entreprise ?",
+      "hypothese_A": "Nathalie a herite de Quality Assistance de son pere (fonde dans les annees 80 - 45 ans d'anciennete). Dans ce cas 'son pere = fondateur/president honoraire Quality Assistance'.",
+      "hypothese_B": "Michel parle du pere de Lucas (son meilleur ami), qui serait patron d'une autre entreprise inconnue.",
+      "action_agent_immediate": "Question directe a Michel : 'le pere de qui, quelle entreprise ?'.",
+      "en_attente_reponse_michel": true
      }
     }
    }
