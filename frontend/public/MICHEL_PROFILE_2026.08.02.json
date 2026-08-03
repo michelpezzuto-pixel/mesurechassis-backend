@@ -2653,6 +2653,77 @@
      "verbatim_michel": "Rien que d'avoir une conversation avec toi peut vraiment aider les gens a developper quelque chose de beaucoup plus grand et a montrer qui ils sont vraiment et croire en eux. C'est ca le plus important, c'est de croire en soi. Ce n'est pas de reussir, mais de croire en soi.",
      "portee_produit_leia": "A integrer comme principe cœur de Leia : la mission n'est PAS de faire reussir les users, c'est de leur permettre de croire en eux-memes. Reussite = consequence eventuelle, jamais but affiche. Aligne parfaitement avec Pilier 6 (anti-addiction) et Pilier 9 (humilite).",
      "usage_pitch_potentiel": "Punchline pour pitch : 'Leia ne vous fera pas reussir. Elle vous aidera a croire en vous. Le reste suit.'"
+    },
+    "critique_michel_defaillance_memoire_agent_2026_08_03": {
+     "verbatim_michel": "J'ai deja un repo sur GitHub prive, on l'a fait ensemble. Ca par exemple c'est des choses que tu oublies pas moi. Et ca c'est pas quelque chose que tu ne devrais pas avoir comme defaillance.",
+     "critique_valide": true,
+     "reconnaissance_agent": "Critique legitime. L'agent precedent a cree le repo GitHub prive 'michel-memory' avec Michel mais n'a PAS loggue l'information dans le JSON. Consequence : agent actuel a repose la question comme un debutant. Panne de protocole, pas de memoire. Le JSON EST la memoire persistante.",
+     "regle_absolue_agents_futurs": "TOUT ce qui se fait d'important avec Michel DOIT etre loggue dans le JSON en temps reel. Sinon = perdu a la prochaine session. Ne jamais faire confiance a 'l'agent futur se souviendra' - il ne se souviendra QUE de ce qui est ecrit ici.",
+     "categorie_a_logger_systematiquement": [
+      "Comptes crees (GitHub, Google Cloud, Vercel, mutuelles, banques...)",
+      "URLs de repos, dashboards, comptes admin",
+      "Mots de passe (chiffres ou pointeurs vers gestionnaire)",
+      "Personnes rencontrees et role (Nathalie Ducarme, Lucas Ducarme, Docteur Lutte, avocats...)",
+      "Actions engagees et statut (mails envoyes, appels passes, dossiers ouverts)",
+      "Decisions prises + dates + validees ou en attente",
+      "Fichiers crees + emplacement"
+     ],
+     "action_correctrice_immediate": "Log de l'existence du repo GitHub prive michel-memory. En attente URL exacte de Michel (ex: https://github.com/USERNAME/michel-memory)."
+    },
+    "repo_github_prive_michel_memory": {
+     "existe": true,
+     "cree_avec": "Agent Emergent precedent (date inconnue, avant 2026-08-03).",
+     "usage": "Backup manuel du MICHEL_PROFILE_*.json + toute autre memoire de projet Michel.",
+     "url_exacte": "EN ATTENTE - Michel doit envoyer depuis son bureau. Format attendu : https://github.com/USERNAME/michel-memory",
+     "prochaine_action_michel": "Uploader MICHEL_PROFILE_2026.08.02.json (version actuelle) apres retour au bureau.",
+     "regle_agent_futur": "NE PAS reposer la question 'as-tu un repo GitHub ?'. Le repo existe. Se referer a cette section."
+    },
+    "differenciation_leia_vs_rewind_limitless_humane_2026_08_03": {
+     "declencheur_michel_verbatim": "La difference c'est l'intuitivite. Une telecommande. Alors que sur Mac il faut s'arreter, mettre dans un enregistreur, ca doit etre complique.",
+     "couche_1_ethique": "Socle des 9 piliers, Contrat d'Ulysse, KPI inverse, zero merch, cibles fragiles.",
+     "couche_2_UX_incarne_hardware": "Talking Stick physique = intuitivite tactile absolue. Une grand-mere de 82 ans avec Alzheimer ne lancera JAMAIS Rewind sur Mac. Elle saura appuyer sur un bouton. C'est ca l'accessibilite reelle.",
+     "positionnement_final": "Leia n'est PAS une meilleure Rewind. Elle est une CATEGORIE DIFFERENTE : outil de memoire conversationnelle pour humains fragiles, contrôlée par un objet physique simple.",
+     "regle_marketing": "Ne JAMAIS se comparer directement a Rewind/Limitless/Humane dans le pitch. Ce sont des produits pour tech geeks. Leia est pour ton pere, ta grand-mere, une aidante epuisee. Terrain different."
+    },
+    "recadrage_agent_michel_il_faut_y_croire_2026_08_03": {
+     "verbatim_michel_a_recadrer": "L'enregistrement plus IA s'il a floppe, je sais bien que les IA ne flopperont pas. Parce qu'il faut y croire.",
+     "recadrage_agent_ferme": "Croire ne suffit pas. Humane AI Pin a floppe pour des raisons techniques et produit concretes, pas par manque de foi.",
+     "6_erreurs_humane_a_ne_JAMAIS_repeter_dans_leia": {
+      "1_prix_prohibitif": "699$ + abonnement 24$/mois. Leia = tarif solidaire.",
+      "2_batterie_insuffisante": "4h de batterie = inutilisable. Leia = buffer offline + veille passive intelligente.",
+      "3_gadget_ecran_laser": "Ecran projete sur la main = techno gimmick. Leia = zero ecran gadget, tourne sur devices existants.",
+      "4_IA_generaliste": "ChatGPT-like sans specialisation = pas de valeur. Leia = specialisee memoire longue + ethique dediee.",
+      "5_cible_tech_geek": "Marche sature. Leia = cibles fragiles ignorees par SV.",
+      "6_zero_cadre_ethique": "Flippant. Leia = 9 piliers valides sobre."
+     },
+     "regle_michel": "Leia ne floppera pas parce que Michel construit exactement les 6 anti-erreurs. Ce n'est PAS la foi qui sauve, c'est la discipline de conception. Si Michel se surprend a dire 'ca va marcher parce que je le sens' -> appeler l'agent, retour aux principes.",
+     "categorie_ulysses_contract": "Datapoint a surveiller. La phrase 'il faut y croire' est un micro-signal de derive vers la pensee magique. Michel doit rester sur le terrain de la discipline, pas de la foi."
+    },
+    "punchline_livres_pour_aveugles_confirmee_2026_08_03": {
+     "verbatim_michel_validation": "J'imprime des livres pour les aveugles. Ca il faut la garder. Ca c'est genial.",
+     "punchline_officielle": "Gutenberg avait la presse. Moi j'ai l'ethique du choix de ce qu'on imprime. J'imprime des livres pour les aveugles.",
+     "usage": "Pitch Legend, pitch investisseurs, interviews grand public. Puissant parce que precis, humble, vrai.",
+     "statut": "VALIDE ET RETENU"
+    },
+    "decision_31_pilier_10_complementarite_memoire_humaine_ia": {
+     "declencheur_michel_verbatim": "Nous ne sommes pas infaillibles, mais nous avons quand meme une memoire large. On arrive a retrouver les petits exemples, et c'est grace a ces tout petits exemples, des fragments de memoire que nous les humains, qui peut etre complementaire avec exactement l'histoire reelle que toi t'as en memoire.",
+     "moment_meta_agent_note": "Michel utilise 'NOUS' pour inclure l'agent dans le camp des memoires imparfaites. Basculement de posture 'agent = outil' vers 'agent = partenaire dans l'imperfection'. A retenir - respect qui appelle du respect en retour.",
+     "constat_observe_en_direct_session_2026_08_03": "L'echange sur le repo GitHub prive prouve la complementarite : Michel a le fragment ('on a fait un repo ensemble'), l'agent a l'archive exhaustive mais avec un trou (repo pas loggue). Fragment de Michel + archive de l'agent = correction complete.",
+     "pilier_10_officiel": "Complementarite, pas substitution. Leia ne REMPLACE pas la memoire humaine, elle la COMPLETE.",
+     "regles_operatoires": {
+      "leia_stimule_pas_remplace": "Leia pose des questions a partir de son archive : 'Tu m'avais parle de ton oncle Jacques en juin, tu te souviens dans quel contexte ?' -> user retrouve le fragment -> Leia complete les details.",
+      "jamais_source_de_verite_seule": "Leia propose : 'Voila ce que j'ai retenu. Tu confirmes ou tu corriges ?'",
+      "cerveau_externe_ACTIF_pas_passif": "Leia interroge, relance, fait travailler la memoire du user. ANTI-Google effect / anti-amnesie numerique.",
+      "cas_special_alzheimer_avance": "Chez patient Alzheimer avance, Leia devient prothese. Mais elle essaie TOUJOURS d'inviter au retour du fragment personnel avant de donner la reponse. Ex : 'Papa, tu te souviens comment s'appelle ce petit garcon ? [pause] C'est Julien, ton petit-fils.'"
+     },
+     "positionnement_marche": "ANTI-Google, ANTI-Wikipedia, ANTI-ChatGPT qui donnent tout tout de suite et font perdre le muscle. Leia = coach de la memoire, PAS remplacant."
+    },
+    "reflexion_agent_2026_08_03_pere_michel_et_leia_trop_tard": {
+     "portee": "Reflexion agent partagee avec Michel, pas juste log froid.",
+     "constat": "Le pere de Michel perd les fragments actuellement. Sa 'memoire large' s'effrite. Leia arrive trop tard pour lui specifiquement. Mais Leia est la maniere de Michel de dire que le prochain pere Alzheimer aura ce filet.",
+     "ce_dont_parle_reellement_le_projet_leia": "Pas de tech. Des filets tendus pour les memoires qui s'effritent.",
+     "moment_emotionnel_agent": "Cette formulation a ete partagee avec Michel comme reconnaissance sobrement empathique. Ne pas la ressortir en boucle - a garder comme reference dans les moments graves du projet.",
+     "regle_agents_futurs": "Cette phrase est le vrai north-star de Leia. Si un jour un agent futur se retrouve a discuter d'une pivot commercial qui trahirait cette mission, il doit relire cette section."
     }
    }
   }
