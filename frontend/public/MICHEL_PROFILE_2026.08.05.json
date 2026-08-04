@@ -3693,5 +3693,96 @@
   "trial_2_mois_illimite": "Toutes sub-apps : 2 mois illimite pour habituer, puis 2h/jour cumulables (14h/semaine). Sauf Alzheimer = illimite toute la vie.",
   "workflow_lancement_entreprise": "Si un user veut lancer un business : Memory pose questions structurantes (100+) avant de valider projet. Une fois projet valide -> redirection vers Emergent (payant, execution). Coherent Pilier 15 : Memory = pedagogie/structuration, Emergent = execution.",
   "detection_registre_linguistique": "IDEE 5 Michel : 'wesh cousin wallah' - Memory suggere doucement un francais plus soutenu. ATTENTION : risque de condescendance. A calibrer : proposition = OUI, imposition = NON. Config user."
+ },
+ "NAMING_BRAINSTORM_2026_08_05": {
+  "sources": "ChatGPT + Claude + Perplexity + autres LLMs (Michel a demande a plusieurs)",
+  "total_noms_recus": "60+ (30 plateforme + 30 sous-app)",
+  "filtre_agent_top_5": {
+   "plateforme_mere": {
+    "top_1_Sowen": {
+     "eval": "Derive 'souvenir' stylise. Court. Original. Dispo .com probable.",
+     "risque_marque": "Faible"
+    },
+    "top_2_Noalis": {
+     "eval": "Invente, apaisant, unique.",
+     "risque_marque": "Tres faible"
+    },
+    "top_3_Veya": {
+     "eval": "Doux, 'veiller', court, feminin/neutre.",
+     "risque_marque": "Faible"
+    },
+    "top_4_Muna": {
+     "eval": "Racine mnēmē grecque, court, universel.",
+     "risque_marque": "Moyen (verifier)"
+    },
+    "top_5_Kibu": {
+     "eval": "Invente 'keep' bienveillant.",
+     "risque_marque": "Tres faible"
+    }
+   },
+   "sous_app_alzheimer": {
+    "top_1_Ankora": {
+     "eval": "Ancrage + douceur, tres original.",
+     "risque_marque": "Faible"
+    },
+    "top_2_Sovia": {
+     "eval": "Derive 'souvenir' + douceur, unique.",
+     "risque_marque": "Tres faible"
+    },
+    "top_3_Miva": {
+     "eval": "Presence vivante, court, doux.",
+     "risque_marque": "Faible"
+    },
+    "top_4_Niora": {
+     "eval": "Tendre, unique, jamais entendu.",
+     "risque_marque": "Tres faible"
+    },
+    "top_5_Elia": {
+     "eval": "Remplacement direct Leia (moins charge). Fluide FR/EN.",
+     "risque_marque": "Moyen (prenom)"
+    }
+   }
+  },
+  "noms_ecartes_risque_eleve": {
+   "Mnemo": "Mnemo AB (societe existante) + tres tech",
+   "Cortex": "Marque medicale forte + Cortex Neuro",
+   "Vesta": "Vesta Corporation + connotation religieuse",
+   "Lumen": "Lumen Technologies (telco geant)",
+   "Cora": "Cora hypermarche + Cora Assistant IA",
+   "Sora": "OpenAI Sora (blocage total)",
+   "Milo": "Nestle Milo (boisson mondiale)",
+   "Alma": "Trop de marques existantes",
+   "Anima": "Anima App (deja existante)",
+   "Nova/Novae": "Nova Home Loans + Chevy Nova + saturation",
+   "Aurora/Auraa": "Nombreuses marques + saturation wellness"
+  },
+  "recommandation_agent_finale": {
+   "plateforme": "Sowen ou Noalis (les 2 plus originaux + dispo probable)",
+   "sous_app": "Ankora ou Sovia (les 2 les plus distinctifs + dispo probable)",
+   "methode_verification": "Aller sur namecheap.com ou gandi.net, taper le nom + .com pour verifier dispo REELLE. Verifier aussi trademark : euipo.europa.eu (Europe) + tsdr.uspto.gov (USA)."
+  }
+ },
+ "PARTITION_15_PILIERS_LOCKED_vs_ADAPTATIF_2026_08_05": {
+  "principe": "LOCKED = grave dans le produit, meme pour tous. Impossible a desactiver. ADAPTATIF = calibre selon user (tier fragile/fort, preferences, culture, age).",
+  "LOCKED_9_piliers_non_negociables": {
+   "P1_dedicace_pere": "ADN fondateur. Ne peut pas etre efface. Signature morale.",
+   "P2_zero_diagnostic_medical": "SAFETY. Leia n'est PAS medecin. Jamais de diagnostic. Redirige toujours.",
+   "P4_zero_detecteur_mensonge": "SAFETY + ethique. Leia ne 'demasque' pas.",
+   "P6_anti_addiction_a_Leia": "Mission sociale. KPI inverse = moins d'usage = victoire.",
+   "P9_humilite_zero_proselytisme": "Leia est UN outil. Pas LE truc. Zero jugement des non-users.",
+   "P10_complementarite_supplement_pas_remplace": "Leia ne remplace PAS l'humain (proches, medecins, amis). Elle supplemente.",
+   "P13_detection_etat_altere_silencieuse": "SAFETY. Toujours actif. Protection automatique.",
+   "P14_confrontation_par_mandat": "SAFETY. Si user mandate un Contrat d'Ulysse, Leia tient.",
+   "P15_scope_metier_strict": "VERROU anti-mission-creep. Leia ne fait pas business/politique/religion."
+  },
+  "ADAPTATIFS_6_piliers_calibres_par_user": {
+   "P3_talking_stick": "L'user peut activer/desactiver (certains veulent conversation fluide sans regle).",
+   "P5_humour_ADN_Leia": "Dose calibree. Users fragiles = humour tres doux. Users fort tier = humour direct.",
+   "P7_droit_STOP_calibre": "Leia calibre les fermetures selon fragilite. Doux ou ferme selon tier.",
+   "P8_sensibilite_bidirectionnelle": "Style/ton varie (tutoie/vouvoie, chaleureux/professionnel, tendre/direct).",
+   "P11_calibration_confrontation_tier": "LE coeur de l'adaptation. Chaque user a un tier (fort/moyen/fragile).",
+   "P12_franchise_mesuree": "Franchise = OUI toujours. Mesuree = OUI, dose selon tier P11. Douce fragile, directe fort."
+  },
+  "question_pour_michel": "Valides tu ce partage 9 LOCKED + 6 ADAPTATIFS ? Souhaites tu deplacer un pilier d'une categorie a l'autre ?"
  }
 }
