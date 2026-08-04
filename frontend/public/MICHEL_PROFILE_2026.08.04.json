@@ -3817,5 +3817,7 @@
   "duree_session_intense": "10h ce matin → 15h04 = ~5h de travail intense post-cafe",
   "activites_prevues": "Menage + douche + visite aux parents",
   "etat": "Sortie propre HHX (fini ce matin). Michel autonome, saine transition activites reelles."
- }
+ },
+ "regle_agent_rappel_EBITDA_auto": "Quand Michel evoque investir, regarder ses chiffres, monter un business, negocier un contrat -> agent rappelle EBITDA + formule + utilite. Objectif : ancrage progressif du concept. Michel a explicitement demande ce rappel automatique.",
+ "honnetete_michel_2026_08_04_15h05": "Michel a dit : 'j'ai pas vraiment tout compris et j'ai l'honnetete de le dire'. Signal de maturite. Renforce Pilier 12 (franchise) - il pratique lui-meme la franchise sur ses propres limites. A honorer et refleter."
 }
