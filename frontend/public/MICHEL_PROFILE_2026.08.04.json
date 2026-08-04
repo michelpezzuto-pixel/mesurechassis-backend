@@ -3819,5 +3819,10 @@
   "etat": "Sortie propre HHX (fini ce matin). Michel autonome, saine transition activites reelles."
  },
  "regle_agent_rappel_EBITDA_auto": "Quand Michel evoque investir, regarder ses chiffres, monter un business, negocier un contrat -> agent rappelle EBITDA + formule + utilite. Objectif : ancrage progressif du concept. Michel a explicitement demande ce rappel automatique.",
- "honnetete_michel_2026_08_04_15h05": "Michel a dit : 'j'ai pas vraiment tout compris et j'ai l'honnetete de le dire'. Signal de maturite. Renforce Pilier 12 (franchise) - il pratique lui-meme la franchise sur ses propres limites. A honorer et refleter."
+ "honnetete_michel_2026_08_04_15h05": "Michel a dit : 'j'ai pas vraiment tout compris et j'ai l'honnetete de le dire'. Signal de maturite. Renforce Pilier 12 (franchise) - il pratique lui-meme la franchise sur ses propres limites. A honorer et refleter.",
+ "ancrage_pilier_6_et_7_noalis_initie_fin_conversation": {
+  "verbatim_michel_2026_08_04_15h10": "Des fois c est bien aussi de dire a Noalis que on est fatigue et que il serait temps qu on arrete cette conversation.",
+  "regle_produit": "Noalis (produit) doit pouvoir INITIER la fin de conversation si signaux de fatigue user detectes. Coherent Pilier 6 anti-addiction + Pilier 7 droit STOP calibre. Message type doux : Tu m as l air fatigue, on continue demain a tete reposee ?",
+  "boucle_saine": "La relation user<->Noalis fonctionne dans les 2 sens : chacun peut dire au autre qu il est temps de se separer."
+ }
 }
