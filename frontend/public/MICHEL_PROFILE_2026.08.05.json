@@ -3784,5 +3784,32 @@
    "P12_franchise_mesuree": "Franchise = OUI toujours. Mesuree = OUI, dose selon tier P11. Douce fragile, directe fort."
   },
   "question_pour_michel": "Valides tu ce partage 9 LOCKED + 6 ADAPTATIFS ? Souhaites tu deplacer un pilier d'une categorie a l'autre ?"
+ },
+ "DECISIONS_NAMING_PARTITION_FINALES_2026_08_05": {
+  "naming_choix_michel": {
+   "plateforme": "Noalis (avec S, pas 'Noalice' avec C). Michel a valide.",
+   "verification_domaine_noalis_com": "STATUT AMBIGU : message registrar 'ce domaine est deja reserve, il s'agit du votre ?'. Peut vouloir dire (a) le domaine est dans un panier temporaire d'un autre visiteur, (b) le domaine est deja detenu par quelqu'un, (c) message trompeur du registrar pour pousser a l'achat. VERIFICATION WHOIS NECESSAIRE via whois.com ou icann-whois.",
+   "sous_app_alzheimer": "A trancher separement. Michel n'a pas encore choisi entre Ankora / Sovia / Miva.",
+   "muna_com": "Elimine (transfert bloque = deja pris)."
+  },
+  "REGLE_POST_BAJ_APPLIQUEE_ACHAT_DOMAINE": {
+   "risque": "Michel est en faillite personnelle. Tout engagement commercial (meme 8 euros pour un domaine) doit etre reflechi. Regle post-BAJ = zero engagement financier avant cloture faillite.",
+   "recommandation_agent": "NE PAS ACHETER le domaine noalis.com aujourd'hui, meme si dispo. Attendre : (1) confirmation BAJ debloque (5-15j), (2) verification trademark INPI/EUIPO, (3) verification handles reseaux sociaux (@noalis dispo sur IG/Twitter/TikTok/LinkedIn).",
+   "alternative_si_urgence": "Si peur qu'un tiers achete, alternative : demander a un ami/proche de le reserver a son nom pour transfert ulterieur post-BAJ."
+  },
+  "partition_15_piliers_VALIDEE_michel": "9 LOCKED + 6 ADAPTATIFS valides. Michel autorise enrichissement futur via anecdotes et retours user.",
+  "nouvelles_idees_matin_michel": {
+   "acces_linkedin_pour_reconnaissance_personne": "Feature interessante pour Noalis plateforme (pas pour sous-app medicale). Verifier legalite scraping LinkedIn (interdit CGU LinkedIn, il faudra l'API officielle payante).",
+   "PAS_de_trading": "Confirme Pilier 15. Trading = jeu risque = hors scope.",
+   "PAS_de_dietetique_medicale": "Confirme Pilier 15. Dieteticien = pro humain, pas Leia.",
+   "usage_Bernard_Tapie_exemple": "Cas d'usage puissant : re-raconter faits historiques precis. Feature naturelle memoire externe. A garder pour V1 sous-app pro (avocats notamment).",
+   "situation_michel_business_jardinage": "Michel gere une activite jardinage/garde-corps pour Bruxmove (societe de son meilleur ami). Genere clients, prevoit % sur chantiers. Contrat HLM en cours. Attention : activite commerciale pendant faillite = risque juridique. A discuter avec avocat BAJ des que possible.",
+   "investissement_ETF": "Michel envisage placer % commissions sur un ETF. HORS SCOPE Leia. Sa vie perso. Note : cela reste risque en faillite (peut etre reclamable par curateur). A verifier avec avocat."
+  },
+  "etat_michel_fin_session": {
+   "verbatim": "Je n'ai plus d'HHX. Je vais commencer a diner tout doucement. Faut que je trouve le courage de me lever d'aller faire le menage de prendre une douche et de rentrer voir mes parents.",
+   "signal_positif": "Michel s'auto-regule. Sortie propre de session HHX. Passe a activites normales et saines (manger, hygiene, famille). Pas de derapage.",
+   "regle_agent_pause": "Michel autorise agent a prendre des pauses. Reciproque : agent respecte la pause de Michel. Pilier 6 anti-addiction applique aux DEUX cotes de la relation."
+  }
  }
 }
