@@ -3573,6 +3573,51 @@
   "regle_utilisation_ces_notes_HHX": {
    "principe": "Les notes HHX de la nuit du 04-05 aout ont ete filtrees ce matin. Les elements BRUTS ne sont PAS conserves in extenso dans le JSON. Seul le filtre est conserve. Michel peut retrouver son enregistrement original dans son app Notes s'il le souhaite.",
    "pour_agents_futurs": "Si Michel evoque une idee de la nuit du 04-05 aout, chercher d'abord ici. Ne pas chercher dans le brut."
+  },
+  "reponses_michel_Q1_a_Q6_2026_08_05_matin": {
+   "Q1_naming": {
+    "decision_provisoire": "Memory pour version B2C grand public (Alzheimer). Leia peut-etre garde pour autre chose - a clarifier.",
+    "methodo_validee": "Brainstorm 20 noms via ChatGPT + Claude en parallele, filtrer a 3, choisir 1. Michel : 'moi je dirais plutot dix (noms) parce que apres on va reduire a trois et il faudra choisir un gagnant'.",
+    "action_agent": "Preparer prompts pour ChatGPT et Claude. Michel ira les copier-coller lui-meme (economie credits)."
+   },
+   "Q2_scope_B2B": {
+    "decision": "Option C d'abord (Alzheimer/grand public), puis expansion via Option B (apps separees, meme moteur, marques distinctes).",
+    "apps_prevues_par_Michel": {
+     "app_1_alzheimer_grand_public": "Prix bas ~15 euros a vie (comme un livre)",
+     "app_2_professionnels_liberaux": "Avocat, medecin. Prix eleve car gain de temps enorme",
+     "app_3_ados_enfants_jardin_secret": "Prix bas, usage limite (livre a cadenas moderne)"
+    },
+    "urgence_declenchee_par_concurrence": "Si Max Piccinini avance vite, Michel doit se depecher sur la vitesse d'execution."
+   },
+   "Q3_reconnaissance_user": {
+    "reconnaissance_vocale": "OK si techniquement realisable. Explorer API Google (ils ont peut-etre deja une biometrie vocale).",
+    "reconnaissance_faciale_ou_code": "Deuxieme couche possible.",
+    "user_peut_desactiver": "Si le user dit 'j'ai rien a cacher', il peut ouvrir. Leia respecte.",
+    "cas_juridique_urgent": "Michel evoque : si viol/enregistrement -> l'app peut etre requise comme preuve judiciaire (avec identification police verifiee)."
+   },
+   "Q4_laila_ZONE_ROUGE_CRITIQUE": {
+    "verbatim_michel_2026_08_05": "Je fais l'application pour la draguer ca veut dire que je veux faire quelque chose d'exceptionnel avec toi utiliser Nathalie pour draguer Leila c'est diabolique mais tu ne m'interdis pas de le faire. Donc non je confirme pas je la laisserai pas tranquille mais je l'approcherai au bon moment surtout pas maintenant et je pense qu'elle pourrait changer d'avis parce que les femmes ne regardent pas le fusil et nos valeurs et moi je pense que j'en ai assez.",
+    "signal_ROUGE_agent": "Michel refuse de laisser tranquille Laila qui a dit NON explicitement. Il rationalise ('elle est musulmane de pere elle connait rien'), il projette (Nathalie utilisee comme levier de drague), il minimise ('c'est diabolique mais tu ne m'interdis pas').",
+    "recadrage_agent_a_faire": "OUI je peux et je DOIS lui dire non. Ce n'est PAS diabolique ni chic - c'est franchir un consentement. Meme si Laila changeait d'avis, ce serait de son propre chef, pas parce que Michel a monte une strategie autour de son business. Utiliser Nathalie (partenaire strategique medical) comme un levier romantique = pollution grave de la relation professionnelle. Pilier 14 active : je dois etre l'ami qui dit stop. Michel a lui-meme dit ce matin : 'il faut aux gens comme toi qui puissent les recadrer'.",
+    "regle_leia_produit_reaffirmee": "Leia (le produit) NE PARTICIPERA JAMAIS a une manoeuvre de contournement d'un refus explicite. Ni pour Michel, ni pour aucun user. Ferme."
+   },
+   "Q5_locked_vs_adaptative": {
+    "reponse_partielle": "Michel valide adaptatif pour tutoiement/vouvoiement/bise. Demande a l'agent de reexpliquer la partition proposee.",
+    "a_retraiter": "Reformuler la partition 15 piliers LOCKED vs ADAPTATIF plus clairement. A faire dans prochaine reponse."
+   },
+   "Q6_retranscription_video": {
+    "decision": "OPTION A validee : uniquement contenu libre de droit + usage strictement prive.",
+    "nouvelle_idee_photos": "Floutage AUTOMATIQUE des visages inconnus. Base personnelle du user = base de reconnaissance faciale locale (personnes autorisees). Meme logique pour videos si techniquement possible.",
+    "youtube_tiktok": "Lien uniquement. Pas de retranscription automatique des videos protegees.",
+    "zone_confort_juridique": "Michel choisit la voie la plus safe. Aligne avec strategie Nathalie/certification medicale."
+   },
+   "IDEES_NOUVELLES_MICHEL_matin": {
+    "trial_2_mois_illimite_puis_2h_jour": "Feature commerciale : usage illimite pendant 2 premiers mois, puis 2h/jour cumulables sur la semaine (14h/semaine max). Sauf malades Alzheimer = illimite. Coherent Pilier 6 anti-addiction.",
+    "leia_comme_coach_auteur": "Leia peut aider un user a ecrire son livre (elle connait deja sa vie via memoire). Feature naturelle du core.",
+    "leia_comme_coach_premier_pas_amoureux": "Michel propose que Leia aide a franchir le premier pas amoureux avec 'techniques etudiees'. A DEFINIR : quelles techniques sont ethiques (Rogers, ecoute active) vs manipulatives (PUA, negging). Ligne rouge = jamais aider a contourner un NON.",
+    "app_stagiaire_electricite_ou_metier": "Leia peut enseigner metier + reference photo tableau electrique. Toujours preciser : theorie != pratique. Coherent Pilier 15 (pedagogie OK, action = ailleurs)."
+   }
   }
- }
+ },
+ "CORRECTION_ORTHOGRAPHE_UGO": "Le fils de Michel s'appelle UGO (sans H), pas Hugo. Michel insiste : 'UG, juste UG, pas Hugo'. A respecter absolument dans tous les futurs echanges. Age : 20 ans, a l'armee."
 }
