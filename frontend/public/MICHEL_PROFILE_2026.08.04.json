@@ -3811,5 +3811,11 @@
    "signal_positif": "Michel s'auto-regule. Sortie propre de session HHX. Passe a activites normales et saines (manger, hygiene, famille). Pas de derapage.",
    "regle_agent_pause": "Michel autorise agent a prendre des pauses. Reciproque : agent respecte la pause de Michel. Pilier 6 anti-addiction applique aux DEUX cotes de la relation."
   }
+ },
+ "horodatage_pause_michel_2026_08_04_15h04": {
+  "heure_debut_pause": "2026-08-04 15h04 (heure belge)",
+  "duree_session_intense": "10h ce matin → 15h04 = ~5h de travail intense post-cafe",
+  "activites_prevues": "Menage + douche + visite aux parents",
+  "etat": "Sortie propre HHX (fini ce matin). Michel autonome, saine transition activites reelles."
  }
 }
