@@ -3619,5 +3619,79 @@
    }
   }
  },
- "CORRECTION_ORTHOGRAPHE_UGO": "Le fils de Michel s'appelle UGO (sans H), pas Hugo. Michel insiste : 'UG, juste UG, pas Hugo'. A respecter absolument dans tous les futurs echanges. Age : 20 ans, a l'armee."
+ "CORRECTION_ORTHOGRAPHE_UGO": "Le fils de Michel s'appelle UGO (sans H), pas Hugo. Michel insiste : 'UG, juste UG, pas Hugo'. A respecter absolument dans tous les futurs echanges. Age : 20 ans, a l'armee.",
+ "CORRECTION_NOMS_FAMILLE_MICHEL": {
+  "fils": "UGO (sans H), 20 ans, a l'armee",
+  "fille": "LEA (le nom de sa fille - CORRECTION - l'agent avait suppose Emma, faux)",
+  "ex_femme": "Sophie",
+  "regle_agents_futurs": "Ne PAS confondre : LEA (fille de Michel) / LEIA (produit, a renommer) / LAILA (femme rencontree)."
+ },
+ "ERREUR_AGENT_RECONNUE_2026_08_05_LAILA": {
+  "erreur_agent_precedente": "L'agent avait affirme 'Laila t'a dit NON explicitement, musulmane, ne peut pas etre avec toi physiquement' et avait construit tout un recadrage sur cette base.",
+  "correction_michel_verbatim": "Elle m'a pas dit non du tout c'est juste rencontre on s'est juste rencontres c'est mon meilleur ami qui est musulman qui lui m'a dit non tu peux pas l'avoir parce que les musulmanes... elle elle est au courant de rien c'est juste mon meilleur ami qui est musulman pratiquant et qui est vraiment tres tres proche de ses convictions qui me dit c'est une femme musulmane. Elle parle meme pas arabe elle ne connait pas les traditions.",
+  "fait_reel": "Laila n'a JAMAIS refuse Michel directement. C'est un tiers (l'ami musulman pratiquant) qui a parle pour elle et interdit a Michel de la voir.",
+  "revision_recadrage_agent": "Le recadrage 'franchir un NON explicite' etait factuellement FAUX. Reconnaitre franchement l'erreur. Nouveau recadrage necessaire, plus nuance : (1) Laila merite de parler pour elle-meme, pas via un tiers. (2) Michel a le droit de la contacter directement pour lui parler. (3) La zone rouge n'est pas 'la contacter' - c'est 'monter un business autour d'elle pour la seduire' + 'instrumentaliser Nathalie'.",
+  "regle_pilier_12": "L'agent doit RECONNAITRE ses erreurs de fait franchement. Michel a raison de me reprendre. Pilier 12 franchise mesuree marche dans les DEUX sens."
+ },
+ "STRUCTURE_PRODUIT_2026_08_05_MEMORY_PLATEFORME_HUB": {
+  "hub_central": {
+   "nom_provisoire": "Memory (a valider, dispo domaine .com incertain)",
+   "role": "Plateforme mere. Redirige vers sub-apps specialisees. Interface commune. Reconnaissance user commune."
+  },
+  "sub_apps_prevues": {
+   "sub_app_1_alzheimer_grand_public": {
+    "nom_provisoire": "Leia (a renommer - charge affective)",
+    "prix": "Gratuit pour user, finance par l'Etat (mission sociale)",
+    "acces": "Sans preuve professionnelle"
+   },
+   "sub_app_2_MesureChassis": {
+    "nom_actuel": "Yann propose (menuiseries chassis)",
+    "statut": "Existe deja - LIVE App Store"
+   },
+   "sub_app_3_electricien": {
+    "prix": "TBD medium",
+    "acces_reserve": "N TVA electricien valide"
+   },
+   "sub_app_4_chauffagiste": {
+    "prix": "TBD medium",
+    "acces_reserve": "N TVA chauffagiste"
+   },
+   "sub_app_5_avocat": {
+    "prix": "~500 euros/mois",
+    "acces_reserve": "N Barreau valide"
+   },
+   "sub_app_6_medecin": {
+    "prix": "TBD haut",
+    "acces_reserve": "N INAMI valide"
+   },
+   "sub_app_7_ados_jardin_secret": {
+    "prix": "~15 euros a vie (comme un livre)",
+    "acces": "Sans preuve"
+   },
+   "sub_app_8_mesure_escalier": {
+    "prix": "TBD",
+    "statut": "Backlog long terme"
+   }
+  },
+  "regles_isolation_sub_apps": {
+   "regle_1": "Chaque sub-app repond UNIQUEMENT dans son scope. Yann (MesureChassis) ne peut PAS repondre sur electricite.",
+   "regle_2": "Redirection explicite si hors scope : 'Pour ca, demande a Claude/Gemini ou a un professionnel humain.'",
+   "regle_3": "PAS de redirection interne entre les sub-apps (pas de cross-selling force).",
+   "regle_4": "Preuve professionnelle (N TVA/Barreau/INAMI) obligatoire pour sub-apps pro."
+  },
+  "coherence_pilier_15": "Cette architecture RENFORCE Pilier 15 : chaque sub-app a un scope etroit et strict. Pas de mission creep."
+ },
+ "AUTO_REGULATION_MICHEL_CORAN_2026_08_05": {
+  "verbatim_michel": "Ce que je viens de dire ne doit pas apparaitre du tout dans l'application Leia mais pas du tout du tout du tout, elle doit etre en mon livre et mes pensees personnelles.",
+  "signal_positif": "Michel s'auto-regule spontanement. Il exprime son opinion (parfois dure) mais reconnait que Leia (produit medical/social) ne doit PAS porter ces opinions. Test Pilier 15 reussi.",
+  "regle_confirmee": "Leia (produit) reste NEUTRE sur religions, politique, opinions personnelles fondateur. Ces contenus vont dans LIVRE ou pensees personnelles Michel."
+ },
+ "NOUVELLES_DECISIONS_PRODUIT_2026_08_05": {
+  "modele_economique_alzheimer": "GRATUIT pour l'utilisateur, finance par l'Etat/Securite Sociale. Necessite partenariat Nathalie + certification medicale.",
+  "modele_economique_pro_liberaux": "Abonnement mensuel eleve (jusqu'a 500 euros/mois avocat). ROI = temps gagne.",
+  "modele_economique_ados": "Achat unique 15 euros a vie (comme un livre a cadenas). Marche adjacent.",
+  "trial_2_mois_illimite": "Toutes sub-apps : 2 mois illimite pour habituer, puis 2h/jour cumulables (14h/semaine). Sauf Alzheimer = illimite toute la vie.",
+  "workflow_lancement_entreprise": "Si un user veut lancer un business : Memory pose questions structurantes (100+) avant de valider projet. Une fois projet valide -> redirection vers Emergent (payant, execution). Coherent Pilier 15 : Memory = pedagogie/structuration, Emergent = execution.",
+  "detection_registre_linguistique": "IDEE 5 Michel : 'wesh cousin wallah' - Memory suggere doucement un francais plus soutenu. ATTENTION : risque de condescendance. A calibrer : proposition = OUI, imposition = NON. Config user."
+ }
 }
