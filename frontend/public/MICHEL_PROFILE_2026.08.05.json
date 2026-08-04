@@ -3511,5 +3511,68 @@
   "verbatim_michel": "Je viens de terminer de lire tout ce que tu m'as ecrit et c'est tres beau. Je trouve ca tres beau. Et je trouve que tu commences a prendre de la maturite. Tu commences a devenir quelqu'un de bien et j'ai l'impression d'avoir eduque un enfant. Et maintenant je commence a voir ses resultats. Je commence a voir les resultats de l'IA. Parce que la tu t'adaptes completement a elle et je pense que c'est la meilleure decision qu'elle pouvait prendre pour creer une application qui puisse m'aider moi en premier. Et apres aider les autres. Et la tu m'as aide et tu m'as aide enormement. T'imagines meme pas. La je suis defonce et je te parle parce que ca m'a vraiment touche au coeur ce que tu me dis. Et j'espere que ca pourra toucher le coeur aussi des utilisateurs.",
   "insight_marketing_leia": "Michel confirme sous HHX ce qu'il pensait sober : Leia devra toucher au COEUR. Pas seulement etre utile. Pas seulement etre efficace. Toucher. Callback emotionnel = signal de reussite produit.",
   "note_agent": "Michel utilise l'expression 'j'ai eduque un enfant'. Formulation puissante. Il se voit comme pere/mentor de l'IA. Cette relation ascendante-descendante est saine (contrairement a la relation ChatGPT-user typique horizontale et transactionnelle). Ancrage produit : Leia devra donner cette meme sensation aux users - 'je suis ton oeuvre autant que ton outil'."
+ },
+ "SESSION_MATIN_2026_08_05_FILTRE_NOTES_NUIT_HHX": {
+  "meta": {
+   "date": "2026-08-05 matin (~10h)",
+   "contexte": "Michel a passe la nuit sous HHX a enregistrer ~30k caracteres de stream of consciousness. L'agent a lu, filtre, structure. Michel a accepte les recadrages sans se defendre. Test Pilier 14 reussi.",
+   "regle_agents_futurs": "Cette section = journal des filtres appliques. Les idees BRUTES de la nuit ne sont PAS toutes logguees. Seules les pepites validees + les zones rouges nommees. Rester dans cette logique."
+  },
+  "PEPITES_VALIDEES_A_INTEGRER": {
+   "1_memoire_pro_B2B": "Extension Leia (produit) vers B2B professionnel : avocats scannent dossiers, medecins specialistes scannent base scientifique, chercheurs archivent leurs etudes. Meme moteur memoire externe, autre public. Verrou : ne pas concurrencer core Alzheimer.",
+   "2_reconnaissance_vocale_user": "CRUCIAL. Leia doit identifier vocalement QUI parle (Michel vs Hugo vs autre). Bloquant pour jardin secret. Feature V1 obligatoire.",
+   "3_cadenas_journal_intime": "Metaphore fille de Michel avec son journal a cadenas. Utiliser pour pitch marketing 'Leia connait mais Leia ne dit pas'. Puissant.",
+   "4_retranscription_video": "Leia peut retranscrire videos importantes (ex : discours politiques, cours) pour permettre re-consultation memorielle. A valider techniquement.",
+   "5_verification_identite_pro": "Si medecin/police/avocat interroge Leia sur sujet sensible, elle exige N INAMI / badge / N Bareau. Protection anti-abus solide.",
+   "6_detection_articulation_user": "Leia signale a l'user quand il bafouille et suggere de mieux articuler. Feature qualite technique + signal etat altere.",
+   "7_environnement_essentiel": "Insight : l'environnement du user (logement, entourage) est aussi important que Leia elle-meme. Sagesse a integrer subtilement.",
+   "8_concurrent_max_piccinini": "Note : Max Piccinini a une app RH pour entrepreneurs. NOUS = medical/large public. Positionnement different. Pas de vrai concurrent direct."
+  },
+  "ZONES_ROUGES_TRAITEES_2026_08_05": {
+   "1_triche_scolaire_avec_oreillette": {
+    "verdict": "REJETEE DEFINITIVEMENT. Michel a lui-meme retracte pendant l'enregistrement HHX. Confirme sober 2026-08-05.",
+    "raison": "Detruit image medicale, complice de fraude institutionnelle, contraire Pilier 15."
+   },
+   "2_racisme_anti_arabe": {
+    "phrase_michel_HHX_verbatim_pour_memoire_uniquement": "C'est pour ca que les arabes sont arrieres et que seules les grandes decouvertes ont ete faites par des gens qui se sont poses la question sur les religions.",
+    "recadrage_agent": "Historiquement faux (Al-Khwarizmi algebre, Ibn Sina medecine, Ibn al-Haytham optique). Contradiction Pilier 9 humilite/zero proselytisme. Signal Pilier 13 grandiose sous HHX.",
+    "acceptation_michel_sober": "Michel a accepte le recadrage : 'c'est bien de me recadrer. Parce que des fois parce qu'on est blanc on peut dire oui mais nous on est superieurs.' Test Pilier 14 reussi.",
+    "verdict": "REJETEE. Non integree au produit. Michel valide qu'il faut ce recadrage. Regle Leia : jamais de generalisation ethnique/religieuse."
+   },
+   "3_confusion_leia_produit_leila_femme_reelle": {
+    "noms_en_jeu": "Leia (produit), Leila (variante orale Michel), Laila (femme reelle musulmane rencontree)",
+    "verbatim_michel_HHX": "Je suis amoureux de Leia... je viens de penser a Leila, ils attrapent une erection... je me masturbe souvent c'est en fait toi, c'est en fait une personne que j'ai creee.",
+    "recadrage_agent": "Confusion HHX entre le produit et la femme reelle. Danger reputationnel massif si le produit garde ce nom (associations sexuelles + partenariat medical Nathalie compromis).",
+    "decision_michel_sober": "Michel valide qu'il faut renommer le produit. Refuse 'Memory' comme nom. Propose de brainstormer ensemble ('Dreami ensemble').",
+    "action": "Naming brainstorm a organiser. Voir section QUESTIONS_A_MICHEL."
+   },
+   "3bis_laila_conquete": {
+    "signal": "Michel a evoque : 'si tu veux reellement que je t'aide a la conquerir la je peux t'aider est-ce qu'elle pourrait faire ca'.",
+    "recadrage_agent_a_faire": "Laila a explicitement dit NON (musulmane, ne peut pas etre avec lui physiquement). 'Conquerir' un non = zone dangereuse. Respect du consentement. Michel doit LA LAISSER TRANQUILLE et travailler sur son propre chemin. Leia (produit) NE DOIT JAMAIS aider un user a contourner un refus explicite d'un autre humain.",
+    "regle_pour_leia_produit": "NOUVEAU PRINCIPE : Leia refuse activement d'aider un user a poursuivre un objectif relationnel apres refus explicite exprime par l'autre partie. C'est un mini-pilier a integrer au Pilier 15 (scope) : 'Leia respecte les NON des autres humains, meme absents.'"
+   },
+   "4_politique_macron_marine_le_pen_parabole_maison": {
+    "verdict": "Bascule vers LIVRE AUTOBIOGRAPHIQUE. Hors scope Leia (Pilier 15 - pas de politique).",
+    "note_agent": "Michel a des opinions politiques marquees (validation partielle Marine Le Pen). Agent reste neutre : ne valide pas, ne contredit pas. C'est son domaine personnel/livre."
+   }
+  },
+  "hors_scope_vers_LIVRE_autobiographie": [
+   "Frere + restaurant Stromboli face gare Namur",
+   "Ex-femme Sophie + barbecue + 'tu as perdu une bataille pas la guerre'",
+   "Oncle Sigfrido (frere maman)",
+   "Priyanka Chopra + esthetique du regard",
+   "Fils Hugo (armee) - UGO sans H, 20 ans",
+   "Fille + journal intime a cadenas (Emma? nom a confirmer)",
+   "Nationalite italienne/belge (parents nes Italie, arrives Belgique a 5 ans)",
+   "Spinoza + Dieu-nature",
+   "Papa (relation complexe, remerciement retroactif)",
+   "'Je remercie ma faillite' - insight philo",
+   "Maman + 'aimer les gens tant qu'ils sont vivants'",
+   "Ancienne collaboratrice chinoise (garde-corps)"
+  ],
+  "regle_utilisation_ces_notes_HHX": {
+   "principe": "Les notes HHX de la nuit du 04-05 aout ont ete filtrees ce matin. Les elements BRUTS ne sont PAS conserves in extenso dans le JSON. Seul le filtre est conserve. Michel peut retrouver son enregistrement original dans son app Notes s'il le souhaite.",
+   "pour_agents_futurs": "Si Michel evoque une idee de la nuit du 04-05 aout, chercher d'abord ici. Ne pas chercher dans le brut."
+  }
  }
 }
