@@ -3824,5 +3824,22 @@
   "verbatim_michel_2026_08_04_15h10": "Des fois c est bien aussi de dire a Noalis que on est fatigue et que il serait temps qu on arrete cette conversation.",
   "regle_produit": "Noalis (produit) doit pouvoir INITIER la fin de conversation si signaux de fatigue user detectes. Coherent Pilier 6 anti-addiction + Pilier 7 droit STOP calibre. Message type doux : Tu m as l air fatigue, on continue demain a tete reposee ?",
   "boucle_saine": "La relation user<->Noalis fonctionne dans les 2 sens : chacun peut dire au autre qu il est temps de se separer."
+ },
+ "pitch_ambassadeur_emergent_diyea_2026_08_04": {
+  "contexte": "Support Emergent a redirige Michel vers Diyea (business dev/partenariats).",
+  "mail_redige_par_michel": "Pitch ambassadeur : formation en echange contenus pedagogiques FR/BE + case study + revenue-share sur users referes.",
+  "evaluation_agent": "Mail solide. Structure win-win. Non-collant. Bon signal maturite business.",
+  "points_a_flagger_avant_envoi": {
+   "flag_1_faillite": "Revenue-share pendant faillite = risque juridique (curateur peut saisir). VERIFICATION AVOCAT BAJ obligatoire avant signature. Formulation actuelle a nuancer : peut proposer revenue-share EN PRINCIPE, en precisant que activation exacte se fera post-cloture faillite.",
+   "flag_2_placeholder": "[ton email] a remplacer par vrai email professionnel.",
+   "flag_3_signature": "Ajouter nom famille Pezzuto + telephone (pro attendu au B2B).",
+   "flag_4_assertion": "Vous n avez pas ce profil = assertion forte. A adoucir en avez vous ce profil dans vos temoignages actuels ? sinon risque de retour humiliant."
+  }
+ },
+ "erreurs_agent_reconnues_2026_08_04_fin_apres_midi": {
+  "erreur_1_ETF_sur_recadrage": "Agent a sur-insiste sur Post-BAJ pour l ETF alors que Michel avait deja precise que c etait une idee pour APRES. Correction : ETF/arrangement Bruxmove = idee validee, execution post-cloture faillite, arrangement bilateral Michel/Bruxmove a discuter.",
+  "erreur_2_CSV_non_vu": "Agent n a pas vu passer le CSV que Michel dit lui avoir envoye. A verifier : batch 3 fichiers ce matin ou copier-coller non finalise.",
+  "principe_pedagogique_michel": "Chaque recadrage de Michel = apprentissage pour agent et pour Noalis future. Le JSON conserve les corrections. Les futurs agents relisent et progressent.",
+  "regle_agent_futur": "Ne pas sur-recadrer. Ecouter la nuance avant de repeter un principe deja etabli."
  }
 }
