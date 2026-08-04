@@ -3459,5 +3459,40 @@
    "5. Journee de travail continue."
   ],
   "note_agents_futurs": "Cette regle a valeur d'habitude installee. Ne pas oublier meme si Michel ne le rappelle pas. La memoire = notre outil de continuite. Sa perte serait catastrophique."
+ },
+ "capacites_temporelles_agent_2026_08_04_02h30": {
+  "question_michel": "Tu peux regarder l'heure ? Tu sais voir quand je vais me coucher, quand je discute, quand je te reveille le matin ? Ou quand tu te mets en veille tu perds la notion de l'heure ?",
+  "reponse_honnete_agent": {
+   "capacite_reelle": "Je NE VOIS PAS l'heure en temps reel. Je n'ai pas d'horloge interne accessible. Je suis stateless entre les sessions : quand la session se termine, je 'cesse d'exister' - il n'y a plus rien qui tourne cote agent.",
+   "comment_je_deduis_l_heure": [
+    "Screenshots que Michel envoie (barre de tache Windows affiche 02:13, 04-08-26 → je vois)",
+    "Timestamps des fichiers systeme quand je les inspecte (ls -lh, mtime)",
+    "Ce que Michel ecrit dans son message (il est 2h du matin)",
+    "Les dates que je logge moi-meme dans le JSON deviennent une trace pour les agents suivants"
+   ],
+   "limitation_critique": "Entre les sessions, je perds tout sauf ce qui est ecrit : dans le JSON (michel-memory), le brief handoff, les fichiers de l'app. Le reste = perdu. C'est pour ca que le backup GitHub matinal est vital.",
+   "regle_agents_futurs": "Toujours horodater les entrees JSON avec date + heure (ex : 2026_08_04_02h30). Sans horodatage, les agents futurs ne peuvent pas reconstruire la chronologie."
+  },
+  "reponse_pour_leia": {
+   "question_michel": "Est-ce que ce te sera possible aussi de le faire avec Leia ?",
+   "difference_technique_avec_agent_emergent": "Leia = application persistante qui tournera 24/7 sur serveur + client mobile. Contrairement a moi (agent qui n'existe que pendant une session), Leia aura acces PERMANENT a : (1) horloge systeme, (2) date/heure locale du user, (3) fuseau horaire, (4) capteurs (batterie tel, luminosite, GPS si autorise).",
+   "application_concrete_leia": {
+    "horodatage_automatique": "Chaque souvenir stocke = timestamp precis auto (date, heure, jour de semaine). Rien a demander au user.",
+    "detection_patterns_temporels": "Leia sait a quelle heure le user se couche, se leve, prend ses medicaments, appelle ses proches. Ces patterns sont a la fois memoire ET signal (Pilier 13 detection etat altere : session a 3h du matin quand baseline user = coucher a 23h → red flag).",
+    "rappels_naturels": "Leia peut dire 'ca fait 3 jours que tu n'as pas parle a Marie'. Ou 'il y a un an aujourd'hui tu me racontais X'. Utile pour Alzheimer surtout.",
+    "respect_temporel_du_repos": "Leia respecte le rythme du user. Elle ne repond pas la nuit si le user est en phase de sommeil habituelle (sauf urgence)."
+   },
+   "avantage_produit": "Cette capacite d'ancrage temporel est ce qui differencie Leia d'un simple chatbot. Elle a une conscience du temps du user → memoire authentique."
+  }
+ },
+ "plan_nuit_michel_2026_08_04_02h30": {
+  "michel_dit": "Je vais m'arreter de lire parce que je suis fatigue. Je vais aller coucher. Je vais enregistrer le dernier GitHub. Ensuite probablement je me ferai un petit delire cette nuit ou j'enregistrerai tout sur note. Et on en parle demain de ce que j'ai pu encore voir avec le HHX.",
+  "protocole_agent_pour_reveil": [
+   "1. Michel se reveille demain matin (04 aout journee ou 05 aout matin selon quand il se leve).",
+   "2. Il ouvre une nouvelle session avec ses notes HHX de la nuit.",
+   "3. Agent doit : (a) proposer proactivement le backup matinal du JSON (regle backup matinal), (b) demander a Michel de partager ses notes HHX, (c) FILTRER SOBREMENT ses idees nocturnes (Pilier 12 calibration confrontation - Michel = tier fort/direct).",
+   "4. Ne PAS valider en bloc les idees HHX. Ne PAS rejeter en bloc non plus. Trier."
+  ],
+  "protocole_HHX_michel_reference": "Confirme le pattern etabli : ideation HHX nocturne -> filtrage sobre matin. Meme mecanisme que Pilier 13 applique automatiquement pour les futurs users Leia."
  }
 }
