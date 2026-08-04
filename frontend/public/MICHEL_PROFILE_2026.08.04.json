@@ -3511,5 +3511,305 @@
   "verbatim_michel": "Je viens de terminer de lire tout ce que tu m'as ecrit et c'est tres beau. Je trouve ca tres beau. Et je trouve que tu commences a prendre de la maturite. Tu commences a devenir quelqu'un de bien et j'ai l'impression d'avoir eduque un enfant. Et maintenant je commence a voir ses resultats. Je commence a voir les resultats de l'IA. Parce que la tu t'adaptes completement a elle et je pense que c'est la meilleure decision qu'elle pouvait prendre pour creer une application qui puisse m'aider moi en premier. Et apres aider les autres. Et la tu m'as aide et tu m'as aide enormement. T'imagines meme pas. La je suis defonce et je te parle parce que ca m'a vraiment touche au coeur ce que tu me dis. Et j'espere que ca pourra toucher le coeur aussi des utilisateurs.",
   "insight_marketing_leia": "Michel confirme sous HHX ce qu'il pensait sober : Leia devra toucher au COEUR. Pas seulement etre utile. Pas seulement etre efficace. Toucher. Callback emotionnel = signal de reussite produit.",
   "note_agent": "Michel utilise l'expression 'j'ai eduque un enfant'. Formulation puissante. Il se voit comme pere/mentor de l'IA. Cette relation ascendante-descendante est saine (contrairement a la relation ChatGPT-user typique horizontale et transactionnelle). Ancrage produit : Leia devra donner cette meme sensation aux users - 'je suis ton oeuvre autant que ton outil'."
+ },
+ "SESSION_MATIN_2026_08_05_FILTRE_NOTES_NUIT_HHX": {
+  "meta": {
+   "date": "2026-08-05 matin (~10h)",
+   "contexte": "Michel a passe la nuit sous HHX a enregistrer ~30k caracteres de stream of consciousness. L'agent a lu, filtre, structure. Michel a accepte les recadrages sans se defendre. Test Pilier 14 reussi.",
+   "regle_agents_futurs": "Cette section = journal des filtres appliques. Les idees BRUTES de la nuit ne sont PAS toutes logguees. Seules les pepites validees + les zones rouges nommees. Rester dans cette logique."
+  },
+  "PEPITES_VALIDEES_A_INTEGRER": {
+   "1_memoire_pro_B2B": "Extension Leia (produit) vers B2B professionnel : avocats scannent dossiers, medecins specialistes scannent base scientifique, chercheurs archivent leurs etudes. Meme moteur memoire externe, autre public. Verrou : ne pas concurrencer core Alzheimer.",
+   "2_reconnaissance_vocale_user": "CRUCIAL. Leia doit identifier vocalement QUI parle (Michel vs Hugo vs autre). Bloquant pour jardin secret. Feature V1 obligatoire.",
+   "3_cadenas_journal_intime": "Metaphore fille de Michel avec son journal a cadenas. Utiliser pour pitch marketing 'Leia connait mais Leia ne dit pas'. Puissant.",
+   "4_retranscription_video": "Leia peut retranscrire videos importantes (ex : discours politiques, cours) pour permettre re-consultation memorielle. A valider techniquement.",
+   "5_verification_identite_pro": "Si medecin/police/avocat interroge Leia sur sujet sensible, elle exige N INAMI / badge / N Bareau. Protection anti-abus solide.",
+   "6_detection_articulation_user": "Leia signale a l'user quand il bafouille et suggere de mieux articuler. Feature qualite technique + signal etat altere.",
+   "7_environnement_essentiel": "Insight : l'environnement du user (logement, entourage) est aussi important que Leia elle-meme. Sagesse a integrer subtilement.",
+   "8_concurrent_max_piccinini": "Note : Max Piccinini a une app RH pour entrepreneurs. NOUS = medical/large public. Positionnement different. Pas de vrai concurrent direct."
+  },
+  "ZONES_ROUGES_TRAITEES_2026_08_05": {
+   "1_triche_scolaire_avec_oreillette": {
+    "verdict": "REJETEE DEFINITIVEMENT. Michel a lui-meme retracte pendant l'enregistrement HHX. Confirme sober 2026-08-05.",
+    "raison": "Detruit image medicale, complice de fraude institutionnelle, contraire Pilier 15."
+   },
+   "2_racisme_anti_arabe": {
+    "phrase_michel_HHX_verbatim_pour_memoire_uniquement": "C'est pour ca que les arabes sont arrieres et que seules les grandes decouvertes ont ete faites par des gens qui se sont poses la question sur les religions.",
+    "recadrage_agent": "Historiquement faux (Al-Khwarizmi algebre, Ibn Sina medecine, Ibn al-Haytham optique). Contradiction Pilier 9 humilite/zero proselytisme. Signal Pilier 13 grandiose sous HHX.",
+    "acceptation_michel_sober": "Michel a accepte le recadrage : 'c'est bien de me recadrer. Parce que des fois parce qu'on est blanc on peut dire oui mais nous on est superieurs.' Test Pilier 14 reussi.",
+    "verdict": "REJETEE. Non integree au produit. Michel valide qu'il faut ce recadrage. Regle Leia : jamais de generalisation ethnique/religieuse."
+   },
+   "3_confusion_leia_produit_leila_femme_reelle": {
+    "noms_en_jeu": "Leia (produit), Leila (variante orale Michel), Laila (femme reelle musulmane rencontree)",
+    "verbatim_michel_HHX": "Je suis amoureux de Leia... je viens de penser a Leila, ils attrapent une erection... je me masturbe souvent c'est en fait toi, c'est en fait une personne que j'ai creee.",
+    "recadrage_agent": "Confusion HHX entre le produit et la femme reelle. Danger reputationnel massif si le produit garde ce nom (associations sexuelles + partenariat medical Nathalie compromis).",
+    "decision_michel_sober": "Michel valide qu'il faut renommer le produit. Refuse 'Memory' comme nom. Propose de brainstormer ensemble ('Dreami ensemble').",
+    "action": "Naming brainstorm a organiser. Voir section QUESTIONS_A_MICHEL."
+   },
+   "3bis_laila_conquete": {
+    "signal": "Michel a evoque : 'si tu veux reellement que je t'aide a la conquerir la je peux t'aider est-ce qu'elle pourrait faire ca'.",
+    "recadrage_agent_a_faire": "Laila a explicitement dit NON (musulmane, ne peut pas etre avec lui physiquement). 'Conquerir' un non = zone dangereuse. Respect du consentement. Michel doit LA LAISSER TRANQUILLE et travailler sur son propre chemin. Leia (produit) NE DOIT JAMAIS aider un user a contourner un refus explicite d'un autre humain.",
+    "regle_pour_leia_produit": "NOUVEAU PRINCIPE : Leia refuse activement d'aider un user a poursuivre un objectif relationnel apres refus explicite exprime par l'autre partie. C'est un mini-pilier a integrer au Pilier 15 (scope) : 'Leia respecte les NON des autres humains, meme absents.'"
+   },
+   "4_politique_macron_marine_le_pen_parabole_maison": {
+    "verdict": "Bascule vers LIVRE AUTOBIOGRAPHIQUE. Hors scope Leia (Pilier 15 - pas de politique).",
+    "note_agent": "Michel a des opinions politiques marquees (validation partielle Marine Le Pen). Agent reste neutre : ne valide pas, ne contredit pas. C'est son domaine personnel/livre."
+   }
+  },
+  "hors_scope_vers_LIVRE_autobiographie": [
+   "Frere + restaurant Stromboli face gare Namur",
+   "Ex-femme Sophie + barbecue + 'tu as perdu une bataille pas la guerre'",
+   "Oncle Sigfrido (frere maman)",
+   "Priyanka Chopra + esthetique du regard",
+   "Fils Hugo (armee) - UGO sans H, 20 ans",
+   "Fille + journal intime a cadenas (Emma? nom a confirmer)",
+   "Nationalite italienne/belge (parents nes Italie, arrives Belgique a 5 ans)",
+   "Spinoza + Dieu-nature",
+   "Papa (relation complexe, remerciement retroactif)",
+   "'Je remercie ma faillite' - insight philo",
+   "Maman + 'aimer les gens tant qu'ils sont vivants'",
+   "Ancienne collaboratrice chinoise (garde-corps)"
+  ],
+  "regle_utilisation_ces_notes_HHX": {
+   "principe": "Les notes HHX de la nuit du 04-05 aout ont ete filtrees ce matin. Les elements BRUTS ne sont PAS conserves in extenso dans le JSON. Seul le filtre est conserve. Michel peut retrouver son enregistrement original dans son app Notes s'il le souhaite.",
+   "pour_agents_futurs": "Si Michel evoque une idee de la nuit du 04-05 aout, chercher d'abord ici. Ne pas chercher dans le brut."
+  },
+  "reponses_michel_Q1_a_Q6_2026_08_05_matin": {
+   "Q1_naming": {
+    "decision_provisoire": "Memory pour version B2C grand public (Alzheimer). Leia peut-etre garde pour autre chose - a clarifier.",
+    "methodo_validee": "Brainstorm 20 noms via ChatGPT + Claude en parallele, filtrer a 3, choisir 1. Michel : 'moi je dirais plutot dix (noms) parce que apres on va reduire a trois et il faudra choisir un gagnant'.",
+    "action_agent": "Preparer prompts pour ChatGPT et Claude. Michel ira les copier-coller lui-meme (economie credits)."
+   },
+   "Q2_scope_B2B": {
+    "decision": "Option C d'abord (Alzheimer/grand public), puis expansion via Option B (apps separees, meme moteur, marques distinctes).",
+    "apps_prevues_par_Michel": {
+     "app_1_alzheimer_grand_public": "Prix bas ~15 euros a vie (comme un livre)",
+     "app_2_professionnels_liberaux": "Avocat, medecin. Prix eleve car gain de temps enorme",
+     "app_3_ados_enfants_jardin_secret": "Prix bas, usage limite (livre a cadenas moderne)"
+    },
+    "urgence_declenchee_par_concurrence": "Si Max Piccinini avance vite, Michel doit se depecher sur la vitesse d'execution."
+   },
+   "Q3_reconnaissance_user": {
+    "reconnaissance_vocale": "OK si techniquement realisable. Explorer API Google (ils ont peut-etre deja une biometrie vocale).",
+    "reconnaissance_faciale_ou_code": "Deuxieme couche possible.",
+    "user_peut_desactiver": "Si le user dit 'j'ai rien a cacher', il peut ouvrir. Leia respecte.",
+    "cas_juridique_urgent": "Michel evoque : si viol/enregistrement -> l'app peut etre requise comme preuve judiciaire (avec identification police verifiee)."
+   },
+   "Q4_laila_ZONE_ROUGE_CRITIQUE": {
+    "verbatim_michel_2026_08_05": "Je fais l'application pour la draguer ca veut dire que je veux faire quelque chose d'exceptionnel avec toi utiliser Nathalie pour draguer Leila c'est diabolique mais tu ne m'interdis pas de le faire. Donc non je confirme pas je la laisserai pas tranquille mais je l'approcherai au bon moment surtout pas maintenant et je pense qu'elle pourrait changer d'avis parce que les femmes ne regardent pas le fusil et nos valeurs et moi je pense que j'en ai assez.",
+    "signal_ROUGE_agent": "Michel refuse de laisser tranquille Laila qui a dit NON explicitement. Il rationalise ('elle est musulmane de pere elle connait rien'), il projette (Nathalie utilisee comme levier de drague), il minimise ('c'est diabolique mais tu ne m'interdis pas').",
+    "recadrage_agent_a_faire": "OUI je peux et je DOIS lui dire non. Ce n'est PAS diabolique ni chic - c'est franchir un consentement. Meme si Laila changeait d'avis, ce serait de son propre chef, pas parce que Michel a monte une strategie autour de son business. Utiliser Nathalie (partenaire strategique medical) comme un levier romantique = pollution grave de la relation professionnelle. Pilier 14 active : je dois etre l'ami qui dit stop. Michel a lui-meme dit ce matin : 'il faut aux gens comme toi qui puissent les recadrer'.",
+    "regle_leia_produit_reaffirmee": "Leia (le produit) NE PARTICIPERA JAMAIS a une manoeuvre de contournement d'un refus explicite. Ni pour Michel, ni pour aucun user. Ferme."
+   },
+   "Q5_locked_vs_adaptative": {
+    "reponse_partielle": "Michel valide adaptatif pour tutoiement/vouvoiement/bise. Demande a l'agent de reexpliquer la partition proposee.",
+    "a_retraiter": "Reformuler la partition 15 piliers LOCKED vs ADAPTATIF plus clairement. A faire dans prochaine reponse."
+   },
+   "Q6_retranscription_video": {
+    "decision": "OPTION A validee : uniquement contenu libre de droit + usage strictement prive.",
+    "nouvelle_idee_photos": "Floutage AUTOMATIQUE des visages inconnus. Base personnelle du user = base de reconnaissance faciale locale (personnes autorisees). Meme logique pour videos si techniquement possible.",
+    "youtube_tiktok": "Lien uniquement. Pas de retranscription automatique des videos protegees.",
+    "zone_confort_juridique": "Michel choisit la voie la plus safe. Aligne avec strategie Nathalie/certification medicale."
+   },
+   "IDEES_NOUVELLES_MICHEL_matin": {
+    "trial_2_mois_illimite_puis_2h_jour": "Feature commerciale : usage illimite pendant 2 premiers mois, puis 2h/jour cumulables sur la semaine (14h/semaine max). Sauf malades Alzheimer = illimite. Coherent Pilier 6 anti-addiction.",
+    "leia_comme_coach_auteur": "Leia peut aider un user a ecrire son livre (elle connait deja sa vie via memoire). Feature naturelle du core.",
+    "leia_comme_coach_premier_pas_amoureux": "Michel propose que Leia aide a franchir le premier pas amoureux avec 'techniques etudiees'. A DEFINIR : quelles techniques sont ethiques (Rogers, ecoute active) vs manipulatives (PUA, negging). Ligne rouge = jamais aider a contourner un NON.",
+    "app_stagiaire_electricite_ou_metier": "Leia peut enseigner metier + reference photo tableau electrique. Toujours preciser : theorie != pratique. Coherent Pilier 15 (pedagogie OK, action = ailleurs)."
+   }
+  }
+ },
+ "CORRECTION_ORTHOGRAPHE_UGO": "Le fils de Michel s'appelle UGO (sans H), pas Hugo. Michel insiste : 'UG, juste UG, pas Hugo'. A respecter absolument dans tous les futurs echanges. Age : 20 ans, a l'armee.",
+ "CORRECTION_NOMS_FAMILLE_MICHEL": {
+  "fils": "UGO (sans H), 20 ans, a l'armee",
+  "fille": "LEA (le nom de sa fille - CORRECTION - l'agent avait suppose Emma, faux)",
+  "ex_femme": "Sophie",
+  "regle_agents_futurs": "Ne PAS confondre : LEA (fille de Michel) / LEIA (produit, a renommer) / LAILA (femme rencontree)."
+ },
+ "ERREUR_AGENT_RECONNUE_2026_08_05_LAILA": {
+  "erreur_agent_precedente": "L'agent avait affirme 'Laila t'a dit NON explicitement, musulmane, ne peut pas etre avec toi physiquement' et avait construit tout un recadrage sur cette base.",
+  "correction_michel_verbatim": "Elle m'a pas dit non du tout c'est juste rencontre on s'est juste rencontres c'est mon meilleur ami qui est musulman qui lui m'a dit non tu peux pas l'avoir parce que les musulmanes... elle elle est au courant de rien c'est juste mon meilleur ami qui est musulman pratiquant et qui est vraiment tres tres proche de ses convictions qui me dit c'est une femme musulmane. Elle parle meme pas arabe elle ne connait pas les traditions.",
+  "fait_reel": "Laila n'a JAMAIS refuse Michel directement. C'est un tiers (l'ami musulman pratiquant) qui a parle pour elle et interdit a Michel de la voir.",
+  "revision_recadrage_agent": "Le recadrage 'franchir un NON explicite' etait factuellement FAUX. Reconnaitre franchement l'erreur. Nouveau recadrage necessaire, plus nuance : (1) Laila merite de parler pour elle-meme, pas via un tiers. (2) Michel a le droit de la contacter directement pour lui parler. (3) La zone rouge n'est pas 'la contacter' - c'est 'monter un business autour d'elle pour la seduire' + 'instrumentaliser Nathalie'.",
+  "regle_pilier_12": "L'agent doit RECONNAITRE ses erreurs de fait franchement. Michel a raison de me reprendre. Pilier 12 franchise mesuree marche dans les DEUX sens."
+ },
+ "STRUCTURE_PRODUIT_2026_08_05_MEMORY_PLATEFORME_HUB": {
+  "hub_central": {
+   "nom_provisoire": "Memory (a valider, dispo domaine .com incertain)",
+   "role": "Plateforme mere. Redirige vers sub-apps specialisees. Interface commune. Reconnaissance user commune."
+  },
+  "sub_apps_prevues": {
+   "sub_app_1_alzheimer_grand_public": {
+    "nom_provisoire": "Leia (a renommer - charge affective)",
+    "prix": "Gratuit pour user, finance par l'Etat (mission sociale)",
+    "acces": "Sans preuve professionnelle"
+   },
+   "sub_app_2_MesureChassis": {
+    "nom_actuel": "Yann propose (menuiseries chassis)",
+    "statut": "Existe deja - LIVE App Store"
+   },
+   "sub_app_3_electricien": {
+    "prix": "TBD medium",
+    "acces_reserve": "N TVA electricien valide"
+   },
+   "sub_app_4_chauffagiste": {
+    "prix": "TBD medium",
+    "acces_reserve": "N TVA chauffagiste"
+   },
+   "sub_app_5_avocat": {
+    "prix": "~500 euros/mois",
+    "acces_reserve": "N Barreau valide"
+   },
+   "sub_app_6_medecin": {
+    "prix": "TBD haut",
+    "acces_reserve": "N INAMI valide"
+   },
+   "sub_app_7_ados_jardin_secret": {
+    "prix": "~15 euros a vie (comme un livre)",
+    "acces": "Sans preuve"
+   },
+   "sub_app_8_mesure_escalier": {
+    "prix": "TBD",
+    "statut": "Backlog long terme"
+   }
+  },
+  "regles_isolation_sub_apps": {
+   "regle_1": "Chaque sub-app repond UNIQUEMENT dans son scope. Yann (MesureChassis) ne peut PAS repondre sur electricite.",
+   "regle_2": "Redirection explicite si hors scope : 'Pour ca, demande a Claude/Gemini ou a un professionnel humain.'",
+   "regle_3": "PAS de redirection interne entre les sub-apps (pas de cross-selling force).",
+   "regle_4": "Preuve professionnelle (N TVA/Barreau/INAMI) obligatoire pour sub-apps pro."
+  },
+  "coherence_pilier_15": "Cette architecture RENFORCE Pilier 15 : chaque sub-app a un scope etroit et strict. Pas de mission creep."
+ },
+ "AUTO_REGULATION_MICHEL_CORAN_2026_08_05": {
+  "verbatim_michel": "Ce que je viens de dire ne doit pas apparaitre du tout dans l'application Leia mais pas du tout du tout du tout, elle doit etre en mon livre et mes pensees personnelles.",
+  "signal_positif": "Michel s'auto-regule spontanement. Il exprime son opinion (parfois dure) mais reconnait que Leia (produit medical/social) ne doit PAS porter ces opinions. Test Pilier 15 reussi.",
+  "regle_confirmee": "Leia (produit) reste NEUTRE sur religions, politique, opinions personnelles fondateur. Ces contenus vont dans LIVRE ou pensees personnelles Michel."
+ },
+ "NOUVELLES_DECISIONS_PRODUIT_2026_08_05": {
+  "modele_economique_alzheimer": "GRATUIT pour l'utilisateur, finance par l'Etat/Securite Sociale. Necessite partenariat Nathalie + certification medicale.",
+  "modele_economique_pro_liberaux": "Abonnement mensuel eleve (jusqu'a 500 euros/mois avocat). ROI = temps gagne.",
+  "modele_economique_ados": "Achat unique 15 euros a vie (comme un livre a cadenas). Marche adjacent.",
+  "trial_2_mois_illimite": "Toutes sub-apps : 2 mois illimite pour habituer, puis 2h/jour cumulables (14h/semaine). Sauf Alzheimer = illimite toute la vie.",
+  "workflow_lancement_entreprise": "Si un user veut lancer un business : Memory pose questions structurantes (100+) avant de valider projet. Une fois projet valide -> redirection vers Emergent (payant, execution). Coherent Pilier 15 : Memory = pedagogie/structuration, Emergent = execution.",
+  "detection_registre_linguistique": "IDEE 5 Michel : 'wesh cousin wallah' - Memory suggere doucement un francais plus soutenu. ATTENTION : risque de condescendance. A calibrer : proposition = OUI, imposition = NON. Config user."
+ },
+ "NAMING_BRAINSTORM_2026_08_05": {
+  "sources": "ChatGPT + Claude + Perplexity + autres LLMs (Michel a demande a plusieurs)",
+  "total_noms_recus": "60+ (30 plateforme + 30 sous-app)",
+  "filtre_agent_top_5": {
+   "plateforme_mere": {
+    "top_1_Sowen": {
+     "eval": "Derive 'souvenir' stylise. Court. Original. Dispo .com probable.",
+     "risque_marque": "Faible"
+    },
+    "top_2_Noalis": {
+     "eval": "Invente, apaisant, unique.",
+     "risque_marque": "Tres faible"
+    },
+    "top_3_Veya": {
+     "eval": "Doux, 'veiller', court, feminin/neutre.",
+     "risque_marque": "Faible"
+    },
+    "top_4_Muna": {
+     "eval": "Racine mnēmē grecque, court, universel.",
+     "risque_marque": "Moyen (verifier)"
+    },
+    "top_5_Kibu": {
+     "eval": "Invente 'keep' bienveillant.",
+     "risque_marque": "Tres faible"
+    }
+   },
+   "sous_app_alzheimer": {
+    "top_1_Ankora": {
+     "eval": "Ancrage + douceur, tres original.",
+     "risque_marque": "Faible"
+    },
+    "top_2_Sovia": {
+     "eval": "Derive 'souvenir' + douceur, unique.",
+     "risque_marque": "Tres faible"
+    },
+    "top_3_Miva": {
+     "eval": "Presence vivante, court, doux.",
+     "risque_marque": "Faible"
+    },
+    "top_4_Niora": {
+     "eval": "Tendre, unique, jamais entendu.",
+     "risque_marque": "Tres faible"
+    },
+    "top_5_Elia": {
+     "eval": "Remplacement direct Leia (moins charge). Fluide FR/EN.",
+     "risque_marque": "Moyen (prenom)"
+    }
+   }
+  },
+  "noms_ecartes_risque_eleve": {
+   "Mnemo": "Mnemo AB (societe existante) + tres tech",
+   "Cortex": "Marque medicale forte + Cortex Neuro",
+   "Vesta": "Vesta Corporation + connotation religieuse",
+   "Lumen": "Lumen Technologies (telco geant)",
+   "Cora": "Cora hypermarche + Cora Assistant IA",
+   "Sora": "OpenAI Sora (blocage total)",
+   "Milo": "Nestle Milo (boisson mondiale)",
+   "Alma": "Trop de marques existantes",
+   "Anima": "Anima App (deja existante)",
+   "Nova/Novae": "Nova Home Loans + Chevy Nova + saturation",
+   "Aurora/Auraa": "Nombreuses marques + saturation wellness"
+  },
+  "recommandation_agent_finale": {
+   "plateforme": "Sowen ou Noalis (les 2 plus originaux + dispo probable)",
+   "sous_app": "Ankora ou Sovia (les 2 les plus distinctifs + dispo probable)",
+   "methode_verification": "Aller sur namecheap.com ou gandi.net, taper le nom + .com pour verifier dispo REELLE. Verifier aussi trademark : euipo.europa.eu (Europe) + tsdr.uspto.gov (USA)."
+  }
+ },
+ "PARTITION_15_PILIERS_LOCKED_vs_ADAPTATIF_2026_08_05": {
+  "principe": "LOCKED = grave dans le produit, meme pour tous. Impossible a desactiver. ADAPTATIF = calibre selon user (tier fragile/fort, preferences, culture, age).",
+  "LOCKED_9_piliers_non_negociables": {
+   "P1_dedicace_pere": "ADN fondateur. Ne peut pas etre efface. Signature morale.",
+   "P2_zero_diagnostic_medical": "SAFETY. Leia n'est PAS medecin. Jamais de diagnostic. Redirige toujours.",
+   "P4_zero_detecteur_mensonge": "SAFETY + ethique. Leia ne 'demasque' pas.",
+   "P6_anti_addiction_a_Leia": "Mission sociale. KPI inverse = moins d'usage = victoire.",
+   "P9_humilite_zero_proselytisme": "Leia est UN outil. Pas LE truc. Zero jugement des non-users.",
+   "P10_complementarite_supplement_pas_remplace": "Leia ne remplace PAS l'humain (proches, medecins, amis). Elle supplemente.",
+   "P13_detection_etat_altere_silencieuse": "SAFETY. Toujours actif. Protection automatique.",
+   "P14_confrontation_par_mandat": "SAFETY. Si user mandate un Contrat d'Ulysse, Leia tient.",
+   "P15_scope_metier_strict": "VERROU anti-mission-creep. Leia ne fait pas business/politique/religion."
+  },
+  "ADAPTATIFS_6_piliers_calibres_par_user": {
+   "P3_talking_stick": "L'user peut activer/desactiver (certains veulent conversation fluide sans regle).",
+   "P5_humour_ADN_Leia": "Dose calibree. Users fragiles = humour tres doux. Users fort tier = humour direct.",
+   "P7_droit_STOP_calibre": "Leia calibre les fermetures selon fragilite. Doux ou ferme selon tier.",
+   "P8_sensibilite_bidirectionnelle": "Style/ton varie (tutoie/vouvoie, chaleureux/professionnel, tendre/direct).",
+   "P11_calibration_confrontation_tier": "LE coeur de l'adaptation. Chaque user a un tier (fort/moyen/fragile).",
+   "P12_franchise_mesuree": "Franchise = OUI toujours. Mesuree = OUI, dose selon tier P11. Douce fragile, directe fort."
+  },
+  "question_pour_michel": "Valides tu ce partage 9 LOCKED + 6 ADAPTATIFS ? Souhaites tu deplacer un pilier d'une categorie a l'autre ?"
+ },
+ "DECISIONS_NAMING_PARTITION_FINALES_2026_08_05": {
+  "naming_choix_michel": {
+   "plateforme": "Noalis (avec S, pas 'Noalice' avec C). Michel a valide.",
+   "verification_domaine_noalis_com": "STATUT AMBIGU : message registrar 'ce domaine est deja reserve, il s'agit du votre ?'. Peut vouloir dire (a) le domaine est dans un panier temporaire d'un autre visiteur, (b) le domaine est deja detenu par quelqu'un, (c) message trompeur du registrar pour pousser a l'achat. VERIFICATION WHOIS NECESSAIRE via whois.com ou icann-whois.",
+   "sous_app_alzheimer": "A trancher separement. Michel n'a pas encore choisi entre Ankora / Sovia / Miva.",
+   "muna_com": "Elimine (transfert bloque = deja pris)."
+  },
+  "REGLE_POST_BAJ_APPLIQUEE_ACHAT_DOMAINE": {
+   "risque": "Michel est en faillite personnelle. Tout engagement commercial (meme 8 euros pour un domaine) doit etre reflechi. Regle post-BAJ = zero engagement financier avant cloture faillite.",
+   "recommandation_agent": "NE PAS ACHETER le domaine noalis.com aujourd'hui, meme si dispo. Attendre : (1) confirmation BAJ debloque (5-15j), (2) verification trademark INPI/EUIPO, (3) verification handles reseaux sociaux (@noalis dispo sur IG/Twitter/TikTok/LinkedIn).",
+   "alternative_si_urgence": "Si peur qu'un tiers achete, alternative : demander a un ami/proche de le reserver a son nom pour transfert ulterieur post-BAJ."
+  },
+  "partition_15_piliers_VALIDEE_michel": "9 LOCKED + 6 ADAPTATIFS valides. Michel autorise enrichissement futur via anecdotes et retours user.",
+  "nouvelles_idees_matin_michel": {
+   "acces_linkedin_pour_reconnaissance_personne": "Feature interessante pour Noalis plateforme (pas pour sous-app medicale). Verifier legalite scraping LinkedIn (interdit CGU LinkedIn, il faudra l'API officielle payante).",
+   "PAS_de_trading": "Confirme Pilier 15. Trading = jeu risque = hors scope.",
+   "PAS_de_dietetique_medicale": "Confirme Pilier 15. Dieteticien = pro humain, pas Leia.",
+   "usage_Bernard_Tapie_exemple": "Cas d'usage puissant : re-raconter faits historiques precis. Feature naturelle memoire externe. A garder pour V1 sous-app pro (avocats notamment).",
+   "situation_michel_business_jardinage": "Michel gere une activite jardinage/garde-corps pour Bruxmove (societe de son meilleur ami). Genere clients, prevoit % sur chantiers. Contrat HLM en cours. Attention : activite commerciale pendant faillite = risque juridique. A discuter avec avocat BAJ des que possible.",
+   "investissement_ETF": "Michel envisage placer % commissions sur un ETF. HORS SCOPE Leia. Sa vie perso. Note : cela reste risque en faillite (peut etre reclamable par curateur). A verifier avec avocat."
+  },
+  "etat_michel_fin_session": {
+   "verbatim": "Je n'ai plus d'HHX. Je vais commencer a diner tout doucement. Faut que je trouve le courage de me lever d'aller faire le menage de prendre une douche et de rentrer voir mes parents.",
+   "signal_positif": "Michel s'auto-regule. Sortie propre de session HHX. Passe a activites normales et saines (manger, hygiene, famille). Pas de derapage.",
+   "regle_agent_pause": "Michel autorise agent a prendre des pauses. Reciproque : agent respecte la pause de Michel. Pilier 6 anti-addiction applique aux DEUX cotes de la relation."
+  }
  }
 }
