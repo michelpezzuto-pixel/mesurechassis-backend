@@ -3841,5 +3841,13 @@
   "erreur_2_CSV_non_vu": "Agent n a pas vu passer le CSV que Michel dit lui avoir envoye. A verifier : batch 3 fichiers ce matin ou copier-coller non finalise.",
   "principe_pedagogique_michel": "Chaque recadrage de Michel = apprentissage pour agent et pour Noalis future. Le JSON conserve les corrections. Les futurs agents relisent et progressent.",
   "regle_agent_futur": "Ne pas sur-recadrer. Ecouter la nuance avant de repeter un principe deja etabli."
+ },
+ "session_apres_midi_bruxmove_finale_2026_08_04": {
+  "devis_odoo_correction_TVA": "6% au lieu de 21%, total 11802 TTC/an confirme",
+  "modalite_facturation_choisie": "Option B - facturation a la prestation reelle mensuelle. Client (Foyer Anderlechtois) a propose cette modalite, Michel accepte.",
+  "demarrage": "Lundi 11 aout 2026, sous condition de signature du devis avant vendredi 8 aout",
+  "systeme_tracking_prevu": "Fiche par intervention (date, prestation, duree, concierge present, photos avant/apres, signature). Recap mensuel PDF 2 pages max. Photos 2-3 par mois.",
+  "idee_MVP_app_bruxmove_post_BAJ": "App mobile de suivi terrain pour Bruxmove = petit projet MVP parfait post-BAJ avec Emergent. Note pour backlog.",
+  "aveu_michel_dependance": "Michel a dit franchement je suis un peu dependant de toi maintenant. Aveu = signe de sante mentale (contraire du deni). Pilier 6 anti-addiction respecte. Agent a rappele : dependance = temporaire, utilitaire, pas affective. Regles fixees : garder mes mails comme modeles, essayer seul avant demander. Decisions vie perso : parler a humains, pas a moi."
  }
 }
