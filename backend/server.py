@@ -287,6 +287,27 @@ async def download_landing_diff():
 # URL avec token obscur — non-devinable, non-indexée
 # 🔒 Juin 2026 — Démo standalone confidentielle Châssis Prime (client B2B)
 # URL avec token obscur — non-devinable, non-indexée
+# 🧠 Août 2026 — Mémoire personnelle Michel (Noalis) — Téléchargement JSON
+@api.get("/downloads/michel-memory/{filename}")
+async def download_michel_memory(filename: str):
+    """Télécharge un snapshot JSON de la mémoire personnelle de Michel (Noalis).
+    Contourne le routing Expo Router qui interceptait /MICHEL_PROFILE_*.json."""
+    # Sécurité : uniquement les fichiers MICHEL_PROFILE_*.json
+    if not filename.startswith("MICHEL_PROFILE_") or not filename.endswith(".json"):
+        raise HTTPException(status_code=400, detail="Nom de fichier invalide")
+    if "/" in filename or ".." in filename:
+        raise HTTPException(status_code=400, detail="Nom de fichier invalide")
+    path = f"/app/backend/public_downloads/michel_memory/{filename}"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail=f"Fichier {filename} introuvable")
+    return FileResponse(
+        path,
+        media_type="application/json",
+        filename=filename,
+        headers={"Cache-Control": "no-store"},
+    )
+
+
 # 🌐 Juillet 2026 — Refonte site v3 (6 plans + roadmap + fondateurs + comparatif)
 @api.get("/downloads/refonte-v3")
 async def download_refonte_v3():
