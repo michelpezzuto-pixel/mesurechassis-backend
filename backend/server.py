@@ -288,6 +288,24 @@ async def download_landing_diff():
 # 🔒 Juin 2026 — Démo standalone confidentielle Châssis Prime (client B2B)
 # URL avec token obscur — non-devinable, non-indexée
 # 🧠 Août 2026 — Mémoire personnelle Michel (Noalis) — Téléchargement JSON
+@api.get("/downloads/michel-memory/latest")
+async def download_michel_memory_latest():
+    """Retourne toujours le fichier MICHEL_PROFILE le plus récent (par ordre alpha du nom).
+    Lien stable, sans risque d'auto-correct iOS sur les majuscules/points."""
+    import glob
+    matches = sorted(glob.glob("/app/backend/public_downloads/michel_memory/MICHEL_PROFILE_*.json"))
+    if not matches:
+        raise HTTPException(status_code=404, detail="Aucun fichier trouvé")
+    path = matches[-1]  # dernier par ordre alpha = plus récent (dates ISO)
+    filename = os.path.basename(path)
+    return FileResponse(
+        path,
+        media_type="application/json",
+        filename=filename,
+        headers={"Cache-Control": "no-store"},
+    )
+
+
 @api.get("/downloads/michel-memory/{filename}")
 async def download_michel_memory(filename: str):
     """Télécharge un snapshot JSON de la mémoire personnelle de Michel (Noalis).
