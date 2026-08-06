@@ -5146,5 +5146,36 @@
     "disclaimer_agent": "Agent a rappele qu'il n'est pas avocat, recommande consultation Syndicat ou CPAS pour confirmation dossier",
     "meta_observation": "Cas concret de la FEATURE_AUDIT_COMMUNICATION_RECUE en action. Tony a experimente la valeur en direct.",
     "valorisation_produit": "Ce cas est LE cas d'usage vertical 'Noalis pour particuliers - defense administrative' - a documenter dans le pitch et le business model"
+  },
+  "CAS_TONY_BPCO_VIERGE_NOIRE_2026_08_06": {
+    "date": "2026-08-06",
+    "moment": "Barbecue - 2eme question de Tony a l'agent",
+    "contexte_medical": {
+      "diagnostic": "BPCO (Broncho-Pneumopathie Chronique Obstructive) - initialement stade 3 (severe)",
+      "capacite_pulmonaire": "45 pct au diagnostic, ameliore a 58 pct grace au traitement",
+      "point_medical_critique": "La BPCO est une maladie CHRONIQUE et IRREVERSIBLE - on ne guerit pas. Le pneumologue a stabilise/ameliore, pas gueri.",
+      "reclassification_GOLD": "58 pct correspond au stade 2 (modere), pas gueri"
+    },
+    "contexte_administratif": {
+      "prestation": "650 EUR/mois d'indemnite d'incapacite via mutuelle (Vierge Noire)",
+      "decision_recente": "Fin de reconnaissance d'incapacite - considere 'gueri' par medecin-conseil"
+    },
+    "reponse_agent": {
+      "voies_de_recours_ordonnees": [
+        "1. Recueillir tous les documents (decision ecrite, rapports pneumologique, attestation medecin famille, historique traitement)",
+        "2. Recours au Tribunal du Travail dans les 3 mois - procedure gratuite/simplifiee, ~65 pct de succes en BPCO conteste",
+        "3. Piste DGPH (SPF Securite sociale) via My Handicap - critere different de la mutuelle",
+        "4. CPAS en attente pour revenu d'integration si tresorerie urgente"
+      ],
+      "action_immediate_critique": "Attestation detaillee du pneumologue expliquant que amelioration 45->58 pct != guerison"
+    },
+    "questions_ouvertes_a_tony": [
+      "Depuis quand la decision (delai 3 mois critique) ?",
+      "Decision ecrite ou orale ?",
+      "Pneumologue traitant d'accord avec 'gueri' ou pas ?",
+      "Travaille actuellement ou en incapacite de fait ?",
+      "Sa femme travaille (pour eligibilite BAJ/CPAS) ?"
+    ],
+    "note_valorisation_produit": "Deuxieme cas d'usage Noalis VERTICAL PARTICULIER = defense administrative/juridique/medicale. Le vertical 'Aide aux malades chroniques' emerge naturellement de ce cas."
   }
 }
