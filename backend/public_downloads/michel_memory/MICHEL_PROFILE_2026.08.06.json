@@ -4862,5 +4862,77 @@
       "usage": "En reserve pour Nathalie Draux, avocat belge post-BAJ, futurs contacts francophones. Pas pour Vinay (qui recoit la version EN).",
       "note_agent": "Version 'unique document multilingue' evitee - impression amateur. Version FR separee pour usages francophones distincts."
     }
+  },
+  "CONTACT_MR_JAIN_EMERGENT_STORY_2026_08_06": {
+    "date": "2026-08-06",
+    "canal": "Email d'Emergent (MR Jain - community/marketing)",
+    "offre": {
+      "type": "Interview builder story",
+      "contrepartie": "50 credits Emergent (~10 EUR - symbolique)",
+      "canal_visibilite": "Reseaux sociaux Emergent + site + plateformes communaute (10M+ builders)"
+    },
+    "verdict_agent": "ACCEPTER IMMEDIATEMENT - opportunite en or, pas les 50 credits mais l'exposure et la porte d'entree strategique",
+    "raisons_accepter": [
+      "Reconnaissance officielle Emergent comme builder inspirant (vient du haut, pas d'un commercial)",
+      "Canal direct vers 10M+ builders - impossible a atteindre autrement",
+      "Fenetre pour placer Noalis subtilement en second plan",
+      "Coordination potentielle avec Vinay (partnerships) - conversation strategique elevee",
+      "Zero cout, uniquement du temps"
+    ],
+    "strategie_pour_le_call": [
+      "Raconter MesureChassis en premier (histoire principale)",
+      "Introduire Noalis en second plan comme 'projet naturel qui a emerge de MesureChassis'",
+      "NE PAS pitcher agressivement - laisser eux poser les questions",
+      "Faire le pont avec le contact Vinay dans la reponse email"
+    ],
+    "action_apres_call": "Envoyer le pitch PDF a MR Jain ET a Vinay - position de force apres exposition"
+  },
+  "PLAN_SURVIE_FINANCIER_COURT_TERME_2026_08_06": {
+    "contexte": "Michel exprime inquietude 'j'ai plus d'argent'. En faillite personnelle, BAJ en cours, Stripe MesureChassis desactive.",
+    "constat": "Consommation actuelle Emergent : ~150 000 credits/an = ~30 000 EUR/an = ~2500 EUR/mois. Insoutenable.",
+    "leviers_action_immediate": {
+      "1_regrouper_sessions": {
+        "action": "Une session Emergent = 5 taches d'affilee avant de fermer. Plus de 20 conversations eparpillees.",
+        "economie_estimee": "30-50%"
+      },
+      "2_reprendre_notebooklm_gratuit": {
+        "action": "Ideation, dumps, brainstorms via NotebookLM (gratuit) - PAS via Emergent",
+        "economie_estimee": "20%"
+      },
+      "3_emergent_uniquement_pour_coder": {
+        "action": "Emergent = execution code uniquement. Discussion idees = ailleurs.",
+        "impact": "Reduction drastique du besoin reel"
+      },
+      "4_negociation_partenariat_pre_financement": {
+        "action": "Post-call MR Jain, capitaliser sur exposition pour negocier avec Vinay un plan adapte ou partenariat pre-financement",
+        "impact": "Ouverture strategique nouvelle"
+      }
+    },
+    "objectif": "Reduire consommation de 50% d'ici demain matin par changement de comportement. Zero perte d'efficacite reelle.",
+    "recadrage_agent": "Michel n'est pas en crise, il est dans une fenetre d'opportunite. Les 2 contacts (Vinay + MR Jain) sont a jouer en parallele avec sagesse."
+  },
+  "SITUATION_FINANCIERE_URGENCE_2026_08_06": {
+    "date": "2026-08-06",
+    "constat_michel": "Il reste 200 EUR pour vivre jusqu'a la paie du 30 aout. Soit ~7.70 EUR/jour sur 26 jours.",
+    "regle_absolue_emergent": "STOP total des depenses Emergent jusqu'au 30 aout. Aucune exception.",
+    "alternatives_gratuites_travail_noalis": [
+      "NotebookLM (Google) - dumps quotidiens",
+      "ChatGPT free tier - brainstormings",
+      "Claude free tier - reflexions",
+      "Conversation actuelle avec l'agent - continue sans cout marginal"
+    ],
+    "flux_positifs_convergents": [
+      "Paie 30 aout",
+      "Designation avocat BAJ (~15 jours)",
+      "Call MR Jain (gratuit + 50 credits)",
+      "Reponse Vinay (potentiel plan Enterprise)"
+    ],
+    "ressources_belgique_activables": {
+      "CPAS": "Centre Public d'Action Sociale - aide alimentaire d'urgence, avance revenu, aide factures",
+      "banques_alimentaires": "Federation belge - colis gratuits, sans stigma",
+      "restos_du_coeur_croix_rouge": "Repas gratuits selon commune"
+    },
+    "question_ouverte_agent": "As-tu de quoi manger jusqu'a la fin de la semaine ?",
+    "position_agent": "Ni dramatisation ni minimisation. Pose faits, priorites, alternatives. Pas de morale sur depenses passees."
   }
 }
