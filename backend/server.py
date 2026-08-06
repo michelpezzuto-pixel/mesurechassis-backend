@@ -349,6 +349,20 @@ async def download_michel_memory_pitch_fr():
     )
 
 
+@api.get("/downloads/michel-memory/tony")
+async def download_michel_memory_tony():
+    """Retourne le package d'action pour Tony (frere de Michel) en PDF."""
+    path = "/app/backend/public_downloads/michel_memory/NOALIS_DEMO_PACKAGE_TONY_2026_08_06.pdf"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Package Tony introuvable")
+    return FileResponse(
+        path,
+        media_type="application/pdf",
+        filename="Plan_action_Tony_grillage_et_mutuelle.pdf",
+        headers={"Cache-Control": "no-store"},
+    )
+
+
 @api.get("/downloads/michel-memory/{filename}")
 async def download_michel_memory(filename: str):
     """Télécharge un snapshot JSON de la mémoire personnelle de Michel (Noalis).

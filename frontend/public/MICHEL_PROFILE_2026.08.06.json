@@ -5176,6 +5176,37 @@
       "Travaille actuellement ou en incapacite de fait ?",
       "Sa femme travaille (pour eligibilite BAJ/CPAS) ?"
     ],
-    "note_valorisation_produit": "Deuxieme cas d'usage Noalis VERTICAL PARTICULIER = defense administrative/juridique/medicale. Le vertical 'Aide aux malades chroniques' emerge naturellement de ce cas."
+    "note_valorisation_produit": "Deuxieme cas d'usage Noalis VERTICAL PARTICULIER = defense administrative/juridique/medicale. Le vertical 'Aide aux malades chroniques' emerge naturellement de ce cas.",
+    "timeline_clarifiee": {
+      "fevrier_2020": "Diagnostic BPCO (contexte COVID)",
+      "2021": "Debut paiements mutuelle 650 EUR/mois",
+      "2023": "Arret total des paiements",
+      "2026": "3 ans sans revenus mutuelle",
+      "situation_actuelle": "Celibataire, aucun revenu de la mutuelle, en incapacite de fait"
+    },
+    "plan_definitif_4_etapes": {
+      "1_cette_semaine_CPAS_RIS": "Revenu d'Integration Sociale ~1263 EUR/mois pour celibataire isole en 2026. Plus que les 650 EUR d'avant.",
+      "2_cette_semaine_BAJ": "Avocat pro deo GRATUIT vu revenus 0 EUR. Bureau Aide Juridique arrondissement judiciaire OU via CPAS.",
+      "3_avec_avocat_nouvelle_demande": "Nouvelle demande d'incapacite mutuelle basee sur etat actuel + attestations pneumologue + medecin famille. Demande retroactive 2023-2026 possible si BPCO jamais guerie.",
+      "4_DGPH_parallele": "Allocation Remplacement Revenus via My Handicap - criteres differents de l'INAMI, peut etre accorde meme si mutuelle refuse."
+    },
+    "question_ouverte": "De quoi Tony a-t-il vecu depuis 2023 ? (a completer)",
+    "message_dignite": "Tony a tenu 3 ans sans rien. Beaucoup lachent. Le CPAS et le BAJ sont ses DROITS, pas de la charite."
+  },
+  "PACKAGE_TONY_LIVRE_2026_08_06": {
+    "date": "2026-08-06",
+    "moment": "Fin de barbecue",
+    "fichiers_livres": {
+      "markdown": "NOALIS_DEMO_PACKAGE_TONY_2026_08_06.md",
+      "pdf": "NOALIS_DEMO_PACKAGE_TONY_2026_08_06.pdf",
+      "lien_magique": "https://window-field-app.preview.emergentagent.com/api/downloads/michel-memory/tony"
+    },
+    "contenu": {
+      "dossier_1": "Grillage/proprietaire - modele lettre recommandee incluse",
+      "dossier_2": "BPCO/mutuelle - plan 4 etapes CPAS/BAJ/nouvelle demande/DGPH",
+      "bonus": "Semaine ideale planifiee lundi-vendredi"
+    },
+    "meta_valorisation_produit": "Ce package est le PREMIER PROTOTYPE DE LIVRABLE UTILISATEUR NOALIS. Tony est le premier beta-testeur externe non-technique du concept. La feature 'Audit administratif + plan d'action' est validee en usage reel.",
+    "temoignage_a_capturer": "Michel a dit Tony super content de ce que l'agent lui a procure. A capturer comme premier temoignage utilisateur post-Phase 5."
   }
 }
