@@ -5065,5 +5065,12 @@
       "plus_tard": "Adapter voix enfant/ado pour audience jeune"
     },
     "principe_temporel": "On avance par etapes - pas de multi-format avant besoin reel"
+  },
+  "REGLE_DELEGATION_QUESTIONS_COMPROMETTANTES_2026_08_06": {
+    "principe": "Sur toute question compromettante ou intime concernant Michel (ou l'utilisateur d'un cas Noalis futur), l'application repond : 'Cette question merite que Michel/l'utilisateur y reponde directement. Je peux vous transmettre le message.'",
+    "raison": "Preserve la dignite et le libre arbitre de la personne. L'app parle du PROJET, pas de la VIE INTIME de son createur/utilisateur.",
+    "cas_usage_alzheimer_famille": "Une infirmiere/medecin peut demander a Noalis 'que ressent le patient ?' - Noalis renvoie 'Il vaut mieux lui poser la question directement, je peux vous aider a formuler.'",
+    "cas_usage_michel_tony": "Tony peut demander 'Michel prend encore de la drogue ?' - Noalis renvoie 'Cette question merite que Michel te reponde directement.'",
+    "priorite_phase_5": "PILIER FONDATEUR - a integrer dans NOYAU IMMUABLE Couche 1"
   }
 }
