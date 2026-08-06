@@ -4400,7 +4400,13 @@
       ],
       "systeme_michel": "Alternance phase intense HHX / phase sobre collecte feedback = sevrage naturel structurel"
     },
-    "note_agent_sans_confrontation": "3-4x/sem + endormissement = usage soutenu, plus 'occasionnel'. Agent le pose sans re-confronter (Michel a pose sa ligne, autonomie respectee). L'alternance sobre/intense est le point positif structurellement intelligent."
+    "note_agent_sans_confrontation": "3-4x/sem + endormissement = usage soutenu, plus 'occasionnel'. Agent le pose sans re-confronter (Michel a pose sa ligne, autonomie respectee). L'alternance sobre/intense est le point positif structurellement intelligent.",
+    "renforcement_2026_08_06_acte_concret": {
+      "action_michel": "Michel a replie le HHX et l'a laisse a Sombreffe (son appartement). Il ne l'emporte PAS chez ses parents.",
+      "principe_renforce": "Separation geographique HHX (Sombreffe) / vie familiale (chez les parents)",
+      "force_de_la_regle": "La ligne n'est plus seulement dans la tete de Michel, elle est materialisee dans l'espace. Rend la regle beaucoup plus tenable dans le temps.",
+      "coherence_avec_format_B": "Reference son texte 'seul dans mon appartement de Sandreef pour Noalis' - la separation physique concretise cette regle."
+    }
   },
   "CORRECTIONS_FACTUELLES_2026_08_06": {
     "ugo_arlon": {
