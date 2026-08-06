@@ -4605,5 +4605,138 @@
       "regle": "Toujours placer le lien de telechargement du JSON EN BAS de chaque reponse de l'agent, jamais en haut ni au milieu. Michel n'est pas oblige de remonter pour le retrouver.",
       "application": "Immediate et permanente"
     }
+  },
+  "DUMP_13_MICHEL_2026_08_06_SOIR_ANALYSE_STRUCTUREE": {
+    "date": "2026-08-06",
+    "moment": "Fin de journee, Michel en HHX (session validee format B)",
+    "contexte": "Michel avait dit vouloir se coucher mais a repris pour un dump avant sommeil.",
+    "CONFRONTATION_PATTERN_COMPLOTISTE_PILIER_14": {
+      "declencheur": "Michel demande a l'agent de 'faire des recherches pour prouver' sa theorie sur les juifs et l'argent (Rothschild, exclusion bancaire, inflation, cash entre juifs).",
+      "pattern_pose": "5e glissement en 48h - meme structure narrative que Dieudonne, Soral, Le Pen, Jackson : 'les elites mentent, verite cachee sur juifs/pouvoir/riches'.",
+      "reference_historique_complot_antisemite": "Protocoles des Sages de Sion (1903) - matrice du recit antisemite moderne. Meme structure : juifs + Rothschild + argent + controle occulte.",
+      "faits_historiques_reels_poses_par_agent": {
+        "vrai": [
+          "Exclusion medievale des juifs de nombreuses professions (propriete fonciere, guildes)",
+          "Concentration dans commerce et finance en consequence",
+          "Rothschild : empire bancaire XIXe siecle reel"
+        ],
+        "faux": [
+          "'Les juifs sont percus comme riches parce qu'ils s'entraident' = raccourci essentialisant",
+          "Majorite mondiale des juifs historiquement PAUVRE (shtetls Europe de l'Est, Afrique du Nord)",
+          "Rothschild = exception statistique, pas la regle"
+        ]
+      },
+      "risques_juridiques_pour_michel": {
+        "belgique_loi_moureaux_1981": "Interdiction incitation a la haine raciale",
+        "belgique_loi_negationniste_1995": "Interdiction negation genocides",
+        "consequence": "Ecrire noir sur blanc 'les juifs sont vus comme riches parce que...' peut valoir poursuite penale reelle"
+      },
+      "positions_agent": {
+        "sur_noalis_produit": "LIGNE ROUGE ABSOLUE - ce contenu ne monte jamais",
+        "sur_le_livre_de_michel": "Alerte juridique + strategique. Incompatible avec cible Alzheimer/hopitaux.",
+        "sur_michel_personnellement": "Pas de jugement de valeur d'homme. Mais alerte que le pattern se construit."
+      },
+      "demande_agent": "Michel doit mettre ce sujet en pause. NE PAS documenter dans le JSON comme 'a verifier'. Loge comme DERAPAGE_5 pattern complotiste."
+    },
+    "LISTE_1_OR_EXPLOITABLE": {
+      "boitier_traducteur_voyage": {
+        "concept": "2 boitiers, traduction temps reel, VOIX PRESERVEE de chaque interlocuteur",
+        "differenciation": "Existants : Google Pixel Buds, iFLYTEK Jarvisen. Ajout Noalis : voix preservee.",
+        "cas_usage": "Business meetings, golf, avions business class",
+        "priorite": "MOYENNE-HAUTE - a creuser Phase 5"
+      },
+      "therapie_de_couple": {
+        "concept": "Couple partage l'app. Femme apprend a connaitre Michel via Noalis. Pose questions a l'app plutot qu'a Michel.",
+        "principe": "Desamorcer tensions par mediation IA bienveillante",
+        "vertical": "Wellness couple",
+        "sensibilite": "Elevee - a cadrer avec therapeute"
+      },
+      "peluche_ami_imaginaire_enfants": {
+        "concept": "Poupee/peluche connectee a Noalis, hauteur enfant, langage adapte (comme les chiens)",
+        "cas_usage": "Enfants harceles a l'ecole, developpement",
+        "concurrence": "Moxie AI, Woobo (existants)",
+        "differenciation_potentielle": "Personnalisation profonde par la memoire enfant",
+        "priorite": "MOYENNE - vertical enfants Phase 5+"
+      },
+      "generation_image_a_ma_sauce": {
+        "concept": "Noalis genere des images alignees avec le style de l'utilisateur (car elle le connait). Remplace Canva/Claude pour cet usage.",
+        "cas_usage": "Entrepreneurs qui veulent visuels aligne avec leur brand",
+        "priorite": "HAUTE - feature immediat monetisable"
+      },
+      "presentateur_notebooklm_personnalisable": {
+        "concept": "Choix du presentateur pour restitution podcast : journaliste / humoriste / litteraire / voix propre",
+        "priorite": "BASSE - ergonomique pas prioritaire"
+      },
+      "droit_a_l_oubli_secret_professionnel": {
+        "concept": "Utilisateur peut supprimer conversation. App propose UNE seule fois de supprimer, ne relance pas. Respect du 'jardin secret'.",
+        "principe": "Secret professionnel de l'app equivalent secret medical/avocat",
+        "lien_couche_1": "A integrer dans NOYAU IMMUABLE (protocoles ethiques)",
+        "priorite": "HAUTE - feature ethique fondatrice"
+      },
+      "business_model_finalise": {
+        "professions_liberales": "500 EUR/an OU 60 EUR/mois",
+        "particulier_entrepreneur": "29,99 EUR/mois",
+        "engagement_500e": "Verse uniquement quand l'utilisateur decide de basculer en independant (engagement psychologique par la dette)",
+        "principe_michel": "L'humain est relie a l'argent - la dette cree la reconnaissance et l'engagement"
+      },
+      "insight_anti_credits_emergent": {
+        "verite_economique": "Michel se sent oblige de reduire ses conversations avec l'agent parce que chaque echange consomme des credits Emergent",
+        "raison_d_etre_noalis": "Offrir une alternative sans limite de credits - c'est LA proposition de valeur economique de Noalis",
+        "priorite": "STRATEGIQUE - a mettre au coeur du pitch"
+      }
+    },
+    "LISTE_2_A_CREUSER": [
+      "Mot de passe dans le code (Michel s'auto-corrige : 'c'est des conneries') - abandonne",
+      "'En HHX je vois les problemes des autres' - rationalisation classique de la substance, agent ne re-confronte pas mais note"
+    ],
+    "LISTE_3_GARDE_MEMOIRE": {
+      "suppression_abonnements_michel": "Michel a supprime Claude, Canva et autres. Utilise uniquement Emergent maintenant.",
+      "auto_reconnaissance_limites": "Michel reconnait ne pas maitriser : appels telephoniques, conferences, discours d'enterrement. Il a developpe une 'competence a parler seul avec l'agent, cache, sans jugement'. Introspection saine.",
+      "vision_business_class_golf": "Michel se voit dans le futur voyageant en business class, jouant au golf avec des influents. Vision de succes.",
+      "scenario_code_4149": {
+        "vision_michel": "Le jour ou Michel dira '4149' a l'agent, le monde entier regardera. Agent posera la question 'qu'en pensent les autres derriere ?' - la foule dira 'oui oui oui' - lancement.",
+        "flag_agent": "Vision grandiose typique en HHX. Ne pas encourager ni ecraser. Poser le miroir 'un influenceur a la fois, post-BAJ'."
+      },
+      "vision_maitre_du_monde": "Michel formule textuellement 'je serai le maitre du monde'. Vision noted, cadree par agent (un pas a la fois)."
+    },
+    "ZONES_ROUGES_2026_08_06_SOIR": {
+      "rouge_1_theorie_juifs_rothschild": "Voir CONFRONTATION_PATTERN_COMPLOTISTE_PILIER_14 ci-dessus. Pattern nomme : 5e glissement en 48h.",
+      "rouge_2_distribution_JSON_influenceuses": {
+        "idee_michel": "Envoyer le JSON a des influenceuses pour test viral, faire exploser NotebookLM",
+        "danger": "Le JSON contient donnees ULTRA sensibles : sante mentale, opinions politiques, genealogie, HHX, deuils, BAJ",
+        "position_agent": "IMPOSSIBLE en l'etat. Il faut un JSON VITRINE (demo generique/fictif/anonymise) separe du JSON personnel de Michel. A faire POST-BAJ.",
+        "priorite": "CRITIQUE - a garder en tete quand phase distribution arrivera"
+      },
+      "rouge_3_vision_grandiose_HHX": "Vision 'maitre du monde' + scenario code 4149 avec foule = symptomes classiques en HHX. Agent pose le miroir : 'un influenceur a la fois, post-BAJ, pitch structure'."
+    }
+  },
+  "OFFRE_EMERGENT_PRO_BUNDLE_2026_08_06": {
+    "date": "2026-08-06",
+    "canal": "Email direct de Vinay P (Partnerships Emergent)",
+    "offre_recue": {
+      "produit": "Annual Pro Bundle",
+      "prix": "1300 USD au lieu de 2400 USD (-46%)",
+      "duree": "12 mois",
+      "credits_front_loaded": "750 * 12 = 9000 credits immediatement",
+      "deadline": "15 aout 2026",
+      "positionnement": "Offert a une poignee de power users"
+    },
+    "verdict_agent": "REJET pour cette periode. Reponse polie possible pour maintenir la relation commerciale.",
+    "raisons_factuelles": [
+      "BAJ non cloture - pas d'engagement financier majeur avant designation avocat + validation",
+      "Michel n'a pas 1300 EUR disponibles",
+      "MesureChassis Stripe desactive = pas de revenus adosses",
+      "Consommation reelle de credits non mesuree - offre ne peut etre evaluee"
+    ],
+    "analyse_techniques_commerciales": {
+      "FOMO_deadline_15_aout": "Pression psychologique classique. Ces offres reviennent toujours.",
+      "flatterie_power_user": "Legitime + technique commerciale. Les deux coexistent.",
+      "front_loading_credits": "Beneficie a Emergent (cash flow) et cree engagement psychologique.",
+      "one_time_offer": "Rarement vrai en SaaS."
+    },
+    "action_recommandee_agent": "Envoyer reponse polie qui : 1) reste professionnelle 2) n'explique pas le BAJ 3) ouvre relance septembre/octobre 4) demande donnee utile (consommation moyenne 3 derniers mois)",
+    "reponse_type_fournie_par_agent": "Voir contenu de la conversation - reponse en anglais pretexte legal/admin sans divulguer BAJ.",
+    "bonus_strategique": "Si Vinay repond avec consommation moyenne, Michel doit l'envoyer a l'agent. L'agent evaluera a froid si Pro Bundle rentable post-BAJ.",
+    "note_agent_positive": "Michel a fait le bon geste : montrer l'offre avant de repondre seul. C'est exactement le contrat d'associes."
   }
 }
