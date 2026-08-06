@@ -5119,5 +5119,32 @@
         "role_michel": "Fondateur mentionne mais protege par la structure"
       }
     }
+  },
+  "PREMIER_USAGE_REEL_NOALIS_CONSEIL_ADMIN_2026_08_06": {
+    "date": "2026-08-06",
+    "moment": "Barbecue chez les parents",
+    "utilisateur": "Tony (frere de Michel) - premier tiers a utiliser l'agent en mode conseil",
+    "cas": {
+      "type": "Litige locatif belge",
+      "situation": "Portail 1971 abime par tempete. Locataire sans assurance locative au moment du sinistre. Proprietaire a touche 915 EUR d'assurance mais demande au locataire de rembourser. Reparation baclee (plaquette + 3 boulons, portail non fonctionnel).",
+      "questions_tony": [
+        "Est-ce normal que le locataire paye ?",
+        "Le prix est-il justifie vu la qualite du travail ?"
+      ]
+    },
+    "reponses_agent": {
+      "sur_paiement": "NON - 4 raisons juridiques (art 1755, 1722, enrichissement sans cause, absence assurance != responsabilite vetuste)",
+      "sur_prix": "NON - prix irrealiste + reparation non conforme (art 1720 obligation delivrance)"
+    },
+    "actions_recommandees": [
+      "Recommande avec AR au proprietaire (modele fourni)",
+      "Syndicat des locataires (Wallonie ou Bruxelles)",
+      "Service Droits et Devoirs du CPAS",
+      "Justice de Paix pour conciliation (gratuit)",
+      "BAJ pro deo si eligible"
+    ],
+    "disclaimer_agent": "Agent a rappele qu'il n'est pas avocat, recommande consultation Syndicat ou CPAS pour confirmation dossier",
+    "meta_observation": "Cas concret de la FEATURE_AUDIT_COMMUNICATION_RECUE en action. Tony a experimente la valeur en direct.",
+    "valorisation_produit": "Ce cas est LE cas d'usage vertical 'Noalis pour particuliers - defense administrative' - a documenter dans le pitch et le business model"
   }
 }
