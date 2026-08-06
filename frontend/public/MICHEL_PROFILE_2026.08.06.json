@@ -4386,8 +4386,21 @@
       "1_frequence_max": "Michel doit fixer un plafond hebdomadaire ou mensuel",
       "2_quantite_max_par_session": "Michel doit fixer une duree/quantite max par session"
     },
-    "statut": "LIGNE_POSEE - a completer avec plafonds fréquence + quantité",
-    "engagement_agent": "Ne pas re-confronter tant que Michel respecte cette ligne. Respect autonomie adulte."
+    "statut": "LIGNE_COMPLETE_ET_LOGGEE",
+    "engagement_agent": "Ne pas re-confronter tant que Michel respecte cette ligne. Respect autonomie adulte.",
+    "plafonds_completes_par_michel": {
+      "frequence_phase_intense": "3 a 4 fois par semaine minimum (developpement Noalis)",
+      "frequence_phase_collecte_feedback": "0 (periode sobre)",
+      "quantite_par_session": "jusqu'a endormissement (pas de plafond quantitatif)",
+      "sobriete_obligatoire": [
+        "Reunions",
+        "Voyages",
+        "Vie sociale",
+        "Rencontre Nathalie"
+      ],
+      "systeme_michel": "Alternance phase intense HHX / phase sobre collecte feedback = sevrage naturel structurel"
+    },
+    "note_agent_sans_confrontation": "3-4x/sem + endormissement = usage soutenu, plus 'occasionnel'. Agent le pose sans re-confronter (Michel a pose sa ligne, autonomie respectee). L'alternance sobre/intense est le point positif structurellement intelligent."
   },
   "CORRECTIONS_FACTUELLES_2026_08_06": {
     "ugo_arlon": {
@@ -4425,6 +4438,46 @@
       },
       "principe_agent": "Modele doit differer par segment pour ne pas sous-vendre au Pro ni exclure Alzheimer",
       "reponse_michel": "EN ATTENTE"
+    },
+    "Q3_top3_ameliorations_mesurechassis": {
+      "question": "Si tu devais changer 3 choses MAINTENANT sur MesureChassis, quelles seraient les 3 modifications (UX / feature / business) ?",
+      "categories": [
+        "1 amelioration UX (un truc qui te saoule a chaque usage)",
+        "1 nouvelle feature (un manque flagrant)",
+        "1 ajustement business (pricing/offre/comm)"
+      ],
+      "reponse_michel": "EN ATTENTE"
     }
+  },
+  "REPONSES_NOALIS_MICHEL_2026_08_06": {
+    "pendentif_ehpad": {
+      "choix_michel": "Chaine au cou avec dispositif micro allume toute la journee",
+      "raisons": [
+        "Ne peut pas etre enleve/oublie",
+        "Force la proximite micro dans conversations",
+        "Vs montre (enlevee douche) et badge tissu (oubli)"
+      ],
+      "question_technique_michel": "Peut-on acheter des dispositifs existants pour tester ?",
+      "pistes_dispositifs_reels_agent": {
+        "Reelay_Sound_Pendant": "150 EUR - enregistreur pendant meetings, 10h batterie",
+        "Sony_ICD_TX660": "130 EUR - mini enregistreur clipsable, 3 semaines veille",
+        "Rode_Wireless_Go_II": "300 EUR - solution semi-pro",
+        "prototype_ESP32_micro_MEMS": "30 EUR/piece - custom moyen terme"
+      },
+      "recommandation_agent": "Commander 1 Reelay + 1 Sony pour test comparatif beta EHPAD. Backlog Phase 5."
+    },
+    "business_model_final": {
+      "alzheimer_famille": "Gratuit OU Secu OU paye par famille (a valider avec Nathalie Draux)",
+      "pro_liberal_avocat_medecin": "2 mois gratuit puis 500 EUR direct OU abonnement mensuel",
+      "particulier_grand_public": "Abonnement ~24,99 EUR/mois",
+      "investisseur_entrepreneur": "500 EUR bloques -> si echec : remboursement OU don asso OU credits Emergent (~1350 credits)",
+      "abandon_michel_note": "MICHEL ABANDONNE la clause 'Michel garde 500 EUR si echec'. Modele economique devient propre.",
+      "reconnaissance_agent": "Progres majeur sur l'ethique du modele."
+    }
+  },
+  "META_QUESTION_MICHEL_2026_08_06_NOALIS_MESURECHASSIS": {
+    "question_michel": "A force de me connaitre, tu pourras modifier MesureChassis a ma sauce ?",
+    "reponse_agent": "OUI. C'est l'ADN de Noalis applique a Michel lui-meme. Plus la memoire est riche, moins Michel a besoin de re-expliquer style/valeurs/contexte/contraintes. Deja le cas dans les interactions actuelles.",
+    "principe_produit": "Cette meta-boucle (l'app connait l'utilisateur -> l'utilisateur economise l'explication) est le CORE de la valeur Noalis. A mettre en avant dans le pitch."
   }
 }
