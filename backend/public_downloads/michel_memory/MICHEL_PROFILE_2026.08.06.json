@@ -4852,6 +4852,15 @@
       "option_1_piece_jointe_PDF": "Recommandee - Telecharger + attacher en piece jointe au mail",
       "option_2_lien_dans_mail": "Coller le lien PDF dans le corps du mail",
       "option_3_copier_contenu": "Copier-coller le contenu MD dans le corps du mail (mise en forme basique)"
+    },
+    "version_FR_ajoutee_2026_08_06": {
+      "fichiers": {
+        "markdown_FR": "NOALIS_PITCH_EMERGENT_V1_FR.md",
+        "pdf_FR": "NOALIS_PITCH_EMERGENT_V1_FR.pdf"
+      },
+      "lien_pdf_FR": "https://window-field-app.preview.emergentagent.com/api/downloads/michel-memory/NOALIS_PITCH_EMERGENT_V1_FR.pdf",
+      "usage": "En reserve pour Nathalie Draux, avocat belge post-BAJ, futurs contacts francophones. Pas pour Vinay (qui recoit la version EN).",
+      "note_agent": "Version 'unique document multilingue' evitee - impression amateur. Version FR separee pour usages francophones distincts."
     }
   }
 }
