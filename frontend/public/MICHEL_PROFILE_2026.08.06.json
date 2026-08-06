@@ -4841,6 +4841,17 @@
     ],
     "angle_strategique_central": "L'insight collaboration de Michel : Noalis grows the top of Emergent's funnel. Positionne Michel non comme demandeur mais comme apporteur de valeur.",
     "usage_recommande": "Envoyer en piece jointe ou lien du mail v2 a Vinay P. Formulation : 'Attached is a short pitch describing the project. I'd appreciate if you could share it with the founders when appropriate.'",
-    "statut": "PRET - en attente validation Michel avant envoi"
+    "statut": "PRET - en attente validation Michel avant envoi",
+    "version_PDF_generee": {
+      "fichier": "NOALIS_PITCH_EMERGENT_V1.pdf",
+      "lien": "https://window-field-app.preview.emergentagent.com/api/downloads/michel-memory/NOALIS_PITCH_EMERGENT_V1.pdf",
+      "taille": "8.2 KB",
+      "avantage": "Ouvre directement dans navigateur / mail client / lecteur PDF. Aucun souci de compatibilite. Format universel professionnel."
+    },
+    "3_options_envoi": {
+      "option_1_piece_jointe_PDF": "Recommandee - Telecharger + attacher en piece jointe au mail",
+      "option_2_lien_dans_mail": "Coller le lien PDF dans le corps du mail",
+      "option_3_copier_contenu": "Copier-coller le contenu MD dans le corps du mail (mise en forme basique)"
+    }
   }
 }
