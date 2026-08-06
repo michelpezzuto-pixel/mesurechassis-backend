@@ -5050,5 +5050,20 @@
       "verification": "EXACT - Tony Robbins raconte cette anecdote dans 'Unlimited Power'. Contrainte financiere qui force a penser autrement.",
       "parallele_michel": "Michel dans son studio de Sombreffe avec 200 EUR = memes conditions de creation contrainte que Tony Robbins a l'epoque."
     }
+  },
+  "NOM_DOMAINE_NOALIS_2026_08_06": {
+    "verification_michel": "Domaine noalis.com verifie sur OVH le 6 aout 2026 - LIBRE",
+    "plan_B_si_pique": "Noahlis (avec un H entre O et A)",
+    "regle_absolue": "Achat du domaine INTERDIT tant que BAJ non cloture",
+    "note_agent": "Priorite absolue de reserver post-BAJ. Verification hebdomadaire de disponibilite recommandee jusque la."
+  },
+  "FORMAT_PRESENTATION_NOTEBOOK_ARRETE_2026_08_06": {
+    "decision_michel": "Reste sur 2 journalistes NotebookLM par defaut pour toutes les presentations actuelles",
+    "usage_present": "Presentation a Tony ce soir au barbecue - format 2 journalistes",
+    "adaptations_futures_prevues": {
+      "apres_visite_Nathalie": "Adapter version pharma/medical pour audiences medicales",
+      "plus_tard": "Adapter voix enfant/ado pour audience jeune"
+    },
+    "principe_temporel": "On avance par etapes - pas de multi-format avant besoin reel"
   }
 }
