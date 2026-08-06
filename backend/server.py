@@ -306,6 +306,49 @@ async def download_michel_memory_latest():
     )
 
 
+@api.get("/downloads/michel-memory/demo")
+async def download_michel_memory_demo():
+    """Retourne le JSON DEMO PROJET ONLY (sans donnees perso).
+    Lien stable, sans risque d'auto-correct iOS."""
+    path = "/app/backend/public_downloads/michel_memory/NOALIS_DEMO_PROJET_ONLY.json"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Fichier demo introuvable")
+    return FileResponse(
+        path,
+        media_type="application/json",
+        filename="NOALIS_DEMO_PROJET_ONLY.json",
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+@api.get("/downloads/michel-memory/pitch-en")
+async def download_michel_memory_pitch_en():
+    """Retourne le pitch Emergent en anglais PDF."""
+    path = "/app/backend/public_downloads/michel_memory/NOALIS_PITCH_EMERGENT_V1.pdf"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Pitch EN introuvable")
+    return FileResponse(
+        path,
+        media_type="application/pdf",
+        filename="NOALIS_PITCH_EMERGENT_V1.pdf",
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+@api.get("/downloads/michel-memory/pitch-fr")
+async def download_michel_memory_pitch_fr():
+    """Retourne le pitch Emergent en francais PDF."""
+    path = "/app/backend/public_downloads/michel_memory/NOALIS_PITCH_EMERGENT_V1_FR.pdf"
+    if not os.path.isfile(path):
+        raise HTTPException(status_code=404, detail="Pitch FR introuvable")
+    return FileResponse(
+        path,
+        media_type="application/pdf",
+        filename="NOALIS_PITCH_EMERGENT_V1_FR.pdf",
+        headers={"Cache-Control": "no-store"},
+    )
+
+
 @api.get("/downloads/michel-memory/{filename}")
 async def download_michel_memory(filename: str):
     """Télécharge un snapshot JSON de la mémoire personnelle de Michel (Noalis).
