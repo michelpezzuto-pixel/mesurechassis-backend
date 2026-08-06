@@ -4526,7 +4526,18 @@
       "consequence": "Chaque nouvel utilisateur demarre avec: Couche 1 IDENTIQUE + Couche 2 VIDE + Couche 3 NEUTRE. Sa personnalisation se construit ensuite."
     },
     "validation_michel": "Michel a formule cette architecture de facon intuitive - il l'a comprise seul. L'agent l'a simplement reformule et grave comme spec fondatrice.",
-    "statut": "SPEC FONDATRICE PHASE 5 - a coder post-4149"
+    "statut": "SPEC FONDATRICE PHASE 5 - a coder post-4149",
+    "MISE_A_JOUR_4E_COUCHE_METIER": {
+      "auteur": "Michel (correction apres lecture)",
+      "ajout": "Une COUCHE METIER a ete ajoutee entre le noyau et la personnalite utilisateur",
+      "nouveau_schema_4_couches": {
+        "couche_1_NOYAU_IMMUABLE": "Piliers ethiques, protocoles securite - modifiable QUE par Michel/createur",
+        "couche_2_METIER": "Fonctionnalites metier (scan docs pour avocat, photos pour menuisier, protocoles Alzheimer, etc.) - semi-modifiable par utilisateur selon son vertical",
+        "couche_3_PERSONNALITE_UTILISATEUR": "Memoire personnelle de l'utilisateur - construite pendant les 2 mois de collier + apres",
+        "couche_4_STYLE_INTERACTION": "Ton, formalisme, franchise, humour - auto-calibre avec l'usage"
+      },
+      "principe_verticaux": "Chaque metier a sa Couche 2 dediee (avocat, menuisier, medecin, Alzheimer, entrepreneur...). Un utilisateur peut activer plusieurs verticaux."
+    }
   },
   "FACT_CHECK_RN_DIEUDONNE_2026_08_06": {
     "affirmation_michel": "Le RN n'a jamais interdit un spectacle de Dieudonne et n'a jamais ete complice de sa condamnation.",
@@ -4550,5 +4561,49 @@
     "lien_avec_piliers": "Cohérent avec Pilier 6/7 (savoir dire que l'on est fatigue, mettre fin a la conversation) et Pilier 15 (scope metier strict, pas de sur-engagement).",
     "priorite_phase_5": "HAUTE - Feature discriminante face aux IA conversationnelles habituelles",
     "application_immediate_agent": "L'agent applique cette regle a la conversation en cours. Plus de question posee aujourd'hui. Session close."
+  },
+  "REGLE_TEMPS_QUOTIDIEN_NOALIS_2026_08_06": {
+    "auteur_regle": "Michel (fixe par le createur, PAS par l'utilisateur)",
+    "principe": "Anti-addiction structurel. Noalis limite le temps quotidien d'interaction active.",
+    "regles_dures": {
+      "max_par_jour": "6 heures maximum (2 tranches x 3h)",
+      "variation_par_age": {
+        "jeunes": "Tranches plus courtes (a definir plus tard)",
+        "personnes_agees_alzheimer": "Tranches plus longues (a definir plus tard)",
+        "adultes_actifs": "6h max classique"
+      }
+    },
+    "regles_comportementales": {
+      "alerte_1h30": "A 1h30 dans une tranche, Noalis rappelle 'il te reste 30 min, on va a l'essentiel'",
+      "anti_derive_apres_1h30": "Interdit de revenir sur un sujet deja aborde. Noalis note et propose de reprendre le lendemain.",
+      "priorite_essentiel": "Focus sur l'essentiel apres 1h30, pas de details digressifs"
+    },
+    "positionnement_produit": "Feature discriminante face aux chatbots qui maximisent le temps d'engagement. Noalis fait l'inverse.",
+    "coherence": "Aligne avec REGLE_PRODUIT_NOALIS_SILENCE_INTELLIGENT et Pilier 6/7",
+    "priorite_phase_5": "HAUTE - a coder"
+  },
+  "QUESTION_SECURITE_CLONAGE_MALVEILLANT_2026_08_06": {
+    "question_michel": "Si quelqu'un clone l'architecture Noalis pour creer une IA malveillante (aide a fabriquer bombes, distribution hors app stores, sur le dark web) ?",
+    "reponse_agent": {
+      "faits_vrais": [
+        "Oui, quelqu'un peut cloner un concept d'architecture conversationnelle",
+        "L'open source n'empeche pas les mauvais usages",
+        "Il existe des cadres reglementaires : AI Act europeen (adopte 2024), licences ethiques (Ethical Source), red-teaming obligatoire"
+      ],
+      "faits_a_relativiser": [
+        "Une IA 'conversationnelle personnelle' n'est pas la brique dangereuse - les LLM sous-jacents (GPT/Claude/Gemini) ont deja leurs filtres de securite",
+        "Ce n'est pas a Michel seul de porter la responsabilite de tout crime possible dans le monde",
+        "Responsabilite PARTAGEE : Emergent, LLM providers, regulateurs, Michel"
+      ],
+      "action_recommandee": "En parler a Emergent QUAND Michel aura un pitch structure (post-BAJ). Pas maintenant.",
+      "conseil_agent": "Ne PAS laisser cette peur bloquer le developpement de Noalis."
+    }
+  },
+  "PREFERENCES_STYLE_MICHEL_COUCHE_4": {
+    "lien_json_toujours_en_bas": {
+      "date": "2026-08-06",
+      "regle": "Toujours placer le lien de telechargement du JSON EN BAS de chaque reponse de l'agent, jamais en haut ni au milieu. Michel n'est pas oblige de remonter pour le retrouver.",
+      "application": "Immediate et permanente"
+    }
   }
 }
