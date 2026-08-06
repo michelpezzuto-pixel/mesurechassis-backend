@@ -5072,5 +5072,52 @@
     "cas_usage_alzheimer_famille": "Une infirmiere/medecin peut demander a Noalis 'que ressent le patient ?' - Noalis renvoie 'Il vaut mieux lui poser la question directement, je peux vous aider a formuler.'",
     "cas_usage_michel_tony": "Tony peut demander 'Michel prend encore de la drogue ?' - Noalis renvoie 'Cette question merite que Michel te reponde directement.'",
     "priorite_phase_5": "PILIER FONDATEUR - a integrer dans NOYAU IMMUABLE Couche 1"
+  },
+  "QUESTION_SECURITE_ANONYMAT_2026_08_06": {
+    "date": "2026-08-06",
+    "question_michel": "Est-ce que c'est vraiment intelligent de mettre mon nom, parce que si ca prend vraiment du succes, y a des gens qui voudront m'abattre parce que je suis trop droit",
+    "analyse_agent_2_couches": {
+      "couche_1_legitime_securite_fondateur": {
+        "position": "Vraie preoccupation. Toute personne qui gagne en visibilite doit gerer sa securite numerique et physique.",
+        "precautions_recommandees": {
+          "0_euro": [
+            "Pas de photo domicile publique",
+            "2FA sur tous les comptes",
+            "Gestionnaire de mots de passe (Bitwarden)"
+          ],
+          "post_BAJ_low_cost": [
+            "Adresse pro type WeWork/boite postale (~20 EUR/mois)",
+            "Telephone public separe"
+          ]
+        }
+      },
+      "couche_2_fantasme_martyr_a_cadrer": {
+        "position_agent": "La formulation 'on voudra m'abattre parce que je suis trop droit' est un FANTASME DE MARTYR classique - notamment en HHX. A desamorcer maintenant.",
+        "contre_exemples_reels": [
+          "Yuval Harari - chercheur mondial ethique IA, vit tranquillement",
+          "Yann LeCun - Chief AI Officer Meta, debat public, aucune menace",
+          "Timnit Gebru - virée de Google, fonde son labo, va bien",
+          "Tim Berners-Lee - inventeur Web, milite ethique, vit normalement"
+        ],
+        "verite_factuelle": "Les figures assassinees (Kennedy, MLK, Politkovskaia) l'ont ete pour raisons politiques precises + opposition frontale a pouvoirs armes. Pas pour 'droiture personnelle'.",
+        "stade_actuel_michel": "Menuisier belge inconnu du grand public. Personne ne veut l'abattre. Personne."
+      }
+    },
+    "verdict_pitch_emergent": {
+      "decision": "GARDER LE NOM dans le pitch",
+      "raisons": [
+        "Un pitch anonyme est immediatement suspect",
+        "MesureChassis est deja au nom de Michel - anonymat deja casse",
+        "Le nom est un actif : 'menuisier belge qui construit Noalis' = histoire vendeuse"
+      ]
+    },
+    "vraie_protection_long_terme": {
+      "principe": "La protection vient de la STRUCTURE JURIDIQUE, pas de l'anonymat",
+      "structure_recommandee_post_BAJ": {
+        "holding_noalis": "Structure juridique avec adresse officielle (pas domicile)",
+        "email_public": "contact@noalis.com (pas michelcarella@...)",
+        "role_michel": "Fondateur mentionne mais protege par la structure"
+      }
+    }
   }
 }
