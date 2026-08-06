@@ -4815,5 +4815,32 @@
     },
     "regle_permanente_loguee": "Le JSON personnel Michel ne s'envoie JAMAIS a un commercial sans NDA signe. Uniquement dans le cadre d'un partenariat formel avec accord de confidentialite.",
     "signal_agent": "Michel a montre une capacite de recalibrage rapide (2 tours seulement) apres avoir compris l'analogie du dossier medical envoye a un banquier. Signal positif Pilier 14."
+  },
+  "PITCH_EMERGENT_V1_CREE_2026_08_06": {
+    "date": "2026-08-06",
+    "fichier": "NOALIS_PITCH_EMERGENT_V1.md",
+    "lien_telechargement": "https://window-field-app.preview.emergentagent.com/api/downloads/michel-memory/NOALIS_PITCH_EMERGENT_V1.md",
+    "langue": "Anglais",
+    "longueur": "Environ 1.5 page A4",
+    "contenu_couvert": [
+      "One-liner Noalis",
+      "Presentation founder (menuisier belge, createur MesureChassis en prod)",
+      "L'insight origine (pere Alzheimer + memoire Emergent)",
+      "Architecture 4 couches",
+      "5 verticaux identifies",
+      "Angle Emergent : Noalis = funnel vers Emergent (l'angle collaboration de Michel)",
+      "Etat actuel du projet",
+      "2 asks : Enterprise plan court terme + call fondateurs moyen terme"
+    ],
+    "sujets_EVITES_dans_pitch_par_choix_agent": [
+      "Le mot 'faillite' - remplace par 'ongoing administrative process'",
+      "Le mot 'BAJ' - non mentionne",
+      "Sante mentale, HHX, dossier personnel - zero mention",
+      "Opinions politiques - zero mention",
+      "Genealogie, famille - zero mention"
+    ],
+    "angle_strategique_central": "L'insight collaboration de Michel : Noalis grows the top of Emergent's funnel. Positionne Michel non comme demandeur mais comme apporteur de valeur.",
+    "usage_recommande": "Envoyer en piece jointe ou lien du mail v2 a Vinay P. Formulation : 'Attached is a short pitch describing the project. I'd appreciate if you could share it with the founders when appropriate.'",
+    "statut": "PRET - en attente validation Michel avant envoi"
   }
 }

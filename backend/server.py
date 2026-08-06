@@ -309,18 +309,27 @@ async def download_michel_memory_latest():
 @api.get("/downloads/michel-memory/{filename}")
 async def download_michel_memory(filename: str):
     """Télécharge un snapshot JSON de la mémoire personnelle de Michel (Noalis).
+    Accepte aussi les pitchs et JSON vitrine Noalis.
     Contourne le routing Expo Router qui interceptait /MICHEL_PROFILE_*.json."""
-    # Sécurité : uniquement les fichiers MICHEL_PROFILE_*.json
-    if not filename.startswith("MICHEL_PROFILE_") or not filename.endswith(".json"):
+    # Sécurité : autoriser MICHEL_PROFILE_*.json OU NOALIS_PITCH_/DEMO_*.md/.json/.pdf
+    allowed_prefixes = ("MICHEL_PROFILE_", "NOALIS_PITCH_", "NOALIS_DEMO_")
+    allowed_suffixes = (".json", ".md", ".pdf")
+    if not (filename.startswith(allowed_prefixes) and filename.endswith(allowed_suffixes)):
         raise HTTPException(status_code=400, detail="Nom de fichier invalide")
     if "/" in filename or ".." in filename:
         raise HTTPException(status_code=400, detail="Nom de fichier invalide")
     path = f"/app/backend/public_downloads/michel_memory/{filename}"
     if not os.path.isfile(path):
         raise HTTPException(status_code=404, detail=f"Fichier {filename} introuvable")
+    # Media type selon extension
+    media_type = {
+        ".json": "application/json",
+        ".md": "text/markdown; charset=utf-8",
+        ".pdf": "application/pdf",
+    }[os.path.splitext(filename)[1]]
     return FileResponse(
         path,
-        media_type="application/json",
+        media_type=media_type,
         filename=filename,
         headers={"Cache-Control": "no-store"},
     )
