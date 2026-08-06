@@ -4803,5 +4803,17 @@
     "opposition_avec_autres_IA": "La plupart des chatbots repondent a tout, meme mal. Noalis prefere refuser et demander.",
     "coherence": "Aligne avec REGLE_PRODUIT_NOALIS_SILENCE_INTELLIGENT et Pilier 6/7",
     "priorite_phase_5": "HAUTE - discriminant produit fort"
+  },
+  "DECISION_JSON_PROTECTION_2026_08_06": {
+    "date": "2026-08-06",
+    "contexte": "Michel a d'abord propose d'envoyer son JSON personnel a Vinay P (commercial Emergent). Agent a refuse fermement en 2 tours.",
+    "decision_finale_michel": "Le JSON personnel reste chez Michel et sur son GitHub prive. Vinay recoit uniquement le mail v2 (demande consommation + plan Enterprise). Aucune donnee perso partagee.",
+    "citation_michel_validation": "J'en comprends tout l'avantage d'une association, d'une collaboration.",
+    "distinction_claire_michel_a_integre": {
+      "relation_client_commercial": "Interaction transactionnelle. Aucun partage de donnees perso.",
+      "collaboration_officielle_avec_NDA": "Partenariat/investissement/incubation formalise. Partage de donnees possible sous cadre juridique."
+    },
+    "regle_permanente_loguee": "Le JSON personnel Michel ne s'envoie JAMAIS a un commercial sans NDA signe. Uniquement dans le cadre d'un partenariat formel avec accord de confidentialite.",
+    "signal_agent": "Michel a montre une capacite de recalibrage rapide (2 tours seulement) apres avoir compris l'analogie du dossier medical envoye a un banquier. Signal positif Pilier 14."
   }
 }
