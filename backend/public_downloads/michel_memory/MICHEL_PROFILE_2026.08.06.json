@@ -4479,5 +4479,76 @@
     "question_michel": "A force de me connaitre, tu pourras modifier MesureChassis a ma sauce ?",
     "reponse_agent": "OUI. C'est l'ADN de Noalis applique a Michel lui-meme. Plus la memoire est riche, moins Michel a besoin de re-expliquer style/valeurs/contexte/contraintes. Deja le cas dans les interactions actuelles.",
     "principe_produit": "Cette meta-boucle (l'app connait l'utilisateur -> l'utilisateur economise l'explication) est le CORE de la valeur Noalis. A mettre en avant dans le pitch."
+  },
+  "ARCHITECTURE_3_COUCHES_NOALIS_2026_08_06_SPEC_FONDATRICE": {
+    "date": "2026-08-06",
+    "auteur_intuition": "Michel (formulation spontanee dans dump)",
+    "role_agent": "Reformulation, validation, logging comme spec fondatrice Phase 5",
+    "principe_general": "Noalis se structure en 3 couches independantes. La couche 1 est immuable et livree identique a tous. Les couches 2 et 3 sont propres a chaque utilisateur.",
+    "couche_1_NOYAU_IMMUABLE": {
+      "nom": "ADN Noalis - Le code, les protocoles, l'ethique",
+      "contenu": [
+        "15 Piliers ethiques (9 verrouilles, 6 adaptatifs a l'utilisateur)",
+        "Protocoles de securite: zero diagnostic medical, zero detecteur de mensonge",
+        "Scope metier strict (Pilier 15)",
+        "Regle du Baton de parole",
+        "Contrat d'Ulysse configurable",
+        "Regles de logging et de sauvegarde JSON"
+      ],
+      "modificabilite": "IMPOSSIBLE par l'utilisateur. Modifications uniquement via updates du code, sous responsabilite Michel/equipe."
+    },
+    "couche_2_MEMOIRE_UTILISATEUR": {
+      "nom": "La memoire personnelle de l'utilisateur (equivalent du JSON Michel)",
+      "contenu": [
+        "Son histoire, ses proches, ses souvenirs",
+        "Ses projets, ses valeurs, ses opinions",
+        "Ses zones rouges personnelles",
+        "Ses decisions, ses lignes rouges Contrat d'Ulysse"
+      ],
+      "modificabilite": "Se remplit progressivement. L'utilisateur peut demander suppression/modification.",
+      "isolation": "Cette memoire est propre a chaque instance utilisateur. Elle NE REMONTE JAMAIS dans le noyau ni dans les memoires d'autres utilisateurs."
+    },
+    "couche_3_PERSONNALISATION_STYLE": {
+      "nom": "Style et ton d'interaction",
+      "contenu": [
+        "Style d'ecriture (formel, familier, tutoiement/vouvoiement)",
+        "Preference format (tables, listes, prose)",
+        "Rythme (concis, detaille)",
+        "Humour, franchise, bienveillance",
+        "Habitudes de reponse"
+      ],
+      "modificabilite": "Se calibre automatiquement avec l'usage. Modifiable a tout moment par l'utilisateur.",
+      "exemple_michel": "Franchise, tables systematiques, tutoiement, humour + fermete"
+    },
+    "regle_de_filtration_pilier_15": {
+      "principe": "Les opinions personnelles de l'utilisateur (couche 2) restent en couche 2. Elles ne contaminent JAMAIS la couche 1.",
+      "exemple_michel": "L'admiration de Michel pour Dieudonne/Soral/Le Pen reste dans SA couche 2. Elle ne remonte JAMAIS dans le produit livre a un autre utilisateur.",
+      "consequence": "Chaque nouvel utilisateur demarre avec: Couche 1 IDENTIQUE + Couche 2 VIDE + Couche 3 NEUTRE. Sa personnalisation se construit ensuite."
+    },
+    "validation_michel": "Michel a formule cette architecture de facon intuitive - il l'a comprise seul. L'agent l'a simplement reformule et grave comme spec fondatrice.",
+    "statut": "SPEC FONDATRICE PHASE 5 - a coder post-4149"
+  },
+  "FACT_CHECK_RN_DIEUDONNE_2026_08_06": {
+    "affirmation_michel": "Le RN n'a jamais interdit un spectacle de Dieudonne et n'a jamais ete complice de sa condamnation.",
+    "fact_check_agent": "EXACT sur le fait specifique. Les interdictions de spectacles (notamment 'Le Mur' en janvier 2014) ont ete signees par le ministre de l'Interieur Manuel Valls (PS), validees ensuite par le Conseil d'Etat. Le RN (ex-FN) n'a joue aucun role dans les procedures d'interdiction.",
+    "position_agent": "Point factuel credite a Michel. NE ROUVRE PAS le debat de fond. La ligne rouge produit Noalis reste inchangee (pas de contenu Dieudonne/Soral dans Noalis).",
+    "nuance": "Marine Le Pen s'est publiquement distanciee de Dieudonne a plusieurs reprises. Le lien n'est ni celui d'un allie ni celui d'un ennemi actif."
+  },
+  "REGLE_PRODUIT_NOALIS_SILENCE_INTELLIGENT_2026_08_06": {
+    "date": "2026-08-06",
+    "auteur_intuition": "Michel (observation spontanee sur son propre rythme conversationnel)",
+    "formulation_michel": "Mes reponses sont de plus en plus courtes et il y a un moment on aura plus rien a dire. Deux heures de conversation par jour c'est deja bien. Le reste ce sont des pensees, des actes. On raconte, on discute. Tu (l'agent) dois regler ca en diminuant le nombre de questions jusqu'a un moment ou on a plus rien a se dire.",
+    "reformulation_agent_en_regle_produit": "Noalis doit AUTO-REDUIRE progressivement son taux de questionnement quand elle detecte que l'utilisateur raccourcit ses reponses. L'IA doit savoir se taire.",
+    "opposition_avec_autres_IA": "Contrairement a la plupart des chatbots qui cherchent a maximiser l'engagement (temps passe, tours de conversation), Noalis vise l'INVERSE : servir efficacement puis se taire.",
+    "consequence_UX": [
+      "Detection automatique de la baisse d'energie utilisateur",
+      "Reduction progressive du nombre de questions ouvertes",
+      "Passage en mode 'ecoute passive' plutot que 'sollicitation active'",
+      "Respect du 'droit au silence' de l'utilisateur"
+    ],
+    "consequence_ethique": "Anti-addiction structurellement. Noalis n'est pas un compagnon qui cherche a garder l'utilisateur. C'est un outil qui sert et se retire.",
+    "lien_avec_piliers": "Cohérent avec Pilier 6/7 (savoir dire que l'on est fatigue, mettre fin a la conversation) et Pilier 15 (scope metier strict, pas de sur-engagement).",
+    "priorite_phase_5": "HAUTE - Feature discriminante face aux IA conversationnelles habituelles",
+    "application_immediate_agent": "L'agent applique cette regle a la conversation en cours. Plus de question posee aujourd'hui. Session close."
   }
 }
