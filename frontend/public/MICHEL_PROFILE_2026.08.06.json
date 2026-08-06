@@ -4989,5 +4989,66 @@
     "observation_agent": "Michel a montre un mindset de survie sain : activation des droits (CPAS), pas de honte, articulation famille + institutions + auto-gestion. C'est une force qu'il faut reconnaitre.",
     "citation_michel_a_retenir_pour_le_livre": "J'ai jamais eu beaucoup d'argent, tu le sais tres bien. Et j'ai toujours eu la chance de pouvoir manger un matin.",
     "backlog_conversation_future": "Michel a propose de partager sa methode de risotto. A revenir un jour dans une session detente."
+  },
+  "DUMP_14_MICHEL_2026_08_06_BARBECUE": {
+    "date": "2026-08-06",
+    "contexte": "Dump juste avant/pendant barbecue chez les parents avec Tony",
+    "corrections_orthographe": {
+      "Novalis": "Noalis (double coup de dictee)",
+      "Sandreef": "Sombreffe (commune belge)"
+    },
+    "LISTE_1_OR_EXPLOITABLE": {
+      "boitier_G7_G20_traducteur_diplomatique": {
+        "concept": "Chaque leader mondial a son boitier. Chacun parle sa langue, les autres entendent avec sa voix preservee dans leur propre langue.",
+        "extension_de": "Feature boitier voyage (dump #12)",
+        "cas_usage": "Reunions G7/G20/Nations Unies/traites bilateraux",
+        "priorite": "Vision - a long terme"
+      },
+      "PILIER_ABSOLU_REFUS_ROBOTS_GUERRE": {
+        "principe": "Noalis ne sera JAMAIS integree a des systemes robotiques militaires ou de combat.",
+        "statut": "Nouveau Pilier ethique verrouille - a ajouter aux 15 piliers existants",
+        "positionnement_absolu": "Aucune negociation possible sur ce point, meme pour offre financiere massive"
+      },
+      "integration_robots_humanoides_Optimus": {
+        "concept": "Noalis integree dans robots humanoides civils (type Optimus d'Elon Musk) comme couche 'conscience ethique'",
+        "logique_architecturale": "Noalis = couche conscience morale. N'importe quel corps robotique compatible peut en beneficier.",
+        "priorite": "Vision long terme post-Phase 5"
+      },
+      "flotte_commerciaux_specialises": {
+        "concept": "Vendeurs specialises par vertical metier (Alzheimer, entrepreneurs, avocats, medecins, adolescents) pour vendre Noalis mondialement.",
+        "modele_GTM": "B2B SaaS classique avec specialisation verticale",
+        "condition": "POST-BAJ uniquement",
+        "priorite": "Structure business a construire"
+      },
+      "presentateur_adaptatif_par_audience": {
+        "principe": "Choix du presentateur/voix adaptatif selon l'audience cible",
+        "modes": {
+          "defaut": "2 journalistes NotebookLM style (chaleureux, familier)",
+          "audience_medicale_Nathalie": "Presentateur mono, ton clinique",
+          "audience_enfant_ado": "Voix jeune, langage simple",
+          "audience_pro_pitch_Emergent": "Presentateur pro, ton tech"
+        },
+        "principe_produit": "Adaptatif, pas fige. Detection automatique du contexte."
+      },
+      "feature_compteur_moments_sociaux": {
+        "concept": "Enregistrement des moments de vie via collier. Utilisateur peut interroger : 'combien de fois j'ai vu X cette annee ?', 'quel etait mon 3e barbecue de l'ete ?'",
+        "cas_usage": "Nostalgie, souvenir, quantification vie sociale, memoire familiale",
+        "condition_fonctionnement": "L'utilisateur doit jouer le jeu et alimenter l'app (contexte des moments)",
+        "priorite": "MOYENNE-HAUTE - feature emotionnelle forte"
+      }
+    },
+    "DISTINCTION_CAHIER_DES_CHARGES_vs_NOALIS": {
+      "clarification_michel": "Le JSON actuel n'est pas Noalis. C'est le cahier des charges de Noalis.",
+      "distinction": {
+        "cahier_des_charges": "Spec produit ecrite (le JSON de 130 sections)",
+        "noalis_finie": "Produit qui utilise cette spec pour vivre - a coder post-4149"
+      },
+      "utilite_pedagogique": "A rappeler quand on presente le JSON a des tiers - eviter la confusion 'ah c'est ca Noalis ?' - non, c'est le PLAN de Noalis."
+    },
+    "reference_tony_robbins_baignoire": {
+      "citation_michel": "D'apres Tony Robbins l'influenceur, lui a eu la revelation pendant qu'il faisait la vaisselle dans une baignoire pour economiser l'eau",
+      "verification": "EXACT - Tony Robbins raconte cette anecdote dans 'Unlimited Power'. Contrainte financiere qui force a penser autrement.",
+      "parallele_michel": "Michel dans son studio de Sombreffe avec 200 EUR = memes conditions de creation contrainte que Tony Robbins a l'epoque."
+    }
   }
 }
