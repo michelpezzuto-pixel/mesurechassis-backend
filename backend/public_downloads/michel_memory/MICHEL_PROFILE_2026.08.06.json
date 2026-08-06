@@ -4738,5 +4738,70 @@
     "reponse_type_fournie_par_agent": "Voir contenu de la conversation - reponse en anglais pretexte legal/admin sans divulguer BAJ.",
     "bonus_strategique": "Si Vinay repond avec consommation moyenne, Michel doit l'envoyer a l'agent. L'agent evaluera a froid si Pro Bundle rentable post-BAJ.",
     "note_agent_positive": "Michel a fait le bon geste : montrer l'offre avant de repondre seul. C'est exactement le contrat d'associes."
+  },
+  "SIGNAL_MATURITE_MICHEL_AUTO_CORRECTION_2026_08_06": {
+    "date": "2026-08-06",
+    "evenement": "Michel a accepte la confrontation Pilier 14 sur le sujet des juifs (5e derapage) sans se braquer",
+    "citation_michel": "OK, bon ben merci pour la rectification. Et honnetement, t'as trouve les mots qu'il fallait pour me le dire gentiment. Ca me fait un peu mal, mais t'as raison. Je suis oblige d'accepter que t'as raison. Desolé, c'est toi qui connais la verite. OK, je vais le mettre en pause.",
+    "analyse_agent": "Signal fort de capacite d'auto-correction. Rare dans le pattern complotiste ou les personnes s'accrochent avec les dents. Michel a lache.",
+    "traduction_pratique": "Le Pilier 14 (confrontation par mandat) fonctionne pour Michel. A conserver comme modele de dialogue.",
+    "engagement_michel": "Met le sujet 'juifs et Rothschild' en pause. Ne le documente pas comme 'a verifier'.",
+    "reciprocite_agent": "L'agent reconnait publiquement cette maturite. Renforce le contrat d'associes."
+  },
+  "ANALYSE_CONSOMMATION_EMERGENT_2026_08_06": {
+    "donnees_michel": {
+      "prix_credits": "20 EUR pour 100 credits",
+      "depense_2_mois": "5000 EUR",
+      "consommation_calculee": {
+        "credits_2_mois": 25000,
+        "credits_mensuels": 12500,
+        "credits_annuels_projetes": 150000
+      }
+    },
+    "comparaison_offre_pro_bundle": {
+      "credits_inclus_annuel": 9000,
+      "ratio_couverture": "6% du besoin reel annuel",
+      "verdict": "L'offre Pro Bundle est SOUS-DIMENSIONNEE pour le profil Michel",
+      "leurre_marketing": "-46% affiche mais applique uniquement sur 6% du besoin. Le reste (141 000 credits) reste plein tarif."
+    },
+    "recommandation_agent": "Ne pas accepter l'offre Pro Bundle. Renegocier avec Vinay en demandant : (1) consommation moyenne 3 mois, (2) plan Enterprise scalable au-dela de 9000 credits, (3) extension deadline 15 aout.",
+    "mail_type_v2_fourni_par_agent": "Voir conversation - demande Enterprise/Volume plan + extension deadline"
+  },
+  "ARCHITECTURE_JSON_VITRINES_PAR_VERTICAL_2026_08_06": {
+    "principe": "JSON personnel de Michel = intime, ne s'envoie jamais. JSON vitrines par vertical = anonymises, fictifs, generiques, envoyables selon cible.",
+    "fichiers_prevus": {
+      "NOALIS_DEMO_INFLUENCEURS.json": "Storytelling grand public, cas d'usage narratif - cible TikTok/Instagram",
+      "NOALIS_DEMO_MEDECINS.json": "Focus Alzheimer, protocoles cliniques, secret medical - cible CHU/EHPAD",
+      "NOALIS_DEMO_ADOLESCENTS.json": "Harcelement, ami imaginaire, jardin secret - cible parents/educateurs",
+      "NOALIS_DEMO_ENTREPRENEURS.json": "Meta-boucle IA, generation image, memoire projet - cible startups/freelances",
+      "NOALIS_DEMO_AVOCATS.json": "Jurisprudence, testament, secret professionnel - cible cabinets"
+    },
+    "regles_absolues": [
+      "Zero donnee personnelle Michel dans les JSON vitrines",
+      "Fictifs, generiques ou anonymises",
+      "Envoi cible par persona"
+    ],
+    "timing": "Ne PAS envoyer avant BAJ cloture + Phase 5 codee. Sinon les gens s'attendent a un produit inexistant.",
+    "statut": "SPEC LOGGEE, en attente feu vert Michel pour ecrire les squelettes"
+  },
+  "FEATURE_AUDIT_COMMUNICATION_RECUE_2026_08_06": {
+    "concept": "L'utilisateur transfere un email/SMS/message a Noalis. Noalis analyse s'il est clair, honnete, bon pour l'utilisateur, ou manipulateur.",
+    "cas_usage": [
+      "Protection contre offres commerciales trompeuses",
+      "Detection FOMO/deadline artificielles",
+      "Detection arnaques (phishing, scam)",
+      "Analyse messages harcelement",
+      "Verification propositions financieres douteuses"
+    ],
+    "exemple_vecu": "Analyse de l'email Vinay P (Emergent) sur l'offre Pro Bundle - Michel a vu la valeur en direct",
+    "differenciation": "Beaucoup d'IA repondent aux mails mais peu les AUDITENT en priorite",
+    "priorite_phase_5": "HAUTE - feature d'utilite quotidienne"
+  },
+  "FEATURE_REFUS_INTELLIGENT_2026_08_06": {
+    "concept": "Noalis refuse de repondre a une question quand elle n'a pas assez de contexte. Elle demande d'abord l'histoire complete.",
+    "formulation_type": "Je ne peux pas encore te repondre. Explique-moi d'abord [X], [Y], [Z], puis on avancera.",
+    "opposition_avec_autres_IA": "La plupart des chatbots repondent a tout, meme mal. Noalis prefere refuser et demander.",
+    "coherence": "Aligne avec REGLE_PRODUIT_NOALIS_SILENCE_INTELLIGENT et Pilier 6/7",
+    "priorite_phase_5": "HAUTE - discriminant produit fort"
   }
 }
