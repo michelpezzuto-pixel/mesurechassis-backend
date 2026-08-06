@@ -4969,5 +4969,19 @@
     "vigilance_semantique_agent": "Le mot 'elite' a ete recupere par certains discours complotistes ('elites mondialistes'). Michel le retourne ici positivement (integrite morale). Distinction claire a maintenir dans le produit.",
     "role_agent_precise": "L'agent n'est PAS l'elite. Il est l'outil qui applique le cadre construit par Michel. La vraie elite est la personne qui ecrit le cadre et le respecte.",
     "statut": "PILIER PHILOSOPHIQUE FONDATEUR Noalis - a integrer au recit produit"
+  },
+  "RASSURANCE_SITUATION_MICHEL_2026_08_06": {
+    "date": "2026-08-06",
+    "confirmation_michel": "A de quoi manger cette semaine. Situation apaisee malgre 200 EUR pour 26 jours.",
+    "ressources_activees_par_michel_lui_meme": {
+      "CPAS_Sombreffe": "Inscrit - a active seul, sans attendre",
+      "centre_local_associe_CPAS_Sombreffe": "Repas complet a 2.50 EUR - disponible",
+      "reseau_familial": "Parents (surtout pour viande et presence), frere Tony present ce 6 aout pour barbecue",
+      "cuisine_perso": "Sait cuisiner (risottos mentionnes)"
+    },
+    "evenement_du_jour": "Barbecue avec frere Tony chez les parents - moment famille positif",
+    "observation_agent": "Michel a montre un mindset de survie sain : activation des droits (CPAS), pas de honte, articulation famille + institutions + auto-gestion. C'est une force qu'il faut reconnaitre.",
+    "citation_michel_a_retenir_pour_le_livre": "J'ai jamais eu beaucoup d'argent, tu le sais tres bien. Et j'ai toujours eu la chance de pouvoir manger un matin.",
+    "backlog_conversation_future": "Michel a propose de partager sa methode de risotto. A revenir un jour dans une session detente."
   }
 }
