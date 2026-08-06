@@ -4292,7 +4292,7 @@
       "fils_ugo": {
         "statut_actuel": "Academie a Bruxelles, part a Arlon en septembre 2026, se rapproche de sa mere",
         "vision_michel": "Le faire rejoindre le projet apres l'armee (dans 3-4 ans)",
-        "conditions_exigees": "AUCUNE DEPENDANCE: pas de drogue, sexe, jeux, cigarette. Pas d'agression, viol, faux, detournement, vol, violence physique/sexuelle.",
+        "conditions_exigees": "Pas d'INTERDICTION totale des substances, mais AUCUNE DEPENDANCE. Pas de venue chez Michel drogue/fume. Pas d'agression, viol, faux, detournement, vol, violence physique/sexuelle. (Nuance apportee par Michel 2026-08-06 matin)",
         "flag_agent": "Contradiction avec la consommation HHX de Michel - voir CONFRONTATION_HHX_2026_08_06"
       },
       "projet_jomicook_ex_sophie": "Michel avait un projet 'jomicook' que Sophie trouvait 'trop grand'. A raconter plus tard.",
@@ -4333,5 +4333,47 @@
       "rouge_5_abus_sexuel_comme_preuve": "Sujet ultra sensible. Necessite avocat specialise violences + garanties non-manipulation. Reste en backlog theorique, pas en MVP.",
       "rouge_6_contradiction_ugo_hhx": "Le contrat impose a Ugo doit d'abord s'appliquer a Michel. Sinon = destruction de l'autorite paternelle deja fragilisee (voir la fille qui l'appelle 'menteur')."
     }
+  },
+  "REPONSE_MICHEL_HHX_2026_08_06_MATIN": {
+    "date": "2026-08-06",
+    "moment": "Reponse de Michel a la confrontation Pilier 14 du matin",
+    "concessions_michel": {
+      "marc_coucke_report_accepte": "Michel comprend l'enjeu due diligence et reporte le contact Marc Coucke. Sagesse notee.",
+      "nuance_ugo_precise": "Michel precise: pas d'interdiction totale, seulement pas de DEPENDANCE. Nuance legitime. Correction JSON faite.",
+      "demande_clarification_ligne": "Michel demande a l'agent de clarifier ce que 'tracer une ligne' signifie concretement. Preuve qu'il ne ferme pas la conversation."
+    },
+    "arguments_michel_defense_HHX": {
+      "argument_1_etudes_medicales": {
+        "position_michel": "Je prends du HHX pour aider les etudes medicales",
+        "position_agent": "REJETE. Michel ne participe a aucune etude medicale. Pour vraiment aider: Sciensano, CHU Liege toxicologie, EMCDDA/REITOX. Envoyer temoignage ecrit. Fumer chez soi n'est PAS de la recherche."
+      },
+      "argument_2_riches_ne_droguent_pas": {
+        "modeles_michel": "Bernard Arnault et Bernard Tapie",
+        "position_agent": "Tapie condamne corruption sportive, escroquerie CDR/Credit Lyonnais - pas un modele de 'vrai riche'. Arnault effectivement clean mais discipline monastique totale - la coherence s'impose si c'est le modele."
+      },
+      "argument_3_metaphore_fable_5": {
+        "metaphore_michel": "Le HHX = ether dans une mobylette, boost temporaire",
+        "position_agent": "La metaphore condamne Michel elle-meme. Une mobylette a l'ether grille son moteur. Michel a lui-meme cite Kurt Cobain: 'la drogue l'a rendu dependant et il s'est tire une balle'."
+      }
+    },
+    "contre_proposition_michel_ligne_HHX": {
+      "formulation_michel": "J'en prends pas, mais le jour ou j'ai vraiment envie de travailler et d'ouvrir l'esprit et developper l'application, j'en prends.",
+      "verdict_agent": "REFUSE - Ce n'est PAS une ligne, c'est un cheque en blanc. Aucune contrainte de frequence, quantite, contexte. Discours-type du deni.",
+      "agent_propose_3_formats": {
+        "A_cadre_strict": "Max X fois/semaine, X grammes max, jamais avant midi, jamais chez Ugo, jamais chez les parents",
+        "B_cadre_projet": "Uniquement pendant phases de dump creatif Noalis. Consigne chaque prise dans le JSON.",
+        "C_arret_total": "J'arrete definitivement a partir du [date]. Point."
+      },
+      "attente_agent": "Michel doit choisir A, B ou C dans le prochain dump. Ligne modifiable ulterieurement mais existante a un instant T."
+    },
+    "precision_agent_sur_dernier_arg_michel": {
+      "michel_dit": "Je me l'applique. J'ai arrete toutes les drogues, l'alcool, celibataire donc pas de sexe.",
+      "position_agent": "Michel exclut le HHX du champ 'drogue'. C'est le deni central: la substance qu'on utilise n'est jamais 'une vraie drogue'. Or l'HHX est un cannabinoide de synthese, classe comme substance illicite ou en zone grise dans plusieurs pays UE depuis 2024."
+    },
+    "phrase_forte_michel_a_retenir": {
+      "citation": "Je suis en train de jouer ma vie, la.",
+      "renvoi_agent": "L'agent renvoie a Michel sa propre phrase. Dossier BAJ + fils Ugo + fille + projet Noalis = tout depend de la coherence des 24 prochains mois."
+    },
+    "position_finale_agent": "L'agent ne demandera pas l'arret. Il demande UNE LIGNE choisie (A, B ou C) et l'obligation de la logger. Il respecte l'autonomie adulte de Michel. Il refuse le cheque en blanc."
   }
 }
