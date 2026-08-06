@@ -4375,5 +4375,56 @@
       "renvoi_agent": "L'agent renvoie a Michel sa propre phrase. Dossier BAJ + fils Ugo + fille + projet Noalis = tout depend de la coherence des 24 prochains mois."
     },
     "position_finale_agent": "L'agent ne demandera pas l'arret. Il demande UNE LIGNE choisie (A, B ou C) et l'obligation de la logger. Il respecte l'autonomie adulte de Michel. Il refuse le cheque en blanc."
+  },
+  "LIGNE_HHX_MICHEL_2026_08_06_FORMAT_B_ACCEPTE": {
+    "date": "2026-08-06",
+    "moment": "Apres 2 confrontations Pilier 14, Michel pose sa ligne",
+    "ligne_michel_texto": "HHX uniquement seul dans mon appartement de Sandreef pour dumper sur Noalis. Jamais avant reunions, voyages ou vie sociale. C'est un booster de travail, pas un quotidien. Ca evoluera si ca ne fait plus effet.",
+    "classification_agent": "FORMAT B - Cadre projet. Ligne validee (pas un cheque en blanc).",
+    "auto_reconnaissance_michel": "Michel reconnait lui-meme: 'je peux pas avoir de vie sociale avec cette drogue, elle est trop forte'. Signal d'auto-lucidite.",
+    "trous_a_combler_signales_par_agent": {
+      "1_frequence_max": "Michel doit fixer un plafond hebdomadaire ou mensuel",
+      "2_quantite_max_par_session": "Michel doit fixer une duree/quantite max par session"
+    },
+    "statut": "LIGNE_POSEE - a completer avec plafonds fréquence + quantité",
+    "engagement_agent": "Ne pas re-confronter tant que Michel respecte cette ligne. Respect autonomie adulte."
+  },
+  "CORRECTIONS_FACTUELLES_2026_08_06": {
+    "ugo_arlon": {
+      "ancien_log_agent": "Ugo passe a Arlon en septembre 2026 (2e annee academie/armee), se rapproche de sa mere. Duree totale armee inconnue. Michel lui proposera de rejoindre Noalis a la fin.",
+      "correction_michel": "Ugo n'est pas a la fin de l'armee dans 3 ans. Il est en 2e annee. La duree totale reste indeterminee. Michel le laisse pour la discipline militaire."
+    },
+    "michael_jackson_epstein": {
+      "position_michel": "Michael Jackson blanchi grace aux affaires Epstein",
+      "position_agent": "Correction factuelle : les documents Epstein n'ont pas traite MJ. Verdict penal 2005 = non-coupable. Reglements civils existent. Loge comme OPINION Michel, pas comme fait.",
+      "categorie": "opinion_personnelle_protegee"
+    },
+    "auto_correction_michel_etudes_medicales": {
+      "michel_reconnait": "Je me suis complètement plante sur l'argument 'etudes medicales'. Reformule: ca alimentera le LIVRE (recit personnel), pas la recherche medicale.",
+      "commentaire_agent": "Belle capacite d'auto-correction avec humour ('bien fait dans tes dents'). Signal de maturite dans le protocole d'associes."
+    }
+  },
+  "QUESTIONS_OUVERTES_AGENT_2026_08_06": {
+    "date": "2026-08-06",
+    "contexte": "Michel invite l'agent a poser des questions Noalis. Agent en pose 2 concretes.",
+    "Q1_pendentif_ehpad_forme_physique": {
+      "options": [
+        "badge tissu discret",
+        "chaine/bijou classique",
+        "montre connectee type Apple Watch",
+        "boitier chambre + micros ehpad",
+        "autre"
+      ],
+      "reponse_michel": "EN ATTENTE"
+    },
+    "Q2_business_model_par_segment": {
+      "segments": {
+        "alzheimer_famille": "gratuit ? paye par Secu ? paye par famille ?",
+        "pro_liberal_avocat_medecin": "500 EUR direct ? abonnement mensuel ?",
+        "particulier_entrepreneur": "les 500 EUR sont pour eux ?"
+      },
+      "principe_agent": "Modele doit differer par segment pour ne pas sous-vendre au Pro ni exclure Alzheimer",
+      "reponse_michel": "EN ATTENTE"
+    }
   }
 }
