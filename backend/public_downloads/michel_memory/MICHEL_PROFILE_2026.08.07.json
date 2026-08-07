@@ -22,10 +22,10 @@
   }
  },
  "_metadata": {
-  "last_updated_iso": "2026-08-07T21:30:00+0200",
-  "last_updated_readable_fr": "Vendredi 07 août 2026 à 21h30",
-  "version": 6,
-  "total_sections": 159,
+  "last_updated_iso": "2026-08-07T22:15:00+0200",
+  "last_updated_readable_fr": "Vendredi 07 août 2026 à 22h15",
+  "version": 7,
+  "total_sections": 160,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif."
  },
@@ -5406,7 +5406,8 @@
   "DUMP_16": "2026-08-07 matin sobre, clarifications solides",
   "DUMP_17": "2026-08-07 après-midi sobre, stratégie diffusion + module étudiant",
   "OUTSORGROUP": "2026-08-07, proposition cold call repoussée à Q1 2027",
-  "DUMP_18": "2026-08-07 soir, HHX probable, script vente B2B + endgame anti-dépendance + question latence démos (répondue) + blocages Ulysse (100€/flatterie)"
+  "DUMP_18": "2026-08-07 soir, HHX probable, script vente B2B + endgame anti-dépendance + question latence démos (répondue) + blocages Ulysse (100€/flatterie)",
+  "CONTACTS_INFLUENCEURS": "2026-08-07 soir, 3 profils capturés (Émilie, VibeCodeur, Qin Hui) + 4e en attente (mindset entrepreneurs)"
  },
  "NOTE_INTERNE_AGENT_FEEDBACK_2026_08_07": {
   "date": "2026-08-07",
@@ -5840,6 +5841,44 @@
     "regle_app": "🔒 JAMAIS relayé par M14. Stocké uniquement comme mémoire personnelle. L'idée purificateur d'eau contient un fond humanitaire sincère — sans suite opérationnelle.",
     "note_agent": "Aucune confrontation nécessaire — classé sans commentaire, conformément à la règle 'bloquer sans faire la morale'."
    }
+  }
+ },
+ "CONTACTS_STRATEGIQUES_INFLUENCEURS_2026_08_07": {
+  "_meta": {
+   "date_capture": "2026-08-07 soir",
+   "contexte": "Michel avait joint des captures d'écran aux dumps 16/17 mais elles n'avaient PAS été enregistrées (le JSON est texte uniquement, et l'agent précédent ne les a pas transcrites). Michel les a renvoyées ce soir — capturées définitivement ici.",
+   "objectif": "Personnes à contacter pour la diffusion de M14 et le soutien des futurs collaborateurs."
+  },
+  "CONTACT_1_EMILIE": {
+   "plateforme": "TikTok",
+   "pseudo": "@emg.paris",
+   "nom_affiche": "Émilie",
+   "stats_au_2026_08_07": "23 followers, 333 j'aime, 4 suivis",
+   "profil": "Développement personnel / confiance en soi",
+   "interet_michel": "Pourrait donner confiance aux futurs collaborateurs de Michel.",
+   "note_agent": "Compte très petit (23 followers) — accessible et abordable pour un premier contact, mais faible portée de diffusion. Plus un profil 'coach interne potentiel' qu'un relais d'audience."
+  },
+  "CONTACT_2_VIBECODEUR": {
+   "plateforme": "TikTok",
+   "pseudo": "@vibecodeur",
+   "nom_affiche": "VibeCodeur",
+   "stats_au_2026_08_07": "1602 followers, 24,2K j'aime, 3 suivis",
+   "bio": "Vibecodeur TDAH via Cursor — Je build avec l'IA — Tips, builds & découvertes au quotidien",
+   "interet_michel": "Faire éventuellement son application avec lui et lui montrer comment tout gérer grâce à Emergent.",
+   "note_agent": "🟢 Cible la plus pertinente des trois : il buildé déjà avec l'IA (Cursor), audience engagée (24K likes pour 1600 followers = très bon ratio), et le angle TDAH résonne avec la mission M14 (mémoire externe pour cerveaux atypiques). Candidat naturel pour un pack démo 'influenceur builder'."
+  },
+  "CONTACT_3_QIN_HUI": {
+   "plateforme": "YouTube (+ livre chez Marabout)",
+   "pseudo": "Qin Hui",
+   "identite_civile": "Thomas Claret",
+   "profil": "Youtubeur français spécialisé Dark Web / cybersécurité. Auteur du livre-jeu 'Au cœur du Dark Web avec Qin Hui' (Marabout, 4,6/5, énigmes à résoudre).",
+   "interet_michel": "A créé 'DarkGPT', une application qui fait tourner les têtes, et gagne de l'argent avec les vues YouTube — Michel trouve ça très malin.",
+   "fact_check_agent": "⚠️ Précision vérifiée (web) : 'DarkGPT' est une SÉRIE DE VIDÉOS scénarisée (une IA fictive 'venue du dark web'), pas une vraie application commercialisée. Le business model réel = vues YouTube + livre. La leçon marketing reste valable : créer un personnage/concept mystérieux qui génère de la curiosité massive. Mais ne pas aborder ce contact en croyant qu'il vend une app.",
+   "note_agent": "Grosse audience, mais univers 'dark' éloigné du positionnement éthique/paix de M14. À évaluer : le contraste peut être un atout médiatique ou un risque d'image."
+  },
+  "EN_ATTENTE_CONTACT_4_MINDSET": {
+   "demande_michel": "Ajouter une personne qui conseille les entrepreneurs sur le développement du mindset — pour aider aussi ses collaborateurs.",
+   "status": "🟡 EN ATTENTE — clarification demandée à Michel : est-ce Émilie (contact 1) ou une 4e personne dont il doit encore envoyer le profil ?"
   }
  }
 }
