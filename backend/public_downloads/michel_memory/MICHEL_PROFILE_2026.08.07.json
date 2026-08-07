@@ -5602,5 +5602,58 @@
       "Vérif express .com/.be/INPI/EUIPO",
       "Réservation triple extension (.com + .be + .eu ou .app)"
     ]
+  },
+  "BRAINSTORM_NAMING_RESULTATS_2026_08_07": {
+    "methode": "Prompt universel envoyé à 5 IAs (Gemini, Perplexity, autre variant, autre variant, autre variant)",
+    "total_noms_bruts": 75,
+    "total_coup_de_coeur": 5,
+    "coups_de_coeur_par_IA": {
+      "IA1": "MILO",
+      "IA2_Perplexity": "SAVIA",
+      "IA3": "NURA",
+      "IA4": "TENIR",
+      "IA5": "VELIO"
+    },
+    "signal_le_plus_fort": {
+      "famille": "VEL- (veille/voile/protection)",
+      "convergence": "3 IAs sur 5 (Velio, Vela x2, Velora)",
+      "interpretation": "Signal produit fort — la sémantique 'présence qui veille sans imposer' résonne indépendamment chez plusieurs IAs."
+    },
+    "eliminations_a_froid": {
+      "MILO": "Nestlé Milo — boisson mondiale, impossible",
+      "LUMA_LUMEN": "Luma AI + Lumen Technologies, pris",
+      "VELA": "Mot commun IT/ES, marques existantes",
+      "KERN": "Mot commun DE/NL, marques industrielles",
+      "NORA_NURA": "Prénoms très courants, marques MO",
+      "AEVA": "AEVA Technologies (Nasdaq LIDAR), conflit direct",
+      "ELARA": "Elara Caring / Naming Group",
+      "TENIR": "Brillant FR mais mort en NL/DE/EN",
+      "ANCORA": "Mot italien commun"
+    },
+    "finalistes_agent": {
+      "rang_1_VELIO": {
+        "score": "Or",
+        "raison": "Création propre, convergence 3 IAs sur la racine, prononciation universelle, philosophie parfaitement alignée",
+        "baseline_test": "Velio se souvient, pour que vous restiez libre."
+      },
+      "rang_2_SAVIA": {
+        "score": "Argent",
+        "raison": "Coup de cœur Perplexity magnifiquement argumenté, sève + sagesse",
+        "reserve": "Mot espagnol commun — risque marque à vérifier en zone hispanique",
+        "baseline_test": "Savia. Ce qui compte reste avec vous."
+      },
+      "rang_3_EKOA": {
+        "score": "Bronze",
+        "raison": "Création originale, propre, quasi certain d'être libre",
+        "point_faible": "Sonne startup 2015, moins de profondeur émotionnelle",
+        "baseline_test": "Rien ne se perd. Tout vous revient."
+      }
+    },
+    "reco_agent": "VELIO — à vérifier immédiatement (Google + OVH + INPI + EUIPO)",
+    "next_steps": [
+      "Michel vérifie Velio sur les 4 outils",
+      "Si libre → réservation .com + .be + .eu chez OVH (~35 €/an)",
+      "Si pris → fallback sur SAVIA puis EKOA avec mêmes vérifs"
+    ]
   }
 }
