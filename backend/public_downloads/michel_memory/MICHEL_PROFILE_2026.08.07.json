@@ -22,9 +22,9 @@
   }
  },
  "_metadata": {
-  "last_updated_iso": "2026-08-07T22:40:00+0200",
-  "last_updated_readable_fr": "Vendredi 07 août 2026 à 22h40",
-  "version": 8,
+  "last_updated_iso": "2026-08-07T22:55:00+0200",
+  "last_updated_readable_fr": "Vendredi 07 août 2026 à 22h55",
+  "version": 9,
   "total_sections": 160,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif."
@@ -5881,6 +5881,16 @@
   "EN_ATTENTE_CONTACT_4_MINDSET": {
    "demande_michel": "Ajouter une personne qui conseille les entrepreneurs sur le développement du mindset — pour aider aussi ses collaborateurs.",
    "status": "✅ RÉSOLU — c'était Émilie (contact 1). Aucun 4e contact à attendre."
+  },
+  "ORDRE_DEPLOIEMENT_DECIDE_PAR_MICHEL": {
+   "date": "2026-08-07 soir",
+   "sequence": [
+    "1. L'ASSOCIÉ (interne — pitch dimanche/lundi)",
+    "2. NATHALIE (test réel Alzheimer — premier déploiement externe)",
+    "3. Influenceurs (Émilie, VibeCodeur...) — SEULEMENT quand Michel sera prêt"
+   ],
+   "regle": "Aucun message à Émilie ni aux autres influenceurs pour l'instant. Quand Michel sera prêt, il le dira et le message sera rédigé ENSEMBLE.",
+   "moment_notable": "Inversion des rôles saine : l'agent s'est emballé sur le timing, MICHEL a remis les idées en place ('c'est toi qui t'emballes et c'est moi qui te remets les idées en place'). Signal fort de lucidité et de maturité stratégique — Michel applique lui-même le Pilier 14. L'agent a eu tort sur le timing, raison sur le fond."
   }
  }
 }
