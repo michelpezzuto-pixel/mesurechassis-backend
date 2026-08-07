@@ -5521,5 +5521,39 @@
         "status": "🟡 En attente du naming — pas en attente de budget."
       }
     }
+  },
+  "STRATEGIE_SITE_VITRINE_NOALIS_2026_08_07": {
+    "philosophie": "Noalis-first : l'app EST le produit. Le site n'est qu'une porte d'entrée.",
+    "citation_michel": "Ce ne sera qu'un site vitrine, il y aura rien dedans puisque tout est dans l'application. Il suffit de poser la question, ils ont la réponse. Ils n'ont pas besoin d'aller chercher sur un site Internet.",
+    "contenu_minimal": {
+      "hero": "Logo + baseline + 2 lignes de vision",
+      "cta": [
+        "Télécharger App Store",
+        "Télécharger Google Play"
+      ],
+      "contact": "email uniquement (ex: contact@noalis.be)",
+      "obligatoire_belgique": [
+        "Mentions légales",
+        "Politique de confidentialité RGPD"
+      ]
+    },
+    "ce_qui_est_exclu_volontairement": [
+      "Blog",
+      "Page 'Features'",
+      "FAQ (tout est dans l'app)",
+      "Articles de contenu",
+      "Témoignages détaillés (max 2-3 phrases en hero si besoin)"
+    ],
+    "implication_hebergement": {
+      "besoin_reel": "Site statique HTML/CSS ultra léger",
+      "hebergement_gratuit_possible": [
+        "Cloudflare Pages",
+        "Vercel",
+        "GitHub Pages"
+      ],
+      "hebergement_payant_minimal": "EasyHost formule basse (~3 €/mois) si Michel préfère tout centraliser en Belgique",
+      "conclusion": "Dépense réelle limitée aux noms de domaine (~30-45 €/an total pour .com + .be + .eu)"
+    },
+    "reference_marche": "Même approche que Apple, Notion, Superhuman — site minimaliste, produit maximaliste."
   }
 }
