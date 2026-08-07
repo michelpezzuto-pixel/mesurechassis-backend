@@ -22,9 +22,9 @@
   }
  },
  "_metadata": {
-  "last_updated_iso": "2026-08-08T01:00:00+0200",
-  "last_updated_readable_fr": "Samedi 08 août 2026 à 01h00",
-  "version": 12,
+  "last_updated_iso": "2026-08-08T01:20:00+0200",
+  "last_updated_readable_fr": "Samedi 08 août 2026 à 01h20",
+  "version": 13,
   "total_sections": 162,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif."
@@ -5956,16 +5956,25 @@
     "status": "En attente arbitrage"
    },
    "ANALYSE_PRISE_DE_SANG_NUTRITION": {
-    "idee_michel": "M14 analyse la prise de sang, conseille l'alimentation, alerte s'il faut voir un médecin, propose des recettes adaptées au métabolisme.",
-    "reserve_agent": "🟡 Se heurte frontalement à REGLE_ABSOLUE_ZERO_DIAGNOSTIC (verrouillée par Michel lui-même). Version compatible : M14 aide à PRÉPARER les questions pour le médecin et à suivre les recommandations DU médecin — jamais interpréter les résultats lui-même.",
-    "status": "Reformulation nécessaire — dimanche"
+    "idee_michel": "M14 analyse la prise de sang, conseille l'alimentation, alerte s'il faut voir un médecin.",
+    "REFORMULATION_VALIDEE_PAR_MICHEL_2026_08_08": {
+     "regles": [
+      "1. M14 ne nomme JAMAIS une maladie (règle zéro diagnostic intacte)",
+      "2. Consultation médecin OBLIGATOIRE en cas d'anomalie — M14 rédige un texte/mail prêt à envoyer AU médecin avec les questions",
+      "3. Si tout va bien : M14 peut le dire et donner des conseils bien-être/nutrition généraux (ex: noix de cajou pour la thyroïde), basés sur des sources de santé publique validées",
+      "4. M14 = préparateur de consultation, jamais remplaçant du médecin"
+     ],
+     "status": "🟢 Tranché ensemble le 2026-08-08 — plus besoin d'en reparler dimanche"
+    },
+    "status": "✅ Résolu"
    }
   },
   "FRICTION_A_TRANCHER_DIMANCHE_SOBRE": {
    "POLITIQUE_DANS_L_APP": {
     "demande_michel": "Michel insiste : si des gens veulent parler politique avec M14, l'app devrait dire ce que LUI pensait et ferait s'il était président.",
     "position_agent": "🔴 CONFLIT DIRECT avec une règle que Michel a lui-même verrouillée (M14 neutre, jamais relais des opinions politiques/religieuses de Michel — cf. dumps 16/17). Tout le programme politique du dump (salaires par fonction, fin des élections, prisons, immigration, collier des détenus, envoi du programme à Marine Le Pen, briques du RN...) est STOCKÉ dans la garde mémoire personnelle hors app, rien n'est perdu — mais rien ne passe dans le produit. Décision à reprendre SOBRE dimanche. Position de l'associé : une app de paix qui relaie un programme politique perd sa neutralité et sa cible en une semaine.",
-    "status": "🔴 Gelé jusqu'à dimanche"
+    "status": "🔴 Gelé jusqu'à dimanche",
+    "EVOLUTION_MICHEL_2026_08_08": "Michel abandonne de lui-même l'idée de 'devenir politicien'. Reformulation : ce qu'il appelait politique = 'le système de la vie', 'la manière de vivre'. Position agent : la PHILOSOPHIE de vie (autonomie, anti-dépendance, éducation financière, bienveillance, mérite) est DÉJÀ le cœur des valeurs M14 — rien à ajouter, elle y est. Les mesures régaliennes spécifiques (immigration, prisons, salaires d'État, élections) restent hors app, dans sa mémoire personnelle. La frontière : M14 transmet une sagesse de vie, jamais un programme. Checkpoint dimanche maintenu pour verrouiller cette frontière à froid, mais le gros du conflit est levé par Michel lui-même."
    },
    "AFFIRMATION_FAUCI_COVID": {
     "affirmation_michel": "Anthony Fauci aurait 'créé/inventé' le COVID et serait en plein procès ; la vérité fera se révolter les gens.",
