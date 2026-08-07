@@ -5554,6 +5554,53 @@
       "hebergement_payant_minimal": "EasyHost formule basse (~3 €/mois) si Michel préfère tout centraliser en Belgique",
       "conclusion": "Dépense réelle limitée aux noms de domaine (~30-45 €/an total pour .com + .be + .eu)"
     },
-    "reference_marche": "Même approche que Apple, Notion, Superhuman — site minimaliste, produit maximaliste."
+    "reference_marche": "Même approche que Apple, Notion, Superhuman — site minimaliste, produit maximaliste.",
+    "_UPDATE": "Le nom 'Noalis' est ABANDONNÉ. Rebranding en cours. Voir DECISION_RENOMMAGE_APP_2026_08_07."
+  },
+  "DECISION_RENOMMAGE_APP_2026_08_07": {
+    "date": "2026-08-07 soir",
+    "declencheur": "WHOIS noalis.com révèle : organisation NOALIS active en Nouvelle-Aquitaine (probablement bailleur social groupe Action Logement). Registrar Gandi, domaine actif.",
+    "risques_identifies": {
+      "marque_deposee": "Probable dépôt INPI/EUIPO — risque de cessation d'usage à moyen terme",
+      "SEO": "Site NOALIS existant remonte sur Google, l'app serait invisible",
+      "confusion_clients": "Risque juridique et commercial même en activités différentes"
+    },
+    "decision_michel": "Changement de nom immédiat. Michel refuse de prendre le moindre risque de mur juridique.",
+    "methode_choisie": "Reproduction du pattern de brainstorming multi-LLM (ChatGPT + Claude + Gemini + Perplexity + Le Chat Mistral) avec prompt universel structuré.",
+    "prompt_universel_naming": "Voir clé PROMPT_BRAINSTORMING_NAMING_2026_08_07",
+    "status": "🟢 EN COURS — Michel lance le brainstorm"
+  },
+  "PROMPT_BRAINSTORMING_NAMING_2026_08_07": {
+    "objectif": "Prompt réutilisable universel pour brainstormer un nom de marque avec plusieurs IAs simultanément.",
+    "contraintes_clefs": [
+      "4-7 lettres",
+      "Prononçable FR/NL/EN/DE/ES/IT",
+      "Sonorité douce, humaine, mémorable",
+      "Pas de AI/GPT/Bot/Tech",
+      "Non descriptif littéral",
+      "Fonctionne comme verbe potentiel",
+      ".com et .be libres à minima",
+      "Noalis exclu (conflit Nouvelle-Aquitaine)"
+    ],
+    "format_reponse_attendu": [
+      "Bloc 1: 15 noms brainstorming brut",
+      "Bloc 2: Top 5 argumenté",
+      "Bloc 3: Coup de cœur unique"
+    ],
+    "IAs_a_consulter": [
+      "ChatGPT",
+      "Claude",
+      "Gemini",
+      "Perplexity",
+      "Le Chat Mistral",
+      "Grok",
+      "Copilot"
+    ],
+    "etape_suivante_apres_reception": [
+      "Michel envoie les résultats à l'agent",
+      "Agent croise et propose 3-5 finalistes",
+      "Vérif express .com/.be/INPI/EUIPO",
+      "Réservation triple extension (.com + .be + .eu ou .app)"
+    ]
   }
 }
