@@ -5403,6 +5403,123 @@
   },
   "_INDEX_DUMPS": {
     "DUMP_15": "2026-08-06 soir, sous HHX, filtré 07/08",
-    "DUMP_16": "2026-08-07 matin sobre, clarifications solides"
+    "DUMP_16": "2026-08-07 matin sobre, clarifications solides",
+    "DUMP_17": "2026-08-07 après-midi sobre, stratégie diffusion + module étudiant",
+    "OUTSORGROUP": "2026-08-07, proposition cold call repoussée à Q1 2027"
+  },
+  "NOTE_INTERNE_AGENT_FEEDBACK_2026_08_07": {
+    "date": "2026-08-07",
+    "feedback_michel": "Arrête de rappeler à chaque message que je ne peux rien faire tant que le BAJ n'est pas fini. Je le sais. Tu le diras UNIQUEMENT quand je te dirai que je vais vraiment faire quelque chose.",
+    "regle_agent": "🔒 NE PLUS mentionner BAJ / faillite / interdiction financière de manière préventive. Attendre que Michel annonce une action réelle et concrète, puis alerter. Sinon, silence sur ce point.",
+    "principe": "Michel s'auto-régule. L'agent recadre uniquement en cas de danger imminent réel, pas en préventif systématique."
+  },
+  "OUTSORGROUP_PROPOSITION_2026_08_07": {
+    "_meta": {
+      "date_reception": "2026-08-07",
+      "status": "REPOUSSÉ POLIMENT — porte ouverte pour Flandre en Q1 2027",
+      "documents_recus": [
+        "OutsorGroup Strategic Delivery Partner Onepager.pdf",
+        "OutsorGroup Strategic Delivery Partner presentation.pdf",
+        "Proposition commerciale personnalisée (Cold Calling B2B)"
+      ]
+    },
+    "offre_details": {
+      "type_service": "Cold Calling B2B — prospection téléphonique externalisée",
+      "volume": "40h/semaine",
+      "tarifs_horaires": {
+        "3_mois": "18,80 €/h",
+        "6_mois": "16,80 €/h",
+        "12_mois": "14,80 €/h"
+      },
+      "cout_mensuel_estime": {
+        "3_mois": "~3 250 €/mois",
+        "6_mois": "~2 900 €/mois",
+        "12_mois": "~2 560 €/mois"
+      },
+      "phase_pilote": "1 mois — ~3 250 €",
+      "cibles_proposees": [
+        "menuiseries",
+        "fabricants châssis",
+        "installateurs portes/fenêtres",
+        "artisans",
+        "PME menuiserie"
+      ],
+      "zones": [
+        "Belgique",
+        "France",
+        "Luxembourg",
+        "Suisse",
+        "Allemagne"
+      ]
+    },
+    "decision_michel": {
+      "esquive_utilisee": "'Je suis en vacances, je regarde à mon retour' — pour prendre le temps de consulter l'agent.",
+      "verdict": "Non intéressé maintenant. Idée : garder pour la FLANDRE uniquement, marché NL où le cold call est culturellement plus adapté.",
+      "raison_report": "Priorité = valider la démarche mail direct sur Wallonie/France d'abord. Externalisation seulement après traction prouvée."
+    },
+    "reponse_a_envoyer": {
+      "objet": "Re: Proposition commerciale MesureChâssis — Retour",
+      "corps": "Bonjour,\n\nMerci pour l'envoi de votre proposition détaillée ainsi que pour la clarté de votre approche.\n\nJ'ai pris le temps d'étudier votre offre à mon retour. Après réflexion, j'ai décidé de repousser toute externalisation commerciale à une phase ultérieure de mon développement.\n\nMa priorité actuelle est de finaliser plusieurs éléments internes (démonstration vidéo, structuration des offres, phase de validation directe auprès des premiers clients belges francophones et français) avant d'engager un partenaire de prospection. Cette étape me permettra également de mieux calibrer le message commercial que nous vous transmettrions, afin de garantir l'efficacité de votre travail.\n\nCela étant dit, votre proposition m'intéresse particulièrement pour un marché spécifique : la Flandre, où la prospection téléphonique en néerlandais me semble effectivement plus pertinente que ma démarche par e-mail. J'aimerais donc, si vous le souhaitez, garder le contact pour envisager une collaboration ciblée sur ce marché-là, une fois ma phase de validation terminée (horizon Q1 2027).\n\nJe vous propose que nous reprenions contact début 2027. D'ici là, je vous souhaite une excellente fin d'année.\n\nBien cordialement,\nMichel Pezzuto"
+    },
+    "relance_probable": "Ils vont relancer avant Q1 2027 (technique commerciale standard). Réponse universelle : 'Je ne suis pas encore prêt, je reviens vers vous.'"
+  },
+  "REPONSE_TYPE_UNIVERSELLE_PAS_ENCORE_PRET": {
+    "phrase": "Je ne suis pas encore prêt, je reviens vers vous.",
+    "usage": "Réponse passe-partout pour toute relance commerciale, partenariat, sollicitation, proposition, invitation qui arrive AVANT que Michel soit prêt.",
+    "avantages": [
+      "Poli et professionnel",
+      "Ne ferme aucune porte",
+      "Ne donne aucune information sur la situation réelle",
+      "Renvoie la balle : c'est Michel qui recontactera, pas l'inverse",
+      "Fonctionne quel que soit le motif du blocage (BAJ, timing, doute, budget, stratégie...)"
+    ],
+    "status": "🔒 PHRASE GRAVÉE — réutilisable indéfiniment"
+  },
+  "DUMP_17_MICHEL_2026_08_07_APRES_MIDI": {
+    "_meta": {
+      "date_capture": "2026-08-07 après-midi",
+      "etat_utilisateur": "Sobre, lucide, travail continu."
+    },
+    "OR_features_produit": {
+      "STRATEGIE_DIFFUSION_DEMO_PACKAGES_CIBLES": {
+        "principe": "Reproduire le pattern 'Pack Emergent' (JSON + book/pitch + audio écoute) pour chaque cible influente.",
+        "cibles": {
+          "influenceurs": "Pack sur mesure — usage lifestyle / créativité / mémoire perso",
+          "businessmen": "Pack ROI / productivité / suivi contacts",
+          "parents": "Pack éducation enfants / suivi famille",
+          "medecins": "Pack présentation médicale — un médecin présente à d'autres médecins",
+          "journalistes": "Pack média / veille / archivage sources",
+          "etudiants": "Pack scolarité (voir module dédié ci-dessous)"
+        },
+        "principe_diffusion": "Chaque cible écoute son pack, se familiarise en amont, puis Michel démonte l'app en démo."
+      },
+      "MODULE_ETUDIANT_CONTEXTUALISE": {
+        "principe": "L'étudiant précise SA section (droit, médecine, ingénieur, coiffure, mécanique, etc.).",
+        "adaptation": "Noalis charge automatiquement le référentiel de sa section, tous ses cours, ses points forts/faibles, propose exercices ciblés et pistes d'amélioration.",
+        "valeur": "Compagnon d'études personnalisé, non intrusif — pas de remplacement prof, complément mémoire.",
+        "status": "🟢 Feature majeure — à documenter pour Phase 5."
+      }
+    },
+    "GARDE_MEMOIRE_PERSONNEL_MICHEL_HORS_APP": {
+      "POSITION_HOMOSEXUALITE": {
+        "contenu": "Michel valide : tolérance totale, mariage OK, éducation d'enfants OK. Ligne rouge personnelle : pas d'achat d'enfants (GPA). Distinction : lesbiennes peuvent avoir un enfant biologique (PMA), pas les couples gays (qui devraient passer par GPA).",
+        "categorie": "Opinion citoyenne personnelle Michel",
+        "regle_app": "🔒 JAMAIS relayée par Noalis. Noalis reste neutre sur les questions bioéthiques."
+      },
+      "ANALYSE_BERNARD_TAPIE": {
+        "contenu": "Michel comprend a posteriori l'affaire Tapie / Crédit Lyonnais : Tapie aurait arrosé un juge, l'État a réclamé les 400M€. Michel classe Tapie comme escroc ayant choisi l'enrichissement plutôt que la morale.",
+        "categorie": "Réflexion éthique personnelle Michel — indicateur de son cadre moral.",
+        "usage_agent": "Rappel : Michel valorise la morale > enrichissement. À réutiliser pour l'aider à tenir sa ligne éthique."
+      }
+    },
+    "A_CREUSER": {
+      "NOM_DE_DOMAINE": {
+        "besoin_michel": "Acheter le nom de domaine avant de faire connaître le projet.",
+        "analyse_agent": "🟢 Michel a raison — c'est stratégique ET peu coûteux. Un .com ou .be = 10-15 €/an. Budget viable sans risque.",
+        "prerequis": "Attendre la session multi-LLM (ChatGPT + Claude + Gemini) pour valider le nom FINAL de l'app.",
+        "action": "Une fois le nom validé → réserver simultanément .com + .be + .eu chez OVH ou Gandi (~30-45 €/an total). C'est l'UNE des rares dépenses recommandées.",
+        "status": "🟡 En attente du naming — pas en attente de budget."
+      }
+    }
   }
 }
