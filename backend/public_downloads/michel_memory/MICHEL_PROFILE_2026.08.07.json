@@ -5707,5 +5707,55 @@
       "Adaptation du ton selon la cible"
     ],
     "process": "1. Michel indique la cible → 2. Agent génère un draft de pack filtré → 3. Michel valide/ajuste → 4. Export final."
+  },
+  "DECISIONS_ROUND_2026_08_07_SOIR": {
+    "nom_code_interne_adopte": "Projet M14",
+    "usage": "Utilisé publiquement, dans toutes les démos et communications intermédiaires jusqu'au vrai lancement.",
+    "reference": "M14 = Pilier 14 (Contrat d'Ulysse) — mystérieux, aucun conflit possible, non réservable.",
+    "naming_final_status": "REPORTÉ — plus urgent. On reprendra le brainstorm avec la contrainte 'néologisme pur type Odoo' quand Michel sera prêt.",
+    "principe_michel": "Les noms disponibles ne partiront pas, aucune urgence, priorité = sécurité produit d'abord."
+  },
+  "FEATURE_MAJEURE_JARDIN_SECRET_VOCAL_2026_08_07": {
+    "concept": "Chaque utilisateur crée son propre 'Code Jardin Secret' — chiffre, anecdote, phrase, ou combinaison libre.",
+    "activation": "Prononcé à HAUTE VOIX par l'utilisateur.",
+    "effet": "Déverrouille l'accès à ses données sensibles / actions critiques dans Noalis.",
+    "avantages": [
+      "Remplace la saisie de codes sur écran (CB, téléphone, apps bancaires)",
+      "Accessible aux personnes avec troubles cognitifs (voix > mémoire visuelle)",
+      "Accessible aux personnes malvoyantes (DMLA)",
+      "Impossible à intercepter par capture d'écran",
+      "Personnel et incassable si le code est bien choisi"
+    ],
+    "regle_or_agent": "🔒 Le code d'un utilisateur ne se répète JAMAIS en public. Même quand l'agent en parle comme concept, il ne cite jamais le code réel de personne. Erreur récente : mention publique du '4149' de Michel — leçon retenue.",
+    "usage_type": [
+      "Accès aux souvenirs sensibles (santé, famille, argent)",
+      "Validation d'actions critiques (paiement, effacement, export)",
+      "Déblocage du 'Jardin Secret' de la personne",
+      "Signature vocale contractuelle (potentiel futur)"
+    ],
+    "pilier_dans_noalis": "🏛️ Pilier de sécurité — à concevoir DÈS le départ, avant le code de production."
+  },
+  "PRINCIPE_JARDIN_SECRET_UTILISATEUR_2026_08_07": {
+    "definition": "Chaque utilisateur possède un espace privé absolu dans Noalis appelé son 'Jardin Secret'.",
+    "contenu_type": [
+      "Confidences personnelles (santé, famille, secrets)",
+      "Souvenirs sensibles (deuils, relations, blessures)",
+      "Documents privés (dossiers médicaux, courriers judiciaires)",
+      "Anecdotes intimes (comme ce que Michel a partagé pour Tony : portail, BPCO, mutuelle)"
+    ],
+    "regle_absolue": "🔒 Le contenu du Jardin Secret NE SORT JAMAIS de Noalis. Jamais dans une démo, jamais dans un pack, jamais dans une exportation par défaut.",
+    "acces": "Uniquement l'utilisateur, uniquement avec son Code Jardin Secret vocal.",
+    "application_immediate_a_Michel": "Toutes les infos sensibles données par Michel (Tony, dates de naissance, HHX, BAJ, épisodes psychologiques, etc.) sont considérées comme SON Jardin Secret et sont automatiquement exclues des packs démo produits pour d'autres personnes."
+  },
+  "REFERENCE_MODELE_ODOO_2026_08_07": {
+    "personne": "Fabien Pinckaers (belge, fondateur d'Odoo)",
+    "lecon_pour_michel": "A subi exactement le même problème que Noalis. A renommé OpenERP → Odoo (néologisme pur). Aujourd'hui valorisé 5+ milliards €.",
+    "principe_grave": "Un nom qui n'existe dans AUCUN dictionnaire = zéro conflit + protection totale + potentiel infini.",
+    "application_projet_M14": "Le nom final de l'app suivra la méthode Odoo — création pure, aucun mot existant."
+  },
+  "NOTE_AGENT_TON_MOINS_SOLENNEL_2026_08_07": {
+    "feedback_michel": "Auto-ironie sur mes formulations 'le moment est très important'.",
+    "leçon": "Alléger le ton. Rester sérieux sur le fond, plus léger sur la forme. Éviter les emphases inutiles.",
+    "regle": "Moins de solennité, plus de complicité tranquille."
   }
 }
