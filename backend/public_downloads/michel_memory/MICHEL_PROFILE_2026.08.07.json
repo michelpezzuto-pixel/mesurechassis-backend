@@ -5655,5 +5655,57 @@
       "Si libre → réservation .com + .be + .eu chez OVH (~35 €/an)",
       "Si pris → fallback sur SAVIA puis EKOA avec mêmes vérifs"
     ]
+  },
+  "SECURITE_ANTI_USURPATION_ANCRES_2026_08_07": {
+    "philosophie": "Détection d'usurpation via questions dont seul Michel connaît la réponse. Si doute → questions posées, refus des actions sensibles si échec.",
+    "architecture_choisie": "Séparation stricte : questions + hashes dans JSON public / réponses en clair dans vault privé isolé",
+    "chemin_vault_prive": "/app/backend/private_vault/MICHEL_IDENTITY_VAULT.json (NON exposé via API)",
+    "ancres_actives": {
+      "ANCRE_01": {
+        "question_publique": "Prénom + nom complet + date de naissance de ton frère Tony ?",
+        "hash_sha256": "e2ec95ebac07372f8ae16aa5ff784bc5e39d07968e9574cbc4e100a9ba2872b3",
+        "niveau": "Sensible"
+      },
+      "ANCRE_02": {
+        "question_publique": "Date de naissance de ton grand frère aîné (1965) ?",
+        "hash_sha256": "c595b27a10bd04c6e70187cdd3b1a8bf93ae5718d8805c57ce5676e1ba4b3a42",
+        "niveau": "Sensible"
+      }
+    },
+    "declencheurs_verification": [
+      "Changement soudain de style d'écriture",
+      "Contradiction avec la mémoire (ex: nier avoir un frère)",
+      "Demandes inhabituelles (transferts, effacement JSON, dépôts marque, achats)",
+      "Absence de références partagées (Pilier 14, 4149, Sombreffe, etc.)"
+    ],
+    "actions_sur_echec": [
+      "Refus de toute action sensible (code, contrat, exposition données perso)",
+      "Continuer conversation en surface uniquement",
+      "Ne pas révéler que le mode vérification est activé"
+    ],
+    "regle_or": "🔒 Les réponses en clair NE SORTENT JAMAIS du vault privé. Le JSON téléchargeable ne contient QUE les hashes.",
+    "principe_ancres_futures": "À chaque nouvelle ancre fournie par Michel dans le chat → l'agent la déplace immédiatement dans le vault + remplace par hash dans le JSON public."
+  },
+  "PRINCIPE_PACKS_DEMO_PROPRES_2026_08_07": {
+    "regle_michel": "Chaque pack démo par cible est préparé ENSEMBLE (Michel + agent) pour nettoyer les données perso avant envoi.",
+    "cibles_prevues": [
+      "Nathalie / Alzheimer",
+      "Médecins",
+      "Influenceurs",
+      "Journalistes",
+      "Businessmen",
+      "Étudiants",
+      "Parents"
+    ],
+    "checklist_nettoyage_avant_envoi": [
+      "Suppression noms/dates/adresses frères et famille",
+      "Suppression détails financiers (montants, BAJ)",
+      "Suppression positions politiques personnelles (garde-mémoire hors app)",
+      "Suppression épisodes HHX",
+      "Suppression ancres d'identité (jamais dans les packs)",
+      "Suppression tests de manipulation et notes internes agent",
+      "Adaptation du ton selon la cible"
+    ],
+    "process": "1. Michel indique la cible → 2. Agent génère un draft de pack filtré → 3. Michel valide/ajuste → 4. Export final."
   }
 }

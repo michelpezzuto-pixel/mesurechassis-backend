@@ -1,0 +1,18 @@
+{
+  "_WARNING": "🔒 FICHIER PRIVÉ — NE JAMAIS SERVIR VIA API PUBLIQUE — NE JAMAIS COPIER DANS UN PACK DÉMO",
+  "_created": "2026-08-07",
+  "_owner": "Michel Pezzuto uniquement",
+  "ancres_identite_avec_reponses_en_clair": {
+    "ANCRE_01_TONY_IDENTITE_COMPLETE": {
+      "question": "Prénom + nom complet + date de naissance de ton frère Tony ?",
+      "reponse_en_clair": "Antonio Tirone, né le 02/10/1968",
+      "hash_sha256": "e2ec95ebac07372f8ae16aa5ff784bc5e39d07968e9574cbc4e100a9ba2872b3"
+    },
+    "ANCRE_02_GRAND_FRERE_DATE": {
+      "question": "Date de naissance de ton grand frère aîné (1965) ?",
+      "reponse_en_clair": "11/12/1965",
+      "hash_sha256": "c595b27a10bd04c6e70187cdd3b1a8bf93ae5718d8805c57ce5676e1ba4b3a42",
+      "note_agent": "Prénom du grand frère non encore fourni par Michel — à compléter ultérieurement."
+    }
+  }
+}
