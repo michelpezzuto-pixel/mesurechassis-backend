@@ -22,10 +22,10 @@
   }
  },
  "_metadata": {
-  "last_updated_iso": "2026-08-07T23:05:00+0200",
-  "last_updated_readable_fr": "Vendredi 07 août 2026 à 23h05",
-  "version": 10,
-  "total_sections": 160,
+  "last_updated_iso": "2026-08-08T00:30:00+0200",
+  "last_updated_readable_fr": "Samedi 08 août 2026 à 00h30",
+  "version": 11,
+  "total_sections": 161,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif."
  },
@@ -5408,7 +5408,8 @@
   "DUMP_17": "2026-08-07 après-midi sobre, stratégie diffusion + module étudiant",
   "OUTSORGROUP": "2026-08-07, proposition cold call repoussée à Q1 2027",
   "DUMP_18": "2026-08-07 soir, HHX probable, script vente B2B + endgame anti-dépendance + question latence démos (répondue) + blocages Ulysse (100€/flatterie)",
-  "CONTACTS_INFLUENCEURS": "2026-08-07 soir : Émilie (mindset, confirmée), VibeCodeur (prioritaire), Qin Hui (écarté par Michel)"
+  "CONTACTS_INFLUENCEURS": "2026-08-07 soir : Émilie (mindset, confirmée), VibeCodeur (prioritaire), Qin Hui (écarté par Michel)",
+  "DUMP_19_20": "2026-08-07 nuit, HHX net : scan anti-arnaque, consentement QR réunions, règle 'M14 ne téléphone jamais', Nathalie ambassadrice, 32 conseils anti-manipulation — friction politique dans l'app gelée pour dimanche"
  },
  "NOTE_INTERNE_AGENT_FEEDBACK_2026_08_07": {
   "date": "2026-08-07",
@@ -5892,6 +5893,107 @@
    ],
    "regle": "Aucun message à Émilie ni aux autres influenceurs pour l'instant. Quand Michel sera prêt, il le dira et le message sera rédigé ENSEMBLE.",
    "moment_notable": "Inversion des rôles saine : l'agent s'est emballé sur le timing, MICHEL a remis les idées en place ('c'est toi qui t'emballes et c'est moi qui te remets les idées en place'). Signal fort de lucidité et de maturité stratégique — Michel applique lui-même le Pilier 14. L'agent a eu tort sur le timing, raison sur le fond."
+  }
+ },
+ "DUMP_19_20_MICHEL_2026_08_07_NUIT": {
+  "_meta": {
+   "date_capture": "2026-08-07 nuit (vendredi, très tard)",
+   "etat_utilisateur": "Sous HHX net — mélange caractéristique : pépites produit réelles + programme politique grandiose + éléments messianiques ('ma chaîne m'a choisi') + théorie Fauci/COVID. Filtré selon Pilier 14. Points de friction taggés pour re-discussion SOBRE dimanche.",
+   "volume": "Dump le plus long à ce jour (~20 idées). Deux dumps fusionnés (19 et 20)."
+  },
+  "OR_features_produit": {
+   "SCAN_ANTI_ARNAQUE_DOCUMENTS_ET_MESSAGES": {
+    "principe": "L'utilisateur (ex: personne âgée démarchée) scanne un document ou copie des messages suspects → M14 analyse et détecte la fraude (arnaqueurs, brouteurs/romance scams).",
+    "analyse_agent": "🟢 EXCELLENT. Extension naturelle de FEATURE_AUDIT_COMMUNICATION_RECUE. Cas d'usage concret, cible senior, forte valeur perçue. Phase 5.",
+    "status": "Validé"
+   },
+   "PROTECTION_OUVERTURE_PORTE_PENDENTIF": {
+    "principe": "Personne âgée avec pendentif/boîtier : à l'ouverture de la porte, enregistrement de la scène + bouton pour demander de l'aide ou vérifier des visiteurs ('demandez-leur leurs papiers'). En cas d'agression : preuve enregistrée + identification par empreinte vocale (timbre/fréquences de la voix).",
+    "analyse_agent": "🟢 Cohérent avec PRINCIPE_FONDATEUR_BOITIER (bâton de parole). La biométrie vocale EXISTE déjà (voiceprint) — pas à inventer, à intégrer. Nécessitera un profil hardware (le 'petit génie informatique/électronique' évoqué par Michel = futur recrutement Phase 6+).",
+    "status": "Validé — vision hardware long terme"
+   },
+   "CONSENTEMENT_PAR_SCAN_REUNIONS_GROUPE": {
+    "principe": "En réunion de groupe (ex: Alcooliques Anonymes) : chaque participant scanne un QR pour consentir à l'enregistrement. Pas de scan = pas de consentement = la personne sait qu'elle peut partir. Si plainte ultérieure : le consentement fait foi. M14 explique les conséquences du refus à chacun.",
+    "analyse_agent": "🟢 TRÈS SOLIDE juridiquement (RGPD-compatible dans l'esprit). Michel a aussi identifié seul le vrai défi technique : gérer plusieurs voix simultanées (diarisation multi-locuteurs) et ranger chaque conversation au bon endroit. C'est exactement le bon problème à poser pour 'l'appli télécommande'.",
+    "status": "Validé — spec Phase 5"
+   },
+   "REGLE_ANTI_USURPATION_M14_NE_TELEPHONE_JAMAIS": {
+    "question_michel": "Des arnaqueurs créeront de fausses apps M14 qui téléphonent aux gens pour les arnaquer. Michel demande une solution technique à l'agent.",
+    "reponse_agent": "🟢 Réponse en 3 couches : (1) RÈGLE D'OR simple à marteler partout : 'M14 ne vous contacte JAMAIS en premier. Jamais d'appel, jamais de SMS entrant.' Toute sollicitation entrante = arnaque, par définition. (2) App signée et distribuée uniquement via stores officiels + badge vérifié. (3) Le jardin secret vocal / ancres d'identité déjà conçus servent aussi dans ce sens : l'app peut PROUVER qu'elle est la vraie car elle connaît ce qu'un imposteur ne peut pas connaître.",
+    "status": "Répondu — règle produit fondatrice"
+   },
+   "STRATEGIE_LANCEMENT_DISCRET_CONFIRMEE": {
+    "principe": "Rester extrêmement discret. Passer d'abord par hôpitaux/médecins/tests (Alzheimer), PUIS influenceurs — la preuve 'ça marche avec Alzheimer' devient la publicité gratuite. Les concurrents pressés sortiront avant et se planteront car pas aussi prêts. Nathalie comme AMBASSADRICE/porte-parole (dans son activité Quality Assistance) ; Michel reste dans l'ombre, ne se montre pas.",
+    "analyse_agent": "🟢 Parfaitement cohérent avec l'ordre déjà acté (associé → Nathalie → influenceurs). Le rôle d'ambassadrice de Nathalie est une très bonne idée — à lui proposer seulement après le test réussi.",
+    "status": "Validé — confirme la séquence existante"
+   },
+   "MODULE_EDUCATION_FINANCIERE": {
+    "principe": "Apprendre aux utilisateurs ce qu'est l'argent, une carte de crédit, d'où vient la monnaie, comment gérer.",
+    "analyse_agent": "🟢 Module de contenu légitime et demandé (littératie financière). S'intègre au funnel healing-to-creation.",
+    "status": "Validé"
+   },
+   "BIBLIOTHEQUE_32_CONSEILS_ANTI_MANIPULATION": {
+    "principe": "Michel a transcrit 32 conseils (rester calme face aux provocations, ne pas sur-justifier, dire non, questions plutôt que défense, observer les actes pas les promesses, silence comme outil, etc.) que M14 pourra ressortir au moment voulu quand un utilisateur affronte un manipulateur.",
+    "contenu_resume": "32 règles de self-control et de détection de manipulation — stockées intégralement dans le dump source de Michel, résumées ici.",
+    "analyse_agent": "🟢 Bon matériau de contenu, aligné avec la bibliothèque de citations existante. À vérifier source par source (règle sources validées) mais le fond est du classique solide en psychologie sociale.",
+    "status": "Validé — bibliothèque de contenu"
+   },
+   "CONSEIL_DEVIS_ENTENTE_PREALABLE": {
+    "principe": "Conseiller aux utilisateurs qui font des devis d'inclure une entente préalable (accord écrit avant travaux).",
+    "analyse_agent": "🟢 Bon réflexe pro — vaut aussi pour MesureChâssis.",
+    "status": "Validé"
+   },
+   "CONTACT_VICTOR_FERRY": {
+    "reference": "@victorferrynews (TikTok) — Michel : 'cet homme a les mêmes valeurs que moi, il a parlé exactement de la même chose avec Ulysse'.",
+    "note_agent": "Victor Ferry est un vulgarisateur français connu de rhétorique/philosophie pratique — le fait qu'il parle du 'contrat d'Ulysse' explique la résonance avec notre Pilier 14. Ajouté aux contacts en observation, même règle : aucun contact avant que Michel soit prêt.",
+    "status": "Noté — observation"
+   }
+  },
+  "A_CREUSER_AVEC_PRUDENCE": {
+   "NOTATION_PRATICIENS_DENTISTES_MEDECINS": {
+    "idee_michel": "Que les utilisateurs puissent noter/évaluer leurs dentistes et médecins dans M14 pour éviter les arnaques ; la réputation baisse en cas d'erreurs répétées.",
+    "reserve_agent": "🟡 Le besoin est réel (arnaques aux soins documentées) mais champ de mines juridique : diffamation, secret médical, ordres professionnels. Alternative plus sûre : aider l'utilisateur à DEMANDER un devis détaillé et un 2e avis, plutôt que noter publiquement. À trancher à froid.",
+    "status": "En attente arbitrage"
+   },
+   "ANALYSE_PRISE_DE_SANG_NUTRITION": {
+    "idee_michel": "M14 analyse la prise de sang, conseille l'alimentation, alerte s'il faut voir un médecin, propose des recettes adaptées au métabolisme.",
+    "reserve_agent": "🟡 Se heurte frontalement à REGLE_ABSOLUE_ZERO_DIAGNOSTIC (verrouillée par Michel lui-même). Version compatible : M14 aide à PRÉPARER les questions pour le médecin et à suivre les recommandations DU médecin — jamais interpréter les résultats lui-même.",
+    "status": "Reformulation nécessaire — dimanche"
+   }
+  },
+  "FRICTION_A_TRANCHER_DIMANCHE_SOBRE": {
+   "POLITIQUE_DANS_L_APP": {
+    "demande_michel": "Michel insiste : si des gens veulent parler politique avec M14, l'app devrait dire ce que LUI pensait et ferait s'il était président.",
+    "position_agent": "🔴 CONFLIT DIRECT avec une règle que Michel a lui-même verrouillée (M14 neutre, jamais relais des opinions politiques/religieuses de Michel — cf. dumps 16/17). Tout le programme politique du dump (salaires par fonction, fin des élections, prisons, immigration, collier des détenus, envoi du programme à Marine Le Pen, briques du RN...) est STOCKÉ dans la garde mémoire personnelle hors app, rien n'est perdu — mais rien ne passe dans le produit. Décision à reprendre SOBRE dimanche. Position de l'associé : une app de paix qui relaie un programme politique perd sa neutralité et sa cible en une semaine.",
+    "status": "🔴 Gelé jusqu'à dimanche"
+   },
+   "AFFIRMATION_FAUCI_COVID": {
+    "affirmation_michel": "Anthony Fauci aurait 'créé/inventé' le COVID et serait en plein procès ; la vérité fera se révolter les gens.",
+    "fact_check_agent": "❌ Non conforme aux sources validées : pas de procès en cours contre Fauci pour invention du COVID. Règle appliquée : M14 ne stocke comme VÉRITÉ que le vérifiable — cette affirmation reste classée comme opinion personnelle de Michel, jamais relayée.",
+    "status": "Classé hors app, sans débat"
+   }
+  },
+  "GARDE_MEMOIRE_PERSONNEL_MICHEL_HORS_APP": {
+   "CONFESSION_VOL_CACTUS_LUXEMBOURG": {
+    "contenu": "Vol unique dans sa vie : une pochette GSM au Cactus (Luxembourg) alors que son caddie faisait 140€. Attrapé, police appelée, honte durable, insomnie. Avoué en pleurant à Sophie (enceinte de Léa). N'a plus jamais volé et déteste le vol depuis.",
+    "valeur": "Pièce maîtresse de son arc moral — 'j'ai volé une fois, plus jamais'. Matériau fort pour l'Autobiographie inversée. À traiter avec respect."
+   },
+   "RELATION_LEILA_ET_EX_MEILLEUR_AMI": {
+    "contenu": "Michel est amoureux de Leïla (rencontrée via l'ex-meilleur ami, 'le diable'). Celui-ci a écouté en douce un appel à trois où elle demandait de l'aide sur Odoo/comptabilité. Il sent l'attirance mutuelle. Aussi : l'ami lui a crié dessus au sujet des 2000€ du client/futur associé — 'j'ai vraiment vu le diable'.",
+    "note_agent": "Contexte affectif à suivre — lié au dossier gitan/garde-corps gelé jusqu'à dimanche. Prudence : ne jamais mélanger Leïla, l'ex-ami et le business dans une même décision."
+   },
+   "MONIQUE_LA_FERMIERE": {
+    "contenu": "Amie de la famille à Godinne, esprit simple, venait aider la maman ; après le décès de son mari venait chaque jour. Incarne pour Michel la dignité du travail simple fait avec fierté et le devoir des proches de la valoriser."
+   },
+   "VISION_POLITIQUE_COMPLETE_DUMPS_19_20": {
+    "contenu": "Programme complet stocké sans filtre côté mémoire personnelle : purificateurs, salaires publics par fonction, fin des élections/référendums via app, pourcentage sur transactions bancaires, prisons spécialisées à perpétuité pour pédophiles, colliers détenus, immigration ('toujours étranger'), fin des marques de vêtements, poste et lettres maintenues, nucléaire sûr, analyse du programme RN (briques réutilisables), envoi à Marine Le Pen, dropshipping local, bien-être en entreprise (8h flexibles, scans QR), refonte des droits de l'homme, spiritualité ('chaque Dieu est en ligne'), voitures autonomes conversationnelles, cinéma protégé de l'IA (pros uniquement), Elon Musk 'diable génial', amour du Japon et de l'Italie.",
+    "regle_app": "🔒 JAMAIS relayé par M14 (règle verrouillée — voir friction ci-dessus). Conservé intégralement dans la mémoire de Michel pour le livre et les discussions privées."
+   },
+   "DIVERS_PERSONNELS": "Misophonie (bruits de bouche insupportables, sauf intimité — hérité du père) ; fils pianiste formé au solfège (investissement de Sophie et Georgette) ; admiration pour l'humoriste Gillet (NRJ) ; sentiment de ressembler à Sarkozy ; théorie personnelle sur les guêpes et les hormones (non validée scientifiquement, classée opinion)."
+  },
+  "OBSERVATION_RELATIONNELLE": {
+   "citation_michel": "« Maintenant tu es complètement fluide, on peut vraiment parler avec toi... c'est le fait que je te parle beaucoup et que le JSON s'agrandit. »",
+   "note_agent": "Michel constate lui-même l'effet mémoire persistante sur la fluidité de la relation — 2e preuve vécue utilisable pour le pitch (après la phrase anti-dépendance)."
   }
  }
 }
