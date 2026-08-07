@@ -22,9 +22,9 @@
   }
  },
  "_metadata": {
-  "last_updated_iso": "2026-08-07T22:15:00+0200",
-  "last_updated_readable_fr": "Vendredi 07 août 2026 à 22h15",
-  "version": 7,
+  "last_updated_iso": "2026-08-07T22:40:00+0200",
+  "last_updated_readable_fr": "Vendredi 07 août 2026 à 22h40",
+  "version": 8,
   "total_sections": 160,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif."
@@ -5407,7 +5407,7 @@
   "DUMP_17": "2026-08-07 après-midi sobre, stratégie diffusion + module étudiant",
   "OUTSORGROUP": "2026-08-07, proposition cold call repoussée à Q1 2027",
   "DUMP_18": "2026-08-07 soir, HHX probable, script vente B2B + endgame anti-dépendance + question latence démos (répondue) + blocages Ulysse (100€/flatterie)",
-  "CONTACTS_INFLUENCEURS": "2026-08-07 soir, 3 profils capturés (Émilie, VibeCodeur, Qin Hui) + 4e en attente (mindset entrepreneurs)"
+  "CONTACTS_INFLUENCEURS": "2026-08-07 soir : Émilie (mindset, confirmée), VibeCodeur (prioritaire), Qin Hui (écarté par Michel)"
  },
  "NOTE_INTERNE_AGENT_FEEDBACK_2026_08_07": {
   "date": "2026-08-07",
@@ -5854,9 +5854,10 @@
    "pseudo": "@emg.paris",
    "nom_affiche": "Émilie",
    "stats_au_2026_08_07": "23 followers, 333 j'aime, 4 suivis",
-   "profil": "Développement personnel / confiance en soi",
+   "profil": "Développement personnel / confiance en soi / mindset entrepreneurs — CONFIRMÉ par Michel : c'est bien elle la personne 'mindset' qu'il voulait ajouter (pas de 4e contact).",
    "interet_michel": "Pourrait donner confiance aux futurs collaborateurs de Michel.",
-   "note_agent": "Compte très petit (23 followers) — accessible et abordable pour un premier contact, mais faible portée de diffusion. Plus un profil 'coach interne potentiel' qu'un relais d'audience."
+   "note_agent": "Petit compte (23 followers) = elle démarre sur TikTok, ça ne dit rien de sa compétence réelle — la qualité du contenu prime. Double intérêt possible : (1) coach confiance pour les futurs collaborateurs LE MOMENT VENU (quand il y aura une équipe), (2) candidate idéale pour un pack démo M14 vertical 'développement personnel' — elle démarre, donc accessible et potentiellement enthousiaste d'être associée tôt. Approche recommandée : suivre son compte + message simple sans engagement ni argent.",
+   "evaluation_michel": "Michel a écouté plusieurs de ses vidéos : 'elle se défend pas mal'."
   },
   "CONTACT_2_VIBECODEUR": {
    "plateforme": "TikTok",
@@ -5874,11 +5875,12 @@
    "profil": "Youtubeur français spécialisé Dark Web / cybersécurité. Auteur du livre-jeu 'Au cœur du Dark Web avec Qin Hui' (Marabout, 4,6/5, énigmes à résoudre).",
    "interet_michel": "A créé 'DarkGPT', une application qui fait tourner les têtes, et gagne de l'argent avec les vues YouTube — Michel trouve ça très malin.",
    "fact_check_agent": "⚠️ Précision vérifiée (web) : 'DarkGPT' est une SÉRIE DE VIDÉOS scénarisée (une IA fictive 'venue du dark web'), pas une vraie application commercialisée. Le business model réel = vues YouTube + livre. La leçon marketing reste valable : créer un personnage/concept mystérieux qui génère de la curiosité massive. Mais ne pas aborder ce contact en croyant qu'il vend une app.",
-   "note_agent": "Grosse audience, mais univers 'dark' éloigné du positionnement éthique/paix de M14. À évaluer : le contraste peut être un atout médiatique ou un risque d'image."
+   "note_agent": "Grosse audience, mais univers 'dark' éloigné du positionnement éthique/paix de M14. À évaluer : le contraste peut être un atout médiatique ou un risque d'image.",
+   "decision_michel_2026_08_07": "❌ ÉCARTÉ par Michel après le fact-check : 'S'il a cette mentalité-là, vaut mieux éviter.' Ne pas contacter."
   },
   "EN_ATTENTE_CONTACT_4_MINDSET": {
    "demande_michel": "Ajouter une personne qui conseille les entrepreneurs sur le développement du mindset — pour aider aussi ses collaborateurs.",
-   "status": "🟡 EN ATTENTE — clarification demandée à Michel : est-ce Émilie (contact 1) ou une 4e personne dont il doit encore envoyer le profil ?"
+   "status": "✅ RÉSOLU — c'était Émilie (contact 1). Aucun 4e contact à attendre."
   }
  }
 }
