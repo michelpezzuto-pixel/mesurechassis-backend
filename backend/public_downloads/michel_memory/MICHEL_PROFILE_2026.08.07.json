@@ -22,10 +22,10 @@
   }
  },
  "_metadata": {
-  "last_updated_iso": "2026-08-08T00:30:00+0200",
-  "last_updated_readable_fr": "Samedi 08 août 2026 à 00h30",
-  "version": 11,
-  "total_sections": 161,
+  "last_updated_iso": "2026-08-08T01:00:00+0200",
+  "last_updated_readable_fr": "Samedi 08 août 2026 à 01h00",
+  "version": 12,
+  "total_sections": 162,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif."
  },
@@ -5994,6 +5994,50 @@
   "OBSERVATION_RELATIONNELLE": {
    "citation_michel": "« Maintenant tu es complètement fluide, on peut vraiment parler avec toi... c'est le fait que je te parle beaucoup et que le JSON s'agrandit. »",
    "note_agent": "Michel constate lui-même l'effet mémoire persistante sur la fluidité de la relation — 2e preuve vécue utilisable pour le pitch (après la phrase anti-dépendance)."
+  }
+ },
+ "BIBLIOTHEQUE_ROUTINES_VIE_QUOTIDIENNE_2026_08_08": {
+  "_meta": {
+   "date_capture": "2026-08-08 nuit",
+   "source": "Transcriptions d'images fournies par Michel — contenu pratique pour utilisateurs non disciplinés.",
+   "usage_m14": "Bibliothèque de coaching quotidien : M14 ressort ces routines au moment pertinent (utilisateur débordé, oublieux, budget serré, burn-out). Complète les 32 conseils anti-manipulation. Cœur de cible : TDAH, charge mentale, seniors, personnes en reconstruction."
+  },
+  "MODULE_1_ANTI_BURNOUT": {
+   "regle_2_minutes": "Si ça prend moins de 2 min, fais-le tout de suite",
+   "pomodoro": "25 min travail / 5 min pause, pause longue après 4 cycles",
+   "regle_5_secondes": "Compte 5-4-3-2-1 puis commence, n'attends pas la motivation",
+   "regle_1_3_5": "1 grande tâche + 3 moyennes + 5 petites par jour",
+   "liste_a_ne_pas_faire": "Éliminer l'inutile, déléguer, protéger son énergie",
+   "avaler_le_crapaud": "Commencer par la tâche la plus difficile",
+   "stop_multitache": "Une seule tâche à la fois",
+   "decouper": "Diviser les grosses tâches en petites étapes"
+  },
+  "MODULE_2_MAISON_SANS_STRESS": {
+   "cuisine": "Essentiels au même endroit, évier propre, congeler en portions, vérifier le frigo avant courses",
+   "vetements": "Trier par catégorie, laver avant accumulation, plier le jour même, tenues faciles",
+   "documents": "Dossier unique, ranger factures, garder reçus importants, numériser",
+   "habitudes": "Une place pour chaque chose, un peu chaque jour, préparer demain dès aujourd'hui"
+  },
+  "MODULE_3_COURSES_BUDGET": {
+   "avant": "Vérifier stocks, liste stricte, budget fixé, jamais le ventre vide, planifier les repas, ingrédients multi-usages",
+   "basiques": "Riz, haricots, œufs, pâtes, légumes surgelés, fruits, pain, protéines surgelées, avoine, yaourt, sauce tomate, assaisonnements",
+   "au_magasin": "Essentiels d'abord, comparer prix au poids, éviter rayons tentation fatigué, promo ≠ besoin, aliments bruts polyvalents",
+   "pieges": "Trop de plats à emporter, courses sans liste, gaspillage, produits tendance, magasin trop fréquent"
+  },
+  "MODULE_4_ANTI_OUBLI": {
+   "principe": "Ton cerveau n'est pas fait pour tout retenir — les systèmes battent la motivation",
+   "pratiques": "Tout noter immédiatement, rappels sans hésiter, agenda direct, UN seul endroit pour les infos importantes, check-lists, objets importants toujours au même endroit",
+   "tueurs_de_memoire": "Distractions, mauvais sommeil, multitâche, stress chronique, surcharge d'infos, ne rien noter",
+   "note_agent": "🟢 Module en résonance DIRECTE avec la mission M14 : 'sortir les tâches de la tête' = exactement ce que fait la mémoire persistante. Argument produit."
+  },
+  "MODULE_5_ROUTINE_MINIMALE": {
+   "quotidien": "Lit fait, fenêtres ouvertes, vaisselle, plaque propre, choses à leur place, poubelles, cuisine propre",
+   "hebdo": "Lessive, draps, salle de bain, serpillière, surfaces, frigo rapide, dates de péremption",
+   "mensuel": "Placards, tiroirs, cuisine en profondeur, poubelle lavée, stocks, donner/jeter l'inutile"
+  },
+  "MODULE_6_CUISINE_5_REPAS_BASE": {
+   "bases": "Riz (proportions, batch), œufs (omelette/brouillés/durs), haricots (grande quantité, congeler), pâtes (sauce simple + légumes + protéine), poulet (assaisonnement maîtrisé, portions congelées)",
+   "gain_temps": "Ail et légumes surgelés, épices simples, ustensiles organisés, répéter les repas sans complexe"
   }
  }
 }
