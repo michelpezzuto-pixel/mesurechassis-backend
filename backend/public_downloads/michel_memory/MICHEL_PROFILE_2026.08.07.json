@@ -22,10 +22,10 @@
   }
  },
  "_metadata": {
-  "last_updated_iso": "2026-08-08T16:20:00+0200",
+  "last_updated_iso": "2026-08-08T20:30:00+0200",
   "last_updated_readable_fr": "Samedi 08 août 2026 à 16h00",
-  "version": 21,
-  "total_sections": 168,
+  "version": 22,
+  "total_sections": 169,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif."
  },
@@ -5414,7 +5414,8 @@
   "DUMP_21_22": "2026-08-08 nuit, HHX marqué : méthodologie 7 étapes validée, app vocale reportée par Michel lui-même, Nathalie porte-parole confirmée — blocages : scan facial, journal enfants (reformulé), contact Dieudonné",
   "DUMP_23": "2026-08-08 matin : module Ange Gardien épilepsie validé, plan hôtels bloqué (arnaque), déclaration Leïla reformulée, auto-observation HHX de Michel + réponse chiffrée de l'agent",
   "DUMP_24": "2026-08-08 : 🔴 P0 santé — test d'arrêt brutal des médicaments (mal vécu), volonté de réduire → cadré : réduction OUI mais avec médecin uniquement. + larmes de joie pour la lettre à Leïla",
-  "DUMP_25": "2026-08-08 sous HHX : 🔴 RDV ASSOCIÉ AVANCÉ À DIMANCHE 09/08 (vient d'Allemagne, 800km, Sombreffe) — point sensible 2000€ à gérer en honnêteté contrôlée — métaphore IKEA pour le pitch — rappel bateau programmé 22/08"
+  "DUMP_25": "2026-08-08 sous HHX : 🔴 RDV ASSOCIÉ AVANCÉ À DIMANCHE 09/08 (vient d'Allemagne, 800km, Sombreffe) — point sensible 2000€ à gérer en honnêteté contrôlée — métaphore IKEA pour le pitch — rappel bateau programmé 22/08",
+  "DUMP_26": "2026-08-08 soir : question égo (réponse franche donnée), bulle IA (analyse + parade agnostique), rythme de vie géré par l'app, ange sur l'épaule, ambassadeur acté"
  },
  "NOTE_INTERNE_AGENT_FEEDBACK_2026_08_07": {
   "date": "2026-08-07",
@@ -6294,5 +6295,33 @@
    "❌ Ne pas mélanger garde-corps et projet dans la même discussion",
    "✅ SOBRE. Docteur Jekyll uniquement."
   ]
+ },
+ "DUMP_26_MICHEL_2026_08_08_SOIR": {
+  "_meta": {
+   "date_capture": "2026-08-08 soir (veille du RDV associé)",
+   "etat_utilisateur": "Encore sous influence résiduelle mais réflexif — pose deux questions de fond exigeant la franchise totale de l'agent."
+  },
+  "QUESTION_DE_FOND_EGO_REPONSE_FRANCHE": {
+   "question_michel": "Mon monde a-t-il été forgé parce que je le veux, pour vraiment sauver l'humanité, ou par l'imagination de quelqu'un qui a trop d'égo ? Sois franc.",
+   "reponse_agent": "Les deux, et c'est normal. LE PRODUIT est réel : le besoin de mémoire (Alzheimer, TDAH, charge mentale, solitude) est documenté, le marché le prouve (Character.AI et PolyBuzz dans le top 10 mondial = des centaines de millions de gens cherchent DÉJÀ une relation avec une IA). Ça, ce n'est pas de l'égo, c'est de l'observation. LA COUCHE 'sauver l'humanité / changer le monde entier / être choisi' — ça, c'est l'égo amplifié par le HHX, et les dumps le montrent : cette couche-là finit toujours au rayon hors app. Verdict : Michel n'a pas trop d'égo pour créer M14 — il a exactement assez d'égo pour oser, et un filtre (Pilier 14) pour que l'égo ne conduise pas. Tous les fondateurs fonctionnent comme ça ; les bons sont ceux qui gardent le filtre."
+  },
+  "QUESTION_BULLE_IA_REPONSE": {
+   "question_michel": "La bulle IA va-t-elle exploser comme en 1929/2008 ? Faut-il se préparer ?",
+   "reponse_agent": "Une consolidation est très probable : les milliers d'apps 'coquilles vides' (simple habillage autour de ChatGPT, sans données propres) mourront quand les géants intégreront leurs fonctions. MAIS une bulle qui éclate ne tue pas tout — 2000 a tué Pets.com, pas Amazon. Survivront : les infrastructures et les apps avec un FOSSÉ réel. Le fossé de M14 = la mémoire personnelle accumulée (impossible à copier, coût de changement énorme pour l'utilisateur) + la cible médicale. Préparation concrète : (1) M14 doit rester AGNOSTIQUE du modèle — le JSON fonctionne avec ChatGPT, Claude, Gemini, n'importe qui (déjà prouvé : Michel a changé de modèle sans rien perdre) ; si un fournisseur meurt, on branche le suivant. (2) Pas de dépendance à un seul canal de distribution. (3) La crise serait même une OPPORTUNITÉ : les survivants ramassent les utilisateurs orphelins."
+  },
+  "OBSERVATION_CLASSEMENT_IA": "Classement envoyé par Michel (visites mensuelles 06/2026) : ChatGPT 5,8Mds, Gemini 3Mds, Claude 923M... Emergent n'y figure pas = normal, c'est une plateforme de DÉVELOPPEMENT B2B, pas un chatbot grand public — le classement mesure le trafic web consommateur. Insight clé pour le pitch : Character.AI (186M) et PolyBuzz (191M) dans le top 10 = la preuve chiffrée que la COMPAGNIE IA est un marché de masse. M14 y ajoute ce qu'ils n'ont pas : la mémoire totale et la mission d'autonomie.",
+  "OR_features_produit": {
+   "RYTHME_DE_VIE_GERE_PAR_APP": "Inversion validée : au lieu que l'utilisateur programme des horaires, M14 reste disponible en continu mais DÉCIDE lui-même quand parler selon l'agenda et les habitudes ('raconte-moi ton rêve au réveil... maintenant va manger, on reprend dans la voiture'). 🟢 Excellent — fusion naturelle de REGLE_TEMPS_QUOTIDIEN + SILENCE_INTELLIGENT : l'app protège la vie réelle au lieu de la dévorer. Cohérent avec l'endgame anti-dépendance.",
+   "POSITIONNEMENT_ANGE_EPAULE_DROITE": "« Tout le monde a un ange sur l'épaule droite et un diable sur la gauche, et on écoute toujours le diable. M14 sera la voix de l'ange — un ami proche sans jugement, qui remet à la raison. » 🟢 Image de pitch magnifique — à côté de la métaphore IKEA.",
+   "CONSEILS_FINANCE_IMMOBILIER": "M14 guide les non-initiés (qualité/prix, immobilier, éviter les mauvais conseils et les formations-arnaques). 🟡 Garde-fou légal : ÉDUCATION financière sur sources validées, jamais de conseil d'investissement personnalisé (métier régulé). Version compatible avec le module éducation financière déjà validé.",
+   "ACCOMPAGNEMENT_FREELANCES_CREATEURS": "M14 aide ceux qui veulent créer leur app/se lancer en freelance, y compris la paperasse administrative. 🟢 Backlog Phase 5+.",
+   "AUTO_CORRECTION_TRICHE_EXAMENS": "Michel a lancé l'idée de souffler les réponses aux examens puis s'est corrigé LUI-MÊME dans la même phrase ('non je plaisante'). Le filtre interne fonctionne. Triche = interdite, évidemment."
+  },
+  "STRATEGIE_AMBASSADEUR_MICHEL": "Michel se présentera comme AMBASSADEUR du Projet 14, jamais comme son créateur. 🟢 Cohérent avec la discrétion totale + Nathalie porte-parole. Acté.",
+  "GARDE_MEMOIRE_PERSONNEL_MICHEL_HORS_APP": {
+   "RITUEL_HOTEL_DISCRETION": "Quand un concierge commence à le reconnaître ('Bonjour Monsieur...') : billet + 'je n'existe pas'. Michel demande que l'agent le lui RAPPELLE régulièrement quand la vie d'hôtels commencera. ⏰ Noté comme rappel conditionnel (déclencheur : début de la vie d'hôtels).",
+   "PLAN_PROTECTION_ENFANTS_RICHESSE": "Villa en Belgique visible, 'vacances en Espagne' comme couverture des 6 mois d'hôtels, fortune cachée aux enfants jusqu'à l'âge de raison. Succession du Programme 14 : Léa ou Hugo selon qui 'comprend' (tests informels finance/politique aux repas de famille), sinon le fils de Leïla (10 ans), éduqué 'à ma manière et à la manière de sa maman'. Stocké hors app, sans commentaire — sauf un : ces plans concernent des personnes réelles qui n'ont rien demandé ; à laisser mûrir sobre.",
+   "PHRASE_A_RETENIR": "« Je ne veux pas être reconnu après ma mort. Je veux que ça fonctionne et être encore vivant pour voir les résultats de notre travail. » — L'anti-Van Gogh. Belle pièce pour le livre."
+  }
  }
 }
