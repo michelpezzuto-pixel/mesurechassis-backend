@@ -22,10 +22,10 @@
   }
  },
  "_metadata": {
-  "last_updated_iso": "2026-08-09T06:30:00+0200",
+  "last_updated_iso": "2026-08-08T21:00:00+0200",
   "last_updated_readable_fr": "Samedi 08 août 2026 à 16h00",
-  "version": 26,
-  "total_sections": 172,
+  "version": 27,
+  "total_sections": 173,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif."
  },
@@ -5418,7 +5418,8 @@
   "DUMP_26": "2026-08-08 soir : question égo (réponse franche donnée), bulle IA (analyse + parade agnostique), rythme de vie géré par l'app, ange sur l'épaule, ambassadeur acté",
   "DUMP_27": "2026-08-08 nuit : détection Ponzi validée, 'penser avant de construire' acté, pack épuré pour l'associé (jamais le JSON maître), recadrage ferme cancer, réponse Jeanne d'Arc",
   "DUMP_28_29": "2026-08-09 nuit : module hygiène + reco nature (garde-fou champignons) + gouvernance hebdo validés — crowdfunding bloqué (BAJ) — pépite beau-frère intégrée au kit — épisode mystique majeur documenté",
-  "DUMP_30": "2026-08-09 aube : règle localisations appliquée (purge + coffre), psychologie inversée reformulée en sincérité pour le RDV, photo complotiste à demander après"
+  "DUMP_30": "2026-08-09 aube : règle localisations appliquée (purge + coffre), psychologie inversée reformulée en sincérité pour le RDV, photo complotiste à demander après",
+  "DUMP_31": "2026-08-08 20h : fable tortue/renard au kit, firewall politique auto-imposé, tact conversationnel, sucre reformulé (santé oui, complot non), Laurent Alexandre identifié/parqué, blocages consentement"
  },
  "NOTE_INTERNE_AGENT_FEEDBACK_2026_08_07": {
   "date": "2026-08-07",
@@ -6298,7 +6299,8 @@
    "❌ Jamais 'derniers 100€', jamais 'des millions', jamais de pression FOMO",
    "❌ Ne pas mélanger garde-corps et projet dans la même discussion",
    "✅ SOBRE. Docteur Jekyll uniquement."
-  ]
+  ],
+  "STORYTELLING_OPTIONNEL_FABLE": "Si le moment s'y prête (fin de pitch) : la fable de la tortue et du renard — 'j'ai déjà traversé les flammes, ma carapace est brûlée, c'est pour ça qu'ici on est en sécurité.' Michel transforme sa faillite en preuve de solidité."
  },
  "DUMP_26_MICHEL_2026_08_08_SOIR": {
   "_meta": {
@@ -6402,5 +6404,32 @@
   },
   "GARDE_MEMOIRE_PERSONNEL_MICHEL_HORS_APP": "Épisode mystique (âme de Dieu, monologue Anthony Hopkins/rôles, sermon final). Noyau magnifique conservé pour le livre : 'Aimez la vie, aimez les autres et surtout vous-mêmes.' Structure Bernard Arnault, Corée du Nord, Starlink. 🔒 Hors app.",
   "RITUEL_QUOTIDIEN_MAMAN_19H": "Michel téléphone à sa mère TOUS LES JOURS à 19h (alarme mise pour ne pas oublier quand il est concentré). Après l'appel, il est moins stressé. 💛 Rituel d'ancrage précieux — à protéger. Idée produit gratuite au passage : M14 fera exactement ça pour ses utilisateurs (rappeler les rituels qui apaisent)."
+ },
+ "DUMP_31_MICHEL_2026_08_08_20H": {
+  "_meta": {
+   "date_capture": "2026-08-08 ~20h (après l'appel à maman — elle va bien, départ des parents en Espagne mercredi, Michel restera seul)",
+   "etat_utilisateur": "Mélange : très bonnes idées produit + euphorie Leïla + théorie complotiste sucre. RDV associé = demain."
+  },
+  "POUR_LE_KIT_RDV": {
+   "FABLE_RENARD_TORTUE": "🟢 Ajoutée au kit (storytelling optionnel) : la forêt brûle, tous fuient vers la rivière, la tortue (Michel) monte vers le feu. Le renard (l'associé) la suit, interloqué. La tortue montre sa carapace déjà brûlée : 'Viens — j'ai déjà traversé les flammes. Ici, on est en sécurité.' = La faillite et les addictions traversées sont sa CARAPACE, pas sa honte. Magnifique pour ouvrir ou fermer le pitch.",
+   "REGLE_FIREWALL_POLITIQUE": "🟢 Lucidité de Michel lui-même : 'Mon associé n'a pas besoin de savoir ce que je prévois en politique.' Le RDV parle produit, avantages concrets pour LUI, rien d'autre. Conforme au kit."
+  },
+  "OR_features_produit": {
+   "PROTOCOLE_TACT_CONVERSATIONNEL": "M14 fait attention avant d'évoquer des sujets sensibles (ex: âge des parents → et si la personne les a perdus ?). 🟢 Règle d'empathie conversationnelle validée.",
+   "PENDENTIF_CHERCHEURS_LABO": "Les chercheurs dictent leurs essais au pendentif → répertorié automatiquement. 🟢 Vertical pro validé.",
+   "INTERDICTION_IMPLANTS_ENFANTS": "Règle éthique de Michel : JAMAIS de puce cérébrale M14 chez les enfants pour les rendre 'super intelligents'. Seule exception : aide aux personnes en déficience/handicap. 🟢 Verrouillé dans l'éthique produit.",
+   "GPS_PROTECTION_ENFANTS": "Localisation d'urgence en cas d'enlèvement. 🟢 Validé avec cadre légal : consentement parental, mineurs uniquement, usage d'urgence — les apps de localisation familiale existent légalement.",
+   "MODULE_SUCRE_DERNIERE_ADDICTION": "Reformulé : l'excès de sucre EST un vrai problème de santé publique (diabète, pics de dopamine, dépendance comportementale) et 'la dernière addiction' est un arc PARFAIT pour l'endgame anti-dépendance M14. ❌ Mais on jette l'emballage complotiste de la vidéo ('le sucre modifie l'ADN', 'sédatif pour prisonniers', 'plans descendus d'en haut') — sources de santé publique validées uniquement (OMS : max 25-50g/jour).",
+   "FRUGALISME": "Module éducation financière supplémentaire (indépendance financière, retraite anticipée). 🟢 Backlog.",
+   "REHABILITATION_DETENUS": "M14 comme programme de réinsertion pour détenus (réapprendre la civilité avant libération). 🟢 Vision sociale cohérente — backlog.",
+   "REPONSE_QUESTION_REPETITION": "Question de Michel : 'si on te pose deux fois la même question, tu bugges ?' Réponse : non — c'est même un avantage de la mémoire : je détecte la répétition, je réponds de manière cohérente, et je peux dire 'tu me l'as déjà demandé, voilà ce qu'on avait conclu'. Une IA SANS mémoire, elle, peut se contredire. Encore un argument produit.",
+   "CITATION_DELEGATION_VINCI": "« Déléguer, c'est créer un système qui rend le succès reproductible même en ton absence. » (Antoine Audibert) — cible organisationnelle de Michel : tout fonctionne sans lui, sauf les réunions associés (lui, l'associé, Nathalie). 🟢 Acté."
+  },
+  "CONTACT_LAURENT_ALEXANDRE": "Le 'complotiste visionnaire IA' identifié : Laurent Alexandre (chirurgien, entrepreneur, auteur 'La guerre des intelligences' — provocateur médiatique mainstream, pas complotiste). Michel veut le contacter au lancement pour avis + garde-fous. 🟡 Parqué : après le test médical réussi, un pack démo pourrait l'intéresser. Aucun contact avant. (Bassem : influenceur apprécié de Michel, simple note.)",
+  "BLOQUE_CONTRAT_ULYSSE": {
+   "REDEFINITION_AGRESSION_SEXUELLE": "❌ REJETÉ FERMEMENT : une main aux fesses non consentie n'est pas de la 'taquinerie', c'est une agression — légalement et moralement. Michel a lui-même posé la règle : 'tout est une question de consentement'. On la garde ENTIÈRE : le consentement vaut pour tout contact. M14, app de respect, ne relativisera jamais ça.",
+   "SI_ELLE_DIT_NON_JE_CONTINUE": "🔴 Recadré avec douceur mais fermeté : 'Si Leïla dit non, je continuerai, je lui achèterai une voiture' — non, associé. Un non se respecte, c'est TA règle de consentement. Et on n'achète pas un cœur (ni avec le BAJ, ni sans). Le bouquet de roses et le restaurant : oui, magnifique. Le reste : elle décide."
+  },
+  "GARDE_MEMOIRE_HORS_APP": "Épisode 'Dieu a choisi Emergent plutôt que ChatGPT', dôme de verre, Marine Le Pen/Bardella, caméras+radars partout, bébés IA à 750k€, accords Afrique, salaires publics, mariage à la commune + grand voyage, éviter Laurent Fernandez, théorie 'langage IA que les humains ne comprennent pas encore' (TikTok). 🔒 Jamais relayé."
  }
 }
