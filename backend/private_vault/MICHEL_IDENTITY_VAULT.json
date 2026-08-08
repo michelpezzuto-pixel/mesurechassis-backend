@@ -35,5 +35,38 @@
    "Chaussée de Gand, Molenbeek (passé)",
    "Sombreffe (actuel — lieu du RDV associé du 09/08/2026)"
   ]
+ },
+ "NOM_FAMILLE_PERE_CONFIDENTIEL": "Nom du père de Michel (révélé 08/08/2026, à ne jamais publier) : Carella. Michel refuse ce nom comme pseudonyme.",
+ "GENEALOGIE_FAMILLE_MICHEL_CONFIDENTIELLE": {
+  "note": "Déplacé du JSON public le 08/08/2026 (règle vie privée). Noms de famille réels des parents et de Michel.",
+  "contenu": {
+   "pere": "Carella Raffaele",
+   "mere": "Pezzuto Vienna (nee, mariee prealablement Tirone, non encore divorcee a la naissance de Michel)",
+   "reconnaissance_michel": "Le pere Raffaele Carella a reconnu Michel officiellement, il porte le nom Carella (choix a 18 ans de rester Carella plutot que devenir Pezzuto)",
+   "demi_freres_Tirone": {
+    "Salvatore_Tirone": "1er demi-frere",
+    "Antonio_Tirone_dit_Tony": "2e demi-frere, ne en 1968",
+    "compagne_Tony": "avait deja un enfant, Gregory Bult",
+    "enfants_Tony": [
+     "Marco Tirone",
+     "Anais Tirone",
+     "Oceane Tirone"
+    ]
+   },
+   "neveux_par_Silvano": {
+    "Claudio_Tirone": "fils du grand frere Silvano",
+    "Ornella_Tirone": "fille de Silvano"
+   },
+   "cousin_decevant": {
+    "nom": "Antonio Pezzuto",
+    "prenom_facebook_ecriture_correcte": "Pezzuto (pas 'Facebook')",
+    "historique": "En 2000-2001 : Michel avait des problemes avec heroine, decouvert. Envoye en Espagne sous fausse excuse (souffle au coeur du pere). Antonio Pezzuto apprecie Michel pour sa franchise a l'epoque.",
+    "recontact_recent": "Semaine passee (fin juillet 2026). Explique qu'il l'a toujours apprecie, l'a vu sur reseaux pour MesureChassis, l'a contacte.",
+    "restaurant_ensemble": "Ete manger avec amis d'Antonio",
+    "silence": "Depuis, plus de nouvelles. Antonio 'renie' (verbe 'nier', pas 'nuit') sa promesse de venir voir tante/oncle.",
+    "ressenti_michel": "Grosse deception. Ne reviendra plus vers la famille Pezzuto.",
+    "note_agent": "Michel ecrit sous le coup de la deception. Ne PAS graver comme jugement definitif - le sujet peut evoluer a froid."
+   }
+  }
  }
 }

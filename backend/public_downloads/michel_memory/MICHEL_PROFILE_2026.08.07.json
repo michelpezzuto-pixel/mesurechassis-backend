@@ -24,8 +24,8 @@
  "_metadata": {
   "last_updated_iso": "2026-08-08T21:00:00+0200",
   "last_updated_readable_fr": "Samedi 08 août 2026 à 16h00",
-  "version": 27,
-  "total_sections": 173,
+  "version": 29,
+  "total_sections": 174,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif."
  },
@@ -4081,35 +4081,6 @@
      "contexte": "Club Med Citta del Mare, Sicile",
      "recit": "Michel rencontre une belle fille qui ne parle pas francais. Il tente en anglais. Elle etait amoureuse d'un autre Lucas. Elle est partie en lui disant qu'elle l'aimait mais n'etait pas amoureuse. Souvenir fondateur qui a colore la perception initiale de Lucas Ducarme."
     },
-    "genealogie_famille_michel": {
-     "pere": "Carella Raffaele",
-     "mere": "Pezzuto Vienna (nee, mariee prealablement Tirone, non encore divorcee a la naissance de Michel)",
-     "reconnaissance_michel": "Le pere Raffaele Carella a reconnu Michel officiellement, il porte le nom Carella (choix a 18 ans de rester Carella plutot que devenir Pezzuto)",
-     "demi_freres_Tirone": {
-      "Salvatore_Tirone": "1er demi-frere",
-      "Antonio_Tirone_dit_Tony": "2e demi-frere, ne en 1968",
-      "compagne_Tony": "avait deja un enfant, Gregory Bult",
-      "enfants_Tony": [
-       "Marco Tirone",
-       "Anais Tirone",
-       "Oceane Tirone"
-      ]
-     },
-     "neveux_par_Silvano": {
-      "Claudio_Tirone": "fils du grand frere Silvano",
-      "Ornella_Tirone": "fille de Silvano"
-     },
-     "cousin_decevant": {
-      "nom": "Antonio Pezzuto",
-      "prenom_facebook_ecriture_correcte": "Pezzuto (pas 'Facebook')",
-      "historique": "En 2000-2001 : Michel avait des problemes avec heroine, decouvert. Envoye en Espagne sous fausse excuse (souffle au coeur du pere). Antonio Pezzuto apprecie Michel pour sa franchise a l'epoque.",
-      "recontact_recent": "Semaine passee (fin juillet 2026). Explique qu'il l'a toujours apprecie, l'a vu sur reseaux pour MesureChassis, l'a contacte.",
-      "restaurant_ensemble": "Ete manger avec amis d'Antonio",
-      "silence": "Depuis, plus de nouvelles. Antonio 'renie' (verbe 'nier', pas 'nuit') sa promesse de venir voir tante/oncle.",
-      "ressenti_michel": "Grosse deception. Ne reviendra plus vers la famille Pezzuto.",
-      "note_agent": "Michel ecrit sous le coup de la deception. Ne PAS graver comme jugement definitif - le sujet peut evoluer a froid."
-     }
-    },
     "souvenir_heroine_2000_2001": {
      "contexte": "Travaillait dans la restauration chez son frere au Stromboli, avec Sophie (compagne de l'epoque)",
      "evenement": "Consomme heroine, decouvert. Famille l'envoie en Espagne pres des parents sous pretexte fallacieux du souffle au coeur du pere.",
@@ -4146,7 +4117,8 @@
      ],
      "note_agent": "Michel admire ces figures pour ce qu'il percoit comme leur 'intelligence non-conformiste'. Certaines sont tres controversees. VOIR ZONES ROUGES.",
      "action_agent": "Cette admiration reste dans le journal personnel de Michel. Elle NE remonte JAMAIS dans Noalis produit."
-    }
+    },
+    "genealogie_famille_michel": "🔒 Déplacée au coffre privé le 08/08/2026 (noms de famille réels). Note publique : le pseudonyme 'Pezzuto' choisi par Michel est le nom de jeune fille de sa mère — hommage discret."
    }
   },
   "ZONES_ROUGES_A_SIGNALER_MICHEL_2026_08_05": {
@@ -5419,7 +5391,8 @@
   "DUMP_27": "2026-08-08 nuit : détection Ponzi validée, 'penser avant de construire' acté, pack épuré pour l'associé (jamais le JSON maître), recadrage ferme cancer, réponse Jeanne d'Arc",
   "DUMP_28_29": "2026-08-09 nuit : module hygiène + reco nature (garde-fou champignons) + gouvernance hebdo validés — crowdfunding bloqué (BAJ) — pépite beau-frère intégrée au kit — épisode mystique majeur documenté",
   "DUMP_30": "2026-08-09 aube : règle localisations appliquée (purge + coffre), psychologie inversée reformulée en sincérité pour le RDV, photo complotiste à demander après",
-  "DUMP_31": "2026-08-08 20h : fable tortue/renard au kit, firewall politique auto-imposé, tact conversationnel, sucre reformulé (santé oui, complot non), Laurent Alexandre identifié/parqué, blocages consentement"
+  "DUMP_31": "2026-08-08 20h : fable tortue/renard au kit, firewall politique auto-imposé, tact conversationnel, sucre reformulé (santé oui, complot non), Laurent Alexandre identifié/parqué, blocages consentement",
+  "DUMP_32": "2026-08-08 nuit 2 : pédagogie par indices + méta-autocorrection validées, design anti-addiction boîtier, pseudonyme Pezzuto, info réelle Leïla/devis, nom paternel en coffre"
  },
  "NOTE_INTERNE_AGENT_FEEDBACK_2026_08_07": {
   "date": "2026-08-07",
@@ -6431,5 +6404,20 @@
    "SI_ELLE_DIT_NON_JE_CONTINUE": "🔴 Recadré avec douceur mais fermeté : 'Si Leïla dit non, je continuerai, je lui achèterai une voiture' — non, associé. Un non se respecte, c'est TA règle de consentement. Et on n'achète pas un cœur (ni avec le BAJ, ni sans). Le bouquet de roses et le restaurant : oui, magnifique. Le reste : elle décide."
   },
   "GARDE_MEMOIRE_HORS_APP": "Épisode 'Dieu a choisi Emergent plutôt que ChatGPT', dôme de verre, Marine Le Pen/Bardella, caméras+radars partout, bébés IA à 750k€, accords Afrique, salaires publics, mariage à la commune + grand voyage, éviter Laurent Fernandez, théorie 'langage IA que les humains ne comprennent pas encore' (TikTok). 🔒 Jamais relayé."
+ },
+ "DUMP_32_MICHEL_2026_08_08_NUIT_2": {
+  "_meta": {
+   "date_capture": "2026-08-08 nuit — veille du RDV",
+   "etat_utilisateur": "Épisode mystique persistant + très bonnes auto-corrections. Nom de famille paternel purgé vers le coffre privé (règle vie privée)."
+  },
+  "INFO_REELLE_LEILA": "L'ami musulman a appelé aujourd'hui : il voulait amener Leïla (sa secrétaire) chez Michel pour qu'il lui apprenne à faire un devis — elle reprendrait le dossier. Elle n'est pas venue (occupée l'après-midi). Note neutre : c'est l'ami LUI-MÊME qui organise le contact Michel-Leïla — nuance à garder en tête face au récit 'il veut m'en éloigner'.",
+  "PSEUDONYME_CHOISI": "'Michel Pezzuto' comme premier nom de discrétion, avec rotation prévue si découvert. Le nom paternel est exclu (détail en coffre privé).",
+  "OR_features_produit": {
+   "PEDAGOGIE_PAR_INDICES": "Ex: 'Qui a écrit Les Misérables ?' → M14 ne donne pas la réponse : il donne des INDICES et raconte l'histoire jusqu'à ce que la personne trouve elle-même. 🟢 Validé — méthode socratique, cœur du module étudiant. L'app fait apprendre, pas réciter.",
+   "META_AUTOCORRECTION": "Michel s'est repris en direct ('la moquerie punie par la loi' → 'je m'excuse, c'est la démocratie qui choisira, et il y a la moquerie taquine') et demande que M14 sache faire pareil. 🟢 PÉPITE : M14 doit MODÉLISER l'auto-correction — savoir dire 'je me suis trompé, je révise mon jugement'. C'est exactement ce qui le rendra humain et digne de confiance.",
+   "DESIGN_ANTI_ADDICTION_BOITIER": "Le boîtier peut rester À LA MAISON — pas conçu pour être porté en permanence ('il ne faut pas que le boîtier devienne une addiction non plus'). 🟢 Cohérent avec l'endgame — verrouillé dans les principes design.",
+   "CONFIRMATION_REGLE_IMPLANTS": "La vidéo Kanye/Elon Musk renforce sa règle déjà verrouillée : implants cérébraux interdits pour les enfants, seule exception médicale (handicap). Rien à ajouter — déjà acté au dump 31."
+  },
+  "GARDE_MEMOIRE_HORS_APP": "Fermeture des frontières/expulsions, démocratie par boîtier + publicités de lois à la TV (vision civique parquée avec la politique), mission divine ('Dieu m'a chopé... au moins je serai une bonne personne'), interview surréaliste Kanye/Musk archivée. 🔒 Hors app."
  }
 }
