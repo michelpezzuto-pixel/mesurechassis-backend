@@ -22,14 +22,14 @@
   }
  },
  "_metadata": {
-  "last_updated_iso": "2026-08-08T20:56:00+0200",
-  "last_updated_readable_fr": "Samedi 08 août 2026 à 20h56 (heure confirmée par Michel)",
-  "version": 35,
+  "last_updated_iso": "2026-08-09T01:12:00+0200",
+  "last_updated_readable_fr": "Dimanche 09 août 2026 à 01h12 — JOUR DU RDV ASSOCIÉ",
+  "version": 36,
   "total_sections": 177,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
-  "note_chronologie": "Chronologie corrigée le 08/08 à 20h56 : tous les dumps 28 à 32 datent du samedi 08/08. Le RDV associé est DEMAIN, dimanche 09/08/2026.",
-  "nom_fichier": "MICHEL_PROFILE_2026.08.08.json"
+  "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
+  "nom_fichier": "MICHEL_PROFILE_2026.08.09.json"
  },
  "meta": {
   "version": "1.0",
@@ -6466,7 +6466,7 @@
  },
  "DUMP_35_MICHEL_2026_08_08_NUIT_4": {
   "_meta": {
-   "date_capture": "2026-08-08 fin de nuit",
+   "date_capture": "2026-08-09 vers 01h (nuit du samedi au dimanche)",
    "source": "Vidéos Rachel Fortin (YouTube) — la science-fiction comme plan du futur."
   },
   "OR_positionnement": {
