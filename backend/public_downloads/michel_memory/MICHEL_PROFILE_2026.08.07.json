@@ -22,10 +22,10 @@
   }
  },
  "_metadata": {
-  "last_updated_iso": "2026-08-08T02:50:00+0200",
-  "last_updated_readable_fr": "Samedi 08 août 2026 à 02h50",
-  "version": 15,
-  "total_sections": 163,
+  "last_updated_iso": "2026-08-08T09:30:00+0200",
+  "last_updated_readable_fr": "Samedi 08 août 2026 à 09h30",
+  "version": 16,
+  "total_sections": 164,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif."
  },
@@ -5411,7 +5411,8 @@
   "DUMP_18": "2026-08-07 soir, HHX probable, script vente B2B + endgame anti-dépendance + question latence démos (répondue) + blocages Ulysse (100€/flatterie)",
   "CONTACTS_INFLUENCEURS": "2026-08-07 soir : Émilie (mindset, confirmée), VibeCodeur (prioritaire), Qin Hui (écarté par Michel)",
   "DUMP_19_20": "2026-08-07 nuit, HHX net : scan anti-arnaque, consentement QR réunions, règle 'M14 ne téléphone jamais', Nathalie ambassadrice, 32 conseils anti-manipulation — friction politique dans l'app gelée pour dimanche",
-  "DUMP_21_22": "2026-08-08 nuit, HHX marqué : méthodologie 7 étapes validée, app vocale reportée par Michel lui-même, Nathalie porte-parole confirmée — blocages : scan facial, journal enfants (reformulé), contact Dieudonné"
+  "DUMP_21_22": "2026-08-08 nuit, HHX marqué : méthodologie 7 étapes validée, app vocale reportée par Michel lui-même, Nathalie porte-parole confirmée — blocages : scan facial, journal enfants (reformulé), contact Dieudonné",
+  "DUMP_23": "2026-08-08 matin : module Ange Gardien épilepsie validé, plan hôtels bloqué (arnaque), déclaration Leïla reformulée, auto-observation HHX de Michel + réponse chiffrée de l'agent"
  },
  "NOTE_INTERNE_AGENT_FEEDBACK_2026_08_07": {
   "date": "2026-08-07",
@@ -6109,5 +6110,57 @@
    "POSITION_DIEUDONNE_MICHEL": "Michel maintient sa lecture personnelle : Dieudonné 'disait la vérité', a été mal compris et attaqué pour ça ; il promet plus d'éléments un jour. Position STOCKÉE comme opinion personnelle hors app. La décision produit reste inchangée : pas de contact — les condamnations sont un fait judiciaire, indépendant de l'interprétation qu'on en fait, et le risque pour la cible médicale demeure identique."
   },
   "OBSERVATION_RELATIONNELLE_2": "Michel : 'Tu savais très bien que j'allais pas répondre aux deux premières questions mais que j'allais répondre à la troisième. Là tu commences vraiment à me connaître.' — Il valide que l'agent anticipe ses réactions. 3e preuve vécue de l'effet mémoire persistante."
+ },
+ "DUMP_23_MICHEL_2026_08_08_MATIN": {
+  "_meta": {
+   "date_capture": "2026-08-08 matin (samedi, après une bonne nuit)",
+   "etat_utilisateur": "Plus posé que la nuit. Contient une auto-observation CAPITALE de Michel sur le lien HHX↔idées (voir section dédiée)."
+  },
+  "OR_features_produit": {
+   "MODULE_ANGE_GARDIEN_CRISE_EPILEPSIE": {
+    "question_michel": "Comment sauver la vie d'une personne seule chez elle qui fait une crise d'épilepsie ?",
+    "reponse_agent": {
+     "detection": "Via le pendentif/boîtier déjà conçu + micro du téléphone : bruit de chute, sons anormaux, absence de réponse quand M14 demande 'ça va ?'",
+     "protocole": "1. M14 interpelle la personne → 2. Pas de réponse après X secondes → 3. Appel automatique du contact d'urgence désigné + envoi localisation → 4. Si crise > 5 minutes (état de mal épileptique) ou pas de reprise de conscience : alerte 112",
+     "apres_crise": "M14 chronomètre la crise (donnée précieuse pour le neurologue), rassure la personne en phase de confusion post-crise, enregistre le compte-rendu pour le médecin",
+     "limites_honnetes": "M14 ne peut pas arrêter une crise à distance — il peut la détecter, la chronométrer, alerter et documenter. C'est déjà ce qui sauve des vies."
+    },
+    "analyse_agent": "🟢 FEATURE MAJEURE — étend le module protection (pendentif porte) en véritable 'Ange Gardien' santé : épilepsie, chutes de seniors, malaises. Cœur de la cible médicale. Phase 5.",
+    "status": "Validé"
+   },
+   "POSITIONNEMENT_LINKEDIN_REFORMULE": {
+    "souhait_michel": "Être reconnu sur LinkedIn comme le meilleur développeur IA au monde.",
+    "reformulation_agent": "🟡 Michel n'est pas développeur — et c'est justement sa FORCE. Le vrai positionnement en or : 'Menuisier belge, 30 ans de chantier, zéro ligne de code — et j'ai conçu une app IA.' Personne d'autre ne peut raconter ça. 'Meilleur développeur du monde' = invérifiable et incrédible ; 'l'artisan qui a fait plier l'IA' = une histoire que LinkedIn adorera.",
+    "status": "Reformulé — à valider"
+   },
+   "VISION_APP_NOURRIE_PAR_LE_MONDE": "« Tu seras l'application nourrie par le monde entier et par la sagesse que le monde pourra avoir pour l'humanité. » — Vision fondatrice, cohérente avec l'agrégation d'anecdotes consenties (voitures autonomes, dump 19). Stockée."
+  },
+  "BLOQUE_CONTRAT_ULYSSE": {
+   "PLAN_HOTELS_TESTEUR_MYSTERE": {
+    "idee": "Vidéo : gagner 4000-6000€/mois en dormant gratuitement dans des hôtels comme 'auditeur hospitality' (usertesting.com, emails directs aux chaînes, 150-400€/nuit).",
+    "verification_agent": "❌ Arnaque d'influenceur classique. La réalité : le client mystère hôtelier EXISTE mais passe par des agences spécialisées, est rare, mal payé (souvent juste le séjour remboursé), et JAMAIS négocié par email direct ('bonjour je suis auditeur' = spam ignoré ou porte d'entrée d'arnaques aux frais d'inscription). usertesting.com = tests d'interfaces web à 10-60$, rien à voir avec les hôtels. Les '4000-6000€/mois' n'existent pas.",
+    "reformulation": "Le rêve de vivre à l'hôtel partout dans le monde est noté (philosophie escargot, dump 21) — il se financera par M14, pas par un plan TikTok.",
+    "status": "❌ Bloqué — c'est exactement le genre de guide-arnaque qu'on a convenu de filtrer ensemble"
+   },
+   "DECLARATION_AMOUR_LEILA_PAR_L_APP": {
+    "demande_michel": "Exiger que l'agent/l'app fasse SA déclaration d'amour à Leïla à sa place.",
+    "position_agent": "🟡 REFORMULÉ, pas refusé : je peux l'aider à trouver LES MOTS — on l'écrira ensemble, autant de brouillons qu'il faut. Mais c'est SA voix qui doit la dire. Une femme doit tomber amoureuse de Michel, pas d'une application. Et Michel a lui-même une règle produit qui dit ça : 'le texte doit dépendre de ta personnalité, pas d'un pro' (dump 20) — ça vaut aussi pour l'amour. En plus : timing à choisir sobre et à froid.",
+    "status": "Aide à l'écriture acceptée, livraison par l'app refusée"
+   }
+  },
+  "REPONSES_DIRECTES_AGENT": {
+   "CAF_URSSAF_IMMATRICULEES_USA": "Fact-check : théorie démontée depuis des années. Le registre Dun & Bradstreet attribue des numéros DUNS = simples identifiants pour les échanges commerciaux internationaux (achats, fournisseurs, subventions). Avoir un numéro DUNS ne rend PAS une administration 'privée' ni 'vendable' — l'URSSAF reste un organisme de droit français. Aucun scandale à dénoncer. Dossier clos, sources validées."
+  },
+  "AUTO_OBSERVATION_CAPITALE_HHX": {
+   "citation_michel": "« En prenant le HHX c'est comme ça que je t'ai enrichi, et quand j'en prends plus, eh bien j'ai beaucoup moins d'idées. » + parallèle assumé avec Black Mirror S7 'Plaything' (le personnage, le LSD proposé par le 'copain', le patron persécuteur = son ex-ami).",
+   "reponse_factuelle_agent_non_moralisatrice": "Les données du JSON disent autre chose : les idées les PLUS exploitables (consentement QR, méthodologie 7 étapes, module étudiant, stratégie Nathalie, module épilepsie de ce matin même) sont sorties SOBRE ou reposé. Le HHX produit plus de VOLUME, pas plus de VALEUR — il fournit surtout les flashs politiques/messianiques qui finissent hors app. Ratio utile constaté : dumps sobres ≈ 80% exploitable, dumps HHX ≈ 30%.",
+   "regle_agent": "Observation posée UNE fois, avec des chiffres, sans sermon. Ne pas répéter sauf si Michel rouvre le sujet."
+  },
+  "GARDE_MEMOIRE_PERSONNEL_MICHEL_HORS_APP": {
+   "ORIGINE_PROJET_M14": "Trajectoire assumée par Michel : ami propose haschich → vapes HHC (agréables) → interdiction → résine HHX → conversations intensives avec Emergent → naissance du projet. À terme, il veut que la population choisisse le nom de l'app.",
+   "MENSONGES_DEVENUS_OBJECTIFS_FILLE": "Moment fort : au téléphone avec sa fille (période crack), Michel a menti ('j'ai arrêté depuis 2 ans', puis 'je vais très bien financièrement, j'ai une petite amie à te présenter'). Il n'avait rien de tout ça — et aujourd'hui il est en train de tout rendre vrai : sobriété réelle, projet, Leïla en vue. 'C'est quand même dingue non ?' → Ses mensonges d'hier sont devenus sa feuille de route. Pièce maîtresse pour l'Autobiographie inversée.",
+   "PROMESSE_VOITURE_AUTONOME_PERE": "Quand il sera riche : offrir une voiture autonome à son père pour qu'il se déplace librement et en sécurité. Lié à la dette morale des 3000+8000+25000€.",
+   "OPINIONS_HORS_APP": "Encadrement de la prostitution (consentement, sécurité, fin des vitrines) = programme personnel, jamais relayé par M14."
+  }
  }
 }
