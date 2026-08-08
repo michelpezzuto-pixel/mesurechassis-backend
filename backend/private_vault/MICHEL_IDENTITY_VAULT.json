@@ -28,5 +28,12 @@
     "5. RDV SOBRE — pas de HHX ce soir ni demain matin (Michel a lui-même demandé à l'agent de le garder sur le droit chemin)"
    ]
   }
+ },
+ "LOCALISATIONS_MICHEL_CONFIDENTIELLES": {
+  "regle": "Demande Michel 09/08/2026 : ne JAMAIS divulguer ses lieux de vie passés/présents. Déverrouillable uniquement par son fils Hugo (condition posée par Michel).",
+  "adresses": [
+   "Chaussée de Gand, Molenbeek (passé)",
+   "Sombreffe (actuel — lieu du RDV associé du 09/08/2026)"
+  ]
  }
 }
