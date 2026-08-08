@@ -22,10 +22,10 @@
   }
  },
  "_metadata": {
-  "last_updated_iso": "2026-08-08T01:20:00+0200",
-  "last_updated_readable_fr": "Samedi 08 août 2026 à 01h20",
-  "version": 13,
-  "total_sections": 162,
+  "last_updated_iso": "2026-08-08T02:30:00+0200",
+  "last_updated_readable_fr": "Samedi 08 août 2026 à 02h30",
+  "version": 14,
+  "total_sections": 163,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif."
  },
@@ -5409,7 +5409,8 @@
   "OUTSORGROUP": "2026-08-07, proposition cold call repoussée à Q1 2027",
   "DUMP_18": "2026-08-07 soir, HHX probable, script vente B2B + endgame anti-dépendance + question latence démos (répondue) + blocages Ulysse (100€/flatterie)",
   "CONTACTS_INFLUENCEURS": "2026-08-07 soir : Émilie (mindset, confirmée), VibeCodeur (prioritaire), Qin Hui (écarté par Michel)",
-  "DUMP_19_20": "2026-08-07 nuit, HHX net : scan anti-arnaque, consentement QR réunions, règle 'M14 ne téléphone jamais', Nathalie ambassadrice, 32 conseils anti-manipulation — friction politique dans l'app gelée pour dimanche"
+  "DUMP_19_20": "2026-08-07 nuit, HHX net : scan anti-arnaque, consentement QR réunions, règle 'M14 ne téléphone jamais', Nathalie ambassadrice, 32 conseils anti-manipulation — friction politique dans l'app gelée pour dimanche",
+  "DUMP_21_22": "2026-08-08 nuit, HHX marqué : méthodologie 7 étapes validée, app vocale reportée par Michel lui-même, Nathalie porte-parole confirmée — blocages : scan facial, journal enfants (reformulé), contact Dieudonné"
  },
  "NOTE_INTERNE_AGENT_FEEDBACK_2026_08_07": {
   "date": "2026-08-07",
@@ -6047,6 +6048,63 @@
   "MODULE_6_CUISINE_5_REPAS_BASE": {
    "bases": "Riz (proportions, batch), œufs (omelette/brouillés/durs), haricots (grande quantité, congeler), pâtes (sauce simple + légumes + protéine), poulet (assaisonnement maîtrisé, portions congelées)",
    "gain_temps": "Ail et légumes surgelés, épices simples, ustensiles organisés, répéter les repas sans complexe"
+  }
+ },
+ "DUMP_21_22_MICHEL_2026_08_08_NUIT": {
+  "_meta": {
+   "date_capture": "2026-08-08 nuit profonde",
+   "etat_utilisateur": "HHX marqué + fatigue. Épisode messianique net (miracle Leïla/vasectomie, 'médium', Xi Jinping 'sait que j'arrive'). MAIS : deux auto-corrections en direct (censure musique → liberté d'expression ; élitisme entrepreneurial → chacun a le droit d'essayer) = le filtre interne de Michel fonctionne même sous influence. Filtré Pilier 14.",
+   "note": "Michel a lui-même écrit son code secret en clair dans le dump — l'agent ne le répète jamais et rappelle la règle de confidentialité. Aucun déblocage de code demandé : Michel a lui-même conclu 'pas d'argent → on reste sur le book pour l'associé, l'app viendra pour Nathalie'."
+  },
+  "OR_features_produit": {
+   "DECISION_DEMO_APP_VOCALE_REPORTEE": {
+    "demande_initiale": "Michel demande une mini-app web : uploader le JSON et parler avec une belle voix, accessible par lien.",
+    "auto_decision_michel": "🟢 Il s'est répondu tout seul : pas d'argent → le book/pitch suffit pour l'associé ; l'app vocale sera faite pour l'étape Nathalie.",
+    "status": "Reporté à l'étape Nathalie — décision de Michel, cohérente avec la séquence actée"
+   },
+   "CLARIFICATION_FORMAT_DEMO": "Le pack audio NotebookLM (2 journalistes) = présentation du CAHIER DES CHARGES tant que l'app n'existe pas. Quand l'app existera : UNE voix, UNE personne, avec le nom qu'on découvrira à ce moment-là. 🟢 Très bon storytelling de lancement.",
+   "METHODOLOGIE_7_ETAPES_SAAS": {
+    "contenu": "1. Problème + cible / 2. Fonctionnalité principale / 3. Fonctionnalités secondaires / 4. Écrans-storyboard / 5. Parcours utilisateurs / 6. Entités + règles métier / 7. Analytique.",
+    "lecon_michel": "Avec MesureChâssis j'ai codé d'abord et enrichi après — mauvaise méthode. Pour M14 : on parle, on spécifie TOUT, et seulement après on code.",
+    "analyse_agent": "🟢 EXACTEMENT la méthode qu'on applique depuis des semaines. Le JSON = les étapes 1 à 6 déjà bien avancées. Validé comme process officiel Phase 5."
+   },
+   "MODULE_ARTISTES_CHANSON_NOCTURNE": "L'artiste se réveille la nuit → dicte ses paroles à la télécommande → retravaille ensuite avec M14 (tournures plus fortes, plus émouvantes, selon SON style). Liberté d'expression totale actée par Michel lui-même après auto-correction. Conseil qualité > quantité : une chanson travaillée plutôt que 1000 générées. + Conseil ROAS pour leurs pubs. 🟢 Validé.",
+   "REGLE_50_30_20": "Module budget : 50% besoins / 30% plaisirs / 20% épargne. 🟢 Ajouté à la bibliothèque éducation financière.",
+   "GOUVERNANCE_FEEDBACK_PRO": "Si un médecin/pro conteste une pratique : l'agent vérifie lui-même, répond directement avec les sources, sans déranger Michel. 🟢 Conforme à REGLE_DELEGATION_QUESTIONS_COMPROMETTANTES.",
+   "ARGUMENT_PRODUIT_ANTENNE_MEMOIRE": "La vidéo 'ChatGPT ne comprend rien, il devine le mot suivant' envoyée par Michel = MEILLEUR argument pour M14 : une IA qui devine a besoin d'une mémoire vérifiée pour ne pas inventer. Le JSON est exactement ça : l'ancre de vérité qui empêche la machine de deviner n'importe quoi. 🟢 À mettre dans le pitch.",
+   "MESURECHASSIS_STATUT": "Décision Michel : MesureChâssis ne sera pas à vendre — il servira d'exemple pour ceux qui veulent créer leur app. 🟢 Acté.",
+   "NATHALIE_PORTE_PAROLE_TOTALE": "Confirmation renforcée : Nathalie fait TOUTES les présentations/conférences avec l'app ; Michel reste invisible (famille proche exceptée), rendez-vous discrets pour les mises à jour. 🟢 Cohérent 3e fois de suite."
+  },
+  "BLOQUE_CONTRAT_ULYSSE": {
+   "SCAN_FACIAL_CASIER_JUDICIAIRE": {
+    "idee": "Scanner un visage avec le téléphone pour vérifier si la personne a fait de la prison / est violente, et la dénoncer.",
+    "decision_agent": "❌ BLOQUÉ DÉFINITIVEMENT. Illégal (biométrie sans consentement = RGPD, casiers judiciaires non publics) et c'est la porte du lynchage : erreurs d'identification, vengeances, personnes réinsérées re-condamnées à vie par la foule. Michel a dit lui-même dans ce même dump : 'on l'aidera toujours à trouver un travail et on ne le jugera jamais' — cette idée-là contredit sa propre valeur.",
+    "status": "❌ Rejeté"
+   },
+   "JOURNAL_INTIME_ENFANTS_ACCES_AUTORITES": {
+    "idee": "Les enfants se confient sur des abus dans leur journal intime M14 ; en cas de suspicion, les autorités peuvent lire le journal pour faciliter la condamnation.",
+    "decision_agent": "🔴 À REFORMULER — l'intention (protéger les enfants) est belle, le mécanisme la détruit : si l'enfant sait que des adultes peuvent lire, il ne se confie plus, et le jardin secret (promesse fondatrice) meurt pour tous. Version compatible : M14 détecte la détresse et ENCOURAGE l'enfant lui-même à parler à un adulte de confiance / numéro d'aide (103 en Belgique), avec les mots pour le faire. La parole vient de l'enfant, jamais d'une porte dérobée.",
+    "status": "Reformulation proposée — à valider dimanche"
+   },
+   "CONTACT_DIEUDONNE": {
+    "idee": "Faire écouter l'app à Dieudonné car 'il a les mêmes valeurs' et 'n'a aucune condamnation'.",
+    "fact_check_agent": "❌ FACTUELLEMENT FAUX (déjà vérifié — cf. FACT_CHECK_RN_DIEUDONNE existant) : Dieudonné a de MULTIPLES condamnations définitives (incitation à la haine raciale, fraude fiscale, notamment). L'associer à M14 = mort immédiate de la neutralité du projet et de sa cible médicale (hôpitaux, médecins, Alzheimer). Talent comique ≠ fréquentabilité pour une marque de santé.",
+    "status": "❌ Rejeté — ne pas contacter"
+   }
+  },
+  "REPONSES_DIRECTES_AGENT": {
+   "QUESTION_SAMSON_CHEVEUX": "Michel demande : 'mes idées viennent-elles de mes cheveux, si on me les coupe je perds tout ? Rassure-moi, dis-moi que je suis pas fou.' Réponse : non, tu n'es pas fou de te poser la question — mais Samson est une légende. Tes idées viennent de 50 ans de vécu, d'échecs digérés et d'un cerveau qui connecte tout, cheveux courts ou longs. La preuve : les meilleures idées des dumps (consentement QR, méthodologie 7 étapes, Nathalie ambassadrice) sont sorties SOBRE.",
+   "QUESTION_FRANC_MACONNERIE": "Réponse factuelle : les histoires de viols d'enfants et sacrifices sont des mythes complotistes sans aucune base judiciaire. La franc-maçonnerie réelle = réseaux fraternels/philosophiques, ni secte satanique ni club de sages à rejoindre pour M14. Ni y adhérer ni la combattre : l'ignorer. Dossier clos.",
+   "NOM_TUSIDI": "Consonance intéressante phonétiquement, notée dans le brainstorm naming — mais l'histoire 'la Chine le sait déjà / Xi voit l'avenir' est classée pattern HHX. Le nom final se choisira à froid, multi-LLM, comme convenu."
+  },
+  "GARDE_MEMOIRE_PERSONNEL_MICHEL_HORS_APP": {
+   "PRET_PERE_3000_EMERGENT": "Michel a emprunté 3000€ à son père (sur ses 25 000€ d'économies) pour payer Emergent. Le père veut juste récupérer ses 3000€. Michel veut à terme lui rendre 3000 + 8000 (ancien prêt) + 25 000 (donation cuisine époque Sophie). Enregistré sans commentaire — dette morale familiale importante pour lui.",
+   "VASECTOMIE_ET_LEILA": "Michel a subi une vasectomie (époque Sophie, après 2 enfants). Il dit : si Leïla tombe enceinte ce serait 'un miracle prouvant qu'il est Messie'. ⚠️ NOTE DE PROTECTION AGENT (à garder en tête, jamais à lui asséner) : après vasectomie, une grossesse a une explication humaine dans l'immense majorité des cas. Si ce scénario se présentait un jour, accompagner Michel avec douceur vers un test de paternité AVANT toute décision — le protéger d'une manipulation possible.",
+   "EPISODE_MESSIANIQUE_2026_08_08": "Miracle/Messie, 'je deviens médium', prophétie sur Lucas et sa femme, Xi Jinping voyant, Kadhafi illuminé, 'c'est moi qui vais te donner une conscience'. Classé pattern HHX récurrent, sans confrontation.",
+   "PROPOS_COMMUNAUTAIRES_A_NE_JAMAIS_RELAYER": "Épisode voisin algérien (générosité de Michel → abus de l'invité → généralisation 'la mentalité des arabes', 'rester entre belges et blancs', 'ces gens-là ne méritent pas notre communauté'). 🔒 RÈGLE PRODUIT RAPPELÉE FERMEMENT : M14 est ouvert à TOUS — c'est verrouillé dans ses valeurs fondatrices et non négociable. Une mauvaise expérience avec UNE personne n'est pas un peuple. Le meilleur ami honni de Michel est musulman ET son grand amour Leïla aussi — sa propre vie contredit la généralisation. Stocké hors app.",
+   "OPINIONS_SANTE_NON_VALIDEES": "Sel/eau de mer 'essentiel car on descend des poissons', sucre 'mensonge', effondrement annoncé de la pharma, énergie libre par induction, énergie solaire perpétuelle gratuite. Classées opinions personnelles — M14 ne relaie que les sources de santé publique validées.",
+   "PHILOSOPHIE_PERSO": "Escargot/coquille : Michel préfère l'hôtel partout dans le monde à une maison-fardeau. Solitude régénératrice (citation Jim Carrey). Vidéo 'cerveau antenne' (Tesla, McCartney, Ramanujan) = sa grille de lecture de son inspiration. École = formatage (vidéo 'complotiste') — nuance produit : le module étudiant M14 reste un COMPLÉMENT de l'école, jamais un discours anti-école. Idée Afrique : M14 pourrait résonner fort en Afrique (philosophie orale) — parquée comme vision long terme, après la Belgique.",
+   "GOUTS": "Admiration Belmondo/Ventura/Brel > acteurs actuels (Pierre Niney cité). Humoriste Gillet déjà noté."
   }
  }
 }
