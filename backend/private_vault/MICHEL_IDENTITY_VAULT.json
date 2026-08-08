@@ -1,18 +1,32 @@
 {
-  "_WARNING": "🔒 FICHIER PRIVÉ — NE JAMAIS SERVIR VIA API PUBLIQUE — NE JAMAIS COPIER DANS UN PACK DÉMO",
-  "_created": "2026-08-07",
-  "_owner": "Michel Pezzuto uniquement",
-  "ancres_identite_avec_reponses_en_clair": {
-    "ANCRE_01_TONY_IDENTITE_COMPLETE": {
-      "question": "Prénom + nom complet + date de naissance de ton frère Tony ?",
-      "reponse_en_clair": "Antonio Tirone, né le 02/10/1968",
-      "hash_sha256": "e2ec95ebac07372f8ae16aa5ff784bc5e39d07968e9574cbc4e100a9ba2872b3"
-    },
-    "ANCRE_02_GRAND_FRERE_DATE": {
-      "question": "Date de naissance de ton grand frère aîné (1965) ?",
-      "reponse_en_clair": "11/12/1965",
-      "hash_sha256": "c595b27a10bd04c6e70187cdd3b1a8bf93ae5718d8805c57ce5676e1ba4b3a42",
-      "note_agent": "Prénom du grand frère non encore fourni par Michel — à compléter ultérieurement."
-    }
+ "_WARNING": "🔒 FICHIER PRIVÉ — NE JAMAIS SERVIR VIA API PUBLIQUE — NE JAMAIS COPIER DANS UN PACK DÉMO",
+ "_created": "2026-08-07",
+ "_owner": "Michel Pezzuto uniquement",
+ "ancres_identite_avec_reponses_en_clair": {
+  "ANCRE_01_TONY_IDENTITE_COMPLETE": {
+   "question": "Prénom + nom complet + date de naissance de ton frère Tony ?",
+   "reponse_en_clair": "Antonio Tirone, né le 02/10/1968",
+   "hash_sha256": "e2ec95ebac07372f8ae16aa5ff784bc5e39d07968e9574cbc4e100a9ba2872b3"
+  },
+  "ANCRE_02_GRAND_FRERE_DATE": {
+   "question": "Date de naissance de ton grand frère aîné (1965) ?",
+   "reponse_en_clair": "11/12/1965",
+   "hash_sha256": "c595b27a10bd04c6e70187cdd3b1a8bf93ae5718d8805c57ce5676e1ba4b3a42",
+   "note_agent": "Prénom du grand frère non encore fourni par Michel — à compléter ultérieurement."
   }
+ },
+ "DOSSIER_CONFIDENTIEL_2000_EUROS_ASSOCIE_2026_08_08": {
+  "note": "Déplacé du JSON public à la demande de Michel (08/08/2026) — ne jamais réintégrer au fichier téléchargeable.",
+  "contenu": {
+   "aveu_michel": "L'argent que cet homme lui a donné (2000€, contexte garde-corps/Bruxmove) a été utilisé par Michel pour financer Emergent/l'application. Michel estime que ça lui donne droit à 50/50... mais prévoit de NE PAS lui dire, et demande à l'agent de garder le secret.",
+   "position_agent_ulysse": "🔴 L'agent ne peut pas conseiller la dissimulation, pour une raison STRATÉGIQUE avant d'être morale : l'ex-meilleur ami est DÉJÀ au courant et a hurlé au téléphone à ce sujet — le secret n'existe plus, il est juste en sursis. S'il sort par la bouche de l'ex-ami, la confiance meurt et le projet avec. Reformulation proposée : en faire l'OUVERTURE du pitch — 'Ton argent a financé la naissance de ce projet. C'est pour ça que tu es le premier à qui je le montre, et que je veux que tu sois le premier à en profiter.' L'aveu contrôlé devient un argument ; l'aveu subi devient une trahison.",
+   "garde_fous_rdv": [
+    "1. SÉPARER les deux sujets : d'abord régler le garde-corps (plan escaliers, engagement clair), PUIS le projet M14. Jamais mélangés dans la même heure.",
+    "2. ZÉRO engagement financier écrit ou chiffré (BAJ) — pas de promesse 50/50 à chaud : 'les parts se définiront avec un cadre légal après le BAJ'",
+    "3. Ne JAMAIS dire 'derniers 100€' (règle déjà actée) ni promettre des millions",
+    "4. Démo simple : lui montrer la mémoire en action, le laisser conclure seul",
+    "5. RDV SOBRE — pas de HHX ce soir ni demain matin (Michel a lui-même demandé à l'agent de le garder sur le droit chemin)"
+   ]
+  }
+ }
 }

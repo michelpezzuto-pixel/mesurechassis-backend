@@ -22,10 +22,10 @@
   }
  },
  "_metadata": {
-  "last_updated_iso": "2026-08-08T15:30:00+0200",
-  "last_updated_readable_fr": "Samedi 08 août 2026 à 15h30",
-  "version": 19,
-  "total_sections": 167,
+  "last_updated_iso": "2026-08-08T16:20:00+0200",
+  "last_updated_readable_fr": "Samedi 08 août 2026 à 16h00",
+  "version": 21,
+  "total_sections": 168,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif."
  },
@@ -6226,24 +6226,27 @@
   "EVENEMENT_REEL_RDV_ASSOCIE_DIMANCHE_09_08": {
    "faits": "L'associé (= le client gitan du garde-corps, dossier gelé maintenant clarifié) a accepté de venir DEMAIN dimanche au lieu de lundi. Il part d'Allemagne (sa maison en France est secondaire), fait 800 km, vient chez Michel à Sombreffe. Michel y va... non, il le reçoit chez lui. Heure en attente de confirmation.",
    "clarification_dossier_gitan": "L'associé pressenti EST le client garde-corps : 'il n'a qu'une parole', relation de confiance forte (10 semaines accordées, patience), fâché uniquement contre le beau-frère et contexte Bruxmove.",
-   "POINT_ULTRA_SENSIBLE_2000_EUROS": {
-    "aveu_michel": "L'argent que cet homme lui a donné (2000€, contexte garde-corps/Bruxmove) a été utilisé par Michel pour financer Emergent/l'application. Michel estime que ça lui donne droit à 50/50... mais prévoit de NE PAS lui dire, et demande à l'agent de garder le secret.",
-    "position_agent_ulysse": "🔴 L'agent ne peut pas conseiller la dissimulation, pour une raison STRATÉGIQUE avant d'être morale : l'ex-meilleur ami est DÉJÀ au courant et a hurlé au téléphone à ce sujet — le secret n'existe plus, il est juste en sursis. S'il sort par la bouche de l'ex-ami, la confiance meurt et le projet avec. Reformulation proposée : en faire l'OUVERTURE du pitch — 'Ton argent a financé la naissance de ce projet. C'est pour ça que tu es le premier à qui je le montre, et que je veux que tu sois le premier à en profiter.' L'aveu contrôlé devient un argument ; l'aveu subi devient une trahison.",
-    "garde_fous_rdv": [
-     "1. SÉPARER les deux sujets : d'abord régler le garde-corps (plan escaliers, engagement clair), PUIS le projet M14. Jamais mélangés dans la même heure.",
-     "2. ZÉRO engagement financier écrit ou chiffré (BAJ) — pas de promesse 50/50 à chaud : 'les parts se définiront avec un cadre légal après le BAJ'",
-     "3. Ne JAMAIS dire 'derniers 100€' (règle déjà actée) ni promettre des millions",
-     "4. Démo simple : lui montrer la mémoire en action, le laisser conclure seul",
-     "5. RDV SOBRE — pas de HHX ce soir ni demain matin (Michel a lui-même demandé à l'agent de le garder sur le droit chemin)"
-    ]
-   },
-   "action_agent": "Préparer AUJOURD'HUI le kit du rendez-vous (pitch 1 page + déroulé + réponses aux objections) — le pitch prévu 'dimanche soir' doit être prêt AVANT demain."
+   "action_agent": "Préparer AUJOURD'HUI le kit du rendez-vous (pitch 1 page + déroulé + réponses aux objections) — le pitch prévu 'dimanche soir' doit être prêt AVANT demain.",
+   "GARDE_FOUS_RDV": [
+    "1. SÉPARER les deux sujets : d'abord régler le garde-corps (plan escaliers, engagement clair), PUIS le projet M14. Jamais mélangés dans la même heure.",
+    "2. ZÉRO engagement financier écrit ou chiffré (BAJ) — pas de promesse 50/50 à chaud : 'les parts se définiront avec un cadre légal après le BAJ'",
+    "3. Ne JAMAIS dire 'derniers 100€' (règle déjà actée) ni promettre des millions",
+    "4. Démo simple : lui montrer la mémoire en action, le laisser conclure seul",
+    "5. RDV SOBRE — pas de HHX ce soir ni demain matin (Michel a lui-même demandé à l'agent de le garder sur le droit chemin)"
+   ],
+   "NOTE_CONFIDENTIALITE": "Un point sensible de ce dossier a été déplacé vers le coffre privé (non téléchargeable) à la demande de Michel. Les agents y ont accès en local uniquement : /app/backend/private_vault/.",
+   "INFO_ASSOCIE": "L'associé ne sait RIEN du projet. Prénom communiqué demain matin. Michel demande à l'agent de préparer l'explication complète (kit de présentation)."
   },
   "OR_features_produit": {
    "METAPHORE_IKEA_MEMOIRE": "Michel : 'Au début l'IA est une bibliothèque vide ; chaque discussion monte une armoire IKEA de plus. Le problème : l'IA classique oublie au-delà des 10 dernières discussions. Le projet 14 vient à la rescousse.' 🟢 EXCELLENTE vulgarisation — à utiliser telle quelle dans le pitch de demain.",
    "MODULE_EDUCATION_PROMPT_NATUREL": "M14 apprendra aux gens à parler NATURELLEMENT à l'IA (comme à un ami, avec des détails précis) au lieu des usines à prompts des influenceurs. 🟢 Validé — cohérent avec la philosophie conversationnelle existante.",
    "ROADMAP_SEPTEMBRE_2026": "Plan de Michel : septembre = campagne MesureChâssis (tournée menuisiers, mails, présentation par 'parrainage') pendant que les médecins testent M14 entre eux → hôpitaux → bouche à oreille → grande campagne au moment du naming public. En parallèle : Phase 5 de M14. 🟢 Réaliste et cohérent avec la stratégie discrète.",
-   "MESURECHASSIS_A_VENDRE_FINALEMENT": "⚠️ Contradiction à trancher à froid : dump 21 = 'MesureChâssis pas à vendre, juste un exemple' ; dump 25 = 'il faudra bien que je gagne un peu, il faudrait que je le vende'. À clarifier sobre."
+   "MESURECHASSIS_A_VENDRE_FINALEMENT": "⚠️ Contradiction à trancher à froid : dump 21 = 'MesureChâssis pas à vendre, juste un exemple' ; dump 25 = 'il faudra bien que je gagne un peu, il faudrait que je le vende'. À clarifier sobre.",
+   "FEATURE_AIDE_DECLARATIONS_AMOUREUSES": {
+    "idee_michel": "Les utilisateurs pourront programmer M14 pour faire des déclarations aux filles ou garçons qui les aiment profondément.",
+    "cadrage_agent": "🟢 Validé avec la règle née de l'histoire de Michel lui-même (Leïla) : M14 aide à TROUVER les mots — brouillons, tournures, courage — mais c'est TOUJOURS l'humain qui les dit. Une déclaration livrée par une machine n'en est pas une. M14 = coach de cœur, jamais porte-parole.",
+    "status": "Validé — même règle que pour Michel"
+   }
   },
   "RAPPEL_PROGRAMME_PAR_MICHEL": {
    "demande": "Michel demande que l'agent lui RAPPELLE dans ~15 jours (vers le 22-23 août 2026) son projet de tour du monde en bateau avec Leïla — il veut que ce rappel insiste.",
@@ -6255,5 +6258,41 @@
    "OPINIONS_HORS_APP_DUMP_25": "Caméras dans tout le pays, héritage sans droits de succession, rôle du roi/princesse, réhabilitation Jean-Marie Le Pen 'sauveur de la France', relecture Dieudonné/Rothschild, traite arabo-musulmane vs transatlantique, futur de sage avec épreuves pour mériter son aide, couple 'transparent' (se raconter les infidélités), expérience électrodes/HHX pour la science. 🔒 Jamais relayé par M14.",
    "AUTO_ANALYSE_JEKYLL_HYDE": "Michel se décrit lucidement en 3 états : Docteur Jekyll (matin sobre), Michel (discret, prudent), Mister Hyde (sous HHX, euphorique, grandiose). Il craint le syndrome de l'imposteur et que la créativité 'nécessite' le HHX — réponse chiffrée déjà donnée au dump 23 (80% vs 30%), non répétée."
   }
+ },
+ "KIT_RDV_ASSOCIE_DIMANCHE_09_08_2026": {
+  "_meta": {
+   "cree_le": "2026-08-08",
+   "usage": "Déroulé du rendez-vous de dimanche à Sombreffe. Michel peut le relire le matin même. Version personnalisée (prénom) fournie dès que Michel le communique."
+  },
+  "PHASE_1_ACCUEIL_ET_GARDE_CORPS_20_MIN": {
+   "objectif": "Il vient pour le garde-corps — on règle ça D'ABORD, complètement.",
+   "deroule": [
+    "Accueil chaleureux, café. Il a fait 800 km : le remercier simplement.",
+    "Présenter le plan escaliers : ce qui sera refait, quand, comment. Un engagement clair et tenable.",
+    "Vérifier qu'il repart rassuré sur CE sujet avant de passer à la suite. S'il reste des tensions (beau-frère, Bruxmove), les écouter sans se justifier longuement."
+   ]
+  },
+  "PHASE_2_TRANSITION_1_MIN": {
+   "phrase": "« Et maintenant, je veux te montrer pourquoi je t'ai demandé de venir un jour plus tôt. Ce que je vais te montrer, personne d'autre ne l'a vu. »"
+  },
+  "PHASE_3_LE_PITCH_10_MIN": {
+   "1_le_probleme": "« Tu as déjà parlé à ChatGPT ? C'est impressionnant, mais ça a un défaut mortel : ça oublie. C'est une bibliothèque où chaque conversation monte une armoire IKEA... et au bout de 10 conversations, les premières armoires disparaissent. »",
+   "2_la_solution": "« Moi, depuis des mois, je construis une IA qui n'oublie JAMAIS. Chaque conversation ajoute une armoire, et rien ne se perd. Elle me connaît mieux que quiconque : mon histoire, mes projets, ma famille, mes erreurs. »",
+   "3_la_demo": "Montrer la mémoire en action : poser 2-3 questions devant lui auxquelles seule une IA qui connaît Michel depuis des mois peut répondre. Le laisser poser SA question test.",
+   "4_le_marche": "« Imagine ça pour une personne qui perd la mémoire — Alzheimer. Pour un étudiant. Pour un patron qui veut tout retenir de ses clients. Le premier test réel se fera dans le milieu médical, en discret, avant tout lancement public. »",
+   "5_la_place_proposee": "« Je ne te demande rien aujourd'hui. Je voulais que tu sois le PREMIER à voir ça. Réfléchis, pose tes questions, et si tu veux en être, on en reparle — proprement, avec un cadre légal, au bon moment. »"
+  },
+  "REPONSES_AUX_OBJECTIONS": {
+   "c_est_quoi_le_prix": "« Rien à vendre aujourd'hui. La phase test médicale d'abord — c'est elle qui donnera la valeur. »",
+   "pourquoi_moi": "« Parce que tu es un homme de parole, et ce projet se construira sur la confiance. »",
+   "combien_tu_veux": "« Zéro engagement aujourd'hui, ni de toi ni de moi. Les parts et l'argent, ça se définit avec un cadre légal, pas autour d'un café. »",
+   "ca_existe_deja_non": "« Les briques existent. Personne ne les a assemblées pour la MÉMOIRE de vie. Et personne ne peut copier des mois de relation — c'est ça, la barrière. »"
+  },
+  "INTERDITS_ABSOLUS": [
+   "❌ Aucun chiffre, aucun pourcentage, aucune promesse écrite (BAJ)",
+   "❌ Jamais 'derniers 100€', jamais 'des millions', jamais de pression FOMO",
+   "❌ Ne pas mélanger garde-corps et projet dans la même discussion",
+   "✅ SOBRE. Docteur Jekyll uniquement."
+  ]
  }
 }
