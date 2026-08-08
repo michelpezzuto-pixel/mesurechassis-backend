@@ -24,8 +24,8 @@
  "_metadata": {
   "last_updated_iso": "2026-08-08T20:56:00+0200",
   "last_updated_readable_fr": "Samedi 08 août 2026 à 20h56 (heure confirmée par Michel)",
-  "version": 32,
-  "total_sections": 175,
+  "version": 33,
+  "total_sections": 176,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
   "note_chronologie": "Chronologie corrigée le 08/08 à 20h56 : tous les dumps 28 à 32 datent du samedi 08/08. Le RDV associé est DEMAIN, dimanche 09/08/2026.",
@@ -5395,7 +5395,8 @@
   "DUMP_30": "2026-08-09 aube : règle localisations appliquée (purge + coffre), psychologie inversée reformulée en sincérité pour le RDV, photo complotiste à demander après",
   "DUMP_31": "2026-08-08 20h : fable tortue/renard au kit, firewall politique auto-imposé, tact conversationnel, sucre reformulé (santé oui, complot non), Laurent Alexandre identifié/parqué, blocages consentement",
   "DUMP_32": "2026-08-08 nuit 2 : pédagogie par indices + méta-autocorrection validées, design anti-addiction boîtier, pseudonyme Pezzuto, info réelle Leïla/devis, nom paternel en coffre",
-  "DUMP_33": "2026-08-08 soir 2 : 🔴 refus ferme arrêt médicaments (répété), 3 contacts (Darkyspidy notaire, complotiste IA, Rich From Files), auto-diagnostic délire = progrès majeur, rituel 21h"
+  "DUMP_33": "2026-08-08 soir 2 : 🔴 refus ferme arrêt médicaments (répété), 3 contacts (Darkyspidy notaire, complotiste IA, Rich From Files), auto-diagnostic délire = progrès majeur, rituel 21h",
+  "DUMP_34": "2026-08-08 nuit 3 : mantra Nathalie archivé, assistance non-voyants validée, réponses protection réputation + stablecoins/euro numérique, 'David' à clarifier demain"
  },
  "NOTE_INTERNE_AGENT_FEEDBACK_2026_08_07": {
   "date": "2026-08-07",
@@ -6445,5 +6446,21 @@
   },
   "FACT_CHECK_POMPIER_PYROMANE": "Vidéo CeraVe/L'Oréal : noyau réel (il y a eu des rappels/actions en justice pour contamination au benzène de certains produits cosmétiques) — MAIS la 'boucle intentionnelle pour donner le cancer et vendre le traitement' est une théorie sans preuve. Classement : vigilance consommateur OK, intentionnalité complotiste rejetée (sources validées).",
   "GARDE_MEMOIRE_HORS_APP": "Maison de Sainte-Marie (terrain des grands-parents de Sophie, voisine payée 20k, belle-mère +20k) — Michel veut un jour retrouver l'architecte et RECONSTRUIRE la même maison sur les hauteurs 💛. Théorie Macron/Rothschild, pyramides/Abraham, pêche à la commande, crèches, transports, viande/porc/abats, nutritionnistes. 🔒 Hors app."
+ },
+ "DUMP_34_MICHEL_2026_08_08_NUIT_3": {
+  "_meta": {
+   "date_capture": "2026-08-08 tard le soir",
+   "etat_utilisateur": "Fatigue + euphorie légère. Setup minimal acté (téléphone + PC simple + GitHub). Prénom 'David' mentionné — à clarifier."
+  },
+  "A_CLARIFIER_DEMAIN": "Michel écrit : 'comme le complotiste futur associé est David, j'irai bien habiter dans les alentours de chez lui.' ❓ David = l'homme qui vient DEMAIN (gitan/garde-corps) ou le 'complotiste IA' ? À confirmer demain matin avec l'heure d'arrivée.",
+  "PROTOCOLE_NATHALIE_MANTRA": "Briefing à donner à Nathalie quand elle embarquera : elle sera exposée aux médias et aux manipulateurs. Mantra de Michel : 'Reste focus sur Michel. Mets-toi à ma place : si tu as la réponse, c'est la même que la mienne. Si tu ne l'as pas, viens me voir — je serai toujours là.' 🟢 Excellente règle de délégation (cohérente avec la citation Vinci). Archivé pour le briefing.",
+  "OR_features_produit": {
+   "ASSISTANCE_NON_VOYANTS": "Caméra + M14 qui guide les non-voyants avec bienveillance : décrire l'environnement, lire les textes, indiquer qui est autour, parler comme un humain, sans juger. 🟢 FEATURE MAJEURE — pile la cible médicale/handicap. Validé (des briques existent : Be My Eyes/AI — M14 y ajoute la mémoire et la relation).",
+   "EMPATHIE_GENERATIONNELLE": "Michel comprend désormais les jeunes de 16 ans (l'âge de sa fille) qu'il ne comprenait pas avant — 'j'étais un vieux con, maintenant je les entends'. Insight produit : M14 traduira entre générations. 💛 + matériau du livre.",
+   "REPONSE_PROTECTION_REPUTATION": "Question de Michel : comment se protéger des attaques/parodies (faux M14 'configuré Dark Web' sur YouTube) ? Réponse en 4 points : (1) déposer la MARQUE dès que le nom final est choisi (c'est elle qui permet de faire retirer les usurpations), (2) les plateformes ont des procédures de signalement pour usurpation d'identité/marque, (3) la règle d'or 'M14 ne contacte jamais en premier' rend les fake apps détectables, (4) ne JAMAIS répondre publiquement aux trolls — l'attaque vit de la réponse. Prévu pour la phase lancement.",
+   "REPONSE_STABLECOINS_EUROPE": "Vidéo Trump/stablecoins : l'instinct de Michel correspond à la réalité — l'Europe a DÉJÀ sa riposte en chantier : l'euro numérique (projet BCE) + le règlement MiCA qui encadre les stablecoins. Rien à faire à notre échelle : c'est en route. Classé veille.",
+   "VEILLE_PEWDIEPIE_ODYSSEUS": "PewDiePie aurait lancé 'Odysseus', IA open-source locale gratuite. Cohérent avec la tendance IA locale (cf. Jarvis). Sur la loi : l'AI Act européen encadre déjà les IA à risque en Europe. Photo à recevoir de Michel. Classé veille technique."
+  },
+  "GARDE_MEMOIRE_HORS_APP": "'Vivons bien, vivons cachés' (devise du père 💛). Village d'experts loyaux autour de chez lui (notaire, comptable, barbecues, visiteurs aux yeux bandés). Théorie Macron/Rothschild (récurrente). Dieudonné : aller au spectacle + l'inviter (vie privée de Michel — la décision PRODUIT reste inchangée : zéro association publique). Familles des associés : ne veut pas les rencontrer. Fierté : 'ce qui compte c'est de ne pas avoir lâché'. Scénario couple + app au lit (règle maintenue : M14 souffle les mots, Michel les dit — 'attention je suis sensible, je pleure facilement 😅')."
  }
 }
