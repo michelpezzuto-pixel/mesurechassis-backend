@@ -22,10 +22,10 @@
   }
  },
  "_metadata": {
-  "last_updated_iso": "2026-08-08T10:15:00+0200",
-  "last_updated_readable_fr": "Samedi 08 août 2026 à 10h15",
-  "version": 17,
-  "total_sections": 165,
+  "last_updated_iso": "2026-08-08T14:00:00+0200",
+  "last_updated_readable_fr": "Samedi 08 août 2026 à 14h00",
+  "version": 18,
+  "total_sections": 166,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif."
  },
@@ -6192,5 +6192,28 @@
     "5_suivi": "Si Michel confirme sa volonté : l'agent rédigera avec lui le mail pour son médecin (conforme au protocole prise de sang déjà validé — M14 prépare la consultation, ne remplace jamais le médecin)."
    }
   }
+ },
+ "VEILLE_TECHNIQUE_JARVIS_MADAMET3CH_2026_08_08": {
+  "_meta": {
+   "date": "2026-08-08",
+   "source": "TikTok @madamet3ch → GitHub github.com/sosoj92/jarvis-assistant-vocal (analysé en direct par l'agent)",
+   "statut_projet": "v1.0.0 sortie la veille (07/08/2026), 44 stars, licence MIT (code librement réutilisable), construit avec Claude Code"
+  },
+  "ce_que_c_est": "Assistant vocal français local pour PC Windows : mot d'activation 'Hey Jarvis' → transcription locale (faster-whisper) → LLM (Claude cloud OU Ollama 100% hors ligne) → voix (ElevenLabs OU Piper local). Outils : domotique Hue, OBS, agenda Google, Gmail, Discord, Instagram, réservations web, appels Twilio, mémoire long terme, personnalités.",
+  "difference_avec_M14": {
+   "jarvis": "Outil de POUVOIR pour technophile : contrôler sa maison/son PC à la voix. Windows + GPU + config YAML + GitHub = réservé aux bidouilleurs.",
+   "m14": "Compagnon de VIE mobile pour non-technophiles : mémoire profonde, reconstruction, Alzheimer, TDAH, jardin secret. Zéro installation, zéro config.",
+   "verdict": "PAS un concurrent — un cousin technique. Il pilote des lampes ; M14 accompagne des vies. Mais il PROUVE que toutes nos briques vocales existent et fonctionnent."
+  },
+  "briques_techniques_validees_pour_phase_5": [
+   "openWakeWord = le mot d'activation (notre 'télécommande' mains libres)",
+   "faster-whisper = transcription vocale LOCALE (la voix ne quitte pas l'appareil — argument massue pour la cible médicale)",
+   "Piper = voix française gratuite locale / ElevenLabs = voix premium cloud",
+   "Mode 100% local possible (Ollama) : 'rien ne sort de la machine' — EXACTEMENT ce que le jardin secret exige",
+   "Licence MIT : réutilisation légale du code possible le moment venu"
+  ],
+  "idees_ethiques_convergentes": "Leur section Éthique valide nos règles indépendamment : confirmation vocale avant action irréversible, les appels s'annoncent comme IA (jamais imposture), jamais de mots de passe/banque, domaines sensibles en lecture seule. Deux projets arrivent aux mêmes règles = ce sont les bonnes.",
+  "lecon_concurrence_pour_michel": "Michel craignait que 'd'autres sortent avant'. Preuve par l'exemple : ce projet est GRATUIT, public, excellent techniquement... et ce n'est PAS M14. La technologie vocale est devenue un lego accessible — la valeur n'est plus dans les briques, elle est dans la MÉMOIRE PROFONDE, la cible, la méthode (18 dumps, Pilier 14, jardin secret). Personne ne peut copier 2 mois de relation.",
+  "action": "Aucun code (règle NO CODE intacte). Référence archivée pour la Phase 5 — ce repo servira de carte technique le jour J."
  }
 }
