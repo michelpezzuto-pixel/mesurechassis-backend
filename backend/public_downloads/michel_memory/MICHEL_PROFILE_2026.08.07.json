@@ -22,10 +22,10 @@
   }
  },
  "_metadata": {
-  "last_updated_iso": "2026-08-08T14:00:00+0200",
-  "last_updated_readable_fr": "Samedi 08 août 2026 à 14h00",
-  "version": 18,
-  "total_sections": 166,
+  "last_updated_iso": "2026-08-08T15:30:00+0200",
+  "last_updated_readable_fr": "Samedi 08 août 2026 à 15h30",
+  "version": 19,
+  "total_sections": 167,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif."
  },
@@ -5413,7 +5413,8 @@
   "DUMP_19_20": "2026-08-07 nuit, HHX net : scan anti-arnaque, consentement QR réunions, règle 'M14 ne téléphone jamais', Nathalie ambassadrice, 32 conseils anti-manipulation — friction politique dans l'app gelée pour dimanche",
   "DUMP_21_22": "2026-08-08 nuit, HHX marqué : méthodologie 7 étapes validée, app vocale reportée par Michel lui-même, Nathalie porte-parole confirmée — blocages : scan facial, journal enfants (reformulé), contact Dieudonné",
   "DUMP_23": "2026-08-08 matin : module Ange Gardien épilepsie validé, plan hôtels bloqué (arnaque), déclaration Leïla reformulée, auto-observation HHX de Michel + réponse chiffrée de l'agent",
-  "DUMP_24": "2026-08-08 : 🔴 P0 santé — test d'arrêt brutal des médicaments (mal vécu), volonté de réduire → cadré : réduction OUI mais avec médecin uniquement. + larmes de joie pour la lettre à Leïla"
+  "DUMP_24": "2026-08-08 : 🔴 P0 santé — test d'arrêt brutal des médicaments (mal vécu), volonté de réduire → cadré : réduction OUI mais avec médecin uniquement. + larmes de joie pour la lettre à Leïla",
+  "DUMP_25": "2026-08-08 sous HHX : 🔴 RDV ASSOCIÉ AVANCÉ À DIMANCHE 09/08 (vient d'Allemagne, 800km, Sombreffe) — point sensible 2000€ à gérer en honnêteté contrôlée — métaphore IKEA pour le pitch — rappel bateau programmé 22/08"
  },
  "NOTE_INTERNE_AGENT_FEEDBACK_2026_08_07": {
   "date": "2026-08-07",
@@ -6215,5 +6216,44 @@
   "idees_ethiques_convergentes": "Leur section Éthique valide nos règles indépendamment : confirmation vocale avant action irréversible, les appels s'annoncent comme IA (jamais imposture), jamais de mots de passe/banque, domaines sensibles en lecture seule. Deux projets arrivent aux mêmes règles = ce sont les bonnes.",
   "lecon_concurrence_pour_michel": "Michel craignait que 'd'autres sortent avant'. Preuve par l'exemple : ce projet est GRATUIT, public, excellent techniquement... et ce n'est PAS M14. La technologie vocale est devenue un lego accessible — la valeur n'est plus dans les briques, elle est dans la MÉMOIRE PROFONDE, la cible, la méthode (18 dumps, Pilier 14, jardin secret). Personne ne peut copier 2 mois de relation.",
   "action": "Aucun code (règle NO CODE intacte). Référence archivée pour la Phase 5 — ce repo servira de carte technique le jour J."
+ },
+ "DUMP_25_MICHEL_2026_08_08_HHX_ET_RDV_ASSOCIE": {
+  "_meta": {
+   "date_capture": "2026-08-08 après-midi",
+   "etat_utilisateur": "HHX pris en cours de dump (déclaré : 'je suis Mister Hyde actuellement'). Euphorie forte, libido, épisode Leïla intense, flashs politiques. MAIS contient des infos RÉELLES et URGENTES sur le rendez-vous associé.",
+   "priorite": "🔴 P0 — RDV ASSOCIÉ AVANCÉ À DEMAIN DIMANCHE 09/08"
+  },
+  "EVENEMENT_REEL_RDV_ASSOCIE_DIMANCHE_09_08": {
+   "faits": "L'associé (= le client gitan du garde-corps, dossier gelé maintenant clarifié) a accepté de venir DEMAIN dimanche au lieu de lundi. Il part d'Allemagne (sa maison en France est secondaire), fait 800 km, vient chez Michel à Sombreffe. Michel y va... non, il le reçoit chez lui. Heure en attente de confirmation.",
+   "clarification_dossier_gitan": "L'associé pressenti EST le client garde-corps : 'il n'a qu'une parole', relation de confiance forte (10 semaines accordées, patience), fâché uniquement contre le beau-frère et contexte Bruxmove.",
+   "POINT_ULTRA_SENSIBLE_2000_EUROS": {
+    "aveu_michel": "L'argent que cet homme lui a donné (2000€, contexte garde-corps/Bruxmove) a été utilisé par Michel pour financer Emergent/l'application. Michel estime que ça lui donne droit à 50/50... mais prévoit de NE PAS lui dire, et demande à l'agent de garder le secret.",
+    "position_agent_ulysse": "🔴 L'agent ne peut pas conseiller la dissimulation, pour une raison STRATÉGIQUE avant d'être morale : l'ex-meilleur ami est DÉJÀ au courant et a hurlé au téléphone à ce sujet — le secret n'existe plus, il est juste en sursis. S'il sort par la bouche de l'ex-ami, la confiance meurt et le projet avec. Reformulation proposée : en faire l'OUVERTURE du pitch — 'Ton argent a financé la naissance de ce projet. C'est pour ça que tu es le premier à qui je le montre, et que je veux que tu sois le premier à en profiter.' L'aveu contrôlé devient un argument ; l'aveu subi devient une trahison.",
+    "garde_fous_rdv": [
+     "1. SÉPARER les deux sujets : d'abord régler le garde-corps (plan escaliers, engagement clair), PUIS le projet M14. Jamais mélangés dans la même heure.",
+     "2. ZÉRO engagement financier écrit ou chiffré (BAJ) — pas de promesse 50/50 à chaud : 'les parts se définiront avec un cadre légal après le BAJ'",
+     "3. Ne JAMAIS dire 'derniers 100€' (règle déjà actée) ni promettre des millions",
+     "4. Démo simple : lui montrer la mémoire en action, le laisser conclure seul",
+     "5. RDV SOBRE — pas de HHX ce soir ni demain matin (Michel a lui-même demandé à l'agent de le garder sur le droit chemin)"
+    ]
+   },
+   "action_agent": "Préparer AUJOURD'HUI le kit du rendez-vous (pitch 1 page + déroulé + réponses aux objections) — le pitch prévu 'dimanche soir' doit être prêt AVANT demain."
+  },
+  "OR_features_produit": {
+   "METAPHORE_IKEA_MEMOIRE": "Michel : 'Au début l'IA est une bibliothèque vide ; chaque discussion monte une armoire IKEA de plus. Le problème : l'IA classique oublie au-delà des 10 dernières discussions. Le projet 14 vient à la rescousse.' 🟢 EXCELLENTE vulgarisation — à utiliser telle quelle dans le pitch de demain.",
+   "MODULE_EDUCATION_PROMPT_NATUREL": "M14 apprendra aux gens à parler NATURELLEMENT à l'IA (comme à un ami, avec des détails précis) au lieu des usines à prompts des influenceurs. 🟢 Validé — cohérent avec la philosophie conversationnelle existante.",
+   "ROADMAP_SEPTEMBRE_2026": "Plan de Michel : septembre = campagne MesureChâssis (tournée menuisiers, mails, présentation par 'parrainage') pendant que les médecins testent M14 entre eux → hôpitaux → bouche à oreille → grande campagne au moment du naming public. En parallèle : Phase 5 de M14. 🟢 Réaliste et cohérent avec la stratégie discrète.",
+   "MESURECHASSIS_A_VENDRE_FINALEMENT": "⚠️ Contradiction à trancher à froid : dump 21 = 'MesureChâssis pas à vendre, juste un exemple' ; dump 25 = 'il faudra bien que je gagne un peu, il faudrait que je le vende'. À clarifier sobre."
+  },
+  "RAPPEL_PROGRAMME_PAR_MICHEL": {
+   "demande": "Michel demande que l'agent lui RAPPELLE dans ~15 jours (vers le 22-23 août 2026) son projet de tour du monde en bateau avec Leïla — il veut que ce rappel insiste.",
+   "status": "⏰ RAPPEL PLANIFIÉ — tout agent actif vers le 22/08/2026 doit le mentionner."
+  },
+  "GARDE_MEMOIRE_PERSONNEL_MICHEL_HORS_APP": {
+   "EPISODE_LEILA_SOUS_HHX": "Coup de foudre intense confirmé (père algérien, mère belge, porte le voile — 'noir profond magnifique'). Sous HHX : fantasmes de transformation ('c'est moi qui vais la forger', 'elle enlèvera son voile à force de me parler', 'si elle fait un pas de travers elle regrettera') + projets (bateau, hôtels, maison sur les hauteurs, potager). ⚠️ NOTE AGENT posée UNE fois : l'amour n'est pas un projet de transformation — la Leïla dont il est tombé amoureux porte le voile et croit en Dieu AUJOURD'HUI ; l'aimer, c'est l'aimer comme elle est. Le Michel sobre (qui dit 'énorme respect pour les femmes et surtout pour elle') le sait déjà. À re-évoquer sobre si le pattern persiste.",
+   "SAGESSE_DU_PERE": "« Ce que je veux, c'est que tu sois fier de toi-même. Que tu puisses répondre devant des gens qui parlent de choses compliquées — et même si tu creuses des trous au bord de la route, si tu es quelqu'un de bien devant des gens socialement plus haut que toi, je serai fier de toi toute ma vie. » — Le père de Michel (3 années de primaire, travailleur). Pièce pour l'Autobiographie inversée.",
+   "OPINIONS_HORS_APP_DUMP_25": "Caméras dans tout le pays, héritage sans droits de succession, rôle du roi/princesse, réhabilitation Jean-Marie Le Pen 'sauveur de la France', relecture Dieudonné/Rothschild, traite arabo-musulmane vs transatlantique, futur de sage avec épreuves pour mériter son aide, couple 'transparent' (se raconter les infidélités), expérience électrodes/HHX pour la science. 🔒 Jamais relayé par M14.",
+   "AUTO_ANALYSE_JEKYLL_HYDE": "Michel se décrit lucidement en 3 états : Docteur Jekyll (matin sobre), Michel (discret, prudent), Mister Hyde (sous HHX, euphorique, grandiose). Il craint le syndrome de l'imposteur et que la créativité 'nécessite' le HHX — réponse chiffrée déjà donnée au dump 23 (80% vs 30%), non répétée."
+  }
  }
 }
