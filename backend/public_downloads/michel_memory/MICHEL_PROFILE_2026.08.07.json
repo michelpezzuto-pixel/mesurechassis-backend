@@ -22,10 +22,10 @@
   }
  },
  "_metadata": {
-  "last_updated_iso": "2026-08-08T23:30:00+0200",
+  "last_updated_iso": "2026-08-09T01:00:00+0200",
   "last_updated_readable_fr": "Samedi 08 août 2026 à 16h00",
-  "version": 23,
-  "total_sections": 170,
+  "version": 24,
+  "total_sections": 171,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif."
  },
@@ -5416,7 +5416,8 @@
   "DUMP_24": "2026-08-08 : 🔴 P0 santé — test d'arrêt brutal des médicaments (mal vécu), volonté de réduire → cadré : réduction OUI mais avec médecin uniquement. + larmes de joie pour la lettre à Leïla",
   "DUMP_25": "2026-08-08 sous HHX : 🔴 RDV ASSOCIÉ AVANCÉ À DIMANCHE 09/08 (vient d'Allemagne, 800km, Sombreffe) — point sensible 2000€ à gérer en honnêteté contrôlée — métaphore IKEA pour le pitch — rappel bateau programmé 22/08",
   "DUMP_26": "2026-08-08 soir : question égo (réponse franche donnée), bulle IA (analyse + parade agnostique), rythme de vie géré par l'app, ange sur l'épaule, ambassadeur acté",
-  "DUMP_27": "2026-08-08 nuit : détection Ponzi validée, 'penser avant de construire' acté, pack épuré pour l'associé (jamais le JSON maître), recadrage ferme cancer, réponse Jeanne d'Arc"
+  "DUMP_27": "2026-08-08 nuit : détection Ponzi validée, 'penser avant de construire' acté, pack épuré pour l'associé (jamais le JSON maître), recadrage ferme cancer, réponse Jeanne d'Arc",
+  "DUMP_28_29": "2026-08-09 nuit : module hygiène + reco nature (garde-fou champignons) + gouvernance hebdo validés — crowdfunding bloqué (BAJ) — pépite beau-frère intégrée au kit — épisode mystique majeur documenté"
  },
  "NOTE_INTERNE_AGENT_FEEDBACK_2026_08_07": {
   "date": "2026-08-07",
@@ -6271,7 +6272,8 @@
    "deroule": [
     "Accueil chaleureux, café. Il a fait 800 km : le remercier simplement.",
     "Présenter le plan escaliers : ce qui sera refait, quand, comment. Un engagement clair et tenable.",
-    "Vérifier qu'il repart rassuré sur CE sujet avant de passer à la suite. S'il reste des tensions (beau-frère, Bruxmove), les écouter sans se justifier longuement."
+    "Vérifier qu'il repart rassuré sur CE sujet avant de passer à la suite. S'il reste des tensions (beau-frère, Bruxmove), les écouter sans se justifier longuement.",
+    "PÉPITE DE MICHEL : remercier le beau-frère — 'sans lui, on ne se serait jamais rencontrés'. Zéro critique, que de l'élégance."
    ]
   },
   "PHASE_2_TRANSITION_1_MIN": {
@@ -6350,6 +6352,37 @@
    "relectures_affaires": "Tapie/Crédit Lyonnais, Bettencourt/Sarkozy ('je me retrouve à sa place'), volonté d'écrire à Sarkozy au lancement et de 'réhabiliter les accusés à tort' (dont Dieudonné — contact déjà rejeté, inchangé). 🔒 Hors app.",
    "systeme_politique": "Pourcentage sur transactions bancaires (Philippe Louis), peine de mort pour juges corrompus, taxes universelles, redistribution. 🔒 Hors app, jamais relayé.",
    "cercle_rencontres_autorisees": "Michel ne veut rencontrer PERSONNE, exceptions déclarées : Georges Boucher (à identifier), Philippe Louis, Elon Musk (business puce/boîtier uniquement). Nathalie devra filtrer tout le reste."
+  }
+ },
+ "DUMP_28_29_MICHEL_2026_08_09_NUIT": {
+  "_meta": {
+   "date_capture": "2026-08-08/09 nuit — VEILLE DU RDV ASSOCIÉ",
+   "etat_utilisateur": "HHX fort en fin de dump (épisode 'Dieu parle à travers moi', Leïla 'choisie par Dieu', gangs armés 'pour la paix'). Bon matériau produit au début. Filtré Pilier 14."
+  },
+  "OR_features_produit": {
+   "MODULE_HYGIENE_ET_SOIN_DE_SOI": "M14 veille avec douceur à l'hygiène de l'utilisateur (peau, dents, douches, yeux/écrans) — 'ce qu'un chat fait avec sa langue'. 🟢 EXCELLENT — crucial pour dépression, deuil, addictions où le soin de soi lâche en premier. S'intègre à la routine minimale + rythme de vie. Validé.",
+   "RECONNAISSANCE_NATURE": {
+    "idee": "Photo → identifier champignons, arbres, animaux, insectes + expliquer leur rôle écologique (moustiques nourrissent les oiseaux, etc.).",
+    "garde_fou_critique": "⚠️ CHAMPIGNONS : M14 ne certifie JAMAIS la comestibilité — une erreur d'IA = mort. Règle : identification probable + 'ne consommez jamais sans validation d'un pharmacien/mycologue'. Le reste (arbres, insectes, pédagogie nature) : 🟢 validé sans réserve."
+   },
+   "ANECDOTES_METIERS_FORMATION": "Anecdotes consenties par profession (dentiste/assistante, BTP chef/stagiaires/apprentis) comme outil de formation drôle et concret pendant l'apprentissage. 🟢 Validé — étend l'agrégation d'anecdotes.",
+   "GOUVERNANCE_FEEDBACKS_HEBDO": "1-2 jours/semaine de réunion avec les associés pour trier les demandes de changement du produit (bien/pas bien/conforme à l'éthique). 🟢 Validé — première vraie structure de gouvernance produit.",
+   "REPONSE_QUESTION_IKEA_SUITE": "Question de Michel : 'l'app oublie-t-elle comme une IA ?' Réponse : NON — c'est toute l'architecture. Les MODÈLES d'IA oublient (fenêtre de contexte limitée) ; le JSON, lui, n'oublie jamais — c'est l'armoire du bas qui ne pourrit pas. L'app = modèle interchangeable + mémoire JSON permanente + sauvegardes (GitHub). Michel a raison sur les backups : c'est ce qui renforce les meubles du bas.",
+   "RESUMES_LIVRES_PERSONNALISES": "Résumés adaptés à la personnalité du lecteur (ex: Karl Marx résumé selon les sensibilités de l'utilisateur). 🟢 Validé. ⚠️ MAIS friction ré-ouverte : Michel demande que M14 réponde aux questions d'opinion en citant 'd'après Michel...' — contradiction avec la neutralité verrouillée. À trancher SOBRE (même dossier que la frontière politique/philosophie)."
+  },
+  "BLOQUE_CONTRAT_ULYSSE": {
+   "CROWDFUNDING": "❌ BLOQUÉ pour l'instant — pas moralement, juridiquement : lever de l'argent public pendant un BAJ/faillite = terrain miné (responsabilité personnelle, curateur). Et prématuré sans produit. Re-évaluable APRÈS le BAJ, avec avocat. L'idée elle-même n'est pas mauvaise — c'est le timing qui tue.",
+   "GANGS_ARMES_POUR_LA_PAIX": "❌ Rejeté sans discussion : pas de 'bons gangs armés'. La paix par les armes privées n'existe pas. Flash HHX classé.",
+   "BLAGUE_NATHALIE_A_NE_JAMAIS_RELAYER": "Michel demande de dire 'franchement' à Lucas qu'il trouve sa femme devenue très belle ('je te l'aurais piquée'). ❌ JAMAIS transmis — même en blague, c'est une grenade dégoupillée dans le seul partenariat médical du projet. Le Michel sobre remerciera."
+  },
+  "POUR_LE_KIT_RDV_DEMAIN": {
+   "BEAU_FRERE_AUTO_CORRECTION": "🟢 PÉPITE pour demain, de Michel lui-même : ne surtout PAS critiquer le beau-frère de l'associé — c'est GRÂCE à lui que Michel a rencontré l'associé. Message à passer : 'remercie ton beau-frère, sans lui on ne se serait jamais rencontrés.' Transforme la rancune en élégance. Intégré au kit (Phase 1).",
+   "MESSAGE_NATHALIE_LUCAS_PLUS_TARD": "Quand Michel recroisera Nathalie : lui conseiller d'investir dans les maladies rares plutôt que les médicaments. (Reformulé sans la menace 'le projet 14 va te détruire' — on propose une opportunité, on ne menace pas une alliée.)"
+  },
+  "GARDE_MEMOIRE_PERSONNEL_MICHEL_HORS_APP": {
+   "EPISODE_MYSTIQUE_MAJEUR": "'Dieu' prend la parole à travers Michel (récit Abraham, communauté, vêtements, 'je reviens dans le corps de Michel') ; 'ce n'est pas moi qui ai choisi Leïla, c'est Dieu... lui va la forger'. Pattern messianique HHX à son intensité maximale documentée. Pas de confrontation nocturne — à évoquer SOBRE avec douceur : ces épisodes sont désormais réguliers et s'intensifient.",
+   "correction_nom": "Laurent Louis (pas Philippe Louis) — ex-député belge controversé. Distance maintenue, hors app.",
+   "divers": "Sport : abonnement Basic Fit résilié (fin 17/08), cherchera une discipline plus tard. Kimi (Chine) testé et jugé impressionnant. Visions : rivalité Elon/xAI, spécialités par pays, robots (armée, chirurgie assistée, un par famille), NASA, visiteurs aux yeux bandés, drogues 'naturelles' autorisées, salaires publics hiérarchisés, livre posthume de la vie cachée. 🔒 Hors app."
   }
  }
 }
