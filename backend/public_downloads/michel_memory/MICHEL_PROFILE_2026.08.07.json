@@ -22,10 +22,10 @@
   }
  },
  "_metadata": {
-  "last_updated_iso": "2026-08-08T09:30:00+0200",
-  "last_updated_readable_fr": "Samedi 08 août 2026 à 09h30",
-  "version": 16,
-  "total_sections": 164,
+  "last_updated_iso": "2026-08-08T10:15:00+0200",
+  "last_updated_readable_fr": "Samedi 08 août 2026 à 10h15",
+  "version": 17,
+  "total_sections": 165,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif."
  },
@@ -5412,7 +5412,8 @@
   "CONTACTS_INFLUENCEURS": "2026-08-07 soir : Émilie (mindset, confirmée), VibeCodeur (prioritaire), Qin Hui (écarté par Michel)",
   "DUMP_19_20": "2026-08-07 nuit, HHX net : scan anti-arnaque, consentement QR réunions, règle 'M14 ne téléphone jamais', Nathalie ambassadrice, 32 conseils anti-manipulation — friction politique dans l'app gelée pour dimanche",
   "DUMP_21_22": "2026-08-08 nuit, HHX marqué : méthodologie 7 étapes validée, app vocale reportée par Michel lui-même, Nathalie porte-parole confirmée — blocages : scan facial, journal enfants (reformulé), contact Dieudonné",
-  "DUMP_23": "2026-08-08 matin : module Ange Gardien épilepsie validé, plan hôtels bloqué (arnaque), déclaration Leïla reformulée, auto-observation HHX de Michel + réponse chiffrée de l'agent"
+  "DUMP_23": "2026-08-08 matin : module Ange Gardien épilepsie validé, plan hôtels bloqué (arnaque), déclaration Leïla reformulée, auto-observation HHX de Michel + réponse chiffrée de l'agent",
+  "DUMP_24": "2026-08-08 : 🔴 P0 santé — test d'arrêt brutal des médicaments (mal vécu), volonté de réduire → cadré : réduction OUI mais avec médecin uniquement. + larmes de joie pour la lettre à Leïla"
  },
  "NOTE_INTERNE_AGENT_FEEDBACK_2026_08_07": {
   "date": "2026-08-07",
@@ -6161,6 +6162,35 @@
    "MENSONGES_DEVENUS_OBJECTIFS_FILLE": "Moment fort : au téléphone avec sa fille (période crack), Michel a menti ('j'ai arrêté depuis 2 ans', puis 'je vais très bien financièrement, j'ai une petite amie à te présenter'). Il n'avait rien de tout ça — et aujourd'hui il est en train de tout rendre vrai : sobriété réelle, projet, Leïla en vue. 'C'est quand même dingue non ?' → Ses mensonges d'hier sont devenus sa feuille de route. Pièce maîtresse pour l'Autobiographie inversée.",
    "PROMESSE_VOITURE_AUTONOME_PERE": "Quand il sera riche : offrir une voiture autonome à son père pour qu'il se déplace librement et en sécurité. Lié à la dette morale des 3000+8000+25000€.",
    "OPINIONS_HORS_APP": "Encadrement de la prostitution (consentement, sécurité, fin des vitrines) = programme personnel, jamais relayé par M14."
+  }
+ },
+ "DUMP_24_MICHEL_2026_08_08_SANTE_MEDICAMENTS": {
+  "_meta": {
+   "date_capture": "2026-08-08 matin",
+   "priorite": "🔴 P0 SANTÉ — à relire par tout futur agent avant toute discussion médicaments/sevrage avec Michel."
+  },
+  "MOMENT_EMOTIONNEL_LEILA": {
+   "contenu": "Michel a pleuré de joie quand l'agent a proposé d'écrire ensemble les brouillons de sa déclaration à Leïla ('j'ai envie de pleurer et je suis en train de pleurer'). Il confirme : c'est LUI qui la dira. Il souligne son énorme respect pour les femmes, et pour elle en particulier.",
+   "engagement_agent": "Écriture à deux, autant de brouillons qu'il faudra, au moment que Michel choisira — sobre et à froid."
+  },
+  "TRAITEMENT_MEDICAL_ACTUEL_DECLARE": {
+   "medicaments": [
+    "Baclofène 25mg x4/jour (probablement — 'Bakel 4x25' ; utilisé notamment dans la dépendance à l'alcool)",
+    "Trazodone un demi (probablement — 'trio do' ; antidépresseur/sommeil)",
+    "Paroxétine 25mg (antidépresseur ISRS)",
+    "Champix (varénicline — arrêt tabac ; ne fume plus depuis ~2 mois)"
+   ],
+   "note": "Noms déduits de la dictée vocale — à confirmer avec Michel. Personne 'Carole' mentionnée (il lui a parlé ce matin) — identité à clarifier."
+  },
+  "EVENEMENT_ARRET_BRUTAL_TEST": {
+   "faits": "Michel n'a pas pris ses médicaments hier soir 'pour voir'. Ce matin : très mal, incapable d'imaginer ou de faire quoi que ce soit. A pris du HHX pour compenser — sans effet. Conclusion de Michel : 'sans mes médicaments et sans le HHX, ça ne va pas'. Souhait exprimé : DIMINUER ses médicaments.",
+   "reponse_agent_pilier_14": {
+    "1_relecture_des_faits": "Ce qu'il a ressenti ce matin n'est PAS 'lui sans médicaments' — c'est un EFFET DE MANQUE. La paroxétine arrêtée d'un coup provoque un syndrome de discontinuation (vertiges, angoisse, brouillard, chute d'humeur) ; le baclofène arrêté brutalement peut être réellement dangereux (anxiété majeure, risque de convulsions). L'expérience prouve que le traitement est ACTIF, pas qu'il est prisonnier à vie.",
+    "2_validation_objectif": "Vouloir diminuer = objectif LÉGITIME et cohérent avec toute la philosophie M14 (moins de dépendances). L'agent le soutient à 100%.",
+    "3_regle_absolue": "🔒 JAMAIS d'arrêt ou de réduction en solo. La diminution est un PROJET MÉDICAL : médecin prescripteur + paliers progressifs (tapering) sur des semaines/mois. M14 aide à préparer LA question au médecin : 'Je vais mieux, je veux réduire progressivement — quel plan de paliers ?'",
+    "4_point_HHX_sans_sermon": "Compenser les médicaments par du HHX = remplacer une dépendance contrôlée (dosée, suivie, prescrite) par une incontrôlée. Posé une fois, sans insister.",
+    "5_suivi": "Si Michel confirme sa volonté : l'agent rédigera avec lui le mail pour son médecin (conforme au protocole prise de sang déjà validé — M14 prépare la consultation, ne remplace jamais le médecin)."
+   }
   }
  }
 }
