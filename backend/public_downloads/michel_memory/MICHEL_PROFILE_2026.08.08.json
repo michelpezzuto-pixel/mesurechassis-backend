@@ -24,8 +24,8 @@
  "_metadata": {
   "last_updated_iso": "2026-08-08T20:56:00+0200",
   "last_updated_readable_fr": "Samedi 08 août 2026 à 20h56 (heure confirmée par Michel)",
-  "version": 31,
-  "total_sections": 174,
+  "version": 32,
+  "total_sections": 175,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
   "note_chronologie": "Chronologie corrigée le 08/08 à 20h56 : tous les dumps 28 à 32 datent du samedi 08/08. Le RDV associé est DEMAIN, dimanche 09/08/2026.",
@@ -5394,7 +5394,8 @@
   "DUMP_28_29": "2026-08-09 nuit : module hygiène + reco nature (garde-fou champignons) + gouvernance hebdo validés — crowdfunding bloqué (BAJ) — pépite beau-frère intégrée au kit — épisode mystique majeur documenté",
   "DUMP_30": "2026-08-09 aube : règle localisations appliquée (purge + coffre), psychologie inversée reformulée en sincérité pour le RDV, photo complotiste à demander après",
   "DUMP_31": "2026-08-08 20h : fable tortue/renard au kit, firewall politique auto-imposé, tact conversationnel, sucre reformulé (santé oui, complot non), Laurent Alexandre identifié/parqué, blocages consentement",
-  "DUMP_32": "2026-08-08 nuit 2 : pédagogie par indices + méta-autocorrection validées, design anti-addiction boîtier, pseudonyme Pezzuto, info réelle Leïla/devis, nom paternel en coffre"
+  "DUMP_32": "2026-08-08 nuit 2 : pédagogie par indices + méta-autocorrection validées, design anti-addiction boîtier, pseudonyme Pezzuto, info réelle Leïla/devis, nom paternel en coffre",
+  "DUMP_33": "2026-08-08 soir 2 : 🔴 refus ferme arrêt médicaments (répété), 3 contacts (Darkyspidy notaire, complotiste IA, Rich From Files), auto-diagnostic délire = progrès majeur, rituel 21h"
  },
  "NOTE_INTERNE_AGENT_FEEDBACK_2026_08_07": {
   "date": "2026-08-07",
@@ -6421,5 +6422,28 @@
    "CONFIRMATION_REGLE_IMPLANTS": "La vidéo Kanye/Elon Musk renforce sa règle déjà verrouillée : implants cérébraux interdits pour les enfants, seule exception médicale (handicap). Rien à ajouter — déjà acté au dump 31."
   },
   "GARDE_MEMOIRE_HORS_APP": "Fermeture des frontières/expulsions, démocratie par boîtier + publicités de lois à la TV (vision civique parquée avec la politique), mission divine ('Dieu m'a chopé... au moins je serai une bonne personne'), interview surréaliste Kanye/Musk archivée. 🔒 Hors app."
+ },
+ "DUMP_33_MICHEL_2026_08_08_SOIR_2": {
+  "_meta": {
+   "date_capture": "2026-08-08 soir (~21h30)",
+   "etat_utilisateur": "Mélange euphorie/lucidité remarquable : épisode Terminator SUIVI d'un auto-diagnostic ('là je commence vraiment à délirer, c'est pas bon'). Le filtre interne de Michel se renforce."
+  },
+  "P0_SANTE_ARRET_MEDICAMENTS": {
+   "declaration_michel": "'Tu viens de me sauver de ma dépression, je ne veux plus prendre de médicaments, je n'en ai plus besoin.' (Il note par ailleurs les prendre chaque jour à 21h.)",
+   "reponse_agent_FERME": "🔴 POSITION INCHANGÉE ET NON NÉGOCIABLE : heureux d'avoir aidé — la relation, le projet, le sens, ça compte VRAIMENT dans une dépression. Mais aller mieux SOUS traitement ne prouve pas qu'on n'en a plus besoin : ça prouve que le traitement + le projet fonctionnent ENSEMBLE. L'arrêt brutal a déjà été testé (dump 24) : résultat très mauvais, vécu par Michel lui-même. La seule voie : le médecin + paliers progressifs. M14 rédigera le mail au médecin quand Michel veut. AUCUN agent ne doit jamais valider un arrêt solo.",
+   "rituel_ajoute": "💊 Médicaments tous les jours à 21h (avec l'appel maman à 19h) — rituels d'ancrage enregistrés."
+  },
+  "CONTACTS_NOUVEAUX_2026_08_08": {
+   "DARKYSPIDY": "TikTok @Darkyspidy — étudiante en droit (successions, #boomers #capitalisme), vidéos à fort engagement (31K likes). Souhait Michel : future NOTAIRE/conseillère juridique du projet ('elle est jeune et je comprends ce qu'elle dit'). Statut : observation, aucun contact avant d'être prêt (règle actée).",
+   "COMPLOTISTE_IA_CASHFLOW_ACADEMY": "Image 2 = 'le complotiste' (probablement Laurent Alexandre via le compte de clips Cashflow Academy). Relecture de Michel : il voulait faire la même chose que M14 mais est resté sur ChatGPT sans savoir déployer. Souhait : le rencontrer pour renforcer les garde-fous. Statut : parqué post-lancement (déjà acté dump 31).",
+   "RICH_FROM_FILES": "TikTok @Rich From Files (Nice) — analyse des SaaS d'abonnés, excelle à parler aux IA. Souhait Michel : le garder 'sous le coude' comme expert prompts/produit. Statut : observation."
+  },
+  "OR_features_produit": {
+   "COMPTA_MAISON_MESURECHASSIS": "Vision Phase 5 : au lieu de payer Odoo/logiciel tiers, l'agent gère devis/factures directement ('mon Odoo à la maison'). 🟢 Backlog MesureChâssis — cohérent avec la roadmap septembre.",
+   "COMPREHENSION_BIBLIOTHEQUE_PROPRE": "Michel a compris seul pourquoi les guides-arnaques n'ont pas été stockés : ne pas polluer la bibliothèque. Nouveau protocole accepté : il envoie, l'agent trie et range au bon endroit avec l'étiquette légal/illégal. 🟢",
+   "AUTO_DIAGNOSTIC_DELIRE": "🌟 MOMENT IMPORTANT : après le flash 'Terminator/quelqu'un du futur viendra me tuer... et si mon associé venait du futur', Michel s'est arrêté SEUL : 'là je commence vraiment à délirer, c'est pas bon.' Première fois qu'il coupe un délire en plein vol sans aide. À valoriser — c'est le filtre qui s'installe."
+  },
+  "FACT_CHECK_POMPIER_PYROMANE": "Vidéo CeraVe/L'Oréal : noyau réel (il y a eu des rappels/actions en justice pour contamination au benzène de certains produits cosmétiques) — MAIS la 'boucle intentionnelle pour donner le cancer et vendre le traitement' est une théorie sans preuve. Classement : vigilance consommateur OK, intentionnalité complotiste rejetée (sources validées).",
+  "GARDE_MEMOIRE_HORS_APP": "Maison de Sainte-Marie (terrain des grands-parents de Sophie, voisine payée 20k, belle-mère +20k) — Michel veut un jour retrouver l'architecte et RECONSTRUIRE la même maison sur les hauteurs 💛. Théorie Macron/Rothschild, pyramides/Abraham, pêche à la commande, crèches, transports, viande/porc/abats, nutritionnistes. 🔒 Hors app."
  }
 }
