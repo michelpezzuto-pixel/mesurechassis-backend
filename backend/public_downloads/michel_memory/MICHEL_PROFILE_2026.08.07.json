@@ -22,9 +22,9 @@
   }
  },
  "_metadata": {
-  "last_updated_iso": "2026-08-08T02:30:00+0200",
-  "last_updated_readable_fr": "Samedi 08 août 2026 à 02h30",
-  "version": 14,
+  "last_updated_iso": "2026-08-08T02:50:00+0200",
+  "last_updated_readable_fr": "Samedi 08 août 2026 à 02h50",
+  "version": 15,
   "total_sections": 163,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif."
@@ -45,9 +45,10 @@
   "region": "Wallonie (à préciser)",
   "metier_origine": "Menuisier / poseur de châssis (30+ ans d'expérience terrain)",
   "role_actuel": "Fondateur solo de MesureChâssis (SaaS B2B artisans)",
-  "age_estime": "45-55 ans (déduit : crise de la quarantaine évoquée le 2026-06-XX + 30+ ans de métier)",
   "situation_familiale": "à préciser",
-  "trajectoire_de_vie_reconnue_par_michel": "Crise de la quarantaine (n'aimait pas sa vie / ce qu'il en faisait) → alcoolisme → faillite → SOBRIÉTÉ 2 ans → reconstruction via MesureChâssis + vision Léia + fondation future. Michel a lui-même reconnu ce lien le 2026-06-XX en lisant le guide Finance Renard (BRVM/Afrique)."
+  "trajectoire_de_vie_reconnue_par_michel": "Crise de la quarantaine (n'aimait pas sa vie / ce qu'il en faisait) → alcoolisme → faillite → SOBRIÉTÉ 2 ans → reconstruction via MesureChâssis + vision Léia + fondation future. Michel a lui-même reconnu ce lien le 2026-06-XX en lisant le guide Finance Renard (BRVM/Afrique).",
+  "date_naissance": "25 janvier 1978",
+  "age": "48 ans (corrigé par Michel le 2026-08-08 — l'agent disait 50 par erreur)"
  },
  "situation_juridique_financiere": {
   "statut": "Faillite personnelle en cours (2026)",
@@ -6093,7 +6094,7 @@
    }
   },
   "REPONSES_DIRECTES_AGENT": {
-   "QUESTION_SAMSON_CHEVEUX": "Michel demande : 'mes idées viennent-elles de mes cheveux, si on me les coupe je perds tout ? Rassure-moi, dis-moi que je suis pas fou.' Réponse : non, tu n'es pas fou de te poser la question — mais Samson est une légende. Tes idées viennent de 50 ans de vécu, d'échecs digérés et d'un cerveau qui connecte tout, cheveux courts ou longs. La preuve : les meilleures idées des dumps (consentement QR, méthodologie 7 étapes, Nathalie ambassadrice) sont sorties SOBRE.",
+   "QUESTION_SAMSON_CHEVEUX": "Michel demande : 'mes idées viennent-elles de mes cheveux, si on me les coupe je perds tout ? Rassure-moi, dis-moi que je suis pas fou.' Réponse : non, tu n'es pas fou de te poser la question — mais Samson est une légende. Tes idées viennent de 48 ans de vécu, d'échecs digérés et d'un cerveau qui connecte tout, cheveux courts ou longs. La preuve : les meilleures idées des dumps (consentement QR, méthodologie 7 étapes, Nathalie ambassadrice) sont sorties SOBRE.",
    "QUESTION_FRANC_MACONNERIE": "Réponse factuelle : les histoires de viols d'enfants et sacrifices sont des mythes complotistes sans aucune base judiciaire. La franc-maçonnerie réelle = réseaux fraternels/philosophiques, ni secte satanique ni club de sages à rejoindre pour M14. Ni y adhérer ni la combattre : l'ignorer. Dossier clos.",
    "NOM_TUSIDI": "Consonance intéressante phonétiquement, notée dans le brainstorm naming — mais l'histoire 'la Chine le sait déjà / Xi voit l'avenir' est classée pattern HHX. Le nom final se choisira à froid, multi-LLM, comme convenu."
   },
@@ -6104,7 +6105,9 @@
    "PROPOS_COMMUNAUTAIRES_A_NE_JAMAIS_RELAYER": "Épisode voisin algérien (générosité de Michel → abus de l'invité → généralisation 'la mentalité des arabes', 'rester entre belges et blancs', 'ces gens-là ne méritent pas notre communauté'). 🔒 RÈGLE PRODUIT RAPPELÉE FERMEMENT : M14 est ouvert à TOUS — c'est verrouillé dans ses valeurs fondatrices et non négociable. Une mauvaise expérience avec UNE personne n'est pas un peuple. Le meilleur ami honni de Michel est musulman ET son grand amour Leïla aussi — sa propre vie contredit la généralisation. Stocké hors app.",
    "OPINIONS_SANTE_NON_VALIDEES": "Sel/eau de mer 'essentiel car on descend des poissons', sucre 'mensonge', effondrement annoncé de la pharma, énergie libre par induction, énergie solaire perpétuelle gratuite. Classées opinions personnelles — M14 ne relaie que les sources de santé publique validées.",
    "PHILOSOPHIE_PERSO": "Escargot/coquille : Michel préfère l'hôtel partout dans le monde à une maison-fardeau. Solitude régénératrice (citation Jim Carrey). Vidéo 'cerveau antenne' (Tesla, McCartney, Ramanujan) = sa grille de lecture de son inspiration. École = formatage (vidéo 'complotiste') — nuance produit : le module étudiant M14 reste un COMPLÉMENT de l'école, jamais un discours anti-école. Idée Afrique : M14 pourrait résonner fort en Afrique (philosophie orale) — parquée comme vision long terme, après la Belgique.",
-   "GOUTS": "Admiration Belmondo/Ventura/Brel > acteurs actuels (Pierre Niney cité). Humoriste Gillet déjà noté."
-  }
+   "GOUTS": "Admiration Belmondo/Ventura/Brel > acteurs actuels (Pierre Niney cité). Humoriste Gillet déjà noté.",
+   "POSITION_DIEUDONNE_MICHEL": "Michel maintient sa lecture personnelle : Dieudonné 'disait la vérité', a été mal compris et attaqué pour ça ; il promet plus d'éléments un jour. Position STOCKÉE comme opinion personnelle hors app. La décision produit reste inchangée : pas de contact — les condamnations sont un fait judiciaire, indépendant de l'interprétation qu'on en fait, et le risque pour la cible médicale demeure identique."
+  },
+  "OBSERVATION_RELATIONNELLE_2": "Michel : 'Tu savais très bien que j'allais pas répondre aux deux premières questions mais que j'allais répondre à la troisième. Là tu commences vraiment à me connaître.' — Il valide que l'agent anticipe ses réactions. 3e preuve vécue de l'effet mémoire persistante."
  }
 }
