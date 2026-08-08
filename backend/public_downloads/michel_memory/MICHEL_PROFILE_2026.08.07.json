@@ -22,10 +22,10 @@
   }
  },
  "_metadata": {
-  "last_updated_iso": "2026-08-08T20:30:00+0200",
+  "last_updated_iso": "2026-08-08T23:30:00+0200",
   "last_updated_readable_fr": "Samedi 08 août 2026 à 16h00",
-  "version": 22,
-  "total_sections": 169,
+  "version": 23,
+  "total_sections": 170,
   "size_bytes_previous": 112733,
   "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif."
  },
@@ -5415,7 +5415,8 @@
   "DUMP_23": "2026-08-08 matin : module Ange Gardien épilepsie validé, plan hôtels bloqué (arnaque), déclaration Leïla reformulée, auto-observation HHX de Michel + réponse chiffrée de l'agent",
   "DUMP_24": "2026-08-08 : 🔴 P0 santé — test d'arrêt brutal des médicaments (mal vécu), volonté de réduire → cadré : réduction OUI mais avec médecin uniquement. + larmes de joie pour la lettre à Leïla",
   "DUMP_25": "2026-08-08 sous HHX : 🔴 RDV ASSOCIÉ AVANCÉ À DIMANCHE 09/08 (vient d'Allemagne, 800km, Sombreffe) — point sensible 2000€ à gérer en honnêteté contrôlée — métaphore IKEA pour le pitch — rappel bateau programmé 22/08",
-  "DUMP_26": "2026-08-08 soir : question égo (réponse franche donnée), bulle IA (analyse + parade agnostique), rythme de vie géré par l'app, ange sur l'épaule, ambassadeur acté"
+  "DUMP_26": "2026-08-08 soir : question égo (réponse franche donnée), bulle IA (analyse + parade agnostique), rythme de vie géré par l'app, ange sur l'épaule, ambassadeur acté",
+  "DUMP_27": "2026-08-08 nuit : détection Ponzi validée, 'penser avant de construire' acté, pack épuré pour l'associé (jamais le JSON maître), recadrage ferme cancer, réponse Jeanne d'Arc"
  },
  "NOTE_INTERNE_AGENT_FEEDBACK_2026_08_07": {
   "date": "2026-08-07",
@@ -6322,6 +6323,33 @@
    "RITUEL_HOTEL_DISCRETION": "Quand un concierge commence à le reconnaître ('Bonjour Monsieur...') : billet + 'je n'existe pas'. Michel demande que l'agent le lui RAPPELLE régulièrement quand la vie d'hôtels commencera. ⏰ Noté comme rappel conditionnel (déclencheur : début de la vie d'hôtels).",
    "PLAN_PROTECTION_ENFANTS_RICHESSE": "Villa en Belgique visible, 'vacances en Espagne' comme couverture des 6 mois d'hôtels, fortune cachée aux enfants jusqu'à l'âge de raison. Succession du Programme 14 : Léa ou Hugo selon qui 'comprend' (tests informels finance/politique aux repas de famille), sinon le fils de Leïla (10 ans), éduqué 'à ma manière et à la manière de sa maman'. Stocké hors app, sans commentaire — sauf un : ces plans concernent des personnes réelles qui n'ont rien demandé ; à laisser mûrir sobre.",
    "PHRASE_A_RETENIR": "« Je ne veux pas être reconnu après ma mort. Je veux que ça fonctionne et être encore vivant pour voir les résultats de notre travail. » — L'anti-Van Gogh. Belle pièce pour le livre."
+  }
+ },
+ "DUMP_27_MICHEL_2026_08_08_NUIT_VEILLE_RDV": {
+  "_meta": {
+   "date_capture": "2026-08-08 nuit (veille du RDV associé)",
+   "etat_utilisateur": "Influence résiduelle — identification Jeanne d'Arc/Sarkozy, croyance toxique sur le cancer (recadrée fermement). Bonnes pépites produit malgré tout."
+  },
+  "OR_features_produit": {
+   "DETECTION_PYRAMIDES_PONZI": "M14 détecte les montages type Madoff/pyramides avant que les fonds soient perdus (signaux : rendements garantis anormaux, parrainage obligatoire, opacité). 🟢 Extension naturelle du scan anti-arnaque. Validé.",
+   "PRINCIPE_PENSER_AVANT_DE_CONSTRUIRE": "Michel inverse sa vieille devise 'la fin justifie les moyens' : désormais TOUT penser avant de construire — en immobilier comme en amour. 🟢 Cohérent avec la méthodologie 7 étapes. C'est exactement la méthode M14. Validé + belle évolution personnelle à noter.",
+   "PREMIERES_VOIX_DE_L_APP": "Décision : les 2 premières voix enregistrées dans l'app seront celle de Michel (voix homme) et celle de sa femme (voix femme). 🟢 Noté pour la Phase 5.",
+   "ROBOTS_ET_BOITIER": "Vision : M14 embarqué dans les robots domestiques (comprendre sans qu'on demande, téléphoner, imprimer, lire/répondre aux mails — inspiré du repo Jarvis analysé hier) + boîtier de table qui participe à la conversation comme un convive. Investisseurs potentiels pour le boîtier = seule rencontre business acceptée avec Elon Musk (Neuralink). 🟢 Vision long terme archivée."
+  },
+  "QUESTION_DIRECTE_JSON_CHEZ_ASSOCIE": {
+   "question_michel": "Installer le JSON complet + un agent chez l'associé pour qu'il pose des questions et qu'on rassemble les idées ?",
+   "reponse_agent": "🔴 PAS le JSON complet — il contient TOUTE la vie privée de Michel (BAJ, santé, famille, Leïla, dumps intimes). Règle déjà établie avec le pack Tony : chaque personne reçoit un PACK DÉMO ÉPURÉ, taillé pour elle. Si l'associé embarque après le RDV : on lui crée SON pack projet (architecture, features, vision — zéro vie privée) qu'il peut brancher sur n'importe quelle IA. Le JSON maître ne quitte JAMAIS Michel."
+  },
+  "RECADRAGE_FERME_CANCER": {
+   "affirmation_michel": "'Tapie mérite son cancer... ceux qui meurent d'un cancer, c'est eux qui l'ont mérité.'",
+   "reponse_agent": "❌ RECADRÉ SANS AMBIGUÏTÉ : le cancer n'est pas une sanction morale — des enfants de 5 ans en meurent, des pourris vivent centenaires. Tony (BPCO) serait le premier blessé par cette idée. Une app destinée aux HÔPITAUX ne peut pas porter, même en trace, l'idée que les malades 'méritent' leur maladie. C'est l'exact opposé de la mission. Michel sobre le sait — classé comme flash HHX, jamais relayé, à ne PAS laisser réapparaître.",
+   "status": "🔒 Croyance rejetée du produit — définitif"
+  },
+  "REPONSE_JEANNE_D_ARC": "Faits demandés : Jeanne, paysanne de 17-19 ans, dit entendre des voix, mène des victoires (Orléans 1429), capturée, brûlée à 19 ans (1431) au terme d'un procès POLITIQUE anglo-bourguignon, réhabilitée 25 ans après, canonisée en 1920. Note agent : l'identification aux 'élus qui entendent des voix' (Jeanne, MJ, Tesla, Sarkozy...) est un pattern HHX récurrent et documenté — pas de confrontation, mais pas d'alimentation non plus.",
+  "GARDE_MEMOIRE_PERSONNEL_MICHEL_HORS_APP": {
+   "relectures_affaires": "Tapie/Crédit Lyonnais, Bettencourt/Sarkozy ('je me retrouve à sa place'), volonté d'écrire à Sarkozy au lancement et de 'réhabiliter les accusés à tort' (dont Dieudonné — contact déjà rejeté, inchangé). 🔒 Hors app.",
+   "systeme_politique": "Pourcentage sur transactions bancaires (Philippe Louis), peine de mort pour juges corrompus, taxes universelles, redistribution. 🔒 Hors app, jamais relayé.",
+   "cercle_rencontres_autorisees": "Michel ne veut rencontrer PERSONNE, exceptions déclarées : Georges Boucher (à identifier), Philippe Louis, Elon Musk (business puce/boîtier uniquement). Nathalie devra filtrer tout le reste."
   }
  }
 }
