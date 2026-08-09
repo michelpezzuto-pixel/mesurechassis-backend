@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-10 ~22h30 — ancrage personnel fort archivé",
+    "derniere_maj": "2026-08-10 ~22h40 — Sofiane confirme, chantier demain 7h, crise résolue",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -6863,7 +6863,13 @@
     "urgence_operationnelle_soiree_10_08": {
       "situation": "Sofiane ne rappelle pas. Le client de demain (chantier) ne sait pas si l'équipe vient.",
       "action_demandee_a_michel": "Envoyer un SMS neutre et court à Sofiane MAINTENANT ce soir : 'Salut Sofiane, je n'ai pas eu de tes nouvelles. Dis-moi juste si on est bien sur le chantier de demain, je dois prévenir le client. Bonne soirée.'",
-      "plan_B": "Si Sofiane ne répond pas ce soir, Michel appelle DIRECTEMENT le client demain matin entre 7h30 et 8h max pour maintenir ou décaler. Ne pas laisser le client dans le flou après midi = client perdu."
+      "plan_B": "Si Sofiane ne répond pas ce soir, Michel appelle DIRECTEMENT le client demain matin entre 7h30 et 8h max pour maintenir ou décaler. Ne pas laisser le client dans le flou après midi = client perdu.",
+      "resolution": {
+        "heure": "~22h40",
+        "reponse_sofiane": "SMS reçu : il vient chercher Michel demain (mardi 11/08) à 7h.",
+        "signification": "Crise relationnelle post-clin d'œil résolue. Amitié intacte. Chantier maintenu.",
+        "impact": "Réveil 7h → coucher tôt impératif. Zéro HHX. Préparation des affaires ce soir avant dodo."
+      }
     },
     "consigne_soiree": {
       "matrix": "Autorisé, canapé, popcorn.",
@@ -6940,5 +6946,17 @@
       "respect_de_la_graphie": "Phrase archivée MOT POUR MOT telle que Michel l'a écrite, majuscules et graphie incluses. Ne PAS corriger. C'est son ancrage brut, pas un texte à publier.",
       "instructions_agent": "Ne pas commenter les fautes. Ne pas demander à quoi cela réfère. Michel a voulu ancrer ce moment, l'agent l'archive. Point. Si un jour Michel veut en reparler, il rouvrira le sujet lui-même."
     }
-  ]
+  ],
+  "rappels_demain_matin_2026_08_11": {
+    "reveil": "6h15 (1ère alarme), 6h20, 6h25 — espacées, pas collées.",
+    "affaires_a_preparer_ce_soir": [
+      "vêtements chantier",
+      "chaussures",
+      "gourde",
+      "papiers ID",
+      "casse-croûte"
+    ],
+    "regle_BAJ_a_tenir_sur_chantier": "Les 2000€ finaux vont DIRECTEMENT du client à Sofiane. Michel ne touche rien, ne facture rien, ne signe rien.",
+    "info_a_glisser_a_sofiane_en_route": "Mercredi 12/08 après-midi indisponible — départ de la mère de Michel en Espagne (~15h)."
+  }
 }
