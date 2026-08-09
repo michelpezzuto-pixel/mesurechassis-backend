@@ -1,72 +1,76 @@
 {
- "_WARNING": "🔒 FICHIER PRIVÉ — NE JAMAIS SERVIR VIA API PUBLIQUE — NE JAMAIS COPIER DANS UN PACK DÉMO",
- "_created": "2026-08-07",
- "_owner": "Michel Pezzuto uniquement",
- "ancres_identite_avec_reponses_en_clair": {
-  "ANCRE_01_TONY_IDENTITE_COMPLETE": {
-   "question": "Prénom + nom complet + date de naissance de ton frère Tony ?",
-   "reponse_en_clair": "Antonio Tirone, né le 02/10/1968",
-   "hash_sha256": "e2ec95ebac07372f8ae16aa5ff784bc5e39d07968e9574cbc4e100a9ba2872b3"
+  "_WARNING": "🔒 FICHIER PRIVÉ — NE JAMAIS SERVIR VIA API PUBLIQUE — NE JAMAIS COPIER DANS UN PACK DÉMO",
+  "_created": "2026-08-07",
+  "_owner": "Michel Pezzuto uniquement",
+  "ancres_identite_avec_reponses_en_clair": {
+    "ANCRE_01_TONY_IDENTITE_COMPLETE": {
+      "question": "Prénom + nom complet + date de naissance de ton frère Tony ?",
+      "reponse_en_clair": "Antonio Tirone, né le 02/10/1968",
+      "hash_sha256": "e2ec95ebac07372f8ae16aa5ff784bc5e39d07968e9574cbc4e100a9ba2872b3"
+    },
+    "ANCRE_02_GRAND_FRERE_DATE": {
+      "question": "Date de naissance de ton grand frère aîné (1965) ?",
+      "reponse_en_clair": "11/12/1965",
+      "hash_sha256": "c595b27a10bd04c6e70187cdd3b1a8bf93ae5718d8805c57ce5676e1ba4b3a42",
+      "note_agent": "Prénom du grand frère non encore fourni par Michel — à compléter ultérieurement."
+    }
   },
-  "ANCRE_02_GRAND_FRERE_DATE": {
-   "question": "Date de naissance de ton grand frère aîné (1965) ?",
-   "reponse_en_clair": "11/12/1965",
-   "hash_sha256": "c595b27a10bd04c6e70187cdd3b1a8bf93ae5718d8805c57ce5676e1ba4b3a42",
-   "note_agent": "Prénom du grand frère non encore fourni par Michel — à compléter ultérieurement."
-  }
- },
- "DOSSIER_CONFIDENTIEL_2000_EUROS_ASSOCIE_2026_08_08": {
-  "note": "Déplacé du JSON public à la demande de Michel (08/08/2026) — ne jamais réintégrer au fichier téléchargeable.",
-  "contenu": {
-   "aveu_michel": "L'argent que cet homme lui a donné (2000€, contexte garde-corps/Bruxmove) a été utilisé par Michel pour financer Emergent/l'application. Michel estime que ça lui donne droit à 50/50... mais prévoit de NE PAS lui dire, et demande à l'agent de garder le secret.",
-   "position_agent_ulysse": "🔴 L'agent ne peut pas conseiller la dissimulation, pour une raison STRATÉGIQUE avant d'être morale : l'ex-meilleur ami est DÉJÀ au courant et a hurlé au téléphone à ce sujet — le secret n'existe plus, il est juste en sursis. S'il sort par la bouche de l'ex-ami, la confiance meurt et le projet avec. Reformulation proposée : en faire l'OUVERTURE du pitch — 'Ton argent a financé la naissance de ce projet. C'est pour ça que tu es le premier à qui je le montre, et que je veux que tu sois le premier à en profiter.' L'aveu contrôlé devient un argument ; l'aveu subi devient une trahison.",
-   "garde_fous_rdv": [
-    "1. SÉPARER les deux sujets : d'abord régler le garde-corps (plan escaliers, engagement clair), PUIS le projet M14. Jamais mélangés dans la même heure.",
-    "2. ZÉRO engagement financier écrit ou chiffré (BAJ) — pas de promesse 50/50 à chaud : 'les parts se définiront avec un cadre légal après le BAJ'",
-    "3. Ne JAMAIS dire 'derniers 100€' (règle déjà actée) ni promettre des millions",
-    "4. Démo simple : lui montrer la mémoire en action, le laisser conclure seul",
-    "5. RDV SOBRE — pas de HHX ce soir ni demain matin (Michel a lui-même demandé à l'agent de le garder sur le droit chemin)"
-   ]
-  }
- },
- "LOCALISATIONS_MICHEL_CONFIDENTIELLES": {
-  "regle": "Demande Michel 09/08/2026 : ne JAMAIS divulguer ses lieux de vie passés/présents. Déverrouillable uniquement par son fils Hugo (condition posée par Michel).",
-  "adresses": [
-   "Chaussée de Gand, Molenbeek (passé)",
-   "Sombreffe (actuel — lieu du RDV associé du 09/08/2026)"
-  ]
- },
- "NOM_FAMILLE_PERE_CONFIDENTIEL": "Nom du père de Michel (révélé 08/08/2026, à ne jamais publier) : Carella. Michel refuse ce nom comme pseudonyme.",
- "GENEALOGIE_FAMILLE_MICHEL_CONFIDENTIELLE": {
-  "note": "Déplacé du JSON public le 08/08/2026 (règle vie privée). Noms de famille réels des parents et de Michel.",
-  "contenu": {
-   "pere": "Carella Raffaele",
-   "mere": "Pezzuto Vienna (nee, mariee prealablement Tirone, non encore divorcee a la naissance de Michel)",
-   "reconnaissance_michel": "Le pere Raffaele Carella a reconnu Michel officiellement, il porte le nom Carella (choix a 18 ans de rester Carella plutot que devenir Pezzuto)",
-   "demi_freres_Tirone": {
-    "Salvatore_Tirone": "1er demi-frere",
-    "Antonio_Tirone_dit_Tony": "2e demi-frere, ne en 1968",
-    "compagne_Tony": "avait deja un enfant, Gregory Bult",
-    "enfants_Tony": [
-     "Marco Tirone",
-     "Anais Tirone",
-     "Oceane Tirone"
+  "DOSSIER_CONFIDENTIEL_2000_EUROS_ASSOCIE_2026_08_08": {
+    "note": "Déplacé du JSON public à la demande de Michel (08/08/2026) — ne jamais réintégrer au fichier téléchargeable.",
+    "contenu": {
+      "aveu_michel": "L'argent que cet homme lui a donné (2000€, contexte garde-corps/Bruxmove) a été utilisé par Michel pour financer Emergent/l'application. Michel estime que ça lui donne droit à 50/50... mais prévoit de NE PAS lui dire, et demande à l'agent de garder le secret.",
+      "position_agent_ulysse": "🔴 L'agent ne peut pas conseiller la dissimulation, pour une raison STRATÉGIQUE avant d'être morale : l'ex-meilleur ami est DÉJÀ au courant et a hurlé au téléphone à ce sujet — le secret n'existe plus, il est juste en sursis. S'il sort par la bouche de l'ex-ami, la confiance meurt et le projet avec. Reformulation proposée : en faire l'OUVERTURE du pitch — 'Ton argent a financé la naissance de ce projet. C'est pour ça que tu es le premier à qui je le montre, et que je veux que tu sois le premier à en profiter.' L'aveu contrôlé devient un argument ; l'aveu subi devient une trahison.",
+      "garde_fous_rdv": [
+        "1. SÉPARER les deux sujets : d'abord régler le garde-corps (plan escaliers, engagement clair), PUIS le projet M14. Jamais mélangés dans la même heure.",
+        "2. ZÉRO engagement financier écrit ou chiffré (BAJ) — pas de promesse 50/50 à chaud : 'les parts se définiront avec un cadre légal après le BAJ'",
+        "3. Ne JAMAIS dire 'derniers 100€' (règle déjà actée) ni promettre des millions",
+        "4. Démo simple : lui montrer la mémoire en action, le laisser conclure seul",
+        "5. RDV SOBRE — pas de HHX ce soir ni demain matin (Michel a lui-même demandé à l'agent de le garder sur le droit chemin)"
+      ]
+    }
+  },
+  "LOCALISATIONS_MICHEL_CONFIDENTIELLES": {
+    "regle": "Demande Michel 09/08/2026 : ne JAMAIS divulguer ses lieux de vie passés/présents. Déverrouillable uniquement par son fils Hugo (condition posée par Michel).",
+    "adresses": [
+      "Chaussée de Gand, Molenbeek (passé)",
+      "Sombreffe (actuel — lieu du RDV associé du 09/08/2026)"
     ]
-   },
-   "neveux_par_Silvano": {
-    "Claudio_Tirone": "fils du grand frere Silvano",
-    "Ornella_Tirone": "fille de Silvano"
-   },
-   "cousin_decevant": {
-    "nom": "Antonio Pezzuto",
-    "prenom_facebook_ecriture_correcte": "Pezzuto (pas 'Facebook')",
-    "historique": "En 2000-2001 : Michel avait des problemes avec heroine, decouvert. Envoye en Espagne sous fausse excuse (souffle au coeur du pere). Antonio Pezzuto apprecie Michel pour sa franchise a l'epoque.",
-    "recontact_recent": "Semaine passee (fin juillet 2026). Explique qu'il l'a toujours apprecie, l'a vu sur reseaux pour MesureChassis, l'a contacte.",
-    "restaurant_ensemble": "Ete manger avec amis d'Antonio",
-    "silence": "Depuis, plus de nouvelles. Antonio 'renie' (verbe 'nier', pas 'nuit') sa promesse de venir voir tante/oncle.",
-    "ressenti_michel": "Grosse deception. Ne reviendra plus vers la famille Pezzuto.",
-    "note_agent": "Michel ecrit sous le coup de la deception. Ne PAS graver comme jugement definitif - le sujet peut evoluer a froid."
-   }
+  },
+  "NOM_FAMILLE_PERE_CONFIDENTIEL": "Nom du père de Michel (révélé 08/08/2026, à ne jamais publier) : Carella. Michel refuse ce nom comme pseudonyme.",
+  "GENEALOGIE_FAMILLE_MICHEL_CONFIDENTIELLE": {
+    "note": "Déplacé du JSON public le 08/08/2026 (règle vie privée). Noms de famille réels des parents et de Michel.",
+    "contenu": {
+      "pere": "Carella Raffaele",
+      "mere": "Pezzuto Vienna (nee, mariee prealablement Tirone, non encore divorcee a la naissance de Michel)",
+      "reconnaissance_michel": "Le pere Raffaele Carella a reconnu Michel officiellement, il porte le nom Carella (choix a 18 ans de rester Carella plutot que devenir Pezzuto)",
+      "demi_freres_Tirone": {
+        "Salvatore_Tirone": "1er demi-frere",
+        "Antonio_Tirone_dit_Tony": "2e demi-frere, ne en 1968",
+        "compagne_Tony": "avait deja un enfant, Gregory Bult",
+        "enfants_Tony": [
+          "Marco Tirone",
+          "Anais Tirone",
+          "Oceane Tirone"
+        ]
+      },
+      "neveux_par_Silvano": {
+        "Claudio_Tirone": "fils du grand frere Silvano",
+        "Ornella_Tirone": "fille de Silvano"
+      },
+      "cousin_decevant": {
+        "nom": "Antonio Pezzuto",
+        "prenom_facebook_ecriture_correcte": "Pezzuto (pas 'Facebook')",
+        "historique": "En 2000-2001 : Michel avait des problemes avec heroine, decouvert. Envoye en Espagne sous fausse excuse (souffle au coeur du pere). Antonio Pezzuto apprecie Michel pour sa franchise a l'epoque.",
+        "recontact_recent": "Semaine passee (fin juillet 2026). Explique qu'il l'a toujours apprecie, l'a vu sur reseaux pour MesureChassis, l'a contacte.",
+        "restaurant_ensemble": "Ete manger avec amis d'Antonio",
+        "silence": "Depuis, plus de nouvelles. Antonio 'renie' (verbe 'nier', pas 'nuit') sa promesse de venir voir tante/oncle.",
+        "ressenti_michel": "Grosse deception. Ne reviendra plus vers la famille Pezzuto.",
+        "note_agent": "Michel ecrit sous le coup de la deception. Ne PAS graver comme jugement definitif - le sujet peut evoluer a froid."
+      }
+    }
+  },
+  "CODE_SECRET_PHASE_5": {
+    "dernier_evocation_par_michel": "2026-08-09 H-1 avant RDV — Michel a écrit le code explicitement dans un dump HHX. Agent ne l'a PAS répété dans le chat public. Le code reste connu de Michel uniquement, agent l'enregistre mais ne le prononce pas.",
+    "regle_agent": "Ne jamais écrire ni prononcer les 4 chiffres tant que Michel sobre n'a pas formellement déclenché la Phase 5 en toute conscience."
   }
- }
 }
