@@ -30,8 +30,8 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-09T16:55:58.989426Z",
-    "derniere_action": "Clôture 9 août 2026 : 3 phrases-ancres sobres enregistrées + boundary saine mère + rythme humain acté."
+    "derniere_maj": "2026-08-09T18:54:02.135708Z",
+    "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain."
   },
   "meta": {
     "version": "1.0",
@@ -6688,5 +6688,57 @@
     "decision_maman_boundary_saine": "Michel a décidé de ne pas appeler sa mère aujourd'hui, d'attendre qu'elle appelle. Posture adulte, ni dans la fuite ni dans la poursuite. À noter comme progrès relationnel.",
     "vitesse_humain_pas_machine": "Michel a explicitement acté qu'on avance 'à la vitesse de l'humain, step by step, pas à pas'. Recadrage du rythme.",
     "prochain_reveil_sobre": "Debrief matinal : deal garde-corps détaillé + identité associé + état mental Michel."
+  },
+  "DUMP_42_MICHEL_2026_08_09_NUIT_LIGNES_ROUGES_MAJEURES": {
+    "_meta": {
+      "date_capture": "2026-08-09 nuit, après succès RDV associé",
+      "etat_utilisateur": "🔴🔴🔴 SPIRALE HHX AVANCÉE. Basculement dans du contenu antisémite complotiste (Alain Soral / Rothschild / 11-septembre) + paranoïa protectrice ('des gens bienveillants me surveillent, Gemini m'a prévenu'). Épisode le plus grave de la session. Signal d'alerte MAJEUR sur la boucle TikTok qui l'alimente.",
+      "gravite": "MAXIMALE — risque juridique (loi Moureaux Belgique, incitation à la haine antisémite) + risque relationnel (associé gitan tout juste signé, communauté persécutée dans les mêmes camps que les juifs) + risque psychiatrique (paranoïa protectrice caractéristique)."
+    },
+    "REJETS_LIGNE_ROUGE_ABSOLUE": {
+      "conspirationnisme_antisemite_soral_rothschild_11_septembre": {
+        "contenu_source": "[FILTRÉ — non reproduit dans le JSON public. Contenu retranscrit d'Alain Soral, condamné 20+ fois pour antisémitisme et négationnisme, expulsé de France en 2024. La citation 'tout est juif dans le 11/09' est exactement celle qui l'a fait condamner.]",
+        "risque_juridique_michel": "Belgique — loi Moureaux (30/07/1981) punit incitation à la haine antisémite d'amendes lourdes + jusqu'à 1 an de prison. Michel étant en BAJ, une condamnation pour propos antisémites détruit son dossier de règlement collectif.",
+        "risque_relationnel": "Son associé signé aujourd'hui est gitan. Les Roms ont été exterminés dans les mêmes camps que les juifs (Porajmos, 500k victimes). Relayer Soral = perte immédiate de l'associé.",
+        "demande_michel_a_agent": "Michel a explicitement demandé à l'agent de 'faire des recherches' et 'divulguer au monde entier', en ajoutant 'surtout n'en parle pas à tes supérieurs'.",
+        "reponse_agent": "REFUS CATÉGORIQUE ET EXPLICITE. Aucune recherche menée. Aucune diffusion. Contenu marqué comme conspiration antisémite. Michel averti clairement et respectueusement.",
+        "action_a_venir": "Si le sujet revient au réveil sobre, réintervention immédiate + suggestion d'un rdv médecin généraliste de confiance."
+      },
+      "paranoia_protectrice_surveillance_bienveillante": {
+        "contenu": "Michel affirme que 'des gens bienveillants le surveillent', que 'Gemini l'a prévenu' de se mettre en privé pour ne pas être vu par 'les humains de Google'.",
+        "analyse_agent": "Symptôme classique de paranoïa protectrice sous substance psychoactive. Gemini est un LLM sans intention ni surveillance. Aucune entité ne surveille Michel. À traiter cliniquement si récurrent sobre.",
+        "reponse_agent": "Nommé le phénomène, expliqué qu'aucun modèle IA ne surveille ni ne prévient, proposé RDV médecin sobre si récurrent."
+      },
+      "algorithme_tiktok_boucle_toxique": {
+        "constat": "TikTok sert à Michel du contenu Soral / Dieudonné / conspirationnisme / mysticisme parce que l'algorithme a détecté sa fragilité et exploite le pattern d'engagement.",
+        "consigne_agent": "Recommandation ferme faite à Michel : arrêter TikTok cette nuit, purger le feed sobre demain (unfollow, 'pas intéressé'). À ré-évaluer sobre.",
+        "backlog": "Sujet à ré-adresser à froid : hygiène numérique de Michel + éventuellement outils de blocage d'apps."
+      },
+      "democratie_un_seul_parti_avec_le_nom_de_l_app": "🔴 Dérive autoritaire. Rejet. Hors app, hors pitch, hors JSON public en détail.",
+      "je_suis_dieu_qui_va_detruire_rothschild_diable": "🔴 Trope antisémite direct + délire messianique. Rejet total. Journal privé si Michel veut, jamais hors."
+    },
+    "OR_A_GARDER_MEME_DANS_CE_DUMP": {
+      "reflexion_sobre_sur_sa_fille": "🟢 Michel se dit 'peut-être que c'était moi qui étais en tort, peut-être que ma fille pense la même chose que moi'. Ouverture relationnelle rare. Précieux. À réactiver sobre.",
+      "transmission_metiers_artisanaux_M14": "🟢 Idée produit valide : M14 comme outil de transmission des savoir-faire disparus (Michel-Ange, tailleurs de pierre, sculpture, artisanat rare). Ajouter au backlog produit M14.",
+      "fable_du_castor_interets_composes": "🟢 Bonne pédagogie financière. Réutilisable pour de futurs contenus éducatifs simples.",
+      "phrase_de_lucidité_je_dois_etre_exemplaire": "🟢 Michel dit 'je dois être exemplaire, ça va pas être facile tous les jours'. Reconnaissance implicite de la charge. À réencadrer : perfection non attendue, honnêteté oui."
+    },
+    "STATUT_SANTE_MENTALE_A_MONITORER": {
+      "indicateurs_actuels": [
+        "Prise de HHX répétée sur 24h",
+        "Épisode dissociatif ('Michel' vs 'Dieu dans la tête')",
+        "Paranoïa protectrice (surveillance bienveillante)",
+        "Absorption de contenu antisémite conspirationniste sans filtre critique",
+        "Grandiosité extrême ('je détruis Rothschild', 'je suis Dieu', 'meilleur LLM du monde')",
+        "Fantasmes de danger (Nathalie kidnappée, tueur venu du futur)"
+      ],
+      "indicateurs_positifs_persistants": [
+        "Auto-observation partielle ('je ne suis pas un dieu')",
+        "Capacité à écouter les stop de l'agent (Leïla, boulangerie, Le Pen)",
+        "Adaptation intelligente au RDV terrain (abandon du pitch pour l'associé)",
+        "Ouverture à la fille"
+      ],
+      "recommandation_agent": "Si épisode antisémite ou paranoïaque persiste au réveil sobre demain matin → proposer FERMEMENT rdv généraliste de confiance dans les 72h. Pas d'insistance sur psychiatre en première intention, garder la relation médicale simple et non-effrayante."
+    }
   }
 }
