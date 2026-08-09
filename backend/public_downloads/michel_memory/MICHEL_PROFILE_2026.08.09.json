@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-10 ~23h10 — correction lecture agent : entonnoir M14→Emergent est légal, pas fraude",
+    "derniere_maj": "2026-08-10 ~23h15 — modèle Emergent↔N14 clarifié, blocages Apple documentés, alternatives démo Nathalie",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -7018,6 +7018,18 @@
         "Deux jambes en parallèle une fois le numéro d'entreprise obtenu : (1) prospection menuisiers physique pour Mesure Châssis, (2) démo M14 à Nathalie. Bonne stratégie de temps.",
         "Ne pas mélanger le pitch Nathalie (M14) et le pitch menuisiers (Mesure Châssis) : Michel l'a bien vu."
       ]
+    },
+    {
+      "date": "2026-08-10 ~23h15",
+      "flag": "🎆 CLARIFICATION FINALE — Modèle Emergent ↔ N14 clair et légal",
+      "modele_par_michel": {
+        "aujourd_hui": "Michel PAIE Emergent pour construire N14 (application native).",
+        "phase_transition": "Une fois N14 codé, Michel sort l'app d'Emergent, l'utilise en autonomie.",
+        "cycles_de_mise_a_jour": "Michel enrichit N14 seul, et revient ponctuellement sur Emergent avec le JSON quand il veut faire évoluer le code de l'app. Emergent = atelier. N14 = maison.",
+        "image_de_michel": "Emergent dans la main gauche (paiement + fabrication), N14 dans la main droite (autonomie). Une fois l'app livrée, Michel lâche la main gauche."
+      },
+      "diagnostic_agent": "Modèle STANDARD, LÉGAL, PROPRE. C'est exactement l'usage normal d'Emergent. Aucun problème.",
+      "correction_erreur_agent": "L'agent avait initialement lu 'faire croire à Emergent que je consomme énormément' comme une fraude de métrique. C'était une mauvaise lecture. Michel voulait juste dire : je paie mon abonnement pour valoriser MA propre app, pas la leur. Franc et cash."
     }
   ],
   "positions_de_l_agent_a_maintenir": [
@@ -7047,5 +7059,45 @@
       "info_donnee_par_agent_de_memoire": "Série Netflix 'Tapie' (2023) avec Laurent Lafitte dans le rôle-titre, réalisation Tristan Séguéla, scénario Olivier Demangel.",
       "avertissement": "Info de mémoire de l'agent, à VÉRIFIER sur Google. Un LLM se trompe régulièrement. Michel doit confirmer."
     }
-  ]
+  ],
+  "gestion_code_secret_phase_5": [
+    {
+      "date": "2026-08-10 ~23h15",
+      "situation": "Michel a mentionné oralement (via dictaphone) son code à 4 chiffres dans le chat. IL A EXPLICITEMENT DEMANDÉ QUE L'AGENT N'EN TIENNE PAS COMPTE : 'ne tiens pas compte de mon code, je ne le dirai pas encore'.",
+      "position_agent_maintenue": "NO CODE reste ACTIF. Phase 5 NON déclenchée. L'agent respecte à la lettre la consigne de Michel : le code est mentionné mais non-activé. Attente de déclenchement formel sobre.",
+      "regle_agent": "L'agent ne DOIT JAMAIS répéter, taper, ni prononcer ce code dans le chat. Même pour y faire allusion. Le code est archivé de fait dans l'historique de conversation Michel, mais l'agent ne le reproduit pas.",
+      "suggestion_agent_pour_demain_sobre": "Michel peut envisager de : (1) changer de code puisque celui-ci est désormais dans l'historique conversationnel, ou (2) le conserver tel quel. Décision à prendre demain sobre."
+    }
+  ],
+  "blocages_publication_apple_store": {
+    "date_analyse": "2026-08-10",
+    "obstacles_bloquants_aujourd_hui": [
+      "Compte développeur Apple : $99/an, KYC identité déclarée, moyen de paiement pro.",
+      "Statut légal BAJ : interdit d'exercer une activité commerciale déclarée. Bloqué jusqu'à sortie du BAJ (1-2 ans).",
+      "Revue App Store : audit strict, refus fréquents, itérations."
+    ],
+    "meme_probleme_google_play": "Google Play $25 one-shot mais KYC identique.",
+    "conclusion": "Publication Apple/Google IMPOSSIBLE avant sortie du BAJ. Pas ce mois-ci, pas le mois prochain."
+  },
+  "alternatives_demo_nathalie_sans_app_store": {
+    "date": "2026-08-10 ~23h15",
+    "options_par_ordre_de_simplicite": [
+      {
+        "option": "Démo web sur téléphone de Michel",
+        "principe": "N14 tourne sur URL Emergent ou build web temporaire. Michel montre directement à Nathalie autour d'un café.",
+        "avantage": "Zéro contrainte légale, zéro coût, zéro délai. Suffit largement pour un premier test.",
+        "recommandation_agent": "OPTION PRIVILÉGIÉE pour première démo Nathalie."
+      },
+      {
+        "option": "PWA (Progressive Web App)",
+        "principe": "N14 accessible via URL, s'installe comme app sur téléphone sans passer par l'App Store.",
+        "avantage": "Look d'app, comportement d'app, sans contrainte App Store."
+      },
+      {
+        "option": "TestFlight (iOS) / Google Play Internal Testing (Android)",
+        "principe": "Distribution de la vraie app native à un cercle restreint, sans publication officielle.",
+        "contrainte": "Nécessite quand même un compte développeur (celui d'un ami/associé légal si Michel toujours en BAJ)."
+      }
+    ]
+  }
 }
