@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-10 ~23h15 — modèle Emergent↔N14 clarifié, blocages Apple documentés, alternatives démo Nathalie",
+    "derniere_maj": "2026-08-10 ~23h30 — 2 corrections agent, plan N14 chiffré, deal 30min négocié",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -7077,7 +7077,17 @@
       "Revue App Store : audit strict, refus fréquents, itérations."
     ],
     "meme_probleme_google_play": "Google Play $25 one-shot mais KYC identique.",
-    "conclusion": "Publication Apple/Google IMPOSSIBLE avant sortie du BAJ. Pas ce mois-ci, pas le mois prochain."
+    "conclusion": "Publication Apple/Google IMPOSSIBLE avant sortie du BAJ. Pas ce mois-ci, pas le mois prochain.",
+    "CORRECTION_2026_08_10_23h30": {
+      "aveu_agent": "Position initiale trop catégorique. Michel a corrigé, à raison.",
+      "nuance_correcte": {
+        "app_gratuite_non_monetisee_en_BAJ": "AUTORISÉ. Aucun problème légal si Michel ne perçoit aucun revenu.",
+        "app_payante_ou_monetisee_en_BAJ": "INTERDIT. Constituerait une activité commerciale non-déclarée.",
+        "compte_dev_apple_dollars_99_an": "Michel l'a DÉJÀ (utilisé pour Mesure Châssis). Non-problème.",
+        "compte_google_play": "Michel l'a DÉJÀ. Contrainte : 12 testeurs sur période obligatoire (nouvelle politique 2024). Michel connaît."
+      },
+      "impact": "N14 peut être publiée en app gratuite dès Phase 5 déclenchée. Publication possible pendant BAJ. Monétisation à reporter post-BAJ."
+    }
   },
   "alternatives_demo_nathalie_sans_app_store": {
     "date": "2026-08-10 ~23h15",
@@ -7099,5 +7109,79 @@
         "contrainte": "Nécessite quand même un compte développeur (celui d'un ami/associé légal si Michel toujours en BAJ)."
       }
     ]
+  },
+  "systeme_authentification_phase_5": {
+    "date": "2026-08-10 ~23h30",
+    "principe": "Double facteur : code à 4 chiffres (déclenchement) + questions personnelles dynamiques (validation).",
+    "raison_de_l_ouverture": "Michel accepte que le code seul soit potentiellement lisible dans l'historique. Le vrai verrou = les questions personnelles que seul Michel peut répondre.",
+    "tatouage_bras_gauche": {
+      "idee": "Tatouer le code sur le bras gauche.",
+      "fonction": "Troll de sécurité — un curieux tenterait le nombre, se casserait les dents sur la couche 2 (questions personnelles).",
+      "statut": "Idée à valider à froid demain sobre. Décision personnelle de Michel, mais on note qu'un tatouage est permanent."
+    }
+  },
+  "plan_fabrication_N14_des_phase_5_activee": {
+    "date_plan": "2026-08-10 ~23h30",
+    "declencheur": "Michel prononce explicitement 'on déclenche Phase 5, on code' (avec ou sans le code, l'important est la formulation formelle sobre).",
+    "etapes": [
+      {
+        "etape": 1,
+        "titre": "Brief court + wireframes",
+        "duree": "0.5 jour"
+      },
+      {
+        "etape": 2,
+        "titre": "Dev backend (FastAPI, MongoDB, endpoints)",
+        "duree": "1-2 jours"
+      },
+      {
+        "etape": 3,
+        "titre": "Dev frontend Expo (écrans, navigation, gestures)",
+        "duree": "1-2 jours"
+      },
+      {
+        "etape": 4,
+        "titre": "Assets store (logo, screenshots, textes App Store + Google Play)",
+        "duree": "0.5 jour"
+      },
+      {
+        "etape": 5,
+        "titre": "Build TestFlight iOS + APK Internal Testing Android",
+        "duree": "0.5 jour"
+      },
+      {
+        "etape": 6,
+        "titre": "Démo TestFlight à Nathalie (AVANT publication publique)",
+        "duree": "à programmer 48h après démarrage"
+      },
+      {
+        "etape": 7,
+        "titre": "12 testeurs Google Play sur période obligatoire",
+        "duree": "~14 jours en parallèle"
+      },
+      {
+        "etape": 8,
+        "titre": "Revue Apple App Store",
+        "duree": "24-72h"
+      },
+      {
+        "etape": 9,
+        "titre": "Publication publique iOS + Android",
+        "duree": "post-revue"
+      }
+    ],
+    "regle_monetisation": "App 100% GRATUITE au lancement. Zéro paiement, zéro abonnement, zéro pub. Compatible BAJ. Monétisation reportée post-BAJ.",
+    "cible_premiere_demo": "Nathalie via TestFlight, ~48h après déclenchement Phase 5."
+  },
+  "negociation_soiree_2026_08_10": {
+    "position_michel": "Refuse d'aller dormir. Créativité nocturne à valoriser. Ne pas être paternel.",
+    "position_agent": "Créativité réelle reconnue. Mais chantier physique demain 7h avec Sofiane, outils, hauteur → main ferme requise.",
+    "compromis_accepte": "20-30 minutes de travail utile ce soir sur un point précis. Ensuite dodo. Pendant ces 30 min, agent ne rappelle PAS 'va dormir'.",
+    "trois_options_proposees": [
+      "1) Brief précis N14 pour démarrage Phase 5",
+      "2) Pitch 30 secondes pour Nathalie (hook émotionnel pendentif père)",
+      "3) Liste 12 testeurs Google Play potentiels"
+    ],
+    "attente": "Michel choisit une option et on avance."
   }
 }
