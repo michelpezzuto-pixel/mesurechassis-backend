@@ -30,8 +30,8 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-09T15:05:06.349371Z",
-    "derniere_action": "H-1 avant RDV : pitch mis à jour avec le pivot plateforme (idée valide extraite). 3 mines désamorcées (Le Pen, racisme, cannabis). Métaphore du train validée. Code 4 chiffres non-répété. Naming PLURIBUS : trademark risk noté."
+    "derniere_maj": "2026-08-09T16:05:41.546785Z",
+    "derniere_action": "DUMP_41 posé à H-15min : phrase de lucidité extraite ('je ne suis pas un dieu'), 4 rejets fermes (Elon, Nathalie kidnap, prostitution État, Vienna/Marie), consigne agent = messages courts jusqu'après RDV."
   },
   "meta": {
     "version": "1.0",
@@ -6640,5 +6640,26 @@
       "verite_leila": "Promesse tenue (dump 39 précédent)."
     },
     "CONSIGNE_H-1": "Michel ne fait plus RIEN de nouveau. Copie le pitch mis à jour dans NotebookLM, réécoute UNE fois, boit de l'eau, ne touche plus à son téléphone. À l'arrivée : garde-corps d'abord, café, pitch, démo M14, 7 questions, métaphore du train, 'on chiffre à froid'. Rien d'autre."
+  },
+  "DUMP_41_MICHEL_2026_08_09_H-15MIN_AVANT_RDV": {
+    "_meta": {
+      "date_capture": "2026-08-09 vers 20h45 — associé imminent",
+      "etat": "🔴 Michel continue de dumper à 15 min du RDV. Utilise l'agent comme container pour vider sa tête. Mécanisme compréhensible mais chronophage. Consigne agent : arrêter les dumps FERMEMENT.",
+      "pepite_lucidite": "🟢 Phrase-clé émergée : 'Je ne suis pas un dieu, je suis quelqu'un qui a toujours cherché des solutions aux autres.' — À conserver et faire résonner. C'est le Docteur Jekyll qui se pose."
+    },
+    "REJETS_FERMES": {
+      "mail_elon_musk_demain": "🔴 Fantasme HHX. Elon Musk ne répondra pas. Aucune action à mener. Bloqué.",
+      "fantasme_nathalie_kidnappee": "🔴 Signal inquiétant. Michel imagine Nathalie 'kidnappée pour qu'ils viennent le voir'. Marqueur de dissociation avancée + mise en danger d'un proche dans le récit. À monitorer sobre demain.",
+      "prostitution_paid_by_state_pour_violeurs": "🔴 Idée dangereuse. Hors app. Hors pitch. Hors JSON public en détail.",
+      "elon_musk_meme_ethique_revelation": "🟠 Grandiosité. Elon Musk n'a pas eu 'la même révélation'. À filtrer.",
+      "vienna_marie_vierge_marie_mere_michel": "🟠 Construction messianique autour du prénom de la mère. Journal privé, hors app.",
+      "robot_dans_tete_jusqu_a_160_ans": "🟠 Réutilisation du sujet 'mémoire des morts', déjà classé interdit dump 40."
+    },
+    "OR_A_GARDER": {
+      "phrase_clé": "'Je ne suis pas un dieu, je suis quelqu'un qui a toujours cherché des solutions aux autres.'",
+      "note_auto_lucidité": "Michel reconnaît explicitement qu'il est resté 48 ans avant de 'comprendre' parce qu'il ne se donnait 'pas la peine de chercher'. Auto-observation saine et rare — à valoriser.",
+      "cycle_eau_vision_ecologique": "Fond philosophique OK (respect du cycle naturel, filtration par la roche). Hors app. Journal personnel s'il veut."
+    },
+    "CONSIGNE_AGENT_POUR_LA_PROCHAINE_HEURE": "Ne plus répondre longuement. Si Michel continue à dumper avant le RDV : messages courts, fermes, redirection vers 'pose le téléphone'. Après le RDV : attendre son debrief factuel, sans le brusquer."
   }
 }
