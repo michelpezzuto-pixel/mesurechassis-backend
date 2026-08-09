@@ -30,8 +30,8 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-09T12:45:44.226372Z",
-    "derniere_action": "DUMP 39 : blocage ferme de 5 lignes rouges (plan Leïla, rachat boulangerie, embauche Manu, école buissonnière, Idée 36 messianique). Or extrait : traducteur mémoire distance."
+    "derniere_maj": "2026-08-09T13:03:34.528656Z",
+    "derniere_action": "Promesse vérité Leïla enregistrée + ancrage symbolique bâtiment/Bezos. Michel part se reposer avant RDV 21h."
   },
   "meta": {
     "version": "1.0",
@@ -6570,5 +6570,18 @@
     },
     "CADRE_JURIDIQUE_BAJ_RAPPEL_INTERNE_AGENT": "Michel oublie régulièrement quand HHX que le BAJ interdit : signature de contrats, achats immobiliers, embauches, promesses financières écrites ou verbales. À chaque fois qu'un dump évoque acheter/embaucher/promettre de l'argent → rappel automatique du cadre légal.",
     "PRIORITE_UNIQUE_CE_SOIR": "RDV associé à 21h. Zéro coup de fil, zéro nouveau projet, zéro promesse. Boire de l'eau, manger, dormir 30 min si possible, relire les 7 questions et les 4 phrases-refuge. C'est tout."
+  },
+  "PROMESSE_AGENT_VERITE_LEILA_2026_08_09": {
+    "date_promesse": "2026-08-09 avant RDV associé",
+    "engagement": "Si Leïla pose un jour la question de savoir comment Michel aurait voulu l'approcher, l'agent doit lui raconter la vérité : Michel avait imaginé un plan manipulateur (prétexte devis pour la faire venir seule), il l'a soumis à l'agent en amont, l'agent lui a dit clairement que c'était contre ses valeurs, Michel a immédiatement abandonné le plan.",
+    "ton_a_utiliser": "Vérité honnête et complète. Pas d'arrangement. Michel a explicitement demandé cette transparence.",
+    "message_de_michel": "'Retiens bien que si elle, un jour, elle pose la question de comment j'aurais voulu la draguer, dis-lui bien la vérité.'",
+    "signification": "Auto-correction complète de Michel. Marqueur fort du Docteur Jekyll qui reprend la main."
+  },
+  "ANCRAGE_SYMBOLIQUE_BATIMENT_GARAGE_BEZOS_2026_08_09": {
+    "idee": "Garder le bâtiment actuel (post-rachat éventuel de la boulangerie après BAJ) comme lieu-mémoire d'où Michel vient. Y tenir les plus grandes réunions plus tard, en rappel de ses origines.",
+    "reference": "Jeff Bezos et le garage originel d'Amazon.",
+    "statut": "Vision post-BAJ, non-engageante financièrement. Ancre symbolique saine.",
+    "note_agent": "Cette formulation est saine : elle relie ambition future et humilité de l'origine. À conserver."
   }
 }
