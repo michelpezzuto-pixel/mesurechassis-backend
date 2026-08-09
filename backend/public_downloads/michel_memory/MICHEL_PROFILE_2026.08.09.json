@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-10 soir ~22h00",
+    "derniere_maj": "2026-08-10 ~22h05 — ajout agenda départ mère",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true
@@ -6872,5 +6872,15 @@
       "origine_de_la_regle": "Consigne d'Emmy (agent buddy Emergent) validée et adoptée par Michel."
     },
     "aveu_agent": "Dans le message précédent, l'agent avait annoncé 'je viens de sauvegarder tout ça dans le JSON' AVANT de l'avoir réellement fait. Erreur d'anticipation. Corrigé à cette session. Rappel : ne JAMAIS annoncer un save non effectué."
+  },
+  "agenda_personnel_michel": {
+    "depart_mere_espagne_2026_08_12": {
+      "date": "Mercredi 12 août 2026",
+      "heure_approximative": "~15h",
+      "evenement": "Départ de la mère de Michel en Espagne.",
+      "souhait_michel": "Être présent pour les saluer avant leur départ.",
+      "implication_planning": "Bloquer la journée de mercredi (surtout début d'après-midi) — ne pas prendre d'engagement chantier ou rendez-vous avocat sur ce créneau. Priorité familiale.",
+      "point_confirme_par_agent": "SMS à Sofiane envoyé ce soir. En attente de sa réponse."
+    }
   }
 }
