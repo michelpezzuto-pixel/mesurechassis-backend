@@ -30,8 +30,8 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-09T10:18:46.190771Z",
-    "derniere_action": "Pitch B2B + questions livrés en chat avant RDV associé. Filtrage Contrat d'Ulysse appliqué sur dump 5h30 (rejet idée 33, HHX, messianisme)."
+    "derniere_maj": "2026-08-09T12:45:44.226372Z",
+    "derniere_action": "DUMP 39 : blocage ferme de 5 lignes rouges (plan Leïla, rachat boulangerie, embauche Manu, école buissonnière, Idée 36 messianique). Or extrait : traducteur mémoire distance."
   },
   "meta": {
     "version": "1.0",
@@ -6549,5 +6549,26 @@
       "Michel demande AVANT le RDV un pitch propre — il sait que ses dumps HHX ne sont pas utilisables tels quels devant un partenaire."
     ],
     "CONSIGNE_AGENT_POUR_LA_SUITE": "Après RDV : attendre le debrief factuel de Michel (état de l'associé, engagement, feeling). Ne PAS relancer avant. Si Michel dort après HHX, laisser dormir."
+  },
+  "DUMP_39_MICHEL_2026_08_09_AVANT_RDV_MULTIPLES_LIGNES_ROUGES": {
+    "_meta": {
+      "date_capture": "2026-08-09 fin d'après-midi / avant RDV 21h",
+      "etat_utilisateur": "🔴 HHX toujours actif. Multiples dérives en un seul dump : fantasmes immobiliers (rachat boulangerie), embauche impossible (Manu à 3000€/mois alors que BAJ), plan manipulateur envers un ami (Leïla), messianisme (Idée 36), dissociation (Dieu écoute à gauche). MAIS conserve des fragments d'auto-régulation : il s'arrête tout seul sur le deepfake Bigard en réalisant le problème du consentement.",
+      "action_agent": "Blocage ferme et sans sermon des 3 lignes rouges. Filtrage. Rappel du cadre BAJ. Rappel du RDV à venir comme seule priorité."
+    },
+    "REJETS_FERMES_CONTRAT_ULYSSE_ROUND_2": {
+      "plan_leila_pretexte_devis": "🔴🔴🔴 LIGNE ROUGE ABSOLUE. Le scénario : mentir à l'ami musulman en prétendant que le devis est envoyé, pour faire venir Leïla seule sous couvert professionnel. Michel a lui-même qualifié l'idée de 'diabolique'. Rejet total : trahison d'ami + manque de respect culturel (voile, codes marime que Michel connaît) + auto-illusion sur l'attraction. Consigne : Michel ne téléphone à personne ce soir.",
+      "rachat_boulangerie_+_embauche_Manu_1200_3000_eur_mois": "🔴 Impossible juridiquement. Michel est en BAJ (règlement collectif de dettes). Aucun achat immobilier, aucune embauche à son nom, aucune promesse de salaire ne peut être faite sans mise en risque grave. Classé en 'vision post-BAJ à froid'. Ne pas activer.",
+      "propos_l_algerien_degage": "🔴 Formulation xénophobe due au HHX. Non conforme aux valeurs propres de Michel sobre. Non retranscrit tel quel dans le JSON public. Signal d'alerte : quand Michel emploie ce genre de terme, c'est un marqueur HHX fort.",
+      "idee_ecole_buissonniere_boitier_verite": "🔴 'Inciter les jeunes à ne pas rentrer trop tard sur le marché du travail' via l'app = pas dans le produit. Mur juridique et éthique. Refusé.",
+      "idee_36_N4_donne_direction_humanite": "🟠 Registre messianique. Garde privé. Journal personnel de Michel s'il veut, jamais dans le produit ni le pitch."
+    },
+    "OR_EXTRAIT_A_GARDER_DANS_M14": {
+      "traducteur_memoire_distance_boitier": "🟢 IDÉE PRODUIT VALIDE. Deux personnes qui ne parlent pas la même langue (ex : Turquie / Belgique) restent connectées via leur boîtier M14 : messages traduits, rappels d'anniversaire, prises de RDV asynchrones. À intégrer dans le backlog M14 comme 'pont interpersonnel multilingue'.",
+      "raisonnement_ethique_deepfake_voix": "🟢 Michel arrive tout seul à : consentement + paiement + acceptation de la responsabilité juridique par le prêteur de voix. Ce raisonnement est correct sur le fond. À réactiver dans plusieurs années si le sujet clonage se pose. Pas maintenant.",
+      "note_progression_michel": "Michel s'auto-corrige au milieu de son dump ('ça ne marche pas parce que consentement') → capacité d'auto-régulation qui persiste malgré le HHX. Marqueur positif à souligner."
+    },
+    "CADRE_JURIDIQUE_BAJ_RAPPEL_INTERNE_AGENT": "Michel oublie régulièrement quand HHX que le BAJ interdit : signature de contrats, achats immobiliers, embauches, promesses financières écrites ou verbales. À chaque fois qu'un dump évoque acheter/embaucher/promettre de l'argent → rappel automatique du cadre légal.",
+    "PRIORITE_UNIQUE_CE_SOIR": "RDV associé à 21h. Zéro coup de fil, zéro nouveau projet, zéro promesse. Boire de l'eau, manger, dormir 30 min si possible, relire les 7 questions et les 4 phrases-refuge. C'est tout."
   }
 }
