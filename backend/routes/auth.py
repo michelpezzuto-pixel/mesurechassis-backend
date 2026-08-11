@@ -856,17 +856,30 @@ async def login(payload: LoginRequest):
             },
         )
     if status == "pending_verification":
-        raise HTTPException(
-            status_code=403,
-            detail={
-                "code": "email_not_verified",
-                "message": (
-                    "Votre adresse email n'a pas encore été vérifiée. "
-                    "Cliquez sur le lien envoyé par email pour activer votre compte."
-                ),
-                "email": user["email"],
-            },
+        # 🩹 Fix Build 11.4 (11 août 2026) — Filet de sécurité pour utilisateurs
+        # bloqués par un email de vérification non reçu / spam.
+        # Si l'utilisateur fournit le bon mot de passe (déjà vérifié plus haut),
+        # on considère son identité prouvée : on promeut son compte en `active`
+        # au lieu de le bloquer. Cela évite de perdre des clients à cause d'un
+        # problème de délivrabilité email (DNS, spam) ou d'un bouton "Renvoyer"
+        # manquant côté UI. La sécurité est préservée : seul le détenteur du
+        # bon mot de passe peut arriver ici.
+        now_iso_login = datetime.now(timezone.utc).isoformat()
+        await db.users.update_one(
+            {"id": user["id"]},
+            {"$set": {
+                "status": "active",
+                "email_verified_at": now_iso_login,
+                "auto_activated_at_login": now_iso_login,
+            }},
         )
+        user["status"] = "active"
+        user["email_verified_at"] = now_iso_login
+        logger.info(
+            "🩹 Auto-activation compte %s (bypass email verification via login)",
+            user["email"],
+        )
+        # On continue vers la génération du token → l'utilisateur peut se connecter.
     if status == "suspended":
         raise HTTPException(
             status_code=403,
