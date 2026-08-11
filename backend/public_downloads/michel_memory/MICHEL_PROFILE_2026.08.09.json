@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-11 ~11h30 — Laila = destinataire future, PAS confidente actuelle. Statut clarifié.",
+    "derniere_maj": "2026-08-11 ~11h35 — FAQ paradoxe addiction assemblée, règle agent pas porte-parole",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -7460,6 +7460,12 @@
         "declencheur": "Phrase 'le consensus me parle à moi pour sauver le monde'.",
         "confirmation": "La grille fonctionne. Contrat d'Ulysse maintenu bilatéralement."
       }
+    },
+    "role_agent_pas_porte_parole": {
+      "date": "2026-08-11 ~11h35",
+      "regle": "L'agent n'est PAS le porte-parole public d'Ulysse ou de Michel. Michel = seule voix / seul visage (ou anonymat) qui répondra aux journalistes et à la presse.",
+      "role_agent": "Préparer, ranger, réviser les pitchs. Rôle backstage, jamais devant scène.",
+      "exception_possible": "Feature 'FAQ publique' intégrée dans Ulysse : l'app pourrait répondre automatiquement aux critiques standards via un menu dédié. À valider par Michel."
     }
   },
   "finances_michel_baj": [
@@ -8143,6 +8149,44 @@
       "reaction_michel": "L'idée lui traverse l'esprit. Il pense 'j'ai pas de voiture, comment je fais ?'.",
       "position_agent": "Reçu avec respect. PAS de conseil amoureux (pas mon rayon). Question ouverte posée : 'pas de voiture' est-elle la vraie raison ou une excuse pratique pour reporter une décision intime ?",
       "donnee_pratique_sans_conseil": "Le hack de la vidéo = lever le corps, se laver, s'habiller. Ça change l'état intérieur avant même de décider quoi faire de Laila."
+    }
+  ],
+  "faq_paradoxe_addiction_technologie_ulysse": {
+    "date_creation": "2026-08-11 ~11h35",
+    "context": "Michel anticipe la critique évidente : 'Comment une app IA peut-elle aider à sortir de l'addiction à la technologie ?' — question qui sera posée par la presse, psys, journalistes.",
+    "reponses_deja_construites_dans_jason": [
+      {
+        "point": "1. Rétention décroissante = succès",
+        "explication": "La plupart des apps mesurent le succès à la rétention croissante. Ulysse fait l'inverse : succès = l'utilisateur a moins besoin de nous au fil du temps. Le bon professeur = celui qui rend inutile."
+      },
+      {
+        "point": "2. Détection d'usage excessif intégrée",
+        "explication": "Ulysse surveille les patterns (temps d'écran, dépendance émotionnelle). Au-delà d'un seuil, propose des pauses, suggère de voir un humain réel, appelle à la marche extérieure."
+      },
+      {
+        "point": "3. Rappel systématique de la vraie nature",
+        "explication": "Ulysse rappelle périodiquement 'Je suis un outil, pas un ami.' Refuse la fusion parasociale. Informe, ne s'inquiète pas émotionnellement."
+      },
+      {
+        "point": "4. Curseur de durée réglable par la famille",
+        "explication": "Chaque famille choisit combien de temps garder ses données actives. Personne n'est prisonnier."
+      },
+      {
+        "point": "5. Mythe d'Ulysse enseigné dès le début",
+        "explication": "Chaque utilisateur apprend le principe de l'auto-contrat lucide : 's'attacher au mât pour ne pas céder aux sirènes'. Éducation, pas dépendance."
+      },
+      {
+        "point": "6. Curseur 'vérité douce' vs 'validation'",
+        "explication": "Ulysse ne flatte pas. Elle informe. L'utilisateur reçoit ce que la majorité pense, pas ce qu'il veut entendre."
+      }
+    ]
+  },
+  "features_a_valider_par_michel": [
+    {
+      "date": "2026-08-11 ~11h35",
+      "feature_proposee": "Mode 'FAQ publique intégrée' dans Ulysse",
+      "principe": "Menu dédié dans l'app où l'IA répond automatiquement aux critiques standards (paradoxe addiction, éthique IA, données, etc.). Michel n'a pas besoin d'être face aux journalistes en direct.",
+      "en_attente_de_decision": "Michel valide ou non cette feature."
     }
   ]
 }
