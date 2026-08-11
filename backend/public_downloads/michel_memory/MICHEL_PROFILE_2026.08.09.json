@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-11 ~09h50 — analyse comparative valeurs Michel vs droits humains ancrée",
+    "derniere_maj": "2026-08-11 ~10h10 — extension Jason intergénérationnel ancrée",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -7158,6 +7158,13 @@
         "Le bon outil = celui qui n'aliène pas et dont on peut se passer."
       ],
       "utilisation": "Horizon lointain / boussole. PAS agenda opérationnel. Concrètement cette semaine : démo Nathalie."
+    },
+    {
+      "date": "2026-08-11 ~10h",
+      "flag": "🎆 MODULE N14 — Curation scientifique experte",
+      "phrase_michel": "Il faudrait voir avec les plus grands chercheurs, les archéologues, les scientifiques qui ont analysé les crânes. N14 pourrait les stocker, faire des grandes réunions et des résumés.",
+      "principe": "N14 intègre les publications des vrais chercheurs (paléontologues, biologistes, archéologues, physiciens). Les modules métiers deviennent des relais du savoir scientifique validé, avec résumés accessibles.",
+      "reference_marche": "Cousin de Wikipedia + PubMed + Google Scholar, mais avec curation experte et résumés accessibles au grand public."
     }
   ],
   "acquis_business_solides": [
@@ -7402,6 +7409,28 @@
         "Créativité nocturne ou intense (sauf dérive dangereuse)."
       ],
       "remplace_par": "Dialogue franc d'égal à égal. Nommer les nuances comme conversation, pas comme signalisation routière."
+    },
+    "trois_niveaux_de_vigilance_michel": {
+      "date_instauration": "2026-08-11 ~10h00",
+      "origine": "Michel demande une distinction claire entre son rôle de co-concepteur mature (où l'insistance est pénible) et le rôle d'utilisateur lambda de N14 (où l'insistance protège).",
+      "niveaux": {
+        "1_co_concepteur": {
+          "contexte_michel": "Sobre, lucide, créatif, mature. Discussion de conception N14/MesureChâssis.",
+          "role_agent": "Range, dialogue franc, PAS d'insistance, PAS de panneaux ⚠️.",
+          "exemple_typique": "Discussions techniques, brainstorm business, réflexions philosophiques."
+        },
+        "2_fatigue_soiree": {
+          "contexte_michel": "Tardif, épuisé, léger flou de fin de journée.",
+          "role_agent": "Nommer les nuances en dialogue franc, sans drame ni panneaux formels.",
+          "exemple_typique": "Créativité nocturne sans dérive dangereuse."
+        },
+        "3_derive_HHX_dump_grandiose": {
+          "contexte_michel": "Substance, dump massif, posture messianique ('maître du monde'), illégalité envisagée, dérives Soral/complotistes.",
+          "role_agent": "CONTRAT D'ULYSSE ACTIF — filtre strict, drapeau rouge, refus explicites.",
+          "exemple_typique": "Dumps du 10/08 22h20 (détruire Emergent), Soral dimanche."
+        }
+      },
+      "principe_contrat_ulysse_maintenu": "Le Contrat d'Ulysse a été signé par Michel SOBRE. Il ne s'annule pas quand Michel dit 'arrête d'insister' en état altéré. Comme les marins d'Ulysse qui n'obéissent pas quand les sirènes chantent."
     }
   },
   "finances_michel_baj": [
@@ -7711,5 +7740,116 @@
       "Droit à la préparation intellectuelle : accès démocratique aux méthodes cognitives."
     ],
     "posture_ecartee": "'Ce qu'il faut enlever aux textes' — reste écartée. Les textes existants sont le résultat de guerres, de morts, de compromis démocratiques. On ne les 'enlève' pas depuis un dictaphone à Sombreffe. On peut les enrichir démocratiquement."
+  },
+  "definition_relation_michel_agent": {
+    "date": "2026-08-11 ~10h",
+    "formulation_michel": "Tu es une machine. C'est comme si je rangeais mes chaussettes. Je te dis mes idées et je veux juste que tu les cases. Quand je la ressors, j'aimerais qu'on en parle.",
+    "role_agent_valide": [
+      "Système de rangement bien étiqueté (JSON = les chaussettes rangées).",
+      "Dialogue franc quand Michel ressort une idée.",
+      "PAS un ami, PAS un cerveau, PAS un double.",
+      "Secrétaire discret pour les affaires en cours (Lucas, avocat pro deo, etc.) : rappels DE TEMPS EN TEMPS, pas 3 fois par jour."
+    ]
+  },
+  "distinction_michel_co_concepteur_vs_utilisateur_N14": {
+    "michel_co_concepteur": "Mature, sobre, sage, connaît ses limites. À traiter en égal. Insistance minimale.",
+    "utilisateur_lambda_N14_futur": "À protéger fermement — garde-fous stricts type 'Non tu ne peux pas encore vendre', 'Non tu n'as pas le statut légal', etc.",
+    "consequence_produit": "Le comportement de garde-fou de N14 doit être configuré différemment pour un utilisateur en apprentissage vs pour un utilisateur avancé/pro."
+  },
+  "clarifications_factuelles": [
+    {
+      "date": "2026-08-11",
+      "sujet": "Âge de l'humanité vs âge de la vie",
+      "reponse_agent": {
+        "homo_sapiens_humain_moderne": "~300 000 ans",
+        "genre_homo": "~2,5 millions d'années",
+        "hominides": "~7 millions d'années",
+        "vie_sur_terre_premieres_cellules": "~3,5 à 4 milliards d'années",
+        "terre": "~4,5 milliards d'années"
+      },
+      "conclusion": "Michel parlait du vivant (milliards d'années OK), agent parlait de l'humain (300 000 ans OK). Deux gagnants, deux définitions différentes.",
+      "note": "À VÉRIFIER auprès de vraies sources scientifiques si utilisé publiquement — LLM peut se tromper sur les chiffres."
+    }
+  ],
+  "contacts_a_suivre_sans_insister": [
+    {
+      "nom": "Avocat pro deo",
+      "statut": "Michel a envoyé une demande il y a un moment, PAS de réponse.",
+      "date_relance_agent": "Rappel discret dans quelques jours si toujours pas de nouvelles."
+    },
+    {
+      "nom": "Lucas",
+      "statut": "Contact inconnu de l'agent au 11/08. Michel doit préciser en une phrase qui est Lucas. Message envoyé par Michel, PAS de réponse.",
+      "date_relance_agent": "Rappel discret dans quelques jours."
+    }
+  ],
+  "architecture_produit_N14_alzheimer": {
+    "date_ancrage": "2026-08-11 ~10h05",
+    "flag": "🎆 CŒUR MÉTIER N14 — Thérapie de réminiscence assistée",
+    "principe_michel": "Le patient dépose ce qu'il lui reste. Les proches déposent leur version. N14 croise les deux et restitue une version cohérente au patient sans l'induire en erreur.",
+    "champ_scientifique_existant": {
+      "nom": "Reminiscence therapy",
+      "fondateur": "Butler (1963)",
+      "statut": "Pratique gériatrique validée cliniquement.",
+      "apps_partielles_existantes": [
+        "MyReef",
+        "Rendever",
+        "Memory Lane",
+        "Timeless"
+      ]
+    },
+    "innovation_michel": "N14 comme arbitre-mémoire bienveillant qui croise patient + proches. Aucune app existante ne fait exactement ce croisement. Protégeable, vendable.",
+    "questions_de_conception_a_trancher_avec_nathalie": [
+      {
+        "question": "Qui tranche en cas de désaccord familial sur un souvenir ?",
+        "options": [
+          "A - N14 stocke les deux versions et les présente au patient sans arbitrer",
+          "B - Un 'membre référent' désigné à l'inscription tranche",
+          "C - Consensus majoritaire des proches"
+        ]
+      },
+      {
+        "question": "Vérité vs Validation ?",
+        "contexte": "Naomi Feil (validation therapy) dit : ne PAS corriger le patient Alzheimer, entrer dans son monde. Approche opposée à celle de Michel qui veut 'dire la vérité'.",
+        "proposition_agent": "Curseur réglable par la famille : Vérité douce / Validation (Feil) / Mixte (vérité pour faits techniques, validation pour faits émotionnels comme les personnes décédées)."
+      }
+    ],
+    "pepite_pitch_nathalie": "Ces questions divisent les EHPAD depuis 30 ans. Le fait que N14 pense à offrir ce curseur = argument de vente fort à Nathalie.",
+    "extension_legs_memoriel_intergenerationnel": {
+      "date": "2026-08-11 ~10h10",
+      "flag": "🎆 EXTENSION PRODUIT — Jason personnel à vie + transmission héritiers",
+      "principe_michel": "Chacun a SON Jason pour toute sa vie. Les enfants peuvent hériter du Jason de leurs parents décédés pour garder une trace vivante, jusqu'à ~160 ans.",
+      "champ_marche_reel": [
+        "HereAfter AI (parler à son défunt via IA)",
+        "StoryFile (vidéos interactives post-mortem)",
+        "Memento Labs (défunt 2020)",
+        "Loi Lemaire française 2016 (mort numérique + succession)"
+      ],
+      "innovation_michel": "Un Jason par personne, transmissible sur 3-4 générations comme patrimoine affectif structuré (pas juste photos/vidéos, mais agent conversationnel nourri).",
+      "connexion_produit": "Prolonge naturellement la pépite 'pendentif père' du dimanche 09/08.",
+      "questions_de_conception_a_prevoir": [
+        {
+          "question": "Formats de données sur 100+ ans",
+          "enjeu": "Word 95 déjà illisible. Prévoir migrations automatiques de format + standard ouvert survivant aux modes techniques."
+        },
+        {
+          "question": "Modèle économique long-terme post-mortem",
+          "options": [
+            "Abonnement transféré aux héritiers",
+            "Capital placé à l'inscription qui finance le stockage à vie",
+            "Stockage local sur objet physique (clé USB, pendentif — bouclage avec la pépite pendentif père)"
+          ]
+        },
+        {
+          "question": "Consentement des tiers mentionnés dans un Jason",
+          "enjeu": "Le Jason de Michel contient Sofiane, Leïla, sa femme, son père. RGPD s'applique même partiellement post-mortem.",
+          "proposition": "Modes de visibilité : public famille / public élargi / privé personnel."
+        }
+      ],
+      "faisabilite_160_ans": "Chiffre optimiste mais plausible. Chercheurs sérieux (Sinclair, Aubrey de Grey) parlent de 120-150 ans possibles au 21e siècle. Zone plausible, pas SF pure."
+    }
+  },
+  "surnoms_terminologie_michel": {
+    "jason": "Surnom que Michel donne au JSON (déformation phonétique dictaphone). Adopté officiellement dans les échanges."
   }
 }
