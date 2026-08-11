@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-11 ~09h30 — nouvelle règle 'moins de panneaux', Idée 37A requalifiée, règle pas d'excuses adoptée",
+    "derniere_maj": "2026-08-11 ~09h35 — feature adaptation géographique + philosophie préparation ancrées",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -7572,6 +7572,34 @@
         "Répondre en égal, ni soumis ni supérieur.",
         "Nommer clairement ce qu'on maintient et ce qu'on lâche."
       ]
+    }
+  ],
+  "features_N14_a_ancrer": [
+    {
+      "date": "2026-08-11 ~09h35",
+      "flag": "🌍 FEATURE PRODUIT — Localisation intelligente / adaptation géographique et culturelle",
+      "phrase_michel_source": "Si j'habitais en Inde, je t'aurais dit autre chose. J'utilise les catégories que je connais parce que j'habite en Belgique.",
+      "principe": "N14 détecte le contexte géographique et culturel de l'utilisateur et adapte : vocabulaire, exemples, catégories, référents.",
+      "cas_usages": [
+        "Menuisier belge vs menuisier tunisien vs menuisier québécois → mêmes bases métier, mais exemples locaux différents (normes, matériaux disponibles, climats).",
+        "Aidant Alzheimer français vs indien → contextes culturels familiaux très différents.",
+        "Formulations politiques ou religieuses adaptées aux référents locaux."
+      ],
+      "reference_marche": "Comparable à Netflix, Spotify, Duolingo : recommandations et contenus localisés."
+    }
+  ],
+  "principes_michel_a_ancrer": [
+    {
+      "date": "2026-08-11 ~09h35",
+      "titre": "Philosophie de la préparation",
+      "phrase_michel": "Tant qu'ils n'auront pas préparé leur sujet, connaître exactement de quoi parle l'autre, de quoi il va revenir, sur quel sujet et sa manière de parler — dès qu'on a tout compris, c'est là qu'on peut taper dans le mille.",
+      "applications": [
+        "Démo Nathalie : lister 10 questions probables + 10 réponses préparées à l'avance.",
+        "Rencontres avec avocat BAJ : préparer les points à couvrir.",
+        "Prospection menuisiers : connaître leurs objections types.",
+        "Débats publics futurs : connaître les positions de ses interlocuteurs."
+      ],
+      "compatibilite_MesureChâssis": "Peut devenir une méthode de coaching intégrée dans MesureChâssis pour les artisans qui doivent défendre leurs devis face aux clients."
     }
   ]
 }
