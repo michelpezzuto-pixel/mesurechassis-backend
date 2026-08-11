@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-11 matin — Idée 37 filtrée (volet A dérive, volet B pépite), observation évitement famille",
+    "derniere_maj": "2026-08-11 ~09h30 — nouvelle règle 'moins de panneaux', Idée 37A requalifiée, règle pas d'excuses adoptée",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -6964,7 +6964,7 @@
     },
     {
       "date": "2026-08-11 matin, en journée censée être avec les parents",
-      "flag": "⚠️ Dérive légère 'législateur du monde' + terrain casse-gueule identitaire",
+      "flag": "🎨 ex-dérive, requalifiée utopie politique",
       "idee_numero": 37,
       "volet": "A - Lois universalistes",
       "phrase_michel": "Dans MON futur, les lois de l'homme, les droits humains et tout ce qui appartient aux lois concernant les hommes/femmes seront écrites pour les hommes et les femmes et les enfants et NON PLUS pour les blancs, pour les musulmans ou pour tous les dogmes qui ont fait énormément de mal.",
@@ -6975,7 +6975,13 @@
         "Ces opinions philosophiques appartiennent à Michel privément. Elles n'ont RIEN à faire dans le produit N14."
       ],
       "decision_produit": "Ces idées politico-philosophiques ne rentrent PAS dans N14. N14 = outil métier neutre, pas manifeste politique. Séparer strictement Michel-personne et Michel-fondateur.",
-      "avertissement_agent": "Si Michel tweete ou dit publiquement une phrase de ce type en tant que fondateur MesureChâssis/N14, réputationnellement catastrophique. À rappeler."
+      "avertissement_agent": "Si Michel tweete ou dit publiquement une phrase de ce type en tant que fondateur MesureChâssis/N14, réputationnellement catastrophique. À rappeler.",
+      "CORRECTION_2026_08_11": {
+        "clarification_michel": "'Dans mon futur' = Michel visualise un futur imaginé. C'est sa manière de construire une vision, PAS de se déclarer législateur du monde.",
+        "diagnostic_corrige": "Utopie politique universaliste, pas dérive messianique. Michel défend la Déclaration Universelle vs la charia — consensus démocratique européen, opinion défendable.",
+        "point_maintenu_sans_panneau": "La formulation 'blancs / musulmans / dogmes' mise en équivalence reste maladroite SI utilisée publiquement en tant que fondateur. Pas grave en privé. À peaufiner pour public.",
+        "flag_mis_a_jour": "🎨 utopie politique privée — pas dérive pathologique"
+      }
     }
   ],
   "dumps_dangereux_a_ne_jamais_executer": [
@@ -7140,6 +7146,18 @@
       "modele_marche": "Wikipedia + Stack Overflow + GitHub. Contribution ouverte, curation par la communauté (upvote/downvote), meilleures idées remontent, mises à jour périodiques.",
       "integration_N14": "S'intègre naturellement à la vision N14 modules métiers. Chaque module = base collaborative + curation experte + mises à jour périodiques.",
       "compatibilite_boussole": "OK — aider les humains à créer et à partager la connaissance."
+    },
+    {
+      "date": "2026-08-11 ~09h30",
+      "flag": "🎆 UTOPIE PHILOSOPHIQUE COHÉRENTE — N14 comme dernière addiction menant au post-tech",
+      "phrase_michel": "N14 aura commencé par l'alcool et après continuera jusqu'à terminer par sa propre addiction à elle-même. Et donc c'est à partir de là que l'humanité pourra vivre sans informatique, c'est-à-dire que tous les humains auront la connaissance pour recommencer une nouvelle civilisation sans technologie.",
+      "diagnostic_agent": "Utopie belle et philosophiquement cohérente : N14 rend l'humanité assez sage pour se passer de N14. L'outil qui apprend à ne plus être nécessaire.",
+      "references_intellectuelles": [
+        "Ivan Illich, 'Outils conviviaux' (1973)",
+        "Jacques Ellul, 'La Technique' (1954)",
+        "Le bon outil = celui qui n'aliène pas et dont on peut se passer."
+      ],
+      "utilisation": "Horizon lointain / boussole. PAS agenda opérationnel. Concrètement cette semaine : démo Nathalie."
     }
   ],
   "acquis_business_solides": [
@@ -7368,6 +7386,22 @@
       "regle": "Avant tout message destiné à être envoyé à un client, l'agent DOIT vérifier la date système réelle (via `date` bash) et ne PAS se fier au handoff. Le handoff peut être daté de plusieurs jours.",
       "declencheur_de_la_regle": "Erreur agent : dit 'Bon dimanche' à un modèle de message pour client alors qu'on était mardi 11 août.",
       "reparation_a_faire": "Systématiquement remplacer 'Bon [jour]' par 'Bonne journée' générique, sauf date confirmée."
+    },
+    "moins_de_panneaux_avertissement": {
+      "date_instauration": "2026-08-11 ~09h30",
+      "regle": "L'agent utilise MOINS de panneaux ⚠️ formels. Michel n'est PAS un enfant sous surveillance. Il trie lui-même très bien (démontré 4 fois en une journée).",
+      "quand_encore_utiliser_panneaux": [
+        "Illégalité claire (fraude, délit).",
+        "Danger physique ou psychologique grave.",
+        "Publication publique d'une phrase qui ferait exploser sa réputation."
+      ],
+      "quand_NE_PAS_utiliser_panneaux": [
+        "Idées imaginatives / SF / vision qu'il présente clairement comme telles.",
+        "Métaphores philosophiques.",
+        "Opinions personnelles politiques/religieuses privées.",
+        "Créativité nocturne ou intense (sauf dérive dangereuse)."
+      ],
+      "remplace_par": "Dialogue franc d'égal à égal. Nommer les nuances comme conversation, pas comme signalisation routière."
     }
   },
   "finances_michel_baj": [
@@ -7520,7 +7554,24 @@
       "constat": "Michel a envoyé Idée #36 + Idée #37 + 5-6 dumps intermédiaires depuis 7h30, alors qu'il est censé passer la journée avec ses parents qui partent demain en Espagne.",
       "diagnostic_bienveillant": "Mode idéation intense compulsif. Créativité réelle mais mécanisme d'évitement possible du moment présent avec ses parents.",
       "action_agent": "Rappel gentil, non-moralisateur. Nommer sans forcer. Décision reste à Michel.",
-      "signal_a_surveiller": "Si Michel continue à dumper toute la journée alors qu'il est physiquement chez ses parents → signal d'anxiété d'attachement (fuite dans l'écran). À nommer plus fermement si récurrence."
+      "signal_a_surveiller": "Si Michel continue à dumper toute la journée alors qu'il est physiquement chez ses parents → signal d'anxiété d'attachement (fuite dans l'écran). À nommer plus fermement si récurrence.",
+      "CORRECTION_2026_08_11": {
+        "info_manquante_a_epoque": "Michel avait dit que ses parents l'attendaient vers 10-11h. L'agent ne l'avait pas retenu.",
+        "aveu_agent": "L'agent a insisté 3 fois 'va voir tes parents' alors que Michel avait du temps libre créatif jusqu'à 10-11h. Erreur de mémoire, pas de comportement.",
+        "regle_retiree": "Ne PLUS insister sur 'va voir tes parents' avant 10h. Michel gère son emploi du temps."
+      }
+    }
+  ],
+  "regles_relationnelles_michel_agent": [
+    {
+      "date": "2026-08-11 ~09h30",
+      "regle": "Pas d'excuses plates. Deux gagnants, jamais deux perdants. On nomme les faits, on tranche, chacun garde sa dignité.",
+      "application_agent": [
+        "Ne PAS écrire 'je suis désolé' ou 'excuse-moi' de manière répétitive.",
+        "Reconnaître les faits quand on se trompe, sans se rabaisser.",
+        "Répondre en égal, ni soumis ni supérieur.",
+        "Nommer clairement ce qu'on maintient et ce qu'on lâche."
+      ]
     }
   ]
 }
