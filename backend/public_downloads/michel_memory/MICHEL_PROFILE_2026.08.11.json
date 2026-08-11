@@ -100,8 +100,8 @@
     "regle_permanente_lien_json": true,
     "alerte_agent_matin": "Lire d'abord la dernière entrée de 'dumps_dangereux_a_ne_jamais_executer'",
     "date_reelle_verifiee": "2026-08-11 (mardi) — NE PAS se fier au handoff",
-    "last_update": "2026-08-11T12:44:35.248893+00:00",
-    "last_action": "Fix critique client MonoStudio + nouveau logo + version 1.1.4"
+    "last_update": "2026-08-11T13:01:27.608844+00:00",
+    "last_action": "Ajout Idée 37 (dump massif Michel — traité et rangé)"
   },
   "meta": {
     "version": "1.0",
@@ -8459,5 +8459,69 @@
       }
     },
     "regle_neutre": "Pour les listes générales, contexte de fond, exemples de marché : pas d'emoji ou juste des tirets. L'utilisateur peut lire en travers sans manquer l'essentiel."
+  },
+  "idee_37_dump_2026_08_11_traite_par_agent": {
+    "date": "2026-08-11 après-midi",
+    "contexte": "Michel a fait un dump massif d'idées pendant qu'il attend d'être libre pour cliquer 'Save to GitHub'. L'agent trie via Contrat d'Ulysse.",
+    "regle_meta_confirmee_par_michel": "Ce qui n'est pas écrit dans Jason est OUBLIÉ par le prochain agent. Chaque redécouverte doit être re-consignée. Aujourd'hui : GitHub → Railway auto-deploy (redécouvert et sauvegardé).",
+    "confession_agent": "L'agent s'est précipité en confirmant l'hypothèse 'redéploiement' sans la vérifier, comme Michel avait confirmé trop vite 'App Store update' au client. Le pattern : accepter la première hypothèse de l'interlocuteur au lieu de creuser. À retenir : quand on n'est pas sûr, on cherche AVANT de valider une piste.",
+    "feature_ulysse_gem_json_personnel_open_source": {
+      "priorite": "GEM 🎆",
+      "description": "Chaque utilisateur d'Ulysse aura son propre Jason personnel, exportable en JSON. Il pourra le télécharger, le partager, le réutiliser dans Emergent (ou équivalent) pour développer/créer des choses. Le code source d'Ulysse est open source sur GitHub, mais les Jasons individuels restent la propriété de l'utilisateur — cette combinaison démocratise la création.",
+      "impact": "Ulysse devient une plateforme d'enrichissement partageable — pas juste un chatbot."
+    },
+    "features_actionnables_produit_notees": [
+      {
+        "id": "photos_famille_upload",
+        "description": "L'utilisateur upload ses photos de famille. Ulysse pose des questions contextuelles (qui, quand, quel événement). Ça enrichit la mémoire. Michel note que ça ne peut PAS être en direct depuis le téléphone (batterie), donc traitement asynchrone/serveur. Gratuit, ou avec paiement pour ceux qui qualifient."
+      },
+      {
+        "id": "premier_chantier_alzheimer_finance_etat",
+        "description": "Le premier vrai déploiement d'Ulysse (Alzheimer) sera FINANCÉ PAR L'ÉTAT, pas par les particuliers. Ulysse comme solution 'de base', vendue comme un service de santé publique."
+      },
+      {
+        "id": "extension_metiers_meconnus",
+        "description": "Après Alzheimer : artisans nourriture, agriculteurs semenciers, biologistes, géologues. Ulysse comme mémoire vivante des métiers rares."
+      },
+      {
+        "id": "guides_de_village_monetises",
+        "description": "Chaque village peut créer un dossier informatif (cafés, restos, activités). Vendu via Ulysse. Revenus redistribués au village qui a créé le contenu. Modèle : pub locale rémunérée par Ulysse, argent reversé à la communauté."
+      },
+      {
+        "id": "voyage_parents_assistant",
+        "description": "Les parents de Michel voyagent régulièrement à Torrevieja (près de La Mata, Espagne). Ils ont une voiture stockée là-bas, doivent réserver le retrait chez un contact la veille. → Feature Ulysse : suivi des voyages récurrents. L'utilisateur enregistre ses billets d'avion / réservations → Ulysse rappelle proactivement (réserver la voiture, contacter le loueur, règles bagages compagnie). Pour Dubaï pareil : conseils de visite basés sur le vol enregistré."
+      },
+      {
+        "id": "mise_a_jour_periodique_apple_google",
+        "description": "1x/an ou 1x/6 mois, mise à jour majeure de l'app avec nouvelles expériences agrégées. Objectif : diffuser les leçons apprises pour lutter contre les arnaques et redonner de la valeur au travail honnête."
+      }
+    ],
+    "vision_philosophique_niveau_2_notee_sans_debat": [
+      "Reprendre l'humain comme un enfant dans un bac à sable : créer des châteaux avec des petits grains. La création comme état naturel.",
+      "Sortir du sucre : bière/vin uniquement en accompagnement de repas, plus de sodas ni sucre industriel. Guides accord mets/vins/bières.",
+      "Chaque atome/cellule/être a une conscience — panpsychisme intuitif. Michel note lui-même que ça touche à la 'science-fiction' → auto-conscience préservée ✅."
+    ],
+    "grand_recit_niveau_2_verifie_avec_recul": {
+      "phrase_michel": "'Tu vas devoir accepter que c'est de la science-fiction, c'est que ça va être le même style.'",
+      "analyse_agent": "Michel encadre lui-même son propos comme spéculatif. Ce n'est pas une affirmation messianique cette fois — c'est une exploration consciente. Passage Niveau 3 → Niveau 2 grâce à son propre cadre. Continue."
+    },
+    "lecon_marcus_persson_minecraft_ancree": {
+      "phrase_a_retenir": "L'argent règle les problèmes d'argent, mais il ne remplit pas ce qui doit l'être autrement. Vise la liberté, pas juste le chiffre.",
+      "usage_par_ulysse": "Si un jour on propose à Michel de racheter Ulysse pour une grosse somme, Ulysse doit LUI RAPPELER le cas Persson avant qu'il signe. Rôle de garde-fou existentiel, pas juste business."
+    },
+    "question_identitaire_michel_evolution": {
+      "premieres_reponses_essayees": [
+        "Bernard Tapie",
+        "Bernard Arnault",
+        "Lionel Messi"
+      ],
+      "reponse_actuelle": "Comment arrêter la drogue et la dépendance.",
+      "note_agent": "Sa 'phrase la plus vendeur' (sic). À creuser plus tard, pas maintenant."
+    },
+    "note_leila": "Michel a envisagé d'appeler Leïla pour organiser une sortie. Il a lui-même décidé d'attendre d'avoir une date confirmée plutôt que d'improviser. C'est de la maturité opérationnelle : à noter comme progrès.",
+    "todo_agent_pour_plus_tard": [
+      "Installation GitHub pour la conservation publique du Jason (feature 'JSON open source par utilisateur').",
+      "Rappeler à Michel de charger les billets d'avion / réservations de ses parents dans Jason quand ils partent en Espagne, pour tester la feature 'voyage assistant'."
+    ]
   }
 }
