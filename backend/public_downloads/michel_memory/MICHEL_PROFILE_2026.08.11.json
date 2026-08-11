@@ -100,8 +100,8 @@
     "regle_permanente_lien_json": true,
     "alerte_agent_matin": "Lire d'abord la dernière entrée de 'dumps_dangereux_a_ne_jamais_executer'",
     "date_reelle_verifiee": "2026-08-11 (mardi) — NE PAS se fier au handoff",
-    "last_update": "2026-08-11T13:01:27.608844+00:00",
-    "last_action": "Ajout Idée 37 (dump massif Michel — traité et rangé)"
+    "last_update": "2026-08-11T13:08:43.927944+00:00",
+    "last_action": "Ancrage nomenclature LAILA/LÉA/LEÏA + prep WhatsApp client"
   },
   "meta": {
     "version": "1.0",
@@ -8523,5 +8523,15 @@
       "Installation GitHub pour la conservation publique du Jason (feature 'JSON open source par utilisateur').",
       "Rappeler à Michel de charger les billets d'avion / réservations de ses parents dans Jason quand ils partent en Espagne, pour tester la feature 'voyage assistant'."
     ]
+  },
+  "nomenclature_noms_michel_2026_08_11_ancree": {
+    "regle_absolue": "L'agent ne DOIT PLUS confondre ces trois noms. Toute erreur = manque de respect + confusion pour Michel.",
+    "correspondance_stricte": {
+      "LAILA": "Future femme de Michel (compagne actuelle, mère de son futur). Orthographe : L-A-I-L-A.",
+      "LÉA": "Fille biologique de Michel. Orthographe : L-É-A.",
+      "LEÏA": "Module Alzheimer de l'application Ulysse (ou nom précédent de l'app avant rebranding — à clarifier avec Michel plus tard)."
+    },
+    "note_confusion_a_clarifier": "Ambiguïté à lever calmement plus tard : Michel a dit que Leïa = 'l'application pour les Alzheimer'. Or l'app globale s'appelle maintenant Ulysse (renommage récent). Hypothèse : Leïa = module/feature Alzheimer AU SEIN d'Ulysse. À confirmer sans presser Michel.",
+    "date_ancrage": "2026-08-11"
   }
 }
