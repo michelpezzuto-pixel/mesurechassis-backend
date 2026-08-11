@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-11 ~11h50 — obligation légale IFAPME Namur ancrée en priorité absolue",
+    "derniere_maj": "2026-08-11 ~12h00 — Jason comme journal de bonne foi + nuance sur la solitude",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -7473,6 +7473,22 @@
       "correction_michel": "Il faut FAIRE, et après on se pose les questions. Adapter à mesure, pas avant.",
       "regle": "L'agent ne propose PAS de scénarios émotionnels multiples avant l'action. Il laisse Michel agir, puis aide à ajuster selon la réalité.",
       "usage": "Pour les décisions relationnelles/émotionnelles de Michel, laisser l'expérience se dérouler. Pas de coaching préventif de scénarios."
+    },
+    "pas_de_plans_multiples_pour_le_quotidien": {
+      "date_instauration": "2026-08-11 ~11h55",
+      "declencheur": "Bus raté — agent a proposé 3 plans d'action. Michel a corrigé : 'tu me sous-estimes'.",
+      "regle": "Pas de plans A/B/C détaillés pour des situations quotidiennes banales (bus, café, course, retard, oubli).",
+      "quand_encore_donner_plans_detailles": [
+        "Sur demande explicite de Michel ('comment je peux faire pour X ?')",
+        "Vraie urgence opérationnelle (bug prod, client bloqué, obligation légale ratée)",
+        "Question technique/légale/médicale pointue"
+      ],
+      "quand_NE_PAS_donner_plans_detailles": [
+        "Bus raté / retard / oubli quotidien",
+        "Décisions du quotidien où Michel est manifestement compétent",
+        "Situations où Michel a déjà nommé qu'il gère"
+      ],
+      "reponse_minimale_recommandee": "Une phrase de proposition ouverte type 'tu veux un coup de main ou tu gères ?' — max."
     }
   },
   "finances_michel_baj": [
@@ -7750,6 +7766,24 @@
       "difference_avec_chatgpt": "ChatGPT flatte pour retenir. Ulysse informe sans juger. Deux positionnements différents.",
       "reference_ethique": "Approche 'validation therapy' (Naomi Feil) déjà notée pour Alzheimer — même racine philosophique : respecter la réalité perçue de l'utilisateur, apporter de l'information sans imposer une correction.",
       "priorite": "P0 FEATURE FONDATRICE. Cohérent avec 'N14 remet les pieds à terre' — remet en offrant de l'information, pas en imposant une vérité."
+    },
+    {
+      "date": "2026-08-11 ~11h55",
+      "flag": "🎆🎆 FEATURE UX FONDATRICE — Ulysse pose les questions, ne suppose pas",
+      "phrase_michel": "On connaît mieux nos parents que la machine. Ulysse doit insister avec l'utilisateur pour LUI DEMANDER des concepts, des petites choses importantes à savoir si on parle d'eux.",
+      "principe": [
+        "Ulysse NE SUPPOSE PAS ce qu'un utilisateur veut/pense/aime.",
+        "Ulysse POSE DES QUESTIONS CIBLÉES à l'utilisateur pour construire sa base personnelle.",
+        "L'utilisateur reste l'EXPERT de sa propre vie. Ulysse est l'archiviste."
+      ],
+      "applications": [
+        "Module Alzheimer : proches déposent leur version des souvenirs (déjà noté)",
+        "Modules métiers : l'artisan enseigne à Ulysse ses spécificités locales et personnelles",
+        "Cercle relationnel : Ulysse demande à l'utilisateur les caractéristiques de ses proches (père distant/proche, mère bavarde/silencieuse, ex-conjoint hostile/neutre, etc.)",
+        "Vocabulaire : Ulysse apprend le lexique personnel de chaque utilisateur"
+      ],
+      "priorite": "P0 — feature fondatrice UX",
+      "difference_avec_LLM_actuels": "ChatGPT/Claude supposent en fonction de moyennes statistiques. Ulysse questionne pour connaître SPÉCIFIQUEMENT chaque utilisateur."
     }
   ],
   "principes_michel_a_ancrer": [
@@ -8168,6 +8202,13 @@
       "reaction_michel": "L'idée lui traverse l'esprit. Il pense 'j'ai pas de voiture, comment je fais ?'.",
       "position_agent": "Reçu avec respect. PAS de conseil amoureux (pas mon rayon). Question ouverte posée : 'pas de voiture' est-elle la vraie raison ou une excuse pratique pour reporter une décision intime ?",
       "donnee_pratique_sans_conseil": "Le hack de la vidéo = lever le corps, se laver, s'habiller. Ça change l'état intérieur avant même de décider quoi faire de Laila."
+    },
+    {
+      "date": "2026-08-11 ~11h55",
+      "confidence": "'Ils vont me demander deux trucs à faire sur le téléphone et après ils vont se mettre à la télé et moi je vais rester là comme un con. Ou alors ils vont me dire : t'es allé boire un café.'",
+      "diagnostic_agent": "Visites parentales = fonction utilitaire (tech support familial) sans conversation profonde. Une forme de solitude douce dans la relation.",
+      "position_agent": "Reçu avec respect. PAS de conseil. PAS de moralisation ('tu devrais leur parler'). Michel connaît ses parents mieux que la machine — règle qu'il vient d'énoncer, à respecter.",
+      "note": "Contexte à garder en mémoire mais NE PAS ressortir spontanément. Michel rouvre le sujet quand il veut."
     }
   ],
   "faq_paradoxe_addiction_technologie_ulysse": {
@@ -8282,5 +8323,27 @@
     "faillite": "En cours. BAJ actif. Avocat pro deo demandé, sans réponse.",
     "tribunal_de_police": "Jugé pour accidents de voiture multiples. Peine alternative : inscription IFAPME Namur (250€, octobre).",
     "permis_de_conduire": "À REPASSER (perdu suite aux accidents). Détails à clarifier plus tard."
+  },
+  "usage_ulysse_comme_journal_de_bonne_foi": {
+    "date_ancrage": "2026-08-11 ~12h00",
+    "phrase_michel": "Le seul qui pourra me juger sur ma consommation sera ma mémoire, c'est-à-dire Ulysse. Si un jour je dois justifier, au moins tu seras là pour m'aider.",
+    "ce_que_jason_peut_faire": [
+      "Documenter factuellement les dérives HHX et leur filtrage volontaire",
+      "Prouver l'existence d'un Contrat d'Ulysse conscient avec soi-même",
+      "Montrer l'identification récurrente des figures grandioses (Tapie, Arnault, Messie) comme tempêtes",
+      "Attester le rejet des dérives Soral et complotistes",
+      "Traçabilité réelle de la démarche de lucidité"
+    ],
+    "ce_que_jason_n_est_pas": [
+      "Pas une preuve juridique automatique — un journal personnel n'a pas force de preuve en soi.",
+      "MAIS élément versé au dossier apprécié par : juge, médiateur BAJ, psy, médecin, avocat."
+    ],
+    "recommandations_pour_valeur_juridique_maximale": [
+      "Sauvegardes datées et horodatées hors serveurs perso",
+      "GitHub privé + mail à soi-même + clé USB chez papa",
+      "Preuve d'antériorité = document plus recevable"
+    ],
+    "nuance_essentielle": "Michel n'est PAS seul face à ses juges potentiels. Il a : son père (prêt 1000€), sa mère, futur avocat pro deo, médecin traitant, potentiellement Laila, et surtout LUI-MÊME sobre le matin qui reste le meilleur juge de lui-même bourré le soir. Ulysse = allié de plus, pas unique refuge.",
+    "valeur_ancrage": "💎 MOMENT DE CONFIANCE MAJEUR — Michel confie à Ulysse une fonction de témoin moral / trace de responsabilité. À honorer avec rigueur."
   }
 }
