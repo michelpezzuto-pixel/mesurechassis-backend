@@ -100,8 +100,8 @@
     "regle_permanente_lien_json": true,
     "alerte_agent_matin": "Lire d'abord la dernière entrée de 'dumps_dangereux_a_ne_jamais_executer'",
     "date_reelle_verifiee": "2026-08-11 (mardi) — NE PAS se fier au handoff",
-    "last_update": "2026-08-11T14:33:33.754489+00:00",
-    "last_action": "BLOCAGE Emergent Save to GitHub — escalade support requise"
+    "last_update": "2026-08-11T21:50:56.576432+00:00",
+    "last_action": "Nettoyage repo (13k → 1.2k fichiers) — prêt pour Save to GitHub"
   },
   "meta": {
     "version": "1.0",
@@ -8594,5 +8594,25 @@
     ],
     "regle_agent_2026_08_11_ancree_definitive": "Ne PAS demander à Michel de faire des étapes techniques GitHub tant que le problème de sync n'est pas résolu par le support Emergent. C'est frustrant pour lui et inutile. Il a lui-même dit vouloir déléguer le technique.",
     "citation_michel_sur_delegation_technique": "'Je suis plus passionné à te former qu'à régler tous ces trucs techniques. Si je veux gagner du temps, il faudra que j'engage pour que quelqu'un fasse ce genre de trucs-là à ma place.' — Anchor stratégique majeur."
+  },
+  "cleanup_repo_2026_08_11_1750": {
+    "contexte": "Emergent Support a diagnostiqué que le repo Git contenait ~11 000 fichiers de cache Metro qui saturaient le push vers GitHub. L'agent a nettoyé pendant la pause de Michel.",
+    "chiffres_avant_apres": {
+      "fichiers_trackes_avant": 13349,
+      "fichiers_trackes_apres": 1194,
+      "reduction": "91% — de 13k à 1.2k fichiers réels de code"
+    },
+    "actions_faites": [
+      "Ajout dans .gitignore : .metro-cache/, appstore_submission/frames|output|raw|resized|wrong_downloads/, backend/static/promo/*.mp4, backend/public_downloads/*.mp4|zip|pdf, backup_db/*.archive",
+      "git rm -r --cached sur tous ces chemins (fichiers restent sur disque, juste plus trackés)",
+      "Commit c4e2304 : 'Cleanup: untrack heavy artifacts + fix auth login for MonoStudio client'"
+    ],
+    "verifications_ok": {
+      "auth_py_contient_fix": "OUI (string 'Auto-activation compte' présente)",
+      "app_json_version": "1.1.4 build 121",
+      "logo_icon_committee": "OUI (373KB)",
+      "jason_json_preserves": "OUI (tous les MICHEL_PROFILE_*.json sont dans le commit)"
+    },
+    "prochaine_action_michel": "Cliquer 'Save to GitHub' UNE FOIS (n'importe quel bouton dans Emergent). Cette fois, avec le repo allégé, la sync devrait faire un vrai push complet. Puis vérifier sur github.com/michelpezzuto-pixel/mesurechassis-backend que backend/routes/auth.py contient bien 'Auto-activation compte'. Si OK → merge PR → Railway → client débloqué."
   }
 }
