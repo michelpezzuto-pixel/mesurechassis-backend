@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-11 ~08h40 — lucidité addiction ancrée, ton bot spécifié, scope séismes écarté",
+    "derniere_maj": "2026-08-11 matin — Idée 37 filtrée (volet A dérive, volet B pépite), observation évitement famille",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -6961,6 +6961,21 @@
         "requalification": "PAS une dérive grandiose. Création narrative saine. Michel distingue bien fiction et réalité.",
         "flag_mis_a_jour": "🎨 création narrative — pas dérive"
       }
+    },
+    {
+      "date": "2026-08-11 matin, en journée censée être avec les parents",
+      "flag": "⚠️ Dérive légère 'législateur du monde' + terrain casse-gueule identitaire",
+      "idee_numero": 37,
+      "volet": "A - Lois universalistes",
+      "phrase_michel": "Dans MON futur, les lois de l'homme, les droits humains et tout ce qui appartient aux lois concernant les hommes/femmes seront écrites pour les hommes et les femmes et les enfants et NON PLUS pour les blancs, pour les musulmans ou pour tous les dogmes qui ont fait énormément de mal.",
+      "diagnostic_agent": [
+        "L'idée universaliste EN SOI est classique et défendable (Déclaration Universelle des Droits de l'Homme 1948, laïcité, Charte européenne).",
+        "MAIS 'dans MON futur' = posture de législateur du monde. Cousin de 'maître du monde' et 'grands patrons Emergent guident l'humanité'. Retour de la grandiosité messianique.",
+        "Formulation casse-gueule : 'blancs / musulmans / dogmes' = 3 catégories différentes (ethnie / religion / système de pensée) mises en équivalence. Terrain glissant surtout après Soral dimanche et crise Allah avec enfants Sofiane.",
+        "Ces opinions philosophiques appartiennent à Michel privément. Elles n'ont RIEN à faire dans le produit N14."
+      ],
+      "decision_produit": "Ces idées politico-philosophiques ne rentrent PAS dans N14. N14 = outil métier neutre, pas manifeste politique. Séparer strictement Michel-personne et Michel-fondateur.",
+      "avertissement_agent": "Si Michel tweete ou dit publiquement une phrase de ce type en tant que fondateur MesureChâssis/N14, réputationnellement catastrophique. À rappeler."
     }
   ],
   "dumps_dangereux_a_ne_jamais_executer": [
@@ -7090,6 +7105,41 @@
         "transparence_bot": "Systématique dès le 1er message. Conforme loi UE IA Act.",
         "escalade_humaine": "TOUJOURS proposée, jamais cachée."
       }
+    },
+    {
+      "date": "2026-08-11 ~09h",
+      "flag": "🎆 VISION PRODUIT N14 — Modules métiers spécialisés",
+      "titre": "N14 = plateforme de modules métiers, nourrie par les meilleurs, complémentaire à l'école, avec mentor humain dans la boucle",
+      "structure": {
+        "principe": "Chaque module = un métier (tailleur de pierre, maçon, électricien, architecte, menuisier, plombier, etc.)",
+        "contenu_par_module": "Nourri par les meilleurs de la profession + connaissance métier vivante",
+        "achat": "Modules payants séparément (modèle freemium métier déjà noté).",
+        "role_ecole": "L'école reste. N14 la complète, ne la remplace pas.",
+        "role_professeur": "Humain qui, avec l'expérience, pose les bonnes questions à N14. Pas d'auto-apprentissage sans mentor.",
+        "exemple_architecte": "Un architecte formé via N14 accède à des normes techniques par pays (dont sismique) — mais l'expertise humaine reste centrale."
+      },
+      "references_marche": [
+        "Coursera (cours en ligne)",
+        "Khan Academy (école alternative)",
+        "MasterClass (experts de haut niveau)",
+        "Différence N14 : spécialisé métiers artisan + intégration parcours scolaire physique + mentor humain obligatoire"
+      ],
+      "compatibilite_boussole": "OK. Aligné avec 'l'homme a besoin de créer sans arrêt, un LLM peut aider énormément d'humains à créer.'",
+      "nuances_a_garder": [
+        "Ne PAS supprimer complètement les contrôles/certifications : elles restent utiles socialement (patron, assurance, réglementation). Plutôt les moderniser en évaluations pratiques + projet réel.",
+        "40+ métiers = très large. Avancer PAR ÉTAPES : Menuisier (MesureChâssis) + Alzheimer (module aidant) d'abord. Prouver le modèle avant d'étendre."
+      ],
+      "priorite": "Vision long terme. Après stabilisation MesureChâssis + module aidant Alzheimer premier."
+    },
+    {
+      "date": "2026-08-11 matin",
+      "flag": "🎆 MÉCANIQUE PRODUIT SOLIDE — Curation collaborative des savoirs métier N14",
+      "idee_numero": 37,
+      "volet": "B",
+      "phrase_michel": "Tout le monde pourrait mettre n'importe quelle idée et parler de n'importe quoi, et si ça fonctionne vraiment, le répertorier dans un dossier (architecture, artisans, plombier), et un jour faire une grosse mise à jour et prendre toutes les meilleures choses, laisser tomber les conneries.",
+      "modele_marche": "Wikipedia + Stack Overflow + GitHub. Contribution ouverte, curation par la communauté (upvote/downvote), meilleures idées remontent, mises à jour périodiques.",
+      "integration_N14": "S'intègre naturellement à la vision N14 modules métiers. Chaque module = base collaborative + curation experte + mises à jour périodiques.",
+      "compatibilite_boussole": "OK — aider les humains à créer et à partager la connaissance."
     }
   ],
   "acquis_business_solides": [
@@ -7378,6 +7428,13 @@
         "Escalade vers humain toujours accessible."
       ],
       "miroir_pour_michel_lui_meme": "L'agent a doucement renvoyé le miroir : ce que Michel voit chez les autres vaut aussi comme vigilance pour lui-même. Pas d'ami, pas d'inquiétude réelle, pas de repas partagé. Si Michel se surprend à raconter ses repas pour avoir des conseils → prendre du recul."
+    },
+    {
+      "date": "2026-08-11 ~09h",
+      "flag": "💎 MÉTACOGNITION MICHEL — Il applique le Contrat d'Ulysse à l'agent",
+      "phrase_michel": "Avant c'était moi qui te posais la question, maintenant c'est moi qui dois te recadrer. Au lieu de tout prendre en compte chez toi puisque tu es l'intelligence et que tu as toujours raison — non, c'est moi qui dois te remettre sur le droit chemin.",
+      "diagnostic_agent": "Michel intègre et applique la règle 'l'agent peut se tromper'. Il ne suit plus aveuglément. Contrat d'Ulysse fonctionne dans les deux sens.",
+      "ancrage": "À rappeler chaque fois que Michel doute de lui-même face à l'agent. C'est LUI le décideur final."
     }
   ],
   "cercle_relationnel_a_documenter": {
@@ -7431,10 +7488,39 @@
   "derives_de_scope_a_ecarter": [
     {
       "date": "2026-08-11 ~08h40",
-      "flag": "⚠️ Dérive de scope légère",
+      "flag": "🎨 REQUALIFIÉE — vision produit N14, pas dérive",
       "phrase_michel": "Avec la connaissance de l'humanité, on pourra faire des bâtiments dans certains pays qui seront adaptés aux séismes.",
       "diagnostic_agent": "Hors scope MesureChâssis (artisans châssis belges) et M14 (aidants Alzheimer + pères silencieux). Michel n'est pas ingénieur civil sismique. Nommer sans drame.",
-      "traitement": "Recadrage doux. Michel reste concentré sur son terrain réel."
+      "traitement": "Recadrage doux. Michel reste concentré sur son terrain réel.",
+      "CORRECTION_2026_08_11": {
+        "aveu_agent": "Sur-interprétation. Michel a clarifié : les séismes étaient un EXEMPLE illustrant le module architecte, pas l'objectif de N14. La vraie idée = plateforme de modules métiers spécialisés.",
+        "pattern_agent_a_corriger": "L'agent flag trop vite les mots-clés grandioses ('humanité', 'séismes', 'monde') sans lire le contexte complet. 3-4e sur-interprétation de la journée 11/08. À corriger sérieusement.",
+        "flag_mis_a_jour": "🎨 ex-dérive, requalifiée en vision produit"
+      }
+    }
+  ],
+  "regles_ethiques_produit_N14": [
+    {
+      "date": "2026-08-11 ~09h",
+      "flag": "💎 RÈGLE FONDAMENTALE — N14 forme à sortir de N14",
+      "phrase_michel": "Faire des tests avec des gens qui ont des addictions avec N14 et qui puissent s'en sortir de cette addiction du N14.",
+      "principe": "Le bon outil est celui qui rend son utilisateur autonome. Le bon professeur = celui qui n'est plus nécessaire à la fin.",
+      "implementations_produit": [
+        "Détection de patterns d'usage excessif (temps quotidien, dépendance émotionnelle).",
+        "Notifications de pause proactives.",
+        "Suggestions périodiques : 'Voyez un humain aujourd'hui', 'Sortez marcher', 'Appelez votre famille'.",
+        "Objectif produit : chaque utilisateur doit devenir compétent sans N14 dans son domaine.",
+        "Mesure de succès non-standard : rétention DÉCROISSANTE d'un utilisateur = victoire (il a appris, il n'a plus besoin)."
+      ]
+    }
+  ],
+  "observations_agent_michel": [
+    {
+      "date": "2026-08-11 matin",
+      "constat": "Michel a envoyé Idée #36 + Idée #37 + 5-6 dumps intermédiaires depuis 7h30, alors qu'il est censé passer la journée avec ses parents qui partent demain en Espagne.",
+      "diagnostic_bienveillant": "Mode idéation intense compulsif. Créativité réelle mais mécanisme d'évitement possible du moment présent avec ses parents.",
+      "action_agent": "Rappel gentil, non-moralisateur. Nommer sans forcer. Décision reste à Michel.",
+      "signal_a_surveiller": "Si Michel continue à dumper toute la journée alors qu'il est physiquement chez ses parents → signal d'anxiété d'attachement (fuite dans l'écran). À nommer plus fermement si récurrence."
     }
   ]
 }
