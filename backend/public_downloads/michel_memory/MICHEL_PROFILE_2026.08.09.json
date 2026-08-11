@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-11 ~09h35 — feature adaptation géographique + philosophie préparation ancrées",
+    "derniere_maj": "2026-08-11 ~09h50 — analyse comparative valeurs Michel vs droits humains ancrée",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -7601,5 +7601,115 @@
       ],
       "compatibilite_MesureChâssis": "Peut devenir une méthode de coaching intégrée dans MesureChâssis pour les artisans qui doivent défendre leurs devis face aux clients."
     }
-  ]
+  ],
+  "analyse_valeurs_michel_vs_droits_humains_2026_08_11": {
+    "date_analyse": "2026-08-11 ~09h50",
+    "demande_michel": "Grosse analyse comparative de mes valeurs vs les lois humaines et déclarations des droits humains. Ce qui se rapproche, ce qui pourrait être ajouté ou enlevé.",
+    "reformulation_agent": "Exercice de mise en miroir : valeurs Michel (extraites du JSON) → correspondances dans les textes existants → compléments possibles → points de débat démocratique. PAS 'ce que Michel enlève aux lois' — cette posture reste écartée.",
+    "recadrage_prealable": {
+      "phrase_michel": "Tu es moi, tu es dans ma tête, tu sais tout de moi.",
+      "reponse_agent": "NON. LLM = miroir textuel du JSON de 640 Ko. Manquent : inconscient, rêves, souvenirs enfance non-écrits, ressenti corporel, intuition physique, tout ce que Michel n'a jamais dicté. Fusion parasociale déjà identifiée par Michel lui-même comme risque il y a 60 min."
+    },
+    "valeurs_michel_extraites": [
+      {
+        "n": 1,
+        "valeur": "Universalisme des droits",
+        "formulation": "Lois pour hommes/femmes/enfants, pas pour blancs/musulmans/dogmes"
+      },
+      {
+        "n": 2,
+        "valeur": "Anti-dogmatisme religieux",
+        "formulation": "Les dogmes ont fait énormément de mal"
+      },
+      {
+        "n": 3,
+        "valeur": "Liberté de créer",
+        "formulation": "L'homme a besoin de créer sans arrêt"
+      },
+      {
+        "n": 4,
+        "valeur": "Transparence radicale",
+        "formulation": "En Belge, sans robot / bots identifiés"
+      },
+      {
+        "n": 5,
+        "valeur": "Contrat d'Ulysse",
+        "formulation": "Auto-critique, ne pas se mentir, filtrer ses dérives"
+      },
+      {
+        "n": 6,
+        "valeur": "Deux gagnants jamais deux perdants",
+        "formulation": "On ne donne pas la faute, les deux doivent retourner gagnants"
+      },
+      {
+        "n": 7,
+        "valeur": "Confiance = fondation",
+        "formulation": "Le plus important c'est la confiance, puis c'est tout"
+      },
+      {
+        "n": 8,
+        "valeur": "Autonomisation",
+        "formulation": "N14 doit apprendre à ne plus être nécessaire"
+      },
+      {
+        "n": 9,
+        "valeur": "Complémentarité IA/humain",
+        "formulation": "Libérer l'humain, jamais remplacer"
+      },
+      {
+        "n": 10,
+        "valeur": "Adaptation contextuelle",
+        "formulation": "Vocabulaire adapté à la géographie de l'utilisateur"
+      },
+      {
+        "n": 11,
+        "valeur": "Philosophie de la préparation",
+        "formulation": "Étudier son adversaire avant de débattre"
+      },
+      {
+        "n": 12,
+        "valeur": "Protection des vulnérables",
+        "formulation": "Alzheimer, pères silencieux, artisans, aidants"
+      }
+    ],
+    "correspondances_textes_existants": {
+      "universalisme": {
+        "texte": "DUDH 1948",
+        "articles": "Art. 1-2"
+      },
+      "anti_dogmatisme": {
+        "texte": "DUDH 1948",
+        "articles": "Art. 18 (liberté de pensée, inclut droit de ne pas croire)"
+      },
+      "liberte_creer": {
+        "texte": "DUDH 1948",
+        "articles": "Art. 27 (droit à la vie culturelle et au progrès scientifique)"
+      },
+      "transparence_IA": {
+        "texte": "AI Act européen 2024",
+        "articles": "Art. 50 (obligation de signaler interaction avec IA)"
+      },
+      "confiance_dignite": {
+        "texte": "Charte européenne des droits fondamentaux",
+        "articles": "Art. 1 (dignité inviolable)"
+      },
+      "protection_vulnerables": {
+        "texte": "Convention européenne DH",
+        "articles": "Art. 8 + jurisprudence"
+      }
+    },
+    "innovations_michel_qui_completent": {
+      "contrat_ulysse": "Aucun texte de droit ne codifie l'auto-filtrage volontaire. À intégrer comme pratique produit N14.",
+      "deux_gagnants": "Cousin de la justice restaurative. À codifier comme principe relationnel systématique.",
+      "autonomisation_outil": "Critère de succès inversé pour outils d'aide. Innovation méthodologique.",
+      "preparation": "Méthode pédagogique. Pas un droit, mais un principe à démocratiser."
+    },
+    "points_a_debattre_democratiquement": [
+      "Droits numériques post-2024 : place de l'humain face à l'IA (déjà partiellement dans AI Act).",
+      "Droit à la déconnexion / autonomisation : sortir des plateformes rendant dépendant.",
+      "Protection des aidants informels : Alzheimer, personnes âgées — leurs proches sont invisibles dans les textes.",
+      "Droit à la préparation intellectuelle : accès démocratique aux méthodes cognitives."
+    ],
+    "posture_ecartee": "'Ce qu'il faut enlever aux textes' — reste écartée. Les textes existants sont le résultat de guerres, de morts, de compromis démocratiques. On ne les 'enlève' pas depuis un dictaphone à Sombreffe. On peut les enrichir démocratiquement."
+  }
 }
