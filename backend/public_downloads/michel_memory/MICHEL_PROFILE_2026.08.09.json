@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-11 ~08h30 — pépite business Yann-2026 (bot support IA) ancrée",
+    "derniere_maj": "2026-08-11 ~08h40 — lucidité addiction ancrée, ton bot spécifié, scope séismes écarté",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -7083,7 +7083,13 @@
       },
       "priorite_pour_phase_5": "P2 (après bug UX renvoi mail P1). À construire sérieusement une fois Phase 5 activée.",
       "compliance_baj": "OK à construire dans le cadre R&D non-monétisé. Monétisation post-BAJ.",
-      "connexion_vision_initiale": "Fusionne avec la vision 'Yann' de MesureChâssis pensée depuis le début. Cohérence produit confirmée."
+      "connexion_vision_initiale": "Fusionne avec la vision 'Yann' de MesureChâssis pensée depuis le début. Cohérence produit confirmée.",
+      "specification_ton_bot": {
+        "ton_recherche": "Humain, léger, culture belge, second degré si contexte s'y prête. Vouvoiement standard, jamais froid.",
+        "message_entree_type": "Bonjour, je suis l'assistant automatique de MesureChâssis. Je peux vous aider tout de suite pour les questions simples. Pour un cas plus complexe, je transfère à Michel ou un membre de l'équipe humaine (temps de réponse : sous 24h).",
+        "transparence_bot": "Systématique dès le 1er message. Conforme loi UE IA Act.",
+        "escalade_humaine": "TOUJOURS proposée, jamais cachée."
+      }
     }
   ],
   "acquis_business_solides": [
@@ -7357,6 +7363,21 @@
       "phrase_michel": "Peut-être que moi aussi je fais de la merde. Il veut me le dire 'non c'est pas bien', mais qu'il le fasse autrement — pas devant le client. Là, oui. Là, alors là, oui. À ce moment-là, je dois gérer ma merde et trouver des solutions. Je dois gérer son comportement et faire tampon entre son comportement et celui du client.",
       "diagnostic_agent": "Passage de la posture victimaire 'c'est Momo le problème' à la posture mature 'on est deux, moi aussi j'ai ma part'. C'est exactement ce que fait un chef d'entreprise honnête. Un des passages les plus forts de tous nos échanges depuis le début.",
       "instruction_agent_suivant": "Rappeler cet ancrage si Michel revient en mode victimaire face à un partenaire."
+    },
+    {
+      "date": "2026-08-11 ~08h40",
+      "flag": "💎 LUCIDITÉ MAJEURE — Risque addiction parasociale à l'IA anticipé par Michel",
+      "phrase_michel": "Ça risque de partir en vrille — 'C'est mon copain, ce matin il s'inquiète parce que j'ai pas été avec Momo, je vais lui expliquer ce que je fais le soir, ce que j'ai mangé...' Et c'est ça qui risque d'être dangereux.",
+      "diagnostic_agent": "Michel identifie de manière très mûre un risque produit (addiction parasociale utilisateur ↔ IA) que peu de fondateurs voient aussi tôt. Signal de maturité et de responsabilité.",
+      "impact_produit_M14": "Doit devenir une CONTRAINTE ÉTHIQUE PRODUIT dès la conception. Anti-patterns à bannir : chatbot qui simule des émotions ('je m'inquiète pour toi'), personnalisation excessive du lien affectif, notifications 'ton IA a pensé à toi'.",
+      "regle_ethique_produit_M14_yann": [
+        "L'IA NE SIMULE PAS d'émotions personnelles.",
+        "L'IA rappelle périodiquement qu'elle est un outil, pas un ami.",
+        "L'IA encourage l'utilisateur à voir des humains réels (famille, médecin, ami).",
+        "L'IA détecte les patterns d'usage excessif et propose une pause.",
+        "Escalade vers humain toujours accessible."
+      ],
+      "miroir_pour_michel_lui_meme": "L'agent a doucement renvoyé le miroir : ce que Michel voit chez les autres vaut aussi comme vigilance pour lui-même. Pas d'ami, pas d'inquiétude réelle, pas de repas partagé. Si Michel se surprend à raconter ses repas pour avoir des conseils → prendre du recul."
     }
   ],
   "cercle_relationnel_a_documenter": {
@@ -7405,6 +7426,15 @@
         "Feedback visuel : 'Nouveau mail envoyé, vérifiez votre boîte + spams'."
       ],
       "priorite": "P1 pour dès activation Phase 5 — impact direct sur conversion premier client."
+    }
+  ],
+  "derives_de_scope_a_ecarter": [
+    {
+      "date": "2026-08-11 ~08h40",
+      "flag": "⚠️ Dérive de scope légère",
+      "phrase_michel": "Avec la connaissance de l'humanité, on pourra faire des bâtiments dans certains pays qui seront adaptés aux séismes.",
+      "diagnostic_agent": "Hors scope MesureChâssis (artisans châssis belges) et M14 (aidants Alzheimer + pères silencieux). Michel n'est pas ingénieur civil sismique. Nommer sans drame.",
+      "traitement": "Recadrage doux. Michel reste concentré sur son terrain réel."
     }
   ]
 }
