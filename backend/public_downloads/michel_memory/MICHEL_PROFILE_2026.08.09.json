@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-11 ~10h40 — feature fondatrice 'N14 remet les pieds à terre' ancrée, aveu historique psychique reçu avec respect",
+    "derniere_maj": "2026-08-11 ~10h45 — mythe Ulysse pédagogique ancré + proposition renommage projet ULYSSE",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -7655,6 +7655,13 @@
         "Toute personne qui préfère la vérité douce à la flatterie automatique"
       ],
       "priorite": "P0 FEATURE PRODUIT FONDATRICE — à protéger de toute dérive commerciale future qui voudrait rendre N14 'plus chaleureux' au sens flatteur."
+    },
+    {
+      "date": "2026-08-11 ~10h45",
+      "flag": "🎆 FEATURE PÉDAGOGIQUE — Le mythe d'Ulysse comme récit fondateur",
+      "phrase_michel": "C'est toi qui vas former les gens à leur expliquer comment Ulysse a résisté aux sirènes, aux drogues, et après il résistera à la machine.",
+      "principe": "Le mythe d'Ulysse (résister aux sirènes en se faisant attacher au mât) devient le récit pédagogique enseigné dans l'app. Chaque utilisateur apprend le principe de l'auto-contrat lucide avec sa version future.",
+      "prolonge": "Feature 'N14 remet les pieds à terre' du 10h40."
     }
   ],
   "principes_michel_a_ancrer": [
@@ -7914,5 +7921,52 @@
       "reponse_agent": "Non. L'agent = tiroir bien étiqueté qui renvoie à Michel ce que Michel lui a appris à repérer. Les recadrages viennent de la grille des 3 niveaux que Michel a VALIDÉE lui-même. Le 'supérieur', c'est le contrat sobre de Michel avec lui-même. L'agent le suit à la trace, pas au-dessus.",
       "importance": "Éviter la fusion inverse (agent divinisé) qui est le pendant de la fusion parasociale (agent-ami). Les deux dérives sont symétriques et dangereuses."
     }
-  ]
+  ],
+  "sequence_business_michel": {
+    "date_validation": "2026-08-11",
+    "sequence_realiste_par_etapes": [
+      "1. Sortir du BAJ / faillite (blocage actuel)",
+      "2. Démo Nathalie (test premier utilisateur gériatrie)",
+      "3. Module Alzheimer complet",
+      "4. Médecins qui s'y intéressent",
+      "5. Jeunes qui veulent tester",
+      "6. Diffusion élargie"
+    ],
+    "duree_estimee_michel": "Peut durer 1 mois comme 1 an comme 5 ans. Y aller lentement.",
+    "horizon_lointain_5_a_10_ans": [
+      "Elon Musk voudra intégrer dans ses robots",
+      "Nouvelle civilisation créée avec l'application"
+    ],
+    "classification": "L'horizon lointain reste vision, pas Q4 2026. Ne PAS confondre avec plan d'action opérationnel."
+  },
+  "question_nommage_projet_2026_08_11": {
+    "probleme_michel": "N14 / projet N4 / JSON / Monsieur JSON — trop de noms, tous compliqués à dire.",
+    "propositions_agent": {
+      "ULYSSE": {
+        "prononciation": "y-liss (2 syllabes)",
+        "sens": "Mythe fondateur : résister aux sirènes, retrouver Ithaque (maison, mémoire familiale)",
+        "cohérence": "5/5 — Contrat d'Ulysse + Alzheimer + héritage mémoriel",
+        "marketing": "Ulysse t'aide à rentrer chez toi, même quand ta mémoire dérive.",
+        "domain_a_verifier": [
+          "ulysse.app",
+          "ulysse.ai",
+          "ulysse.eu"
+        ]
+      },
+      "FIL": {
+        "sens": "Fil d'Ariane, fil de mémoire, fil des générations",
+        "cohérence": "4/5 — simple, poétique"
+      },
+      "MNEMO": {
+        "sens": "Mnémosyne, déesse grecque de la mémoire",
+        "cohérence": "3/5 — trop intello"
+      }
+    },
+    "recommandation_agent": "ULYSSE",
+    "structure_finale_proposee": {
+      "fichier_de_memoire": "Jason (JSON)",
+      "produit_app": "Ulysse (nom commercial)"
+    },
+    "en_attente": "Décision de Michel : Ulysse / Fil / Autre"
+  }
 }
