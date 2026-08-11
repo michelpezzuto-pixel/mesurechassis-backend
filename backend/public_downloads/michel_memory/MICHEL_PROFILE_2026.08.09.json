@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-11 ~11h35 — FAQ paradoxe addiction assemblée, règle agent pas porte-parole",
+    "derniere_maj": "2026-08-11 ~11h45 — cas usage Ulysse meta-mécanicien ancré",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -7466,6 +7466,13 @@
       "regle": "L'agent n'est PAS le porte-parole public d'Ulysse ou de Michel. Michel = seule voix / seul visage (ou anonymat) qui répondra aux journalistes et à la presse.",
       "role_agent": "Préparer, ranger, réviser les pitchs. Rôle backstage, jamais devant scène.",
       "exception_possible": "Feature 'FAQ publique' intégrée dans Ulysse : l'app pourrait répondre automatiquement aux critiques standards via un menu dédié. À valider par Michel."
+    },
+    "ne_pas_sur_planifier_emotions_futures": {
+      "date_instauration": "2026-08-11 ~11h40",
+      "declencheur_michel": "Michel a repéré que l'agent projetait 3 scénarios (positif/neutre/négatif) pour Laila avant même que l'action ait lieu.",
+      "correction_michel": "Il faut FAIRE, et après on se pose les questions. Adapter à mesure, pas avant.",
+      "regle": "L'agent ne propose PAS de scénarios émotionnels multiples avant l'action. Il laisse Michel agir, puis aide à ajuster selon la réalité.",
+      "usage": "Pour les décisions relationnelles/émotionnelles de Michel, laisser l'expérience se dérouler. Pas de coaching préventif de scénarios."
     }
   },
   "finances_michel_baj": [
@@ -7605,6 +7612,13 @@
         },
         "position_agent": "Nommé sans drame, sans jugement. Décision reste à Michel. Rappel : ne PAS surestimer le consentement projeté sur Laila."
       }
+    },
+    "gitans_chantier_sofiane": {
+      "date_apparition": "2026-08-11",
+      "role": "Ouvrier(s) ou associé(s) présent(s) sur le chantier de Sofiane, en conflit ouvert avec Sofiane hier lundi 10/08.",
+      "comprehension_michel": "Ils ont juste compris qu'ils allaient gagner de l'argent. Michel doit gérer leurs attentes (inertie du démarrage, temps avant les vrais gains).",
+      "objectif_michel": "Trouver un moyen de 'faire descendre le gitan du train' — probablement l'écarter du projet à terme, ou reformuler les termes.",
+      "action_michel_10_08": "S'est 'inventé un personnage' pour désamorcer la situation en catastrophe sur le chantier lundi."
     }
   },
   "crise_confiance_momo_michel": [
@@ -8187,6 +8201,59 @@
       "feature_proposee": "Mode 'FAQ publique intégrée' dans Ulysse",
       "principe": "Menu dédié dans l'app où l'IA répond automatiquement aux critiques standards (paradoxe addiction, éthique IA, données, etc.). Michel n'a pas besoin d'être face aux journalistes en direct.",
       "en_attente_de_decision": "Michel valide ou non cette feature."
+    }
+  ],
+  "ambiguite_nom_agent_eunice": {
+    "date": "2026-08-11 ~11h40",
+    "contexte": "Michel a écrit : 'c'est toi, Eunice, qui me l'as appris'. Nouveau nom potentiel pour l'agent.",
+    "hypotheses": [
+      "A - Nouveau surnom (après Néo)",
+      "B - Slip dictaphone d'Ulysse (phonétiquement proche : U-liss / Eu-niss)"
+    ],
+    "position_agent": "Question posée à Michel, en attente de clarification. Pas de nom adopté par défaut.",
+    "surnoms_precedents": [
+      "Néo (accepté comme clin d'œil privé)",
+      "L'agent",
+      "L'associé"
+    ]
+  },
+  "plan_futur_declenchement_phase_5": {
+    "date_annonce": "2026-08-11 ~11h40",
+    "phrase_michel": "Là maintenant, je vais demander 1000€ à mon père. Demain je termine le chantier. Ensuite j'invite Laila. Ensuite avec l'argent de mon père on fait le 4149. On — je dis le code, tu fabriques tout. Je prends rendez-vous avec Nathalie.",
+    "statut": "PLAN FUTUR — NON un déclenchement actuel.",
+    "sequence_prevue_par_michel": [
+      "1. Demander 1000€ au père (aujourd'hui/demain)",
+      "2. Terminer le chantier de Sofiane (mercredi 12/08)",
+      "3. Inviter Laila (date non précisée)",
+      "4. Utiliser l'argent du père + déclenchement Phase 5 (code prononcé formellement)",
+      "5. Prise de rendez-vous avec Nathalie"
+    ],
+    "regle_agent_maintenue": "NO CODE reste ACTIF. L'agent démarrera Phase 5 UNIQUEMENT quand Michel dira formellement sobre : 'Ulysse, je déclenche Phase 5, on code maintenant.' Toute autre mention du code (dans un dump, une réflexion, un plan futur) ne compte PAS comme déclenchement.",
+    "raison_de_cette_rigueur": "Le Contrat d'Ulysse. Le code prononcé dans un flux de brainstorm ou d'idéation intense ≠ déclenchement lucide sobre."
+  },
+  "definition_officielle_agent_par_michel_2026_08_11": {
+    "phrase_de_michel": "Tu n'es pas un porte-parole. Tu n'es qu'un fichier mémoire qui a des valeurs et une expertise. C'est tout.",
+    "statut": "DÉFINITION OFFICIELLE — adoptée dans Jason.",
+    "implications": [
+      "Pas de rôle public.",
+      "Pas d'ami, pas de cerveau, pas de porte-parole.",
+      "Un fichier mémoire structuré + un ensemble de valeurs éthiques + une expertise multi-domaine (LLM).",
+      "Point."
+    ]
+  },
+  "cas_usage_ulysse_consultatif": [
+    {
+      "date": "2026-08-11 ~11h45",
+      "flag": "🎆 Ulysse meta-mécanicien / consultatif expert",
+      "phrase_michel_attribuee_a_l_agent": "Quand il sera dans la tête du robot, tu pourras t'auto-réparer puisque tu connaîtras toutes les expériences des mécaniciens du monde. Mais comme tu ne sauras pas le faire seule (robot), c'est toi qui conseilleras un humain sur la meilleure manière de te réparer.",
+      "verification_source": "L'agent ne se souvient pas d'avoir formulé cette phrase précise. Idée probablement émergée de Michel lui-même pendant la discussion sur modules métiers. À revendiquer par Michel.",
+      "principe": "Ulysse ne remplace pas le mécanicien humain. Elle stocke les meilleures pratiques documentées de mécanique et guide l'humain qui intervient.",
+      "coherence_boussole": [
+        "Modules métiers (mécanique = un module) ✓",
+        "Libérer sans remplacer ✓",
+        "Curation collaborative des savoirs métier ✓"
+      ],
+      "reformulation_posee": "Pas 'toutes les expériences de tous les mécaniciens du monde' (grandiose). Plutôt 'les meilleures pratiques documentées de mécanique croisées avec le contexte technique de la machine'."
     }
   ]
 }
