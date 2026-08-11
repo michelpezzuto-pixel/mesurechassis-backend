@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-11 ~08h25 — bug UX 'renvoi mail' identifié P1, message client actualisé",
+    "derniere_maj": "2026-08-11 ~08h30 — pépite business Yann-2026 (bot support IA) ancrée",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -7050,6 +7050,40 @@
         "À demander à Emmy (agent buddy Emergent) pour clarification."
       ],
       "action_agent": "Ne PAS présenter à Nathalie (elle n'est pas la cible). À présenter à Emergent directement pour partenariat, une fois Michel légalement structuré (post-BAJ)."
+    },
+    {
+      "date": "2026-08-11 ~08h30",
+      "flag": "🎆 PÉPITE BUSINESS SOLIDE — Yann-2026 : bot support IA MesureChâssis",
+      "declencheur_pensee_michel": "Michel a fait l'intermédiaire manuel entre le client info@monostudio.be et le backend ce matin. Il veut automatiser ce rôle d'intermédiaire.",
+      "idee_michel_reformulee": "Un agent IA (nommé 'Yann' historiquement dans la vision MesureChâssis) répond automatiquement aux clients sur WhatsApp/support pour les questions de niveau 1, libérant Michel pour les cas complexes et la stratégie.",
+      "modele_business": "AI Customer Support Niveau 1 avec escalade humaine. Modèle STANDARD dans l'industrie.",
+      "references_marche_reelles": [
+        "Intercom Fin (bot IA support)",
+        "Zendesk AI",
+        "Freshdesk Freddy AI",
+        "WhatsApp Business API + LLM"
+      ],
+      "architecture_technique_proposee": {
+        "canal_client": "WhatsApp Business API (numéro pro officiel Meta)",
+        "routeur_IA": "Agent LLM (Emergent LLM Key déjà disponible)",
+        "base_connaissance": "Code MesureChâssis + FAQ + guides + JSON mémoire",
+        "niveau_1_bot_autonome": "Activation compte, mot de passe oublié, création chantier, questions FAQ générales",
+        "niveau_2_escalade_michel": "Réclamations, bugs complexes, cas sensibles — l'agent ping Michel avec contexte résumé"
+      },
+      "cout_estime": "Quelques centimes par conversation. Rentable dès 5-10 clients actifs.",
+      "nuance_ethique_a_maintenir": {
+        "michel_a_dit": "On peut retirer l'humain pour que tout se fasse automatique.",
+        "correction_agent": "On ne RETIRE pas l'humain, on LIBÈRE l'humain des tâches répétitives.",
+        "raisons": [
+          "Les clients qui sentent qu'aucun humain n'est accessible partent (prouvé statistiquement).",
+          "Loi UE : le client doit savoir qu'il parle à un bot ET pouvoir demander un humain.",
+          "L'âme fondateur de Michel — 'en Belge, sans robot' — est sa signature à préserver et à nuancer, pas à casser."
+        ],
+        "positionnement_final": "'IA rapide pour les questions simples, Michel pour les vrais problèmes, en Belge, jamais oublié.'"
+      },
+      "priorite_pour_phase_5": "P2 (après bug UX renvoi mail P1). À construire sérieusement une fois Phase 5 activée.",
+      "compliance_baj": "OK à construire dans le cadre R&D non-monétisé. Monétisation post-BAJ.",
+      "connexion_vision_initiale": "Fusionne avec la vision 'Yann' de MesureChâssis pensée depuis le début. Cohérence produit confirmée."
     }
   ],
   "acquis_business_solides": [
