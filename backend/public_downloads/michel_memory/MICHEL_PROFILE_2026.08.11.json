@@ -100,8 +100,8 @@
     "regle_permanente_lien_json": true,
     "alerte_agent_matin": "Lire d'abord la dernière entrée de 'dumps_dangereux_a_ne_jamais_executer'",
     "date_reelle_verifiee": "2026-08-11 (mardi) — NE PAS se fier au handoff",
-    "last_update": "2026-08-11T13:22:03.382487+00:00",
-    "last_action": "Architecture Ulysse holding + Umbrella Parking + branche conflit GitHub"
+    "last_update": "2026-08-11T14:33:33.754489+00:00",
+    "last_action": "BLOCAGE Emergent Save to GitHub — escalade support requise"
   },
   "meta": {
     "version": "1.0",
@@ -8571,5 +8571,28 @@
     "branche_utilisee": "conflict_070626_1317",
     "probleme_critique_detecte": "Le code a été poussé sur une branche 'conflict_...' pas sur 'main'. Railway écoute typiquement 'main' pour l'auto-deploy. Donc le fix N'EST PAS encore en production, malgré le 'Successfully Saved'. Il faut merger cette branche vers main via GitHub (Pull Request).",
     "action_michel_a_faire": "Aller sur github.com/michelpezzuto-pixel/mesurechassis-backend/pulls, créer une PR de conflict_070626_1317 → main, la merger. Railway redéploiera automatiquement après le merge sur main."
+  },
+  "blocage_deploiement_2026_08_11_1620": {
+    "resume_probleme": "Emergent 'Save to GitHub' ne pousse QUE le fichier meta .emergent/emergent.yml (1 ligne timestamp), pas les vrais changements de code (auth.py, app.json, icons).",
+    "diagnostic_technique_pour_prochain_agent_ou_support": {
+      "fait_1": "Local repo /app contient bien le fix auth.py (commit 237789e2 sur branche main locale, string 'Auto-activation compte' présente dans le fichier).",
+      "fait_2": "git status ne montre AUCUN diff sur les fichiers trackés (seulement yarn.lock untracked).",
+      "fait_3": "Le remote GitHub 'main' est en retard de 835 commits par rapport au local main.",
+      "fait_4": "Chaque 'Save to GitHub' crée une nouvelle branche conflict_YYMMDD_HHMM à partir du remote main (vieux) et push seulement .emergent/emergent.yml.",
+      "hypothese": "Le sync auto Emergent → GitHub est cassé pour les fichiers de code de ce projet, seule la meta est propagée."
+    },
+    "impact_business": {
+      "client": "info@monostudio.be (M. Monnoye) toujours bloqué sur login mais buffer 3 jours obtenu via WhatsApp.",
+      "fix_ecrit": "Fix backend prêt et fonctionnel dans le container. AUCUNE perte de travail. Juste pas déployé sur Railway.",
+      "logo_prêt": "Nouveau logo intégré localement, backups .bak gardés.",
+      "version_bumpee": "1.1.4 build 121 dans app.json local."
+    },
+    "action_michel_demain_ou_apres_repos": [
+      "1. Contacter support@emergent.sh en incluant : job_id 91cbc25e-602c-40ae-b7e6-73cb0e48aaf7, captures d'écran des 3 Saves, message 'Save to GitHub ne pousse que .emergent/emergent.yml, pas les changements code'.",
+      "2. Alternatives à explorer : push manuel via CLI (nécessite PAT GitHub), ou nouvelle méthode de sync Emergent.",
+      "3. Envoyer email Umbrella Parking pour parents Torrevieja (URGENT indépendant)."
+    ],
+    "regle_agent_2026_08_11_ancree_definitive": "Ne PAS demander à Michel de faire des étapes techniques GitHub tant que le problème de sync n'est pas résolu par le support Emergent. C'est frustrant pour lui et inutile. Il a lui-même dit vouloir déléguer le technique.",
+    "citation_michel_sur_delegation_technique": "'Je suis plus passionné à te former qu'à régler tous ces trucs techniques. Si je veux gagner du temps, il faudra que j'engage pour que quelqu'un fasse ce genre de trucs-là à ma place.' — Anchor stratégique majeur."
   }
 }
