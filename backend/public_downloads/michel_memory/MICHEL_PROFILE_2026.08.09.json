@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-11 ~11h — 2e relance client + stratégie anonymat archivée",
+    "derniere_maj": "2026-08-11 ~11h05 — MAJEURE CORRECTION: Leïla = future femme, secret = protection enfants, structure familiale clarifiée",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -7550,7 +7550,17 @@
         "Leïla ne lui appartient pas — Michel ne comprend pas ce comportement."
       ],
       "flag_agent": "⚠️ Michel est marié. Terrain sensible. Nommer sans juger. Décision de Michel à prendre sobre.",
-      "position_agent": "Pas mon rayon d'aller creuser. Nommer les faits, laisser Michel décider."
+      "position_agent": "Pas mon rayon d'aller creuser. Nommer les faits, laisser Michel décider.",
+      "CORRECTION_MAJEURE_2026_08_11": {
+        "aveu_agent": "5e sur-interprétation majeure de la journée. L'agent avait lu 'Leïla = secrétaire présentée par Momo' + 'Michel marié' → 'terrain glissant marital'. FAUX.",
+        "realite_clarifiee_par_michel": {
+          "michel_statut_marital": "DIVORCÉ (a une ex-femme, PAS une femme actuelle)",
+          "leila_statut": "FUTURE FEMME de Michel. Associée de vie et de projet. Pas secrétaire.",
+          "structure_familiale": "Chacun a des enfants séparément (d'où 'nos enfants respectifs')."
+        },
+        "role_leila_dans_projet": "Co-fondatrice ombre du projet Ulysse. La seule autre personne qui sait que Michel est derrière l'app. Complice volontaire, pas cachée.",
+        "flag_ancien_a_retirer": "⚠️ 'Terrain glissant marital' → RETIRÉ, c'était basé sur une lecture erronée."
+      }
     }
   },
   "crise_confiance_momo_michel": [
@@ -7991,6 +8001,40 @@
         "Le motif 'le jour où je révélerai que c'est moi' garde une teinte messianique légère à surveiller."
       ]
     },
-    "action_agent": "Nommé sans drame. À rediscuter sobre."
+    "action_agent": "Nommé sans drame. À rediscuter sobre.",
+    "CORRECTION_2026_08_11_11h05": {
+      "aveu_agent": "L'agent a mal interprété le motif du secret. Réalité clarifiée par Michel.",
+      "motif_reel_du_secret": "PROTECTION DES ENFANTS de la notoriété scolaire. Michel + Leïla veulent que leurs enfants respectifs découvrent l'app comme utilisateurs anonymes, sans savoir que Michel/Leïla en sont derrière, pour éviter les rapprochements à l'école qui les transformeraient en 'stars' fragiles.",
+      "reference_marche": "Même logique que Steve Jobs, Bill Gates, Zuckerberg avec leurs enfants : limitation d'écrans, discrétion médiatique, protéger l'enfance de la définition par la réussite parentale.",
+      "diagnostic_corrige": "SAIN, MATURE, PARENTAL. Aucun problème BAJ (pas d'activité commerciale cachée à un conjoint puisque Michel est divorcé et Leïla est co-fondatrice).",
+      "points_precedents_a_retirer": [
+        "'Business caché à ta femme' → faux, il n'a plus de femme",
+        "'Terrain glissant marital' → faux, Leïla n'est pas une flirt secret mais sa future épouse",
+        "'Risque BAJ activité cachée' → faux, pas d'activité commerciale monétisée (BAJ compliant reste OK)"
+      ]
+    }
+  },
+  "principes_fondateurs_ulysse": [
+    {
+      "date": "2026-08-11 ~11h05",
+      "flag": "💎 PRINCIPE ÉDUCATIF FONDATEUR — Protéger les enfants de la fame parentale",
+      "phrase_michel": "Si les enfants découvrent que c'est moi, ils vont en parler à l'école. Ils vont devenir des stars et ils vont faire que des conneries.",
+      "principe": "Le fondateur reste anonyme pour protéger ses enfants de la définition sociale par la réussite parentale. Les enfants doivent construire leur identité par eux-mêmes, pas être des 'stars du fils/de la fille de'.",
+      "references_marche": [
+        "Steve Jobs (a limité l'iPad à ses enfants)",
+        "Bill Gates (interdit smartphones avant 14 ans)",
+        "Zuckerberg (Chan Zuckerberg Initiative discrète sur les enfants)"
+      ],
+      "impact_produit": "L'anonymat fondateur n'est PAS une stratégie marketing secrète, c'est une décision parentale profonde. À respecter et à protéger contre toute pression future ('vous devriez vous montrer, ça vendra mieux')."
+    }
+  ],
+  "structure_familiale_michel_documentee": {
+    "date_documentation": "2026-08-11 ~11h05",
+    "michel_statut_marital": "Divorcé",
+    "leila": "Future femme de Michel. Co-fondatrice ombre d'Ulysse.",
+    "ex_femme_michel": "Mentionnée. Détails à préciser plus tard.",
+    "enfants_michel": "Michel a des enfants d'un précédent mariage. Détails à préciser.",
+    "enfants_leila": "Leïla a des enfants (dont un fils explicitement mentionné). Détails à préciser.",
+    "sofiane_momo": "Ami sous-traitant, avec femme Anna + 5 enfants, PAS lié à Leïla par présentation romantique — juste connaissance commune apparemment (à re-clarifier sobre)."
   }
 }
