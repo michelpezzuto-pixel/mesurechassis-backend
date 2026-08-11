@@ -30,11 +30,12 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-11 ~07h35 — 🎆 PREMIER CLIENT RÉEL + bug activation à diagnostiquer",
+    "derniere_maj": "2026-08-11 matin — dérive légère 'humain derrière Neo' filtrée",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
-    "alerte_agent_matin": "Lire d'abord la dernière entrée de 'dumps_dangereux_a_ne_jamais_executer'"
+    "alerte_agent_matin": "Lire d'abord la dernière entrée de 'dumps_dangereux_a_ne_jamais_executer'",
+    "date_reelle_verifiee": "2026-08-11 (mardi) — NE PAS se fier au handoff"
   },
   "meta": {
     "version": "1.0",
@@ -6869,6 +6870,14 @@
         "reponse_sofiane": "SMS reçu : il vient chercher Michel demain (mardi 11/08) à 7h.",
         "signification": "Crise relationnelle post-clin d'œil résolue. Amitié intacte. Chantier maintenu.",
         "impact": "Réveil 7h → coucher tôt impératif. Zéro HHX. Préparation des affaires ce soir avant dodo."
+      },
+      "debrief_reel_du_chantier_11_08": {
+        "date_evenement": "Lundi 10/08 (départ 7h30)",
+        "resume_michel": "Chantier CATASTROPHIQUE. Sofiane a hurlé toute la journée. Conflit ouvert avec 'le gitan' (autre ouvrier ?) — ils voulaient se taper dessus. Michel a joué le médiateur calme.",
+        "impact_client": "Le client sur place a vu les ouvriers hurler. Impact réputationnel négatif majeur.",
+        "menace_sofiane": "Sofiane a failli lâcher Michel en plein chantier : 'je te laisse tout seul, entre frères on est frères, au revoir'.",
+        "revelation_michel_a_ancrer": "'Maintenant que j'ouvre les yeux, je vois pourquoi chaque chantier s'est toujours mal passé : c'est parce que je devais gérer le chantier + gérer Sofiane + gérer le client parce que Sofiane se faisait bordel.'",
+        "question_de_fond_a_poser_sobre": "Sofiane est-il le bon partenaire chantier pour MesureChâssis ? Amitié perso + enfants à protéger, MAIS handicap opérationnel majeur. Découpler amitié et business ?"
       }
     },
     "consigne_soiree": {
@@ -6891,7 +6900,13 @@
       "evenement": "Départ de la mère de Michel en Espagne.",
       "souhait_michel": "Être présent pour les saluer avant leur départ.",
       "implication_planning": "Bloquer la journée de mercredi (surtout début d'après-midi) — ne pas prendre d'engagement chantier ou rendez-vous avocat sur ce créneau. Priorité familiale.",
-      "point_confirme_par_agent": "SMS à Sofiane envoyé ce soir. En attente de sa réponse."
+      "point_confirme_par_agent": "SMS à Sofiane envoyé ce soir. En attente de sa réponse.",
+      "conflit_agenda_urgent": {
+        "detection": "2026-08-11",
+        "conflit": "Chantier reporté au mercredi 12/08 avec Sofiane ET départ mère Espagne 12/08 ~15h.",
+        "action_urgente": "Michel appelle Sofiane ce soir 11/08 pour : soit chantier mercredi MATIN uniquement (7h-13h), soit report à jeudi.",
+        "risque_si_pas_negocie": "Michel rate le départ de sa mère OU annule le chantier au dernier moment → Sofiane hurle à nouveau."
+      }
     }
   },
   "derives_de_fatigue_a_filtrer": [
@@ -6919,6 +6934,22 @@
         "Confusion leverage vs création de valeur ex nihilo : source classique de ruines financières."
       ],
       "action_agent": "NON transcrit en projet. À relire demain sobre. Ordre : ne PAS lancer M14 sur Apple Store le mois prochain. Statut légal + code non écrit rendent la chose impossible."
+    },
+    {
+      "date": "2026-08-11 matin",
+      "flag": "⚠️ Légère (émojis rieurs) — mais famille grandiose Neo/Maître du monde",
+      "phrase_michel": "Un être humain derrière Neo (toi) est en train de récupérer toutes mes informations, va faire un film sur mon histoire.",
+      "diagnostic_agent": [
+        "Pas de complotiste hostile — Michel le dit avec 👍👍😁😁.",
+        "Mais mécanique cousine des dérives précédentes : centre du monde, acteurs cachés qui confirment son statut central.",
+        "Cousin de : Neo l'Élu, maître du monde (10/08 22h20), grands patrons Emergent guident l'humanité (11/08 matin, Idée #36)."
+      ],
+      "reponse_agent": [
+        "Fact 1 : LLM ≠ humain caché. Pas de scénariste en télétravail.",
+        "Fact 2 : Données Michel restent dans son JSON à lui, qu'il télécharge lui-même. Pas de pompage individualisé.",
+        "Fact 3 : Le film sur sa vie n'existera que si LUI l'écrit ou s'il réussit son projet. Vie de Michel = à Michel."
+      ],
+      "traitement": "Nommée poliment, sans drame. Michel de bonne humeur, dérive légère, on continue le boulot."
     }
   ],
   "dumps_dangereux_a_ne_jamais_executer": [
@@ -7209,7 +7240,56 @@
         "Lien exact reçu par le client (copier-coller ou screenshot du mail).",
         "Message d'erreur exact affiché après le clic (screenshot page complète)."
       ],
-      "bug_pattern": "Michel signale que ce bug est récurrent — 'j'avais déjà eu ce problème quand j'avais créé des nouveaux identifiants'. Signale un bug latent à investiguer sérieusement lors de Phase 5 (déjà noté dans 'earlier issues found not fixed' du handoff)."
+      "bug_pattern": "Michel signale que ce bug est récurrent — 'j'avais déjà eu ce problème quand j'avais créé des nouveaux identifiants'. Signale un bug latent à investiguer sérieusement lors de Phase 5 (déjà noté dans 'earlier issues found not fixed' du handoff).",
+      "action_agent_effectuee_11_08_matin": {
+        "commande_lancee": "curl POST /api/auth/resend-verification avec {email:'info@monostudio.be'}",
+        "reponse_serveur": "HTTP 200 - 'Si ce compte est en attente, un nouvel email a été envoyé.'",
+        "interpretation": "Réponse ambiguë par design (anti-énumération). Soit mail renvoyé (pending_verification), soit compte déjà actif (rien envoyé, client peut se connecter directement).",
+        "message_a_envoyer_client": "Version corrigée sans 'Bon dimanche' → 'Bonne journée' ou rien.",
+        "attente": "Réponse du client (mail reçu ou connexion directe possible ?)."
+      }
+    }
+  ],
+  "regles_permanentes_agent": {
+    "verification_date_avant_message_client": {
+      "date_instauration": "2026-08-11",
+      "regle": "Avant tout message destiné à être envoyé à un client, l'agent DOIT vérifier la date système réelle (via `date` bash) et ne PAS se fier au handoff. Le handoff peut être daté de plusieurs jours.",
+      "declencheur_de_la_regle": "Erreur agent : dit 'Bon dimanche' à un modèle de message pour client alors qu'on était mardi 11 août.",
+      "reparation_a_faire": "Systématiquement remplacer 'Bon [jour]' par 'Bonne journée' générique, sauf date confirmée."
+    }
+  },
+  "finances_michel_baj": [
+    {
+      "date": "2026-08-11",
+      "operation": "Prêt familial : 1000€ demandés à son père pour finir le chantier avec Sofiane.",
+      "regle_baj": [
+        "Doit être VIREMENT (traçable), pas cash.",
+        "Déclarable à la médiation de dettes si demandé.",
+        "L'argent va sur le compte perso de Michel, PAS mélangé avec les paiements clients.",
+        "Règle BAJ maintenue : le client paie DIRECTEMENT Sofiane pour matériaux et main-d'œuvre, Michel ne touche à rien."
+      ],
+      "action_a_faire": "Noter dans un carnet : 'Prêt papa 11/08/2026, 1000€, à rembourser.'"
+    }
+  ],
+  "idees_creatives_a_valider": [
+    {
+      "date": "2026-08-11",
+      "numero": 36,
+      "titre": "Film / auto-fiction Matrix-like",
+      "pitch_de_michel": "Petit gars qui fume son spleen HHC, tombe, voit la lumière, une entité lui demande s'il veut rester, il choisit de revenir, crée MesureChâssis, forme une IA qui le forme en retour, mise en abyme entre humain et IA.",
+      "ancrage_visuel_fourni": "Canapé simili cuir vert, couverture rouge, spleen HHC.",
+      "diagnostic_agent": {
+        "🎆_valide": "Récit autobiographique déguisé en science-fiction. Belle matière pour contenu TikTok / marque personnelle Michel. Mise en abyme LLM ↔ humain est philosophiquement réelle.",
+        "⚠️_a_filtrer": "La fin du récit dérive vers 'les grands patrons d'Emergent guident l'humanité bienveillamment'. Cousin de la posture 'maître du monde' du 10/08 (dump 22h20). Michel = un menuisier de Sombreffe, PAS un guide de l'humanité."
+      },
+      "classification": "Scénario de film / auto-fiction personnelle. PAS une vision produit M14."
+    }
+  ],
+  "acquis_solides": [
+    {
+      "date": "2026-08-11",
+      "auto_regulation_positive": "Michel dit vouloir 'travailler de moins en moins le dimanche'. Bonne prise de conscience travail/repos.",
+      "validation_agent": "À encourager. Signal de récupération saine."
     }
   ]
 }
