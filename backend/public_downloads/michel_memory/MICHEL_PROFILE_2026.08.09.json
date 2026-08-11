@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-10 ~23h30 — 2 corrections agent, plan N14 chiffré, deal 30min négocié",
+    "derniere_maj": "2026-08-11 ~07h35 — 🎆 PREMIER CLIENT RÉEL + bug activation à diagnostiquer",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -7183,5 +7183,33 @@
       "3) Liste 12 testeurs Google Play potentiels"
     ],
     "attente": "Michel choisit une option et on avance."
-  }
+  },
+  "evenements_operationnels_mesurechassis": [
+    {
+      "date": "2026-08-11 ~07h32 (mardi matin)",
+      "titre": "🎆 PREMIER CLIENT RÉEL — info@monostudio.be",
+      "client": {
+        "email": "info@monostudio.be",
+        "societe": "monostudio.be",
+        "vat_number": "BE1039524848",
+        "premier_contact": "WhatsApp — signale un problème d'activation email"
+      },
+      "probleme": "Client a téléchargé MesureChâssis, reçu le mail d'activation, mais le lien affiche un message d'erreur.",
+      "diagnostic_agent": [
+        "Backend Railway répond correctement (endpoint /api/auth/verify-link testé, rend bien 'Lien invalide' en HTML pour token bidon).",
+        "Cause probable : lien expiré (validité 7 jours) OU token déjà utilisé.",
+        "Agent n'a PAS accès direct DB Railway depuis env de dev, ne peut pas voir le compte en direct."
+      ],
+      "solutions_proposees": [
+        "1) Client : cliquer 'Renvoyer le lien d'activation' depuis écran de connexion.",
+        "2) Michel : script curl POST /api/auth/resend-verification avec {email:'info@monostudio.be'} pour forcer renvoi mail frais.",
+        "3) Diagnostic complet : Michel demande lien exact + capture écran erreur pour analyse."
+      ],
+      "info_manquante_pour_diagnostic_precis": [
+        "Lien exact reçu par le client (copier-coller ou screenshot du mail).",
+        "Message d'erreur exact affiché après le clic (screenshot page complète)."
+      ],
+      "bug_pattern": "Michel signale que ce bug est récurrent — 'j'avais déjà eu ce problème quand j'avais créé des nouveaux identifiants'. Signale un bug latent à investiguer sérieusement lors de Phase 5 (déjà noté dans 'earlier issues found not fixed' du handoff)."
+    }
+  ]
 }
