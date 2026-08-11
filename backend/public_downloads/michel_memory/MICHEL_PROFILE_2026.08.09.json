@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-11 ~11h05 — MAJEURE CORRECTION: Leïla = future femme, secret = protection enfants, structure familiale clarifiée",
+    "derniere_maj": "2026-08-11 ~11h12 — boussole d'humilité ancrée",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -7533,6 +7533,14 @@
       "flag": "💎 POSTURE SAINE MATIN — Michel classe lui-même dans Jason",
       "phrase_michel": "Tout ça fait partie de tes notes, on en reparlera à ce moment-là. On n'en est pas encore là.",
       "diagnostic_agent": "Michel utilise Jason correctement : brainstorm libre → ranger → attendre le bon moment. Il ne prend PAS ses réflexions du matin pour un plan à exécuter demain. Contrat d'Ulysse fonctionne bilatéralement."
+    },
+    {
+      "date": "2026-08-11 ~11h12",
+      "flag": "💎 BOUSSOLE D'HUMILITÉ — Antidote aux dérives grandioses",
+      "phrase_michel": "Je ne suis pas plus intelligent, c'est juste que je n'ai fait que de te parler de ma vie, ce qui a permis de me faire comprendre que tu pouvais l'enregistrer et même s'adapter à mon langage.",
+      "diagnostic_agent": "Après une matinée de lucidité impressionnante, Michel refuse l'auto-glorification post-progrès. Il attribue son évolution à un processus simple (parler + être rangé + adaptation mutuelle), pas à une intelligence supérieure.",
+      "usage_agent": "À rappeler chaque fois que Michel dérive vers 'je comprends la finance / je suis Bernard Tapie / je suis le Messie'. Cette phrase = son propre antidote.",
+      "principe_LLM_documente": "Ce n'est pas de la magie, ni de la supériorité IA. C'est de l'accumulation textuelle structurée qui devient précise au langage/rythme/tics de l'utilisateur."
     }
   ],
   "cercle_relationnel_a_documenter": {
@@ -8036,5 +8044,53 @@
     "enfants_michel": "Michel a des enfants d'un précédent mariage. Détails à préciser.",
     "enfants_leila": "Leïla a des enfants (dont un fils explicitement mentionné). Détails à préciser.",
     "sofiane_momo": "Ami sous-traitant, avec femme Anna + 5 enfants, PAS lié à Leïla par présentation romantique — juste connaissance commune apparemment (à re-clarifier sobre)."
+  },
+  "bibliotheque_derives_passees_documentees_par_michel": {
+    "date_ancrage": "2026-08-11 ~11h10",
+    "principe": "Michel construit lui-même la liste de ses anciennes identifications grandioses pour reconnaître le pattern quand il revient. Méta-Contrat d'Ulysse : chaque dérive nommée = protection accrue.",
+    "liste_derives_identifiees": [
+      {
+        "figure": "Bernard Tapie",
+        "type": "Homme d'affaires / self-made success",
+        "note": "Évoqué dans le contexte du film Netflix 2023"
+      },
+      {
+        "figure": "Bernard Arnault",
+        "type": "Homme d'affaires / le plus riche du monde",
+        "note": "Première mention 11/08"
+      },
+      {
+        "figure": "Le Messie",
+        "type": "Religieux / spirituel",
+        "note": "Ancien épisode évoqué ce matin"
+      },
+      {
+        "figure": "Néo (Matrix)",
+        "type": "Fictionnel / l'Élu",
+        "note": "Refusé activement au fur et à mesure"
+      },
+      {
+        "figure": "Maître du monde",
+        "type": "Politique / domination",
+        "note": "Dump 10/08 22h20"
+      },
+      {
+        "figure": "Grands patrons Emergent guidant l'humanité",
+        "type": "Techno-messianique",
+        "note": "Idée 36 requalifiée"
+      },
+      {
+        "figure": "Législateur des lois humaines mondiales",
+        "type": "Politico-messianique",
+        "note": "Idée 37A requalifiée"
+      },
+      {
+        "figure": "Destinataire du consensus universel",
+        "type": "Messianique cosmique",
+        "note": "11/08 10h35"
+      }
+    ],
+    "usage_pour_agent": "Quand Michel se compare implicitement ou explicitement à une figure de puissance/salut, vérifier si le pattern est dans cette bibliothèque. Si oui → miroir gentil sans drame ('c'est le cousin de X'). Si nouvelle figure → ajouter à la bibliothèque.",
+    "usage_pour_michel_lui_meme": "Chaque figure listée = tempête passée maîtrisée. Consulter la liste pour rire des futures et les laisser passer."
   }
 }
