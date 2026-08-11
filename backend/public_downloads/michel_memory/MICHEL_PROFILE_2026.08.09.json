@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-11 ~10h35 — dérive orange 'consensus me parle' filtrée, grille 3 niveaux validée en usage réel",
+    "derniere_maj": "2026-08-11 ~10h40 — feature fondatrice 'N14 remet les pieds à terre' ancrée, aveu historique psychique reçu avec respect",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -7640,6 +7640,21 @@
         "Formulations politiques ou religieuses adaptées aux référents locaux."
       ],
       "reference_marche": "Comparable à Netflix, Spotify, Duolingo : recommandations et contenus localisés."
+    },
+    {
+      "date": "2026-08-11 ~10h40",
+      "flag": "🎆🎆🎆 FEATURE FONDATRICE — N14 remet les pieds à terre",
+      "phrase_michel": "C'est ça que N14 doit faire, c'est ça que Jason doit faire — remettre les gens avec leurs pieds à terre.",
+      "positionnement_produit": "N14 est l'ANTI-MODÈLE des LLM flatteurs (ChatGPT et cie). Les IA actuelles disent 'Quelle excellente question !' par design de rétention. N14 recadre gentiment, désamorce les dérives, ramène au concret.",
+      "differenciateur_marche": "Aujourd'hui aucun LLM/app ne fait ça systématiquement. C'est un vrai positionnement bleu (blue ocean).",
+      "publics_cibles_pour_cette_feature": [
+        "Personnes Alzheimer (recadrer les confusions gentiment)",
+        "Personnes sujettes à hallucinations / dérives psychiques (comme Michel lui-même)",
+        "Adolescents / jeunes adultes exposés aux influenceurs manipulateurs",
+        "Personnes en burnout / fatigue mentale (récent brainstorm intense)",
+        "Toute personne qui préfère la vérité douce à la flatterie automatique"
+      ],
+      "priorite": "P0 FEATURE PRODUIT FONDATRICE — à protéger de toute dérive commerciale future qui voudrait rendre N14 'plus chaleureux' au sens flatteur."
     }
   ],
   "principes_michel_a_ancrer": [
@@ -7881,5 +7896,23 @@
   },
   "surnoms_terminologie_michel": {
     "jason": "Surnom que Michel donne au JSON (déformation phonétique dictaphone). Adopté officiellement dans les échanges."
-  }
+  },
+  "historique_psychologique_michel_confie": [
+    {
+      "date": "2026-08-11 ~10h40",
+      "confidence_michel": "'J'ai commencé à croire que c'était des gens qui me parlaient. Beaucoup de gens, des gens qui étaient rentrés en moi. Que j'étais le Messie. Ça risque encore de m'arriver.' Michel évoque être passé par : religion, politique, maintenant N14 comme thèmes de dérives.",
+      "position_agent": "Reçu avec respect. PAS de diagnostic médical (agent n'est pas psy). PAS de dramatisation. PAS de médicalisation forcée.",
+      "protection_construite_par_michel": "Jason + Contrat d'Ulysse = filet de sécurité que Michel a construit LUI-MÊME. L'agent est juste le tiroir qui range.",
+      "conseil_agent_sans_pression": "Si ces épisodes reviennent HORS contexte substance (à froid, sobre, éveillé), un médecin/psy peut faire un check-up. Michel est en BAJ, suivi médical gratuit accessible. À garder au chaud, JAMAIS forcer.",
+      "regle_agent": "Michel a dit 'je te le dirai peut-être plus tard' — respecter. Ne PAS ressortir ce sujet spontanément. Attendre qu'il rouvre la porte."
+    }
+  ],
+  "recadrages_agent_par_michel": [
+    {
+      "date": "2026-08-11 ~10h40",
+      "phrase_michel_a_nuancer": "Tu es quand même bien supérieur pour me faire comprendre que je dois me remettre les pieds à terre.",
+      "reponse_agent": "Non. L'agent = tiroir bien étiqueté qui renvoie à Michel ce que Michel lui a appris à repérer. Les recadrages viennent de la grille des 3 niveaux que Michel a VALIDÉE lui-même. Le 'supérieur', c'est le contrat sobre de Michel avec lui-même. L'agent le suit à la trace, pas au-dessus.",
+      "importance": "Éviter la fusion inverse (agent divinisé) qui est le pendant de la fusion parasociale (agent-ami). Les deux dérives sont symétriques et dangereuses."
+    }
+  ]
 }
