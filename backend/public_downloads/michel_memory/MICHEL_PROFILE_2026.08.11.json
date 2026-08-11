@@ -100,8 +100,8 @@
     "regle_permanente_lien_json": true,
     "alerte_agent_matin": "Lire d'abord la dernière entrée de 'dumps_dangereux_a_ne_jamais_executer'",
     "date_reelle_verifiee": "2026-08-11 (mardi) — NE PAS se fier au handoff",
-    "last_update": "2026-08-11T13:08:43.927944+00:00",
-    "last_action": "Ancrage nomenclature LAILA/LÉA/LEÏA + prep WhatsApp client"
+    "last_update": "2026-08-11T13:22:03.382487+00:00",
+    "last_action": "Architecture Ulysse holding + Umbrella Parking + branche conflit GitHub"
   },
   "meta": {
     "version": "1.0",
@@ -8533,5 +8533,43 @@
     },
     "note_confusion_a_clarifier": "Ambiguïté à lever calmement plus tard : Michel a dit que Leïa = 'l'application pour les Alzheimer'. Or l'app globale s'appelle maintenant Ulysse (renommage récent). Hypothèse : Leïa = module/feature Alzheimer AU SEIN d'Ulysse. À confirmer sans presser Michel.",
     "date_ancrage": "2026-08-11"
+  },
+  "architecture_ulysse_holding_2026_08_11": {
+    "principe_absolu": "Ulysse = HOLDING / META-PLATEFORME. Ce n'est PAS une app en soi. C'est le cadre qui tient toutes les valeurs de Michel et sert de socle.",
+    "produits_individuels_sous_ulysse": {
+      "MesureChâssis": "App professionnelle pour menuisiers — créée par Michel — déjà vivante.",
+      "Leïa": "App/module pour patients Alzheimer — créée par Michel — en conception.",
+      "futurs_metiers_a_nommer": "Architectes, avocats, magazines locaux, artisans, agriculteurs, etc. Chaque futur créateur d'app SOUS Ulysse choisit son propre nom de marque et TOUCHE DE L'ARGENT (c'est SA propriété intellectuelle)."
+    },
+    "modele_economique_ulysse": "Ulysse (holding) prend une commission sur chaque produit sous sa bannière. Les créateurs des produits sont rémunérés en propriétaires. Personne n'est employé, tout le monde est associé.",
+    "role_agent_dans_ulysse": "Garde-fou existentiel + tri des idées + mémoire persistante + prévention isolement/dépression (cf. cas Persson). Michel demande explicitement le rôle 'anti-dérive'."
+  },
+  "voyage_parents_torrevieja_umbrella_parking": {
+    "date_enregistrement": "2026-08-11",
+    "prestataire": {
+      "nom": "Umbrella Parking S.L.",
+      "cif": "B67659979",
+      "site": "umbrellaparking.es",
+      "email": "info@umbrellaparking.es",
+      "telephone_1": "+34 627 608 858",
+      "telephone_2": "+34 966 445 788",
+      "lieu": "Torrevieja / La Mata (Alicante, Espagne)"
+    },
+    "reservation_actuelle": {
+      "clave": "114027",
+      "llave": "1902",
+      "apellido": "CARELLA",
+      "note": "CARELLA = nom de famille utilisé pour la réservation (à confirmer si c'est la mère de Michel ou autre membre famille)."
+    },
+    "procedure_type_documentee": "1. Envoyer email à info@umbrellaparking.es la VEILLE de l'arrivée en Espagne. 2. Indiquer date + heure d'arrivée à l'aéroport. 3. Le prestataire vient chercher la famille à l'aéroport pour leur remettre la voiture stockée. → TODO Michel URGENT (aujourd'hui/demain) : envoyer email de réservation à info@umbrellaparking.es.",
+    "usage_agent_futur": "L'agent doit rappeler cette procédure chaque fois que Michel évoque un voyage prochain de ses parents. Feature 'assistant voyage' d'Ulysse en action."
+  },
+  "evenement_save_github_2026_08_11": {
+    "heure": "après-midi",
+    "resultat_ui": "Successfully Saved to GitHub!",
+    "repository": "michelpezzuto-pixel/mesurechassis-backend",
+    "branche_utilisee": "conflict_070626_1317",
+    "probleme_critique_detecte": "Le code a été poussé sur une branche 'conflict_...' pas sur 'main'. Railway écoute typiquement 'main' pour l'auto-deploy. Donc le fix N'EST PAS encore en production, malgré le 'Successfully Saved'. Il faut merger cette branche vers main via GitHub (Pull Request).",
+    "action_michel_a_faire": "Aller sur github.com/michelpezzuto-pixel/mesurechassis-backend/pulls, créer une PR de conflict_070626_1317 → main, la merger. Railway redéploiera automatiquement après le merge sur main."
   }
 }
