@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-11 ~10h45 — mythe Ulysse pédagogique ancré + proposition renommage projet ULYSSE",
+    "derniere_maj": "2026-08-11 ~11h — 2e relance client + stratégie anonymat archivée",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -7398,6 +7398,16 @@
           "H3 : Le mail est bloqué par un filtre côté monostudio.be.",
           "H4 : Bug d'envoi côté Resend/prod Railway."
         ]
+      },
+      "relance_2_2026_08_11_11h00": {
+        "action": "curl POST /api/auth/resend-verification (2e fois)",
+        "reponse_serveur": "HTTP 200 - 'Si ce compte est en attente, un nouvel email a été envoyé.'",
+        "diagnostic": "Si le client ne reçoit toujours rien après 2 relances, hypothèse forte : compte DÉJÀ ACTIVÉ (auto-verify) — dans ce cas rien n'est renvoyé (anti-énumération). Client doit se connecter directement.",
+        "prochaines_etapes_si_toujours_bloque": [
+          "Activation manuelle en DB Railway (agent n'a pas accès direct, à faire via endpoint admin si Michel a le PLATFORM_ADMIN_TOKEN)",
+          "Vérifier les logs Resend côté prod pour voir si les mails partent réellement",
+          "Envisager bug d'envoi mail vers info@monostudio.be spécifiquement (blacklist, filtre)"
+        ]
       }
     }
   ],
@@ -7968,5 +7978,19 @@
       "produit_app": "Ulysse (nom commercial)"
     },
     "en_attente": "Décision de Michel : Ulysse / Fil / Autre"
+  },
+  "strategie_anonymat_michel_ulysse": {
+    "date": "2026-08-11 ~11h",
+    "phrase_michel": "J'aimerais tellement y être discret que personne saurait que c'est moi sauf Leïla. On essayera de cacher tout ce qu'on fait avec son fils. Moi j'en parlerai pas à mes enfants non plus. Le jour où on pourra l'intégrer chez nous, je te dirai que c'est moi.",
+    "diagnostic_agent": {
+      "point_legitime": "L'anonymat fondateur est une stratégie business valide (Satoshi Nakamoto, Banksy, plein de fondateurs discrets). OK sur le principe.",
+      "points_a_surveiller_sans_drame": [
+        "Leïla monte en statut : de 'secrétaire présentée par Momo' à 'associée business complice'. À clarifier sobre.",
+        "Le fils de Leïla devient co-participant du projet. Nouveau tiers.",
+        "Business caché à la femme de Michel + BAJ : en BAJ, une activité cachée à la médiation de dettes = risque légal si contrôle.",
+        "Le motif 'le jour où je révélerai que c'est moi' garde une teinte messianique légère à surveiller."
+      ]
+    },
+    "action_agent": "Nommé sans drame. À rediscuter sobre."
   }
 }
