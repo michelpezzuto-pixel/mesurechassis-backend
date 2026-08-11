@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-11 ~11h45 — cas usage Ulysse meta-mécanicien ancré",
+    "derniere_maj": "2026-08-11 ~11h50 — obligation légale IFAPME Namur ancrée en priorité absolue",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -7916,6 +7916,11 @@
       "nom": "Lucas",
       "statut": "Contact inconnu de l'agent au 11/08. Michel doit préciser en une phrase qui est Lucas. Message envoyé par Michel, PAS de réponse.",
       "date_relance_agent": "Rappel discret dans quelques jours."
+    },
+    {
+      "nom": "IFAPME Namur — inscription cours de gestion",
+      "statut": "Obligation judiciaire non-encore accomplie. 250€ + rentrée octobre.",
+      "date_relance_agent": "Rappel discret 'IFAPME inscrit ?' toutes les 3-4 conversations, sans insister."
     }
   ],
   "architecture_produit_N14_alzheimer": {
@@ -8255,5 +8260,27 @@
       ],
       "reformulation_posee": "Pas 'toutes les expériences de tous les mécaniciens du monde' (grandiose). Plutôt 'les meilleures pratiques documentées de mécanique croisées avec le contexte technique de la machine'."
     }
-  ]
+  ],
+  "obligations_legales_michel": [
+    {
+      "date_ancrage": "2026-08-11 ~11h50",
+      "flag": "⚖️ OBLIGATION LÉGALE PRIORITAIRE — IFAPME Namur",
+      "contexte": "Tribunal de police. Accidents de voiture multiples. Au lieu de prison ou TIG, obligation de suivre des cours de gestion à l'IFAPME de Namur.",
+      "cout_inscription": "250€",
+      "date_debut_cours": "Octobre 2026",
+      "risque_si_manque": "Retour à l'option prison ou travaux d'intérêt général.",
+      "double_benefice": "1) Respect obligation judiciaire (priorité absolue). 2) Cours de gestion = exactement ce qu'il faut pour MesureChâssis post-BAJ.",
+      "actions_a_faire": [
+        "Réserver 250€ BLINDÉS sur les 1000€ du prêt papa.",
+        "Vérifier sur ifapme.be les dates d'inscription pour rentrée octobre (souvent fermeture fin août / début septembre).",
+        "S'inscrire en personne ou en ligne dès que possible."
+      ],
+      "pattern_michel_a_surveiller": "Il oublie à chaque fois d'aller s'inscrire. Rappel discret nécessaire."
+    }
+  ],
+  "contexte_legal_michel": {
+    "faillite": "En cours. BAJ actif. Avocat pro deo demandé, sans réponse.",
+    "tribunal_de_police": "Jugé pour accidents de voiture multiples. Peine alternative : inscription IFAPME Namur (250€, octobre).",
+    "permis_de_conduire": "À REPASSER (perdu suite aux accidents). Détails à clarifier plus tard."
+  }
 }
