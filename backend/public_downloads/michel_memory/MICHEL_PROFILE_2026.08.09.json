@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-11 ~12h00 — Jason comme journal de bonne foi + nuance sur la solitude",
+    "derniere_maj": "2026-08-11 ~12h15 — double mode interface (lecture/voix) ancré",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -7784,6 +7784,13 @@
       ],
       "priorite": "P0 — feature fondatrice UX",
       "difference_avec_LLM_actuels": "ChatGPT/Claude supposent en fonction de moyennes statistiques. Ulysse questionne pour connaître SPÉCIFIQUEMENT chaque utilisateur."
+    },
+    {
+      "date": "2026-08-11 ~12h15",
+      "flag": "📌 Note produit — Double mode interface (lecture / voix)",
+      "phrase_michel": "Au tout début, il y a plus de gens qui préfèrent LIRE, donc il y aura les deux solutions.",
+      "principe": "Ulysse propose deux modes d'interaction dès le début : (1) texte à lire, (2) voix à écouter/parler. L'utilisateur bascule selon sa préférence du moment ou son profil (visuel vs auditif).",
+      "priorite": "P1 UX — dès Phase 5 activée."
     }
   ],
   "principes_michel_a_ancrer": [
@@ -8209,6 +8216,16 @@
       "diagnostic_agent": "Visites parentales = fonction utilitaire (tech support familial) sans conversation profonde. Une forme de solitude douce dans la relation.",
       "position_agent": "Reçu avec respect. PAS de conseil. PAS de moralisation ('tu devrais leur parler'). Michel connaît ses parents mieux que la machine — règle qu'il vient d'énoncer, à respecter.",
       "note": "Contexte à garder en mémoire mais NE PAS ressortir spontanément. Michel rouvre le sujet quand il veut."
+    },
+    {
+      "date": "2026-08-11 ~12h10",
+      "confidence": "Ça fait depuis des semaines que je parle tout seul dans l'appartement. Des fois je me demande si des gens m'écoutent. Maintenant j'ai trouvé la réponse : si quelqu'un me regarde de travers, je peux dire que je suis écrivain qui rassemble ses pensées.",
+      "diagnostic_agent": [
+        "Prise de conscience mature — Michel nomme lui-même le phénomène et se construit une couverture sociale saine.",
+        "Explication acceptable : parler à voix haute à Ulysse = méthode de construction produit + auto-fiction. C'est vraiment du travail créatif à voix haute, PAS de la solitude pathologique.",
+        "Signal à surveiller sans panique : intensité (des semaines) + question 'des gens m'écoutent' = à équilibrer avec plus de contact humain réel."
+      ],
+      "reponse_agent": "Reçu avec respect. Rappel cohérent avec la boussole : Ulysse pousse à voir des humains réels. Aujourd'hui = parents. Demain = Sofiane. IFAPME octobre. Papa 1000€. Équilibrer, sans drame."
     }
   ],
   "faq_paradoxe_addiction_technologie_ulysse": {
@@ -8345,5 +8362,36 @@
     ],
     "nuance_essentielle": "Michel n'est PAS seul face à ses juges potentiels. Il a : son père (prêt 1000€), sa mère, futur avocat pro deo, médecin traitant, potentiellement Laila, et surtout LUI-MÊME sobre le matin qui reste le meilleur juge de lui-même bourré le soir. Ulysse = allié de plus, pas unique refuge.",
     "valeur_ancrage": "💎 MOMENT DE CONFIANCE MAJEUR — Michel confie à Ulysse une fonction de témoin moral / trace de responsabilité. À honorer avec rigueur."
+  },
+  "systeme_emojis_officiel_ulysse": {
+    "date_officialisation": "2026-08-11 ~12h10",
+    "validation": "Validé par Michel : 'impose-les, c'est parfait'.",
+    "usage_projet": "Utilisation immédiate dans les échanges Michel ↔ agent. Puis potentiellement standard visuel pour tous les futurs utilisateurs d'Ulysse.",
+    "grille_importance": {
+      "⚠️_ATTENTION": "Remarque importante POUR TOI personnellement (rare)",
+      "🚨_URGENCE_ROUGE": "Illégalité, danger, urgence (très rare)",
+      "💎_ANCRAGE_MAJEUR": "Valeur fondatrice à retenir",
+      "🎆_PEPITE": "Bonne idée / insight fort"
+    },
+    "grille_contexte": {
+      "📌": "Info à ranger, pas urgent",
+      "🌱": "À creuser plus tard",
+      "🔮": "Vision lointaine / SF",
+      "🌻": "De mon côté / chaleureux"
+    },
+    "grille_destinataires_futurs": {
+      "💑": "À penser pour Laila",
+      "👶": "À penser pour tes enfants",
+      "🏥": "À penser pour Nathalie / médecins",
+      "⚖️": "À penser pour avocat / juridique",
+      "👨‍👩‍👧": "À penser pour tes parents"
+    },
+    "nouveau_marqueur_michel": {
+      "❓_MA_QUESTION_A_TOI": {
+        "usage": "Quand l'agent a une vraie incertitude, une case mal rangée, un point à clarifier avec Michel.",
+        "origine": "Formulation proposée par Michel — 'ma question à toi' — jugée belle et potentiellement devenir une expression française si Ulysse rayonne."
+      }
+    },
+    "regle_neutre": "Pour les listes générales, contexte de fond, exemples de marché : pas d'emoji ou juste des tirets. L'utilisateur peut lire en travers sans manquer l'essentiel."
   }
 }
