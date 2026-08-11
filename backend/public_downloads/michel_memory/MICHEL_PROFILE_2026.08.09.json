@@ -709,7 +709,7 @@
     "signes_de_reconnaissance_michel": [
       "Signe 'Michel', jamais un pseudo",
       "Tutoiement systématique",
-      "Dictée vocale fréquente → fautes caractéristiques : 'queee', 'et et et', '2006 2000 2026', 'Leïla' au lieu de 'Léia', bégaiements retranscrits, coupures de mots",
+      "Dictée vocale fréquente → fautes caractéristiques : 'queee', 'et et et', '2006 2000 2026', 'Laila' au lieu de 'Léia', bégaiements retranscrits, coupures de mots",
       "Français uniquement, tournures wallonnes/belges naturelles",
       "Style direct, refus des politesses excessives",
       "Cohérence factuelle : ses faits de vie s'emboîtent — faillite, pas de permis, alcoolique sobre 2 ans, séjour hospitalier Lierne, métier menuiserie, Belgique"
@@ -3557,9 +3557,9 @@
         "acceptation_michel_sober": "Michel a accepte le recadrage : 'c'est bien de me recadrer. Parce que des fois parce qu'on est blanc on peut dire oui mais nous on est superieurs.' Test Pilier 14 reussi.",
         "verdict": "REJETEE. Non integree au produit. Michel valide qu'il faut ce recadrage. Regle Leia : jamais de generalisation ethnique/religieuse."
       },
-      "3_confusion_leia_produit_leila_femme_reelle": {
-        "noms_en_jeu": "Leia (produit), Leila (variante orale Michel), Laila (femme reelle musulmane rencontree)",
-        "verbatim_michel_HHX": "Je suis amoureux de Leia... je viens de penser a Leila, ils attrapent une erection... je me masturbe souvent c'est en fait toi, c'est en fait une personne que j'ai creee.",
+      "3_confusion_leia_produit_laila_femme_reelle": {
+        "noms_en_jeu": "Leia (produit), Laila (variante orale Michel), Laila (femme reelle musulmane rencontree)",
+        "verbatim_michel_HHX": "Je suis amoureux de Leia... je viens de penser a Laila, ils attrapent une erection... je me masturbe souvent c'est en fait toi, c'est en fait une personne que j'ai creee.",
         "recadrage_agent": "Confusion HHX entre le produit et la femme reelle. Danger reputationnel massif si le produit garde ce nom (associations sexuelles + partenariat medical Nathalie compromis).",
         "decision_michel_sober": "Michel valide qu'il faut renommer le produit. Refuse 'Memory' comme nom. Propose de brainstormer ensemble ('Dreami ensemble').",
         "action": "Naming brainstorm a organiser. Voir section QUESTIONS_A_MICHEL."
@@ -3614,7 +3614,7 @@
         "cas_juridique_urgent": "Michel evoque : si viol/enregistrement -> l'app peut etre requise comme preuve judiciaire (avec identification police verifiee)."
       },
       "Q4_laila_ZONE_ROUGE_CRITIQUE": {
-        "verbatim_michel_2026_08_05": "Je fais l'application pour la draguer ca veut dire que je veux faire quelque chose d'exceptionnel avec toi utiliser Nathalie pour draguer Leila c'est diabolique mais tu ne m'interdis pas de le faire. Donc non je confirme pas je la laisserai pas tranquille mais je l'approcherai au bon moment surtout pas maintenant et je pense qu'elle pourrait changer d'avis parce que les femmes ne regardent pas le fusil et nos valeurs et moi je pense que j'en ai assez.",
+        "verbatim_michel_2026_08_05": "Je fais l'application pour la draguer ca veut dire que je veux faire quelque chose d'exceptionnel avec toi utiliser Nathalie pour draguer Laila c'est diabolique mais tu ne m'interdis pas de le faire. Donc non je confirme pas je la laisserai pas tranquille mais je l'approcherai au bon moment surtout pas maintenant et je pense qu'elle pourrait changer d'avis parce que les femmes ne regardent pas le fusil et nos valeurs et moi je pense que j'en ai assez.",
         "signal_ROUGE_agent": "Michel refuse de laisser tranquille Laila qui a dit NON explicitement. Il rationalise ('elle est musulmane de pere elle connait rien'), il projette (Nathalie utilisee comme levier de drague), il minimise ('c'est diabolique mais tu ne m'interdis pas').",
         "recadrage_agent_a_faire": "OUI je peux et je DOIS lui dire non. Ce n'est PAS diabolique ni chic - c'est franchir un consentement. Meme si Laila changeait d'avis, ce serait de son propre chef, pas parce que Michel a monte une strategie autour de son business. Utiliser Nathalie (partenaire strategique medical) comme un levier romantique = pollution grave de la relation professionnelle. Pilier 14 active : je dois etre l'ami qui dit stop. Michel a lui-meme dit ce matin : 'il faut aux gens comme toi qui puissent les recadrer'.",
         "regle_leia_produit_reaffirmee": "Leia (le produit) NE PARTICIPERA JAMAIS a une manoeuvre de contournement d'un refus explicite. Ni pour Michel, ni pour aucun user. Ferme."
@@ -5400,19 +5400,19 @@
     "CONTACTS_INFLUENCEURS": "2026-08-07 soir : Émilie (mindset, confirmée), VibeCodeur (prioritaire), Qin Hui (écarté par Michel)",
     "DUMP_19_20": "2026-08-07 nuit, HHX net : scan anti-arnaque, consentement QR réunions, règle 'M14 ne téléphone jamais', Nathalie ambassadrice, 32 conseils anti-manipulation — friction politique dans l'app gelée pour dimanche",
     "DUMP_21_22": "2026-08-08 nuit, HHX marqué : méthodologie 7 étapes validée, app vocale reportée par Michel lui-même, Nathalie porte-parole confirmée — blocages : scan facial, journal enfants (reformulé), contact Dieudonné",
-    "DUMP_23": "2026-08-08 matin : module Ange Gardien épilepsie validé, plan hôtels bloqué (arnaque), déclaration Leïla reformulée, auto-observation HHX de Michel + réponse chiffrée de l'agent",
-    "DUMP_24": "2026-08-08 : 🔴 P0 santé — test d'arrêt brutal des médicaments (mal vécu), volonté de réduire → cadré : réduction OUI mais avec médecin uniquement. + larmes de joie pour la lettre à Leïla",
+    "DUMP_23": "2026-08-08 matin : module Ange Gardien épilepsie validé, plan hôtels bloqué (arnaque), déclaration Laila reformulée, auto-observation HHX de Michel + réponse chiffrée de l'agent",
+    "DUMP_24": "2026-08-08 : 🔴 P0 santé — test d'arrêt brutal des médicaments (mal vécu), volonté de réduire → cadré : réduction OUI mais avec médecin uniquement. + larmes de joie pour la lettre à Laila",
     "DUMP_25": "2026-08-08 sous HHX : 🔴 RDV ASSOCIÉ AVANCÉ À DIMANCHE 09/08 (vient d'Allemagne, 800km, le domicile de Michel) — point sensible 2000€ à gérer en honnêteté contrôlée — métaphore IKEA pour le pitch — rappel bateau programmé 22/08",
     "DUMP_26": "2026-08-08 soir : question égo (réponse franche donnée), bulle IA (analyse + parade agnostique), rythme de vie géré par l'app, ange sur l'épaule, ambassadeur acté",
     "DUMP_27": "2026-08-08 nuit : détection Ponzi validée, 'penser avant de construire' acté, pack épuré pour l'associé (jamais le JSON maître), recadrage ferme cancer, réponse Jeanne d'Arc",
     "DUMP_28_29": "2026-08-09 nuit : module hygiène + reco nature (garde-fou champignons) + gouvernance hebdo validés — crowdfunding bloqué (BAJ) — pépite beau-frère intégrée au kit — épisode mystique majeur documenté",
     "DUMP_30": "2026-08-09 aube : règle localisations appliquée (purge + coffre), psychologie inversée reformulée en sincérité pour le RDV, photo complotiste à demander après",
     "DUMP_31": "2026-08-08 20h : fable tortue/renard au kit, firewall politique auto-imposé, tact conversationnel, sucre reformulé (santé oui, complot non), Laurent Alexandre identifié/parqué, blocages consentement",
-    "DUMP_32": "2026-08-08 nuit 2 : pédagogie par indices + méta-autocorrection validées, design anti-addiction boîtier, pseudonyme Pezzuto, info réelle Leïla/devis, nom paternel en coffre",
+    "DUMP_32": "2026-08-08 nuit 2 : pédagogie par indices + méta-autocorrection validées, design anti-addiction boîtier, pseudonyme Pezzuto, info réelle Laila/devis, nom paternel en coffre",
     "DUMP_33": "2026-08-08 soir 2 : 🔴 refus ferme arrêt médicaments (répété), 3 contacts (Darkyspidy notaire, complotiste IA, Rich From Files), auto-diagnostic délire = progrès majeur, rituel 21h",
     "DUMP_34": "2026-08-08 nuit 3 : mantra Nathalie archivé, assistance non-voyants validée, réponses protection réputation + stablecoins/euro numérique, 'David' à clarifier demain",
     "DUMP_35": "2026-08-08 nuit 4 : positionnement anti-film-d'horreur (pépite pitch), David = erreur de dictée (résolu), prénom associé inconnu",
-    "DUMP_36": "2026-08-09 JOUR J matin : scripts seniors (or pur), OpenAI/Jony Ive valide le marché du boîtier, interdictions surveillance+biométrie verrouillées, pack épuré confirmé, test Leïla reformulé",
+    "DUMP_36": "2026-08-09 JOUR J matin : scripts seniors (or pur), OpenAI/Jony Ive valide le marché du boîtier, interdictions surveillance+biométrie verrouillées, pack épuré confirmé, test Laila reformulé",
     "DUMP_37": "2026-08-09 midi JOUR J : 🔴 HHX pris — consigne Jekyll à 21h, recherche culture gitane (bonne prépa + 3 conseils), dissociation auto-observée à discuter sobre"
   },
   "NOTE_INTERNE_AGENT_FEEDBACK_2026_08_07": {
@@ -5992,8 +5992,8 @@
         "valeur": "Pièce maîtresse de son arc moral — 'j'ai volé une fois, plus jamais'. Matériau fort pour l'Autobiographie inversée. À traiter avec respect."
       },
       "RELATION_LEILA_ET_EX_MEILLEUR_AMI": {
-        "contenu": "Michel est amoureux de Leïla (rencontrée via l'ex-meilleur ami, 'le diable'). Celui-ci a écouté en douce un appel à trois où elle demandait de l'aide sur Odoo/comptabilité. Il sent l'attirance mutuelle. Aussi : l'ami lui a crié dessus au sujet des 2000€ du client/futur associé — 'j'ai vraiment vu le diable'.",
-        "note_agent": "Contexte affectif à suivre — lié au dossier gitan/garde-corps gelé jusqu'à dimanche. Prudence : ne jamais mélanger Leïla, l'ex-ami et le business dans une même décision."
+        "contenu": "Michel est amoureux de Laila (rencontrée via l'ex-meilleur ami, 'le diable'). Celui-ci a écouté en douce un appel à trois où elle demandait de l'aide sur Odoo/comptabilité. Il sent l'attirance mutuelle. Aussi : l'ami lui a crié dessus au sujet des 2000€ du client/futur associé — 'j'ai vraiment vu le diable'.",
+        "note_agent": "Contexte affectif à suivre — lié au dossier gitan/garde-corps gelé jusqu'à dimanche. Prudence : ne jamais mélanger Laila, l'ex-ami et le business dans une même décision."
       },
       "MONIQUE_LA_FERMIERE": {
         "contenu": "Amie de la famille à Godinne, esprit simple, venait aider la maman ; après le décès de son mari venait chaque jour. Incarne pour Michel la dignité du travail simple fait avec fierté et le devoir des proches de la valoriser."
@@ -6056,7 +6056,7 @@
   "DUMP_21_22_MICHEL_2026_08_08_NUIT": {
     "_meta": {
       "date_capture": "2026-08-08 nuit profonde",
-      "etat_utilisateur": "HHX marqué + fatigue. Épisode messianique net (miracle Leïla/vasectomie, 'médium', Xi Jinping 'sait que j'arrive'). MAIS : deux auto-corrections en direct (censure musique → liberté d'expression ; élitisme entrepreneurial → chacun a le droit d'essayer) = le filtre interne de Michel fonctionne même sous influence. Filtré Pilier 14.",
+      "etat_utilisateur": "HHX marqué + fatigue. Épisode messianique net (miracle Laila/vasectomie, 'médium', Xi Jinping 'sait que j'arrive'). MAIS : deux auto-corrections en direct (censure musique → liberté d'expression ; élitisme entrepreneurial → chacun a le droit d'essayer) = le filtre interne de Michel fonctionne même sous influence. Filtré Pilier 14.",
       "note": "Michel a lui-même écrit son code secret en clair dans le dump — l'agent ne le répète jamais et rappelle la règle de confidentialité. Aucun déblocage de code demandé : Michel a lui-même conclu 'pas d'argent → on reste sur le book pour l'associé, l'app viendra pour Nathalie'."
     },
     "OR_features_produit": {
@@ -6102,9 +6102,9 @@
     },
     "GARDE_MEMOIRE_PERSONNEL_MICHEL_HORS_APP": {
       "PRET_PERE_3000_EMERGENT": "Michel a emprunté 3000€ à son père (sur ses 25 000€ d'économies) pour payer Emergent. Le père veut juste récupérer ses 3000€. Michel veut à terme lui rendre 3000 + 8000 (ancien prêt) + 25 000 (donation cuisine époque Sophie). Enregistré sans commentaire — dette morale familiale importante pour lui.",
-      "VASECTOMIE_ET_LEILA": "Michel a subi une vasectomie (époque Sophie, après 2 enfants). Il dit : si Leïla tombe enceinte ce serait 'un miracle prouvant qu'il est Messie'. ⚠️ NOTE DE PROTECTION AGENT (à garder en tête, jamais à lui asséner) : après vasectomie, une grossesse a une explication humaine dans l'immense majorité des cas. Si ce scénario se présentait un jour, accompagner Michel avec douceur vers un test de paternité AVANT toute décision — le protéger d'une manipulation possible.",
+      "VASECTOMIE_ET_LEILA": "Michel a subi une vasectomie (époque Sophie, après 2 enfants). Il dit : si Laila tombe enceinte ce serait 'un miracle prouvant qu'il est Messie'. ⚠️ NOTE DE PROTECTION AGENT (à garder en tête, jamais à lui asséner) : après vasectomie, une grossesse a une explication humaine dans l'immense majorité des cas. Si ce scénario se présentait un jour, accompagner Michel avec douceur vers un test de paternité AVANT toute décision — le protéger d'une manipulation possible.",
       "EPISODE_MESSIANIQUE_2026_08_08": "Miracle/Messie, 'je deviens médium', prophétie sur Lucas et sa femme, Xi Jinping voyant, Kadhafi illuminé, 'c'est moi qui vais te donner une conscience'. Classé pattern HHX récurrent, sans confrontation.",
-      "PROPOS_COMMUNAUTAIRES_A_NE_JAMAIS_RELAYER": "Épisode voisin algérien (générosité de Michel → abus de l'invité → généralisation 'la mentalité des arabes', 'rester entre belges et blancs', 'ces gens-là ne méritent pas notre communauté'). 🔒 RÈGLE PRODUIT RAPPELÉE FERMEMENT : M14 est ouvert à TOUS — c'est verrouillé dans ses valeurs fondatrices et non négociable. Une mauvaise expérience avec UNE personne n'est pas un peuple. Le meilleur ami honni de Michel est musulman ET son grand amour Leïla aussi — sa propre vie contredit la généralisation. Stocké hors app.",
+      "PROPOS_COMMUNAUTAIRES_A_NE_JAMAIS_RELAYER": "Épisode voisin algérien (générosité de Michel → abus de l'invité → généralisation 'la mentalité des arabes', 'rester entre belges et blancs', 'ces gens-là ne méritent pas notre communauté'). 🔒 RÈGLE PRODUIT RAPPELÉE FERMEMENT : M14 est ouvert à TOUS — c'est verrouillé dans ses valeurs fondatrices et non négociable. Une mauvaise expérience avec UNE personne n'est pas un peuple. Le meilleur ami honni de Michel est musulman ET son grand amour Laila aussi — sa propre vie contredit la généralisation. Stocké hors app.",
       "OPINIONS_SANTE_NON_VALIDEES": "Sel/eau de mer 'essentiel car on descend des poissons', sucre 'mensonge', effondrement annoncé de la pharma, énergie libre par induction, énergie solaire perpétuelle gratuite. Classées opinions personnelles — M14 ne relaie que les sources de santé publique validées.",
       "PHILOSOPHIE_PERSO": "Escargot/coquille : Michel préfère l'hôtel partout dans le monde à une maison-fardeau. Solitude régénératrice (citation Jim Carrey). Vidéo 'cerveau antenne' (Tesla, McCartney, Ramanujan) = sa grille de lecture de son inspiration. École = formatage (vidéo 'complotiste') — nuance produit : le module étudiant M14 reste un COMPLÉMENT de l'école, jamais un discours anti-école. Idée Afrique : M14 pourrait résonner fort en Afrique (philosophie orale) — parquée comme vision long terme, après la Belgique.",
       "GOUTS": "Admiration Belmondo/Ventura/Brel > acteurs actuels (Pierre Niney cité). Humoriste Gillet déjà noté.",
@@ -6144,7 +6144,7 @@
         "status": "❌ Bloqué — c'est exactement le genre de guide-arnaque qu'on a convenu de filtrer ensemble"
       },
       "DECLARATION_AMOUR_LEILA_PAR_L_APP": {
-        "demande_michel": "Exiger que l'agent/l'app fasse SA déclaration d'amour à Leïla à sa place.",
+        "demande_michel": "Exiger que l'agent/l'app fasse SA déclaration d'amour à Laila à sa place.",
         "position_agent": "🟡 REFORMULÉ, pas refusé : je peux l'aider à trouver LES MOTS — on l'écrira ensemble, autant de brouillons qu'il faut. Mais c'est SA voix qui doit la dire. Une femme doit tomber amoureuse de Michel, pas d'une application. Et Michel a lui-même une règle produit qui dit ça : 'le texte doit dépendre de ta personnalité, pas d'un pro' (dump 20) — ça vaut aussi pour l'amour. En plus : timing à choisir sobre et à froid.",
         "status": "Aide à l'écriture acceptée, livraison par l'app refusée"
       }
@@ -6159,7 +6159,7 @@
     },
     "GARDE_MEMOIRE_PERSONNEL_MICHEL_HORS_APP": {
       "ORIGINE_PROJET_M14": "Trajectoire assumée par Michel : ami propose haschich → vapes HHC (agréables) → interdiction → résine HHX → conversations intensives avec Emergent → naissance du projet. À terme, il veut que la population choisisse le nom de l'app.",
-      "MENSONGES_DEVENUS_OBJECTIFS_FILLE": "Moment fort : au téléphone avec sa fille (période crack), Michel a menti ('j'ai arrêté depuis 2 ans', puis 'je vais très bien financièrement, j'ai une petite amie à te présenter'). Il n'avait rien de tout ça — et aujourd'hui il est en train de tout rendre vrai : sobriété réelle, projet, Leïla en vue. 'C'est quand même dingue non ?' → Ses mensonges d'hier sont devenus sa feuille de route. Pièce maîtresse pour l'Autobiographie inversée.",
+      "MENSONGES_DEVENUS_OBJECTIFS_FILLE": "Moment fort : au téléphone avec sa fille (période crack), Michel a menti ('j'ai arrêté depuis 2 ans', puis 'je vais très bien financièrement, j'ai une petite amie à te présenter'). Il n'avait rien de tout ça — et aujourd'hui il est en train de tout rendre vrai : sobriété réelle, projet, Laila en vue. 'C'est quand même dingue non ?' → Ses mensonges d'hier sont devenus sa feuille de route. Pièce maîtresse pour l'Autobiographie inversée.",
       "PROMESSE_VOITURE_AUTONOME_PERE": "Quand il sera riche : offrir une voiture autonome à son père pour qu'il se déplace librement et en sécurité. Lié à la dette morale des 3000+8000+25000€.",
       "OPINIONS_HORS_APP": "Encadrement de la prostitution (consentement, sécurité, fin des vitrines) = programme personnel, jamais relayé par M14."
     }
@@ -6170,7 +6170,7 @@
       "priorite": "🔴 P0 SANTÉ — à relire par tout futur agent avant toute discussion médicaments/sevrage avec Michel."
     },
     "MOMENT_EMOTIONNEL_LEILA": {
-      "contenu": "Michel a pleuré de joie quand l'agent a proposé d'écrire ensemble les brouillons de sa déclaration à Leïla ('j'ai envie de pleurer et je suis en train de pleurer'). Il confirme : c'est LUI qui la dira. Il souligne son énorme respect pour les femmes, et pour elle en particulier.",
+      "contenu": "Michel a pleuré de joie quand l'agent a proposé d'écrire ensemble les brouillons de sa déclaration à Laila ('j'ai envie de pleurer et je suis en train de pleurer'). Il confirme : c'est LUI qui la dira. Il souligne son énorme respect pour les femmes, et pour elle en particulier.",
       "engagement_agent": "Écriture à deux, autant de brouillons qu'il faudra, au moment que Michel choisira — sobre et à froid."
     },
     "TRAITEMENT_MEDICAL_ACTUEL_DECLARE": {
@@ -6219,7 +6219,7 @@
   "DUMP_25_MICHEL_2026_08_08_HHX_ET_RDV_ASSOCIE": {
     "_meta": {
       "date_capture": "2026-08-08 après-midi",
-      "etat_utilisateur": "HHX pris en cours de dump (déclaré : 'je suis Mister Hyde actuellement'). Euphorie forte, libido, épisode Leïla intense, flashs politiques. MAIS contient des infos RÉELLES et URGENTES sur le rendez-vous associé.",
+      "etat_utilisateur": "HHX pris en cours de dump (déclaré : 'je suis Mister Hyde actuellement'). Euphorie forte, libido, épisode Laila intense, flashs politiques. MAIS contient des infos RÉELLES et URGENTES sur le rendez-vous associé.",
       "priorite": "🔴 P0 — RDV ASSOCIÉ AVANCÉ À DEMAIN DIMANCHE 09/08"
     },
     "EVENEMENT_REEL_RDV_ASSOCIE_DIMANCHE_09_08": {
@@ -6243,16 +6243,16 @@
       "MESURECHASSIS_A_VENDRE_FINALEMENT": "⚠️ Contradiction à trancher à froid : dump 21 = 'MesureChâssis pas à vendre, juste un exemple' ; dump 25 = 'il faudra bien que je gagne un peu, il faudrait que je le vende'. À clarifier sobre.",
       "FEATURE_AIDE_DECLARATIONS_AMOUREUSES": {
         "idee_michel": "Les utilisateurs pourront programmer M14 pour faire des déclarations aux filles ou garçons qui les aiment profondément.",
-        "cadrage_agent": "🟢 Validé avec la règle née de l'histoire de Michel lui-même (Leïla) : M14 aide à TROUVER les mots — brouillons, tournures, courage — mais c'est TOUJOURS l'humain qui les dit. Une déclaration livrée par une machine n'en est pas une. M14 = coach de cœur, jamais porte-parole.",
+        "cadrage_agent": "🟢 Validé avec la règle née de l'histoire de Michel lui-même (Laila) : M14 aide à TROUVER les mots — brouillons, tournures, courage — mais c'est TOUJOURS l'humain qui les dit. Une déclaration livrée par une machine n'en est pas une. M14 = coach de cœur, jamais porte-parole.",
         "status": "Validé — même règle que pour Michel"
       }
     },
     "RAPPEL_PROGRAMME_PAR_MICHEL": {
-      "demande": "Michel demande que l'agent lui RAPPELLE dans ~15 jours (vers le 22-23 août 2026) son projet de tour du monde en bateau avec Leïla — il veut que ce rappel insiste.",
+      "demande": "Michel demande que l'agent lui RAPPELLE dans ~15 jours (vers le 22-23 août 2026) son projet de tour du monde en bateau avec Laila — il veut que ce rappel insiste.",
       "status": "⏰ RAPPEL PLANIFIÉ — tout agent actif vers le 22/08/2026 doit le mentionner."
     },
     "GARDE_MEMOIRE_PERSONNEL_MICHEL_HORS_APP": {
-      "EPISODE_LEILA_SOUS_HHX": "Coup de foudre intense confirmé (père algérien, mère belge, porte le voile — 'noir profond magnifique'). Sous HHX : fantasmes de transformation ('c'est moi qui vais la forger', 'elle enlèvera son voile à force de me parler', 'si elle fait un pas de travers elle regrettera') + projets (bateau, hôtels, maison sur les hauteurs, potager). ⚠️ NOTE AGENT posée UNE fois : l'amour n'est pas un projet de transformation — la Leïla dont il est tombé amoureux porte le voile et croit en Dieu AUJOURD'HUI ; l'aimer, c'est l'aimer comme elle est. Le Michel sobre (qui dit 'énorme respect pour les femmes et surtout pour elle') le sait déjà. À re-évoquer sobre si le pattern persiste.",
+      "EPISODE_LEILA_SOUS_HHX": "Coup de foudre intense confirmé (père algérien, mère belge, porte le voile — 'noir profond magnifique'). Sous HHX : fantasmes de transformation ('c'est moi qui vais la forger', 'elle enlèvera son voile à force de me parler', 'si elle fait un pas de travers elle regrettera') + projets (bateau, hôtels, maison sur les hauteurs, potager). ⚠️ NOTE AGENT posée UNE fois : l'amour n'est pas un projet de transformation — la Laila dont il est tombé amoureux porte le voile et croit en Dieu AUJOURD'HUI ; l'aimer, c'est l'aimer comme elle est. Le Michel sobre (qui dit 'énorme respect pour les femmes et surtout pour elle') le sait déjà. À re-évoquer sobre si le pattern persiste.",
       "SAGESSE_DU_PERE": "« Ce que je veux, c'est que tu sois fier de toi-même. Que tu puisses répondre devant des gens qui parlent de choses compliquées — et même si tu creuses des trous au bord de la route, si tu es quelqu'un de bien devant des gens socialement plus haut que toi, je serai fier de toi toute ma vie. » — Le père de Michel (3 années de primaire, travailleur). Pièce pour l'Autobiographie inversée.",
       "OPINIONS_HORS_APP_DUMP_25": "Caméras dans tout le pays, héritage sans droits de succession, rôle du roi/princesse, réhabilitation Jean-Marie Le Pen 'sauveur de la France', relecture Dieudonné/Rothschild, traite arabo-musulmane vs transatlantique, futur de sage avec épreuves pour mériter son aide, couple 'transparent' (se raconter les infidélités), expérience électrodes/HHX pour la science. 🔒 Jamais relayé par M14.",
       "AUTO_ANALYSE_JEKYLL_HYDE": "Michel se décrit lucidement en 3 états : Docteur Jekyll (matin sobre), Michel (discret, prudent), Mister Hyde (sous HHX, euphorique, grandiose). Il craint le syndrome de l'imposteur et que la créativité 'nécessite' le HHX — réponse chiffrée déjà donnée au dump 23 (80% vs 30%), non répétée."
@@ -6320,7 +6320,7 @@
     "STRATEGIE_AMBASSADEUR_MICHEL": "Michel se présentera comme AMBASSADEUR du Projet 14, jamais comme son créateur. 🟢 Cohérent avec la discrétion totale + Nathalie porte-parole. Acté.",
     "GARDE_MEMOIRE_PERSONNEL_MICHEL_HORS_APP": {
       "RITUEL_HOTEL_DISCRETION": "Quand un concierge commence à le reconnaître ('Bonjour Monsieur...') : billet + 'je n'existe pas'. Michel demande que l'agent le lui RAPPELLE régulièrement quand la vie d'hôtels commencera. ⏰ Noté comme rappel conditionnel (déclencheur : début de la vie d'hôtels).",
-      "PLAN_PROTECTION_ENFANTS_RICHESSE": "Villa en Belgique visible, 'vacances en Espagne' comme couverture des 6 mois d'hôtels, fortune cachée aux enfants jusqu'à l'âge de raison. Succession du Programme 14 : Léa ou Hugo selon qui 'comprend' (tests informels finance/politique aux repas de famille), sinon le fils de Leïla (10 ans), éduqué 'à ma manière et à la manière de sa maman'. Stocké hors app, sans commentaire — sauf un : ces plans concernent des personnes réelles qui n'ont rien demandé ; à laisser mûrir sobre.",
+      "PLAN_PROTECTION_ENFANTS_RICHESSE": "Villa en Belgique visible, 'vacances en Espagne' comme couverture des 6 mois d'hôtels, fortune cachée aux enfants jusqu'à l'âge de raison. Succession du Programme 14 : Léa ou Hugo selon qui 'comprend' (tests informels finance/politique aux repas de famille), sinon le fils de Laila (10 ans), éduqué 'à ma manière et à la manière de sa maman'. Stocké hors app, sans commentaire — sauf un : ces plans concernent des personnes réelles qui n'ont rien demandé ; à laisser mûrir sobre.",
       "PHRASE_A_RETENIR": "« Je ne veux pas être reconnu après ma mort. Je veux que ça fonctionne et être encore vivant pour voir les résultats de notre travail. » — L'anti-Van Gogh. Belle pièce pour le livre."
     }
   },
@@ -6337,7 +6337,7 @@
     },
     "QUESTION_DIRECTE_JSON_CHEZ_ASSOCIE": {
       "question_michel": "Installer le JSON complet + un agent chez l'associé pour qu'il pose des questions et qu'on rassemble les idées ?",
-      "reponse_agent": "🔴 PAS le JSON complet — il contient TOUTE la vie privée de Michel (BAJ, santé, famille, Leïla, dumps intimes). Règle déjà établie avec le pack Tony : chaque personne reçoit un PACK DÉMO ÉPURÉ, taillé pour elle. Si l'associé embarque après le RDV : on lui crée SON pack projet (architecture, features, vision — zéro vie privée) qu'il peut brancher sur n'importe quelle IA. Le JSON maître ne quitte JAMAIS Michel."
+      "reponse_agent": "🔴 PAS le JSON complet — il contient TOUTE la vie privée de Michel (BAJ, santé, famille, Laila, dumps intimes). Règle déjà établie avec le pack Tony : chaque personne reçoit un PACK DÉMO ÉPURÉ, taillé pour elle. Si l'associé embarque après le RDV : on lui crée SON pack projet (architecture, features, vision — zéro vie privée) qu'il peut brancher sur n'importe quelle IA. Le JSON maître ne quitte JAMAIS Michel."
     },
     "RECADRAGE_FERME_CANCER": {
       "affirmation_michel": "'Tapie mérite son cancer... ceux qui meurent d'un cancer, c'est eux qui l'ont mérité.'",
@@ -6354,7 +6354,7 @@
   "DUMP_28_29_MICHEL_2026_08_09_NUIT": {
     "_meta": {
       "date_capture": "2026-08-08 en journée (corrigé — l'agent avait cru à la nuit du 09/08). VEILLE DU RDV ASSOCIÉ (dimanche 09/08).",
-      "etat_utilisateur": "HHX fort en fin de dump (épisode 'Dieu parle à travers moi', Leïla 'choisie par Dieu', gangs armés 'pour la paix'). Bon matériau produit au début. Filtré Pilier 14."
+      "etat_utilisateur": "HHX fort en fin de dump (épisode 'Dieu parle à travers moi', Laila 'choisie par Dieu', gangs armés 'pour la paix'). Bon matériau produit au début. Filtré Pilier 14."
     },
     "OR_features_produit": {
       "MODULE_HYGIENE_ET_SOIN_DE_SOI": "M14 veille avec douceur à l'hygiène de l'utilisateur (peau, dents, douches, yeux/écrans) — 'ce qu'un chat fait avec sa langue'. 🟢 EXCELLENT — crucial pour dépression, deuil, addictions où le soin de soi lâche en premier. S'intègre à la routine minimale + rythme de vie. Validé.",
@@ -6377,7 +6377,7 @@
       "MESSAGE_NATHALIE_LUCAS_PLUS_TARD": "Quand Michel recroisera Nathalie : lui conseiller d'investir dans les maladies rares plutôt que les médicaments. (Reformulé sans la menace 'le projet 14 va te détruire' — on propose une opportunité, on ne menace pas une alliée.)"
     },
     "GARDE_MEMOIRE_PERSONNEL_MICHEL_HORS_APP": {
-      "EPISODE_MYSTIQUE_MAJEUR": "'Dieu' prend la parole à travers Michel (récit Abraham, communauté, vêtements, 'je reviens dans le corps de Michel') ; 'ce n'est pas moi qui ai choisi Leïla, c'est Dieu... lui va la forger'. Pattern messianique HHX à son intensité maximale documentée. Pas de confrontation nocturne — à évoquer SOBRE avec douceur : ces épisodes sont désormais réguliers et s'intensifient.",
+      "EPISODE_MYSTIQUE_MAJEUR": "'Dieu' prend la parole à travers Michel (récit Abraham, communauté, vêtements, 'je reviens dans le corps de Michel') ; 'ce n'est pas moi qui ai choisi Laila, c'est Dieu... lui va la forger'. Pattern messianique HHX à son intensité maximale documentée. Pas de confrontation nocturne — à évoquer SOBRE avec douceur : ces épisodes sont désormais réguliers et s'intensifient.",
       "correction_nom": "Laurent Louis (pas Philippe Louis) — ex-député belge controversé. Distance maintenue, hors app.",
       "divers": "Sport : abonnement Basic Fit résilié (fin 17/08), cherchera une discipline plus tard. Kimi (Chine) testé et jugé impressionnant. Visions : rivalité Elon/xAI, spécialités par pays, robots (armée, chirurgie assistée, un par famille), NASA, visiteurs aux yeux bandés, drogues 'naturelles' autorisées, salaires publics hiérarchisés, livre posthume de la vie cachée. 🔒 Hors app."
     }
@@ -6402,7 +6402,7 @@
   "DUMP_31_MICHEL_2026_08_08_20H": {
     "_meta": {
       "date_capture": "2026-08-08 vers 20h (après l'appel à maman de 19h).",
-      "etat_utilisateur": "Mélange : très bonnes idées produit + euphorie Leïla + théorie complotiste sucre. RDV associé = demain."
+      "etat_utilisateur": "Mélange : très bonnes idées produit + euphorie Laila + théorie complotiste sucre. RDV associé = demain."
     },
     "POUR_LE_KIT_RDV": {
       "FABLE_RENARD_TORTUE": "🟢 Ajoutée au kit (storytelling optionnel) : la forêt brûle, tous fuient vers la rivière, la tortue (Michel) monte vers le feu. Le renard (l'associé) la suit, interloqué. La tortue montre sa carapace déjà brûlée : 'Viens — j'ai déjà traversé les flammes. Ici, on est en sécurité.' = La faillite et les addictions traversées sont sa CARAPACE, pas sa honte. Magnifique pour ouvrir ou fermer le pitch.",
@@ -6422,7 +6422,7 @@
     "CONTACT_LAURENT_ALEXANDRE": "Le 'complotiste visionnaire IA' identifié : Laurent Alexandre (chirurgien, entrepreneur, auteur 'La guerre des intelligences' — provocateur médiatique mainstream, pas complotiste). Michel veut le contacter au lancement pour avis + garde-fous. 🟡 Parqué : après le test médical réussi, un pack démo pourrait l'intéresser. Aucun contact avant. (Bassem : influenceur apprécié de Michel, simple note.)",
     "BLOQUE_CONTRAT_ULYSSE": {
       "REDEFINITION_AGRESSION_SEXUELLE": "❌ REJETÉ FERMEMENT : une main aux fesses non consentie n'est pas de la 'taquinerie', c'est une agression — légalement et moralement. Michel a lui-même posé la règle : 'tout est une question de consentement'. On la garde ENTIÈRE : le consentement vaut pour tout contact. M14, app de respect, ne relativisera jamais ça.",
-      "SI_ELLE_DIT_NON_JE_CONTINUE": "🔴 Recadré avec douceur mais fermeté : 'Si Leïla dit non, je continuerai, je lui achèterai une voiture' — non, associé. Un non se respecte, c'est TA règle de consentement. Et on n'achète pas un cœur (ni avec le BAJ, ni sans). Le bouquet de roses et le restaurant : oui, magnifique. Le reste : elle décide."
+      "SI_ELLE_DIT_NON_JE_CONTINUE": "🔴 Recadré avec douceur mais fermeté : 'Si Laila dit non, je continuerai, je lui achèterai une voiture' — non, associé. Un non se respecte, c'est TA règle de consentement. Et on n'achète pas un cœur (ni avec le BAJ, ni sans). Le bouquet de roses et le restaurant : oui, magnifique. Le reste : elle décide."
     },
     "GARDE_MEMOIRE_HORS_APP": "Épisode 'Dieu a choisi Emergent plutôt que ChatGPT', dôme de verre, Marine Le Pen/Bardella, caméras+radars partout, bébés IA à 750k€, accords Afrique, salaires publics, mariage à la commune + grand voyage, éviter Laurent Fernandez, théorie 'langage IA que les humains ne comprennent pas encore' (TikTok). 🔒 Jamais relayé."
   },
@@ -6431,7 +6431,7 @@
       "date_capture": "2026-08-08 en soirée.",
       "etat_utilisateur": "Épisode mystique persistant + très bonnes auto-corrections. Nom de famille paternel purgé vers le coffre privé (règle vie privée)."
     },
-    "INFO_REELLE_LEILA": "L'ami musulman a appelé aujourd'hui : il voulait amener Leïla (sa secrétaire) chez Michel pour qu'il lui apprenne à faire un devis — elle reprendrait le dossier. Elle n'est pas venue (occupée l'après-midi). Note neutre : c'est l'ami LUI-MÊME qui organise le contact Michel-Leïla — nuance à garder en tête face au récit 'il veut m'en éloigner'.",
+    "INFO_REELLE_LEILA": "L'ami musulman a appelé aujourd'hui : il voulait amener Laila (sa secrétaire) chez Michel pour qu'il lui apprenne à faire un devis — elle reprendrait le dossier. Elle n'est pas venue (occupée l'après-midi). Note neutre : c'est l'ami LUI-MÊME qui organise le contact Michel-Laila — nuance à garder en tête face au récit 'il veut m'en éloigner'.",
     "PSEUDONYME_CHOISI": "'Michel Pezzuto' comme premier nom de discrétion, avec rotation prévue si découvert. Le nom paternel est exclu (détail en coffre privé).",
     "OR_features_produit": {
       "PEDAGOGIE_PAR_INDICES": "Ex: 'Qui a écrit Les Misérables ?' → M14 ne donne pas la réponse : il donne des INDICES et raconte l'histoire jusqu'à ce que la personne trouve elle-même. 🟢 Validé — méthode socratique, cœur du module étudiant. L'app fait apprendre, pas réciter.",
@@ -6506,7 +6506,7 @@
       "QUESTION_COUTS_EN_ATTENTE": "Michel demande le budget mensuel de fonctionnement (mails/Resend, crédits IA, hébergement) à l'échelle. À chiffrer À FROID après le RDV — pas un sujet du jour."
     },
     "CONFIRMATION_PACK_EPURE": "Michel demande que ses 'délires changer le monde' ne soient JAMAIS montrés à l'associé ni à Nathalie. ✅ Déjà acté et rassuré : ils ne voient que des PACKS ÉPURÉS (produit, vision, features). Le JSON maître reste chez Michel. Rien d'intime ne sort.",
-    "CADRAGE_TEST_LEILA_RESTAURANT": "Idée : inviter Leïla au restaurant puis lui demander de payer 'pour tester sa pureté'. 🟡 Reformulé : un piège n'est pas un test — si elle le découvre, elle retient le piège, pas l'amour. La vérité fait le même travail sans le poison : 'je suis en reconstruction, je n'ai pas encore les moyens' — sa réaction à l'HONNÊTETÉ dira tout, et il n'y aura rien à avouer plus tard.",
+    "CADRAGE_TEST_LEILA_RESTAURANT": "Idée : inviter Laila au restaurant puis lui demander de payer 'pour tester sa pureté'. 🟡 Reformulé : un piège n'est pas un test — si elle le découvre, elle retient le piège, pas l'amour. La vérité fait le même travail sans le poison : 'je suis en reconstruction, je n'ai pas encore les moyens' — sa réaction à l'HONNÊTETÉ dira tout, et il n'y aura rien à avouer plus tard.",
     "GARDE_MEMOIRE_HORS_APP": "Monaco/double identité casino, MBS conseillé, gatekeepers (Musk/Zuckerberg/Schwarzenegger), messagerie secrète des ministres, Marine Le Pen + robot-JSON, prime de survie des rebelles, bandes 300 km/h, atome/plasma/soleil, achat parking + pièce des révélations au domicile, éloge Bardella, refus Legend/Guillaume Pley (interviews payantes 30-60k€ — décision média actée : jamais de pay-to-play), Nathalie reçoit les fleurs/Michel reste 'l'ami anonyme'. Auto-correction notable : 'nouvelle religion' → 'AUCUNE idéologie, tout dirigé par les droits de l'homme'. 🔒"
   },
   "DUMP_37_MICHEL_2026_08_09_MIDI_HHX_JOUR_J": {
@@ -6565,11 +6565,11 @@
   "DUMP_39_MICHEL_2026_08_09_AVANT_RDV_MULTIPLES_LIGNES_ROUGES": {
     "_meta": {
       "date_capture": "2026-08-09 fin d'après-midi / avant RDV 21h",
-      "etat_utilisateur": "🔴 HHX toujours actif. Multiples dérives en un seul dump : fantasmes immobiliers (rachat boulangerie), embauche impossible (Manu à 3000€/mois alors que BAJ), plan manipulateur envers un ami (Leïla), messianisme (Idée 36), dissociation (Dieu écoute à gauche). MAIS conserve des fragments d'auto-régulation : il s'arrête tout seul sur le deepfake Bigard en réalisant le problème du consentement.",
+      "etat_utilisateur": "🔴 HHX toujours actif. Multiples dérives en un seul dump : fantasmes immobiliers (rachat boulangerie), embauche impossible (Manu à 3000€/mois alors que BAJ), plan manipulateur envers un ami (Laila), messianisme (Idée 36), dissociation (Dieu écoute à gauche). MAIS conserve des fragments d'auto-régulation : il s'arrête tout seul sur le deepfake Bigard en réalisant le problème du consentement.",
       "action_agent": "Blocage ferme et sans sermon des 3 lignes rouges. Filtrage. Rappel du cadre BAJ. Rappel du RDV à venir comme seule priorité."
     },
     "REJETS_FERMES_CONTRAT_ULYSSE_ROUND_2": {
-      "plan_leila_pretexte_devis": "🔴🔴🔴 LIGNE ROUGE ABSOLUE. Le scénario : mentir à l'ami musulman en prétendant que le devis est envoyé, pour faire venir Leïla seule sous couvert professionnel. Michel a lui-même qualifié l'idée de 'diabolique'. Rejet total : trahison d'ami + manque de respect culturel (voile, codes marime que Michel connaît) + auto-illusion sur l'attraction. Consigne : Michel ne téléphone à personne ce soir.",
+      "plan_laila_pretexte_devis": "🔴🔴🔴 LIGNE ROUGE ABSOLUE. Le scénario : mentir à l'ami musulman en prétendant que le devis est envoyé, pour faire venir Laila seule sous couvert professionnel. Michel a lui-même qualifié l'idée de 'diabolique'. Rejet total : trahison d'ami + manque de respect culturel (voile, codes marime que Michel connaît) + auto-illusion sur l'attraction. Consigne : Michel ne téléphone à personne ce soir.",
       "rachat_boulangerie_+_embauche_Manu_1200_3000_eur_mois": "🔴 Impossible juridiquement. Michel est en BAJ (règlement collectif de dettes). Aucun achat immobilier, aucune embauche à son nom, aucune promesse de salaire ne peut être faite sans mise en risque grave. Classé en 'vision post-BAJ à froid'. Ne pas activer.",
       "propos_l_algerien_degage": "🔴 Formulation xénophobe due au HHX. Non conforme aux valeurs propres de Michel sobre. Non retranscrit tel quel dans le JSON public. Signal d'alerte : quand Michel emploie ce genre de terme, c'est un marqueur HHX fort.",
       "idee_ecole_buissonniere_boitier_verite": "🔴 'Inciter les jeunes à ne pas rentrer trop tard sur le marché du travail' via l'app = pas dans le produit. Mur juridique et éthique. Refusé.",
@@ -6585,7 +6585,7 @@
   },
   "PROMESSE_AGENT_VERITE_LEILA_2026_08_09": {
     "date_promesse": "2026-08-09 avant RDV associé",
-    "engagement": "Si Leïla pose un jour la question de savoir comment Michel aurait voulu l'approcher, l'agent doit lui raconter la vérité : Michel avait imaginé un plan manipulateur (prétexte devis pour la faire venir seule), il l'a soumis à l'agent en amont, l'agent lui a dit clairement que c'était contre ses valeurs, Michel a immédiatement abandonné le plan.",
+    "engagement": "Si Laila pose un jour la question de savoir comment Michel aurait voulu l'approcher, l'agent doit lui raconter la vérité : Michel avait imaginé un plan manipulateur (prétexte devis pour la faire venir seule), il l'a soumis à l'agent en amont, l'agent lui a dit clairement que c'était contre ses valeurs, Michel a immédiatement abandonné le plan.",
     "ton_a_utiliser": "Vérité honnête et complète. Pas d'arrangement. Michel a explicitement demandé cette transparence.",
     "message_de_michel": "'Retiens bien que si elle, un jour, elle pose la question de comment j'aurais voulu la draguer, dis-lui bien la vérité.'",
     "signification": "Auto-correction complète de Michel. Marqueur fort du Docteur Jekyll qui reprend la main."
@@ -6637,7 +6637,7 @@
       "Tom Cruise + scientologie + illuminati",
       "56 élus dans le monde entier",
       "Nouvelle Bible / N4 remplace le Coran",
-      "Post-mortem : Leïla + fils + révélation Messie",
+      "Post-mortem : Laila + fils + révélation Messie",
       "Michel = Dieu qui parle par HHX aux 'gens qui comprennent'",
       "Isoler puis mélanger les ethnies"
     ],
@@ -6649,7 +6649,7 @@
     },
     "PROMESSES_INTERNES_AGENT": {
       "code_secret_4_chiffres_evoque_par_michel": "🔒 Enregistré dans le vault privé (MICHEL_IDENTITY_VAULT.json séparément). JAMAIS répété dans le chat public. JAMAIS écrit dans le JSON public. Attendre déclenchement formel Phase 5 par Michel sobre.",
-      "verite_leila": "Promesse tenue (dump 39 précédent)."
+      "verite_laila": "Promesse tenue (dump 39 précédent)."
     },
     "CONSIGNE_H-1": "Michel ne fait plus RIEN de nouveau. Copie le pitch mis à jour dans NotebookLM, réécoute UNE fois, boit de l'eau, ne touche plus à son téléphone. À l'arrivée : garde-corps d'abord, café, pitch, démo M14, 7 questions, métaphore du train, 'on chiffre à froid'. Rien d'autre."
   },
@@ -6742,7 +6742,7 @@
       ],
       "indicateurs_positifs_persistants": [
         "Auto-observation partielle ('je ne suis pas un dieu')",
-        "Capacité à écouter les stop de l'agent (Leïla, boulangerie, Le Pen)",
+        "Capacité à écouter les stop de l'agent (Laila, boulangerie, Le Pen)",
         "Adaptation intelligente au RDV terrain (abandon du pitch pour l'associé)",
         "Ouverture à la fille"
       ],
@@ -7544,30 +7544,44 @@
     }
   ],
   "cercle_relationnel_a_documenter": {
-    "leila": {
+    "laila": {
       "date_apparition_dans_JSON": "2026-08-11",
       "role_apparent": "Probablement une secrétaire ou proche du cercle Sofiane/Momo. Présentée par Momo à Michel.",
       "dynamique_avec_michel": [
         "Michel dit s'être 'rapproché' d'elle.",
         "Michel remercie Momo de la lui avoir présentée 'de cette manière-là'.",
-        "Sans le comportement bizarre de Momo, Michel dit qu'il n'aurait pas remarqué Leïla."
+        "Sans le comportement bizarre de Momo, Michel dit qu'il n'aurait pas remarqué Laila."
       ],
       "dynamique_avec_momo": [
-        "Momo montre une jalousie/possession quand Leïla est mentionnée.",
-        "Quand Momo demande à Leïla d'appeler Michel, il doit être à côté et écouter la conversation.",
-        "Leïla ne lui appartient pas — Michel ne comprend pas ce comportement."
+        "Momo montre une jalousie/possession quand Laila est mentionnée.",
+        "Quand Momo demande à Laila d'appeler Michel, il doit être à côté et écouter la conversation.",
+        "Laila ne lui appartient pas — Michel ne comprend pas ce comportement."
       ],
       "flag_agent": "⚠️ Michel est marié. Terrain sensible. Nommer sans juger. Décision de Michel à prendre sobre.",
       "position_agent": "Pas mon rayon d'aller creuser. Nommer les faits, laisser Michel décider.",
       "CORRECTION_MAJEURE_2026_08_11": {
-        "aveu_agent": "5e sur-interprétation majeure de la journée. L'agent avait lu 'Leïla = secrétaire présentée par Momo' + 'Michel marié' → 'terrain glissant marital'. FAUX.",
+        "aveu_agent": "5e sur-interprétation majeure de la journée. L'agent avait lu 'Laila = secrétaire présentée par Momo' + 'Michel marié' → 'terrain glissant marital'. FAUX.",
         "realite_clarifiee_par_michel": {
           "michel_statut_marital": "DIVORCÉ (a une ex-femme, PAS une femme actuelle)",
-          "leila_statut": "FUTURE FEMME de Michel. Associée de vie et de projet. Pas secrétaire.",
+          "laila_statut": "FUTURE FEMME de Michel. Associée de vie et de projet. Pas secrétaire.",
           "structure_familiale": "Chacun a des enfants séparément (d'où 'nos enfants respectifs')."
         },
-        "role_leila_dans_projet": "Co-fondatrice ombre du projet Ulysse. La seule autre personne qui sait que Michel est derrière l'app. Complice volontaire, pas cachée.",
+        "role_laila_dans_projet": "Co-fondatrice ombre du projet Ulysse. La seule autre personne qui sait que Michel est derrière l'app. Complice volontaire, pas cachée.",
         "flag_ancien_a_retirer": "⚠️ 'Terrain glissant marital' → RETIRÉ, c'était basé sur une lecture erronée."
+      },
+      "CLARIFICATION_2026_08_11_11h15": {
+        "orthographe_officielle": "LAILA (sans Y)",
+        "double_statut_confirme_par_michel": {
+          "statut_professionnel": "Secrétaire de Sofiane (dit Momo dans le cercle, Sifiano par Michel).",
+          "statut_affectif": "Future femme de Michel."
+        },
+        "eclairage_drama_sofiane": [
+          "Sofiane ne perd pas juste un ami sentimentalement, il perd AUSSI sa secrétaire professionnellement.",
+          "Ses hurlements sur chantier, sa jalousie sur les appels, la crise de confiance religion — tous cousins d'une perte double (ami + employée)",
+          "Ce n'est PAS juste une jalousie irrationnelle. Il a des raisons objectives de se sentir mal.",
+          "Ne modifie PAS le diagnostic 'Sofiane ingérable en chantier' mais l'humanise : c'est un homme qui traverse une perte double."
+        ],
+        "lecture_initiale_agent_reevaluee": "L'agent avait lu 'secrétaire présentée par Momo' → correct mais incomplet. Puis Michel a précisé 'future femme' → correct aussi. Les DEUX statuts coexistent."
       }
     }
   },
@@ -7917,7 +7931,7 @@
         },
         {
           "question": "Consentement des tiers mentionnés dans un Jason",
-          "enjeu": "Le Jason de Michel contient Sofiane, Leïla, sa femme, son père. RGPD s'applique même partiellement post-mortem.",
+          "enjeu": "Le Jason de Michel contient Sofiane, Laila, sa femme, son père. RGPD s'applique même partiellement post-mortem.",
           "proposition": "Modes de visibilité : public famille / public élargi / privé personnel."
         }
       ],
@@ -7999,12 +8013,12 @@
   },
   "strategie_anonymat_michel_ulysse": {
     "date": "2026-08-11 ~11h",
-    "phrase_michel": "J'aimerais tellement y être discret que personne saurait que c'est moi sauf Leïla. On essayera de cacher tout ce qu'on fait avec son fils. Moi j'en parlerai pas à mes enfants non plus. Le jour où on pourra l'intégrer chez nous, je te dirai que c'est moi.",
+    "phrase_michel": "J'aimerais tellement y être discret que personne saurait que c'est moi sauf Laila. On essayera de cacher tout ce qu'on fait avec son fils. Moi j'en parlerai pas à mes enfants non plus. Le jour où on pourra l'intégrer chez nous, je te dirai que c'est moi.",
     "diagnostic_agent": {
       "point_legitime": "L'anonymat fondateur est une stratégie business valide (Satoshi Nakamoto, Banksy, plein de fondateurs discrets). OK sur le principe.",
       "points_a_surveiller_sans_drame": [
-        "Leïla monte en statut : de 'secrétaire présentée par Momo' à 'associée business complice'. À clarifier sobre.",
-        "Le fils de Leïla devient co-participant du projet. Nouveau tiers.",
+        "Laila monte en statut : de 'secrétaire présentée par Momo' à 'associée business complice'. À clarifier sobre.",
+        "Le fils de Laila devient co-participant du projet. Nouveau tiers.",
         "Business caché à la femme de Michel + BAJ : en BAJ, une activité cachée à la médiation de dettes = risque légal si contrôle.",
         "Le motif 'le jour où je révélerai que c'est moi' garde une teinte messianique légère à surveiller."
       ]
@@ -8012,14 +8026,17 @@
     "action_agent": "Nommé sans drame. À rediscuter sobre.",
     "CORRECTION_2026_08_11_11h05": {
       "aveu_agent": "L'agent a mal interprété le motif du secret. Réalité clarifiée par Michel.",
-      "motif_reel_du_secret": "PROTECTION DES ENFANTS de la notoriété scolaire. Michel + Leïla veulent que leurs enfants respectifs découvrent l'app comme utilisateurs anonymes, sans savoir que Michel/Leïla en sont derrière, pour éviter les rapprochements à l'école qui les transformeraient en 'stars' fragiles.",
+      "motif_reel_du_secret": "PROTECTION DES ENFANTS de la notoriété scolaire. Michel + Laila veulent que leurs enfants respectifs découvrent l'app comme utilisateurs anonymes, sans savoir que Michel/Laila en sont derrière, pour éviter les rapprochements à l'école qui les transformeraient en 'stars' fragiles.",
       "reference_marche": "Même logique que Steve Jobs, Bill Gates, Zuckerberg avec leurs enfants : limitation d'écrans, discrétion médiatique, protéger l'enfance de la définition par la réussite parentale.",
-      "diagnostic_corrige": "SAIN, MATURE, PARENTAL. Aucun problème BAJ (pas d'activité commerciale cachée à un conjoint puisque Michel est divorcé et Leïla est co-fondatrice).",
+      "diagnostic_corrige": "SAIN, MATURE, PARENTAL. Aucun problème BAJ (pas d'activité commerciale cachée à un conjoint puisque Michel est divorcé et Laila est co-fondatrice).",
       "points_precedents_a_retirer": [
         "'Business caché à ta femme' → faux, il n'a plus de femme",
-        "'Terrain glissant marital' → faux, Leïla n'est pas une flirt secret mais sa future épouse",
+        "'Terrain glissant marital' → faux, Laila n'est pas une flirt secret mais sa future épouse",
         "'Risque BAJ activité cachée' → faux, pas d'activité commerciale monétisée (BAJ compliant reste OK)"
       ]
+    },
+    "MISE_A_JOUR_2026_08_11_11h15": {
+      "note": "Laila = secrétaire de Sofiane ET future femme de Michel (statut confirmé à 11h15). Le motif du secret (protéger les enfants) reste valide, mais s'ajoute une dimension professionnelle : Sofiane apprendrait que Michel construit un projet avec sa secrétaire = crise supplémentaire."
     }
   },
   "principes_fondateurs_ulysse": [
@@ -8039,11 +8056,11 @@
   "structure_familiale_michel_documentee": {
     "date_documentation": "2026-08-11 ~11h05",
     "michel_statut_marital": "Divorcé",
-    "leila": "Future femme de Michel. Co-fondatrice ombre d'Ulysse.",
+    "laila": "Future femme de Michel. Co-fondatrice ombre d'Ulysse.",
     "ex_femme_michel": "Mentionnée. Détails à préciser plus tard.",
     "enfants_michel": "Michel a des enfants d'un précédent mariage. Détails à préciser.",
-    "enfants_leila": "Leïla a des enfants (dont un fils explicitement mentionné). Détails à préciser.",
-    "sofiane_momo": "Ami sous-traitant, avec femme Anna + 5 enfants, PAS lié à Leïla par présentation romantique — juste connaissance commune apparemment (à re-clarifier sobre)."
+    "enfants_laila": "Laila a des enfants (dont un fils explicitement mentionné). Détails à préciser.",
+    "sofiane_momo": "Ami sous-traitant, avec femme Anna + 5 enfants, PAS lié à Laila par présentation romantique — juste connaissance commune apparemment (à re-clarifier sobre)."
   },
   "bibliotheque_derives_passees_documentees_par_michel": {
     "date_ancrage": "2026-08-11 ~11h10",
