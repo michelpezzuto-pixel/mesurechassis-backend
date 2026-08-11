@@ -30,7 +30,7 @@
     "note": "Ce fichier est le profil AI complet de Michel Pezzuto. TOUJOURS le renommer avec la date du jour (MICHEL_PROFILE_YYYY.MM.DD.json) puis le sauvegarder sur GitHub prive michel-memory a chaque changement significatif.",
     "note_chronologie": "Heure confirmée par Michel le 09/08 à 01h12. Le RDV associé, c est AUJOURD HUI dimanche 09/08/2026.",
     "nom_fichier": "MICHEL_PROFILE_2026.08.09.json",
-    "derniere_maj": "2026-08-11 ~11h12 — boussole d'humilité ancrée",
+    "derniere_maj": "2026-08-11 ~11h30 — Laila = destinataire future, PAS confidente actuelle. Statut clarifié.",
     "derniere_action": "DUMP_42 : intervention majeure de l'agent sur ligne rouge antisémite (Soral/Rothschild/11-septembre) + paranoïa surveillance. Refus catégorique de la recherche demandée. Recommandation médecin sobre demain.",
     "derniere_session_ajoutee": "session_2026_08_10_soir_recadrage_bilateral_et_urgence_sofiane",
     "regle_permanente_lien_json": true,
@@ -7582,6 +7582,22 @@
           "Ne modifie PAS le diagnostic 'Sofiane ingérable en chantier' mais l'humanise : c'est un homme qui traverse une perte double."
         ],
         "lecture_initiale_agent_reevaluee": "L'agent avait lu 'secrétaire présentée par Momo' → correct mais incomplet. Puis Michel a précisé 'future femme' → correct aussi. Les DEUX statuts coexistent."
+      },
+      "CLARIFICATION_2026_08_11_11h30": {
+        "decision_michel": "Ne PAS parler du projet Ulysse à Laila avant la démo Nathalie. Elle DÉCOUVRIRA le projet le jour du rendez-vous Nathalie.",
+        "statut_reel_laila_au_11_aout_2026_11h30": [
+          "Laila n'est PAS au courant de l'existence d'Ulysse.",
+          "Laila n'a PAS consenti à être 'co-fondatrice ombre'.",
+          "Laila n'a PAS confirmé être la 'future femme' de Michel — c'est une projection de Michel.",
+          "Michel est SEUL à savoir qu'il construit Ulysse à cette heure."
+        ],
+        "strategie_michel": "Construire en secret + révélation-cadeau le jour Nathalie. Ulysse devient un acte de déclaration romantique.",
+        "scenarios_possibles_jour_J": {
+          "A_positif": "Laila adore la surprise → magnifique",
+          "B_neutre": "Laila flattée mais pas prête → à composer",
+          "C_negatif": "Laila se sent instrumentalisée ('il a construit tout ça sans me demander') → risque affectif"
+        },
+        "position_agent": "Nommé sans drame, sans jugement. Décision reste à Michel. Rappel : ne PAS surestimer le consentement projeté sur Laila."
       }
     }
   },
@@ -7704,6 +7720,16 @@
       "phrase_michel": "C'est toi qui vas former les gens à leur expliquer comment Ulysse a résisté aux sirènes, aux drogues, et après il résistera à la machine.",
       "principe": "Le mythe d'Ulysse (résister aux sirènes en se faisant attacher au mât) devient le récit pédagogique enseigné dans l'app. Chaque utilisateur apprend le principe de l'auto-contrat lucide avec sa version future.",
       "prolonge": "Feature 'N14 remet les pieds à terre' du 10h40."
+    },
+    {
+      "date": "2026-08-11 ~11h20",
+      "flag": "🎆🎆 PRINCIPE PRODUIT FONDATEUR — Ulysse informe, ne juge pas",
+      "phrase_michel": "Si ton cerveau pense que la merde est bonne à manger, Ulysse te dira aussi que c'est ce que tu penses. Il dira : 'Bon, si c'est ce que tu penses, tant mieux, mais honnêtement, la majorité des gens n'aiment pas ça.'",
+      "principe": "Ulysse n'a JAMAIS raison contre l'utilisateur. Ulysse valide la vision de l'utilisateur ET fournit un miroir statistique du monde ('voici ce que la majorité pense / fait / trouve'). L'utilisateur reste libre, reçoit juste PLUS d'information.",
+      "resout_probleme": "L'anxiété 'les utilisateurs vont en avoir marre parce qu'Ulysse a toujours raison'. Dans ce modèle, l'utilisateur n'a jamais tort face à Ulysse — il a juste plus de perspective.",
+      "difference_avec_chatgpt": "ChatGPT flatte pour retenir. Ulysse informe sans juger. Deux positionnements différents.",
+      "reference_ethique": "Approche 'validation therapy' (Naomi Feil) déjà notée pour Alzheimer — même racine philosophique : respecter la réalité perçue de l'utilisateur, apporter de l'information sans imposer une correction.",
+      "priorite": "P0 FEATURE FONDATRICE. Cohérent avec 'N14 remet les pieds à terre' — remet en offrant de l'information, pas en imposant une vérité."
     }
   ],
   "principes_michel_a_ancrer": [
@@ -8056,7 +8082,7 @@
   "structure_familiale_michel_documentee": {
     "date_documentation": "2026-08-11 ~11h05",
     "michel_statut_marital": "Divorcé",
-    "laila": "Future femme de Michel. Co-fondatrice ombre d'Ulysse.",
+    "laila": "Projection de Michel comme 'future femme' — NON confirmé par Laila. Elle est secrétaire de Sofiane (statut pro) et objet d'affection de Michel (statut affectif à sens unique confirmé pour l'instant).",
     "ex_femme_michel": "Mentionnée. Détails à préciser plus tard.",
     "enfants_michel": "Michel a des enfants d'un précédent mariage. Détails à préciser.",
     "enfants_laila": "Laila a des enfants (dont un fils explicitement mentionné). Détails à préciser.",
@@ -8109,5 +8135,14 @@
     ],
     "usage_pour_agent": "Quand Michel se compare implicitement ou explicitement à une figure de puissance/salut, vérifier si le pattern est dans cette bibliothèque. Si oui → miroir gentil sans drame ('c'est le cousin de X'). Si nouvelle figure → ajouter à la bibliothèque.",
     "usage_pour_michel_lui_meme": "Chaque figure listée = tempête passée maîtrisée. Consulter la liste pour rire des futures et les laisser passer."
-  }
+  },
+  "moments_intimes_michel": [
+    {
+      "date": "2026-08-11 ~11h20",
+      "contexte": "Michel dans son lit, short 'dégueulasse' pas lavé depuis 4 jours, pense à Laila. Vidéo TikTok/YouTube d'une femme qui l'a inspiré : 'Qu'est-ce que tu fous dans ton lit ? Si t'es amoureux, imagine que l'autre est peut-être aussi dans un t-shirt sale à penser à toi. Pourquoi tu vas pas la voir ?'",
+      "reaction_michel": "L'idée lui traverse l'esprit. Il pense 'j'ai pas de voiture, comment je fais ?'.",
+      "position_agent": "Reçu avec respect. PAS de conseil amoureux (pas mon rayon). Question ouverte posée : 'pas de voiture' est-elle la vraie raison ou une excuse pratique pour reporter une décision intime ?",
+      "donnee_pratique_sans_conseil": "Le hack de la vidéo = lever le corps, se laver, s'habiller. Ça change l'état intérieur avant même de décider quoi faire de Laila."
+    }
+  ]
 }
