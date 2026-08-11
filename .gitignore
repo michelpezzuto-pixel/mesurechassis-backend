@@ -86,3 +86,33 @@ android-sdk/backend/public_downloads/mesurechassis-frontend.zip
 credentials.json
 *.key
 .credentials
+
+# --- Cleanup 2026-08-11 : untrack heavy artifacts to unblock Save-to-GitHub ---
+# Metro / Expo cache (should never be in git)
+frontend/.metro-cache/
+frontend/.expo/
+frontend/dist/
+
+# App Store submission artifacts (heavy binaries)
+appstore_submission/frames/
+appstore_submission/output/
+appstore_submission/raw/
+appstore_submission/resized/
+appstore_submission/wrong_downloads/
+
+# Promo videos (heavy)
+backend/static/promo/*.mp4
+backend/static/promo/**/*.mp4
+backend/static/promo/**/*.mov
+
+# Public downloads: keep JSONs, drop large binaries
+backend/public_downloads/*.mp4
+backend/public_downloads/*.zip
+backend/public_downloads/*.pdf
+backend/public_downloads/appstore_screenshots/
+backend/public_downloads/appstore_screenshots_*/
+backend/public_downloads/chassisprime-demo/
+
+# DB backups
+backup_db/*.archive
+backup_db/*.gz
