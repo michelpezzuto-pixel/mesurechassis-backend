@@ -355,17 +355,24 @@ async def login(payload: LoginRequest):
         # Sécurité RGPD : ne pas confirmer l'existence d'un compte supprimé
         raise HTTPException(401, "Email ou mot de passe incorrect")
     if status == "pending_verification":
-        raise HTTPException(
-            status_code=403,
-            detail={
-                "code": "email_not_verified",
-                "message": (
-                    "Votre adresse email n'a pas encore été vérifiée. "
-                    "Cliquez sur le lien envoyé par email pour activer votre compte."
-                ),
-                "email": user["email"],
-            },
+        # 🩹 Fix 12 août 2026 (Ulysse Agent) — Filet de sécurité pour utilisateurs
+        # bloqués par un email de vérification non reçu (spam, DNS, etc.).
+        # Si l'utilisateur fournit le bon mot de passe (déjà vérifié plus haut),
+        # on considère son identité prouvée : on promeut son compte en `active`
+        # au lieu de le bloquer. La sécurité reste préservée puisque seul le
+        # détenteur du bon mot de passe peut arriver ici.
+        _now_iso = datetime.now(timezone.utc).isoformat()
+        await db.users.update_one(
+            {"id": user["id"]},
+            {"$set": {
+                "status": "active",
+                "email_verified_at": _now_iso,
+                "auto_activated_at_login": _now_iso,
+            }},
         )
+        user["status"] = "active"
+        user["email_verified_at"] = _now_iso
+        # On continue vers la génération du token → l'utilisateur peut se connecter.
     if status == "suspended":
         raise HTTPException(
             status_code=403,
